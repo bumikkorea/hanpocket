@@ -161,7 +161,7 @@ export default function DigitalWalletTab({ lang, profile }) {
   useEffect(() => { localStorage.setItem(NAME_MAP_KEY, JSON.stringify(nameMap)) }, [nameMap])
 
   const cardCls = 'bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow'
-  const inputCls = 'w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#B8956A]/30 placeholder:text-[#9CA3AF] text-[#111827]'
+  const inputCls = 'w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#111827]/30 placeholder:text-[#9CA3AF] text-[#111827]'
   const labelCls = 'text-xs text-[#6B7280] font-medium block mb-1.5'
   const btnPrimary = 'bg-[#111827] text-white text-sm font-semibold py-2.5 px-4 rounded-xl hover:bg-[#1F2937] transition-all'
   const btnSecondary = 'border border-[#E5E7EB] text-[#6B7280] text-sm font-semibold py-2.5 px-4 rounded-xl hover:bg-[#F9FAFB] transition-all'
@@ -272,7 +272,7 @@ export default function DigitalWalletTab({ lang, profile }) {
                   const Icon = dt.icon
                   return (
                     <button key={dt.id} onClick={() => { setAddingType(dt.id); setEditingDoc(null) }}
-                      className="flex items-center gap-2 text-xs text-left p-3 rounded-xl border border-[#E5E7EB] hover:border-[#B8956A]/40 transition-all">
+                      className="flex items-center gap-2 text-xs text-left p-3 rounded-xl border border-[#E5E7EB] hover:border-[#111827]/40 transition-all">
                       <Icon size={14} className="text-[#6B7280] shrink-0" />
                       <span className="text-[#111827]">{L(lang, dt.label)}</span>
                     </button>
@@ -400,7 +400,7 @@ export default function DigitalWalletTab({ lang, profile }) {
                   <span className="text-xs text-[#6B7280] flex-1">{inst}</span>
                   {editingInst === inst ? (
                     <div className="flex items-center gap-1">
-                      <input className="bg-white border border-[#E5E7EB] rounded-lg px-2 py-1 text-xs w-24 outline-none focus:ring-1 focus:ring-[#B8956A]"
+                      <input className="bg-white border border-[#E5E7EB] rounded-lg px-2 py-1 text-xs w-24 outline-none focus:ring-1 focus:ring-[#111827]"
                         value={newInstKoName} onChange={e => setNewInstKoName(e.target.value)}
                         placeholder={L(lang, { ko: '한글 이름', zh: '韩文名', en: 'Korean name' })} />
                       <button onClick={() => { if (newInstKoName) { setInstName(inst, newInstKoName) }; setEditingInst(null); setNewInstKoName('') }}
@@ -476,7 +476,7 @@ export default function DigitalWalletTab({ lang, profile }) {
                         )}
                         {doc.docType === 'arc' && (
                           <a href="https://www.hikorea.go.kr" target="_blank" rel="noopener noreferrer"
-                            className="text-[10px] text-[#B8956A] hover:underline mt-1 block">Hi-Korea</a>
+                            className="text-[10px] text-[#111827] hover:underline mt-1 block">Hi-Korea</a>
                         )}
                         {doc.docType === 'passport' && (
                           <p className="text-[10px] text-[#9CA3AF] mt-1">{L(lang, { ko: '대사관/영사관 방문', zh: '访问大使馆/领事馆', en: 'Visit embassy/consulate' })}</p>
@@ -541,7 +541,7 @@ function VerifySection({ guide, lang, cardCls }) {
         <div className="mt-3 space-y-2">
           {(guide.steps[lang] || guide.steps.en).map((step, i) => (
             <div key={i} className="flex gap-2 text-xs text-[#374151]">
-              <span className="text-[#B8956A] font-bold shrink-0">{i + 1}.</span>
+              <span className="text-[#111827] font-bold shrink-0">{i + 1}.</span>
               <span>{step}</span>
             </div>
           ))}

@@ -144,7 +144,7 @@ function TimezoneWidget({ lang, compact }) {
         <div className="text-[9px] text-[#6B7280]">{country.flag} {L(lang, country.name)}</div>
         <div className="text-lg font-black text-[#111827]">{countryTime}</div>
       </div>
-      <div className="text-center text-[10px] text-[#B8956A] font-bold mb-1">{diffStr}</div>
+      <div className="text-center text-[10px] text-[#111827] font-bold mb-1">{diffStr}</div>
       <div className="text-center">
         <div className="text-[9px] text-[#6B7280]">{lang === 'ko' ? '한국' : lang === 'zh' ? '韩国' : 'Korea'}</div>
         <div className="text-lg font-black text-[#111827]">{koreaTime}</div>
@@ -166,7 +166,7 @@ function TimezoneWidget({ lang, compact }) {
           <div className="text-2xl font-black text-[#111827]">{countryTime}</div>
         </div>
         <div className="px-3 text-center">
-          <div className="text-[10px] text-[#B8956A] font-bold">{diffStr}</div>
+          <div className="text-[10px] text-[#111827] font-bold">{diffStr}</div>
         </div>
         <div className="text-center flex-1">
           <div className="text-[10px] text-[#6B7280] mb-1">{lang === 'ko' ? '한국' : lang === 'zh' ? '韩国' : 'Korea'}</div>
@@ -250,7 +250,7 @@ function HolidayCalendarWidget({ lang }) {
           const isToday = isCurrentMonth && day === today
           return (
             <div key={day} className={`relative h-5 flex flex-col items-center justify-center rounded text-[10px]
-              ${isToday ? 'bg-[#B8956A] text-white font-black' : hol || isSun ? 'text-red-500 font-bold' : isSat ? 'text-blue-500' : 'text-[#6B7280]'}
+              ${isToday ? 'bg-[#111827] text-white font-black' : hol || isSun ? 'text-red-500 font-bold' : isSat ? 'text-blue-500' : 'text-[#6B7280]'}
             `} title={hol ? L(lang, hol) : ''}>
               {day}
               {hol && !isToday && <span className="absolute -bottom-0 w-1 h-1 rounded-full bg-red-400" />}
@@ -337,8 +337,8 @@ function ParcelWidget({ lang }) {
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#F3F4F6] hover:bg-[#F3F4F6] transition-all">
                 <span className="text-xs text-[#6B7280]">{lang === 'zh' ? c.zh : lang === 'en' ? (c.en || c.name) : c.name}</span>
                 <span className="flex items-center gap-1.5">
-                  {c.badge && <span className="text-[10px] text-[#B8956A] font-bold">{c.badge}</span>}
-                  <ArrowLeftRight size={10} className="text-[#B8956A]" />
+                  {c.badge && <span className="text-[10px] text-[#111827] font-bold">{c.badge}</span>}
+                  <ArrowLeftRight size={10} className="text-[#111827]" />
                 </span>
               </a>
             ))}
@@ -362,12 +362,12 @@ function TravelCurationWidget({ lang }) {
             className="relative min-w-[160px] max-w-[180px] shrink-0 bg-white border border-[#E5E7EB] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all btn-press"
             style={{ scrollSnapAlign: 'start' }}>
             {item.badge && (
-              <span className="absolute top-2 right-2 text-[8px] font-bold bg-[#B8956A] text-[#111827] px-1.5 py-0.5 rounded-full z-10">
+              <span className="absolute top-2 right-2 text-[8px] font-bold bg-[#111827] text-[#111827] px-1.5 py-0.5 rounded-full z-10">
                 {L(lang, item.badge)}
               </span>
             )}
             <div className={`h-16 ${item.bgColor} flex items-center justify-center`}>
-              <Plane size={28} className="text-[#B8956A]/40" />
+              <Plane size={28} className="text-[#111827]/40" />
             </div>
             <div className="p-2.5">
               <p className="text-[11px] font-bold leading-tight mb-1.5">{L(lang, item.name)}</p>
@@ -375,13 +375,13 @@ function TravelCurationWidget({ lang }) {
                 {item.originalPrice ? (
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] text-[#6B7280] line-through">{item.originalPrice}</span>
-                    <span className="text-xs font-black text-[#B8956A]">{item.price}</span>
+                    <span className="text-xs font-black text-[#111827]">{item.price}</span>
                   </div>
                 ) : (
-                  <span className="text-xs font-black text-[#B8956A]">{item.price}</span>
+                  <span className="text-xs font-black text-[#111827]">{item.price}</span>
                 )}
               </div>
-              <span className="block text-center text-[9px] font-bold bg-[#B8956A] text-[#111827] rounded-lg py-1">
+              <span className="block text-center text-[9px] font-bold bg-[#111827] text-[#111827] rounded-lg py-1">
                 {lang === 'ko' ? '예약하기' : lang === 'zh' ? '预订' : 'Book'}
               </span>
             </div>
@@ -420,7 +420,7 @@ function FestivalWidget({ lang }) {
     s.setHours(0,0,0,0); e.setHours(0,0,0,0)
     if (now >= s && now <= e) return { label: { ko: '진행중', zh: '进行中', en: 'Ongoing' }, color: 'bg-green-900/200 text-white' }
     const diff = Math.ceil((s - now) / 864e5)
-    if (diff > 0) return { label: { ko: `D-${diff}`, zh: `D-${diff}`, en: `D-${diff}` }, color: diff <= 7 ? 'bg-red-900/200 text-white' : 'bg-[#111827] text-[#B8956A]' }
+    if (diff > 0) return { label: { ko: `D-${diff}`, zh: `D-${diff}`, en: `D-${diff}` }, color: diff <= 7 ? 'bg-red-900/200 text-white' : 'bg-[#111827] text-[#111827]' }
     return { label: { ko: '종료', zh: '已结束', en: 'Ended' }, color: 'bg-gray-300 text-gray-600' }
   }
 
@@ -436,7 +436,7 @@ function FestivalWidget({ lang }) {
           const st = getStatus(ev.dateStart, ev.dateEnd)
           return (
             <div key={i} className="flex items-start gap-3 p-2.5 rounded-xl bg-[#F3F4F6] hover:bg-[#F3F4F6] transition-all">
-              <MapPin size={20} className="text-[#B8956A] shrink-0 mt-0.5" />
+              <MapPin size={20} className="text-[#111827] shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${ev.categoryColor}`}>{L(lang, ev.category)}</span>
@@ -446,7 +446,7 @@ function FestivalWidget({ lang }) {
                 <p className="text-[10px] text-[#6B7280]">{fmtDate(ev.dateStart, ev.dateEnd)} · {L(lang, ev.location)}</p>
                 {ev.ticketLink && (
                   <a href={ev.ticketLink} target="_blank" rel="noopener noreferrer"
-                    className="inline-block mt-1 text-[9px] font-bold text-[#B8956A] bg-[#B8956A]/10 px-2 py-0.5 rounded-full hover:bg-[#B8956A]/20 transition-all">
+                    className="inline-block mt-1 text-[9px] font-bold text-[#111827] bg-[#111827]/10 px-2 py-0.5 rounded-full hover:bg-[#111827]/20 transition-all">
                     {lang === 'ko' ? '티켓 예매' : lang === 'zh' ? '购票' : 'Get Tickets'}
                   </a>
                 )}
@@ -456,7 +456,7 @@ function FestivalWidget({ lang }) {
         })}
       </div>
       <a href="https://korean.visitkorea.or.kr" target="_blank" rel="noopener noreferrer"
-        className="block mt-3 text-center text-xs font-bold text-[#B8956A] bg-[#F3F4F6] rounded-xl py-2 hover:bg-[#E5E7EB] transition-all">
+        className="block mt-3 text-center text-xs font-bold text-[#111827] bg-[#F3F4F6] rounded-xl py-2 hover:bg-[#E5E7EB] transition-all">
         {lang === 'ko' ? '더보기' : lang === 'zh' ? '查看更多' : 'See more'}
       </a>
     </div>
@@ -655,13 +655,13 @@ function KpopChartWidget({ lang }) {
         {chart.items.map((item, i) => (
           <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 py-1.5 px-2 rounded-lg hover:bg-[#F3F4F6] transition-all">
-            <span className={`text-sm font-black w-6 text-center ${item.rank <= 3 ? 'text-[#B8956A]' : 'text-[#6B7280]'}`}>{item.rank}</span>
+            <span className={`text-sm font-black w-6 text-center ${item.rank <= 3 ? 'text-[#111827]' : 'text-[#6B7280]'}`}>{item.rank}</span>
             {item.artwork && <img src={item.artwork} alt="" className="w-8 h-8 rounded-md shrink-0" />}
             <div className="flex-1 min-w-0">
               <span className="text-xs font-bold text-[#111827] truncate block">{item.title}</span>
               <span className="text-[10px] text-[#6B7280]">{item.artist}</span>
             </div>
-            <Play size={14} strokeWidth={1} className="text-[#B8956A] shrink-0" />
+            <Play size={14} strokeWidth={1} className="text-[#111827] shrink-0" />
           </a>
         ))}
       </div>
@@ -725,7 +725,7 @@ function FanEventIdolWidget({ lang }) {
   }
 
   const pillBase = "shrink-0 px-2 py-0.5 rounded-full text-[9px] font-medium transition-all cursor-pointer select-none"
-  const pillActive = "bg-[#B8956A] text-white"
+  const pillActive = "bg-[#111827] text-white"
   const pillInactive = "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]"
 
   if (showSearch) {
@@ -742,7 +742,7 @@ function FanEventIdolWidget({ lang }) {
         <input
           type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder={lang === 'ko' ? '그룹명/소속사 검색...' : lang === 'zh' ? '搜索组合名/公司...' : 'Search name/company...'}
-          className="w-full text-xs bg-[#F3F4F6] rounded-xl px-3 py-1.5 mb-1.5 outline-none focus:ring-2 focus:ring-[#B8956A]/30"
+          className="w-full text-xs bg-[#F3F4F6] rounded-xl px-3 py-1.5 mb-1.5 outline-none focus:ring-2 focus:ring-[#111827]/30"
         />
         {/* Generation filter */}
         <div className="flex gap-1 overflow-x-auto no-scrollbar mb-1">
@@ -771,7 +771,7 @@ function FanEventIdolWidget({ lang }) {
               className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-left transition-all ${
                 myIdols.includes(g.id) ? 'bg-[#F3F4F6] opacity-50' : 'bg-[#F3F4F6] hover:bg-[#E5E7EB]'
               }`}>
-              <Star size={14} className="text-[#B8956A] shrink-0" />
+              <Star size={14} className="text-[#111827] shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1">
                   <span className="text-[11px] font-bold text-[#111827] truncate">{g.name}</span>
@@ -795,12 +795,12 @@ function FanEventIdolWidget({ lang }) {
   if (registeredIdols.length === 0) {
     return (
       <div className="text-center py-4">
-        <Star size={32} className="text-[#B8956A] mx-auto" />
+        <Star size={32} className="text-[#111827] mx-auto" />
         <p className="text-xs text-[#6B7280] mt-2 mb-3">
           {lang === 'ko' ? '좋아하는 아이돌을 등록하세요!' : lang === 'zh' ? '注册你喜欢的爱豆！' : 'Register your favorite idols!'}
         </p>
         <button onClick={() => setShowSearch(true)}
-          className="text-xs font-bold text-[#B8956A] bg-[#F3F4F6] px-4 py-2 rounded-xl hover:bg-[#E5E7EB] transition-all">
+          className="text-xs font-bold text-[#111827] bg-[#F3F4F6] px-4 py-2 rounded-xl hover:bg-[#E5E7EB] transition-all">
           {lang === 'ko' ? '내 최애 등록' : lang === 'zh' ? '注册我的爱豆' : 'Register My Idol'}
         </button>
       </div>
@@ -816,7 +816,7 @@ function FanEventIdolWidget({ lang }) {
             <div key={idol.id} className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-xl p-3">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Star size={16} className="text-[#B8956A]" />
+                  <Star size={16} className="text-[#111827]" />
                   <div>
                     <p className="text-xs font-bold">{idol.name}</p>
                     <p className="text-[9px] text-[#6B7280]">{idol.company}</p>
@@ -830,7 +830,7 @@ function FanEventIdolWidget({ lang }) {
                 <div className="space-y-1 mb-2">
                   {idol.schedules.slice(0, 2).map((s, i) => (
                     <div key={i} className="flex items-start gap-1.5">
-                      <span className="text-[9px] text-[#B8956A] font-mono shrink-0">{s.date.slice(5)}</span>
+                      <span className="text-[9px] text-[#111827] font-mono shrink-0">{s.date.slice(5)}</span>
                       <span className="text-[10px] text-gray-300">{L(lang, s.name)}</span>
                     </div>
                   ))}
@@ -839,17 +839,17 @@ function FanEventIdolWidget({ lang }) {
                 <p className="text-[10px] text-[#6B7280] mb-2">{lang === 'ko' ? '예정된 일정 없음' : lang === 'zh' ? '暂无日程' : 'No upcoming events'}</p>
               )}
               <div className="flex gap-2 mt-2 pt-2 border-t border-white/10">
-                {idol.socials.weverse && <a href={idol.socials.weverse} target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#6B7280] hover:text-[#B8956A]">Weverse</a>}
-                {idol.socials.instagram && <a href={idol.socials.instagram} target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#6B7280] hover:text-[#B8956A]">IG</a>}
-                {idol.socials.weibo && <a href={idol.socials.weibo} target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#6B7280] hover:text-[#B8956A]">Weibo</a>}
-                {idol.socials.youtube && <a href={idol.socials.youtube} target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#6B7280] hover:text-[#B8956A]">YT</a>}
+                {idol.socials.weverse && <a href={idol.socials.weverse} target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#6B7280] hover:text-[#111827]">Weverse</a>}
+                {idol.socials.instagram && <a href={idol.socials.instagram} target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#6B7280] hover:text-[#111827]">IG</a>}
+                {idol.socials.weibo && <a href={idol.socials.weibo} target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#6B7280] hover:text-[#111827]">Weibo</a>}
+                {idol.socials.youtube && <a href={idol.socials.youtube} target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#6B7280] hover:text-[#111827]">YT</a>}
               </div>
             </div>
           )
         })}
       </div>
       <button onClick={() => setShowSearch(true)}
-        className={`w-full mt-2 text-center text-[10px] font-bold text-[#B8956A] bg-[#F3F4F6] rounded-xl py-1.5 hover:bg-[#E5E7EB] transition-all ${myIdols.length >= 10 ? 'opacity-50 pointer-events-none' : ''}`}>
+        className={`w-full mt-2 text-center text-[10px] font-bold text-[#111827] bg-[#F3F4F6] rounded-xl py-1.5 hover:bg-[#E5E7EB] transition-all ${myIdols.length >= 10 ? 'opacity-50 pointer-events-none' : ''}`}>
         + {lang === 'ko' ? '아이돌 추가' : lang === 'zh' ? '添加爱豆' : 'Add Idol'} ({myIdols.length}/10)
       </button>
     </div>
@@ -915,7 +915,7 @@ function BeautyWidget({ lang }) {
         <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
           className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#F3F4F6] hover:bg-[#F3F4F6] transition-all">
           <span className="text-xs text-[#111827] font-medium">{L(lang, item.name)}</span>
-          <MapPin size={12} className="text-[#B8956A] shrink-0" />
+          <MapPin size={12} className="text-[#111827] shrink-0" />
         </a>
       ))}
     </div>
@@ -934,12 +934,12 @@ function BeautyWidget({ lang }) {
               <a href="https://global.oliveyoung.com" target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#F3F4F6] hover:bg-[#F3F4F6] transition-all">
                 <span className="text-xs text-[#111827]">{lang === 'ko' ? '올리브영 글로벌몰' : lang === 'zh' ? 'Olive Young全球商城' : 'Olive Young Global'}</span>
-                <ArrowLeftRight size={10} className="text-[#B8956A]" />
+                <ArrowLeftRight size={10} className="text-[#111827]" />
               </a>
               <a href="https://www.xiaohongshu.com/search_result?keyword=oliveyoung" target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#F3F4F6] hover:bg-[#F3F4F6] transition-all">
                 <span className="text-xs text-[#111827]">{lang === 'zh' ? '小红书 Olive Young' : 'Xiaohongshu Olive Young'}</span>
-                <ArrowLeftRight size={10} className="text-[#B8956A]" />
+                <ArrowLeftRight size={10} className="text-[#111827]" />
               </a>
             </div>
           </div>
@@ -966,7 +966,7 @@ function BeautyWidget({ lang }) {
           <div>
             <div className="grid grid-cols-2 gap-3 mb-3">
               <a href="https://map.naver.com/v5/search/올리브영" target="_blank" rel="noopener noreferrer"
-                className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#B8956A]/20">
+                className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#111827]/20">
                 <ShoppingBag size={28} className="text-[#111827]" />
                 <span className="text-xs font-bold text-[#111827]">
                   {lang === 'ko' ? '한국에서 사기' : lang === 'zh' ? '在韩国购买' : 'Buy in Korea'}
@@ -976,7 +976,7 @@ function BeautyWidget({ lang }) {
                 </span>
               </a>
               <button onClick={() => setShowShipPopup(true)}
-                className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#B8956A]/20">
+                className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#111827]/20">
                 <Plane size={28} className="text-[#111827]" />
                 <span className="text-xs font-bold text-[#111827]">
                   {lang === 'ko' ? '해외 배송' : lang === 'zh' ? '海外配送' : 'Ship Overseas'}
@@ -1048,7 +1048,7 @@ function BeautyWidget({ lang }) {
       <div className="flex justify-center gap-2 mt-3">
         {BEAUTY_CAT_LABELS.map((cat, i) => (
           <button key={i} onClick={() => { setActiveCat(i); setSubView(null); setShowShipPopup(false) }}
-            className={`h-2 rounded-full transition-all ${activeCat === i ? 'bg-[#B8956A] w-4' : 'bg-[#AEAEB2] w-2'}`} />
+            className={`h-2 rounded-full transition-all ${activeCat === i ? 'bg-[#111827] w-4' : 'bg-[#AEAEB2] w-2'}`} />
         ))}
       </div>
       <p className="text-[10px] text-[#6B7280] text-center mt-1">{L(lang, BEAUTY_CAT_LABELS[activeCat])}</p>
@@ -1079,14 +1079,14 @@ function AccommodationWidget({ lang }) {
       {!popup && (
         <div className="grid grid-cols-2 gap-3">
           <button onClick={() => setPopup('korea')}
-            className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#B8956A]/20">
+            className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#111827]/20">
             <Home size={28} className="text-[#111827]" />
             <span className="text-xs font-bold text-[#111827]">
               {lang === 'ko' ? '한국에서 예약' : lang === 'zh' ? '在韩国预订' : 'Book in Korea'}
             </span>
           </button>
           <button onClick={() => setPopup('abroad')}
-            className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#B8956A]/20">
+            className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#111827]/20">
             <Plane size={28} className="text-[#111827]" />
             <span className="text-xs font-bold text-[#111827]">
               {lang === 'ko' ? '해외에서 예약' : lang === 'zh' ? '从海外预订' : 'Book from Abroad'}
@@ -1145,14 +1145,14 @@ function DeliveryWidget({ lang }) {
       {!view && (
         <div className="grid grid-cols-2 gap-3">
           <button onClick={() => setView('order')}
-            className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#B8956A]/20">
+            className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#111827]/20">
             <Utensils size={28} className="text-[#111827]" />
             <span className="text-xs font-bold text-[#111827]">
               {lang === 'ko' ? '배달 주문' : lang === 'zh' ? '点外卖' : 'Order Delivery'}
             </span>
           </button>
           <button onClick={() => setView('guide')}
-            className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#B8956A]/20">
+            className="flex flex-col items-center gap-2 p-4 bg-[#F3F4F6] rounded-lg hover:shadow-md transition-all btn-press border border-[#111827]/20">
             <BookOpen size={28} className="text-[#111827]" />
             <span className="text-xs font-bold text-[#111827]">
               {lang === 'ko' ? '이용 가이드' : lang === 'zh' ? '使用指南' : 'How to Use'}
@@ -1175,7 +1175,7 @@ function DeliveryWidget({ lang }) {
               <a key={i} href={app.url} target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-[#F3F4F6] hover:bg-[#F3F4F6] transition-all">
                 <span className="text-xs font-semibold text-[#111827]">{lang === 'zh' ? app.zh : app.name}</span>
-                <ArrowLeftRight size={10} className="text-[#B8956A]" />
+                <ArrowLeftRight size={10} className="text-[#111827]" />
               </a>
             ))}
           </div>
@@ -1194,7 +1194,7 @@ function DeliveryWidget({ lang }) {
           <div className="space-y-2 mb-3">
             {DELIVERY_GUIDE_STEPS.map((step, i) => (
               <div key={i} className="flex items-start gap-2 px-3 py-2 rounded-xl bg-[#F3F4F6]">
-                <span className="text-xs font-black text-[#B8956A] w-5 h-5 rounded-full bg-[#B8956A]/10 flex items-center justify-center shrink-0">{step.icon}</span>
+                <span className="text-xs font-black text-[#111827] w-5 h-5 rounded-full bg-[#111827]/10 flex items-center justify-center shrink-0">{step.icon}</span>
                 <span className="text-xs text-[#6B7280]">{L(lang, step.text)}</span>
               </div>
             ))}
@@ -1278,12 +1278,12 @@ function FashionWidget({ lang }) {
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-bold text-[#111827]">{L(lang, store.name)}</span>
                   {store.badge && (
-                    <span className="text-[9px] bg-[#B8956A]/10 text-[#B8956A] px-1.5 py-0.5 rounded-full font-semibold">{L(lang, store.badge)}</span>
+                    <span className="text-[9px] bg-[#111827]/10 text-[#111827] px-1.5 py-0.5 rounded-full font-semibold">{L(lang, store.badge)}</span>
                   )}
                 </div>
                 <p className="text-[10px] text-[#6B7280] mt-0.5">{L(lang, store.desc)}</p>
               </div>
-              <a href={store.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold text-[#B8956A] shrink-0">
+              <a href={store.url} target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold text-[#111827] shrink-0">
                 {L(lang, openLabel)} →
               </a>
             </div>
@@ -1298,7 +1298,7 @@ function FashionWidget({ lang }) {
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-sm font-bold text-[#111827]">{L(lang, store.name)}</span>
                 {store.badge && (
-                  <span className="text-[9px] bg-[#B8956A]/10 text-[#B8956A] px-1.5 py-0.5 rounded-full font-semibold">{L(lang, store.badge)}</span>
+                  <span className="text-[9px] bg-[#111827]/10 text-[#111827] px-1.5 py-0.5 rounded-full font-semibold">{L(lang, store.badge)}</span>
                 )}
               </div>
               <div className="flex gap-2 flex-wrap">
@@ -1316,7 +1316,7 @@ function FashionWidget({ lang }) {
       <div className="flex justify-center gap-2 mt-3">
         {cats.map((cat, i) => (
           <button key={i} onClick={() => setFashionCat(i)}
-            className={`w-2 h-2 rounded-full transition-all ${fashionCat === i ? 'bg-[#B8956A] w-4' : 'bg-[#AEAEB2]'}`} />
+            className={`w-2 h-2 rounded-full transition-all ${fashionCat === i ? 'bg-[#111827] w-4' : 'bg-[#AEAEB2]'}`} />
         ))}
       </div>
     </div>
@@ -1366,7 +1366,7 @@ function TaxRefundWidget({ lang }) {
   return (
     <div className="space-y-4">
       <div className="bg-[#F8F9FA] rounded-lg p-4 border border-[#E5E7EB]">
-        <p className="text-xs font-bold text-[#B8956A] mb-3">{lang === 'ko' ? '환급 예상 계산기' : lang === 'zh' ? '预估退税计算器' : 'Refund Calculator'}</p>
+        <p className="text-xs font-bold text-[#111827] mb-3">{lang === 'ko' ? '환급 예상 계산기' : lang === 'zh' ? '预估退税计算器' : 'Refund Calculator'}</p>
         <div className="flex items-center gap-2 mb-3">
           <span className="text-xs text-[#6B7280]">₩</span>
           <input
@@ -1374,12 +1374,12 @@ function TaxRefundWidget({ lang }) {
             value={amount}
             onChange={e => setAmount(e.target.value)}
             placeholder={lang === 'ko' ? '구매 금액 입력' : lang === 'zh' ? '输入购买金额' : 'Enter amount'}
-            className="w-full text-right text-base font-black text-[#111827] bg-[#F3F4F6] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#B8956A]/50 placeholder:text-[#6B7280] placeholder:text-xs"
+            className="w-full text-right text-base font-black text-[#111827] bg-[#F3F4F6] rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-[#111827]/50 placeholder:text-[#6B7280] placeholder:text-xs"
           />
         </div>
         <div className="w-full text-center py-2 bg-[#F3F4F6] rounded-xl">
           <p className="text-[11px] text-[#6B7280] mb-1">{lang === 'ko' ? '예상 환급액' : lang === 'zh' ? '预估退税金额' : 'Estimated Refund'}</p>
-          <p className="text-xl font-black text-[#B8956A]">₩{refund.toLocaleString('ko-KR')}</p>
+          <p className="text-xl font-black text-[#111827]">₩{refund.toLocaleString('ko-KR')}</p>
         </div>
         <p className="text-[9px] text-[#6B7280] text-center mt-2">
           {lang === 'ko' ? '※ 실제 환급액은 물품 종류에 따라 다를 수 있습니다' : lang === 'zh' ? '※ 实际退税金额可能因商品种类而异' : '※ Actual refund may vary by product type'}
@@ -1391,8 +1391,8 @@ function TaxRefundWidget({ lang }) {
         <div className="space-y-0">
           {instantVsPost.map((row, i) => (
             <div key={i} className={`grid grid-cols-2 gap-1.5 ${row.isHeader ? 'mb-1' : ''}`}>
-              <div className={`px-2 py-1.5 rounded-l-lg ${row.isHeader ? 'bg-[#B8956A]/20' : 'bg-[#F3F4F6]'}`}>
-                <p className={`text-[10px] ${row.isHeader ? 'font-bold text-[#B8956A]' : 'text-[#6B7280]'}`}>{L(lang, row.instant)}</p>
+              <div className={`px-2 py-1.5 rounded-l-lg ${row.isHeader ? 'bg-[#111827]/20' : 'bg-[#F3F4F6]'}`}>
+                <p className={`text-[10px] ${row.isHeader ? 'font-bold text-[#111827]' : 'text-[#6B7280]'}`}>{L(lang, row.instant)}</p>
               </div>
               <div className={`px-2 py-1.5 rounded-r-lg ${row.isHeader ? 'bg-[#E5E7EB]' : 'bg-[#F3F4F6]'}`}>
                 <p className={`text-[10px] ${row.isHeader ? 'font-bold text-[#111827]' : 'text-[#6B7280]'}`}>{L(lang, row.post)}</p>
@@ -1416,8 +1416,8 @@ function TaxRefundWidget({ lang }) {
                 <span className="text-[10px] text-[#6B7280] ml-1.5">{L(lang, a.loc)}</span>
               </div>
               <div className="flex items-center gap-1.5 shrink-0">
-                <span className="text-[10px] font-bold text-[#B8956A]">{a.hours}</span>
-                <MapPin size={10} className="text-[#B8956A]" />
+                <span className="text-[10px] font-bold text-[#111827]">{a.hours}</span>
+                <MapPin size={10} className="text-[#111827]" />
               </div>
             </a>
           ))}
@@ -1456,7 +1456,7 @@ function TraditionWidget({ lang }) {
           <button key={cat.id} onClick={() => setActiveTab(cat.id)}
             className={`flex-1 text-[11px] font-bold py-2 rounded-lg transition-all ${
               activeTab === cat.id
-                ? 'bg-[#111827] text-[#B8956A] shadow'
+                ? 'bg-[#111827] text-[#111827] shadow'
                 : 'text-[#6B7280] hover:text-[#6B7280]'
             }`}>
             {L(lang, cat.label)}
@@ -1468,12 +1468,12 @@ function TraditionWidget({ lang }) {
         {filtered.map((item, i) => (
           <div key={i} className="p-3 rounded-xl bg-[#F3F4F6] hover:bg-[#F3F4F6] transition-all">
             <div className="flex items-start gap-2.5">
-              <Sparkles size={20} className="text-[#B8956A] shrink-0 mt-0.5" />
+              <Sparkles size={20} className="text-[#111827] shrink-0 mt-0.5" />
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-bold text-[#111827] mb-0.5">{L(lang, item.name)}</p>
                 <p className="text-[10px] text-[#6B7280] mb-1">{L(lang, item.location)}</p>
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-[10px] font-semibold text-[#B8956A]">{item.price}</span>
+                  <span className="text-[10px] font-semibold text-[#111827]">{item.price}</span>
                   <span className="text-[10px] text-[#6B7280]">{L(lang, item.duration)}</span>
                 </div>
                 <div className="flex gap-1.5">
@@ -1482,7 +1482,7 @@ function TraditionWidget({ lang }) {
                     {lang === 'ko' ? '예약하기' : lang === 'zh' ? '预订' : 'Book'}
                   </a>
                   <a href={getCtripUrl(item)} target="_blank" rel="noopener noreferrer"
-                    className="text-[9px] font-bold text-[#B8956A] bg-[#B8956A]/10 px-2.5 py-1 rounded-lg hover:bg-[#B8956A]/20 transition-all">
+                    className="text-[9px] font-bold text-[#111827] bg-[#111827]/10 px-2.5 py-1 rounded-lg hover:bg-[#111827]/20 transition-all">
                     Trip.com
                   </a>
                 </div>
@@ -1493,7 +1493,7 @@ function TraditionWidget({ lang }) {
       </div>
 
       <a href="https://korean.visitkorea.or.kr/experience/experience_list.do" target="_blank" rel="noopener noreferrer"
-        className="block mt-3 text-center text-xs font-bold text-[#B8956A] bg-[#F3F4F6] rounded-xl py-2 hover:bg-[#E5E7EB] transition-all">
+        className="block mt-3 text-center text-xs font-bold text-[#111827] bg-[#F3F4F6] rounded-xl py-2 hover:bg-[#E5E7EB] transition-all">
         {lang === 'ko' ? '더 많은 체험 보기' : lang === 'zh' ? '查看更多体验' : 'See more experiences'}
       </a>
     </div>
@@ -1522,7 +1522,7 @@ function NewsWidget({ data, lang }) {
       </div>
       {data.items.length > 3 && (
         <button onClick={() => setExpanded(!expanded)}
-          className="w-full mt-2 text-center text-xs font-bold text-[#B8956A] bg-[#F3F4F6] rounded-xl py-2 hover:bg-[#E5E7EB] transition-all">
+          className="w-full mt-2 text-center text-xs font-bold text-[#111827] bg-[#F3F4F6] rounded-xl py-2 hover:bg-[#E5E7EB] transition-all">
           {expanded
             ? (lang === 'ko' ? '접기' : lang === 'zh' ? '收起' : 'Show less')
             : (lang === 'ko' ? '더보기' : lang === 'zh' ? '查看更多' : 'Show more')
@@ -1577,12 +1577,12 @@ function OliveYoungSaleWidget({ lang }) {
   return (
     <div>
       {/* Next sale highlight */}
-      <div className="bg-gradient-to-r from-[#B8956A]/10 to-[#B8956A]/5 rounded-xl p-3 mb-3 border border-[#B8956A]/20">
+      <div className="bg-gradient-to-r from-[#111827]/10 to-[#111827]/5 rounded-xl p-3 mb-3 border border-[#111827]/20">
         <div className="flex items-center justify-between mb-1">
           <span className="text-xs font-bold text-[#111827]">
             {lang === 'ko' ? '다음 세일' : lang === 'zh' ? '下次大促' : 'Next Sale'}
           </span>
-          <span className="text-[10px] font-bold text-[#B8956A]">
+          <span className="text-[10px] font-bold text-[#111827]">
             {monthsUntil === 0
               ? (lang === 'ko' ? '이번 달!' : lang === 'zh' ? '本月！' : 'This month!')
               : `${monthsUntil}${lang === 'ko' ? '개월 후' : lang === 'zh' ? '个月后' : ' months'}`
@@ -1590,7 +1590,7 @@ function OliveYoungSaleWidget({ lang }) {
           </span>
         </div>
         <p className="text-sm font-bold text-[#111827]">{L(lang, nextSale.label)}</p>
-        <p className="text-xs text-[#B8956A] font-semibold">{lang === 'ko' ? '최대' : lang === 'zh' ? '最高' : 'Up to'} {nextSale.discount} OFF</p>
+        <p className="text-xs text-[#111827] font-semibold">{lang === 'ko' ? '최대' : lang === 'zh' ? '最高' : 'Up to'} {nextSale.discount} OFF</p>
       </div>
 
       {/* Annual sale calendar */}
@@ -1603,15 +1603,15 @@ function OliveYoungSaleWidget({ lang }) {
           const isCurrent = sale.month === currentMonth
           return (
             <div key={i} className={`flex items-center justify-between px-2 py-1.5 rounded-lg text-xs ${
-              isCurrent ? 'bg-[#B8956A]/10 font-bold' : isPast ? 'opacity-40' : ''
+              isCurrent ? 'bg-[#111827]/10 font-bold' : isPast ? 'opacity-40' : ''
             }`}>
               <div className="flex items-center gap-2">
-                <span className={`w-6 text-center font-mono text-[10px] ${isCurrent ? 'text-[#B8956A]' : 'text-[#6B7280]'}`}>
+                <span className={`w-6 text-center font-mono text-[10px] ${isCurrent ? 'text-[#111827]' : 'text-[#6B7280]'}`}>
                   {sale.month}{lang === 'ko' ? '월' : lang === 'zh' ? '月' : ''}
                 </span>
                 <span className={isCurrent ? 'text-[#111827]' : 'text-[#6B7280]'}>{L(lang, sale.label)}</span>
               </div>
-              <span className="text-[10px] text-[#B8956A]">{sale.discount}</span>
+              <span className="text-[10px] text-[#111827]">{sale.discount}</span>
             </div>
           )
         })}
@@ -1624,7 +1624,7 @@ function OliveYoungSaleWidget({ lang }) {
           {lang === 'ko' ? '글로벌몰' : lang === 'zh' ? '全球商城' : 'Global Mall'}
         </a>
         <a href="https://www.oliveyoung.co.kr/store/main/main.do" target="_blank" rel="noopener noreferrer"
-          className="flex-1 text-center text-[10px] font-bold text-[#B8956A] bg-[#B8956A]/10 py-2 rounded-lg hover:bg-[#B8956A]/20 transition-all">
+          className="flex-1 text-center text-[10px] font-bold text-[#111827] bg-[#111827]/10 py-2 rounded-lg hover:bg-[#111827]/20 transition-all">
           {lang === 'ko' ? '한국몰' : lang === 'zh' ? '韩国商城' : 'Korea Mall'}
         </a>
       </div>
@@ -1672,7 +1672,7 @@ function ThemeParkWidget({ lang }) {
         {THEME_PARKS.map((p, i) => (
           <button key={i} onClick={() => setActivePark(i)}
             className={`flex-1 text-xs font-semibold py-1.5 rounded-lg transition-all ${
-              activePark === i ? 'bg-[#B8956A] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'
+              activePark === i ? 'bg-[#111827] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'
             }`}>
             {L(lang, p.name)}
           </button>
@@ -1697,13 +1697,13 @@ function ThemeParkWidget({ lang }) {
         {park.tips.map((tip, i) => (
           <a key={i} href={tip.url} target="_blank" rel="noopener noreferrer"
             className={`flex items-center justify-between px-2.5 py-2 rounded-lg transition-all ${
-              tip.best ? 'bg-[#B8956A]/10 border border-[#B8956A]/20' : 'bg-[#F3F4F6] hover:bg-[#E5E7EB]'
+              tip.best ? 'bg-[#111827]/10 border border-[#111827]/20' : 'bg-[#F3F4F6] hover:bg-[#E5E7EB]'
             }`}>
             <div className="flex items-center gap-2">
-              {tip.best && <span className="text-[8px] font-bold text-white bg-[#B8956A] px-1.5 py-0.5 rounded">BEST</span>}
+              {tip.best && <span className="text-[8px] font-bold text-white bg-[#111827] px-1.5 py-0.5 rounded">BEST</span>}
               <span className="text-xs text-[#111827]">{L(lang, tip.method)}</span>
             </div>
-            <span className="text-xs font-bold text-[#B8956A]">{tip.discount}</span>
+            <span className="text-xs font-bold text-[#111827]">{tip.discount}</span>
           </a>
         ))}
       </div>
@@ -1764,7 +1764,7 @@ function RestaurantWidget({ lang }) {
     if (award === 'michelin1') return { text: '\u2605 Michelin', bg: '#C41D21' }
     if (award === 'bib') return { text: 'Bib Gourmand', bg: '#C41D21' }
     if (award === 'blueribbon') return { text: `Blue Ribbon \u00D7${count || 1}`, bg: '#1A56DB' }
-    return { text: 'Selected', bg: '#B8956A' }
+    return { text: 'Selected', bg: '#111827' }
   }
 
   const priceLabel = (n) => Array(n).fill('\u20A9').join('')
@@ -1793,7 +1793,7 @@ function RestaurantWidget({ lang }) {
         {RESTAURANT_CATEGORIES.map(cat => (
           <button key={cat.id} onClick={() => setCuisineFilter(cat.id)}
             className={`text-[9px] font-semibold px-2 py-1 rounded-lg transition-all whitespace-nowrap flex-shrink-0 ${
-              cuisineFilter === cat.id ? 'bg-[#B8956A] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'
+              cuisineFilter === cat.id ? 'bg-[#111827] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'
             }`}>
             {L(lang, cat.label)}
           </button>
@@ -1885,7 +1885,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
             <span className="text-xs bg-green-900/200 text-white px-2 py-0.5 rounded-full font-bold">{data.line}</span>
             <span className="text-xs text-[#6B7280]">{L(lang, data.status)}</span>
           </div>
-          <span className="text-xs font-bold text-[#B8956A]">
+          <span className="text-xs font-bold text-[#111827]">
             <Train size={14} className="inline mr-1" />{data.nextTrain}
           </span>
         </div>
@@ -1927,7 +1927,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
           <div className="flex items-center justify-between mb-1">
             <p className="text-xs font-semibold text-[#6B7280]">{lang === 'ko' ? '오늘의 한국어 표현' : lang === 'zh' ? '今日韩语表达' : "Today's Korean"}</p>
             {data.day && (
-              <span className="text-[10px] font-bold text-white bg-[#B8956A] px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-white bg-[#111827] px-2 py-0.5 rounded-full">
                 Day {data.day}
               </span>
             )}
@@ -1940,7 +1940,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
               {data.example?.sentence && (
                 <div className="flex items-center gap-1.5 mt-2 bg-[#F3F4F6] px-2.5 py-1.5 rounded-lg">
                   <div className="flex-1">
-                    <p className="text-xs text-[#B8956A] font-mono">"{L('ko', data.example.sentence)}"</p>
+                    <p className="text-xs text-[#111827] font-mono">"{L('ko', data.example.sentence)}"</p>
                     {data.example.pronunciation && <p className="text-[9px] text-[#9CA3AF] mt-0.5">/{data.example.pronunciation}/</p>}
                   </div>
                   <button onClick={() => {
@@ -1954,8 +1954,8 @@ function WidgetContent({ widgetId, lang, setTab }) {
                       console.warn('Web Speech API unavailable:', err)
                       alert(lang === 'ko' ? '음성 기능은 이 환경에서 사용할 수 없습니다' : lang === 'zh' ? '语音功能在此环境中不可用' : 'Voice feature unavailable in this environment')
                     }
-                  }} className="shrink-0 w-7 h-7 rounded-full bg-[#B8956A]/10 flex items-center justify-center hover:bg-[#B8956A]/20 transition-all">
-                    <Volume2 size={14} className="text-[#B8956A]" />
+                  }} className="shrink-0 w-7 h-7 rounded-full bg-[#111827]/10 flex items-center justify-center hover:bg-[#111827]/20 transition-all">
+                    <Volume2 size={14} className="text-[#111827]" />
                   </button>
                 </div>
               )}
@@ -1985,7 +1985,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
             {data.todayDone ? (
               <span className="text-xs font-bold text-green-600 bg-green-500 px-2 py-1.5 rounded-full"><Check size={14} className="text-white" /></span>
             ) : (
-              <span className="text-xs font-bold text-[#B8956A] bg-amber-900/20 px-3 py-1.5 rounded-full animate-pulse">
+              <span className="text-xs font-bold text-[#111827] bg-amber-900/20 px-3 py-1.5 rounded-full animate-pulse">
                 {lang === 'ko' ? '오늘 학습' : lang === 'zh' ? '今日学习' : 'Study today'}
               </span>
             )}
@@ -2032,7 +2032,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
           {data.items.map((item, i) => (
             <div key={i} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-black text-[#B8956A] w-4">{i + 1}</span>
+                <span className="text-xs font-black text-[#111827] w-4">{i + 1}</span>
                 <span className="text-xs text-[#6B7280]">{L(lang, item.label)}</span>
               </div>
               <span className="text-[10px] text-[#6B7280]">{item.viewers.toLocaleString()}</span>
@@ -2044,7 +2044,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
     case 'idol':
       return (
         <div>
-          <p className="text-xs font-bold text-[#B8956A] mb-1.5">{data.name}</p>
+          <p className="text-xs font-bold text-[#111827] mb-1.5">{data.name}</p>
           {data.schedule.map((s, i) => <p key={i} className="text-xs text-[#6B7280]">• {L(lang, s)}</p>)}
         </div>
       )
@@ -2059,7 +2059,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
                 <p className="text-[10px] text-[#6B7280]">{item.time}</p>
               </div>
               {item.rating && (
-                <span className="text-[10px] font-bold text-[#B8956A] bg-amber-900/20 px-2 py-0.5 rounded-full">{item.rating}</span>
+                <span className="text-[10px] font-bold text-[#111827] bg-amber-900/20 px-2 py-0.5 rounded-full">{item.rating}</span>
               )}
             </div>
           ))}
@@ -2122,23 +2122,23 @@ function WidgetContent({ widgetId, lang, setTab }) {
             </span>
           </div>
           <div className="w-full bg-[#F3F4F6] rounded-full h-1.5 mb-3">
-            <div className={`h-1.5 rounded-full transition-all ${pct === 100 ? 'bg-green-900/200' : 'bg-[#B8956A]'}`} style={{ width: `${pct}%` }} />
+            <div className={`h-1.5 rounded-full transition-all ${pct === 100 ? 'bg-green-900/200' : 'bg-[#111827]'}`} style={{ width: `${pct}%` }} />
           </div>
           <div className="space-y-1.5">
             {petData.checklist.map(item => (
               <label key={item.id} className="flex items-center gap-2 cursor-pointer">
                 <button onClick={() => togglePet(item.id)}
-                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center text-xs transition-all ${petChecked[item.id] ? 'bg-[#B8956A] border-[#B8956A] text-white' : 'border-[#E5E7EB]'}`}>
+                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center text-xs transition-all ${petChecked[item.id] ? 'bg-[#111827] border-[#111827] text-white' : 'border-[#E5E7EB]'}`}>
                   {petChecked[item.id] && <Check size={12} className="text-white" />}
                 </button>
-                <LucideIcon name={item.icon} size={16} className="text-[#B8956A]" />
+                <LucideIcon name={item.icon} size={16} className="text-[#111827]" />
                 <span className={`text-xs ${petChecked[item.id] ? 'text-[#6B7280] line-through' : 'text-[#6B7280]'}`}>{L(lang, item.label)}</span>
               </label>
             ))}
           </div>
           <div className="flex gap-2 mt-3">
             <button onClick={() => setTab && setTab('pet')}
-              className="flex-1 text-[10px] font-bold text-[#B8956A] bg-[#F3F4F6] py-2 rounded-xl hover:bg-[#E5E7EB] transition-all btn-press">
+              className="flex-1 text-[10px] font-bold text-[#111827] bg-[#F3F4F6] py-2 rounded-xl hover:bg-[#E5E7EB] transition-all btn-press">
               {lang === 'ko' ? '상세 가이드 보기' : lang === 'zh' ? '查看详细指南' : 'View Full Guide'}
             </button>
             <button onClick={() => setTab && setTab('agency')}
@@ -2154,13 +2154,13 @@ function WidgetContent({ widgetId, lang, setTab }) {
       return (
         <div className="flex items-center justify-around">
           <div className="text-center">
-            <LucideIcon name={data.korea.icon} size={28} className="text-[#B8956A]" />
+            <LucideIcon name={data.korea.icon} size={28} className="text-[#111827]" />
             <p className="text-xs font-bold text-[#111827]">{L(lang, data.korea.city)}</p>
             <p className="text-sm font-black text-[#111827]">{data.korea.temp}</p>
           </div>
           <span className="text-xs text-[#6B7280] font-bold">vs</span>
           <div className="text-center">
-            <LucideIcon name={data.china.icon} size={28} className="text-[#B8956A]" />
+            <LucideIcon name={data.china.icon} size={28} className="text-[#111827]" />
             <p className="text-xs font-bold text-[#111827]">{L(lang, data.china.city)}</p>
             <p className="text-sm font-black text-[#111827]">{data.china.temp}</p>
           </div>
@@ -2189,7 +2189,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
         <div className="grid grid-cols-3 gap-2">
           {data.items.map((item, i) => (
             <div key={i} className="text-center">
-              <LucideIcon name={item.icon} size={20} className="text-[#B8956A]" />
+              <LucideIcon name={item.icon} size={20} className="text-[#111827]" />
               <p className="text-sm font-black text-[#111827]">{item.label}</p>
               <p className="text-[10px] text-[#6B7280]">{L(lang, item.desc)}</p>
             </div>
@@ -2248,7 +2248,7 @@ function CustomizeModal({ config, setConfig, lang, onClose }) {
           <div key={cat.id} className="glass rounded-lg overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 bg-[#F3F4F6] border-b border-[#E5E7EB]">
               <div className="flex items-center gap-2">
-                <LucideIcon name={cat.icon} size={18} className="text-[#B8956A]" />
+                <LucideIcon name={cat.icon} size={18} className="text-[#111827]" />
                 <span className="font-bold text-[#111827] text-sm">{L(lang, cat.name)}</span>
               </div>
               <div className="flex gap-1">
@@ -2271,7 +2271,7 @@ function CustomizeModal({ config, setConfig, lang, onClose }) {
                     </div>
                   </div>
                   <button onClick={() => toggleWidget(w.id)}
-                    className={`w-10 h-6 rounded-full transition-all relative shrink-0 ${localConfig.enabled[w.id] ? 'bg-[#B8956A]' : 'bg-[#4A1525]'}`}>
+                    className={`w-10 h-6 rounded-full transition-all relative shrink-0 ${localConfig.enabled[w.id] ? 'bg-[#111827]' : 'bg-[#4A1525]'}`}>
                     <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${localConfig.enabled[w.id] ? 'left-[18px]' : 'left-0.5'}`} />
                   </button>
                 </label>
@@ -2282,7 +2282,7 @@ function CustomizeModal({ config, setConfig, lang, onClose }) {
       </div>
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#F3F4F6] border-t border-[#E5E7EB]">
         <button onClick={save}
-          className="w-full bg-[#111827] text-[#B8956A] font-bold py-3.5 rounded-lg hover:bg-[#111827] transition-all btn-press">
+          className="w-full bg-[#111827] text-[#111827] font-bold py-3.5 rounded-lg hover:bg-[#111827] transition-all btn-press">
           {lang === 'ko' ? '저장' : lang === 'zh' ? '保存' : 'Save'}
         </button>
       </div>
@@ -2314,7 +2314,7 @@ function FeatureBar({ lang, setTab }) {
             className="min-w-[140px] h-[90px] shrink-0 bg-white rounded-xl border border-[#E5E7EB] flex flex-col items-center justify-center gap-2 px-3 transition-all btn-press hover:shadow-sm"
             style={{ scrollSnapAlign: 'start' }}
           >
-            <Icon size={16} strokeWidth={1} className="text-[#B8956A]" />
+            <Icon size={16} strokeWidth={1} className="text-[#111827]" />
             <span className="text-[10px] text-[#111827] font-medium leading-tight text-center whitespace-pre-line">{L(lang, f.label)}</span>
           </button>
         )
@@ -2441,24 +2441,24 @@ function ExchangeCard({ lang, exchangeRate }) {
           <div>
             <p className="text-xs text-[#6B7280] font-medium">{lang === 'ko' ? '환율' : lang === 'zh' ? '汇率' : 'Exchange'}</p>
             <select value={selectedCurrency} onClick={e => e.stopPropagation()} onChange={handleCurrencyChange}
-              className="mt-1 text-[10px] font-bold text-[#B8956A] bg-transparent outline-none cursor-pointer [&>option]:text-[#111827]">
+              className="mt-1 text-[10px] font-bold text-[#111827] bg-transparent outline-none cursor-pointer [&>option]:text-[#111827]">
               {KEY_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.flag} {c.code}</option>)}
             </select>
           </div>
           <div>
             <p className="text-3xl font-black text-white tracking-tighter">{Math.round(rate)}</p>
             <p className="text-[10px] text-[#6B7280] mt-1">1 {selectedCurrency} = {Math.round(rate)} KRW</p>
-            <p className="text-[8px] text-[#B8956A] mt-0.5">{lang === 'ko' ? '탭하여 계산기' : lang === 'zh' ? '点击计算' : 'Tap to calculate'}</p>
+            <p className="text-[8px] text-[#111827] mt-0.5">{lang === 'ko' ? '탭하여 계산기' : lang === 'zh' ? '点击计算' : 'Tap to calculate'}</p>
           </div>
         </>
       ) : (
         <>
           <div className="flex items-center justify-between">
             <select value={selectedCurrency} onClick={e => e.stopPropagation()} onChange={handleCurrencyChange}
-              className="text-[10px] font-bold text-[#B8956A] bg-transparent outline-none cursor-pointer [&>option]:text-[#111827]">
+              className="text-[10px] font-bold text-[#111827] bg-transparent outline-none cursor-pointer [&>option]:text-[#111827]">
               {KEY_CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.flag} {c.code}</option>)}
             </select>
-            <button onClick={e => { e.stopPropagation(); setCalcMode(false); setAmount('') }} className="text-[10px] text-[#B8956A] font-bold"><X size={12} /></button>
+            <button onClick={e => { e.stopPropagation(); setCalcMode(false); setAmount('') }} className="text-[10px] text-[#111827] font-bold"><X size={12} /></button>
           </div>
           <div className="flex-1 flex flex-col justify-center gap-2">
             <div className="flex items-center gap-1">
@@ -2466,7 +2466,7 @@ function ExchangeCard({ lang, exchangeRate }) {
               <input type="number" value={amount} onClick={e => e.stopPropagation()} onChange={e => setAmount(e.target.value)}
                 placeholder={selectedCurrency} className="flex-1 text-right text-lg font-black text-[#111827] bg-transparent outline-none placeholder:text-[#6B7280] placeholder:text-sm" autoFocus />
             </div>
-            <div className="text-center text-xs text-[#B8956A]">↓ ×{rate.toFixed(1)}</div>
+            <div className="text-center text-xs text-[#111827]">↓ ×{rate.toFixed(1)}</div>
             <div className="text-center">
               <span className="text-2xl font-black text-[#111827]">₩{converted.toLocaleString('ko-KR')}</span>
             </div>
@@ -2520,7 +2520,7 @@ function WeatherCard({ lang }) {
       <div>
         <p className="text-[10px] text-[#6B7280] font-medium">{lang === 'ko' ? '날씨' : lang === 'zh' ? '天气' : 'Weather'}</p>
         <select value={city} onChange={handleCity}
-          className="mt-0.5 text-[9px] font-bold text-[#B8956A] bg-transparent outline-none cursor-pointer [&>option]:text-[#111827]">
+          className="mt-0.5 text-[9px] font-bold text-[#111827] bg-transparent outline-none cursor-pointer [&>option]:text-[#111827]">
           {WEATHER_CITIES.map(c => <option key={c.id} value={c.id}>{L(lang, c.name)}</option>)}
         </select>
       </div>
@@ -2715,7 +2715,7 @@ function MemoCard({ lang }) {
           <span className="text-[8px] text-[#9CA3AF]">({memos.length}/{MAX_MEMOS})</span>
           {memos.length < MAX_MEMOS && (
             <button onClick={addMemo}
-              className="w-5 h-5 rounded-md bg-[#B8956A]/10 text-[#B8956A] flex items-center justify-center hover:bg-[#B8956A]/20 transition-all">
+              className="w-5 h-5 rounded-md bg-[#111827]/10 text-[#111827] flex items-center justify-center hover:bg-[#111827]/20 transition-all">
               <Plus size={12} />
             </button>
           )}
@@ -2732,14 +2732,14 @@ function MemoCard({ lang }) {
                 <input type="text" value={draft} onChange={e => setDraft(e.target.value.slice(0, MAX_CHARS))}
                   onKeyDown={e => e.key === 'Enter' && confirmMemo()}
                   autoFocus
-                  className="flex-1 text-[10px] text-[#111827] bg-[#F3F4F6] rounded px-2 py-1 outline-none focus:ring-1 focus:ring-[#B8956A]/50"
+                  className="flex-1 text-[10px] text-[#111827] bg-[#F3F4F6] rounded px-2 py-1 outline-none focus:ring-1 focus:ring-[#111827]/50"
                   placeholder={`${MAX_CHARS}${lang === 'ko' ? '자 이내' : lang === 'zh' ? '字以内' : ' chars'}`}
                 />
-                <button onClick={confirmMemo} className="text-[#B8956A]"><Check size={12} /></button>
+                <button onClick={confirmMemo} className="text-[#111827]"><Check size={12} /></button>
               </div>
             ) : (
               <>
-                <span className="text-[10px] text-[#B8956A] font-mono w-3 shrink-0">{i + 1}</span>
+                <span className="text-[10px] text-[#111827] font-mono w-3 shrink-0">{i + 1}</span>
                 <span className="text-[10px] text-[#111827] flex-1 truncate cursor-pointer"
                   onClick={() => { setEditing(i); setDraft(memo) }}>{memo}</span>
                 <button onClick={() => deleteMemo(i)}
@@ -2755,10 +2755,10 @@ function MemoCard({ lang }) {
             <input type="text" value={draft} onChange={e => setDraft(e.target.value.slice(0, MAX_CHARS))}
               onKeyDown={e => e.key === 'Enter' && confirmMemo()}
               autoFocus
-              className="flex-1 text-[10px] text-[#111827] bg-[#F3F4F6] rounded px-2 py-1 outline-none focus:ring-1 focus:ring-[#B8956A]/50"
+              className="flex-1 text-[10px] text-[#111827] bg-[#F3F4F6] rounded px-2 py-1 outline-none focus:ring-1 focus:ring-[#111827]/50"
               placeholder={`${MAX_CHARS}${lang === 'ko' ? '자 이내' : lang === 'zh' ? '字以内' : ' chars'}`}
             />
-            <button onClick={confirmMemo} className="text-[#B8956A]"><Check size={12} /></button>
+            <button onClick={confirmMemo} className="text-[#111827]"><Check size={12} /></button>
           </div>
         )}
       </div>
@@ -2799,7 +2799,7 @@ function MyStatusCard({ profile, lang, setTab }) {
 
   const subLabel = {
     free: { color: 'bg-[#F3F4F6] text-[#6B7280]', text: 'Free' },
-    premium: { color: 'bg-[#B8956A]/20 text-[#B8956A]', text: 'Premium' },
+    premium: { color: 'bg-[#111827]/20 text-[#111827]', text: 'Premium' },
   }
   const sub = subLabel[subscription] || subLabel.free
 
@@ -2832,7 +2832,7 @@ function MyStatusCard({ profile, lang, setTab }) {
         {/* Korean progress */}
         <div className="flex items-center justify-between">
           <span className="text-[9px] text-[#6B7280]">{lang === 'ko' ? '한국어' : lang === 'zh' ? '韩语' : 'Korean'}</span>
-          <span className="text-[9px] font-bold text-[#B8956A]">Day {widgetMockData.korean?.day || 1}</span>
+          <span className="text-[9px] font-bold text-[#111827]">Day {widgetMockData.korean?.day || 1}</span>
         </div>
         {/* Login method */}
         <div className="flex items-center justify-between">
@@ -3071,7 +3071,7 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
         <div className={card} style={snapStyle}>
           <div className="flex items-center justify-between mb-1">
             <p className="text-[10px] text-[#6B7280] font-medium">{lang === 'ko' ? '오늘의 한국어 표현' : lang === 'zh' ? '今日韩语表达' : "Today's Korean Expression"}</p>
-            {koreanData.day && <span className="text-[8px] font-bold text-[#B8956A]">Day {koreanData.day}</span>}
+            {koreanData.day && <span className="text-[8px] font-bold text-[#111827]">Day {koreanData.day}</span>}
           </div>
           <div className="flex flex-col flex-1">
             {/* Word section — top half */}
@@ -3086,7 +3086,7 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
                 <div className="border-t border-[#E5E7EB] my-2" />
                 {/* Example section — bottom half */}
                 <div className="flex-1 flex flex-col justify-center">
-                <p className="text-xs font-bold text-[#B8956A] leading-snug">"{L('ko', koreanData.example.sentence)}"</p>
+                <p className="text-xs font-bold text-[#111827] leading-snug">"{L('ko', koreanData.example.sentence)}"</p>
                 <p className="text-[10px] text-[#6B7280] mt-0.5">"{L(lang === 'ko' ? 'zh' : lang, koreanData.example.sentence)}"</p>
                 {koreanData.example.pronunciation && (
                   <p className="text-[9px] text-[#9CA3AF] font-mono mt-0.5">[{koreanData.example.pronunciation}]</p>
@@ -3105,7 +3105,7 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
                     console.warn('Web Speech API unavailable:', err)
                     alert(lang === 'ko' ? '음성 기능은 이 환경에서 사용할 수 없습니다' : lang === 'zh' ? '语音功能在此环境中不可用' : 'Voice feature unavailable in this environment')
                   }
-                }} className="mt-1.5 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#B8956A]/10 text-[#B8956A] hover:bg-[#B8956A]/20 transition-all">
+                }} className="mt-1.5 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111827]/10 text-[#111827] hover:bg-[#111827]/20 transition-all">
                   <Volume2 size={12} />
                   <span className="text-[10px] font-semibold">{lang === 'ko' ? '발음 듣기' : lang === 'zh' ? '听发음' : 'Listen'}</span>
                 </button>
@@ -3183,7 +3183,7 @@ function TreeSection({ title, widgets, lang, setTab, defaultOpen = false }) {
         className="w-full flex items-center justify-between px-4 py-3.5 bg-white hover:bg-[#F9FAFB] transition-all"
       >
         <span className="text-sm font-semibold text-[#111827]">{title}</span>
-        {open ? <ChevronDown size={18} className="text-[#B8956A]" /> : <ChevronRight size={18} className="text-[#9CA3AF]" />}
+        {open ? <ChevronDown size={18} className="text-[#111827]" /> : <ChevronRight size={18} className="text-[#9CA3AF]" />}
       </button>
       {open && (
         <div className="border-t border-[#E5E7EB]">
@@ -3196,10 +3196,10 @@ function TreeSection({ title, widgets, lang, setTab, defaultOpen = false }) {
                 }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <LucideIcon name={w.icon} size={16} className={activeWidget === w.id ? 'text-[#B8956A]' : 'text-[#9CA3AF]'} />
-                  <span className={`text-sm ${activeWidget === w.id ? 'text-[#B8956A] font-medium' : 'text-[#374151]'}`}>{L(lang, w.name)}</span>
+                  <LucideIcon name={w.icon} size={16} className={activeWidget === w.id ? 'text-[#111827]' : 'text-[#9CA3AF]'} />
+                  <span className={`text-sm ${activeWidget === w.id ? 'text-[#111827] font-medium' : 'text-[#374151]'}`}>{L(lang, w.name)}</span>
                 </div>
-                {activeWidget === w.id ? <ChevronDown size={14} className="text-[#B8956A]" /> : <ChevronRight size={14} className="text-[#D1D5DB]" />}
+                {activeWidget === w.id ? <ChevronDown size={14} className="text-[#111827]" /> : <ChevronRight size={14} className="text-[#D1D5DB]" />}
               </button>
               {activeWidget === w.id && (
                 <div className="px-4 py-4 pl-8 bg-[#FAFAFA] border-b border-[#E5E7EB] max-h-[400px] overflow-y-auto no-scrollbar">

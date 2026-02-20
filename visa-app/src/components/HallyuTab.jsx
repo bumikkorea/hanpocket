@@ -97,14 +97,23 @@ export default function HallyuTab({ lang }) {
   useEffect(() => {
     if (section !== 'chart' || chartData.length > 0) return
     setChartLoading(true)
-    fetch('https://rss.applemarketingtools.com/api/v2/kr/music/most-played/10/songs.json')
-      .then(r => r.json())
-      .then(data => {
-        const songs = data?.feed?.results || []
-        setChartData(songs)
-      })
-      .catch(() => setChartData([]))
-      .finally(() => setChartLoading(false))
+    try {
+      fetch('https://rss.applemarketingtools.com/api/v2/kr/music/most-played/10/songs.json')
+        .then(r => r.json())
+        .then(data => {
+          const songs = data?.feed?.results || []
+          setChartData(songs)
+        })
+        .catch(() => {
+          console.warn('Apple Music RSS API unavailable')
+          setChartData([])
+        })
+        .finally(() => setChartLoading(false))
+    } catch (err) {
+      console.warn('Apple Music RSS API not accessible:', err)
+      setChartData([])
+      setChartLoading(false)
+    }
   }, [section])
 
   // Filtered idols

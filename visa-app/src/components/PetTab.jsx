@@ -112,10 +112,10 @@ export default function PetTab({ lang, setTab }) {
         <div className="mt-3">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="text-[#8E8E93]">{lang === 'ko' ? '진행률' : lang === 'zh' ? '进度' : 'Progress'}</span>
-            <span className="text-[#B8956A] font-bold">{doneCount}/{steps.length} ({pct}%)</span>
+            <span className="text-[#111827] font-bold">{doneCount}/{steps.length} ({pct}%)</span>
           </div>
           <div className="w-full bg-white/10 rounded-full h-2">
-            <div className={`h-2 rounded-full transition-all ${pct === 100 ? 'bg-green-400' : 'bg-[#B8956A]'}`} style={{ width: `${pct}%` }} />
+            <div className={`h-2 rounded-full transition-all ${pct === 100 ? 'bg-green-400' : 'bg-[#111827]'}`} style={{ width: `${pct}%` }} />
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default function PetTab({ lang, setTab }) {
             >
               <button onClick={(e) => { e.stopPropagation(); toggleStep(step.num) }}
                 className={`w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all shrink-0 ${
-                  checkedSteps[step.num] ? 'bg-[#B8956A] border-[#B8956A] text-white' : 'border-[#D1D1D6] text-[#8E8E93]'
+                  checkedSteps[step.num] ? 'bg-[#111827] border-[#111827] text-white' : 'border-[#D1D1D6] text-[#8E8E93]'
                 }`}>
                 {checkedSteps[step.num] ? '✓' : step.num}
               </button>
@@ -184,19 +184,19 @@ export default function PetTab({ lang, setTab }) {
 
       {/* Cost Estimate */}
       <div className="bg-[#1C1C1E] rounded-lg p-4">
-        <h3 className="font-bold text-[#B8956A] text-sm mb-3">
+        <h3 className="font-bold text-[#111827] text-sm mb-3">
           💰 {lang === 'ko' ? '예상 비용' : lang === 'zh' ? '预估费用' : 'Estimated Costs'}
         </h3>
         <div className="space-y-1.5">
           {costs.map((c, i) => (
             <div key={i} className="flex items-center justify-between">
               <span className="text-xs text-[#8E8E93]">{L(lang, c.item)}</span>
-              <span className="text-xs font-bold text-[#B8956A]">{c.price}</span>
+              <span className="text-xs font-bold text-[#111827]">{c.price}</span>
             </div>
           ))}
           <div className="border-t border-white/10 mt-2 pt-2 flex items-center justify-between">
             <span className="text-xs font-bold text-white">{lang === 'ko' ? '합계 예상' : lang === 'zh' ? '预估合计' : 'Estimated Total'}</span>
-            <span className="text-sm font-black text-[#B8956A]">3,000~10,000元</span>
+            <span className="text-sm font-black text-[#111827]">3,000~10,000元</span>
           </div>
         </div>
       </div>
@@ -211,7 +211,7 @@ export default function PetTab({ lang, setTab }) {
             <a key={i} href={link.url} target="_blank" rel="noopener noreferrer"
               className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#F7F3ED] hover:bg-[#EDE9E3] transition-all">
               <span className="text-xs text-[#6B2035]">{L(lang, link.name)}</span>
-              <span className="text-[10px] text-[#B8956A]">→</span>
+              <span className="text-[10px] text-[#111827]">→</span>
             </a>
           ))}
         </div>
@@ -219,8 +219,8 @@ export default function PetTab({ lang, setTab }) {
 
       {/* CTA Button */}
       <button onClick={() => setTab && setTab('agency')}
-        className="w-full bg-gradient-to-r from-[#1C1C1E] to-[#2C2C2E] text-center rounded-lg p-4 card-hover btn-press border border-[#B8956A]/30 shadow-lg">
-        <span className="text-[#B8956A] font-bold text-base">
+        className="w-full bg-gradient-to-r from-[#1C1C1E] to-[#2C2C2E] text-center rounded-lg p-4 card-hover btn-press border border-[#111827]/30 shadow-lg">
+        <span className="text-[#111827] font-bold text-base">
           📋 {lang === 'ko' ? '반려동물 서류 대행 신청' : lang === 'zh' ? '申请宠物文件代办' : 'Request Pet Document Service'}
         </span>
         <p className="text-[#8E8E93] text-xs mt-1">

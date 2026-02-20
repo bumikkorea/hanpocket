@@ -280,7 +280,7 @@ h1, h2, h3 {
 
 .china-border {
   position: relative;
-  border: 2px solid #B8956A;
+  border: 2px solid #111827;
 }
 .china-border::before {
   content: '';
@@ -294,14 +294,14 @@ h1, h2, h3 {
 .china-corners { position: relative; }
 .china-corners::before, .china-corners::after {
   content: ''; position: absolute; width: 24px; height: 24px;
-  border: 2px solid #B8956A; pointer-events: none; z-index: 1;
+  border: 2px solid #111827; pointer-events: none; z-index: 1;
 }
 .china-corners::before { top: 6px; left: 6px; border-right: none; border-bottom: none; }
 .china-corners::after { top: 6px; right: 6px; border-left: none; border-bottom: none; }
 .china-corners-bottom { position: relative; }
 .china-corners-bottom::before, .china-corners-bottom::after {
   content: ''; position: absolute; width: 24px; height: 24px;
-  border: 2px solid #B8956A; pointer-events: none; z-index: 1;
+  border: 2px solid #111827; pointer-events: none; z-index: 1;
 }
 .china-corners-bottom::before { bottom: 6px; left: 6px; border-right: none; border-top: none; }
 .china-corners-bottom::after { bottom: 6px; right: 6px; border-left: none; border-top: none; }
@@ -330,7 +330,7 @@ h1, h2, h3 {
   position: absolute;
   top: -1px; left: 50%; transform: translateX(-50%);
   width: 60px; height: 3px;
-  background: linear-gradient(90deg, transparent, #B8956A, transparent);
+  background: linear-gradient(90deg, transparent, #111827, transparent);
 }
 
 /* ─── Card Glow / Vignette Effect ─── */

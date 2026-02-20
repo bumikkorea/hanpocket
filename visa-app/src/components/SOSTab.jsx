@@ -49,15 +49,32 @@ export default function SOSTab({ lang, profile }) {
 
   const getLocation = () => {
     setLocLoading(true)
-    if (!navigator.geolocation) { setLocLoading(false); return }
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        setLocation({ lat: pos.coords.latitude.toFixed(6), lng: pos.coords.longitude.toFixed(6) })
-        setLocLoading(false)
-      },
-      () => { setLocation({ lat: '37.5665', lng: '126.9780', fallback: true }); setLocLoading(false) },
-      { enableHighAccuracy: true, timeout: 10000 }
-    )
+    try {
+      if (!navigator.geolocation) {
+        throw new Error('Geolocation not supported')
+      }
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          setLocation({ lat: pos.coords.latitude.toFixed(6), lng: pos.coords.longitude.toFixed(6) })
+          setLocLoading(false)
+        },
+        (err) => { 
+          console.warn('Geolocation access denied or failed:', err)
+          setLocation({ lat: '37.5665', lng: '126.9780', fallback: true })
+          setLocLoading(false)
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      )
+    } catch (err) {
+      console.warn('Geolocation API unavailable:', err)
+      setLocation({ 
+        lat: '37.5665', 
+        lng: '126.9780', 
+        fallback: true,
+        error: lang === 'ko' ? '위치 서비스를 사용할 수 없습니다' : lang === 'zh' ? '无法使用位置服务' : 'Location service unavailable'
+      })
+      setLocLoading(false)
+    }
   }
 
   const handleSOS = () => {

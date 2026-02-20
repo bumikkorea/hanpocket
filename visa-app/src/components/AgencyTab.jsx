@@ -163,7 +163,7 @@ function AgencyRegistrationModal({ lang, onClose }) {
               'Your application will be sent via email. We will contact you within 3 business days after review.'
             )}
           </p>
-          <button onClick={onClose} className="w-full bg-[#1C1C1E] text-[#B8956A] font-semibold py-3 rounded-xl mt-4">
+          <button onClick={onClose} className="w-full bg-[#1C1C1E] text-[#111827] font-semibold py-3 rounded-xl mt-4">
             {t('확인', '确认', 'OK')}
           </button>
         </div>
@@ -171,10 +171,10 @@ function AgencyRegistrationModal({ lang, onClose }) {
     )
   }
 
-  const inputCls = "w-full bg-[#EDE9E3] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#B8956A]/30"
+  const inputCls = "w-full bg-[#EDE9E3] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#111827]/30"
   const labelCls = "block text-sm font-semibold text-[#2C2C2E] mb-1"
   const subLabelCls = "text-[10px] text-[#8E8E93]"
-  const checkCls = "w-4 h-4 accent-[#B8956A] rounded"
+  const checkCls = "w-4 h-4 accent-[#111827] rounded"
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -182,7 +182,7 @@ function AgencyRegistrationModal({ lang, onClose }) {
         {/* Header */}
         <div className="bg-[#1C1C1E] rounded-t-2xl px-6 py-4 flex items-center justify-between flex-shrink-0">
           <div>
-            <h3 className="text-base font-bold text-[#B8956A]">
+            <h3 className="text-base font-bold text-[#111827]">
               {t('대행사 등록 신청', '代办商注册申请', 'Agency Registration')}
             </h3>
             <p className="text-[10px] text-[#8E8E93] mt-0.5">
@@ -337,7 +337,7 @@ function AgencyRegistrationModal({ lang, onClose }) {
         {/* Footer buttons */}
         <div className="px-6 py-4 border-t border-[#EDE9E3] flex-shrink-0 space-y-2">
           <button onClick={handleSubmit} disabled={!isValid}
-            className={`w-full font-semibold py-3 rounded-xl transition-all ${isValid ? 'bg-[#1C1C1E] text-[#B8956A] hover:bg-[#2C2C2E]' : 'bg-[#EDE9E3] text-[#8E8E93] cursor-not-allowed'}`}>
+            className={`w-full font-semibold py-3 rounded-xl transition-all ${isValid ? 'bg-[#1C1C1E] text-[#111827] hover:bg-[#2C2C2E]' : 'bg-[#EDE9E3] text-[#8E8E93] cursor-not-allowed'}`}>
             {t('신청서 제출', '提交申请', 'Submit Application')}
           </button>
           <button onClick={onClose} className="w-full text-[#8E8E93] text-xs py-2">
@@ -389,12 +389,12 @@ export default function AgencyTab({ profile, lang }) {
             <h3 className="text-lg font-bold text-[#1C1C1E]">{L(lang, labels.agencyLogin)}</h3>
             <p className="text-xs text-[#8E8E93]">{L(lang, labels.comingSoon)}</p>
             <input type="text" placeholder={L(lang, labels.agencyId)}
-              className="w-full bg-[#EDE9E3] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#B8956A]/30" />
+              className="w-full bg-[#EDE9E3] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#111827]/30" />
             <input type="password" placeholder={L(lang, labels.password)}
-              className="w-full bg-[#EDE9E3] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#B8956A]/30" />
-            <button className="w-full bg-[#1C1C1E] text-[#B8956A] font-semibold py-3 rounded-xl">{L(lang, labels.login)}</button>
+              className="w-full bg-[#EDE9E3] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#111827]/30" />
+            <button className="w-full bg-[#1C1C1E] text-[#111827] font-semibold py-3 rounded-xl">{L(lang, labels.login)}</button>
             <button onClick={() => { setShowLogin(false); setShowRegister(true) }}
-              className="w-full text-[#B8956A] text-sm hover:underline">{L(lang, labels.registerInquiry)} →</button>
+              className="w-full text-[#111827] text-sm hover:underline">{L(lang, labels.registerInquiry)} →</button>
             <button onClick={() => setShowLogin(false)} className="w-full text-[#8E8E93] text-xs py-2">{L(lang, labels.cancel)}</button>
           </div>
         </div>
@@ -413,7 +413,7 @@ export default function AgencyTab({ profile, lang }) {
             <p className="text-sm text-[#8E8E93] mt-1">{L(lang, labels.subtitle)}</p>
           </div>
           <button onClick={() => setShowLogin(true)}
-            className="text-xs text-[#B8956A] border border-[#B8956A]/30 px-3 py-1.5 rounded-full hover:bg-[#B8956A]/10 transition-all">
+            className="text-xs text-[#111827] border border-[#111827]/30 px-3 py-1.5 rounded-full hover:bg-[#111827]/10 transition-all">
             {L(lang, labels.agencyLogin)}
           </button>
         </div>
@@ -452,10 +452,10 @@ export default function AgencyTab({ profile, lang }) {
 
                 {/* Badges */}
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  <span className="text-[10px] bg-[#1C1C1E] text-[#B8956A] px-2 py-0.5 rounded-full">{L(lang, labels.experience)}: {agency.experience}</span>
+                  <span className="text-[10px] bg-[#1C1C1E] text-[#111827] px-2 py-0.5 rounded-full">{L(lang, labels.experience)}: {agency.experience}</span>
                   <span className="text-[10px] bg-[#1C1C1E] text-[#8E8E93] px-2 py-0.5 rounded-full">🕐 {agency.hours}</span>
                   {agency.certifications.map((c, i) => (
-                    <span key={i} className="text-[10px] bg-[#B8956A]/10 text-[#B8956A] px-2 py-0.5 rounded-full">✓ {c}</span>
+                    <span key={i} className="text-[10px] bg-[#111827]/10 text-[#111827] px-2 py-0.5 rounded-full">✓ {c}</span>
                   ))}
                   {agency.awards.map((a, i) => (
                     <span key={i} className="text-[10px] bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full">🏆 {a}</span>
@@ -470,8 +470,8 @@ export default function AgencyTab({ profile, lang }) {
                 </div>
 
                 <div className="flex items-center justify-between mt-3">
-                  <span className="font-bold text-[#B8956A] text-sm">{L(lang, agency.price)}</span>
-                  <button className="bg-[#1C1C1E] text-[#B8956A] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-[#2C2C2E] transition-all btn-press">
+                  <span className="font-bold text-[#111827] text-sm">{L(lang, agency.price)}</span>
+                  <button className="bg-[#1C1C1E] text-[#111827] text-xs font-semibold px-4 py-2 rounded-xl hover:bg-[#2C2C2E] transition-all btn-press">
                     {L(lang, labels.contact)}
                   </button>
                 </div>

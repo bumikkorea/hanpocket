@@ -133,7 +133,7 @@ export default function ResumeTab({ lang, profile }) {
     { num: 5, icon: PenTool, label: { ko: '자기소개', zh: '自我介绍', en: 'Introduction' } },
   ]
 
-  const inputCls = 'w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#B8956A]/30 placeholder:text-[#9CA3AF] text-[#111827]'
+  const inputCls = 'w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#111827]/30 placeholder:text-[#9CA3AF] text-[#111827]'
   const labelCls = 'text-xs text-[#6B7280] font-medium block mb-1.5'
   const cardCls = 'bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow'
 
@@ -225,14 +225,14 @@ export default function ResumeTab({ lang, profile }) {
                     <label className={labelCls}>{L(lang, { ko: '전공', zh: '专业', en: 'Major' })}</label>
                     <input className={inputCls} value={edu.major} onChange={e => updateList('education', i, 'major', e.target.value)} />
                     {edu.major && autoTranslate(edu.major, EDUCATION) !== edu.major && (
-                      <p className="text-[10px] text-[#B8956A] mt-1">= {autoTranslate(edu.major, EDUCATION)}</p>
+                      <p className="text-[10px] text-[#111827] mt-1">= {autoTranslate(edu.major, EDUCATION)}</p>
                     )}
                   </div>
                   <div>
                     <label className={labelCls}>{L(lang, { ko: '학위', zh: '学位', en: 'Degree' })}</label>
                     <input className={inputCls} value={edu.degree} onChange={e => updateList('education', i, 'degree', e.target.value)} placeholder={L(lang, { ko: '학사, 석사...', zh: '本科、硕士...', en: "Bachelor's, Master's..." })} />
                     {edu.degree && autoTranslate(edu.degree, EDUCATION) !== edu.degree && (
-                      <p className="text-[10px] text-[#B8956A] mt-1">= {autoTranslate(edu.degree, EDUCATION)}</p>
+                      <p className="text-[10px] text-[#111827] mt-1">= {autoTranslate(edu.degree, EDUCATION)}</p>
                     )}
                   </div>
                 </div>
@@ -243,7 +243,7 @@ export default function ResumeTab({ lang, profile }) {
               </div>
             ))}
             <button onClick={() => addItem('education', { school: '', major: '', year: '', degree: '' })}
-              className="flex items-center gap-1 text-xs text-[#B8956A] font-medium hover:underline">
+              className="flex items-center gap-1 text-xs text-[#111827] font-medium hover:underline">
               <Plus size={14} /> {L(lang, { ko: '학력 추가', zh: '添加学历', en: 'Add Education' })}
             </button>
           </div>
@@ -269,14 +269,14 @@ export default function ResumeTab({ lang, profile }) {
                     <label className={labelCls}>{L(lang, { ko: '직위', zh: '职位', en: 'Position' })}</label>
                     <input className={inputCls} value={c.position} onChange={e => updateList('career', i, 'position', e.target.value)} />
                     {c.position && autoTranslate(c.position, JOB_TITLES) !== c.position && (
-                      <p className="text-[10px] text-[#B8956A] mt-1">= {autoTranslate(c.position, JOB_TITLES)}</p>
+                      <p className="text-[10px] text-[#111827] mt-1">= {autoTranslate(c.position, JOB_TITLES)}</p>
                     )}
                   </div>
                   <div>
                     <label className={labelCls}>{L(lang, { ko: '부서', zh: '部门', en: 'Department' })}</label>
                     <input className={inputCls} value={c.department} onChange={e => updateList('career', i, 'department', e.target.value)} />
                     {c.department && autoTranslate(c.department, DEPARTMENTS) !== c.department && (
-                      <p className="text-[10px] text-[#B8956A] mt-1">= {autoTranslate(c.department, DEPARTMENTS)}</p>
+                      <p className="text-[10px] text-[#111827] mt-1">= {autoTranslate(c.department, DEPARTMENTS)}</p>
                     )}
                   </div>
                 </div>
@@ -297,7 +297,7 @@ export default function ResumeTab({ lang, profile }) {
               </div>
             ))}
             <button onClick={() => addItem('career', { company: '', position: '', department: '', startDate: '', endDate: '', description: '' })}
-              className="flex items-center gap-1 text-xs text-[#B8956A] font-medium hover:underline">
+              className="flex items-center gap-1 text-xs text-[#111827] font-medium hover:underline">
               <Plus size={14} /> {L(lang, { ko: '경력 추가', zh: '添加经历', en: 'Add Career' })}
             </button>
           </div>
@@ -339,7 +339,7 @@ export default function ResumeTab({ lang, profile }) {
                 </div>
               ))}
               <button onClick={() => addItem('certs', { name: '', level: '' })}
-                className="flex items-center gap-1 text-xs text-[#B8956A] font-medium hover:underline">
+                className="flex items-center gap-1 text-xs text-[#111827] font-medium hover:underline">
                 <Plus size={14} /> {L(lang, { ko: '자격증 추가', zh: '添加资格证', en: 'Add Certification' })}
               </button>
             </div>
@@ -356,7 +356,7 @@ export default function ResumeTab({ lang, profile }) {
             <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
               {INTRO_TEMPLATES.map((tmpl, i) => (
                 <button key={i} onClick={() => setData(d => ({ ...d, intro: tmpl.ko, introTemplate: i }))}
-                  className={`w-full text-left text-xs p-3 rounded-xl border transition-all ${data.introTemplate === i ? 'border-[#111827] bg-[#F9FAFB]' : 'border-[#E5E7EB] hover:border-[#B8956A]/40'}`}>
+                  className={`w-full text-left text-xs p-3 rounded-xl border transition-all ${data.introTemplate === i ? 'border-[#111827] bg-[#F9FAFB]' : 'border-[#E5E7EB] hover:border-[#111827]/40'}`}>
                   <span className="text-[#6B7280]">{i + 1}.</span> {L(lang, tmpl)}
                 </button>
               ))}

@@ -51,15 +51,15 @@ function Logo({ size = 'md' }) {
 
       {/* 복주머니 — 마침표 위치 (T 오른쪽 바로 뒤) */}
       <g transform="translate(162, 8) scale(0.5)">
-        <path d="M6,7 Q10,2 14,7" fill="none" stroke="#B8956A" strokeWidth="1.4" strokeLinecap="round"/>
-        <circle cx="10" cy="7.5" r="1.3" fill="#B8956A"/>
-        <line x1="8.5" y1="8.5" x2="7" y2="12" stroke="#B8956A" strokeWidth="0.8" strokeLinecap="round"/>
-        <line x1="11.5" y1="8.5" x2="13" y2="12" stroke="#B8956A" strokeWidth="0.8" strokeLinecap="round"/>
+        <path d="M6,7 Q10,2 14,7" fill="none" stroke="#111827" strokeWidth="1.4" strokeLinecap="round"/>
+        <circle cx="10" cy="7.5" r="1.3" fill="#111827"/>
+        <line x1="8.5" y1="8.5" x2="7" y2="12" stroke="#111827" strokeWidth="0.8" strokeLinecap="round"/>
+        <line x1="11.5" y1="8.5" x2="13" y2="12" stroke="#111827" strokeWidth="0.8" strokeLinecap="round"/>
         <path d="M3,9 Q1,14 3,19 Q5,23 10,24 Q15,23 17,19 Q19,14 17,9 Z" fill="#D42B40"/>
         <path d="M4,9 Q6,10.5 10,10.5 Q14,10.5 16,9" fill="none" stroke="#B02535" strokeWidth="0.5"/>
-        <rect x="8" y="14" width="4" height="4" rx="0.5" fill="none" stroke="#B8956A" strokeWidth="0.6"/>
-        <line x1="10" y1="14" x2="10" y2="18" stroke="#B8956A" strokeWidth="0.4"/>
-        <line x1="8" y1="16" x2="12" y2="16" stroke="#B8956A" strokeWidth="0.4"/>
+        <rect x="8" y="14" width="4" height="4" rx="0.5" fill="none" stroke="#111827" strokeWidth="0.6"/>
+        <line x1="10" y1="14" x2="10" y2="18" stroke="#111827" strokeWidth="0.4"/>
+        <line x1="8" y1="16" x2="12" y2="16" stroke="#111827" strokeWidth="0.4"/>
       </g>
     </svg>
   )
@@ -103,7 +103,7 @@ function Onboarding({ onComplete, lang, setLang }) {
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         {/* 언어 토글 */}
         <button onClick={() => setLang(nextLang(lang))}
-          className="absolute top-6 right-6 text-[#6B7280] text-sm px-3 py-1.5 rounded-full border border-[#E5E7EB] hover:border-[#B8956A] transition-all z-10">
+          className="absolute top-6 right-6 text-[#6B7280] text-sm px-3 py-1.5 rounded-full border border-[#E5E7EB] hover:border-[#111827] transition-all z-10">
           {langLabel(lang)}
         </button>
 
@@ -264,7 +264,7 @@ function Onboarding({ onComplete, lang, setLang }) {
               {nationalityOptions.map(opt => (
                 <button key={opt.id}
                   onClick={() => { setNationality(opt.id); setStep('visa') }}
-                  className="w-full text-left bg-white border border-[#E5E7EB] text-[#111827] rounded-xl p-4 hover:border-[#B8956A]/40 transition-all btn-press shadow-sm">
+                  className="w-full text-left bg-white border border-[#E5E7EB] text-[#111827] rounded-xl p-4 hover:border-[#111827]/40 transition-all btn-press shadow-sm">
                   {s[opt.id]}
                 </button>
               ))}
@@ -328,7 +328,7 @@ function NoticePopup({ lang, onClose }) {
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-bold bg-[#F3F4F6] text-[#111827] px-2 py-0.5 rounded-full">v{entry.version}</span>
                 <span className="text-xs text-[#6B7280]">{entry.date}</span>
-                {idx === 0 && <span className="text-xs bg-[#B8956A]/10 text-[#B8956A] px-2 py-0.5 rounded-full">NEW</span>}
+                {idx === 0 && <span className="text-xs bg-[#111827]/10 text-[#111827] px-2 py-0.5 rounded-full">NEW</span>}
               </div>
               <ul className="space-y-1">
                 {entry.items[lang]?.map((item, i) => <li key={i} className="text-sm text-[#6B7280]">{item}</li>)}
@@ -354,7 +354,7 @@ function SearchBar({ query, setQuery, lang }) {
   return (
     <div className="relative">
       <input type="text" placeholder={t[lang].search} value={query} onChange={e => setQuery(e.target.value)}
-        className="w-full glass rounded-lg px-5 py-3.5 pl-11 text-sm border-0 focus:ring-2 focus:ring-[#B8956A]/30 outline-none transition-all placeholder:text-[#9CA3AF]" />
+        className="w-full glass rounded-lg px-5 py-3.5 pl-11 text-sm border-0 focus:ring-2 focus:ring-[#111827]/30 outline-none transition-all placeholder:text-[#9CA3AF]" />
       <span className="absolute left-4 top-3.5 text-[#9CA3AF]">🔍</span>
     </div>
   )
@@ -421,7 +421,7 @@ function VisaList({ categoryId, region, onSelectVisa, onBack, lang }) {
   const filtered = visaTypes.filter(v => v.category === categoryId && (region === 'mainland' ? v.forMainland : v.forHkMoTw))
   return (
     <div className="space-y-4 animate-fade-up">
-      <button onClick={onBack} className="text-[#B8956A] text-sm font-medium">{s.back}</button>
+      <button onClick={onBack} className="text-[#111827] text-sm font-medium">{s.back}</button>
       <h2 className="text-lg font-bold text-[#111827]">{cat?.icon} {L(lang, cat?.name)}</h2>
       {!filtered.length ? <div className="glass rounded-lg p-8 text-center text-[#6B7280]">{s.noVisaForRegion}</div> :
         filtered.map((visa, i) => (
@@ -430,7 +430,7 @@ function VisaList({ categoryId, region, onSelectVisa, onBack, lang }) {
             className="w-full text-left glass rounded-lg p-4 card-hover btn-press animate-fade-up">
             <div className="flex items-center justify-between mb-2">
               <span className="font-bold text-[#111827]">{visa.code}</span>
-              <span className="text-xs bg-[#111827] text-[#B8956A] px-2.5 py-1 rounded-full">{L(lang, visa.duration)}</span>
+              <span className="text-xs bg-[#111827] text-[#111827] px-2.5 py-1 rounded-full">{L(lang, visa.duration)}</span>
             </div>
             <div className="font-semibold text-[#374151] text-sm">{L(lang, visa.name)}</div>
             <div className="text-[#6B7280] text-xs mt-1 line-clamp-2">{L(lang, visa.summary)}</div>
@@ -446,9 +446,9 @@ function VisaDetail({ visaId, onBack, lang }) {
   if (!visa) return null
   return (
     <div className="space-y-4 animate-fade-up">
-      <button onClick={onBack} className="text-[#B8956A] text-sm font-medium">{s.back}</button>
+      <button onClick={onBack} className="text-[#111827] text-sm font-medium">{s.back}</button>
       <div className="bg-[#F8F9FA] rounded-lg p-6 border border-[#E5E7EB]">
-        <div className="text-xs text-[#B8956A] tracking-wider">{visa.code}</div>
+        <div className="text-xs text-[#111827] tracking-wider">{visa.code}</div>
         <div className="text-xl font-bold mt-2">{L(lang, visa.name)}</div>
         <div className="text-sm text-[#6B7280] mt-1">{L(lang === 'ko' ? 'zh' : 'ko', visa.name)}</div>
         <div className="flex gap-4 mt-4 text-sm text-[#9CA3AF]">
@@ -460,7 +460,7 @@ function VisaDetail({ visaId, onBack, lang }) {
         <Section title={s.subtypes}>
           {visa.subtypes.map(st => (
             <div key={st.code} className="flex items-center gap-2 text-sm mb-1.5">
-              <span className="font-mono text-[#B8956A] bg-[#111827] px-2 py-0.5 rounded text-xs">{st.code}</span>
+              <span className="font-mono text-[#111827] bg-[#111827] px-2 py-0.5 rounded text-xs">{st.code}</span>
               <span className="text-[#6B7280]">{L(lang, st.name)}</span>
             </div>
           ))}
@@ -468,7 +468,7 @@ function VisaDetail({ visaId, onBack, lang }) {
       )}
       <Section title={s.requirements}>
         <ul className="space-y-2">{visa.requirements.map((r, i) => (
-          <li key={i} className="flex gap-2 text-sm text-[#6B7280]"><span className="text-[#B8956A]">•</span><span>{L(lang, r)}</span></li>
+          <li key={i} className="flex gap-2 text-sm text-[#6B7280]"><span className="text-[#111827]">•</span><span>{L(lang, r)}</span></li>
         ))}</ul>
       </Section>
       <Section title={s.processingTime}><p className="text-sm text-[#6B7280]">{L(lang, visa.processingTime)}</p></Section>
@@ -479,8 +479,8 @@ function VisaDetail({ visaId, onBack, lang }) {
         </div>
       </Section>
       {visa.notes && (
-        <div className="bg-[#B8956A]/5 rounded-lg p-4 border border-[#B8956A]/20">
-          <h3 className="font-bold text-[#B8956A] text-sm mb-2">{s.tips}</h3>
+        <div className="bg-[#111827]/5 rounded-lg p-4 border border-[#111827]/20">
+          <h3 className="font-bold text-[#111827] text-sm mb-2">{s.tips}</h3>
           <p className="text-sm text-[#6B7280]">{L(lang, visa.notes)}</p>
         </div>
       )}
@@ -532,7 +532,7 @@ function TransitionTab({ profile, lang }) {
   return (
     <div className="space-y-4 animate-fade-up">
       <div className="bg-[#F8F9FA] rounded-lg p-6 border border-[#E5E7EB]">
-        <div className="text-xs text-[#B8956A] tracking-wider">{s.myStatus}</div>
+        <div className="text-xs text-[#111827] tracking-wider">{s.myStatus}</div>
         <div className="text-lg font-bold mt-2">{L(lang, data.label)}</div>
         <div className="text-sm text-[#6B7280] mt-1">{s.nationality}: {s[profile.nationality]}</div>
       </div>
@@ -542,16 +542,16 @@ function TransitionTab({ profile, lang }) {
         : trans.map((tr, i) => (
           <div key={i} className="glass rounded-lg p-4 animate-fade-up" style={{animationDelay:`${i*0.05}s`}}>
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-6 h-6 bg-[#B8956A]/10 rounded-full flex items-center justify-center text-[#B8956A] text-xs">→</span>
+              <span className="w-6 h-6 bg-[#111827]/10 rounded-full flex items-center justify-center text-[#111827] text-xs">→</span>
               <span className="font-bold text-[#111827] text-sm">{L(lang, tr.label)}</span>
             </div>
             {tr.conditions[lang]?.map((c, j) => (
-              <div key={j} className="flex gap-2 text-sm text-[#6B7280] mb-1"><span className="text-[#B8956A] shrink-0">✓</span><span>{c}</span></div>
+              <div key={j} className="flex gap-2 text-sm text-[#6B7280] mb-1"><span className="text-[#111827] shrink-0">✓</span><span>{c}</span></div>
             ))}
           </div>
         ))
       }
-      {data.notes && <div className="bg-[#B8956A]/5 rounded-lg p-4 border border-[#B8956A]/20"><p className="text-sm text-[#6B7280]">{data.notes[lang]}</p></div>}
+      {data.notes && <div className="bg-[#111827]/5 rounded-lg p-4 border border-[#111827]/20"><p className="text-sm text-[#6B7280]">{data.notes[lang]}</p></div>}
     </div>
   )
 }
@@ -597,8 +597,8 @@ function ChatTab({ profile, lang }) {
       )}
       <div className="flex gap-2 pt-2">
         <input type="text" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();send()}}}
-          placeholder={s.chatPlaceholder} className="flex-1 glass rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#B8956A]/30 placeholder:text-[#9CA3AF]" />
-        <button onClick={send} className="bg-[#111827] text-[#B8956A] w-12 rounded-lg hover:bg-[#1F2937] transition-all btn-press text-lg">↑</button>
+          placeholder={s.chatPlaceholder} className="flex-1 glass rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#111827]/30 placeholder:text-[#9CA3AF]" />
+        <button onClick={send} className="bg-[#111827] text-[#111827] w-12 rounded-lg hover:bg-[#1F2937] transition-all btn-press text-lg">↑</button>
       </div>
     </div>
   )
@@ -699,7 +699,7 @@ function ProfileTab({ profile, setProfile, lang }) {
       {/* 1. 여권 스타일 프로필 카드 - Masked by default */}
       <div className="bg-[#F8F9FA] rounded-lg p-6 border border-[#E5E7EB]">
         <div className="flex items-center justify-between mb-4">
-          <div className="text-xs text-[#B8956A] tracking-wider">PASSPORT INFO</div>
+          <div className="text-xs text-[#111827] tracking-wider">PASSPORT INFO</div>
           <Logo size="sm" />
         </div>
         <div className="space-y-2 text-sm">
@@ -712,7 +712,7 @@ function ProfileTab({ profile, setProfile, lang }) {
         </div>
         {!unmasked && (name || num) && (
           <button onClick={() => setShowVerifyModal(true)}
-            className="mt-3 px-4 py-2 bg-[#B8956A]/20 text-[#B8956A] text-xs font-semibold rounded-xl hover:bg-[#B8956A]/30 transition-all btn-press">
+            className="mt-3 px-4 py-2 bg-[#111827]/20 text-[#111827] text-xs font-semibold rounded-xl hover:bg-[#111827]/30 transition-all btn-press">
             🔓 {lang === 'ko' ? '정보 확인' : lang === 'zh' ? '查看信息' : 'View Info'}
           </button>
         )}
@@ -726,7 +726,7 @@ function ProfileTab({ profile, setProfile, lang }) {
       {/* 2. Visa type + D-day */}
       {exp && days !== null && (
         <div className={`glass rounded-lg p-4 text-center font-bold text-lg ${
-          days<=0?'bg-red-50 text-red-600':days<=30?'bg-red-50 text-red-600':days<=90?'bg-amber-50 text-[#B8956A]':'bg-green-50 text-green-600'
+          days<=0?'bg-red-50 text-red-600':days<=30?'bg-red-50 text-red-600':days<=90?'bg-amber-50 text-[#111827]':'bg-green-50 text-green-600'
         }`}>
           <div className="text-xs text-[#6B7280] font-normal mb-1">{L(lang, vl)}</div>
           {days<=0 ? `🚨 ${s.expired}` : `D-${days} (${days} ${s.daysLeft})`}
@@ -740,7 +740,7 @@ function ProfileTab({ profile, setProfile, lang }) {
         <div>
           <label className="text-xs text-[#6B7280] font-medium block mb-1.5">VISA EXPIRY</label>
           <input type="date" value={exp} onChange={e => setExp(e.target.value)}
-            className="w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#B8956A]/30" />
+            className="w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#111827]/30" />
         </div>
       </div>
 
@@ -753,7 +753,7 @@ function ProfileTab({ profile, setProfile, lang }) {
           <label key={opt.key} className="flex items-center justify-between cursor-pointer">
             <span className="text-sm text-[#6B7280]">{L(lang, opt.label)}</span>
             <button onClick={() => toggleNotif(opt.key)}
-              className={`w-10 h-6 rounded-full transition-all relative ${notifPrefs[opt.key] ? 'bg-[#B8956A]' : 'bg-[#D1D1D6]'}`}>
+              className={`w-10 h-6 rounded-full transition-all relative ${notifPrefs[opt.key] ? 'bg-[#111827]' : 'bg-[#D1D1D6]'}`}>
               <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${notifPrefs[opt.key] ? 'left-[18px]' : 'left-0.5'}`} />
             </button>
           </label>
@@ -770,8 +770,8 @@ function ProfileTab({ profile, setProfile, lang }) {
 
       {/* 4. Hi-Korea reservation button */}
       <a href="https://www.hikorea.go.kr/resv/ResveInfo.pt" target="_blank" rel="noopener noreferrer"
-        className="block w-full bg-white text-center rounded-lg p-4 card-hover btn-press border border-[#B8956A]/30 shadow-sm">
-        <span className="text-[#B8956A] font-bold text-base">
+        className="block w-full bg-white text-center rounded-lg p-4 card-hover btn-press border border-[#111827]/30 shadow-sm">
+        <span className="text-[#111827] font-bold text-base">
           🏛️ {lang === 'ko' ? '비자 연장 신청하러 가기' : lang === 'zh' ? '前往申请签证延期' : 'Apply for Visa Extension'}
         </span>
         <p className="text-[#6B7280] text-xs mt-1">Hi-Korea</p>
@@ -794,7 +794,7 @@ function Input({ label, value, onChange, placeholder, mono }) {
     <div>
       <label className="text-xs text-[#6B7280] font-medium block mb-1.5">{label}</label>
       <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className={`w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#B8956A]/30 placeholder:text-[#9CA3AF] ${mono ? 'font-mono tracking-wider' : ''}`} />
+        className={`w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#111827]/30 placeholder:text-[#9CA3AF] ${mono ? 'font-mono tracking-wider' : ''}`} />
     </div>
   )
 }
@@ -803,7 +803,7 @@ function DocumentAuthGuide({ lang, onBack }) {
   const d = documentAuth
   return (
     <div className="space-y-4 animate-fade-up">
-      <button onClick={onBack} className="text-[#B8956A] text-sm font-medium">{t[lang].back}</button>
+      <button onClick={onBack} className="text-[#111827] text-sm font-medium">{t[lang].back}</button>
       <div className="bg-[#F8F9FA] rounded-lg p-6 border border-[#E5E7EB]">
         <div className="text-xl font-bold">{L(lang, d.title)}</div>
         <div className="text-sm text-[#6B7280] mt-1">{L(lang, d.subtitle)}</div>
@@ -821,7 +821,7 @@ function DocumentAuthGuide({ lang, onBack }) {
         <div className="space-y-4">
           {d.steps.map((s, i) => (
             <div key={i} className="flex gap-3">
-              <div className="w-8 h-8 bg-[#B8956A]/10 rounded-full flex items-center justify-center text-sm shrink-0">{s.icon}</div>
+              <div className="w-8 h-8 bg-[#111827]/10 rounded-full flex items-center justify-center text-sm shrink-0">{s.icon}</div>
               <div>
                 <div className="font-semibold text-[#111827] text-sm">{s.step}. {L(lang, s.title)}</div>
                 <div className="text-xs text-[#6B7280] mt-1">{L(lang, s.desc)}</div>
@@ -834,7 +834,7 @@ function DocumentAuthGuide({ lang, onBack }) {
         <div className="space-y-3">
           {d.byVisaType.map((item, i) => (
             <div key={i} className="flex gap-2 text-sm">
-              <span className="font-mono text-[#B8956A] bg-[#111827] px-2 py-0.5 rounded text-xs shrink-0">{item.visa}</span>
+              <span className="font-mono text-[#111827] bg-[#111827] px-2 py-0.5 rounded text-xs shrink-0">{item.visa}</span>
               <div>
                 <div className="font-semibold text-[#111827] text-xs">{L(lang, item.label)}</div>
                 <div className="text-xs text-[#6B7280]">{L(lang, item.docs)}</div>
@@ -892,7 +892,7 @@ function VisaTab({ profile, lang, view, setView, selCat, setSelCat, selVisa, set
                   className="w-full text-left bg-[#F8F9FA] rounded-lg p-5 card-hover border border-[#E5E7EB] btn-press animate-fade-up">
                   <div className="text-lg font-bold text-[#111827]">{L(lang, documentAuth.title)}</div>
                   <div className="text-sm text-[#6B7280] mt-1">{L(lang, documentAuth.subtitle)}</div>
-                  <div className="text-xs text-[#B8956A] mt-2">{lang==='ko'?'공증 · 번역 · 아포스티유 안내 →':lang==='zh'?'公证 · 翻译 · 海牙认证指南 →':'Notarization · Translation · Apostille Guide →'}</div>
+                  <div className="text-xs text-[#111827] mt-2">{lang==='ko'?'공증 · 번역 · 아포스티유 안내 →':lang==='zh'?'公证 · 翻译 · 海牙认证指南 →':'Notarization · Translation · Apostille Guide →'}</div>
                 </button>
                 <ComparisonTable lang={lang} />
 

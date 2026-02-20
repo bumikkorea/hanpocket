@@ -1,35 +1,89 @@
-const CACHE = 'hanpocket-v1'
-const STATIC = ['/', '/index.html', '/icon.svg', '/manifest.json']
+const CACHE_NAME = 'hanpocket-v1'
+const STATIC_ASSETS = [
+  '/',
+  '/index.html',
+  '/icon.svg',
+  '/manifest.json'
+]
 
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC)))
-  self.skipWaiting()
-})
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-    ))
+// Install event - cache static assets
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(STATIC_ASSETS))
+      .then(() => self.skipWaiting())
   )
-  self.clients.claim()
 })
 
-self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url)
+// Activate event - clean up old caches
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName)
+          }
+        })
+      )
+    }).then(() => self.clients.claim())
+  )
+})
+
+// Fetch event - cache-first for static assets, network-first for API calls
+self.addEventListener('fetch', (event) => {
+  const { request } = event
+  const url = new URL(request.url)
+
+  // Skip cross-origin requests and non-GET requests
+  if (url.origin !== location.origin || request.method !== 'GET') {
+    return
+  }
+
   // Network-first for API calls
-  if (url.hostname !== location.hostname) {
-    e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
+  if (url.pathname.includes('/api/') || url.hostname.includes('api.') || url.hostname.includes('exchangerate') || url.hostname.includes('wttr.in')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Optionally cache successful API responses
+          if (response.status === 200) {
+            const responseClone = response.clone()
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseClone)
+            })
+          }
+          return response
+        })
+        .catch(() => {
+          // Return cached version if network fails
+          return caches.match(request)
+        })
     )
     return
   }
+
   // Cache-first for static assets
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
-      const clone = res.clone()
-      caches.open(CACHE).then(c => c.put(e.request, clone))
-      return res
-    }))
+  event.respondWith(
+    caches.match(request)
+      .then((response) => {
+        if (response) {
+          return response
+        }
+        return fetch(request)
+          .then((response) => {
+            // Don't cache non-successful responses
+            if (!response || response.status !== 200 || response.type !== 'basic') {
+              return response
+            }
+            
+            const responseToCache = response.clone()
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(request, responseToCache)
+              })
+            
+            return response
+          })
+      })
   )
 })

@@ -39,10 +39,10 @@ export default function CultureTab({ lang, setTab }) {
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <LucideIcon name={w.icon} size={16} className={activeWidget === w.id ? 'text-[#B8956A]' : 'text-[#9CA3AF]'} />
-                <span className={`text-sm ${activeWidget === w.id ? 'text-[#B8956A] font-medium' : 'text-[#374151]'}`}>{L(lang, w.name)}</span>
+                <LucideIcon name={w.icon} size={16} className={activeWidget === w.id ? 'text-[#111827]' : 'text-[#9CA3AF]'} />
+                <span className={`text-sm ${activeWidget === w.id ? 'text-[#111827] font-medium' : 'text-[#374151]'}`}>{L(lang, w.name)}</span>
               </div>
-              {activeWidget === w.id ? <ChevronDown size={14} className="text-[#B8956A]" /> : <ChevronRight size={14} className="text-[#D1D5DB]" />}
+              {activeWidget === w.id ? <ChevronDown size={14} className="text-[#111827]" /> : <ChevronRight size={14} className="text-[#D1D5DB]" />}
             </button>
             {activeWidget === w.id && (
               <div className="px-4 py-4 bg-[#FAFAFA] border-b border-[#E5E7EB] max-h-[400px] overflow-y-auto no-scrollbar">

@@ -27,9 +27,9 @@ export default function LifeToolsTab({ lang, setTab }) {
         {allWidgets.map(w => (
           <div key={w.id} className="border border-[#E5E7EB] rounded-lg overflow-hidden">
             <div className="flex items-center gap-2.5 px-4 py-3 bg-white">
-              <LucideIcon name={w.icon} size={16} className="text-[#B8956A]" />
+              <LucideIcon name={w.icon} size={16} className="text-[#111827]" />
               <span className="text-sm font-medium text-[#111827]">{L(lang, w.name)}</span>
-              <ChevronDown size={14} className="text-[#B8956A] ml-auto" />
+              <ChevronDown size={14} className="text-[#111827] ml-auto" />
             </div>
             <div className="px-4 py-4 bg-[#FAFAFA] border-t border-[#E5E7EB] max-h-[400px] overflow-y-auto no-scrollbar">
               <WidgetContent widgetId={w.id} lang={lang} setTab={setTab} />

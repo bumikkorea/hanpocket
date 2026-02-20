@@ -159,12 +159,20 @@ function simpleTranslate(text) {
 }
 
 function speak(text) {
-  if (!('speechSynthesis' in window)) return
-  window.speechSynthesis.cancel()
-  const u = new SpeechSynthesisUtterance(text)
-  u.lang = 'ko-KR'
-  u.rate = 0.85
-  window.speechSynthesis.speak(u)
+  try {
+    if (!('speechSynthesis' in window)) {
+      console.warn('Web Speech API not available')
+      return
+    }
+    window.speechSynthesis.cancel()
+    const u = new SpeechSynthesisUtterance(text)
+    u.lang = 'ko-KR'
+    u.rate = 0.85
+    window.speechSynthesis.speak(u)
+  } catch (err) {
+    console.warn('Web Speech API unavailable:', err)
+    // Silent fail for better UX
+  }
 }
 
 export default function TranslatorTab({ lang }) {

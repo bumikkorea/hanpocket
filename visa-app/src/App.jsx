@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, Component } from 'react'
-import { MessageCircle, X } from 'lucide-react'
+import { MessageCircle, X, Moon, Sun } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -981,6 +981,8 @@ function AppInner() {
   const [hoveredTab, setHoveredTab] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [fontSize, setFontSize] = useState('normal')
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('hp-dark') === '1')
+  useEffect(() => { localStorage.setItem('hp-dark', darkMode ? '1' : '0') }, [darkMode])
   const s = t[lang]
 
   useEffect(() => {
@@ -1221,7 +1223,7 @@ function AppInner() {
   const currentHero = heroData[tab] || heroData.home
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontSize: fontSize === 'large' ? '18px' : fontSize === 'small' ? '14px' : '16px' }}>
+    <div className={`min-h-screen ${darkMode ? 'dark bg-[#111827]' : 'bg-white'}`} style={{ fontSize: fontSize === 'large' ? '18px' : fontSize === 'small' ? '14px' : '16px' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
 
       {/* Header — 29CM style: logo left, icons right */}
@@ -1233,8 +1235,12 @@ function AppInner() {
             <span className="text-[#E5E7EB]">|</span>
             <button onClick={() => setLang(nextLang(lang))} className="text-[#6B7280] text-[11px] hover:text-[#111827] transition-all">{langLabel(lang)}</button>
             <span className="text-[#E5E7EB]">|</span>
-            <button onClick={() => setFontSize(f => f === 'normal' ? 'large' : f === 'large' ? 'small' : 'normal')} className="text-[#6B7280] text-[11px] hover:text-[#111827] transition-all">
+            <button onClick={() => setFontSize(f => f === 'normal' ? 'large' : f === 'large' ? 'small' : 'normal')} className="text-[#6B7280] text-[11px] hover:text-[#111827] dark:text-[#9CA3AF] dark:hover:text-white transition-all">
               {fontSize === 'large' ? 'A-' : fontSize === 'small' ? 'A' : 'A+'}
+            </button>
+            <span className="text-[#E5E7EB] dark:text-[#374151]">|</span>
+            <button onClick={() => setDarkMode(d => !d)} className="text-[#6B7280] hover:text-[#111827] dark:text-[#9CA3AF] dark:hover:text-white transition-all">
+              {darkMode ? <Sun size={13} /> : <Moon size={13} />}
             </button>
             <span className="text-[#E5E7EB]">|</span>
             <button onClick={() => {

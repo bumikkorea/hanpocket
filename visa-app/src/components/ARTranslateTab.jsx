@@ -80,11 +80,18 @@ export default function ARTranslateTab({ lang }) {
 
   const startCamera = async () => {
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Camera API not supported')
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
       streamRef.current = stream
       if (videoRef.current) { videoRef.current.srcObject = stream }
       setCameraOn(true)
-    } catch { setCameraOn(false) }
+    } catch (err) {
+      console.warn('Camera access unavailable:', err)
+      setCameraOn(false)
+      alert(lang === 'ko' ? '카메라 기능은 이 환경에서 사용할 수 없습니다' : lang === 'zh' ? '摄像头功能在此环境中不可用' : 'Camera feature unavailable in this environment')
+    }
   }
 
   const stopCamera = () => {

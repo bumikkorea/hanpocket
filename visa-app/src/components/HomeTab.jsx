@@ -613,28 +613,37 @@ function KpopChartWidget({ lang }) {
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    fetch('/api/apple-music/api/v2/kr/music/most-played/10/songs.json')
-      .then(r => r.json())
-      .then(data => {
-        if (data?.feed?.results) {
-          setChart({
-            items: data.feed.results.map((song, i) => ({
-              rank: i + 1,
-              title: song.name,
-              artist: song.artistName,
-              artwork: song.artworkUrl100,
-              url: song.url,
-            })),
-            updated: data.feed.updated ? new Date(data.feed.updated).toLocaleDateString('ko-KR') : '',
-          })
-        }
-      })
-      .catch(() => setError(true))
-      .finally(() => setLoading(false))
+    try {
+      fetch('https://rss.applemarketingtools.com/api/v2/kr/music/most-played/10/songs.json')
+        .then(r => r.json())
+        .then(data => {
+          if (data?.feed?.results) {
+            setChart({
+              items: data.feed.results.map((song, i) => ({
+                rank: i + 1,
+                title: song.name,
+                artist: song.artistName,
+                artwork: song.artworkUrl100,
+                url: song.url,
+              })),
+              updated: data.feed.updated ? new Date(data.feed.updated).toLocaleDateString('ko-KR') : '',
+            })
+          }
+        })
+        .catch(() => {
+          console.warn('Apple Music RSS API unavailable')
+          setError(true)
+        })
+        .finally(() => setLoading(false))
+    } catch (err) {
+      console.warn('Apple Music RSS API not accessible:', err)
+      setError(true)
+      setLoading(false)
+    }
   }, [])
 
   if (loading) return <p className="text-xs text-[#9CA3AF] text-center py-4">Loading...</p>
-  if (error || !chart) return <p className="text-xs text-[#9CA3AF] text-center py-4">{lang === 'ko' ? '차트를 불러올 수 없습니다' : lang === 'zh' ? '无法加载排行榜' : 'Chart unavailable'}</p>
+  if (error || !chart) return <p className="text-xs text-[#9CA3AF] text-center py-4">{lang === 'ko' ? '차트 데이터를 불러올 수 없습니다' : lang === 'zh' ? '无法加载榜单数据' : 'Chart data unavailable'}</p>
 
   return (
     <div>
@@ -1935,8 +1944,16 @@ function WidgetContent({ widgetId, lang, setTab }) {
                     {data.example.pronunciation && <p className="text-[9px] text-[#9CA3AF] mt-0.5">/{data.example.pronunciation}/</p>}
                   </div>
                   <button onClick={() => {
-                    const u = new SpeechSynthesisUtterance(L('ko', data.example.sentence))
-                    u.lang = 'ko-KR'; u.rate = 0.8; speechSynthesis.speak(u)
+                    try {
+                      if (!('speechSynthesis' in window)) {
+                        throw new Error('speechSynthesis not supported')
+                      }
+                      const u = new SpeechSynthesisUtterance(L('ko', data.example.sentence))
+                      u.lang = 'ko-KR'; u.rate = 0.8; speechSynthesis.speak(u)
+                    } catch (err) {
+                      console.warn('Web Speech API unavailable:', err)
+                      alert(lang === 'ko' ? '음성 기능은 이 환경에서 사용할 수 없습니다' : lang === 'zh' ? '语音功能在此环境中不可用' : 'Voice feature unavailable in this environment')
+                    }
                   }} className="shrink-0 w-7 h-7 rounded-full bg-[#B8956A]/10 flex items-center justify-center hover:bg-[#B8956A]/20 transition-all">
                     <Volume2 size={14} className="text-[#B8956A]" />
                   </button>
@@ -2873,10 +2890,16 @@ function VoiceTranslatorCard({ lang }) {
         const translated = simpleTranslate(final, sourceLang)
         setConversations(prev => [...prev, { source: sourceLang, original: final, translated }])
         // Speak the translation
-        const u = new SpeechSynthesisUtterance(translated)
-        u.lang = sourceLang === 'zh' ? 'ko-KR' : 'zh-CN'
-        u.rate = 0.85
-        speechSynthesis.speak(u)
+        try {
+          if ('speechSynthesis' in window) {
+            const u = new SpeechSynthesisUtterance(translated)
+            u.lang = sourceLang === 'zh' ? 'ko-KR' : 'zh-CN'
+            u.rate = 0.85
+            speechSynthesis.speak(u)
+          }
+        } catch (err) {
+          console.warn('Web Speech API unavailable:', err)
+        }
       } else if (inter) {
         setInterim(inter)
       }
@@ -3069,12 +3092,19 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
                   <p className="text-[9px] text-[#9CA3AF] font-mono mt-0.5">[{koreanData.example.pronunciation}]</p>
                 )}
                 <button onClick={() => {
-                  const text = L('ko', koreanData.example.sentence)
-                  const u = new SpeechSynthesisUtterance(text)
-                  u.lang = 'ko-KR'; u.rate = 0.75
-                  if (text.endsWith('?') || text.endsWith('요?')) u.pitch = 1.2
-                  speechSynthesis.speak(u)
-
+                  try {
+                    if (!('speechSynthesis' in window)) {
+                      throw new Error('speechSynthesis not supported')
+                    }
+                    const text = L('ko', koreanData.example.sentence)
+                    const u = new SpeechSynthesisUtterance(text)
+                    u.lang = 'ko-KR'; u.rate = 0.75
+                    if (text.endsWith('?') || text.endsWith('요?')) u.pitch = 1.2
+                    speechSynthesis.speak(u)
+                  } catch (err) {
+                    console.warn('Web Speech API unavailable:', err)
+                    alert(lang === 'ko' ? '음성 기능은 이 환경에서 사용할 수 없습니다' : lang === 'zh' ? '语音功能在此环境中不可用' : 'Voice feature unavailable in this environment')
+                  }
                 }} className="mt-1.5 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#B8956A]/10 text-[#B8956A] hover:bg-[#B8956A]/20 transition-all">
                   <Volume2 size={12} />
                   <span className="text-[10px] font-semibold">{lang === 'ko' ? '발음 듣기' : lang === 'zh' ? '听发음' : 'Listen'}</span>

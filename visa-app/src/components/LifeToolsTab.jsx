@@ -18,9 +18,6 @@ export default function LifeToolsTab({ lang, setTab }) {
   return (
     <div className="space-y-4 animate-fade-up pb-4">
       <div className="mb-6">
-        <h1 className="text-xl font-bold text-[#111827] tracking-tight">
-          {L(lang, { ko: '생활 도구.', zh: '生活工具。', en: 'Life Tools.' })}
-        </h1>
         <p className="text-sm text-[#6B7280] mt-1">
           {L(lang, { ko: '한국 생활에 유용한 도구 모음.', zh: '韩国生活实用工具集。', en: 'Useful tools for life in Korea.' })}
         </p>

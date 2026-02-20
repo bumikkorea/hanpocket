@@ -20,7 +20,14 @@ import HousingTab from './components/HousingTab'
 import TravelTab from './components/TravelTab'
 import FoodTab from './components/FoodTab'
 import HallyuTab from './components/HallyuTab'
-
+import TranslatorTab from './components/TranslatorTab'
+import ARTranslateTab from './components/ARTranslateTab'
+import SOSTab from './components/SOSTab'
+import CommunityTab from './components/CommunityTab'
+import VisaAlertTab from './components/VisaAlertTab'
+import FinanceTab from './components/FinanceTab'
+import ResumeTab from './components/ResumeTab'
+import DigitalWalletTab from './components/DigitalWalletTab'
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -973,6 +980,7 @@ function AppInner() {
   const [exchangeRate, setExchangeRate] = useState(null)
   const [hoveredTab, setHoveredTab] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [fontSize, setFontSize] = useState('normal')
   const s = t[lang]
 
   useEffect(() => {
@@ -1002,7 +1010,11 @@ function AppInner() {
     { id: 'housing', label: { ko: '부동산', zh: '房产', en: 'Housing' } },
     { id: 'medical', label: { ko: '의료', zh: '医疗', en: 'Medical' } },
     { id: 'fitness', label: { ko: '운동', zh: '运动', en: 'Fitness' } },
-    // { id: 'fan', label: { ko: '팬페이지', zh: '粉丝页', en: 'Fan' } }, // 숨김 처리
+    { id: 'translator', label: { ko: '통역', zh: '翻译', en: 'Translate' } },
+    { id: 'sos', label: { ko: 'SOS', zh: 'SOS', en: 'SOS' } },
+    { id: 'community', label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
+    { id: 'finance', label: { ko: '금융', zh: '金融', en: 'Finance' } },
+    { id: 'wallet', label: { ko: '월렛', zh: '钱包', en: 'Wallet' } },
     { id: 'profile', label: { ko: '내정보', zh: '我的', en: 'Me' } },
   ]
 
@@ -1013,8 +1025,9 @@ function AppInner() {
       items: [
         { label: { ko: '비자 종류별 안내', zh: '签证类型指南', en: 'Visa Types' }, action: () => { setTab('transition'); setView('home') } },
         { label: { ko: '비자 변경/전환', zh: '签证变更', en: 'Visa Change' }, action: () => { setTab('transition'); setView('transition') } },
+        { label: { ko: 'D-day 알림', zh: 'D-day提醒', en: 'D-day Alert' }, action: () => { setTab('visaalert') } },
         { label: { ko: '서류 대행', zh: '文件代办', en: 'Document Services' }, action: () => { setTab('transition'); setView('agency') } },
-        { label: { ko: 'AI 상담', zh: 'AI咨询', en: 'AI Consult' }, action: () => { setTab('chat') } },
+        { label: { ko: '자동 상담', zh: '自动咨询', en: 'Auto Consult' }, action: () => { setTab('chat') } },
       ],
     },
     travel: {
@@ -1064,10 +1077,9 @@ function AppInner() {
       items: [
         { label: { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency' } },
         { label: { ko: '택배/배송', zh: '快递/配送', en: 'Delivery' } },
-        { label: { ko: '의료/병원', zh: '医疗/医院', en: 'Medical' } },
+        { label: { ko: '의료/병원', zh: '医疗/医院', en: 'Medical' }, action: () => { setTab('medical') } },
         { label: { ko: '통신/SIM', zh: '通信/SIM', en: 'Telecom' } },
-        { label: { ko: '긴급 연락처', zh: '紧急联系', en: 'Emergency' } },
-        { label: { ko: '반려동물', zh: '宠物', en: 'Pets' } },
+        { label: { ko: '금융 가이드', zh: '金融指南', en: 'Finance Guide' }, action: () => { setTab('finance') } },
       ],
     },
     jobs: {
@@ -1076,6 +1088,7 @@ function AppInner() {
         { label: { ko: '아르바이트', zh: '兼职', en: 'Part-time' } },
         { label: { ko: '정규직', zh: '全职', en: 'Full-time' } },
         { label: { ko: '취업 가이드', zh: '就业指南', en: 'Job Guide' } },
+        { label: { ko: '이력서 변환', zh: '简历转换', en: 'Resume Builder' }, action: () => { setTab('resume') } },
       ],
     },
     housing: {
@@ -1102,6 +1115,22 @@ function AppInner() {
         { label: { ko: '헬스장', zh: '健身房', en: 'Gym' } },
         { label: { ko: '수영장', zh: '游泳池', en: 'Pool' } },
         { label: { ko: '요가/필라테스', zh: '瑜伽/普拉提', en: 'Yoga/Pilates' } },
+      ],
+    },
+    translator: {
+      title: { ko: '통역 · 번역', zh: '口译 · 翻译', en: 'Interpreter · Translator' },
+      items: [
+        { label: { ko: '실시간 통역', zh: '实时口译', en: 'Real-time Translation' }, action: () => { setTab('translator') } },
+        { label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dictionary' }, action: () => { setTab('artranslate') } },
+      ],
+    },
+    wallet: {
+      title: { ko: '디지털 월렛', zh: '数字钱包', en: 'Digital Wallet' },
+      items: [
+        { label: { ko: '신분증 보관', zh: '证件保管', en: 'ID Storage' }, action: () => { setTab('wallet') } },
+        { label: { ko: '이름 관리', zh: '姓名管理', en: 'Name Management' }, action: () => { setTab('wallet') } },
+        { label: { ko: '본인인증 가이드', zh: '身份验证指南', en: 'Verification Guide' }, action: () => { setTab('wallet') } },
+        { label: { ko: '만료 알림', zh: '到期提醒', en: 'Expiry Alert' }, action: () => { setTab('wallet') } },
       ],
     },
     learn: {
@@ -1145,11 +1174,43 @@ function AppInner() {
     },
     life: {
       title: { ko: '생활.', zh: '生活。', en: 'Life.' },
-      sub: { ko: '환율, 배송, 의료, 긴급연락처.', zh: '汇率、快递、医疗、紧急联系。', en: 'Currency, delivery, medical, emergency.' },
+      sub: { ko: '한국 생활에 유용한 도구 모음.', zh: '韩国生活实用工具集。', en: 'Useful tools for life in Korea.' },
     },
     work: {
       title: { ko: '구직 · 집.', zh: '工作 · 房。', en: 'Work · Housing.' },
       sub: { ko: '취업부터 집 구하기까지.', zh: '从就业到找房。', en: 'From jobs to housing.' },
+    },
+    translator: {
+      title: { ko: '통역.', zh: '翻译。', en: 'Translation.' },
+      sub: { ko: '실시간 통역과 간판 사전.', zh: '实时翻译和招牌词典。', en: 'Real-time translation and sign dictionary.' },
+    },
+    artranslate: {
+      title: { ko: '간판 사전.', zh: '招牌词典。', en: 'Sign Dictionary.' },
+      sub: { ko: '카메라로 간판을 보면서 아래 사전에서 검색하세요.', zh: '对照相机中的招牌，在下方词典中搜索。', en: 'View signs with camera and look up in the dictionary below.' },
+    },
+    sos: {
+      title: { ko: '긴급 SOS.', zh: '紧急SOS。', en: 'Emergency SOS.' },
+      sub: { ko: '위급할 때 도움을 요청하세요.', zh: '紧急时刻寻求帮助。', en: 'Request help in emergencies.' },
+    },
+    community: {
+      title: { ko: '커뮤니티.', zh: '社区。', en: 'Community.' },
+      sub: { ko: '정보 공유와 중고거래 플랫폼.', zh: '信息分享和二手交易平台。', en: 'Info sharing and marketplace platform.' },
+    },
+    visaalert: {
+      title: { ko: 'D-day 알림.', zh: 'D-day提醒。', en: 'D-day Alert.' },
+      sub: { ko: '비자 만료일 관리와 스마트 알림.', zh: '签证到期日管理和智能提醒。', en: 'Visa expiry management and smart alerts.' },
+    },
+    finance: {
+      title: { ko: '금융 가이드.', zh: '金融指南。', en: 'Finance Guide.' },
+      sub: { ko: '은행, 송금, 신용, 세금 완벽 가이드.', zh: '银行、汇款、信用、税务完整指南。', en: 'Complete guide to banking, remittance, credit, tax.' },
+    },
+    resume: {
+      title: { ko: '이력서 변환.', zh: '简历转换。', en: 'Resume Builder.' },
+      sub: { ko: '한국식 이력서 자동 생성 도구.', zh: '韩式简历自动生成工具。', en: 'Auto-generate Korean-style resume.' },
+    },
+    wallet: {
+      title: { ko: '내 월렛.', zh: '我的钱包。', en: 'My Wallet.' },
+      sub: { ko: '신분증, 서류, 이름을 한곳에서.', zh: '证件、文件、姓名，一处管理。', en: 'IDs, docs, and names in one place.' },
     },
     profile: {
       title: { ko: '내 정보.', zh: '我的信息。', en: 'My Info.' },
@@ -1160,7 +1221,7 @@ function AppInner() {
   const currentHero = heroData[tab] || heroData.home
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" style={{ fontSize: fontSize === 'large' ? '18px' : fontSize === 'small' ? '14px' : '16px' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
 
       {/* Header — 29CM style: logo left, icons right */}
@@ -1171,6 +1232,10 @@ function AppInner() {
             <button onClick={() => setShowNotice(true)} className="text-[#6B7280] text-[11px] hover:text-[#111827] transition-all">{lang==='ko'?'공지':lang==='zh'?'公告':'Notice'}</button>
             <span className="text-[#E5E7EB]">|</span>
             <button onClick={() => setLang(nextLang(lang))} className="text-[#6B7280] text-[11px] hover:text-[#111827] transition-all">{langLabel(lang)}</button>
+            <span className="text-[#E5E7EB]">|</span>
+            <button onClick={() => setFontSize(f => f === 'normal' ? 'large' : f === 'large' ? 'small' : 'normal')} className="text-[#6B7280] text-[11px] hover:text-[#111827] transition-all">
+              {fontSize === 'large' ? 'A-' : fontSize === 'small' ? 'A' : 'A+'}
+            </button>
             <span className="text-[#E5E7EB]">|</span>
             <button onClick={() => {
               if (window.confirm(lang === 'ko' ? '로그아웃 하시겠습니까?' : lang === 'zh' ? '确定要退出登录吗？' : 'Log out?')) {
@@ -1246,6 +1311,14 @@ function AppInner() {
         {tab==='housing' && <HousingTab lang={lang} profile={profile} />}
         {tab==='medical' && <MedicalTab lang={lang} />}
         {tab==='fitness' && <FitnessTab lang={lang} />}
+        {tab==='translator' && <TranslatorTab lang={lang} />}
+        {tab==='artranslate' && <ARTranslateTab lang={lang} />}
+        {tab==='sos' && <SOSTab lang={lang} profile={profile} />}
+        {tab==='community' && <CommunityTab lang={lang} profile={profile} />}
+        {tab==='visaalert' && <VisaAlertTab lang={lang} profile={profile} />}
+        {tab==='finance' && <FinanceTab lang={lang} profile={profile} />}
+        {tab==='resume' && <ResumeTab lang={lang} profile={profile} />}
+        {tab==='wallet' && <DigitalWalletTab lang={lang} profile={profile} />}
         {tab==='fan' && (
           <div className="min-h-[60vh] flex items-center justify-center">
             <p className="text-sm text-[#9CA3AF]">{lang === 'ko' ? '준비 중입니다' : lang === 'zh' ? '准备中' : 'Coming soon'}</p>
@@ -1253,6 +1326,11 @@ function AppInner() {
         )}
         {tab==='agency' && <AgencyTab profile={profile} lang={lang} />}
         <div className="mt-12 mb-6 text-center text-[11px] text-[#9CA3AF] space-y-1">
+          <p className="text-[9px] text-[#9CA3AF] max-w-xs mx-auto leading-relaxed">
+            {lang === 'ko' ? '본 앱의 정보는 참고용이며 법적 효력이 없습니다. 비자, 법률, 의료 관련 사항은 반드시 관련 기관에 직접 확인하시기 바랍니다.' 
+            : lang === 'zh' ? '本应用信息仅供参考，不具有法律效力。签证、法律、医疗相关事项请务必直接向相关机构确认。'
+            : 'Information in this app is for reference only and has no legal effect. Please verify visa, legal, and medical matters directly with relevant authorities.'}
+          </p>
           <p>© 2026 HanPocket. All rights reserved.</p>
         </div>
       </div>

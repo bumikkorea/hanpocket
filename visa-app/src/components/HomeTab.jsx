@@ -90,6 +90,7 @@ function ExchangeRateCard({ exchangeRate, lang, compact }) {
           {converted.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}
         </div>
       </div>
+      <p className="text-[8px] text-[#9CA3AF] text-center mt-1">Last: {exchangeRate?._date || '-'}</p>
     </div>
   )
 }
@@ -633,7 +634,7 @@ function KpopChartWidget({ lang }) {
   }, [])
 
   if (loading) return <p className="text-xs text-[#9CA3AF] text-center py-4">Loading...</p>
-  if (error || !chart) return <p className="text-xs text-[#9CA3AF] text-center py-4">Chart unavailable</p>
+  if (error || !chart) return <p className="text-xs text-[#9CA3AF] text-center py-4">{lang === 'ko' ? '차트를 불러올 수 없습니다' : lang === 'zh' ? '无法加载排行榜' : 'Chart unavailable'}</p>
 
   return (
     <div>
@@ -2495,7 +2496,7 @@ function WeatherCard({ lang }) {
 
   const cityObj = WEATHER_CITIES.find(c => c.id === city) || WEATHER_CITIES[0]
   const temp = weather?.temp ?? '—'
-  const desc = weather?.desc || (lang === 'ko' ? '로딩중...' : lang === 'zh' ? '加载中...' : 'Loading...')
+  const desc = weather?.desc || (loading ? (lang === 'ko' ? '로딩중...' : lang === 'zh' ? '加载中...' : 'Loading...') : (lang === 'ko' ? '날씨 정보를 불러올 수 없습니다' : lang === 'zh' ? '无法加载天气信息' : 'Weather unavailable'))
 
   return (
     <div className="w-[200px] h-[180px] shrink-0 bg-white border border-[#E5E7EB] rounded-lg p-4 flex flex-col justify-between shadow-sm" style={{ scrollSnapAlign: 'start' }}>
@@ -2612,6 +2613,7 @@ function InfoBar({ lang, exchangeRate }) {
           return r ? <span key={c.code}>1{c.code}={Math.round(r)}₩</span> : null
         })}
         <span className="text-[8px] text-[#9CA3AF]">KRW{lang === 'ko' ? '기준' : lang === 'zh' ? '基准' : 'base'}</span>
+        {exchangeRate?._date && <span className="text-[8px] text-[#9CA3AF]">({exchangeRate._date})</span>}
       </div>
     </div>
   )
@@ -2637,12 +2639,12 @@ function TaxRefundMiniCard({ lang }) {
         <span className="text-[10px] text-[#6B7280]">₩</span>
         <input type="text" inputMode="numeric" pattern="[0-9]*" value={amount} onChange={e => { const v = e.target.value.replace(/[^0-9]/g, ''); setAmount(v) }}
           placeholder={lang === 'ko' ? '금액 입력' : lang === 'zh' ? '输入金额' : 'Amount'}
-          className="w-full text-right text-sm font-bold text-[#B8956A] bg-transparent border border-[#B8956A] rounded-lg px-2 py-1.5 outline-none focus:ring-1 focus:ring-[#B8956A]/50 placeholder:text-[#9CA3AF] placeholder:text-[10px]"
+          className="w-full text-right text-sm font-bold text-[#111827] bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-2 py-1.5 outline-none focus:ring-1 focus:ring-[#111827]/20 placeholder:text-[#9CA3AF] placeholder:text-[10px]"
         />
       </div>
-      <div className="text-center py-1.5 bg-transparent border border-[#B8956A] rounded-lg flex-1 flex flex-col justify-center">
+      <div className="text-center py-1.5 bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg flex-1 flex flex-col justify-center">
         <p className="text-[9px] text-[#6B7280]">{lang === 'ko' ? '예상 환급액' : lang === 'zh' ? '预估退税' : 'Est. Refund'}</p>
-        <p className="text-xl font-black text-[#B8956A]">₩{refund.toLocaleString('ko-KR')}</p>
+        <p className="text-xl font-black text-[#111827]">₩{refund.toLocaleString('ko-KR')}</p>
       </div>
       <p className="text-[8px] text-[#9CA3AF] text-center mt-1">{lang === 'ko' ? '최소 3만원 이상 구매' : lang === 'zh' ? '最低消费3万韩元' : 'Min ₩30,000'}</p>
     </div>
@@ -2843,6 +2845,180 @@ function MyStatusCard({ profile, lang, setTab }) {
 
 // ─── Personal Cards Section ───
 
+// ─── Voice Translator Card (실시간 음성 통역) ───
+function VoiceTranslatorCard({ lang }) {
+  const [conversations, setConversations] = useState([])
+  const [isListening, setIsListening] = useState(null) // 'zh' | 'ko' | null
+  const [interim, setInterim] = useState('')
+  const recognitionRef = useRef(null)
+
+  const startListening = (sourceLang) => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert(lang === 'ko' ? '이 브라우저는 음성 인식을 지원하지 않습니다.' : lang === 'zh' ? '此浏览器不支持语音识别' : 'Speech recognition not supported')
+      return
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    const recognition = new SpeechRecognition()
+    recognition.lang = sourceLang === 'zh' ? 'zh-CN' : 'ko-KR'
+    recognition.interimResults = true
+    recognition.continuous = false
+    recognition.onresult = (event) => {
+      let final = '', inter = ''
+      for (let i = 0; i < event.results.length; i++) {
+        if (event.results[i].isFinal) final += event.results[i][0].transcript
+        else inter += event.results[i][0].transcript
+      }
+      if (final) {
+        setInterim('')
+        const translated = simpleTranslate(final, sourceLang)
+        setConversations(prev => [...prev, { source: sourceLang, original: final, translated }])
+        // Speak the translation
+        const u = new SpeechSynthesisUtterance(translated)
+        u.lang = sourceLang === 'zh' ? 'ko-KR' : 'zh-CN'
+        u.rate = 0.85
+        speechSynthesis.speak(u)
+      } else if (inter) {
+        setInterim(inter)
+      }
+    }
+    recognition.onend = () => { setIsListening(null); setInterim('') }
+    recognition.onerror = () => {
+      setIsListening(null); setInterim('')
+      setConversations(prev => [...prev, { source: sourceLang, original: lang === 'ko' ? '음성 인식을 사용할 수 없습니다. 텍스트로 입력해주세요.' : lang === 'zh' ? '无法使用语音识别。请使用文字输入。' : 'Speech recognition unavailable. Please use text input.', translated: '' }])
+    }
+    recognitionRef.current = recognition
+    try {
+      recognition.start()
+      setIsListening(sourceLang)
+    } catch (e) {
+      setIsListening(null)
+      setConversations(prev => [...prev, { source: sourceLang, original: lang === 'ko' ? '음성 인식을 사용할 수 없습니다. 텍스트로 입력해주세요.' : lang === 'zh' ? '无法使用语音识别。请使用文字输入。' : 'Speech recognition unavailable. Please use text input.', translated: '' }])
+    }
+  }
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop()
+    }
+  }
+
+  // Simple phrase-based translation dictionary
+  const simpleTranslate = (text, from) => {
+    const zhToKo = {
+      '你好': '안녕하세요', '谢谢': '감사합니다', '对不起': '죄송합니다', '请问': '실례합니다',
+      '多少钱': '얼마예요?', '在哪里': '어디예요?', '我要这个': '이거 주세요',
+      '帮帮我': '도와주세요', '不好意思': '실례합니다', '请等一下': '잠시만요',
+      '我听不懂': '못 알아듣겠어요', '可以吗': '괜찮아요?', '我是中国人': '저는 중국 사람이에요',
+      '洗手间在哪里': '화장실이 어디예요?', '请给我菜单': '메뉴판 주세요',
+      '我想要': '주세요', '太贵了': '너무 비싸요', '便宜一点': '좀 깎아주세요',
+      '这是什么': '이게 뭐예요?', '好吃': '맛있어요', '结账': '계산이요',
+      '一个': '하나', '两个': '둘', '三个': '셋', '我要点餐': '주문할게요',
+      '打包': '포장해 주세요', '堂食': '여기서 먹을게요', '不要辣': '안 맵게 해주세요',
+      '我肚子疼': '배가 아파요', '我头疼': '머리가 아파요', '我发烧了': '열이 나요',
+      '请叫救护车': '구급차 불러주세요', '请叫警察': '경찰 불러주세요',
+      '我迷路了': '길을 잃었어요', '请带我去这个地址': '이 주소로 데려다주세요',
+      '地铁站在哪': '지하철역이 어디예요?', '公交车站': '버스 정류장',
+      '我要去': '가고 싶어요', '请停车': '세워주세요',
+    }
+    const koToZh = {}
+    Object.entries(zhToKo).forEach(([zh, ko]) => { koToZh[ko] = zh; koToZh[ko.replace('?','')] = zh })
+
+    const dict = from === 'zh' ? zhToKo : koToZh
+    // Exact match first
+    if (dict[text]) return dict[text]
+    // Partial match - find longest matching phrase
+    let result = text
+    let matched = false
+    for (const [key, val] of Object.entries(dict).sort((a, b) => b[0].length - a[0].length)) {
+      if (text.includes(key)) {
+        result = result.replace(key, val)
+        matched = true
+      }
+    }
+    if (!matched) {
+      // Return with a note
+      return from === 'zh'
+        ? `[${text}] — (사전에 없는 표현입니다)`
+        : `[${text}] — (词典中没有此表达)`
+    }
+    return result
+  }
+
+  const card = "w-[280px] min-h-[220px] shrink-0 bg-white border border-[#E5E7EB] rounded-lg p-4 flex flex-col card-glow"
+
+  return (
+    <div className={card} style={{ scrollSnapAlign: 'start' }}>
+      <p className="text-[10px] text-[#6B7280] font-medium mb-2">
+        {lang === 'ko' ? '실시간 통역' : lang === 'zh' ? '实时翻译' : 'Live Translator'}
+      </p>
+
+      {/* Conversation area */}
+      <div className="flex-1 overflow-y-auto no-scrollbar space-y-1.5 mb-2 min-h-[100px] max-h-[130px]">
+        {conversations.length === 0 && (
+          <p className="text-[10px] text-[#9CA3AF] text-center mt-6">
+            {lang === 'ko' ? '버튼을 꾹 누르고 말하세요' : lang === 'zh' ? '按住按钮说话' : 'Hold button and speak'}
+          </p>
+        )}
+        {conversations.map((c, i) => (
+          <div key={i} className="space-y-0.5">
+            <p className={`text-[11px] font-semibold ${c.source === 'zh' ? 'text-red-500' : 'text-blue-500'}`}>
+              {c.source === 'zh' ? '中' : '韩'}: {c.original}
+            </p>
+            <p className={`text-[11px] font-semibold ${c.source === 'zh' ? 'text-blue-500' : 'text-red-500'} ml-3`}>
+              → {c.translated}
+            </p>
+          </div>
+        ))}
+        {interim && (
+          <p className={`text-[11px] italic ${isListening === 'zh' ? 'text-red-300' : 'text-blue-300'}`}>
+            {interim}...
+          </p>
+        )}
+      </div>
+
+      {/* Mic buttons */}
+      <div className="flex gap-2">
+        <button
+          onMouseDown={() => startListening('zh')}
+          onMouseUp={stopListening}
+          onTouchStart={(e) => { e.preventDefault(); startListening('zh') }}
+          onTouchEnd={(e) => { e.preventDefault(); stopListening() }}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-sm transition-all select-none ${
+            isListening === 'zh'
+              ? 'bg-red-500 text-white scale-95 shadow-lg shadow-red-500/30'
+              : 'bg-red-50 text-red-500 hover:bg-red-100 active:bg-red-500 active:text-white'
+          }`}
+        >
+          <Mic size={16} />
+          <span>中</span>
+        </button>
+        <button
+          onMouseDown={() => startListening('ko')}
+          onMouseUp={stopListening}
+          onTouchStart={(e) => { e.preventDefault(); startListening('ko') }}
+          onTouchEnd={(e) => { e.preventDefault(); stopListening() }}
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-sm transition-all select-none ${
+            isListening === 'ko'
+              ? 'bg-blue-500 text-white scale-95 shadow-lg shadow-blue-500/30'
+              : 'bg-blue-50 text-blue-500 hover:bg-blue-100 active:bg-blue-500 active:text-white'
+          }`}
+        >
+          <Mic size={16} />
+          <span>韩</span>
+        </button>
+      </div>
+
+      {/* Clear button */}
+      {conversations.length > 0 && (
+        <button onClick={() => setConversations([])}
+          className="mt-1.5 text-[9px] text-[#9CA3AF] hover:text-[#6B7280] text-center">
+          {lang === 'ko' ? '대화 지우기' : lang === 'zh' ? '清除对话' : 'Clear'}
+        </button>
+      )}
+    </div>
+  )
+}
+
 function PersonalSection({ profile, lang, setTab, exchangeRate }) {
   const koreanData = widgetMockData.korean
   const card = "w-[220px] min-h-[220px] shrink-0 bg-white border border-[#E5E7EB] rounded-lg p-4 flex flex-col card-glow"
@@ -2850,6 +3026,9 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
 
   return (
     <HScrollSection>
+      {/* 0. Voice Translator */}
+      <VoiceTranslatorCard lang={lang} />
+
       {/* 1. My Status */}
       <MyStatusCard profile={profile} lang={lang} setTab={setTab} />
 
@@ -2924,7 +3103,7 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
 const SECTION_TODAY = ['editorpick', 'cvsnew', 'beautynew', 'kpop', 'fanevent', 'restaurant']
 const SECTION_SHOPPING = ['oliveyoung', 'themepark', 'beauty', 'fashiontrend']
 const SECTION_CULTURE = ['tradition', 'festival', 'trip']
-const SECTION_TOOLS = ['streak', 'timezone', 'parcel', 'delivery', 'accommodation', 'transport', 'realestate', 'idol', 'drama', 'trending', 'visaqa', 'expat', 'newsTranslated', 'emergency', 'weatherCompare', 'currency', 'pet']
+const SECTION_TOOLS = ['timezone', 'parcel', 'delivery', 'currency']
 
 function getEnabledWidgetsForSection(sectionIds, config) {
   const allWidgets = []

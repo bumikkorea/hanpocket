@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>테슬라 FSD × 패션 × 한국여행 콘텐츠 30선</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Malgun Gothic', 'Microsoft YaHei', sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  line-height: 1.7;
+}
+.header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 60px 40px;
+  text-align: center;
+  border-bottom: 3px solid #e31937;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle at 30% 50%, rgba(227,25,55,0.08) 0%, transparent 50%);
+}
+.header h1 {
+  font-size: 2.4em;
+  color: #fff;
+  letter-spacing: 2px;
+  position: relative;
+}
+.header h1 span { color: #e31937; }
+.header .subtitle {
+  margin-top: 15px;
+  font-size: 1.1em;
+  color: #aaa;
+  position: relative;
+}
+.header .route {
+  margin-top: 20px;
+  display: inline-block;
+  background: rgba(227,25,55,0.15);
+  border: 1px solid rgba(227,25,55,0.4);
+  border-radius: 8px;
+  padding: 12px 24px;
+  color: #f0f0f0;
+  font-size: 0.95em;
+  position: relative;
+}
+.toc {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+.toc h2 {
+  color: #e31937;
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 8px;
+}
+.toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 30px;
+  margin-bottom: 30px;
+}
+.toc-item {
+  color: #bbb;
+  font-size: 0.92em;
+  padding: 4px 0;
+}
+.toc-item .num { color: #e31937; font-weight: bold; margin-right: 6px; }
+.category-header {
+  max-width: 1100px;
+  margin: 50px auto 20px;
+  padding: 0 20px;
+}
+.category-header h2 {
+  font-size: 1.8em;
+  color: #fff;
+  border-left: 4px solid #e31937;
+  padding-left: 16px;
+}
+.category-header .cat-desc {
+  margin-top: 8px;
+  padding-left: 20px;
+  color: #888;
+  font-size: 0.95em;
+}
+.cards {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.card {
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  overflow: hidden;
+  transition: border-color 0.3s;
+  page-break-inside: avoid;
+}
+.card:hover { border-color: #e31937; }
+.card-title {
+  background: linear-gradient(90deg, #1a1a1a, #222);
+  padding: 20px 24px;
+  border-bottom: 1px solid #2a2a2a;
+}
+.card-title .number {
+  color: #e31937;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+.card-title h3 {
+  font-size: 1.25em;
+  color: #fff;
+  margin-top: 4px;
+}
+.card-title .zh {
+  color: #999;
+  font-size: 0.95em;
+  margin-top: 2px;
+}
+.card-body { padding: 24px; }
+.card-body section { margin-bottom: 20px; }
+.card-body section:last-child { margin-bottom: 0; }
+.card-body .label {
+  color: #e31937;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-body .label .icon { font-size: 1.1em; }
+.card-body p { color: #ccc; font-size: 0.93em; }
+.card-body ul {
+  list-style: none;
+  padding: 0;
+}
+.card-body ul li {
+  color: #ccc;
+  font-size: 0.93em;
+  padding: 3px 0 3px 18px;
+  position: relative;
+}
+.card-body ul li::before {
+  content: '▸';
+  color: #e31937;
+  position: absolute;
+  left: 0;
+}
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.meta-box {
+  background: #1a1a1a;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.meta-box .label { margin-bottom: 6px; }
+.footer {
+  text-align: center;
+  padding: 40px;
+  color: #555;
+  font-size: 0.85em;
+  border-top: 1px solid #222;
+  margin-top: 40px;
+}
+@media print {
+  body { background: #fff; color: #222; }
+  .card { border-color: #ddd; background: #fff; break-inside: avoid; }
+  .card-title { background: #f5f5f5; }
+  .card-title h3 { color: #111; }
+  .card-body p, .card-body ul li { color: #333; }
+  .header { background: #222; }
+  .meta-box { background: #f9f9f9; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>TESLA <span>FSD</span> × FASHION × KOREA</h1>
+  <div class="subtitle">중국인 와이프 × 한국인 남편 | 커플 크리에이터 콘텐츠 플랜 30선<br>小红书+抖音 百万粉丝 情侣创作者 内容企划</div>
+  <div class="route">
+    <strong>Day 1:</strong> 서울 → 강릉 → 부산 &nbsp;|&nbsp; <strong>Day 2:</strong> 부산 → 광주 → 서울<br>
+    테슬라 FSD 렌트카 2박 3일 한국 종단 여행
+  </div>
+</div>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <h2>📋 목차 / 目录</h2>
+  
+  <h3 style="color:#e31937; margin: 15px 0 8px;">A. 차 안 콘텐츠 (자율주행 중) — 10개</h3>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="num">A1</span>자율주행 중 풀메이크업 챌린지</div>
+    <div class="toc-item"><span class="num">A2</span>고속도로 패션쇼 — 옷 갈아입기 타임랩스</div>
+    <div class="toc-item"><span class="num">A3</span>자율주행 먹방 — 편의점 풀코스</div>
+    <div class="toc-item"><span class="num">A4</span>FSD 중 커플 네일아트</div>
+    <div class="toc-item"><span class="num">A5</span>자율주행 중 1분 헤어스타일링 챌린지</div>
+    <div class="toc-item"><span class="num">A6</span>FSD로 떠나는 차 안 노래방</div>
+    <div class="toc-item"><span class="num">A7</span>자율주행 중 커플 한복 착용 챌린지</div>
+    <div class="toc-item"><span class="num">A8</span>FSD 중 스킨케어 루틴 풀 코스</div>
+    <div class="toc-item"><span class="num">A9</span>자율주행 중 커플 보드게임/카드게임</div>
+    <div class="toc-item"><span class="num">A10</span>FSD 새벽 드라이브 — 일출 뷰 촬영</div>
+  </div>
+
+  <h3 style="color:#e31937; margin: 15px 0 8px;">B. 도시별 패션 콘텐츠 — 10개</h3>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="num">B1</span>서울 성수동 — 테슬라 × 스트릿 패션</div>
+    <div class="toc-item"><span class="num">B2</span>강릉 경포대 — 바다 × 내추럴 룩</div>
+    <div class="toc-item"><span class="num">B3</span>부산 해운대 — 리조트 룩 화보</div>
+    <div class="toc-item"><span class="num">B4</span>부산 감천문화마을 — 컬러풀 패션</div>
+    <div class="toc-item"><span class="num">B5</span>광주 양림동 — 레트로 빈티지 룩</div>
+    <div class="toc-item"><span class="num">B6</span>강릉 주문진 — 어촌 × 하이패션 갭</div>
+    <div class="toc-item"><span class="num">B7</span>서울 한남동 — 럭셔리 데이트 룩</div>
+    <div class="toc-item"><span class="num">B8</span>부산 영도 흰여울마을 — 지중해 무드</div>
+    <div class="toc-item"><span class="num">B9</span>광주 무등산 — 아웃도어 시크 룩</div>
+    <div class="toc-item"><span class="num">B10</span>서울 을지로 — 뉴트로 공장 패션</div>
+  </div>
+
+  <h3 style="color:#e31937; margin: 15px 0 8px;">C. 테슬라 × 기술 콘텐츠 — 5개</h3>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="num">C1</span>FSD 한국 도로 적응기 — 리얼 리뷰</div>
+    <div class="toc-item"><span class="num">C2</span>테슬라 충전 여행 — 충전소 맛집 루트</div>
+    <div class="toc-item"><span class="num">C3</span>FSD vs 남편 운전 — 블라인드 테스트</div>
+    <div class="toc-item"><span class="num">C4</span>테슬라 캠핑 모드 × 차박 브이로그</div>
+    <div class="toc-item"><span class="num">C5</span>FSD 데이터로 보는 한국 종단 — 인포그래픽</div>
+  </div>
+
+  <h3 style="color:#e31937; margin: 15px 0 8px;">D. 커플/바이럴 챌린지 — 5개</h3>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="num">D1</span>4도시 4룩 — 도시 바뀔 때마다 변신</div>
+    <div class="toc-item"><span class="num">D2</span>와이프 몰래 여행지 서프라이즈</div>
+    <div class="toc-item"><span class="num">D3</span>중한 커플 음식 교환 챌린지</div>
+    <div class="toc-item"><span class="num">D4</span>예산 챌린지 — 10만원으로 하루 여행</div>
+    <div class="toc-item"><span class="num">D5</span>한국 할머니들 반응 — 중국 며느리 패션</div>
+  </div>
+</div>
+
+<!-- ==================== CATEGORY A ==================== -->
+<div class="category-header">
+  <h2>A. 차 안 콘텐츠 (자율주행 중)</h2>
+  <p class="cat-desc">FSD가 운전하는 동안 차 안에서 펼쳐지는 크리에이티브 콘텐츠 10가지. 핵심은 "핸즈프리"의 자유로움을 시각적으로 증명하는 것.</p>
+</div>
+
+<div class="cards">
+
+<!-- A1 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A1</span>
+    <h3>자율주행 중 풀메이크업 챌린지</h3>
+    <div class="zh">自动驾驶全妆挑战</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>FSD를 켜고 서울→강릉 영동고속도로에서 와이프가 풀 메이크업을 처음부터 끝까지 완성한다. 남편은 핸들을 잡지 않고 옆에서 리액션하며, 차가 스스로 차선 변경하거나 앞차를 추월하는 순간에 카메라를 FSD 화면과 와이프 얼굴 사이를 왔다갔다 한다. 메이크업 전 민낯과 완성 후의 극적인 비교가 핵심이다. 강릉 도착 시 완벽한 메이크업으로 카페에 등장하는 것이 마무리. 베이스부터 립까지 전 과정을 보여주되, FSD 개입 순간(차선 변경, 커브)마다 "지금 자율주행 중" 자막을 삽입해 긴장감을 유지한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>대시보드 고정 카메라: FSD 화면(비전 뷰) 실시간 녹화 — 차선·차량 인식 그래픽이 보이도록</li>
+        <li>조수석 클로즈업 카메라 (GoPro/인스타360): 와이프 얼굴 정면, 메이크업 디테일</li>
+        <li>운전석 사이드 카메라: 남편 핸즈프리 상태 + 리액션 포착</li>
+        <li>타임랩스(x8)로 전체 메이크업 과정 압축 + 차선 변경 순간은 실시간 슬로모션</li>
+        <li>비포/애프터 스플릿 스크린 — 민낯 좌측, 완성 우측으로 드라마틱 공개</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>"운전 중 화장"이라는 금기를 자율주행으로 합법적(?)으로 깨는 신선함</li>
+        <li>민낯→완성 비포애프터 = 중국 뷰티 콘텐츠 황금 포맷 (抖音 조회수 보장)</li>
+        <li>FSD 신뢰도를 메이크업이라는 일상 행위로 시각적으로 증명</li>
+        <li>차선 변경 순간 손 떨림 → 웃음 = 밈 생성 가능성 높음</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>영동고속도로 서울→강릉 구간, 특히 대관령 구간 (터널 진입·탈출 시 조명 변화가 영상미 극대화). 출발: 서울 톨게이트 / 도착: 강릉 안목해변 카페거리</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>메이크업 풀세트 (파운데이션~립), 차량용 LED 조명 (클립형), 차량용 확대 거울, GoPro Hero 12 + 흡착 마운트, 물티슈, 메이크업 파우치</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2.5시간 (서울→강릉 이동 중 자연 촬영, 별도 셋업 불필요)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>메이크업 타임랩스: 경쾌한 팝 (Dua Lipa - Levitating 분위기) → 완성 reveal: 드라마틱 오케스트라 스웰 → 카페 등장: 세련된 Lo-fi</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A2 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A2</span>
+    <h3>고속도로 패션쇼 — 옷 갈아입기 타임랩스</h3>
+    <div class="zh">高速公路时装秀 — 换装延时摄影</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>FSD 자율주행 중 와이프가 조수석에서 도시별 컨셉에 맞는 의상으로 갈아입는다. 서울 출발 시 캐주얼 스트릿 룩 → 강릉 도착 전 내추럴 리조트 룩 → 부산 전 글래머러스 나이트 룩으로 변신. 각 의상 교체는 터널 진입 시 시작해서 터널 탈출 시 완성되는 "터널 트랜지션"으로 편집한다. 남편은 FSD 덕분에 완전히 뒤를 돌아 와이프의 코디를 평가하는 리액션을 보여준다. 마지막에는 세 벌을 나란히 비교하는 스플릿 화면으로 마무리. 차 안이라는 좁은 공간에서 옷을 갈아입는 과정 자체가 코미디 요소가 된다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>터널 진입 → 화면 어두워짐 → 터널 탈출 → 새 의상 공개 (트랜지션 편집)</li>
+        <li>조수석 정면 고정캠 + 백미러 앵글에서 동시 촬영</li>
+        <li>옷 교체 과정은 유쾌한 빠른 컷으로, 좁은 공간에서의 우스꽝스러움 강조</li>
+        <li>각 룩 완성 후 차 창문을 배경으로 포즈 — 달리는 풍경이 자연 배경</li>
+        <li>3단 비교 컷: 같은 앵글에서 세 벌의 룩을 연속 배치</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>"터널 트랜지션"은 틱톡/도우인에서 이미 검증된 인기 편집 기법</li>
+        <li>패션 콘텐츠 + 여행 콘텐츠 + 기술 콘텐츠의 3중 카테고리 노출</li>
+        <li>좁은 차 안에서 옷 갈아입는 코미디 = 공감 + 웃음</li>
+        <li>각 도시에 맞는 패션으로 여행 가이드 역할까지</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>영동고속도로 → 동해고속도로 구간. 터널이 많은 대관령~강릉 구간이 최적. 강릉→부산 동해안 루트의 해안 터널도 활용.</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>3벌의 컨셉 의상 (스트릿/리조트/글램), 액세서리 세트별 분류, 의상 커버백, 차량용 옷걸이, 소형 스팀다리미(주름 방지)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>총 여정 중 연속 촬영 약 4시간 (3회 의상 교체, 각 20분 소요)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>런웨이 느낌 일렉트로닉 비트 (터널 트랜지션 시 베이스 드롭) → 각 룩 공개 시 해당 도시 무드 음악</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A3 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A3</span>
+    <h3>자율주행 먹방 — 편의점 풀코스</h3>
+    <div class="zh">自动驾驶吃播 — 便利店全套大餐</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>고속도로 휴게소에서 편의점 음식을 풀코스로 구매한 뒤, FSD를 켜고 달리면서 차 안에서 정식 코스 요리처럼 세팅하여 먹는다. 전채(삼각김밥) → 수프(컵라면) → 메인(도시락) → 디저트(편의점 케이크) 순서로 남편이 웨이터 역할을 하며 서빙한다. 차가 자율주행 중이라 두 사람 모두 손이 자유롭다는 것을 강조. 테이블 냅킨, 와인잔(에 콜라)까지 세팅해 B급 유머를 극대화한다. 와이프는 마치 미쉐린 레스토랑인 듯 품평하고, 남편은 정장 앞치마를 두르고 진지하게 요리를 설명한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>센터콘솔 위 미니 테이블 세팅 — 오버헤드 앵글로 음식 배치 촬영</li>
+        <li>남편 서빙 모습: 좁은 차 안에서 우아한 제스처 → 코미디</li>
+        <li>와이프 맛 리액션 클로즈업 + FSD 화면 PIP(Picture-in-Picture)</li>
+        <li>창밖 풍경 속도감 + 차 안의 고급(?) 분위기 대비</li>
+        <li>각 코스 전환 시 "다음 코스" 자막 + 벨 소리 효과음</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>한국 편의점 음식 = 중국에서 이미 핫한 콘텐츠 소재</li>
+        <li>B급 유머(편의점 풀코스)는 도우인/샤오홍슈 공유율 최상위</li>
+        <li>"자율주행이니까 가능" = 테슬라 FSD 기능을 자연스럽게 어필</li>
+        <li>커플 케미(웨이터 남편 + 까다로운 손님 와이프) = 팬 형성</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>영동고속도로 여주 휴게소에서 음식 구매 → 강릉 방면 자율주행 구간에서 촬영. 또는 부산→광주 남해고속도로 진주 휴게소 출발.</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>미니 접이식 트레이, 테이블 냅킨, 와인잔 2개, 미니 촛대(LED), 정장 앞치마, 편의점 음식 풀코스, 물티슈 다량</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 1.5시간 (구매 30분 + 촬영 1시간)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>클래식 레스토랑 BGM (비발디 사계 등) → 편의점 음식 등장 시 갑자기 트로트로 전환 (갭 코미디)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A4 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A4</span>
+    <h3>FSD 중 커플 네일아트</h3>
+    <div class="zh">自动驾驶中情侣美甲</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>와이프가 자율주행 중인 차 안에서 남편의 손톱에 네일아트를 해준다. 남편은 처음에는 거부하다가 점점 빠져드는 모습을 연출한다. 핵심은 차가 흔들리거나 차선 변경할 때 네일이 삐뚤어지는 순간들 — 이때 와이프의 짜증과 남편의 "차가 그런 거지 내가 그런 거 아니야" 핑계가 웃음 포인트. 완성된 네일에 테슬라 로고를 그려넣는 것이 하이라이트. 마지막에 고속도로 휴게소에서 네일 완성된 손으로 커피를 잡는 컷으로 마무리. 남편이 점점 네일에 진심이 되어가는 과정이 캐릭터 성장(?)</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>손 클로즈업 마크로 렌즈: 네일 작업 디테일 + 차량 진동으로 인한 흔들림</li>
+        <li>2인 리액션 와이드 샷: 남편 표정 변화 (거부→흥미→진심)</li>
+        <li>차선 변경 순간 카메라 흔들림 → 네일 삐뚤어짐 → 리액션 3단 콤보</li>
+        <li>테슬라 로고 그리기 과정은 탑뷰 타임랩스</li>
+        <li>완성 후 FSD 화면 옆에 네일 손 배치 — 같은 프레임에 기술과 아트</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>남자의 네일아트 = 성별 고정관념 깨기 → 진보적 MZ세대 공감</li>
+        <li>움직이는 차에서 섬세한 작업 = 서스펜스 콘텐츠</li>
+        <li>테슬라 로고 네일 = 브랜드 팬덤 자극, 테슬라 공식 리포스트 가능성</li>
+        <li>커플 케미의 극치 — "남편에게 네일해주기" 챌린지로 확산 가능</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>강릉→부산 동해고속도로 구간 (해안 도로 풍경이 창밖으로 보이면 영상미 UP). 약 4시간 구간 중 일부 활용.</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>젤 네일 키트 (UV 없이 가능한 스티커형 추천), 네일 파일, 스톤/글리터, 가는 붓 (테슬라 로고용), 리무버, 미니 LED 데스크 램프</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 1.5시간 (네일 작업 1시간 + 리액션 촬영)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>아기자기한 우쿨렐레 팝 → 차선 변경 시 서스펜스 음악 (현악 스팅) → 완성 시 승리의 팡파레</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A5 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A5</span>
+    <h3>자율주행 중 1분 헤어스타일링 챌린지</h3>
+    <div class="zh">自动驾驶1分钟发型挑战</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>FSD 자율주행 중 와이프가 1분 안에 헤어스타일을 완성하는 챌린지. 타이머를 FSD 화면 옆에 놓고, 매 라운드마다 다른 스타일(포니테일, 반묶음, 브레이드, 업스타일 등)에 도전한다. 남편이 랜덤으로 스타일을 지정하며, 차가 커브를 돌거나 감속할 때마다 헤어가 풀어지는 돌발 상황이 발생한다. 5라운드 진행 후 최종 스타일로 도착지에서 "방금 미용실 다녀왔어요" 컨셉으로 등장. 각 라운드의 성공/실패를 점수로 매기며 게임 형식으로 진행한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>스플릿 스크린: 좌측 타이머+FSD 화면, 우측 와이프 헤어 작업</li>
+        <li>슬로모션: 커브 구간에서 머리카락이 흩날리는 순간</li>
+        <li>각 라운드 완성 후 "정지 프레임" + 점수 그래픽 오버레이</li>
+        <li>뒷좌석에서 촬영한 2인 와이드샷으로 차 안 분위기 전달</li>
+        <li>최종 스타일로 차에서 내리는 순간 — 시네마틱 슬로모션</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>1분 챌린지 포맷 = 숏폼 플랫폼 최적화 (도우인 60초 이내)</li>
+        <li>게임 형식 → 시청자 참여 유도 ("너라면 몇 점?") 댓글 폭발</li>
+        <li>헤어 튜토리얼 + 엔터테인먼트 결합</li>
+        <li>커브에서 머리 풀리는 순간 = 하이라이트 클립 자동 생성</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>대관령 구간 (와인딩 로드 → 헤어 난이도 UP) 또는 부산→광주 남해고속도로 커브 구간</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>헤어 고무줄, 헤어핀 다량, 미니 빗, 헤어스프레이, 타이머(스마트폰), 헤어 악세서리 (리본, 클립 등), 점수판</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 1시간 (5라운드 × 각 10분 진행+리셋)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>게임쇼 BGM (틱톡 타이머 사운드) → 성공 시 축하 음악 / 실패 시 코미디 실패 효과음</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A6 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A6</span>
+    <h3>FSD로 떠나는 차 안 노래방</h3>
+    <div class="zh">FSD车内KTV — 自动驾驶唱歌挑战</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>테슬라의 프리미엄 사운드 시스템을 활용, FSD 자율주행 중 차 안을 노래방으로 변신시킨다. 와이프는 중국 인기곡, 남편은 한국 인기곡을 번갈아 부르며, 서로의 노래에 리액션한다. 핵심은 각자 상대방 나라의 노래에 도전하는 것 — 와이프가 한국 트로트를, 남편이 중국 발라드를 부르는 크로스 문화 순간이 하이라이트. 테슬라 대시보드 화면에 가사를 띄우고, 차가 자동으로 달리는 동안 열창하는 장면을 바깥 풍경과 함께 담는다. 마지막에는 듀엣으로 한중 합작 곡을 부르며 마무리.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>차량 내부 와이드 앵글: 두 사람의 열창 + FSD 화면 동시 포착</li>
+        <li>각자 솔로 파트 시 클로즈업 + 상대방 리액션 PIP</li>
+        <li>창밖 풍경과 노래 가사 자막 오버레이 (한국어+중국어 동시)</li>
+        <li>음파 이퀄라이저 그래픽 효과 추가</li>
+        <li>상대방 나라 노래 도전 시 발음 실수 → 자막으로 강조</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>차 안 노래방 = 글로벌 유니버설 콘텐츠, 언어 장벽 낮음</li>
+        <li>한중 크로스 문화 → 양국 팬 모두 공감 + 코미디</li>
+        <li>음악 저작권 이슈 적은 구간만 사용 + 원곡 태그로 원작자 노출</li>
+        <li>"남편이 중국 노래 부르기" = 중국 시청자 감동 포인트</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>서울→강릉 영동고속도로 (풍경 변화 다양) 또는 동해안 해안도로 (바다 배경으로 감성 극대화)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>블루투스 마이크 2개 (차량 스피커 연결), 미니 LED 조명 (노래방 무드), 노래 가사 준비 (태블릿), 선글라스 (스타일링)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (이동 중 자연 촬영, 10곡 내외)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>실제 부르는 노래가 BGM — 편집 시 하이라이트 부분만 사용. 트랜지션: 노래방 시작 효과음</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A7 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A7</span>
+    <h3>자율주행 중 커플 한복 착용 챌린지</h3>
+    <div class="zh">自动驾驶穿韩服挑战</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>FSD 자율주행 중 좁은 차 안에서 커플이 함께 한복을 입는 챌린지. 한복의 복잡한 매듭과 여러 겹의 레이어를 차 안에서 착용하는 것 자체가 코미디. 남편이 와이프의 고름을 매주려다 차가 흔들려 실패하는 장면, 와이프가 남편의 갓을 씌워주는 장면 등 커플 인터랙션이 핵심. 완성 후 강릉 전통시장에서 한복 차림으로 내려 현지인 반응을 촬영한다. 중국인 와이프가 한복을 입는 것 자체가 한중 문화 교류 메시지를 담는다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>비포(일상복) → 애프터(한복) 극적 변신 컷</li>
+        <li>한복 입는 과정의 타임랩스 + 실패 모먼트 실시간</li>
+        <li>FSD 화면과 한복의 대비 — 전통과 첨단기술의 공존</li>
+        <li>차에서 내리는 순간 시네마틱 슬로모션 + 한국 전통 음악</li>
+        <li>현지인 리액션 컷 (동의 하에 촬영)</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>한복 = 한류 콘텐츠의 핵심 아이템, 중국 시청자 관심도 최상</li>
+        <li>전통(한복) × 미래(FSD 자율주행)의 대비 = 독보적 비주얼</li>
+        <li>중국인이 한복 입기 = 문화 체험 콘텐츠로 양국 모두 호의적</li>
+        <li>좁은 차 안 착용 = 난이도 + 코미디 + 성취감</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>서울→강릉 이동 중 촬영 → 도착지: 강릉 중앙시장(성내동 일대) 또는 강릉 오죽헌 (강릉시 죽헌동 201)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>커플 한복 세트 (대여 추천: 서울 광장시장 한복거리에서 출발 전 수령), 갓, 노리개, 비녀, 한복용 버선</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (차 안 착용 1시간 + 도착 후 거리 촬영 1시간)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>현대적 편곡 국악 (이날치 밴드 스타일) → 완성 시 장엄한 한국 전통 음악 → 거리 장면은 경쾌한 사물놀이</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A8 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A8</span>
+    <h3>FSD 중 스킨케어 루틴 풀 코스</h3>
+    <div class="zh">自动驾驶中全套护肤流程</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>야간 자율주행 중 와이프가 10-Step 한국식 스킨케어 루틴을 풀코스로 시연한다. 클렌징 → 토너 → 에센스 → 세럼 → 아이크림 → 모이스처라이저 → 선크림 → 시트마스크 → 슬리핑팩까지. 남편에게도 각 단계를 하나씩 적용시키며, 한국 스킨케어의 위력을 체험시킨다. 남편의 과장된 리액션("피부가 물광이다!")이 코미디 포인트. 시트마스크를 쓴 커플이 FSD 화면 앞에 앉아 있는 기괴한(?) 비주얼이 썸네일 킬러. 각 제품의 실제 리뷰도 자연스럽게 포함하여 뷰티 브랜드 협찬 가능성을 열어둔다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>각 스킨케어 단계별 제품 클로즈업 + 도포 과정 ASMR 마이크 사용</li>
+        <li>남편 스킨케어 적용 시 과장된 표정 변화 정면 캠</li>
+        <li>시트마스크 착용 후 FSD 화면 응시 — 기괴한 비주얼의 와이드샷</li>
+        <li>야간 촬영: 차량 내부 무드등 + 대시보드 빛만으로 분위기 연출</li>
+        <li>비포(저녁 피곤한 피부) / 애프터(다음날 아침 광채) 비교</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>K-뷰티 10-Step = 중국 시청자 최고 관심 주제</li>
+        <li>시트마스크 커플 + FSD = 밈화 가능한 비주얼</li>
+        <li>남편 스킨케어 리액션 = 남성 뷰티 시장 타겟팅</li>
+        <li>뷰티 브랜드 PPL 잠재력 매우 높음</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>부산→광주 야간 이동 구간 (남해고속도로). 야간 주행이라 차 안 무드 조명 효과 극대화.</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>10-Step 스킨케어 풀세트, 시트마스크 2장, 소형 ASMR 마이크, 차량 무드등(USB), 미니 거울, 수건</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 1.5시간 (10단계 × 각 8분)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>잔잔한 ASMR 앰비언트 → 시트마스크 장면: 코미디 효과음 → 마무리: 치유 힐링 음악</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A9 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A9</span>
+    <h3>자율주행 중 커플 보드게임</h3>
+    <div class="zh">自动驾驶情侣桌游大战</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>FSD 자율주행 중 센터콘솔을 테이블 삼아 커플 보드게임/카드게임을 진행한다. 젠가, UNO, 할리갈리 등 반응이 큰 게임을 선택하고, 패배자에게는 벌칙(다음 도시에서 상대방이 고른 옷 입기)을 부여한다. 차가 급정거하거나 차선 변경할 때 젠가가 무너지는 극적 순간이 핵심 바이럴 요소. "자율주행이 아니면 절대 불가능한 것"을 하는 모습이 FSD의 가치를 보여준다. 게임 결과가 이후 패션 콘텐츠(B카테고리)와 연결되는 시리즈 구조로 설계한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>센터콘솔 위 탑뷰 카메라: 게임판/카드 전체 조감</li>
+        <li>정면 투샷: 두 사람의 긴장감 있는 표정 실시간 포착</li>
+        <li>젠가 무너지는 순간 — 멀티 앵글 슬로모션 (사전에 여러 각도 카메라 세팅)</li>
+        <li>FSD 차선 변경 알림 + 젠가 흔들림을 동시에 캡처</li>
+        <li>벌칙 선언 순간 드라마틱 줌인 + 패배자 절망 표정</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>보드게임 콘텐츠 = 편안한 시청 경험, 긴 체류 시간</li>
+        <li>젠가 무너지는 순간 = 자동 하이라이트/밈 클립</li>
+        <li>벌칙이 다음 콘텐츠로 연결 = 시리즈 시청 유도</li>
+        <li>"운전 중 보드게임" = 상식 파괴 비주얼</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>강릉→부산 동해고속도로 약 4시간 구간 (긴 이동 시간 활용)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>미니 젠가 세트, UNO 카드, 할리갈리, 벌칙 룰렛(종이), 미끄럼 방지 매트 (센터콘솔용)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (게임 3~4판)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>긴장감 있는 게임쇼 BGM → 클라이맥스(무너짐) 시 드럼 롤 + 크래시 → 벌칙 시 장송곡 패러디</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- A10 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">A10</span>
+    <h3>FSD 새벽 드라이브 — 일출 뷰 촬영</h3>
+    <div class="zh">FSD凌晨自动驾驶 — 日出大片</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>새벽 4시에 FSD를 켜고 동해안 해안도로를 달리며 일출을 맞이한다. 와이프는 잠옷 차림에서 시작해 일출과 함께 점점 깨어나며, 일출 순간 차 안에서 황금빛 조명을 받은 시네마틱 포트레이트를 촬영한다. 남편은 FSD 덕분에 운전 대신 카메라맨 역할에 전념. 차가 자동으로 해안선을 따라 달리는 동안 일출 타임랩스를 배경으로 차 안의 로맨틱한 순간들을 담는다. 새벽이라 도로가 한산해 FSD가 매끄럽게 작동하는 모습도 함께 보여준다. 일출 후 해변에 정차하여 "golden hour" 커플 화보로 마무리.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>대시캠: FSD 야간 주행 → 새벽 → 일출 전체 그라데이션 타임랩스</li>
+        <li>와이프 정면캠: 어둠 → 골든아워 빛이 얼굴에 닿는 순간 (자연광 활용)</li>
+        <li>드론(가능시): 해안도로 위 테슬라를 위에서 촬영 — 일출 배경</li>
+        <li>차 창문 프레이밍: 창문을 액자처럼 활용한 일출 구도</li>
+        <li>커플 실루엣: 일출 역광으로 차 안 두 사람의 실루엣</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>일출 + 자율주행 = 감성 콘텐츠의 정점, 높은 저장/공유율</li>
+        <li>골든아워 조명 = 별도 조명 없이 최고의 화보 퀄리티</li>
+        <li>새벽 FSD → 기술 콘텐츠 팬 유입, 일출 → 여행 콘텐츠 팬 유입</li>
+        <li>로맨틱 무드 = 커플 팬덤 강화</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>강릉 → 부산 동해안 7번 국도 해안도로. 특히 경주 감포~울산 간절곶 구간 추천. 간절곶: 한반도에서 가장 먼저 해가 뜨는 곳 (울산 울주군 서생면)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>커플 파자마 세트, 담요, 보온병(따뜻한 음료), GoPro + 흡착 마운트, 드론(선택), 선글라스(일출 후)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 3시간 (새벽 4시~7시, 일출 전후 1시간이 골든타임)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>잔잔한 피아노 앰비언트 → 일출 순간 장엄한 오케스트라 크레센도 → 해변 도착 후 따뜻한 어쿠스틱 기타</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end cards A -->
+
+<!-- ==================== CATEGORY B ==================== -->
+<div class="category-header">
+  <h2>B. 도시별 패션 콘텐츠</h2>
+  <p class="cat-desc">4개 도시 × 각 도시의 개성을 살린 패션 화보 & 스타일링 콘텐츠. 테슬라는 이동 수단이자 촬영 소품.</p>
+</div>
+
+<div class="cards">
+
+<!-- B1 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B1</span>
+    <h3>서울 성수동 — 테슬라 × 스트릿 패션</h3>
+    <div class="zh">首尔圣水洞 — 特斯拉×街头时尚</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>서울 성수동의 리모델링된 공장 건물들을 배경으로 테슬라와 함께하는 스트릿 패션 화보를 촬영한다. 테슬라를 성수동 카페/갤러리 앞에 세워두고 차량과 조화되는 올블랙 미니멀 스트릿 룩을 연출. 와이프는 오버사이즈 블레이저 + 바이커 부츠, 남편은 테크웨어 스타일로 매칭한다. 테슬라의 매끈한 차체 라인과 성수동 벽돌 벽면의 대비가 핵심 비주얼. 차 문을 열고 내리는 순간, 차에 기대는 포즈, 트렁크에 앉는 포즈 등 차량을 적극 활용한 포즈 시퀀스를 기획한다. 마지막으로 성수동 인기 카페에서 커피를 들고 걸어가는 무빙 샷으로 마무리.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>테슬라 차체 반사에 비친 건물/하늘 — 예술적 리플렉션 샷</li>
+        <li>로우앵글: 차 앞에 서 있는 커플을 아래에서 올려다보는 파워 포즈</li>
+        <li>팔콘 윙 도어(Model X인 경우) 또는 차 문 활짝 열어 프레이밍</li>
+        <li>성수동 벽화/그래피티와 함께하는 포즈 → 차량과 색 대비 연출</li>
+        <li>무빙샷: 짐벌 사용, 차에서 내려 카페까지 걸어가는 원테이크</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>성수동 = 중국 관광객 핫플 1위, 샤오홍슈 검색량 최상위</li>
+        <li>테슬라 × 스트릿 = 테크+패션 크로스오버, 양쪽 팬 유입</li>
+        <li>올블랙 커플룩 = 따라하기 쉬운 스타일링 → 공유율↑</li>
+        <li>성수동 카페/갤러리 태그 → 장소 검색 유입</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>서울 성동구 성수동 2가 일대. 추천 스팟: 대림창고 갤러리(성수이로 78), 어니언 성수(아차산로9길 8), LCDC SEOUL(연무장길 76)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>올블랙 커플 스트릿룩 2세트, 선글라스, 크로스백, 테크웨어 악세서리, 짐벌(DJI RS 3), 반사판</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (이른 아침 인적 드문 시간대 추천: 오전 8-10시)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>다크 힙합 비트 (미니멀 베이스라인) → 카페 씬: 차분한 인디 일렉트로닉</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B2 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B2</span>
+    <h3>강릉 경포대 — 바다 × 내추럴 룩</h3>
+    <div class="zh">江陵镜浦台 — 大海×自然风穿搭</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>강릉 경포해변에서 테슬라를 해변 주차장에 세우고 바다를 배경으로 내추럴 리넨 룩 화보를 촬영한다. 와이프는 화이트 리넨 원피스 + 밀짚 모자, 남편은 베이지 리넨 셔츠 + 와이드 팬츠. 테슬라 트렁크를 열어 피크닉 세팅을 하고, 차 뒤에서 바다를 바라보는 "차박 피크닉" 무드를 연출한다. 해변에서의 맨발 걷기, 파도와 함께하는 무빙샷, 석양(또는 오전 빛)의 골든아워를 최대한 활용. 핵심은 "도시를 벗어나 자연 속에서" 느낌의 대비를 서울 콘텐츠(B1)와 연결하는 것.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>테슬라 트렁크 오픈 + 해변 배경: 피크닉 세팅 오버헤드 샷</li>
+        <li>파도와 함께 걷는 커플 — 텔레포토 렌즈로 압축 효과 (바다+커플 밀착)</li>
+        <li>와이프 드레스가 바람에 날리는 순간 — 고속 셔터로 포착</li>
+        <li>차 보닛 위에 앉아 바다 바라보는 백샷 (실루엣)</li>
+        <li>드론 탑뷰: 해변 + 테슬라 + 커플을 한 프레임에</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>해변 + 리넨 + 커플 = 샤오홍슈 "氛围感" 콘텐츠의 정석</li>
+        <li>서울 올블랙(B1) → 강릉 화이트 내추럴의 극적 대비 = 시리즈 효과</li>
+        <li>차박 피크닉 = 중국에서 급부상 중인 캠핑/야외 트렌드</li>
+        <li>강릉 해변 = 한국 여행 버킷리스트, 위치 태그 유입 높음</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>강릉 경포해변 (강릉시 강문동) 남쪽 주차장 구역 — 인적 드문 구간. 대안: 안목해변 커피거리 (견조로 17)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>리넨 커플 의상 세트 (화이트/베이지), 밀짚 모자, 피크닉 바구니, 담요, 과일/음료 소품, 텔레포토 렌즈 (85mm 이상)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (골든아워 활용: 오전 7-9시 또는 오후 5-7시)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>잔잔한 어쿠스틱 기타 + 파도 소리 ASMR → 피크닉 장면: 보사노바 무드</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B3 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B3</span>
+    <h3>부산 해운대 — 리조트 룩 화보</h3>
+    <div class="zh">釜山海云台 — 度假风时尚大片</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>부산 해운대 마린시티의 초고층 빌딩군을 배경으로 글래머러스한 리조트 룩 화보를 촬영한다. 와이프는 실크 슬립드레스 + 골드 주얼리, 남편은 린넨 수트 + 로퍼로 "럭셔리 바캉스 커플"을 연출. 테슬라를 마린시티 해안도로에 세우고, 고층 빌딩과 바다가 동시에 보이는 앵글을 잡는다. 더베이101(야경 명소)에서 칵테일을 들고 테슬라 앞에 서는 나이트 씬도 촬영. 낮과 밤 두 가지 버전으로 같은 장소에서 분위기를 극적으로 바꾸는 것이 차별점.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>마린시티 스카이라인 + 테슬라 + 커플 삼요소 동시 프레이밍</li>
+        <li>주간: 자연광 하이키 촬영 — 리조트 화보 느낌</li>
+        <li>야간: 도시 야경 + 차량 헤드라이트를 조명으로 활용 — 시네마틱</li>
+        <li>테슬라 차체에 비친 야경 반사 → 아트워크 같은 디테일 샷</li>
+        <li>와이프 워킹: 해안 산책로를 따라 걸어오는 풀바디 무빙샷</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>해운대 마린시티 = "한국의 두바이" 이미지로 중국에서 인기</li>
+        <li>주간/야간 같은 장소 2벌 촬영 = 콘텐츠 2배 (원본+리믹스)</li>
+        <li>럭셔리 무드 = 동경/열망 콘텐츠 → 높은 저장률</li>
+        <li>더베이101 태그 → 부산 여행 검색 트래픽 유입</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>해운대 마린시티 해안도로 (해운대구 우동), 더베이101 (동백로 52), 해운대 해변 산책로</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>실크 슬립드레스, 린넨 수트, 골드 주얼리, 클러치백, 칵테일 글래스(소품), 외부 LED 패널(야간), 반사판</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 3시간 (주간 1.5시간 + 야간 1.5시간, 일몰 전후 연속 촬영)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>주간: 트로피컬 하우스 (Kygo 스타일) → 야간: 세련된 딥하우스 → 칵테일 씬: 재즈 라운지</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B4 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B4</span>
+    <h3>부산 감천문화마을 — 컬러풀 패션</h3>
+    <div class="zh">釜山甘川文化村 — 彩色穿搭</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>알록달록한 감천문화마을의 집들을 배경으로 원색 패션 화보를 촬영한다. 와이프는 비비드 레드 원피스, 남편은 로열블루 셔츠로 마을 색감과 조화를 이루는 커플 컬러 매칭. 테슬라는 마을 입구 도로에 세우고, 좁은 골목은 걸어 다니며 촬영한다. 핵심은 벽면 색과 의상 색을 맞추는 "컬러 매칭 게임" 컨셉 — 빨간 벽 앞에서 빨간 옷, 파란 벽 앞에서 파란 옷 식으로 여러 스팟을 돌며 촬영. 마을 곳곳의 어린왕자 동상, 물고기 조형물 등 포토존과 함께하는 컷도 포함.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>벽면 색 + 의상 색 매칭 — 컬러 하모니 구도</li>
+        <li>마을 전경 위에서 내려다보는 와이드 앵글 + 커플 포인트</li>
+        <li>좁은 골목에서의 원포인트 조명 활용 — 빛과 그림자</li>
+        <li>계단 위아래 커플 대각선 구도 — 레벨 차이 활용</li>
+        <li>포토존 조형물과 인터랙션하는 유쾌한 컷</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>감천문화마을 = 중국인 부산 여행 필수 코스, 검색량 매우 높음</li>
+        <li>컬러풀 비주얼 = 인스타/샤오홍슈 피드 최적화 (멈춤율↑)</li>
+        <li>컬러 매칭 게임 = 참신한 촬영 컨셉, 따라하기 챌린지 가능</li>
+        <li>한국 관광지 + 패션 = 여행+패션 이중 카테고리 노출</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>감천문화마을 (부산 사하구 감내2로 203). 추천 스팟: 하늘마루 전망대, 어린왕자 동상, 골목 계단길</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>원색 커플 의상 2~3세트 (빨강, 파랑, 노랑), 원색 소품 (가방, 모자, 우산 등), 편한 운동화 (골목 많음)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2.5시간 (오전 10시~12시 추천, 광량 최적 + 인파 적당)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>밝고 경쾌한 인디팝 (몽환적 신스팝) → 골목 탐험: 탐험대 모험 OST 느낌</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B5 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B5</span>
+    <h3>광주 양림동 — 레트로 빈티지 룩</h3>
+    <div class="zh">光州杨林洞 — 复古穿搭</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>광주 양림동 근대역사문화마을에서 레트로 빈티지 룩 화보를 촬영한다. 일제강점기~근대 건축물이 보존된 거리에서 와이프는 70-80년대 중국 복고풍(旗袍 변형 또는 80년대 상하이 스타일), 남편은 한국 70년대 클래식(나팔바지, 가죽 재킷)을 입어 한중 레트로 크로스오버를 연출. 테슬라(최첨단)와 레트로 건물(과거)의 시대 대비가 비주얼 핵심. 양림동 펭귄마을의 레트로 소품들과 함께 촬영하며, 마을 주민 어르신들과의 자연스러운 교류도 담는다. 마지막에는 테슬라에 타고 "시간여행 끝" 자막과 함께 현대로 돌아오는 컨셉.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>빈티지 필터(그레인+따뜻한 톤) 적용 — 과거 무드 극대화</li>
+        <li>근대 건축물 + 테슬라 대비 샷: 같은 프레임에 과거와 미래 공존</li>
+        <li>구도: 건물 대칭 라인 활용, 클래식 영화 포스터 스타일</li>
+        <li>어르신과의 인터랙션: 자연스러운 다큐 스타일 촬영</li>
+        <li>테슬라 탑승 → 필터가 빈티지에서 현대로 전환되는 편집 트릭</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>레트로/빈티지 = 중국 도우인 인기 카테고리 (复古风 트렌드)</li>
+        <li>한중 레트로 크로스오버 = 독창적 시각 → 차별화</li>
+        <li>시간여행 컨셉 = 스토리텔링 + 비주얼 효과의 결합</li>
+        <li>광주 = 중국인에게 덜 알려진 도시 → 새로운 여행지 발굴 느낌</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>광주 남구 양림동 근대역사문화마을 (천변좌로 446번길), 펭귄마을 (양림길 일대), 이장우 가옥, 오웬 기념관</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>빈티지 의상 세트 (중국 복고+한국 복고), 필름 카메라(소품), 레트로 선글라스, 빈티지 가방, ND 필터(빈티지 톤)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2.5시간 (오후 3-5시 사선광 추천)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>70-80년대 팝 (邓丽君 + 이문세 교차 편집) → 테슬라 탑승: 일렉트로닉으로 전환</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B6 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B6</span>
+    <h3>강릉 주문진 — 어촌 × 하이패션 갭</h3>
+    <div class="zh">江陵注文津 — 渔村×高级时装反差</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>강릉 주문진 어시장과 어촌 마을을 배경으로 하이패션 룩을 대비시키는 "갭(Gap) 패션" 콘텐츠. 와이프는 하이엔드 트렌치코트 + 힐, 남편은 정장 수트 차림으로 수산시장을 활보한다. 생선 좌판 앞에서 포즈, 어선 앞에서 포즈, 등대 앞에서 포즈 — 장소와 의상의 극단적 미스매치가 유머와 비주얼을 동시에 만든다. 테슬라를 항구에 세우고 "럭셔리카가 어촌에" 대비도 활용. 실제로 회를 사먹으며 하이패션 차림으로 수산시장 먹방하는 리얼리티 요소도 포함.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>수산시장 생선 좌판 + 하이패션 커플 — 극단적 갭 비주얼</li>
+        <li>어선 밧줄, 그물, 부표 등 어촌 소품과 럭셔리 의상의 대비</li>
+        <li>주문진 등대 앞 테슬라 + 커플 — 시네마틱 와이드</li>
+        <li>회를 먹는 장면: 정장 차림으로 비닐장갑 끼고 회를 뜯는 갭 코미디</li>
+        <li>어시장 상인들 리액션 (동의 하에) — 다큐 감성</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>"장소×패션 미스매치" = 도우인에서 반복 검증된 바이럴 포맷</li>
+        <li>주문진 = BTS 앨범 커버 촬영지로 중국 한류팬 성지</li>
+        <li>코미디 + 패션 + 먹방 복합 콘텐츠 → 다양한 키워드 노출</li>
+        <li>어시장 회 먹방 = 한국 수산물 관련 검색 유입</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>주문진 수산시장 (강릉시 주문진읍 주문로 26), 주문진 방사제 등대 (BTS 버스정류장 포함), 주문진항</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>하이패션 정장/트렌치 세트, 힐/로퍼, 명품 가방(소품), 비닐장갑(회 먹방용), 물티슈 다량</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (오전 시장 활기찬 시간대: 9-11시)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>파리 패션위크 런웨이 음악 → 시장 장면: 갑자기 트로트 삽입 (갭 코미디) → 회 먹방: 경쾌한 먹방 BGM</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B7 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B7</span>
+    <h3>서울 한남동 — 럭셔리 데이트 룩</h3>
+    <div class="zh">首尔汉南洞 — 奢华约会穿搭</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>한남동 이태원 뒷골목의 고급 레스토랑/갤러리 지역에서 럭셔리 데이트 룩을 촬영한다. 테슬라로 한남동에 도착하는 것부터 시작 — 발레파킹 느낌으로 차에서 우아하게 내리는 장면이 오프닝. 와이프는 리틀 블랙 드레스 + 스틸레토, 남편은 네이비 수트 + 포켓스퀘어. 블루보틀 커피, 리움미술관, 한남동 고급 레스토랑 외관을 배경으로 "럭셔리 데이트 코스" 느낌의 시퀀스를 촬영. 각 장소 이동은 테슬라 FSD로 연결하여 "테슬라가 우리의 개인 기사" 컨셉.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>차에서 내리는 순간: 시네마틱 슬로모션, 발 → 풀바디 틸트업</li>
+        <li>한남동 갤러리 유리벽 반사를 이용한 미러 샷</li>
+        <li>레스토랑 입구 앞 포즈 — 영화 포스터 같은 라이팅</li>
+        <li>테슬라 안에서 데이트 준비하는 와이프 백미러 리플렉션 샷</li>
+        <li>밤 촬영: 네온 + 가로등 + 테슬라 헤드라이트 복합 조명</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>한남동 = 서울 럭셔리 라이프스타일의 상징, 중국 부유층 관심 지역</li>
+        <li>럭셔리 데이트 코스 = "따라하고 싶은" 열망 콘텐츠 → 저장률↑</li>
+        <li>테슬라 = 개인 기사 컨셉 → FSD의 럭셔리 가치 제안</li>
+        <li>LBD(리틀 블랙 드레스) = 글로벌 유니버설 패션 코드</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>한남동 일대 (용산구 한남동). 리움미술관(이태원로55길 60-16), 블루보틀 한남(독서당로 15), 한남동 카페거리</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>LBD + 수트 세트, 스틸레토/드레스슈즈, 주얼리, 포켓스퀘어, 클러치, 휴대용 LED 패널(야간)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (저녁 6-8시 매직아워~야경 전환 시간대)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>세련된 재즈 피아노 → 이동 장면: 딥하우스 → 디너 씬: 클래식 스트링</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B8 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B8</span>
+    <h3>부산 영도 흰여울마을 — 지중해 무드</h3>
+    <div class="zh">釜山影岛白浅滩村 — 地中海风情</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>영도 흰여울문화마을의 하얀 벽과 푸른 바다를 배경으로 "한국의 산토리니" 컨셉 패션을 촬영한다. 와이프는 화이트+블루 스트라이프 원피스, 남편은 화이트 린넨 팬츠 + 블루 셔츠로 지중해 무드를 완성. 좁은 골목과 계단, 바다가 보이는 담벼락 위에서 촬영하며, "이것이 부산이야?" 라는 반전 느낌을 준다. 절영해안산책로를 따라 걸으며 무빙샷으로 해안 절벽 위 마을의 독특한 지형을 보여준다. 테슬라는 마을 입구 도로에 세우고 마을 전경과 함께 촬영.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>하얀 벽 + 푸른 바다 + 블루/화이트 의상 — 3중 컬러 조화</li>
+        <li>계단/골목의 깊이감 활용 — 리딩 라인 구도</li>
+        <li>담벼락 위에서 바다를 바라보는 백샷 — 영화 한 장면</li>
+        <li>절영해안산책로: 절벽+바다 배경 풀바디 워킹 샷</li>
+        <li>슬로모션: 바람에 머리카락/옷이 날리는 순간</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>"한국의 산토리니" 키워드 = 클릭률 매우 높은 표현</li>
+        <li>흰여울마을 = 부산 신흥 포토존, 아직 중국에서 덜 알려져 신선</li>
+        <li>화이트+블루 톤 = 인스타/샤오홍슈 피드 최적화</li>
+        <li>유럽 느낌을 한국에서 = 비용 대비 퀄리티 높은 여행 정보</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>흰여울문화마을 (부산 영도구 영선동4가 일대), 절영해안산책로, 흰여울 안내센터 부근 전망 포인트</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>블루/화이트 커플 의상, 밀짚 바구니, 꽃 한 다발(소품), 와이드 모자, 편한 신발(계단 많음)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (오전 빛이 좋은 시간: 9-11시)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>지중해 감성 기타 (그리스/이탈리아 어쿠스틱) → 산책: 경쾌한 보사노바</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B9 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B9</span>
+    <h3>광주 무등산 — 아웃도어 시크 룩</h3>
+    <div class="zh">光州无等山 — 户外时尚穿搭</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>무등산 국립공원 입구 부근에서 "고프코어(Gorpcore)" 아웃도어 시크 룩을 촬영한다. 최근 한중 모두에서 트렌드인 하이킹 패션을 테슬라와 결합. 와이프는 아크테릭스/노스페이스 스타일 테크 재킷 + 레깅스 + 트레일 러닝화, 남편은 플리스 + 카고 팬츠 + 등산화. 테슬라 트렁크를 열어 아웃도어 장비를 꺼내는 "준비 과정"부터 시작, 무등산 산책로를 걸으며 자연 배경 화보를 촬영한다. 핵심은 "테슬라로 와서 자연을 즐기는" 친환경 라이프스타일 메시지.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>테슬라 트렁크 오픈 — 정리된 아웃도어 장비 배치 (플랫레이 느낌)</li>
+        <li>산길 워킹: 짐벌 무빙샷, 나무 사이로 빛이 들어오는 순간 포착</li>
+        <li>주상절리 또는 바위 지형 앞 포즈 — 자연의 웅장함 대비</li>
+        <li>드링킹 브레이크: 보온병에서 차 따르는 감성 클로즈업</li>
+        <li>테슬라 + 산 풍경 원거리 샷 — 전기차 × 자연의 조화</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>고프코어 = 2024-2025 메가 트렌드, 검색량 급상승</li>
+        <li>전기차 × 자연 = 친환경 메시지 → ESG 감성 MZ세대 어필</li>
+        <li>무등산 = 광주 대표 자연, 한국 국립공원 소개 콘텐츠</li>
+        <li>아웃도어 브랜드 협찬 가능성 높음 (노스페이스, 아크테릭스 등)</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>무등산 국립공원 (광주 동구 용연동). 증심사 탐방로 입구, 주상절리 전망대 (중봉~서석대 구간)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>고프코어 커플 아웃도어 의상, 등산 배낭, 보온병+컵, 트레킹폴(소품), 등산화, 방수 재킷</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 3시간 (입구~전망대 왕복 2시간 + 촬영 1시간)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>자연 다큐 스타일 앰비언트 → 산 정상: 장엄한 오케스트라 → 하산: 경쾌한 일렉트로닉</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B10 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">B10</span>
+    <h3>서울 을지로 — 뉴트로 공장 패션</h3>
+    <div class="zh">首尔乙支路 — 新复古工业风</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>을지로 골목의 인쇄소, 철공소, 낡은 간판들을 배경으로 뉴트로(New-retro) 공장 패션 화보를 촬영한다. 와이프는 오버사이즈 데님 점프수트 + 워커부츠 + 체인 악세서리, 남편은 워크웨어 재킷 + 카고 팬츠로 "공장 시크"를 연출. 을지로의 녹슨 셔터, 형광등 불빛, 좁은 골목이 만드는 독특한 텍스처가 배경. 을지로 힙한 바(을지다락, 카페 등) 앞에서도 촬영하여 "올드 × 뉴"의 을지로 감성을 완성한다. 테슬라(미래)가 을지로(과거) 한복판에 서 있는 비주얼이 핵심 썸네일.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>녹슨 셔터 + 형광등 불빛 — 인더스트리얼 라이팅</li>
+        <li>을지로 골목 미로 속 커플 워킹 — 따라가는 핸드헬드 촬영</li>
+        <li>공구 가게 진열대를 배경으로 — 텍스처 풍부한 포트레이트</li>
+        <li>테슬라 in 을지로: 낡은 건물 사이 주차된 테슬라 와이드샷</li>
+        <li>야간: 네온사인 + 형광등 혼합 조명 — 사이버펑크 무드</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>을지로 = 서울 힙스터 성지, 중국 MZ세대 관심 급상승 지역</li>
+        <li>뉴트로/인더스트리얼 감성 = 글로벌 패션 트렌드</li>
+        <li>테슬라 × 공장 골목 대비 = 밈화 가능한 비주얼</li>
+        <li>을지로 맛집/바 태그 → 서울 여행 검색 유입</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>을지로3가~을지로4가 골목 (중구 을지로 일대). 세운상가, 을지다락, 산림동 인쇄소 골목 추천</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>데님 점프수트, 워크웨어 재킷, 워커부츠, 체인 악세서리, 안전모(소품), 용접 마스크(소품/코미디)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (주간 골목 + 저녁 네온 야경 각 1시간)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>인더스트리얼 일렉트로닉 비트 → 카페 씬: 로파이 힙합 → 야간: 사이버펑크 신스웨이브</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end cards B -->
+
+<!-- ==================== CATEGORY C ==================== -->
+<div class="category-header">
+  <h2>C. 테슬라 × 기술 콘텐츠</h2>
+  <p class="cat-desc">FSD와 테슬라 기술을 직접 리뷰하고 검증하는 콘텐츠. 테크 팬덤 유입을 위한 교육+엔터테인먼트.</p>
+</div>
+
+<div class="cards">
+
+<!-- C1 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">C1</span>
+    <h3>FSD 한국 도로 적응기 — 리얼 리뷰</h3>
+    <div class="zh">FSD韩国道路实测 — 真实评测</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>한국 도로 환경에서 FSD가 어떻게 작동하는지 구간별로 리얼하게 리뷰한다. 고속도로(직선), 대관령(커브), 도심(복잡한 교차로), 해안도로(곡선), 골목길(좁은 도로) 등 5가지 도로 유형에서 FSD 성능을 점수로 평가한다. 와이프가 MC 역할로 "지금 FSD에게 이 상황을 맡길 수 있을까?"를 물으며 남편이 테크 리뷰어처럼 해설한다. 실제로 FSD가 잘 대응하는 순간과 인간 개입이 필요한 순간을 솔직하게 기록하고, 각 구간별 10점 만점 성적표를 그래픽으로 보여준다. 중국 시청자에게는 한국 도로 사정과 FSD의 글로벌 적응력을 동시에 전달하는 교육 콘텐츠가 된다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>대시보드 고정캠: FSD 비전 화면 실시간 녹화 — 차선·보행자·신호등 인식 그래픽 노출</li>
+        <li>운전석 정면캠: 남편 핸즈프리 상태 + FSD 개입/해제 순간 포착</li>
+        <li>PIP(Picture-in-Picture): 도로 실제 영상 + FSD 화면 동시 표시</li>
+        <li>구간별 점수 그래픽 오버레이 — 게임 UI 스타일로 편집</li>
+        <li>드론: 고속도로·해안도로 구간에서 테슬라 주행 전경 항공 촬영</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>FSD 한국 도로 실측 = 중국 테크 유저 최대 관심사 (중국 FSD 미출시 시 호기심 폭발)</li>
+        <li>구간별 성적표 포맷 = 공유·토론 유발 (댓글전쟁 유도)</li>
+        <li>FSD 실패 순간 = 밈 소재 (인간 개입 순간이 오히려 조회수)</li>
+        <li>"한국 도로가 FSD에겐 하드모드" 내러티브 → 글로벌 공감</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>① 영동고속도로 (고속 직선) ② 대관령 구불구불 도로 (커브) ③ 서울 종로/강남 교차로 (도심) ④ 동해안 7번 국도 (해안곡선) ⑤ 서울 북촌 골목 (좁은 도로)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>GoPro x3 (대시보드/운전석/후방), 드론(DJI Mini), 점수판 그래픽 템플릿, FSD 설정 매뉴얼, 보조배터리</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 6~8시간 (5개 구간 이동 포함, 하루 종일 로드트립 형태)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>테크 리뷰 인트로: 일렉트로닉 글리치 비트 → 주행 중: 미니멀 앰비언트 → 점수 발표: 게임쇼 효과음 → 실패 순간: 코미디 효과음</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C2 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">C2</span>
+    <h3>테슬라 캠핑모드 차박 패션 화보</h3>
+    <div class="zh">特斯拉露营模式×车泊时尚大片</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>테슬라 캠핑모드(Camp Mode)를 활용해 차 안에서 하룻밤을 보내는 차박 콘텐츠를 패션 화보 퀄리티로 촬영한다. 와이프가 캠핑 무드의 아웃도어 패션(플리스, 다운, 비니)을 입고 테슬라 뒷좌석을 접어 만든 침대에서 모델 포즈를 취한다. 에어컨/히터가 밤새 가동되는 캠핑모드의 편리함을 보여주면서, 동시에 차 안을 감성 조명과 소품으로 꾸며 "이게 차 안이라고?" 하는 반응을 유도한다. 새벽 산 속 안개와 일출을 배경으로 트렁크를 열고 커피를 내리는 장면이 클라이맥스. 차박 실용 정보(온도 유지, 배터리 소모량, 매트리스 세팅)를 자연스럽게 녹여낸다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>와이드 외부 숏: 산 속/호숫가에 주차된 테슬라 + 트렁크 오픈 + 감성 조명</li>
+        <li>차 내부 클로즈업: 캠핑모드 화면(온도 설정) + 아늑한 침구 + 와이프 포즈</li>
+        <li>타임랩스: 해질녘→밤→새벽 일출까지 차 주변 시간 변화</li>
+        <li>POV 숏: 트렁크에서 바라본 일출 풍경 + 커피 내리는 손</li>
+        <li>드론: 새벽 안개 속 테슬라 한 대가 자연 속에 있는 전경</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>차박(车泊) = 중국 MZ세대 핫 트렌드, 테슬라 캠핑모드 존재를 모르는 사람 많음</li>
+        <li>"전기차로 에어컨 틀며 잔다고?" → 놀라움 = 공유 동기</li>
+        <li>패션 화보 퀄리티 차박 = 기존 차박 콘텐츠와 차별화</li>
+        <li>배터리 소모량 공개 → 실용 정보 = 저장(收藏) 유도</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>강원도 인제 자작나무숲 인근 또는 가평 자라섬 오토캠핑장. 호수/산 배경이 있는 차박 가능 구역 추천</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>차박용 에어매트리스, 감성 스트링 라이트, LED 랜턴, 담요/침낭, 핸드드립 커피 세트, 아웃도어 패션 3~4벌, 핫팩</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 12시간 (저녁 세팅~밤 촬영~새벽 일출까지 하룻밤)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>세팅 과정: 어쿠스틱 기타 → 밤 화보: 재즈 보사노바 → 새벽 일출: 피아노 앰비언트 (Ólafur Arnalds 분위기)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C3 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">C3</span>
+    <h3>충전 20분 동안 할 수 있는 것들</h3>
+    <div class="zh">充电20分钟能做什么</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>슈퍼차저 충전 20분을 타이머로 걸어놓고, 그 시간 동안 주변에서 할 수 있는 활동을 미션 형태로 수행한다. 회차마다 다른 충전소 위치에서 촬영하여 시리즈화할 수 있다. 예를 들어 ① 편의점 먹방 ② 근처 카페에서 라떼아트 배우기 ③ 주변 골목 스트릿 패션 촬영 ④ 스트레칭/요가 ⑤ 틱톡 댄스 챌린지 등을 20분 안에 완수한다. 충전 완료 알림이 울리면 타이머 종료와 함께 다시 출발하는 구성. 전기차 충전 = 지루하다는 편견을 깨면서, 충전소 주변 맛집·카페 정보까지 자연스럽게 제공한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>화면 상단 고정 타이머 오버레이 (00:00~20:00 카운트업)</li>
+        <li>스플릿 스크린: 좌측 충전 게이지 증가 / 우측 활동 영상</li>
+        <li>스피드 편집: 이동 구간은 2배속, 활동 구간은 실시간</li>
+        <li>충전 시작 시 플러그 꽂는 ASMR 클로즈업</li>
+        <li>충전 완료 알림음 + 만충 화면 + 환호하는 리액션으로 마무리</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>"20분 챌린지" 포맷 = 틱톡/더우인 숏폼에 최적화된 구조</li>
+        <li>"전기차 충전 = 보너스 시간"이라는 긍정적 리프레이밍</li>
+        <li>시리즈물 가능 → 매회 다른 충전소 = 반복 시청 유도</li>
+        <li>충전소 주변 맛집/카페 태그 → 지역 검색 유입</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>여주 프리미엄 아울렛 슈퍼차저 (쇼핑 가능), 속초 슈퍼차저 (해변 근접), 대전 슈퍼차저 (성심당 빵 사러가기)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>타이머 앱(화면 녹화용), 경쾌한 미션 카드(수제), 간편한 운동복+패션 아이템(빠른 코디 전환용), 충전 카드</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 1시간 (실제 충전 20분 + 전후 세팅·인트로·아웃트로 40분)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>타이머 시작: 카운트다운 효과음 → 활동 중: 업템포 팝 (신나는 분위기) → 충전 완료: 승리 팡파르 + 경쾌한 아웃트로</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C4 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">C4</span>
+    <h3>1000km 전기세 얼마?</h3>
+    <div class="zh">1000公里电费多少钱</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>서울에서 부산까지 왕복 약 900km + 시내 주행을 합쳐 총 1000km를 주행하며 실제 전기세(충전비)를 낱낱이 기록한다. 매번 충전할 때마다 금액, kWh, 충전소 종류(슈퍼차저/공용/가정용)를 화면에 영수증처럼 보여준다. 최종적으로 1000km 총 비용을 공개하고 같은 거리 가솔린차 유류비와 비교 그래픽을 보여준다. 와이프가 중국어로 "가솔린 대비 X% 절약!"을 강조하며 중국 시청자가 체감할 수 있도록 위안화 환산도 해준다. 고속도로 톨비, 주차비까지 포함한 진짜 총 비용을 투명하게 공개하는 것이 차별점이다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>매 충전마다 클로즈업: 충전기 화면 금액 + 테슬라 앱 충전 기록</li>
+        <li>주행거리 카운터 오버레이: 화면 하단에 0km→1000km 게이지 바</li>
+        <li>비용 누적 그래픽: 매 충전 후 "현재까지 총 ₩XX,XXX" 인포그래픽</li>
+        <li>최종 비교 장면: 가솔린 vs 전기 비용 바 차트 애니메이션</li>
+        <li>중국어 자막 + 위안화(¥) 환산 그래픽 동시 표시</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>"전기차 진짜 얼마나 싸?" = 전기차 관심자 최대 궁금증 → 검색 유입</li>
+        <li>구체적 금액 공개 = 저장(收藏) + 공유 유도 (실용 정보)</li>
+        <li>가솔린 비교 = 논쟁 유발 → 댓글 폭발</li>
+        <li>위안화 환산 → 중국 시청자 체감도 극대화</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>서울→부산 경부고속도로 왕복 코스. 중간 충전: 천안/대전/대구 슈퍼차저. 부산 도착 후 해운대 시내 주행 포함</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>충전 기록 노트, 영수증 보관용 파일, 계산기(연출용), 비교 인포그래픽 템플릿, 보조배터리(카메라용), 충전 카드 2종(슈퍼차저+공용)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 10~12시간 (서울-부산 왕복 주행 시간, 1~2일에 걸쳐 촬영)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>주행 중: 드라이브 팝 (The Weeknd - Blinding Lights 분위기) → 충전 순간: 캐시 레지스터 효과음 → 최종 비교: 드라마틱 리빌 음악</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C5 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">C5</span>
+    <h3>테슬라 FSD vs 한국 택시 대결</h3>
+    <div class="zh">特斯拉FSD vs 韩国出租车</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>같은 출발지-도착지를 두고 테슬라 FSD와 한국 택시 기사가 누가 더 빨리, 안전하게, 쾌적하게 도착하는지 대결한다. 와이프는 택시에, 남편은 FSD 테슬라에 탑승하여 각각의 경험을 동시에 촬영한다. 도착 시간, 경로 선택, 승차감, 비용을 모두 비교한다. 택시 기사 아저씨와의 자연스러운 대화(한국 택시 문화 소개)도 콘텐츠가 된다. FSD의 네비게이션 경로 vs 택시 기사의 '감' 경로를 지도 위에 오버레이로 비교하는 장면이 하이라이트. 승패를 떠나 "AI vs 인간 경험"이라는 보편적 주제로 확장한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>동시 출발 장면: 두 차량 나란히 → 출발 신호와 함께 갈라지는 스플릿 스크린</li>
+        <li>듀얼 PIP: 좌측 FSD 주행 화면 / 우측 택시 내부 (실시간 교차편집)</li>
+        <li>경로 비교 지도: 후반부에 네이버 지도 위 두 경로 오버레이 애니메이션</li>
+        <li>택시 기사 인터뷰: 자연스러운 대화 장면 (자막 필수)</li>
+        <li>도착 순간: 스톱워치 클로즈업 + 승자 팡파르</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>"AI vs 인간" = 전 세계 보편적 관심사, 언어 장벽 없는 흥미</li>
+        <li>한국 택시 문화(빠른 운전, 기사님 대화) = 외국인에게 엔터테인먼트</li>
+        <li>결과를 맞추는 투표/댓글 유도 → 인게이지먼트 극대화</li>
+        <li>택시비 vs 전기세 비용 비교 → C4와 연결 시리즈화 가능</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>출발: 서울역 / 도착: 잠실 롯데월드타워 (약 15km, 도심 구간이라 변수 많음). 또는 강남역→여의도 국회의사당 코스</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>GoPro x4 (각 차량 2대씩), 스톱워치, 출발 깃발(연출용), 택시비 현금, 비교 스코어보드 그래픽 템플릿</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (이동 30~50분 + 인트로/아웃트로/결과 분석 1시간)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>출발: 레이싱 게임 스타트 효과음 → 주행 중: 긴장감 있는 일렉트로닉 (Hans Zimmer 분위기) → 결과 발표: 퀴즈쇼 드럼롤 + 리빌</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end cards C -->
+
+<!-- ==================== CATEGORY D ==================== -->
+<div class="category-header">
+  <h2>D. 커플/바이럴 챌린지</h2>
+  <p class="cat-desc">커플 케미와 챌린지 포맷으로 바이럴을 노리는 콘텐츠. 웃음과 감동, 참여 유도가 핵심.</p>
+</div>
+
+<div class="cards">
+
+<!-- D1 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">D1</span>
+    <h3>자율주행 중 남편 반응 몰카</h3>
+    <div class="zh">自动驾驶中测试老公反应</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>FSD 자율주행 중에 와이프가 몰래 남편을 테스트하는 몰카 콘텐츠. ① 갑자기 핸들을 잡으려는 척 ② "FSD 끄고 직접 운전해" 요구 ③ 자율주행 중 잠드는 척 ④ "저 차가 너무 가까워!" 오버 리액션 ⑤ FSD 화면을 가리기 등 5가지 상황을 만들어 남편의 리얼 반응을 포착한다. 숨겨진 카메라(GoPro)로 남편의 진짜 표정과 반응을 촬영하고, 마지막에 몰카 공개하며 두 사람이 함께 웃는 것으로 마무리. 커플 케미를 보여주면서 FSD에 대한 신뢰/불안 심리를 재미있게 다룬다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>히든캠: 대시보드 뒤/선바이저에 숨긴 소형 카메라 (남편 정면 표정)</li>
+        <li>조수석 몰래 촬영: 와이프 핸드폰 거치 (녹화 중이지만 자연스럽게 위장)</li>
+        <li>리액션 순간 슬로모션 리플레이 + 코미디 효과음 오버레이</li>
+        <li>몰카 공개 순간: 두 사람 얼굴 동시 프레임 (반전 리액션)</li>
+        <li>자막: 남편 심정 상상 자막 ("이 여자 뭐하는 거야…")</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>몰카/프랭크 = 더우인·유튜브 숏폼 최고 인기 장르</li>
+        <li>커플 케미 + 웃음 = 공유 동기 극대화</li>
+        <li>"남편 반응 테스트" 시리즈 = 중국 커플 채널 황금 포맷</li>
+        <li>FSD 신뢰도를 코미디로 풀어냄 → 테크+엔터 융합</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>고속도로 직선 구간 (안전한 FSD 주행 가능 구간). 영동고속도로 또는 경부고속도로 한적한 구간</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>히든캠 GoPro Mini x2, 흡착 마운트(은밀 설치용), 코미디 효과음 모음, 미션 카드(와이프용, 몰래 확인)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 1.5시간 (고속도로 주행 중 자연스럽게 촬영, 5개 미션 수행)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>잠입 시작: 스파이 영화 서스펜스 → 리액션 순간: 코미디 효과음 (두둥!) → 몰카 공개: 밝은 팝 (웃음 터지는 분위기)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D2 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">D2</span>
+    <h3>현지인에게 코디 받기</h3>
+    <div class="zh">让当地人搭配穿搭</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>각 여행 도시에서 길거리 현지인에게 직접 다가가 "오늘 제 코디를 해주세요!"라고 부탁한다. 현지인이 근처 매장에서 옷을 골라주면 그대로 입고 테슬라 앞에서 화보를 찍는 구성. 서울 홍대 힙스터, 부산 해운대 서퍼, 경주 한복 가게 사장님, 전주 교복 대여점 직원 등 지역마다 전혀 다른 코디가 나오는 것이 재미 포인트. 와이프(중국인)가 한국 현지인의 코디를 받으며 문화 교류하는 장면이 자연스럽게 연출된다. 매회 마지막에 테슬라와 함께 해당 코디로 인생샷을 찍고, 시청자 투표로 "Best 코디"를 선정한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>길거리 접근 장면: 핸드헬드 다큐 스타일 (자연스러운 현장감)</li>
+        <li>매장 내 코디 과정: 현지인이 옷 고르는 모습 + 와이프 피팅</li>
+        <li>비포/애프터: 원래 옷 → 현지인 코디 스플릿 비교</li>
+        <li>테슬라 앞 화보 촬영: 도시 배경 + 테슬라 + 새 코디 (잡지 스타일)</li>
+        <li>현지인 리액션 인터뷰: "왜 이 옷을 골랐나요?"</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>"현지인 코디" = 예측 불가 → 매회 다른 결과물 = 시리즈 시청 유도</li>
+        <li>문화 교류 + 패션 = 중국·한국 양쪽 시청자 공감</li>
+        <li>시청자 투표 "어떤 코디가 Best?" → 댓글·투표 참여 유도</li>
+        <li>현지인 출연 → 해당 인물의 SNS 공유 가능</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>서울 홍대/이태원, 부산 해운대/광안리, 경주 황리단길, 전주 한옥마을 (도시별 1회씩 시리즈)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>코디 예산 (1회 10~15만원), 기본 의상(비포용), 촬영 동의서, 통역 큐카드(간단한 한국어 문장)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 3시간 (현지인 섭외 30분 + 쇼핑 1시간 + 화보 촬영 1시간 + 인터뷰 30분)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>접근 장면: 호기심 자극 퀴즈 BGM → 쇼핑 몽타주: 신나는 팝 → 화보 리빌: 런웨이 패션쇼 음악</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D3 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">D3</span>
+    <h3>테슬라 트렁크 프러포즈 재현</h3>
+    <div class="zh">特斯拉后备箱求婚</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>중국에서 유행하는 "후비샹 구혼(后备箱求婚, 트렁크 프러포즈)"을 테슬라 버전으로 재현한다. 남편이 몰래 테슬라 트렁크를 꽃, 풍선, LED 조명, 사진들로 꾸며놓고 와이프에게 서프라이즈로 보여주는 감동 콘텐츠. 테슬라의 넓은 트렁크 공간과 라이트쇼 기능을 활용해 다른 차에서는 불가능한 연출을 만든다. 이미 결혼한 커플이지만 "프러포즈 재현"이라는 컨셉으로 추억을 되살리며, 와이프의 진짜 감동 리액션을 포착한다. 한국의 야경 명소를 배경으로 밤에 촬영하여 로맨틱한 분위기를 극대화한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>준비 과정 몽타주: 남편이 몰래 트렁크 꾸미는 타임랩스</li>
+        <li>와이프 등장 장면: 눈 가리고 이동 → 트렁크 오픈 순간 리액션 풀샷</li>
+        <li>트렁크 내부 클로즈업: 꽃·조명·사진 디테일 ASMR</li>
+        <li>테슬라 라이트쇼: 외부 조명 퍼포먼스 + 커플 실루엣</li>
+        <li>드론: 야경 배경 위에서 바라본 조명 빛나는 테슬라 + 커플</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>后备箱求婚 = 중국 더우인 억대 조회수 카테고리 (검증된 포맷)</li>
+        <li>테슬라 라이트쇼 = 다른 차에서 불가능한 차별화 요소</li>
+        <li>감동 + 로맨스 = 공유·저장 동기 극대화 (여성 시청자 타겟)</li>
+        <li>"결혼 후에도 로맨틱" 메시지 → 기혼 커플 공감 유도</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>서울 남산타워 주차장 (야경), 부산 광안대교 뷰 주차장, 여수 돌산대교 야경 포인트</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>장미꽃 99송이(중국 로맨스 숫자), LED 스트링 라이트, 풍선(하트형), 커플 사진 프린트, 편지, 반지 박스(연출용), 테슬라 라이트쇼 USB</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 3시간 (트렁크 세팅 1.5시간 + 서프라이즈 촬영 30분 + 야경 화보 1시간)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>준비 몽타주: 설레는 피아노 → 트렁크 오픈 순간: 무음→감동 오케스트라 스웰 → 라이트쇼: 드리미 신스팝 → 엔딩: 달달한 중국 러브송</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D4 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">D4</span>
+    <h3>중국 와이프 vs 한국 남편 간식 대결</h3>
+    <div class="zh">中国老婆 vs 韩国老公 零食大战</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>고속도로 휴게소에 들를 때마다 와이프는 중국식 간식(또는 중국에서 가져온 간식)을, 남편은 한국 간식을 각각 고르고 서로에게 먹여보며 리액션 배틀을 벌인다. 매 라운드마다 점수를 매겨 최종 "간식 챔피언 국가"를 가린다. 테슬라 차 안에서 먹방을 진행하며, FSD 자율주행 중이라 두 사람 모두 편하게 먹을 수 있다는 점을 자연스럽게 보여준다. 매운 과자 라운드, 달콤한 디저트 라운드, 음료 라운드 등으로 구성하고, 마지막에 서로 추천 간식 Top 3를 발표한다. 한중 음식 문화 교류를 가볍고 재미있게 다룬다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>차 내부 정면캠: 두 사람 나란히 간식 먹는 모습 (먹방 앵글)</li>
+        <li>간식 클로즈업: 패키지 + 내용물 ASMR (바삭/쫀득 소리)</li>
+        <li>리액션 슬로모션: 매운 맛/신맛에 표정 변하는 순간 슬로모</li>
+        <li>점수판 그래픽: 매 라운드 결과 스코어보드 오버레이</li>
+        <li>휴게소 입장 장면: 테슬라에서 내려 각자 간식 고르러 뛰어가는 와이드 숏</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>한중 간식 비교 = 양국 시청자 모두 관심 + 논쟁(내 나라 간식이 더 맛있어!)</li>
+        <li>먹방 + 리액션 = 더우인/유튜브 최고 인기 조합</li>
+        <li>커플 먹방 = 달달함 + 웃음 = 구독 유도</li>
+        <li>한국 휴게소 문화 소개 → 여행 정보 콘텐츠 역할</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>고속도로 유명 휴게소 (안성 휴게소, 횡성 휴게소 등). 다양한 간식이 있는 대형 휴게소 추천</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>중국 간식 세트 (미리 구매: 辣条, 旺旺, 大白兔 등), 한국 간식 (허니버터칩, 초코파이, 바나나킥 등), 점수판, 물, 물티슈</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>약 2시간 (휴게소 쇼핑 30분 + 차 내 먹방 1시간 + 결과 발표 30분)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>대결 인트로: 복싱 링 벨소리 → 먹방 중: 경쾌한 아시안 팝 → 매운 맛 라운드: 불타는 효과음 → 결과 발표: 시상식 음악</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D5 -->
+<div class="card">
+  <div class="card-title">
+    <span class="number">D5</span>
+    <h3>1도시 1코디 1사진 10분 챌린지</h3>
+    <div class="zh">1城市1穿搭1照片 10分钟挑战</div>
+  </div>
+  <div class="card-body">
+    <section>
+      <div class="label"><span class="icon">🎬</span> 컨셉 상세</div>
+      <p>각 도시에 도착하면 10분 타이머를 걸고 ① 차에서 코디 체인지(1분) ② 촬영 장소 이동(3분) ③ 인생샷 촬영(5분) ④ 차로 복귀(1분)를 완수하는 스피드 챌린지. 도시마다 그 지역 랜드마크와 어울리는 코디를 미리 준비해두고, 테슬라에서 빠르게 갈아입은 뒤 달려가서 사진을 찍고 돌아온다. 부산 해운대에서는 서퍼룩, 경주에서는 한복, 강릉에서는 카페룩, 전주에서는 레트로룩 등. 10분 안에 완성하지 못하면 벌칙이 있다. 테슬라의 넓은 실내를 '이동식 드레스룸'으로 활용하는 것이 포인트. 최종적으로 모든 도시의 사진을 모아 인스타 캐러셀로 공개한다.</p>
+    </section>
+    <section>
+      <div class="label"><span class="icon">📸</span> 촬영 포인트</div>
+      <ul>
+        <li>화면 상단 10분 카운트다운 타이머 고정</li>
+        <li>차 안 코디 체인지: 스피드 타임랩스 (코미디 연출)</li>
+        <li>달리기 구간: 핸드헬드 흔들림캠 (긴박감)</li>
+        <li>사진 촬영 순간: 갑자기 잡지 화보 톤으로 전환 (느린 셔터 효과음)</li>
+        <li>전 도시 사진 모아보기: 엔딩에 갤러리 슬라이드쇼</li>
+      </ul>
+    </section>
+    <section>
+      <div class="label"><span class="icon">🔥</span> 바이럴 포인트</div>
+      <ul>
+        <li>10분 타이머 = 긴장감 + 숏폼에 딱 맞는 러닝타임</li>
+        <li>도시별 코디 변신 = 시각적 다양성 → 끝까지 시청 유도</li>
+        <li>"나도 해보고 싶다" 참여 욕구 → 챌린지 확산 가능</li>
+        <li>최종 사진 갤러리 = 인스타 공유용 콘텐츠 (2차 확산)</li>
+      </ul>
+    </section>
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="label"><span class="icon">📍</span> 추천 촬영 장소</div>
+        <p>부산 해운대 해변, 경주 첨성대/대릉원, 강릉 안목해변 카페거리, 전주 한옥마을, 서울 경복궁 (5개 도시 시리즈)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎒</span> 소품 / 준비물</div>
+        <p>도시별 코디 5세트 (미리 코디백에 준비), 타이머, 삼각대(빠른 셀프 촬영용), 벌칙 카드, 운동화(달리기용)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">⏱</span> 예상 촬영 시간</div>
+        <p>도시당 약 30분 (실제 10분 챌린지 + 서브 앵글·리액션 추가 촬영 20분)</p>
+      </div>
+      <div class="meta-box">
+        <div class="label"><span class="icon">🎵</span> 추천 BGM</div>
+        <p>타이머 시작: 긴급 알람 효과음 → 코디 체인지: 슈퍼마리오 스타 BGM 분위기 → 사진 순간: 셔터음 + 드라마틱 슬로 → 갤러리: 감성 피아노</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end cards D -->
+
+</div><!-- end container -->
+</body>
+</html>

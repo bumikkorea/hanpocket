@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><style>@page { margin: 1cm; } @page { @top-left { content: none; } @top-right { content: none; } @bottom-left { content: none; } @bottom-right { content: none; } }</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>用韩剧学实用韩语</title>
+<style>
+@page { size: A4; margin: 15mm; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Malgun Gothic', 'Microsoft YaHei', sans-serif; color: #333; line-height: 1.6; background: #fff; }
+
+/* Cover Page */
+.cover { page-break-after: always; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; background: linear-gradient(135deg, #e8d5f5 0%, #f5d5e0 50%, #d5e0f5 100%); text-align: center; padding: 40px; }
+.cover h1 { font-size: 42px; color: #6b3fa0; margin-bottom: 8px; }
+.cover .subtitle-ko { font-size: 22px; color: #8b5fbf; margin-bottom: 30px; }
+.cover .subtitle-cn { font-size: 20px; color: #c06090; font-style: italic; margin-bottom: 50px; }
+.cover .deco { font-size: 60px; margin-bottom: 30px; }
+.cover .info { font-size: 14px; color: #888; margin-top: 40px; }
+.cover .stats { display: flex; gap: 30px; margin-top: 30px; }
+.cover .stat { background: rgba(255,255,255,0.7); border-radius: 12px; padding: 15px 25px; }
+.cover .stat-num { font-size: 28px; font-weight: bold; color: #6b3fa0; }
+.cover .stat-label { font-size: 12px; color: #888; }
+
+/* TOC */
+.toc { page-break-after: always; padding: 40px 20px; }
+.toc h2 { font-size: 26px; color: #6b3fa0; text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e8d5f5; padding-bottom: 10px; }
+.toc-item { display: flex; align-items: center; padding: 12px 15px; margin: 8px 0; border-radius: 10px; background: #faf5ff; }
+.toc-item .emoji { font-size: 28px; margin-right: 15px; }
+.toc-item .label { font-size: 18px; font-weight: bold; color: #6b3fa0; }
+.toc-item .label-cn { font-size: 14px; color: #999; margin-left: 8px; }
+
+/* Category Section */
+.category { page-break-before: always; }
+.cat-header { background: linear-gradient(135deg, #e8d5f5, #f5d5e0); padding: 25px 30px; border-radius: 16px; margin-bottom: 20px; text-align: center; }
+.cat-header .emoji { font-size: 40px; }
+.cat-header h2 { font-size: 26px; color: #6b3fa0; margin: 5px 0; }
+.cat-header .cn { font-size: 16px; color: #c06090; }
+
+/* Expression Card */
+.card { border: 1px solid #e8d5f5; border-radius: 12px; margin-bottom: 14px; overflow: hidden; page-break-inside: avoid; }
+.card-top { background: linear-gradient(90deg, #f5eefa, #fef5f8); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0e0f5; }
+.card-num { background: #6b3fa0; color: #fff; width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; margin-right: 10px; }
+.card-kr { font-size: 20px; font-weight: bold; color: #6b3fa0; }
+.card-cn-trans { font-size: 15px; color: #c06090; }
+.card-body { padding: 12px 18px; font-size: 13.5px; }
+.card-body .row { margin-bottom: 6px; }
+.card-body .label { font-weight: bold; color: #8b5fbf; margin-right: 4px; }
+.card-body .pron { background: #faf0ff; padding: 2px 8px; border-radius: 4px; font-size: 13px; }
+.card-body .drama { background: #fff8f0; padding: 6px 10px; border-radius: 6px; font-size: 12.5px; color: #8b6914; border-left: 3px solid #e0c060; margin: 6px 0; }
+.card-body .drama .drama-title { font-weight: bold; color: #7b5b0a; }
+.card-body .scene { background: #fff5f8; padding: 6px 10px; border-radius: 6px; font-size: 12.5px; color: #666; border-left: 3px solid #e0a0c0; margin: 6px 0; }
+.card-body .example { background: #f0f5ff; padding: 6px 10px; border-radius: 6px; font-size: 12.5px; color: #555; border-left: 3px solid #a0b0e0; }
+
+/* Footer */
+.page-footer { text-align: center; font-size: 11px; color: #bbb; margin-top: 30px; padding-top: 10px; border-top: 1px solid #eee; }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+<div class="deco">🎬🇰🇷📺</div>
+<h1>用韩剧学实用韩语</h1>
+<div class="subtitle-ko">한국 드라마로 배우는 실전 한국어</div>
+<div class="subtitle-cn">追剧学韩语，轻松又有趣！</div>
+<div class="stats">
+<div class="stat"><div class="stat-num">5</div><div class="stat-label">카테고리 / 分类</div></div>
+<div class="stat"><div class="stat-num">50</div><div class="stat-label">표현 / 表达</div></div>
+<div class="stat"><div class="stat-num">∞</div><div class="stat-label">재미 / 乐趣</div></div>
+</div>
+<div class="info">Korean Drama Expressions Guide · 韩剧实用韩语手册</div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+<h2>📖 목차 · 目录</h2>
+<div class="toc-item"><span class="emoji">💕</span><span class="label">로맨스<span class="label-cn"> · 浪漫</span></span></div>
+<div class="toc-item"><span class="emoji">💼</span><span class="label">직장<span class="label-cn"> · 职场</span></span></div>
+<div class="toc-item"><span class="emoji">🏠</span><span class="label">일상<span class="label-cn"> · 日常</span></span></div>
+<div class="toc-item"><span class="emoji">😭</span><span class="label">감정<span class="label-cn"> · 情感</span></span></div>
+<div class="toc-item"><span class="emoji">🔥</span><span class="label">유행어/슬랭<span class="label-cn"> · 流行语/俚语</span></span></div>
+</div>
+
+<!-- ==================== 1. ROMANCE ==================== -->
+<div class="category">
+<div class="cat-header">
+<div class="emoji">💕</div>
+<h2>로맨스</h2>
+<div class="cn">浪漫 · Romance</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">1</span><span class="card-kr">사랑해</span></div>
+<div class="card-cn-trans">我爱你</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">sa-rang-hae / 萨朗嘿</span></div>
+<div class="drama">🎬 <span class="drama-title">도깨비 (孤单又灿烂的神-鬼怪)</span><br>📺 공유(孔刘)가 김고은에게 첫눈이 내리는 날 사랑을 고백하는 장면<br>初雪飘落之际，孔刘向金高银深情告白的经典名场面</div>
+<div class="example">💬 오빠, 나 진짜 사랑해. 알지? — 哥，我真的爱你，你知道吧？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">2</span><span class="card-kr">보고 싶었어</span></div>
+<div class="card-cn-trans">我想你了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">bo-go si-peo-sseo / 波高 西坡搜</span></div>
+<div class="drama">🎬 <span class="drama-title">태양의 후예 (太阳的后裔)</span><br>📺 송중기가 전쟁터에서 돌아와 송혜교와 재회하는 장면<br>宋仲基从战场归来，与宋慧乔深情重逢的催泪场景</div>
+<div class="example">💬 매일매일 보고 싶었어. — 每天每天都在想你。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">3</span><span class="card-kr">우리 사귈까?</span></div>
+<div class="card-cn-trans">我们交往吧？</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">u-ri sa-gwil-kka / 乌里 萨归尔嘎</span></div>
+<div class="drama">🎬 <span class="drama-title">스물다섯 스물하나 (二十五，二十一)</span><br>📺 남주혁이 김태리에게 용기 내어 정식으로 교제를 신청하는 장면<br>南柱赫鼓起勇气向金泰梨正式告白提出交往</div>
+<div class="example">💬 나 진심이야. 우리 사귈까? — 我是认真的，我们交往吧？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">4</span><span class="card-kr">너밖에 없어</span></div>
+<div class="card-cn-trans">我只有你</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">neo-bakk-e eop-seo / 诺巴给 噢搜</span></div>
+<div class="drama">🎬 <span class="drama-title">별에서 온 그대 (来自星星的你)</span><br>📺 김수현이 떠나야 하는 운명 앞에서 전지현에게 진심을 고백하는 장면<br>金秀贤面对必须离去的命运，向全智贤坦白心意的虐心场面</div>
+<div class="example">💬 내 눈에는 너밖에 없어. — 在我眼里只有你。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">5</span><span class="card-kr">첫눈에 반했어</span></div>
+<div class="card-cn-trans">一见钟情了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">cheot-nun-e ban-hae-sseo / 超努内 盘嘿搜</span></div>
+<div class="drama">🎬 <span class="drama-title">킹더랜드 (King the Land)</span><br>📺 이준호가 임윤아를 호텔에서 처음 만나고 친구에게 첫눈에 반했다고 털어놓는 장면<br>李俊昊在酒店初遇林允儿后，向朋友坦白一见钟情</div>
+<div class="example">💬 솔직히 첫눈에 반했어. — 说实话，我对你一见钟情了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">6</span><span class="card-kr">같이 있고 싶어</span></div>
+<div class="card-cn-trans">想和你在一起</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">ga-chi it-go si-peo / 嘎起 一特高 西坡</span></div>
+<div class="drama">🎬 <span class="drama-title">사랑의 불시착 (爱的迫降)</span><br>📺 손예진이 북한으로 돌아가야 하는 현빈에게 이별 전날 밤 말하는 장면<br>孙艺珍在离别前夜，对即将返回朝鲜的玄彬说出真心话</div>
+<div class="example">💬 가지 마. 나 너랑 같이 있고 싶어. — 别走，我想和你在一起。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">7</span><span class="card-kr">내 마음 몰라?</span></div>
+<div class="card-cn-trans">你不知道我的心意吗？</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">nae ma-eum mol-la / 内 马恩 摩拉</span></div>
+<div class="drama">🎬 <span class="drama-title">응답하라 1988 (请回答1988)</span><br>📺 정환이가 덕선이를 오랫동안 짝사랑하다가 마음을 전하지 못하는 장면<br>正焕暗恋德善多年却迟迟无法表白的虐心名场面</div>
+<div class="example">💬 이렇게까지 했는데, 내 마음 몰라? — 我都做到这个地步了，你还不知道我的心吗？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">8</span><span class="card-kr">평생 함께하자</span></div>
+<div class="card-cn-trans">一辈子在一起吧</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">pyeong-saeng ham-kke-ha-ja / 漂嗯森 汉给哈扎</span></div>
+<div class="drama">🎬 <span class="drama-title">눈물의 여왕 (泪之女王)</span><br>📺 김수현이 김지원에게 다시 한번 프러포즈하며 영원을 약속하는 대결국 장면<br>金秀贤在大结局中再次向金智媛求婚，许下永远的承诺</div>
+<div class="example">💬 나랑 평생 함께하자. 결혼해 줄래? — 跟我一辈子在一起吧，嫁给我好吗？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">9</span><span class="card-kr">질투 나</span></div>
+<div class="card-cn-trans">我吃醋了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">jil-tu na / 吉尔图 那</span></div>
+<div class="drama">🎬 <span class="drama-title">호텔 델루나 (德鲁纳酒店)</span><br>📺 이지은(아이유)이 여진구가 다른 여자와 이야기하는 걸 보고 질투하는 장면<br>IU看到吕珍九和别的女生聊天后吃醋闹别扭的可爱场景</div>
+<div class="example">💬 왜 그 사람한테만 웃어? 질투 나. — 你为什么只对那个人笑？我吃醋了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">10</span><span class="card-kr">너 없으면 안 돼</span></div>
+<div class="card-cn-trans">没有你不行</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">neo eop-seu-myeon an dwae / 诺 噢思面 安对</span></div>
+<div class="drama">🎬 <span class="drama-title">별에서 온 그대 (来自星星的你)</span><br>📺 전지현이 사라지려는 김수현을 붙잡으며 절박하게 외치는 장면<br>全智贤抓住即将消失的金秀贤，绝望地呐喊的经典场面</div>
+<div class="example">💬 제발 가지 마. 너 없으면 안 돼. — 求你别走，没有你我不行。</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== 2. WORKPLACE ==================== -->
+<div class="category">
+<div class="cat-header">
+<div class="emoji">💼</div>
+<h2>직장</h2>
+<div class="cn">职场 · Workplace</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">1</span><span class="card-kr">수고하셨습니다</span></div>
+<div class="card-cn-trans">辛苦了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">su-go-ha-syeot-seum-ni-da / 苏高哈肖思木尼达</span></div>
+<div class="drama">🎬 <span class="drama-title">미생 (未生)</span><br>📺 장그래(임시완)가 매일 야근 후 퇴근하는 선배들에게 인사하는 장면<br>张克莱(任时完)每天加班后向下班的前辈们恭敬地打招呼</div>
+<div class="example">💬 오늘도 수고하셨습니다! 내일 봐요. — 今天也辛苦了！明天见。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">2</span><span class="card-kr">회의 시작하겠습니다</span></div>
+<div class="card-cn-trans">开始开会</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">hoe-ui si-ja-ka-get-seum-ni-da / 会义 西扎卡给思木尼达</span></div>
+<div class="drama">🎬 <span class="drama-title">미생 (未生)</span><br>📺 오과장(이성민)이 회의실에서 팀원들을 모아 놓고 엄숙하게 회의를 시작하는 장면<br>吴科长(李成民)在会议室严肃地召集团队开会</div>
+<div class="example">💬 자, 그럼 회의 시작하겠습니다. 첫 번째 안건부터 보시죠. — 那么开始开会吧，先看第一个议题。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">3</span><span class="card-kr">보고서 제출했습니다</span></div>
+<div class="card-cn-trans">报告已经提交了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">bo-go-seo je-chul-haet-seum-ni-da / 波高搜 杰出嘿思木尼达</span></div>
+<div class="drama">🎬 <span class="drama-title">미생 (未生)</span><br>📺 장그래가 떨리는 손으로 부장님 책상 위에 첫 보고서를 올려놓는 장면<br>张克莱颤抖着双手，将第一份报告放到部长桌上的紧张场面</div>
+<div class="example">💬 부장님, 요청하신 보고서 제출했습니다. — 部长，您要求的报告已经提交了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">4</span><span class="card-kr">야근해야 돼</span></div>
+<div class="card-cn-trans">得加班</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">ya-geun-hae-ya dwae / 牙根嘿呀对</span></div>
+<div class="drama">🎬 <span class="drama-title">슬기로운 의사생활 (机智的医生生活)</span><br>📺 의사들이 응급 환자가 들어오면서 퇴근 약속을 취소하고 야근하는 장면<br>医生们因急诊患者到来而取消下班约定，继续加班的场景</div>
+<div class="example">💬 미안, 오늘 야근해야 돼. 먼저 가. — 对不起，今天得加班，你先走吧。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">5</span><span class="card-kr">승진 축하해</span></div>
+<div class="card-cn-trans">恭喜升职</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">seung-jin chuk-ha-hae / 僧金 处卡嘿</span></div>
+<div class="drama">🎬 <span class="drama-title">킹더랜드 (King the Land)</span><br>📺 이준호가 호텔 내부 승진 발표 후 동료들에게 축하받는 장면<br>李俊昊在酒店内部晋升公布后，接受同事们祝贺的场景</div>
+<div class="example">💬 드디어 과장 됐네! 승진 축하해! — 终于当上科长了！恭喜升职！</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">6</span><span class="card-kr">퇴근할게요</span></div>
+<div class="card-cn-trans">我先下班了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">toe-geun-hal-ge-yo / 退根哈尔给哟</span></div>
+<div class="drama">🎬 <span class="drama-title">미생 (未生)</span><br>📺 안영이(강소라)가 칼퇴근하면서 당당하게 인사하고 나가는 장면<br>安英怡(姜素拉)准时下班，大方地打招呼离开办公室</div>
+<div class="example">💬 먼저 퇴근할게요. 수고하세요! — 我先下班了，辛苦了！</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">7</span><span class="card-kr">점심 같이 먹을래?</span></div>
+<div class="card-cn-trans">一起吃午饭吗？</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">jeom-sim ga-chi meo-geul-lae / 炯西木 嘎起 莫格尔来</span></div>
+<div class="drama">🎬 <span class="drama-title">슬기로운 의사생활 (机智的医生生活)</span><br>📺 99즈 의사 5인방이 병원 구내식당에서 항상 같이 점심 먹는 일상 장면<br>99届五位医生好友在医院食堂一起吃午饭的温馨日常</div>
+<div class="example">💬 오늘 점심 같이 먹을래? 새로 생긴 맛집 가자. — 今天一起吃午饭吗？去那家新开的餐厅吧。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">8</span><span class="card-kr">내일까지 부탁드립니다</span></div>
+<div class="card-cn-trans">拜托明天之前完成</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">nae-il-kka-ji bu-tak-deu-rim-ni-da / 内一尔嘎吉 普他可德林尼达</span></div>
+<div class="drama">🎬 <span class="drama-title">미생 (未生)</span><br>📺 부장이 퇴근 직전 장그래 책상에 서류를 쌓아놓고 가는 장면<br>部长在下班前把一堆文件丢在张克莱桌上就走了的职场压迫场面</div>
+<div class="example">💬 이 자료 정리해서 내일까지 부탁드립니다. — 请把这份资料整理好，明天之前拜托了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">9</span><span class="card-kr">사직서 쓸 거야</span></div>
+<div class="card-cn-trans">我要写辞职信了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">sa-jik-seo sseul geo-ya / 萨吉克搜 色尔 够呀</span></div>
+<div class="drama">🎬 <span class="drama-title">이태원 클라쓰 (梨泰院Class)</span><br>📺 박새로이(박서준)가 불의에 맞서 상사에게 당당히 사직서를 던지는 장면<br>朴世路(朴叙俊)为正义对抗上司，霸气地甩出辞职信</div>
+<div class="example">💬 더 이상 못 참아. 사직서 쓸 거야. — 我再也忍不了了，我要写辞职信。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">10</span><span class="card-kr">대표님 찾으세요?</span></div>
+<div class="card-cn-trans">您找代表（老板）吗？</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">dae-pyo-nim cha-jeu-se-yo / 代漂尼木 查则塞哟</span></div>
+<div class="drama">🎬 <span class="drama-title">빈센조 (Vincenzo)</span><br>📺 홍차영(전여빈)의 로펌에 의뢰인이 방문하여 대표를 찾는 장면<br>洪车瑛(田美都)的律所来了委托人，前台询问是否找代表的场景</div>
+<div class="example">💬 실례합니다. 대표님 찾으세요? 약속이 있으신가요? — 打扰了，您找代表吗？请问有预约吗？</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== 3. DAILY LIFE ==================== -->
+<div class="category">
+<div class="cat-header">
+<div class="emoji">🏠</div>
+<h2>일상</h2>
+<div class="cn">日常 · Daily Life</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">1</span><span class="card-kr">밥 먹었어?</span></div>
+<div class="card-cn-trans">吃饭了吗？</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">bap meo-geo-sseo / 爸 莫高搜</span></div>
+<div class="drama">🎬 <span class="drama-title">응답하라 1988 (请回答1988)</span><br>📺 쌍문동 이웃들이 골목에서 만날 때마다 "밥 먹었어?"로 인사하는 장면<br>双门洞邻居们在胡同里每次相遇都以"吃了吗"打招呼的温暖日常</div>
+<div class="example">💬 아직 밥 먹었어? 안 먹었으면 같이 가자. — 你吃饭了吗？没吃的话一起去吧。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">2</span><span class="card-kr">어디야?</span></div>
+<div class="card-cn-trans">你在哪？</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">eo-di-ya / 噢迪呀</span></div>
+<div class="drama">🎬 <span class="drama-title">사랑의 불시착 (爱的迫降)</span><br>📺 현빈이 손예진과 연락이 안 돼 급하게 전화하며 "어디야?"라고 묻는 장면<br>玄彬联系不上孙艺珍，急切地打电话问"你在哪"的紧张场面</div>
+<div class="example">💬 야, 어디야? 나 벌써 도착했는데. — 喂，你在哪啊？我已经到了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">3</span><span class="card-kr">집에 가고 싶다</span></div>
+<div class="card-cn-trans">好想回家</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">ji-be ga-go sip-da / 吉贝 嘎高 西普达</span></div>
+<div class="drama">🎬 <span class="drama-title">미생 (未生)</span><br>📺 장그래가 끝없는 야근에 지쳐 창밖을 보며 한숨 쉬는 장면<br>张克莱被无尽的加班折磨，望着窗外叹气想回家的共鸣场面</div>
+<div class="example">💬 아... 집에 가고 싶다. 오늘 왜 이렇게 길어? — 啊…好想回家，今天怎么这么长？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">4</span><span class="card-kr">피곤해 죽겠어</span></div>
+<div class="card-cn-trans">累死了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">pi-gon-hae juk-ge-sseo / 皮公嘿 处克给搜</span></div>
+<div class="drama">🎬 <span class="drama-title">슬기로운 의사생활 (机智的医生生活)</span><br>📺 전미도가 36시간 연속 수술 후 소파에 쓰러지며 말하는 장면<br>田美都连续36小时手术后倒在沙发上嘟囔"累死了"</div>
+<div class="example">💬 오늘 하루 종일 서 있었어. 피곤해 죽겠어. — 今天站了一整天，累死了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">5</span><span class="card-kr">오늘 뭐 해?</span></div>
+<div class="card-cn-trans">今天干嘛？</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">o-neul mwo hae / 噢讷尔 莫嘿</span></div>
+<div class="drama">🎬 <span class="drama-title">스물다섯 스물하나 (二十五，二十一)</span><br>📺 남주혁이 김태리에게 문자 보내며 주말 약속을 잡으려는 설레는 장면<br>南柱赫给金泰梨发信息，想约周末见面的心动场景</div>
+<div class="example">💬 오늘 뭐 해? 시간 되면 카페 갈래? — 今天干嘛？有空的话去咖啡厅吗？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">6</span><span class="card-kr">심심한데</span></div>
+<div class="card-cn-trans">好无聊啊</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">sim-sim-han-de / 西木西木汉得</span></div>
+<div class="drama">🎬 <span class="drama-title">호텔 델루나 (德鲁纳酒店)</span><br>📺 아이유가 호텔에서 할 일 없이 뒹굴거리며 여진구를 괴롭히는 장면<br>IU在酒店无所事事地打滚，找吕珍九作伴解闷的可爱场面</div>
+<div class="example">💬 심심한데 뭐 하지? 나가 볼까? — 好无聊啊，干点啥呢？出去逛逛？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">7</span><span class="card-kr">비 온다</span></div>
+<div class="card-cn-trans">下雨了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">bi on-da / 比 昂达</span></div>
+<div class="drama">🎬 <span class="drama-title">도깨비 (孤单又灿烂的神-鬼怪)</span><br>📺 비 오는 날 공유가 김고은에게 우산 대신 자기 재킷을 씌워주는 장면<br>下雨天孔刘没有伞，把自己的外套披在金高银身上的浪漫场景</div>
+<div class="example">💬 어, 비 온다. 우산 있어? — 哎，下雨了，你有伞吗？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">8</span><span class="card-kr">배고파</span></div>
+<div class="card-cn-trans">饿了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">bae-go-pa / 贝高帕</span></div>
+<div class="drama">🎬 <span class="drama-title">응답하라 1988 (请回答1988)</span><br>📺 덕선이가 친구들과 골목에서 놀다가 "배고파~" 하며 집으로 뛰어가는 장면<br>德善和朋友们在胡同玩耍后喊着"饿了"跑回家的温馨场面</div>
+<div class="example">💬 배고파~ 뭐 먹을까? 치킨 시킬까? — 饿了~ 吃点啥？叫炸鸡？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">9</span><span class="card-kr">늦잠 잤어</span></div>
+<div class="card-cn-trans">睡过头了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">neut-jam ja-sseo / 讷特扎木 扎搜</span></div>
+<div class="drama">🎬 <span class="drama-title">눈물의 여왕 (泪之女王)</span><br>📺 김수현이 늦잠 자서 허둥지둥 출근 준비하며 김지원에게 전화하는 장면<br>金秀贤睡过头后手忙脚乱地准备上班，给金智媛打电话的搞笑场面</div>
+<div class="example">💬 미안! 늦잠 잤어. 10분만 기다려! — 对不起！睡过头了，等我10分钟！</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">10</span><span class="card-kr">장 보러 가자</span></div>
+<div class="card-cn-trans">去买菜吧</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">jang bo-reo ga-ja / 张 波罗 嘎扎</span></div>
+<div class="drama">🎬 <span class="drama-title">사랑의 불시착 (爱的迫降)</span><br>📺 손예진이 북한 마을에서 현빈과 함께 시장에 장 보러 가는 장면<br>孙艺珍在朝鲜村庄和玄彬一起去市场买菜的温馨日常</div>
+<div class="example">💬 냉장고에 아무것도 없네. 장 보러 가자. — 冰箱里什么都没了，去买菜吧。</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== 4. EMOTIONS ==================== -->
+<div class="category">
+<div class="cat-header">
+<div class="emoji">😭</div>
+<h2>감정</h2>
+<div class="cn">情感 · Emotions</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">1</span><span class="card-kr">대박</span></div>
+<div class="card-cn-trans">大发 / 太厉害了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">dae-bak / 代巴克</span></div>
+<div class="drama">🎬 <span class="drama-title">이태원 클라쓰 (梨泰院Class)</span><br>📺 박새로이(박서준)가 단밤 포차의 첫 매출을 보고 놀라며 "대박!" 외치는 장면<br>朴世路(朴叙俊)看到丹栗酒馆第一天的营业额，惊喜地喊出"大发！"</div>
+<div class="example">💬 대박! 이거 진짜야? 믿을 수가 없다. — 天哪！这是真的吗？简直不敢相信。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">2</span><span class="card-kr">미치겠다</span></div>
+<div class="card-cn-trans">要疯了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">mi-chi-get-da / 米起给特达</span></div>
+<div class="drama">🎬 <span class="drama-title">더 글로리 (黑暗荣耀)</span><br>📺 송혜교가 복수 계획이 꼬일 때 혼자서 "미치겠다"며 이를 악무는 장면<br>宋慧乔在复仇计划出现变数时独自咬牙说"要疯了"的紧张场面</div>
+<div class="example">💬 시험 내일인데 하나도 안 외워져. 미치겠다. — 明天就考试了什么都没背下来，要疯了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">3</span><span class="card-kr">어떡해</span></div>
+<div class="card-cn-trans">怎么办</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">eo-tteo-kae / 噢多开</span></div>
+<div class="drama">🎬 <span class="drama-title">별에서 온 그대 (来自星星的你)</span><br>📺 전지현이 술 취해 사고를 치고 다음 날 깨어나 "어떡해, 어떡해!" 반복하는 장면<br>全智贤醉酒闯祸后第二天醒来，不停喊"怎么办怎么办"的搞笑场面</div>
+<div class="example">💬 어떡해, 어떡해! 핸드폰을 택시에 놓고 내렸어! — 怎么办怎么办！手机落在出租车上了！</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">4</span><span class="card-kr">화난다</span></div>
+<div class="card-cn-trans">生气了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">hwa-nan-da / 花南达</span></div>
+<div class="drama">🎬 <span class="drama-title">더 글로리 (黑暗荣耀)</span><br>📺 송혜교가 과거 학교폭력 가해자들을 다시 마주하며 분노를 삼키는 장면<br>宋慧乔再次面对当年校园暴力加害者时压抑怒火的震撼场面</div>
+<div class="example">💬 진짜 화난다. 어떻게 나한테 그럴 수 있어? — 真的生气了，怎么能对我这样？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">5</span><span class="card-kr">억울해</span></div>
+<div class="card-cn-trans">太冤枉了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">eo-gul-hae / 噢古尔嘿</span></div>
+<div class="drama">🎬 <span class="drama-title">빈센조 (Vincenzo)</span><br>📺 금가프라자 주민들이 거대 기업에 쫓겨나게 되면서 "억울해!"를 외치는 장면<br>金家广场居民们面临被大企业驱赶，愤怒地喊出"太冤枉了"</div>
+<div class="example">💬 나 안 그랬어! 진짜 억울해. — 我没有那样做！真的太冤枉了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">6</span><span class="card-kr">감동이야</span></div>
+<div class="card-cn-trans">好感动</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">gam-dong-i-ya / 卡木东伊呀</span></div>
+<div class="drama">🎬 <span class="drama-title">무브 투 헤븐 (Move to Heaven：我是遗物整理师)</span><br>📺 이제훈과 탕준상이 고인의 유품을 정리하며 숨겨진 사연에 감동받는 장면<br>李帝勋和汤峻相整理逝者遗物时，被隐藏的故事深深感动</div>
+<div class="example">💬 이걸 다 준비했어? 감동이야, 진짜. — 这些都是你准备的？真的好感动。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">7</span><span class="card-kr">소름 돋아</span></div>
+<div class="card-cn-trans">起鸡皮疙瘩了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">so-reum do-da / 搜勒木 都达</span></div>
+<div class="drama">🎬 <span class="drama-title">호텔 델루나 (德鲁纳酒店)</span><br>📺 여진구가 처음으로 귀신을 보고 소름이 돋아 팔을 문지르며 놀라는 장면<br>吕珍九第一次看到鬼魂，搓着胳膊惊恐地说"起鸡皮疙瘩了"</div>
+<div class="example">💬 방금 노래 들었어? 소름 돋아, 진짜 잘한다. — 你听到刚才那首歌了吗？起鸡皮疙瘩了，唱得真好。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">8</span><span class="card-kr">설레</span></div>
+<div class="card-cn-trans">心动 / 小鹿乱撞</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">seol-le / 搜尔来</span></div>
+<div class="drama">🎬 <span class="drama-title">스물다섯 스물하나 (二十五，二十一)</span><br>📺 김태리가 남주혁과 손이 닿았을 때 심장이 두근거리며 혼잣말하는 장면<br>金泰梨和南柱赫手指碰触时，心跳加速自言自语"心动了"</div>
+<div class="example">💬 내일 만나는 거 생각하니까 벌써 설레. — 一想到明天要见面就已经心动了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">9</span><span class="card-kr">답답해</span></div>
+<div class="card-cn-trans">郁闷 / 憋屈</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">dap-da-pae / 达普达配</span></div>
+<div class="drama">🎬 <span class="drama-title">이태원 클라쓰 (梨泰院Class)</span><br>📺 박새로이가 장가 회장의 부당함에 아무도 나서지 않는 현실에 답답해하는 장면<br>朴世路面对长家会长的不公，却无人站出来，感到无比憋屈</div>
+<div class="example">💬 아, 답답해! 왜 내 말을 안 들어? — 啊，好郁闷！为什么不听我说的话？</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">10</span><span class="card-kr">후회돼</span></div>
+<div class="card-cn-trans">后悔了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">hu-hoe-dwae / 呼会对</span></div>
+<div class="drama">🎬 <span class="drama-title">응답하라 1988 (请回答1988)</span><br>📺 정환이가 덕선이에게 고백하지 못한 것을 후회하며 혼자 빈 방에 앉아있는 장면<br>正焕独自坐在空房间里，后悔没能向德善告白的虐心结局</div>
+<div class="example">💬 그때 잡았어야 했는데... 너무 후회돼. — 那时候应该留住的…太后悔了。</div>
+</div>
+</div>
+</div>
+
+<!-- ==================== 5. SLANG ==================== -->
+<div class="category">
+<div class="cat-header">
+<div class="emoji">🔥</div>
+<h2>유행어 / 슬랭</h2>
+<div class="cn">流行语 / 俚语 · Slang & Trends</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">1</span><span class="card-kr">갑분싸</span></div>
+<div class="card-cn-trans">气氛突然变冷场</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">gap-bun-ssa / 嘎普恩萨</span></div>
+<div class="drama">🎬 <span class="drama-title">슬기로운 의사생활 (机智的医生生活)</span><br>📺 99즈 밴드 모임에서 누군가 분위기 깨는 말을 해서 다 같이 멈추는 장면<br>99届乐队聚会上有人说了句扫兴的话，全场瞬间沉默的搞笑场面</div>
+<div class="example">💬 그 말 하는 바람에 완전 갑분싸됐잖아. — 你说那句话，气氛一下子就冷了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">2</span><span class="card-kr">존맛탱</span></div>
+<div class="card-cn-trans">超级好吃</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">jon-mat-taeng / 总马特汤</span></div>
+<div class="drama">🎬 <span class="drama-title">이태원 클라쓰 (梨泰院Class)</span><br>📺 단밤 포차에서 손님들이 박새로이의 요리를 먹고 감탄하는 장면<br>丹栗酒馆的客人们吃到朴世路做的菜后赞不绝口</div>
+<div class="example">💬 이 떡볶이 존맛탱! 여기 맛집 인정. — 这炒年糕超好吃！这家是认证美食店。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">3</span><span class="card-kr">꿀잼</span></div>
+<div class="card-cn-trans">超有趣 / 蜜般好玩</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">kkul-jaem / 库尔杰木</span></div>
+<div class="drama">🎬 <span class="drama-title">빈센조 (Vincenzo)</span><br>📺 금가프라자 주민들이 모여서 TV를 보며 "꿀잼!"이라고 외치는 코믹 장면<br>金家广场居民们聚在一起看电视，齐喊"超好看！"的搞笑场面</div>
+<div class="example">💬 이 드라마 꿀잼이야! 밤새 정주행했어. — 这部剧超好看！通宵追完了。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">4</span><span class="card-kr">핵인싸</span></div>
+<div class="card-cn-trans">超级社交达人</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">haek-in-ssa / 黑可因萨</span></div>
+<div class="drama">🎬 <span class="drama-title">킹더랜드 (King the Land)</span><br>📺 임윤아가 호텔에서 모든 직원들과 밝게 인사하며 인기 만점인 장면<br>林允儿在酒店里和所有员工开朗地打招呼，人气满分的场景</div>
+<div class="example">💬 걔는 진짜 핵인싸야. 모르는 사람이 없어. — 那家伙真是超级社交达人，没有不认识的人。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">5</span><span class="card-kr">TMI</span></div>
+<div class="card-cn-trans">多余的信息 / 说多了</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">ti-em-ai / TMI (直接读英文)</span></div>
+<div class="drama">🎬 <span class="drama-title">슬기로운 의사생활 (机智的医生生活)</span><br>📺 조정석이 점심시간에 쓸데없는 TMI를 계속 말해서 친구들이 웃는 장면<br>曹政奭午饭时不停分享无用的TMI，朋友们哭笑不得</div>
+<div class="example">💬 TMI인데, 나 오늘 양말 짝짝이야. — 说个TMI，我今天穿了两只不一样的袜子。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">6</span><span class="card-kr">플렉스</span></div>
+<div class="card-cn-trans">炫富 / 大手笔消费</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">peul-lek-seu / 普勒克思</span></div>
+<div class="drama">🎬 <span class="drama-title">빈센조 (Vincenzo)</span><br>📺 송중기가 이탈리아 마피아 변호사답게 명품 슈트를 입고 등장하는 장면<br>宋仲基以意大利黑手党律师的派头，穿着名牌西装霸气登场</div>
+<div class="example">💬 오늘 월급날이니까 내가 쏜다. 플렉스! — 今天发工资，我请客！flex！</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">7</span><span class="card-kr">가성비</span></div>
+<div class="card-cn-trans">性价比</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">ga-seong-bi / 嘎松比</span></div>
+<div class="drama">🎬 <span class="drama-title">이태원 클라쓰 (梨泰院Class)</span><br>📺 조이서(김다미)가 단밤 포차의 가격 대비 맛을 분석하며 전략을 짜는 장면<br>赵伊瑞(金多美)分析丹栗酒馆的性价比，制定经营策略</div>
+<div class="example">💬 이 식당 가성비 최고야. 양도 많고 맛도 좋아. — 这家餐厅性价比最高，量大还好吃。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">8</span><span class="card-kr">혼밥</span></div>
+<div class="card-cn-trans">一个人吃饭</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">hon-bap / 混爸</span></div>
+<div class="drama">🎬 <span class="drama-title">미생 (未生)</span><br>📺 장그래가 동료들과 어울리지 못하고 혼자 편의점에서 도시락 먹는 장면<br>张克莱无法融入同事圈子，一个人在便利店吃便当的孤独场景</div>
+<div class="example">💬 오늘 혼밥했는데 의외로 좋더라. — 今天一个人吃饭了，意外地还挺好的。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">9</span><span class="card-kr">셀카</span></div>
+<div class="card-cn-trans">自拍</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">sel-ka / 塞尔卡</span></div>
+<div class="drama">🎬 <span class="drama-title">눈물의 여왕 (泪之女王)</span><br>📺 김지원이 김수현과 데이트하며 커플 셀카를 찍는 달달한 장면<br>金智媛和金秀贤约会时甜蜜地拍情侣自拍的场景</div>
+<div class="example">💬 우리 셀카 찍자! 여기 배경 예쁘다. — 我们自拍吧！这里背景好漂亮。</div>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div><span class="card-num">10</span><span class="card-kr">갓생</span></div>
+<div class="card-cn-trans">神仙生活 / 自律人生</div>
+</div>
+<div class="card-body">
+<div class="row"><span class="label">🗣 发音：</span><span class="pron">gat-saeng / 嘎特森</span></div>
+<div class="drama">🎬 <span class="drama-title">스물다섯 스물하나 (二十五，二十一)</span><br>📺 김태리가 펜싱 훈련과 학업을 완벽하게 병행하며 갓생을 사는 장면<br>金泰梨完美兼顾击剑训练和学业，过着"神仙般自律生活"</div>
+<div class="example">💬 오늘 5시에 일어나서 운동하고 공부했어. 갓생 살았다! — 今天5点起床运动还学习了，过了神仙般的一天！</div>
+</div>
+</div>
+</div>
+
+<!-- BACK COVER -->
+<div class="cover" style="page-break-before: always;">
+<div class="deco">🎉✨🇰🇷</div>
+<h1 style="font-size: 32px;">학습 완료!</h1>
+<div class="subtitle-ko">学习完成！恭喜你！</div>
+<div class="subtitle-cn" style="font-size: 16px; max-width: 500px;">现在你已经掌握了50个韩剧中最常用的表达。<br>继续看韩剧，继续学韩语！<br>드라마 보면서 한국어 공부 화이팅! 💪</div>
+<div style="margin-top: 30px; font-size: 13px; color: #999; max-width: 400px;">
+📺 收录韩剧：도깨비 · 태양의 후예 · 별에서 온 그대 · 사랑의 불시착<br>
+이태원 클라쓰 · 미생 · 응답하라 1988 · 킹더랜드 · 눈물의 여왕<br>
+스물다섯 스물하나 · 호텔 델루나 · 빈센조 · 더 글로리<br>
+무브 투 헤븐 · 슬기로운 의사생활
+</div>
+</div>
+
+</body>
+</html>

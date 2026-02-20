@@ -1,0 +1,400 @@
+import { useState, useEffect } from 'react'
+import { sessions, minimaps, xpRules, levelTitles, getLevelFromXp, getNextLevelXp, levels } from '../data/education'
+
+function L(lang, data) {
+  if (typeof data === 'string') return data
+  return data?.[lang] || data?.en || data?.zh || data?.ko || ''
+}
+
+// 로컬스토리지 유틸
+function loadEduState() {
+  try { return JSON.parse(localStorage.getItem('edu_state')) || defaultState() }
+  catch { return defaultState() }
+}
+function saveEduState(state) { localStorage.setItem('edu_state', JSON.stringify(state)) }
+function defaultState() {
+  return { xp: 0, streak: 0, lastLoginDate: null, completedUnits: [], completedQuizzes: [], level: 'beginner', currentSession: 0 }
+}
+
+// ─── XP 바 ───
+function XpBar({ xp, lang }) {
+  const level = getLevelFromXp(xp)
+  const nextXp = getNextLevelXp(level)
+  const prevXp = level === 0 ? 0 : getNextLevelXp(level - 1)
+  const progress = Math.min(((xp - prevXp) / (nextXp - prevXp)) * 100, 100)
+  const title = levelTitles[lang]?.[level] || levelTitles.en[level]
+
+  return (
+    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">⭐</span>
+          <span className="font-bold text-slate-800">Lv.{level + 1} {title}</span>
+        </div>
+        <span className="text-sm text-slate-500">{xp} XP</span>
+      </div>
+      <div className="w-full bg-slate-100 rounded-full h-2.5">
+        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2.5 rounded-full transition-all duration-500"
+          style={{ width: `${progress}%` }} />
+      </div>
+      <div className="flex justify-between mt-1 text-xs text-slate-400">
+        <span>{prevXp}</span>
+        <span>{nextXp}</span>
+      </div>
+    </div>
+  )
+}
+
+// ─── 스트릭 ───
+function StreakBadge({ streak, lang }) {
+  const labels = { ko: '연속 출석', zh: '连续签到', en: 'Streak' }
+  return (
+    <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl p-3 text-white flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <span className="text-2xl">🔥</span>
+        <div>
+          <div className="font-bold text-lg">{streak}{lang === 'ko' ? '일' : lang === 'zh' ? '天' : ' days'}</div>
+          <div className="text-xs opacity-80">{labels[lang]}</div>
+        </div>
+      </div>
+      {streak >= 7 && <span className="text-xs bg-white/20 px-2 py-1 rounded-full">🏆 ×{Math.floor(streak / 7)}</span>}
+    </div>
+  )
+}
+
+// ─── 세션 카드 ───
+function SessionCard({ session, isActive, isCurrent, isLocked, completedCount, totalCount, onClick, lang }) {
+  return (
+    <button
+      onClick={isLocked ? undefined : onClick}
+      className={`w-full text-left rounded-xl p-4 transition-all border ${
+        isCurrent ? 'bg-white shadow-md border-blue-300 ring-2 ring-blue-100' :
+        isLocked ? 'bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed' :
+        'bg-white shadow-sm border-slate-100 hover:border-blue-200 hover:shadow-md'
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${session.color} flex items-center justify-center text-2xl shadow-sm`}>
+          {isLocked ? '🔒' : session.icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-slate-800 text-sm">{L(lang, session.title)}</span>
+            {isCurrent && <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
+              {lang === 'ko' ? '진행중' : lang === 'zh' ? '进行中' : 'Current'}
+            </span>}
+            <span className="text-xs text-slate-400 ml-auto">TOPIK {session.topikLevel}</span>
+          </div>
+          <p className="text-xs text-slate-500 mt-0.5">{L(lang, session.subtitle)}</p>
+          {!isLocked && (
+            <div className="mt-2">
+              <div className="w-full bg-slate-100 rounded-full h-1.5">
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-1.5 rounded-full transition-all"
+                  style={{ width: `${(completedCount / totalCount) * 100}%` }} />
+              </div>
+              <span className="text-xs text-slate-400 mt-0.5">{completedCount}/{totalCount}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </button>
+  )
+}
+
+// ─── 레슨 목록 ───
+function LessonList({ session, eduState, onComplete, onOpenMinimap, onBack, lang }) {
+  return (
+    <div className="space-y-3">
+      <button onClick={onBack} className="text-blue-600 text-sm font-medium">
+        {lang === 'ko' ? '← 뒤로' : lang === 'zh' ? '← 返回' : '← Back'}
+      </button>
+      <div className={`bg-gradient-to-r ${session.color} rounded-xl p-5 text-white`}>
+        <div className="text-3xl mb-2">{session.icon}</div>
+        <div className="text-xl font-bold">{L(lang, session.title)}</div>
+        <div className="text-sm opacity-80 mt-1">{L(lang, session.subtitle)}</div>
+        <div className="text-xs opacity-60 mt-2">{session.days} {lang === 'ko' ? '일' : lang === 'zh' ? '天' : 'days'} · TOPIK {session.topikLevel}</div>
+      </div>
+
+      <div className="space-y-2">
+        {session.units.map((unit, idx) => {
+          const unitKey = `${session.id}-${unit.day}`
+          const done = eduState.completedUnits.includes(unitKey)
+          const isNext = !done && (idx === 0 || eduState.completedUnits.includes(`${session.id}-${session.units[idx-1]?.day}`))
+
+          return (
+            <button
+              key={unit.day}
+              onClick={() => {
+                if (unit.minimap) { onOpenMinimap(unit.minimap) }
+                else if (isNext || done) { onComplete(unitKey) }
+              }}
+              className={`w-full text-left rounded-xl p-3 flex items-center gap-3 transition-all border ${
+                done ? 'bg-green-50 border-green-200' :
+                isNext ? 'bg-white border-blue-300 shadow-sm' :
+                'bg-slate-50 border-slate-100 opacity-50'
+              }`}
+            >
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                done ? 'bg-green-500 text-white' :
+                isNext ? 'bg-blue-500 text-white' :
+                'bg-slate-200 text-slate-400'
+              }`}>
+                {done ? '✓' : unit.day}
+              </div>
+              <span className={`text-sm flex-1 ${done ? 'text-green-700' : isNext ? 'text-slate-800 font-semibold' : 'text-slate-400'}`}>
+                {L(lang, unit.title)}
+              </span>
+              {unit.minimap && <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">🗺️</span>}
+              {done && <span className="text-green-500 text-xs">+{xpRules.lessonComplete} XP</span>}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+// ─── 미니맵 화면 ───
+function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
+  const [selectedScene, setSelectedScene] = useState(null)
+  const [showQuiz, setShowQuiz] = useState(false)
+  const [quizResult, setQuizResult] = useState(null)
+  const map = minimaps[minimapId]
+  if (!map) return null
+
+  const scene = selectedScene !== null ? map.scenes[selectedScene] : null
+
+  if (scene && showQuiz) {
+    return (
+      <div className="space-y-4">
+        <button onClick={() => { setShowQuiz(false); setQuizResult(null) }} className="text-blue-600 text-sm font-medium">
+          {lang === 'ko' ? '← 대화로 돌아가기' : lang === 'zh' ? '← 返回对话' : '← Back to dialogue'}
+        </button>
+        <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+          <h3 className="font-bold text-slate-800 mb-4">📝 Quiz</h3>
+          <p className="text-sm text-slate-700 mb-4">{L(lang, scene.quiz.question)}</p>
+          <div className="space-y-2">
+            {scene.quiz.options[lang]?.map((opt, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  if (quizResult !== null) return
+                  const correct = i === scene.quiz.answer
+                  setQuizResult({ index: i, correct })
+                  onQuizAnswer(correct)
+                }}
+                className={`w-full text-left p-3 rounded-xl text-sm border transition-all ${
+                  quizResult?.index === i
+                    ? quizResult.correct ? 'bg-green-50 border-green-400 text-green-700' : 'bg-red-50 border-red-400 text-red-700'
+                    : quizResult !== null && i === scene.quiz.answer ? 'bg-green-50 border-green-400 text-green-700'
+                    : 'bg-slate-50 border-slate-200 hover:border-blue-300'
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+          {quizResult && (
+            <div className={`mt-4 p-3 rounded-xl text-sm ${quizResult.correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+              {quizResult.correct
+                ? (lang === 'ko' ? '🎉 정답! +5 XP' : lang === 'zh' ? '🎉 正确！+5 XP' : '🎉 Correct! +5 XP')
+                : (lang === 'ko' ? '❌ 틀렸어요. +1 XP' : lang === 'zh' ? '❌ 错了。+1 XP' : '❌ Wrong. +1 XP')}
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  if (scene) {
+    return (
+      <div className="space-y-4">
+        <button onClick={() => setSelectedScene(null)} className="text-blue-600 text-sm font-medium">
+          {lang === 'ko' ? '← 미니맵으로' : lang === 'zh' ? '← 回到迷你地图' : '← Back to minimap'}
+        </button>
+        <h2 className="text-lg font-bold text-slate-800">{L(lang, scene.title)}</h2>
+
+        {/* 대화문 */}
+        <div className="space-y-3">
+          {scene.dialogue[lang]?.map((line, i) => (
+            <div key={i} className={`flex ${line.speaker === 'you' ? 'justify-end' : 'justify-start'}`}>
+              <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+                line.speaker === 'you'
+                  ? 'bg-blue-600 text-white rounded-br-md'
+                  : 'bg-slate-100 text-slate-700 rounded-bl-md'
+              }`}>
+                {line.speaker !== 'you' && <div className="text-xs text-slate-400 mb-1">🧑‍💼 Staff</div>}
+                {line.text}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 퀴즈 버튼 */}
+        <button
+          onClick={() => setShowQuiz(true)}
+          className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-all"
+        >
+          📝 {lang === 'ko' ? '퀴즈 풀기' : lang === 'zh' ? '做题' : 'Take Quiz'}
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      <button onClick={onBack} className="text-blue-600 text-sm font-medium">
+        {lang === 'ko' ? '← 뒤로' : lang === 'zh' ? '← 返回' : '← Back'}
+      </button>
+      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-5 text-white">
+        <div className="text-2xl mb-2">🗺️</div>
+        <div className="text-xl font-bold">{L(lang, map.name)}</div>
+        <div className="text-sm opacity-80 mt-1">
+          {map.scenes.length} {lang === 'ko' ? '가지 상황' : lang === 'zh' ? '个场景' : 'scenes'}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3">
+        {map.scenes.map((scene, i) => (
+          <button
+            key={scene.id}
+            onClick={() => setSelectedScene(i)}
+            className="w-full text-left bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:border-purple-300 hover:shadow-md transition-all"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-lg font-bold text-purple-600">
+                {i + 1}
+              </div>
+              <div>
+                <div className="font-semibold text-slate-800 text-sm">{L(lang, scene.title)}</div>
+                <div className="text-xs text-slate-400">
+                  {lang === 'ko' ? '대화 + 퀴즈' : lang === 'zh' ? '对话 + 练习' : 'Dialogue + Quiz'}
+                </div>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ─── 메인 교육 탭 ───
+export default function EducationTab({ lang }) {
+  const [eduState, setEduState] = useState(loadEduState)
+  const [view, setView] = useState('main') // main | session | minimap
+  const [activeSession, setActiveSession] = useState(null)
+  const [activeMinimap, setActiveMinimap] = useState(null)
+
+  // 오늘 출석 체크
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+    if (eduState.lastLoginDate !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+      const newStreak = eduState.lastLoginDate === yesterday ? eduState.streak + 1 : 1
+      const bonus = newStreak % 7 === 0 ? xpRules.streakBonus7 : 0
+      const updated = {
+        ...eduState,
+        lastLoginDate: today,
+        streak: newStreak,
+        xp: eduState.xp + xpRules.dailyLogin + bonus,
+      }
+      setEduState(updated)
+      saveEduState(updated)
+    }
+  }, [])
+
+  const completeUnit = (unitKey) => {
+    if (eduState.completedUnits.includes(unitKey)) return
+    const updated = {
+      ...eduState,
+      completedUnits: [...eduState.completedUnits, unitKey],
+      xp: eduState.xp + xpRules.lessonComplete,
+    }
+    setEduState(updated)
+    saveEduState(updated)
+  }
+
+  const handleQuizAnswer = (correct) => {
+    const xpGain = correct ? xpRules.quizCorrect : xpRules.quizWrong
+    const updated = { ...eduState, xp: eduState.xp + xpGain }
+    setEduState(updated)
+    saveEduState(updated)
+  }
+
+  if (view === 'minimap' && activeMinimap) {
+    return (
+      <MinimapView
+        minimapId={activeMinimap}
+        eduState={eduState}
+        onQuizAnswer={handleQuizAnswer}
+        onBack={() => { setView(activeSession !== null ? 'session' : 'main'); setActiveMinimap(null) }}
+        lang={lang}
+      />
+    )
+  }
+
+  if (view === 'session' && activeSession !== null) {
+    const session = sessions[activeSession]
+    return (
+      <LessonList
+        session={session}
+        eduState={eduState}
+        onComplete={completeUnit}
+        onOpenMinimap={(id) => { setActiveMinimap(id); setView('minimap') }}
+        onBack={() => { setView('main'); setActiveSession(null) }}
+        lang={lang}
+      />
+    )
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* XP + 스트릭 */}
+      <XpBar xp={eduState.xp} lang={lang} />
+      <StreakBadge streak={eduState.streak} lang={lang} />
+
+      {/* 세션 목록 */}
+      <h2 className="text-lg font-bold text-slate-800">
+        📚 {lang === 'ko' ? '학습 세션' : lang === 'zh' ? '学习课程' : 'Study Sessions'}
+      </h2>
+      <div className="space-y-3">
+        {sessions.map((session, idx) => {
+          const completedCount = session.units.filter(u => eduState.completedUnits.includes(`${session.id}-${u.day}`)).length
+          const prevCompleted = idx === 0 || sessions[idx-1].units.every(u => eduState.completedUnits.includes(`${sessions[idx-1].id}-${u.day}`))
+          const isLocked = idx > 0 && !prevCompleted
+          const isCurrent = !isLocked && completedCount < session.units.length && (idx === 0 || prevCompleted)
+
+          return (
+            <SessionCard
+              key={session.id}
+              session={session}
+              isActive={!isLocked}
+              isCurrent={isCurrent}
+              isLocked={isLocked}
+              completedCount={completedCount}
+              totalCount={session.units.length}
+              onClick={() => { setActiveSession(idx); setView('session') }}
+              lang={lang}
+            />
+          )
+        })}
+      </div>
+
+      {/* TOPIK 진행도 */}
+      <div className="bg-gradient-to-r from-red-500 to-rose-600 rounded-xl p-4 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="font-bold">🎯 TOPIK {lang === 'ko' ? '목표' : lang === 'zh' ? '目标' : 'Goal'}: 3{lang === 'ko' ? '급' : lang === 'zh' ? '级' : ''}</div>
+            <div className="text-xs opacity-80 mt-1">
+              {eduState.completedUnits.length} / 120 {lang === 'ko' ? '레슨 완료' : lang === 'zh' ? '课程完成' : 'lessons done'}
+            </div>
+          </div>
+          <div className="text-3xl font-bold">
+            {Math.round((eduState.completedUnits.length / 120) * 100)}%
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

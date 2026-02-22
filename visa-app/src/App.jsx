@@ -653,7 +653,32 @@ function ProfileTab({ profile, setProfile, lang }) {
         )}
       </button>
 
-      {/* 4. 초기화 버튼 */}
+      {/* 4. 알림 설정 */}
+      {isPushSupported() && (
+        <button
+          onClick={async () => {
+            if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+              // 이미 허용됨 — 안내만
+              alert(lang === 'ko' ? '알림이 이미 활성화되어 있습니다.' : lang === 'zh' ? '通知已启用。' : 'Notifications already enabled.')
+            } else {
+              localStorage.removeItem('hp_push_dismissed')
+              const { subscribePush } = await import('./utils/pushNotification')
+              const sub = await subscribePush()
+              if (sub) {
+                alert(lang === 'ko' ? '알림이 활성화되었습니다!' : lang === 'zh' ? '通知已开启！' : 'Notifications enabled!')
+              } else {
+                alert(lang === 'ko' ? '알림 권한을 허용해주세요. Safari에서 홈 화면에 추가 후 다시 시도해주세요.' : lang === 'zh' ? '请允许通知权限。请在Safari中添加到主屏幕后重试。' : 'Please allow notification permission. Add to Home Screen from Safari and try again.')
+              }
+            }
+          }}
+          className="w-full bg-[#F3F4F6] text-[#111827] font-semibold py-4 rounded-2xl hover:bg-[#E5E7EB] transition-all btn-press flex items-center justify-center gap-3"
+        >
+          <Bell className="w-5 h-5" />
+          {lang === 'ko' ? '알림 설정' : lang === 'zh' ? '通知设置' : 'Notification Settings'}
+        </button>
+      )}
+
+      {/* 5. 초기화 버튼 */}
       <button 
         onClick={() => { 
           localStorage.removeItem('visa_profile'); 

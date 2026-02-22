@@ -1,0 +1,6 @@
+name = "hanpocket-kakao-auth"
+main = "kakao-auth.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+# KAKAO_REST_API_KEY는 wrangler secret으로 설정

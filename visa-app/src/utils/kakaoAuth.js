@@ -1,11 +1,12 @@
-const KAKAO_APP_KEY = 'd93decd524c15c3455ff05983ca07fac';
+const KAKAO_JS_KEY = 'd93decd524c15c3455ff05983ca07fac';
+const AUTH_WORKER_URL = 'https://hanpocket-kakao-auth.bumik-korea.workers.dev';
 
 // Kakao SDK 초기화
 export const initKakao = () => {
   if (!window.Kakao) return false;
   if (window.Kakao.isInitialized()) return true;
   try {
-    window.Kakao.init(KAKAO_APP_KEY);
+    window.Kakao.init(KAKAO_JS_KEY);
     return true;
   } catch (e) {
     console.error('Kakao init failed:', e);
@@ -13,49 +14,52 @@ export const initKakao = () => {
   }
 };
 
-// 카카오 로그인 (팝업 방식 — 백엔드 불필요)
+// 카카오 로그인 시작 (리다이렉트 방식 — 모바일 호환)
 export const loginWithKakao = () => {
-  return new Promise((resolve, reject) => {
-    if (!initKakao()) {
-      reject(new Error('Kakao SDK 초기화 실패'));
-      return;
-    }
-
-    window.Kakao.Auth.login({
-      success: (authObj) => {
-        window.Kakao.API.request({
-          url: '/v2/user/me',
-          success: (res) => {
-            const { id, kakao_account } = res;
-            const userInfo = {
-              id,
-              nickname: kakao_account?.profile?.nickname || '',
-              profile_image: kakao_account?.profile?.profile_image_url || '',
-              email: kakao_account?.email || '',
-              loginType: 'kakao',
-              loginTime: new Date().toISOString()
-            };
-            localStorage.setItem('kakao_user', JSON.stringify(userInfo));
-            resolve(userInfo);
-          },
-          fail: (err) => reject(err)
-        });
-      },
-      fail: (err) => reject(err)
-    });
+  if (!initKakao()) throw new Error('Kakao SDK 초기화 실패');
+  
+  window.Kakao.Auth.authorize({
+    redirectUri: window.location.origin + '/',
+    scope: 'profile_nickname,profile_image'
   });
 };
 
-// 팝업 방식과 동일 (호환용)
+// 팝업 방식 (호환용 — 데스크톱)
 export const loginWithKakaoPopup = loginWithKakao;
 
-// 콜백 처리 (리다이렉트 방식 제거 — code 파라미터만 정리)
+// 리다이렉트 콜백 처리 — Worker에서 토큰 교환
 export const handleKakaoCallback = async () => {
-  const code = new URLSearchParams(window.location.search).get('code');
-  if (code) {
-    window.history.replaceState({}, '', window.location.pathname);
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  
+  if (!code) return null;
+  
+  // URL 정리 (무한루프 방지)
+  window.history.replaceState({}, '', window.location.pathname);
+  
+  try {
+    const res = await fetch(AUTH_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        redirectUri: window.location.origin + '/'
+      })
+    });
+    
+    const data = await res.json();
+    
+    if (data.ok && data.user) {
+      localStorage.setItem('kakao_user', JSON.stringify(data.user));
+      return data.user;
+    }
+    
+    console.error('카카오 인증 실패:', data);
+    return null;
+  } catch (err) {
+    console.error('카카오 콜백 처리 실패:', err);
+    return null;
   }
-  return null;
 };
 
 // 카카오 로그아웃

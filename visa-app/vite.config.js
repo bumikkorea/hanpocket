@@ -16,4 +16,28 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // Vendor chunk: React 및 UI 라이브러리들
+          if (id.includes('node_modules/react') || 
+              id.includes('node_modules/react-dom') || 
+              id.includes('node_modules/lucide-react')) {
+            return 'vendor';
+          }
+          
+          // Data chunk: 큰 데이터 파일들을 별도 청크로 분리
+          if (id.includes('/src/data/')) {
+            return 'data';
+          }
+          
+          // Components chunk: Tab 컴포넌트들을 별도 청크로 분리
+          if (id.includes('/src/components/') && id.includes('Tab.jsx')) {
+            return 'components';
+          }
+        }
+      }
+    }
+  }
 })

@@ -1,10 +1,17 @@
-const CACHE_NAME = 'hanpocket-v2'
+const CACHE_NAME = 'hanpocket-v3'
 const STATIC_ASSETS = ['/', '/index.html']
+const USER_PROFILE_CACHE = 'hanpocket-userdata-v3'
 
 // Install
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(c => c.addAll(STATIC_ASSETS))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME)
+      await cache.addAll(STATIC_ASSETS)
+      
+      // Clear user profile cache to force refresh on profile data
+      await caches.delete(USER_PROFILE_CACHE)
+    })()
   )
   self.skipWaiting()
 })
@@ -12,21 +19,59 @@ self.addEventListener('install', e => {
 // Activate
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
+    (async () => {
+      // Clear old caches
+      const keys = await caches.keys()
+      await Promise.all(
+        keys.filter(k => k !== CACHE_NAME && k !== USER_PROFILE_CACHE)
+          .map(k => caches.delete(k))
+      )
+      
+      // Force reload all tabs to get new version
+      const windowClients = await self.clients.matchAll({ type: 'window' })
+      for (const client of windowClients) {
+        client.postMessage({ type: 'SW_UPDATED', action: 'reload' })
+      }
+      
+      // Take immediate control
+      await self.clients.claim()
+    })()
   )
-  self.clients.claim()
 })
 
-// Fetch — cache-first for static, network-first for API
+// Fetch — cache-first for static, network-first for API and user data
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url)
-  if (url.pathname.startsWith('/api') || url.hostname !== location.hostname) {
+  
+  // Check if this is a user profile/info request (내정보 탭 관련)
+  const isUserDataRequest = url.pathname.includes('/profile') || 
+                           url.pathname.includes('/user') || 
+                           url.pathname.includes('/myinfo') ||
+                           url.searchParams.has('tab') && url.searchParams.get('tab') === 'profile'
+  
+  if (url.pathname.startsWith('/api') || url.hostname !== location.hostname || isUserDataRequest) {
+    // Network-first for API calls and user data
     e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
+      (async () => {
+        try {
+          const response = await fetch(e.request)
+          
+          // Cache user profile data in separate cache with shorter TTL
+          if (isUserDataRequest && response.ok) {
+            const cache = await caches.open(USER_PROFILE_CACHE)
+            const responseClone = response.clone()
+            await cache.put(e.request, responseClone)
+          }
+          
+          return response
+        } catch {
+          // Fallback to cache
+          return await caches.match(e.request) || new Response('Offline', { status: 503 })
+        }
+      })()
     )
   } else {
+    // Cache-first for static assets
     e.respondWith(
       caches.match(e.request).then(r => r || fetch(e.request))
     )
@@ -84,10 +129,30 @@ self.addEventListener('notificationclick', e => {
   )
 })
 
+// ─── Message Handler (for client communication) ───
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'CLEAR_USER_CACHE') {
+    e.waitUntil(
+      caches.delete(USER_PROFILE_CACHE).then(() => {
+        e.ports[0].postMessage({ success: true })
+      })
+    )
+  }
+  
+  if (e.data && e.data.type === 'FORCE_UPDATE_CHECK') {
+    // Trigger skipWaiting for immediate activation
+    self.skipWaiting()
+  }
+})
+
 // ─── Background Sync (for offline actions) ───
 self.addEventListener('sync', e => {
   if (e.tag === 'check-visa-dday') {
     e.waitUntil(checkVisaDday())
+  }
+  
+  if (e.tag === 'clear-user-cache') {
+    e.waitUntil(caches.delete(USER_PROFILE_CACHE))
   }
 })
 

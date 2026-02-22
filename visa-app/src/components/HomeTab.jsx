@@ -3,6 +3,9 @@ import { Stamp, FileText, BookOpen, ArrowLeftRight, Home, X, User, PawPrint, New
 import { widgetCategories, widgetMockData } from '../data/widgets'
 import { idolDatabase, IDOL_GENERATIONS, IDOL_COMPANIES } from '../data/idolData'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES as RESTAURANT_CATEGORIES, LOCATION_FILTERS } from '../data/restaurantData'
+import AppleWidgetCard from './cards/AppleWidgetCard'
+import PersonalSection from './cards/PersonalSection'
+import TodaySection from './cards/TodaySection'
 
 const LUCIDE_ICON_MAP = { Stamp, FileText, BookOpen, ArrowLeftRight, Home, X, PawPrint, Newspaper, Music, TrendingUp, Cloud, MapPin, Settings, Calendar, Clock, DollarSign, Package, Utensils, ShoppingBag, Sparkles, Heart, Plane, Star, Play, Volume2, Flame, Train, Check, Tag, Bike, Wrench, GraduationCap, Users, Clapperboard, Shirt, Siren, Coins, MessageCircle, HelpCircle, Globe, Tv, Mic, Thermometer, Landmark, Briefcase, Building2, Dog }
 function LucideIcon({ name, size = 16, className = '' }) {
@@ -3042,91 +3045,6 @@ function VoiceTranslatorCard({ lang }) {
   )
 }
 
-function PersonalSection({ profile, lang, setTab, exchangeRate }) {
-  const koreanData = widgetMockData.korean
-  const card = "w-[220px] min-h-[220px] shrink-0 bg-white border border-[#E5E7EB] rounded-lg p-4 flex flex-col card-glow"
-  const snapStyle = { scrollSnapAlign: 'start' }
-
-  return (
-    <HScrollSection>
-      {/* 0. My Status */}
-      <MyStatusCard profile={profile} lang={lang} setTab={setTab} />
-
-      {/* 1. Voice Translator */}
-      <VoiceTranslatorCard lang={lang} />
-
-      {/* 2. Memo / Today's Plan */}
-      <MemoCard lang={lang} />
-
-      {/* 3. Korean Calendar */}
-      <div className={card + " overflow-hidden"} style={snapStyle}>
-        <p className="text-[10px] text-[#6B7280] font-medium mb-1">{lang === 'ko' ? '한국 달력' : lang === 'zh' ? '韩国日历' : 'Korean Calendar'}</p>
-        <div className="overflow-y-auto no-scrollbar flex-1">
-          <HolidayCalendarWidget lang={lang} />
-        </div>
-      </div>
-
-      {/* 4. Today's Korean Expression */}
-      {koreanData && (
-        <div className={card} style={snapStyle}>
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-[10px] text-[#6B7280] font-medium">{lang === 'ko' ? '오늘의 한국어 표현' : lang === 'zh' ? '今日韩语表达' : "Today's Korean Expression"}</p>
-            {koreanData.day && <span className="text-[8px] font-bold text-[#111827]">Day {koreanData.day}</span>}
-          </div>
-          <div className="flex flex-col flex-1">
-            {/* Word section — top half */}
-            <div className="flex-1 flex flex-col justify-center">
-              <p className="text-lg font-black text-[#111827] leading-tight">{koreanData.word ? L('ko', koreanData.word) : ''}</p>
-              {koreanData.word && <p className="text-[10px] text-[#6B7280] mt-0.5">{L(lang === 'ko' ? 'zh' : lang, koreanData.word)}</p>}
-              {koreanData.pronunciation && <p className="text-[9px] text-[#9CA3AF] font-mono mt-0.5">[{koreanData.pronunciation}]</p>}
-            </div>
-            {koreanData.example?.sentence && (
-              <>
-                {/* Centered divider */}
-                <div className="border-t border-[#E5E7EB] my-2" />
-                {/* Example section — bottom half */}
-                <div className="flex-1 flex flex-col justify-center">
-                <p className="text-xs font-bold text-[#111827] leading-snug">"{L('ko', koreanData.example.sentence)}"</p>
-                <p className="text-[10px] text-[#6B7280] mt-0.5">"{L(lang === 'ko' ? 'zh' : lang, koreanData.example.sentence)}"</p>
-                {koreanData.example.pronunciation && (
-                  <p className="text-[9px] text-[#9CA3AF] font-mono mt-0.5">[{koreanData.example.pronunciation}]</p>
-                )}
-                <button onClick={() => {
-                  try {
-                    if (!('speechSynthesis' in window)) {
-                      throw new Error('speechSynthesis not supported')
-                    }
-                    const text = L('ko', koreanData.example.sentence)
-                    const u = new SpeechSynthesisUtterance(text)
-                    u.lang = 'ko-KR'; u.rate = 0.75
-                    if (text.endsWith('?') || text.endsWith('요?')) u.pitch = 1.2
-                    speechSynthesis.speak(u)
-                  } catch (err) {
-                    console.warn('Web Speech API unavailable:', err)
-                    alert(lang === 'ko' ? '음성 기능은 이 환경에서 사용할 수 없습니다' : lang === 'zh' ? '语音功能在此环境中不可用' : 'Voice feature unavailable in this environment')
-                  }
-                }} className="mt-1.5 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#111827]/10 text-[#111827] hover:bg-[#111827]/20 transition-all">
-                  <Volume2 size={12} />
-                  <span className="text-[10px] font-semibold">{lang === 'ko' ? '발음 듣기' : lang === 'zh' ? '听发음' : 'Listen'}</span>
-                </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* 5. Tax Refund Calculator */}
-      <TaxRefundMiniCard lang={lang} />
-
-      {/* 6. Exchange Rate Calculator */}
-      <div className={card} style={snapStyle}>
-        <p className="text-[10px] text-[#6B7280] font-medium mb-2">{lang === 'ko' ? '환율 계산기' : lang === 'zh' ? '汇率计算器' : 'Currency Converter'}</p>
-        <ExchangeRateCard exchangeRate={exchangeRate} lang={lang} compact />
-      </div>
-    </HScrollSection>
-  )
-}
 
 // ─── Widget Section Groupings ───
 
@@ -3149,26 +3067,7 @@ function getEnabledWidgetsForSection(sectionIds, config) {
 
 // ─── Widget Card (Apple style) ───
 
-function AppleWidgetCard({ widget, lang, setTab, dark }) {
-  return (
-    <div className={`w-[300px] h-[360px] shrink-0 rounded-lg p-5 flex flex-col bg-white border border-[#E5E7EB]`} style={{ scrollSnapAlign: 'start', boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04), 0 12px 36px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 0 20px rgba(255,255,255,0.3)' }}>
-      <div className="mb-3 shrink-0">
-        <span className={`text-[10px] font-semibold text-[#6B7280]`}>{L(lang, widget.name)}</span>
-      </div>
-      <div
-        className="flex-1 overflow-y-auto no-scrollbar min-h-0"
-        style={{ WebkitOverflowScrolling: 'touch', overscrollBehaviorY: 'contain', touchAction: 'pan-y' }}
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchMove={(e) => {
-          const el = e.currentTarget
-          if (el.scrollHeight > el.clientHeight) e.stopPropagation()
-        }}
-      >
-        <WidgetContent widgetId={widget.id} lang={lang} setTab={setTab} />
-      </div>
-    </div>
-  )
-}
+// AppleWidgetCard component has been moved to ./cards/AppleWidgetCard.jsx
 
 // ─── Collapsible Tree Section ───
 
@@ -3216,7 +3115,7 @@ function TreeSection({ title, widgets, lang, setTab, defaultOpen = false }) {
 
 // ─── Main HomeTab Component ───
 
-export { trackActivity, WidgetContent, TreeSection, LucideIcon, SECTION_SHOPPING, SECTION_CULTURE, SECTION_TOOLS, getEnabledWidgetsForSection }
+export { trackActivity, WidgetContent, TreeSection, LucideIcon, SECTION_SHOPPING, SECTION_CULTURE, SECTION_TOOLS, getEnabledWidgetsForSection, TIMEZONE_COUNTRIES, L, getDaysUntil }
 
 export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   const [cards, setCards] = useState(() => {

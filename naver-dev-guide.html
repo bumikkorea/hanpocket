@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif; color: #111827; padding: 48px; line-height: 1.7; max-width: 800px; margin: 0 auto; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: #6b7280; margin-bottom: 40px; }
+  h2 { font-size: 20px; font-weight: 600; margin-top: 36px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  h3 { font-size: 16px; font-weight: 600; margin-top: 20px; margin-bottom: 8px; }
+  p, li { font-size: 14px; margin-bottom: 6px; }
+  ol, ul { padding-left: 24px; }
+  ol > li { margin-bottom: 12px; }
+  .link-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 16px 0; }
+  .link-box a, .link-box .url { color: #111827; font-weight: 600; font-size: 15px; word-break: break-all; }
+  .tip { background: #f0f9ff; border-left: 3px solid #111827; padding: 12px 16px; margin: 16px 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+  .warn { background: #fef3c7; border-left: 3px solid #d97706; padding: 12px 16px; margin: 16px 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+  .step-num { display: inline-block; width: 28px; height: 28px; background: #111827; color: white; border-radius: 50%; text-align: center; line-height: 28px; font-size: 13px; font-weight: 600; margin-right: 8px; }
+  .section { margin-bottom: 32px; }
+  .divider { border: none; border-top: 1px solid #e5e7eb; margin: 32px 0; }
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { padding: 6px 0; font-size: 14px; }
+  .checklist li::before { content: "☐ "; font-size: 16px; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left; }
+  th { background: #f9fafb; font-weight: 600; }
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #9ca3af; text-align: center; }
+</style>
+</head>
+<body>
+
+<h1>HanPocket 개발자 API 가입 가이드</h1>
+<p class="subtitle">범범뻠용 — 네이버 + data.go.kr + DeepSeek + law.go.kr 가입 총정리</p>
+
+<!-- ===== 1. 네이버 ===== -->
+<div class="section">
+<h2>1. 네이버 개발자 센터</h2>
+<p>네이버 로그인 (네아로) + 뉴스/검색 API를 한 곳에서 발급받을 수 있음</p>
+
+<div class="link-box">
+  <span class="url">https://developers.naver.com</span>
+</div>
+
+<h3>가입 & 앱 등록 (5분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → 우측 상단 <b>"로그인"</b> (기존 네이버 계정으로)</li>
+  <li><span class="step-num">2</span>로그인 후 상단 메뉴 <b>"Application" → "애플리케이션 등록"</b> 클릭</li>
+  <li><span class="step-num">3</span>앱 정보 입력:
+    <ul>
+      <li>애플리케이션 이름: <b>HanPocket</b></li>
+      <li>사용 API 선택: <b>네아로 (네이버 로그인)</b> 체크</li>
+      <li>추가 선택: <b>검색</b> 체크 (뉴스 검색용)</li>
+    </ul>
+  </li>
+  <li><span class="step-num">4</span>네아로 환경 설정:
+    <ul>
+      <li>환경 추가: <b>PC웹</b> 선택</li>
+      <li>서비스 URL: <code>https://hanpocket.pages.dev</code></li>
+      <li>Callback URL: <code>https://hanpocket.pages.dev/</code></li>
+    </ul>
+  </li>
+  <li><span class="step-num">5</span><b>"등록하기"</b> 클릭 → 완료!</li>
+</ol>
+
+<h3>발급된 키 확인</h3>
+<p>"내 애플리케이션" → HanPocket 클릭 → 아래 2개 복사해서 구월에게 전달:</p>
+<table>
+  <tr><th>항목</th><th>설명</th></tr>
+  <tr><td><b>Client ID</b></td><td>공개 키 (프론트엔드에서 사용)</td></tr>
+  <tr><td><b>Client Secret</b></td><td>비밀 키 (서버에서만 사용)</td></tr>
+</table>
+
+<div class="tip">네이버 로그인과 뉴스 검색 API가 같은 Client ID/Secret으로 동작함. 한 번 등록이면 끝!</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 2. data.go.kr ===== -->
+<div class="section">
+<h2>2. 공공데이터포털 (data.go.kr)</h2>
+<p>병원, 관광, 공연, 날씨, 대기오염 등 15개 공공 API 무료 사용</p>
+
+<div class="link-box">
+  <span class="url">https://www.data.go.kr</span>
+</div>
+
+<h3>가입 (3분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"회원가입"</b></li>
+  <li><span class="step-num">2</span>일반회원 선택 → 본인인증 (휴대폰 or 공인인증서)</li>
+  <li><span class="step-num">3</span>회원정보 입력 후 가입 완료</li>
+</ol>
+
+<h3>API 키 발급 (API당 2분)</h3>
+<ol>
+  <li><span class="step-num">1</span>로그인 후 검색창에 API 이름 검색 (아래 표 참고)</li>
+  <li><span class="step-num">2</span>해당 API 페이지에서 <b>"활용신청"</b> 클릭</li>
+  <li><span class="step-num">3</span>활용 목적: <b>"모바일 앱 서비스 개발"</b></li>
+  <li><span class="step-num">4</span>신청 후 <b>즉시~1시간</b> 내 자동 승인 (일부 수동 승인 1~3일)</li>
+</ol>
+
+<h3>우선 발급할 5개 API</h3>
+<table>
+  <tr><th>#</th><th>검색어</th><th>용도</th></tr>
+  <tr><td>1</td><td>건강보험심사평가원 병원정보</td><td>의료탭 병원 검색</td></tr>
+  <tr><td>2</td><td>한국관광공사 관광정보</td><td>여행탭 관광지</td></tr>
+  <tr><td>3</td><td>공연전시 정보 (KOPIS)</td><td>한류탭 공연/전시</td></tr>
+  <tr><td>4</td><td>기상청 단기예보</td><td>홈 날씨 위젯</td></tr>
+  <tr><td>5</td><td>에어코리아 대기오염정보</td><td>홈 미세먼지</td></tr>
+</table>
+
+<div class="tip">발급된 "일반 인증키 (Encoding)" 를 각각 복사해서 구월에게 전달하면 됨. 5개 다 하는데 10분이면 충분!</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 3. DeepSeek ===== -->
+<div class="section">
+<h2>3. DeepSeek API (번역 엔진)</h2>
+<p>HanPocket 실시간 번역 기능의 핵심. 월 ~5,000원</p>
+
+<div class="link-box">
+  <span class="url">https://platform.deepseek.com</span>
+</div>
+
+<h3>가입 & 키 발급 (3분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"Sign Up"</b> (구글 계정으로 가능)</li>
+  <li><span class="step-num">2</span>로그인 후 좌측 메뉴 <b>"API Keys"</b> 클릭</li>
+  <li><span class="step-num">3</span><b>"Create new API key"</b> → 이름: <code>hanpocket</code></li>
+  <li><span class="step-num">4</span>생성된 키를 <b>바로 복사</b> (다시 볼 수 없음!)</li>
+  <li><span class="step-num">5</span>좌측 <b>"Billing"</b> → <b>"Top Up"</b> → $5 충전 (약 ₩7,000)</li>
+</ol>
+
+<div class="warn"><b>주의:</b> API 키는 생성 직후에만 전체 표시됨. 반드시 바로 복사해서 구월에게 전달할 것!</div>
+
+<div class="tip">$5 충전하면 약 2~3개월 사용 가능 (번역 API는 매우 저렴). 자동 충전 설정도 가능.</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 4. law.go.kr ===== -->
+<div class="section">
+<h2>4. 법령정보 API (law.go.kr)</h2>
+<p>비자 관련 최신 법령 자동 업데이트용</p>
+
+<div class="link-box">
+  <span class="url">https://open.law.go.kr</span>
+</div>
+
+<h3>가입 & 키 발급 (5분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"회원가입"</b></li>
+  <li><span class="step-num">2</span>본인인증 후 회원가입 완료</li>
+  <li><span class="step-num">3</span>로그인 → <b>"오픈API 이용신청"</b></li>
+  <li><span class="step-num">4</span>신청서 작성:
+    <ul>
+      <li>서비스명: HanPocket</li>
+      <li>활용 목적: 외국인 비자/체류 관련 법령 정보 제공</li>
+    </ul>
+  </li>
+  <li><span class="step-num">5</span>신청 후 <b>1~3일</b> 후 승인 (이메일 통보)</li>
+</ol>
+
+<div class="tip">승인까지 시간이 걸리니 나머지와 함께 미리 신청해두면 좋음!</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 체크리스트 ===== -->
+<div class="section">
+<h2>체크리스트</h2>
+<ul class="checklist">
+  <li>네이버 개발자 센터 가입 + 앱 등록 (Client ID / Secret 복사)</li>
+  <li>data.go.kr 가입 + 5개 API 활용신청 (인증키 5개 복사)</li>
+  <li>DeepSeek 가입 + $5 충전 + API 키 생성 (키 복사)</li>
+  <li>law.go.kr 가입 + API 이용신청</li>
+  <li>위 키들 전부 구월에게 전달</li>
+</ul>
+
+<div class="tip"><b>전체 소요시간:</b> 약 25~30분<br><b>비용:</b> DeepSeek $5 (₩7,000) — 나머지 전부 무료</div>
+</div>
+
+<div class="footer">HanPocket 개발자 가이드 — 구월 작성</div>
+
+</body>
+</html>

@@ -267,16 +267,25 @@ export default function CommunityTab({ lang, profile }) {
       time: new Date().toISOString(),
       likes: 0,
     }
-    setPosts(prev => prev.map(p => p.id === postId ? { ...p, comments: [...p.comments, comment] } : p))
+    setPosts(prev => {
+      const next = prev.map(p => p.id === postId ? { ...p, comments: [...p.comments, comment] } : p)
+      // Sync selectedPost so detail view updates immediately
+      const updated = next.find(p => p.id === postId)
+      if (updated) setSelectedPost(updated)
+      return next
+    })
     setNewComment('')
   }
 
   const getCatInfo = (catId) => [...communityCategories, ...marketCategories].find(c => c.id === catId)
   const getLocationLabel = (locId) => locationOptions.find(l => l.id === locId)
 
+  // Keep selectedPost in sync with posts state
+  const currentPost = selectedPost ? (posts.find(p => p.id === selectedPost.id) || selectedPost) : null
+
   // ========== Detail View ==========
-  if (selectedPost) {
-    const post = posts.find(p => p.id === selectedPost.id) || selectedPost
+  if (currentPost) {
+    const post = currentPost
     return (
       <div className="space-y-3 animate-fade-up">
         <div className="flex items-center justify-between">

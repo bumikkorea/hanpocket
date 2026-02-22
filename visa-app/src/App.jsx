@@ -93,7 +93,7 @@ function Onboarding({ onComplete, lang, setLang }) {
   // 스플래시 → 국적 선택으로 바로 전환
   useEffect(() => {
     if (step === 'splash') {
-      const timer = setTimeout(() => setStep('nationality'), 2500)
+      const timer = setTimeout(() => setStep('nationality'), 1800)
       return () => clearTimeout(timer)
     }
   }, [step])
@@ -107,148 +107,20 @@ function Onboarding({ onComplete, lang, setLang }) {
           {langLabel(lang)}
         </button>
 
-        {/*  스플래시 (첫 화면)  */}
+        {/*  스플래시 (첫 화면) — iPhone Hello 스타일  */}
         {step === 'splash' && (
-          <div className="animate-fade-up">
-            <svg viewBox="0 0 320 260" style={{ width: '320px', height: '260px' }}>
-              {/* 타원 마그넷 본체 — 그림자를 타원 자체에 */}
-              <defs>
-                <filter id="magnet-shadow" x="-10%" y="-10%" width="120%" height="130%">
-                  <feDropShadow dx="0" dy="4" stdDeviation="8" floodColor="#000" floodOpacity="0.12"/>
-                </filter>
-              </defs>
-              <ellipse cx="160" cy="130" rx="152" ry="122" fill="#FAFAF8" stroke="#E8D5B7" strokeWidth="3" filter="url(#magnet-shadow)"/>
-              <ellipse cx="160" cy="130" rx="142" ry="112" fill="none" stroke="#E8D5B7" strokeWidth="0.5" opacity="0.5"/>
-
-              {/* === 상단 아치: 산등선 + 남산타워 === */}
-              {/* 산등선 */}
-              <path d="M55,88 Q75,65 95,78 Q115,55 135,70 Q155,48 160,42 Q165,48 185,70 Q205,55 225,78 Q245,65 265,88" 
-                fill="none" stroke="#111827" strokeWidth="1.2" strokeLinecap="round"/>
-              {/* 남산타워 (가운데 봉우리 위) */}
-              <line x1="160" y1="42" x2="160" y2="24" stroke="#111827" strokeWidth="1.5"/>
-              <line x1="160" y1="24" x2="160" y2="18" stroke="#111827" strokeWidth="1"/>
-              <circle cx="160" cy="17" r="1.5" fill="#111827"/>
-              <ellipse cx="160" cy="38" rx="5" ry="2.5" fill="none" stroke="#111827" strokeWidth="0.8"/>
-              
-              {/* === 심볼들 === */}
-              
-              {/* 한강 물결 (왼쪽 산 아래) */}
-              <path d="M62,95 Q67,92 72,95 Q77,98 82,95" fill="none" stroke="#4A90D9" strokeWidth="1" opacity="0.7"/>
-              <path d="M65,99 Q70,96 75,99 Q80,102 85,99" fill="none" stroke="#4A90D9" strokeWidth="0.8" opacity="0.5"/>
-
-              {/* 벚꽃 (왼쪽 위) */}
-              <g transform="translate(80,68)">
-                <circle cx="0" cy="-3" r="1.8" fill="#F9C7C8"/>
-                <circle cx="2.8" cy="-1" r="1.8" fill="#F9C7C8"/>
-                <circle cx="1.7" cy="2" r="1.8" fill="#F9C7C8"/>
-                <circle cx="-1.7" cy="2" r="1.8" fill="#F9C7C8"/>
-                <circle cx="-2.8" cy="-1" r="1.8" fill="#F9C7C8"/>
-                <circle cx="0" cy="0" r="1" fill="#E8A0A0"/>
-              </g>
-
-              {/* 립스틱 = 뷰티 (왼쪽) */}
-              <g transform="translate(42,115)">
-                <ellipse cx="0" cy="-5" rx="2" ry="3" fill="#E74C5F"/>
-                <ellipse cx="0" cy="1" rx="2.5" ry="4" fill="#111827"/>
-              </g>
-
-              {/* 한복 (왼쪽) */}
-              <g transform="translate(38,145) scale(1.8)">
-                {/* 치마 */}
-                <path d="M0,-6 Q-7,0 -6,8 L6,8 Q7,0 0,-6 Z" fill="#E74C5F" opacity="0.75"/>
-                {/* 저고리 */}
-                <path d="M-3.5,-6 L3.5,-6 L2.5,-3 L-2.5,-3 Z" fill="#FFFFFF" stroke="#E74C5F" strokeWidth="0.5"/>
-                {/* 소매 */}
-                <path d="M-3.5,-5 L-6,-4" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round"/>
-                <path d="M3.5,-5 L6,-4" stroke="#FFFFFF" strokeWidth="1.2" strokeLinecap="round"/>
-                {/* 고름 리본 */}
-                <path d="M-0.5,-3.5 Q-2,0 -3,1" stroke="#3B82F6" strokeWidth="0.7" fill="none"/>
-                <path d="M0.5,-3.5 Q2,0 3,1" stroke="#E74C5F" strokeWidth="0.7" fill="none"/>
-              </g>
-
-              {/* 회오리감자 (하단 왼쪽) */}
-              <g transform="translate(78,198)">
-                <line x1="0" y1="5" x2="0" y2="-4" stroke="#C8A96E" strokeWidth="1.2"/>
-                <path d="M-3,-4 Q-3,-7 0,-7 Q3,-7 3,-4 Q3,-1 0,-1 Q-2,-1 -2,-3" fill="none" stroke="#D4A030" strokeWidth="1.2"/>
-                <path d="M-2,0 Q-3,2 0,2 Q3,2 3,0" fill="none" stroke="#D4A030" strokeWidth="1"/>
-              </g>
-
-              {/* 떡볶이 (하단) */}
-              <g transform="translate(120,212)">
-                <ellipse cx="-3" cy="0" rx="1.5" ry="5" fill="#E8573A"/>
-                <ellipse cx="1" cy="-1" rx="1.5" ry="5.5" fill="#E8573A"/>
-                <path d="M-6,5 Q0,8 6,5" fill="none" stroke="#111827" strokeWidth="0.8"/>
-              </g>
-
-              {/* 치킨 (하단 가운데) */}
-              <g transform="translate(155,215)">
-                <ellipse cx="0" cy="0" rx="5" ry="4" fill="#F0C75E"/>
-                <ellipse cx="-3" cy="-2" rx="3" ry="2.5" fill="#E8B84A"/>
-                <line x1="3" y1="1" x2="6" y2="4" stroke="#8B5E3C" strokeWidth="1" strokeLinecap="round"/>
-              </g>
-
-              {/* 소주병 (하단 오른쪽) — 둥근 병 모양 */}
-              <g transform="translate(195,212)">
-                <ellipse cx="0" cy="2" rx="3.5" ry="5" fill="none" stroke="#4A90D9" strokeWidth="0.8"/>
-                <ellipse cx="0" cy="0" rx="3" ry="1.5" fill="#C8E6C9" opacity="0.4"/>
-                <line x1="0" y1="-3" x2="0" y2="-6" stroke="#4A90D9" strokeWidth="1.2" strokeLinecap="round"/>
-                <ellipse cx="0" cy="-6" rx="1.5" ry="0.8" fill="none" stroke="#4A90D9" strokeWidth="0.6"/>
-              </g>
-
-              {/* 음표 = K-POP (오른쪽 아래) */}
-              <g transform="translate(240,195)">
-                <circle cx="0" cy="4" r="2.5" fill="#111827"/>
-                <line x1="2.5" y1="4" x2="2.5" y2="-6" stroke="#111827" strokeWidth="1"/>
-                <path d="M2.5,-6 Q6,-8 6,-4" fill="none" stroke="#111827" strokeWidth="1"/>
-              </g>
-
-              {/* 마이크 = K-POP (오른쪽) */}
-              <g transform="translate(275,155)">
-                <circle cx="0" cy="-4" r="3" fill="none" stroke="#111827" strokeWidth="1"/>
-                <line x1="0" y1="-1" x2="0" y2="5" stroke="#111827" strokeWidth="1"/>
-                <line x1="-2" y1="5" x2="2" y2="5" stroke="#111827" strokeWidth="1"/>
-              </g>
-
-              {/* 가위 = 미용 (오른쪽 위) */}
-              <g transform="translate(272,115)">
-                <circle cx="-2" cy="4" r="2" fill="none" stroke="#111827" strokeWidth="0.8"/>
-                <circle cx="2" cy="4" r="2" fill="none" stroke="#111827" strokeWidth="0.8"/>
-                <line x1="-1" y1="2" x2="2" y2="-4" stroke="#111827" strokeWidth="0.8"/>
-                <line x1="1" y1="2" x2="-2" y2="-4" stroke="#111827" strokeWidth="0.8"/>
-              </g>
-
-              {/* 경복궁 삭제 */}
-
-              {/* 한옥 지붕 (상단 왼쪽 산 위) */}
-              <g transform="translate(100,60)">
-                <path d="M-6,0 Q0,-6 6,0" fill="none" stroke="#111827" strokeWidth="1"/>
-                <line x1="-5" y1="0" x2="-5" y2="4" stroke="#111827" strokeWidth="0.6"/>
-                <line x1="5" y1="0" x2="5" y2="4" stroke="#111827" strokeWidth="0.6"/>
-              </g>
-
-              {/* 하트 (산 사이) */}
-              <g transform="translate(205,58)">
-                <path d="M0,2 Q-4,-2 0,-4 Q4,-2 0,2 Z" fill="#E74C5F" opacity="0.6"/>
-              </g>
-
-              {/* 벚꽃 2 (오른쪽 산 근처) */}
-              <g transform="translate(255,80)">
-                <circle cx="0" cy="-2.5" r="1.5" fill="#F9C7C8"/>
-                <circle cx="2.4" cy="-0.8" r="1.5" fill="#F9C7C8"/>
-                <circle cx="1.5" cy="1.7" r="1.5" fill="#F9C7C8"/>
-                <circle cx="-1.5" cy="1.7" r="1.5" fill="#F9C7C8"/>
-                <circle cx="-2.4" cy="-0.8" r="1.5" fill="#F9C7C8"/>
-                <circle cx="0" cy="0" r="0.8" fill="#E8A0A0"/>
-              </g>
-
-              {/* === 가운데 텍스트 === */}
-              <text x="160" y="125" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="28" fontWeight="300" letterSpacing="0.15em" fill="#111827">
-                HanPocket
-              </text>
-              <text x="160" y="145" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="9" fontWeight="400" letterSpacing="0.15em" fill="#888">
-                {lang === 'ko' ? '한국에 온 걸 환영해' : lang === 'zh' ? '欢迎来到韩国' : 'Welcome to Korea'}
-              </text>
-            </svg>
+          <div className="flex flex-col items-center justify-center" style={{ minHeight: '60vh' }}>
+            <span style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '72px',
+              fontWeight: 200,
+              color: '#111827',
+              letterSpacing: '0.02em',
+              opacity: 0,
+              animation: 'fadeIn 1s ease forwards',
+            }}>
+              你好!
+            </span>
           </div>
         )}
 
@@ -994,9 +866,9 @@ function AppInner() {
     }).catch(() => {})
   }, [])
 
-  if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); setLang(p.lang||'zh'); setShowNotice(true) }} />
-
   const [subPage, setSubPage] = useState(null)
+
+  if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); setLang(p.lang||'zh'); setShowNotice(true) }} />
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },

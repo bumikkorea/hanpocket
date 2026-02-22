@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { CreditCard, FileText, Search, Plus, Trash2, Edit3, Eye, EyeOff, Clock, Shield, ChevronDown, ChevronUp, Smartphone, Building, AlertTriangle, Check, X, Maximize2, MinusCircle } from 'lucide-react'
+import { CreditCard, FileText, Search, Plus, Trash2, Edit3, Eye, EyeOff, Clock, Shield, ChevronDown, ChevronUp, Smartphone, Building, AlertTriangle, Check, X, Maximize2, MinusCircle, Filter, User, Zap, BookOpen } from 'lucide-react'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -138,8 +138,47 @@ const VERIFY_GUIDE = [
   },
 ]
 
+// Quick setup recommendations based on user profile
+const getRecommendations = (profile, docs) => {
+  const recommendations = []
+  const hasARC = docs.some(d => d.docType === 'arc')
+  const hasBank = docs.some(d => d.docType === 'bank')
+  
+  if (!hasARC) {
+    recommendations.push({
+      type: 'document',
+      priority: 'high',
+      title: { ko: '외국인등록증 등록', zh: '登记外国人登录证', en: 'Register ARC' },
+      desc: { ko: '가장 중요한 신분증입니다', zh: '최중요的身份证', en: 'Most important ID document' },
+      action: 'arc'
+    })
+  }
+  
+  if (hasARC && !hasBank) {
+    recommendations.push({
+      type: 'document',
+      priority: 'high',
+      title: { ko: '은행계좌 등록', zh: '登记银행账户', en: 'Register bank account' },
+      desc: { ko: '금융 서비스 이용을 위해 필요', zh: '使용金융服务必需', en: 'Required for financial services' },
+      action: 'bank'
+    })
+  }
+  
+  if (hasARC && hasBank) {
+    recommendations.push({
+      type: 'verify',
+      priority: 'medium',
+      title: { ko: '본인인증 설정', zh: '设置身份验证', en: 'Setup verification' },
+      desc: { ko: '온라인 서비스 이용 확대', zh: '扩大在线服务使용', en: 'Expand online service usage' },
+      action: 'verify'
+    })
+  }
+  
+  return recommendations.slice(0, 3) // Limit to 3 recommendations
+}
+
 export default function DigitalWalletTab({ lang, profile }) {
-  const [section, setSection] = useState('docs') // docs, names, verify, timeline, present
+  const [section, setSection] = useState('quickstart') // quickstart | docs | names | verify | timeline
   const [docs, setDocs] = useState(() => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [] } catch { return [] }
   })
@@ -155,6 +194,7 @@ export default function DigitalWalletTab({ lang, profile }) {
   const [editingInst, setEditingInst] = useState(null)
   const [newInstName, setNewInstName] = useState('')
   const [newInstKoName, setNewInstKoName] = useState('')
+  const [docFilter, setDocFilter] = useState('all') // all | expiring | important
   const revealTimer = useRef(null)
 
   useEffect(() => { localStorage.setItem(STORAGE_KEY, JSON.stringify(docs)) }, [docs])
@@ -209,9 +249,12 @@ export default function DigitalWalletTab({ lang, profile }) {
     .filter(d => d._dday !== null)
     .sort((a, b) => a._dday - b._dday)
 
+  const recommendations = getRecommendations(profile, docs)
+
   const sectionButtons = [
+    { id: 'quickstart', icon: Zap, label: { ko: '빠른 시작', zh: '快速开始', en: 'Quick Start' } },
     { id: 'docs', icon: FileText, label: { ko: '문서 보관함', zh: '文件保管箱', en: 'Documents' } },
-    { id: 'names', icon: CreditCard, label: { ko: '이름 관리', zh: '姓名管理', en: 'Name Manager' } },
+    { id: 'names', icon: User, label: { ko: '이름 관리', zh: '姓名管理', en: 'Name Manager' } },
     { id: 'verify', icon: Shield, label: { ko: '본인인증', zh: '身份验证', en: 'Verification' } },
     { id: 'timeline', icon: Clock, label: { ko: '만료 알림', zh: '到期提醒', en: 'Expiry Alert' } },
   ]
@@ -260,9 +303,130 @@ export default function DigitalWalletTab({ lang, profile }) {
         })}
       </div>
 
+      {/* ═══ Quick Start ═══ */}
+      {section === 'quickstart' && (
+        <div className="space-y-4">
+          {/* Welcome message */}
+          <div className={cardCls}>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                <User size={20} className="text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#111827]">
+                  {L(lang, { ko: '안녕하세요!', zh: '你好！', en: 'Hello!' })}
+                </h3>
+                <p className="text-xs text-[#6B7280]">
+                  {L(lang, { ko: '한국 생활 준비를 도와드릴게요', zh: '帮助您准备韩国生活', en: 'Let me help you prepare for life in Korea' })}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick stats */}
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-white rounded-xl p-3 border border-[#E5E7EB] text-center">
+              <div className="text-lg font-bold text-[#111827]">{docs.length}</div>
+              <div className="text-xs text-[#6B7280]">{L(lang, { ko: '등록된 문서', zh: '已登记文件', en: 'Documents' })}</div>
+            </div>
+            <div className="bg-white rounded-xl p-3 border border-[#E5E7EB] text-center">
+              <div className="text-lg font-bold text-[#111827]">{Object.keys(nameMap).length}</div>
+              <div className="text-xs text-[#6B7280]">{L(lang, { ko: '이름 매핑', zh: '姓名映射', en: 'Name Maps' })}</div>
+            </div>
+            <div className="bg-white rounded-xl p-3 border border-[#E5E7EB] text-center">
+              <div className="text-lg font-bold text-[#111827]">{timelineDocs.filter(d => d._dday <= 30 && d._dday >= 0).length}</div>
+              <div className="text-xs text-[#6B7280]">{L(lang, { ko: '곧 만료', zh: '即将到期', en: 'Expiring' })}</div>
+            </div>
+          </div>
+
+          {/* Personalized recommendations */}
+          {recommendations.length > 0 && (
+            <div className={cardCls}>
+              <h3 className="font-bold text-[#111827] text-sm mb-3">{L(lang, { ko: '추천 작업', zh: '推荐任务', en: 'Recommended Actions' })}</h3>
+              <div className="space-y-3">
+                {recommendations.map((rec, i) => (
+                  <div key={i} className={`p-3 rounded-xl border ${
+                    rec.priority === 'high' ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-[#111827] text-sm">{L(lang, rec.title)}</h4>
+                        <p className="text-xs text-[#6B7280] mt-1">{L(lang, rec.desc)}</p>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          if (rec.action === 'arc' || rec.action === 'bank') {
+                            setSection('docs')
+                            setAddingType(rec.action)
+                          } else {
+                            setSection(rec.action)
+                          }
+                        }}
+                        className={`ml-3 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                          rec.priority === 'high' 
+                            ? 'bg-red-600 text-white hover:bg-red-700' 
+                            : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
+                      >
+                        {L(lang, { ko: '시작', zh: '开始', en: 'Start' })}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Quick actions */}
+          <div className={cardCls}>
+            <h3 className="font-bold text-[#111827] text-sm mb-3">{L(lang, { ko: '빠른 실행', zh: '快速操作', en: 'Quick Actions' })}</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <button onClick={() => setSection('docs')} 
+                className="flex items-center gap-2 p-3 bg-[#F9FAFB] rounded-xl hover:bg-[#F3F4F6] transition-colors">
+                <FileText size={16} className="text-[#6B7280]" />
+                <span className="text-sm text-[#111827]">{L(lang, { ko: '문서 추가', zh: '添加文件', en: 'Add Document' })}</span>
+              </button>
+              <button onClick={() => setSection('names')} 
+                className="flex items-center gap-2 p-3 bg-[#F9FAFB] rounded-xl hover:bg-[#F3F4F6] transition-colors">
+                <User size={16} className="text-[#6B7280]" />
+                <span className="text-sm text-[#111827]">{L(lang, { ko: '이름 설정', zh: '设置姓名', en: 'Setup Names' })}</span>
+              </button>
+              <button onClick={() => setSection('verify')} 
+                className="flex items-center gap-2 p-3 bg-[#F9FAFB] rounded-xl hover:bg-[#F3F4F6] transition-colors">
+                <Shield size={16} className="text-[#6B7280]" />
+                <span className="text-sm text-[#111827]">{L(lang, { ko: '인증 가이드', zh: '认证指南', en: 'Verification Guide' })}</span>
+              </button>
+              <button onClick={() => setSection('timeline')} 
+                className="flex items-center gap-2 p-3 bg-[#F9FAFB] rounded-xl hover:bg-[#F3F4F6] transition-colors">
+                <Clock size={16} className="text-[#6B7280]" />
+                <span className="text-sm text-[#111827]">{L(lang, { ko: '만료 확인', zh: '检查到期', en: 'Check Expiry' })}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ═══ A. Document Storage ═══ */}
       {section === 'docs' && (
         <div className="space-y-4">
+          {/* Filter and Add Document */}
+          {!addingType && (
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <select value={docFilter} onChange={e => setDocFilter(e.target.value)}
+                  className="text-sm bg-[#F3F4F6] rounded-xl px-3 py-2 border-0 outline-none focus:ring-2 focus:ring-[#111827]/30">
+                  <option value="all">{L(lang, { ko: '모든 문서', zh: '所有文件', en: 'All Documents' })}</option>
+                  <option value="expiring">{L(lang, { ko: '만료 예정', zh: '即将到期', en: 'Expiring' })}</option>
+                  <option value="important">{L(lang, { ko: '중요 문서', zh: '重요文件', en: 'Important' })}</option>
+                </select>
+              </div>
+              <button onClick={() => setAddingType('quick')}
+                className="flex items-center gap-1 px-3 py-2 bg-[#111827] text-white rounded-xl text-sm font-semibold">
+                <Plus size={14} /> {L(lang, { ko: '추가', zh: '添加', en: 'Add' })}
+              </button>
+            </div>
+          )}
+
           {/* Add Document */}
           {!addingType ? (
             <div className={cardCls}>
@@ -287,7 +451,17 @@ export default function DigitalWalletTab({ lang, profile }) {
           )}
 
           {/* Document List */}
-          {docs.map((doc, i) => {
+          {docs.filter(doc => {
+            if (docFilter === 'all') return true
+            if (docFilter === 'expiring') {
+              const dday = getDday(doc.expiryDate)
+              return dday !== null && dday <= 60
+            }
+            if (docFilter === 'important') {
+              return ['arc', 'passport', 'visa', 'bank'].includes(doc.docType)
+            }
+            return true
+          }).map((doc, i) => {
             const dt = DOC_TYPES.find(t => t.id === doc.docType)
             if (!dt) return null
             const Icon = dt.icon

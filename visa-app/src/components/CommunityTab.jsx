@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Heart, MessageSquare, Plus, ChevronLeft, Send, Image, X, Clock, Tag, User, Briefcase, Home, FileText } from 'lucide-react'
+import { Heart, MessageSquare, Plus, ChevronLeft, Send, Image, X, Clock, Tag, User, Briefcase, Home, FileText, ExternalLink, Phone, MapPin, Calendar, Users } from 'lucide-react'
 import JobsTab from './JobsTab'
 import HousingTab from './HousingTab'
 import ResumeTab from './ResumeTab'
@@ -23,8 +23,8 @@ const marketCategories = [
 ]
 
 const samplePosts = [
-  { id: '1', type: 'community', category: 'info', title: { ko: '외국인등록증 발급 후기', zh: '外国人登录证办理后记', en: 'ARC Application Review' }, content: { ko: '안산 출입국관리사무소에서 외국인등록증을 발급받았습니다. 약 2주 소요되었고, 필요한 서류는 여권, 사진 1장, 수수료 3만원입니다. 오전 일찍 가면 대기시간이 짧습니다.', zh: '在安山出入境管理事务所办理了外国人登录证。大约花了2周时间，需要护照、1张照片、3万韩元手续费。早上早点去等待时间较短。', en: 'Got my ARC at Ansan Immigration. Took about 2 weeks. Need passport, 1 photo, 30,000 KRW fee. Go early to avoid long waits.' }, author: 'user_A', time: '2026-02-20T10:30:00', likes: 12, comments: [{ author: 'user_B', text: { ko: '감사합니다! 저도 다음 주에 가려고요.', zh: '谢谢！我下周也打算去。', en: 'Thanks! I plan to go next week.' }, time: '2026-02-20T11:00:00' }] },
-  { id: '2', type: 'community', category: 'food', title: { ko: '대림동 중국음식 맛집 추천', zh: '大林洞中国美食推荐', en: 'Chinese Food in Daerim' }, content: { ko: '대림역 근처 "동북인가" 추천합니다. 마라탕, 양꼬치, 훠궈 다 맛있어요. 가격도 합리적이고 중국어 메뉴판도 있습니다.', zh: '推荐大林站附近的"东北人家"。麻辣烫、羊肉串、火锅都很好吃。价格合理，还有中文菜单。', en: 'Recommend "Dongbei Renjia" near Daerim station. Great hotpot, skewers, and malatang. Reasonable prices, Chinese menu available.' }, author: 'user_C', time: '2026-02-19T15:20:00', likes: 28, comments: [{ author: 'user_D', text: { ko: '가봤는데 진짜 맛있어요!', zh: '去过，真的很好吃！', en: 'Went there, really good!' }, time: '2026-02-19T16:00:00' }, { author: 'user_E', text: { ko: '주소 좀 알려주세요', zh: '请告诉我地址', en: 'Can you share the address?' }, time: '2026-02-19T17:30:00' }] },
+  { id: '1', type: 'community', category: 'info', title: { ko: '외국인등록증 발급 후기', zh: '外国人登录证办理后记', en: 'ARC Application Review' }, content: { ko: '안산 출입국관리사무소에서 외국인등록증을 발급받았습니다. 약 2주 소요되었고, 필요한 서류는 여권, 사진 1장, 수수료 3만원입니다. 오전 일찍 가면 대기시간이 짧습니다.', zh: '在安山出入境管理事务所办理了外国人登录证。大约花了2周时间，需要护照、1张照片、3万韩元手续费。早上早点去等待时间较短。', en: 'Got my ARC at Ansan Immigration. Took about 2 weeks. Need passport, 1 photo, 30,000 KRW fee. Go early to avoid long waits.' }, author: 'user_A', time: '2026-02-20T10:30:00', likes: 12, comments: [{ author: 'user_B', text: { ko: '감사합니다! 저도 다음 주에 가려고요.', zh: '谢谢！我下周也打算去。', en: 'Thanks! I plan to go next week.' }, time: '2026-02-20T11:00:00' }], quickActions: [{ type: 'map', label: { ko: '안산 출입국 위치', zh: '安山出入境位置', en: 'Ansan Immigration Location' }, url: 'https://map.naver.com/v5/search/안산출입국관리사무소' }, { type: 'website', label: { ko: '온라인 예약', zh: '在线预约', en: 'Online Reservation' }, url: 'https://www.hikorea.go.kr' }] },
+  { id: '2', type: 'community', category: 'food', title: { ko: '대림동 중국음식 맛집 추천', zh: '大林洞中国美食推荐', en: 'Chinese Food in Daerim' }, content: { ko: '대림역 근처 "동북인가" 추천합니다. 마라탕, 양꼬치, 훠궈 다 맛있어요. 가격도 합리적이고 중국어 메뉴판도 있습니다.', zh: '推荐大림站附近的"东北人家"。麻辣烫、羊肉串、火锅都很好吃。价格合理，还有중文菜单。', en: 'Recommend "Dongbei Renjia" near Daerim station. Great hotpot, skewers, and malatang. Reasonable prices, Chinese menu available.' }, author: 'user_C', time: '2026-02-19T15:20:00', likes: 28, comments: [{ author: 'user_D', text: { ko: '가봤는데 진짜 맛있어요!', zh: '去过，真的很好吃！', en: 'Went there, really good!' }, time: '2026-02-19T16:00:00' }, { author: 'user_E', text: { ko: '주소 좀 알려주세요', zh: '请告诉我地址', en: 'Can you share the address?' }, time: '2026-02-19T17:30:00' }], quickActions: [{ type: 'map', label: { ko: '길찾기', zh: '导航', en: 'Directions' }, url: 'https://map.naver.com/v5/search/동북인가 대림동' }, { type: 'phone', label: { ko: '전화하기', zh: '拨打电话', en: 'Call' }, url: 'tel:02-2631-8888' }, { type: 'group', label: { ko: '함께 가기 그룹 참여', zh: '加入同行群', en: 'Join Group Visit' }, participants: 3, maxParticipants: 6 }] },
   { id: '3', type: 'community', category: 'question', title: { ko: '건강보험 가입 질문', zh: '健康保险加入咨询', en: 'Health Insurance Question' }, content: { ko: 'D-2 비자인데 건강보험 의무가입인가요? 가입하면 얼마 정도인지, 직장보험이랑 지역보험 차이가 뭔지 궁금합니다.', zh: 'D-2签证需要强制加入健康保险吗？大概多少钱？职场保险和地区保险有什么区别？', en: 'Is health insurance mandatory on D-2 visa? How much is it? What is the difference between workplace and regional insurance?' }, author: 'user_F', time: '2026-02-18T09:00:00', likes: 8, comments: [] },
   { id: '4', type: 'marketplace', category: 'furniture', title: { ko: '이사로 책상+의자 팝니다', zh: '搬家出售桌子+椅子', en: 'Moving sale: desk+chair' }, content: { ko: '서울 관악구. 이케아 말름 책상 + 의자 세트. 1년 사용. 5만원. 직거래만. 상태 좋습니다.', zh: '首尔冠岳区。宜家MALM桌子+椅子套装。使用1年。5万韩元。当面交易。状态好。', en: 'Gwanak-gu Seoul. IKEA MALM desk + chair set. 1 year used. 50,000 KRW. Meet in person. Good condition.' }, author: 'user_G', time: '2026-02-17T14:00:00', likes: 5, comments: [{ author: 'user_H', text: { ko: '아직 있나요?', zh: '还有吗？', en: 'Still available?' }, time: '2026-02-17T15:00:00' }] },
   { id: '5', type: 'marketplace', category: 'electronics', title: { ko: '갤럭시 S24 중고 판매', zh: '三星Galaxy S24二手出售', en: 'Used Galaxy S24 for sale' }, content: { ko: '갤럭시 S24 256GB. 6개월 사용. 케이스+충전기 포함. 55만원. 서울 강남 직거래.', zh: 'Galaxy S24 256GB。使用6个月。含手机壳+充电器。55万韩元。首尔江南面交。', en: 'Galaxy S24 256GB. 6 months used. With case+charger. 550,000 KRW. Gangnam meet.' }, author: 'user_I', time: '2026-02-16T18:00:00', likes: 15, comments: [] },
@@ -128,6 +128,19 @@ export default function CommunityTab({ lang, profile }) {
             <span className="flex items-center gap-1"><Clock size={12} /> {timeAgo(post.time, lang)}</span>
           </div>
           <p className="text-sm text-[#374151] mt-4 leading-relaxed whitespace-pre-line">{L(lang, post.content)}</p>
+          
+          {/* Quick Actions */}
+          {post.quickActions && (
+            <div className="mt-4 space-y-2">
+              <p className="text-xs text-[#6B7280] font-semibold">{L(lang, { ko: '빠른 실행', zh: '快速操作', en: 'Quick Actions' })}</p>
+              <div className="flex flex-wrap gap-2">
+                {post.quickActions.map((action, i) => (
+                  <QuickActionButton key={i} action={action} lang={lang} />
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center gap-4 mt-4 pt-3 border-t border-[#E5E7EB]">
             <button onClick={() => handleLike(post.id)} className={`flex items-center gap-1 text-sm ${isLiked(post.id) ? 'text-red-500' : 'text-[#9CA3AF]'}`}>
               <Heart size={16} fill={isLiked(post.id) ? 'currentColor' : 'none'} /> {post.likes}
@@ -290,4 +303,45 @@ export default function CommunityTab({ lang, profile }) {
       </>}
     </div>
   )
+}
+
+// Quick Action Button Component
+function QuickActionButton({ action, lang }) {
+  if (action.type === 'map') {
+    return (
+      <a href={action.url} target="_blank" rel="noopener noreferrer"
+        className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-semibold hover:bg-blue-100 transition-colors">
+        <MapPin size={12} /> {L(lang, action.label)}
+      </a>
+    )
+  }
+  
+  if (action.type === 'website') {
+    return (
+      <a href={action.url} target="_blank" rel="noopener noreferrer"
+        className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-lg text-xs font-semibold hover:bg-green-100 transition-colors">
+        <ExternalLink size={12} /> {L(lang, action.label)}
+      </a>
+    )
+  }
+  
+  if (action.type === 'phone') {
+    return (
+      <a href={action.url}
+        className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition-colors">
+        <Phone size={12} /> {L(lang, action.label)}
+      </a>
+    )
+  }
+  
+  if (action.type === 'group') {
+    return (
+      <button className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg text-xs font-semibold hover:bg-purple-100 transition-colors">
+        <Users size={12} /> 
+        {L(lang, action.label)} ({action.participants}/{action.maxParticipants})
+      </button>
+    )
+  }
+  
+  return null
 }

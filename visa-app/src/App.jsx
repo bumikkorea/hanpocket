@@ -874,20 +874,24 @@ function AppInner() {
     }).catch(() => {})
   }, [])
 
-  // Push notification setup
-  useEffect(() => {
-    if (!profile || !isPushSupported()) return
-    // Auto-subscribe after 3 seconds (give page time to load)
-    const timer = setTimeout(async () => {
-      await subscribePush()
-      await registerPeriodicSync()
+  const [pushEnabled, setPushEnabled] = useState(() => {
+    return typeof Notification !== 'undefined' && Notification.permission === 'granted'
+  })
+  const [pushDismissed, setPushDismissed] = useState(() => {
+    return localStorage.getItem('hp_push_dismissed') === 'true'
+  })
+
+  const handleEnablePush = async () => {
+    const sub = await subscribePush()
+    if (sub) {
+      setPushEnabled(true)
       if (profile.visaExpiry) {
         await cacheVisaProfile(profile)
         scheduleDdayCheck(profile.visaExpiry)
       }
-    }, 3000)
-    return () => clearTimeout(timer)
-  }, [profile])
+      await registerPeriodicSync()
+    }
+  }
 
   const [subPage, setSubPage] = useState(null)
 
@@ -1155,6 +1159,21 @@ function AppInner() {
 
       {/* Content */}
       <div className="px-4 pt-4 pb-4">
+        {/* Push notification banner */}
+        {isPushSupported() && !pushEnabled && !pushDismissed && tab === 'home' && (
+          <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '알림 받기' : lang === 'zh' ? '开启通知' : 'Enable Notifications'}</p>
+              <p className="text-xs text-[#6B7280] mt-0.5">{lang === 'ko' ? '비자 만료, 공지사항 등을 놓치지 마세요' : lang === 'zh' ? '不要错过签证到期、公告等信息' : "Don't miss visa expiry alerts & updates"}</p>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <button onClick={() => { setPushDismissed(true); localStorage.setItem('hp_push_dismissed', 'true') }}
+                className="text-xs text-[#9CA3AF] px-2 py-1.5">{lang === 'ko' ? '닫기' : lang === 'zh' ? '关闭' : 'Close'}</button>
+              <button onClick={handleEnablePush}
+                className="text-xs font-semibold text-white bg-[#111827] px-4 py-1.5 rounded-lg">{lang === 'ko' ? '허용' : lang === 'zh' ? '允许' : 'Allow'}</button>
+            </div>
+          </div>
+        )}
         {/* Explore grid */}
         {tab==='explore' && !subPage && (
           <div>

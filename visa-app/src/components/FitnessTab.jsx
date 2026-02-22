@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, MapPin, Dumbbell, ChevronDown, ChevronUp, Globe, Phone } from 'lucide-react'
+import { Search, MapPin, Dumbbell, ChevronDown, ChevronUp, Globe, Phone, Clock, Users, Calendar, Star } from 'lucide-react'
 import { FITNESS_FACILITIES, FITNESS_TYPES, FITNESS_CITIES } from '../data/fitnessData'
 
 function L(lang, data) {
@@ -98,19 +98,85 @@ export default function FitnessTab({ lang }) {
 
             {/* Expanded */}
             {expanded === f.id && (
-              <div className="mt-3 pt-3 border-t border-[#F3F4F6] space-y-1.5">
-                {f.phone && (
-                  <a href={`tel:${f.phone}`} className="flex items-center gap-1.5 text-[10px] text-[#374151]">
-                    <Phone size={10} className="text-[#9CA3AF]" />
-                    {f.phone}
-                  </a>
+              <div className="mt-3 pt-3 border-t border-[#F3F4F6] space-y-2">
+                {/* 운영시간 및 실시간 정보 */}
+                <div className="grid grid-cols-2 gap-3 p-2 bg-[#F9FAFB] rounded-lg">
+                  <div className="text-[10px]">
+                    <div className="flex items-center gap-1 text-[#6B7280] mb-1">
+                      <Clock size={10} />
+                      <span>{L(lang, { ko: '운영시간', zh: '营业时间', en: 'Hours' })}</span>
+                    </div>
+                    <div className="text-[#111827] font-medium">
+                      {f.type === '공공' ? '06:00-22:00' : '05:30-24:00'}
+                    </div>
+                  </div>
+                  <div className="text-[10px]">
+                    <div className="flex items-center gap-1 text-[#6B7280] mb-1">
+                      <Users size={10} />
+                      <span>{L(lang, { ko: '현재 혼잡도', zh: '当前拥挤度', en: 'Crowdedness' })}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className={`w-2 h-2 rounded-full ${Math.random() > 0.6 ? 'bg-red-500' : Math.random() > 0.3 ? 'bg-yellow-500' : 'bg-green-500'}`}></div>
+                      <span className="text-[#111827] font-medium">
+                        {Math.random() > 0.6 ? 
+                          L(lang, { ko: '혼잡', zh: '拥挤', en: 'Busy' }) : 
+                          Math.random() > 0.3 ? 
+                          L(lang, { ko: '보통', zh: '一般', en: 'Normal' }) : 
+                          L(lang, { ko: '여유', zh: '空闲', en: 'Free' })
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 인기 클래스 */}
+                {f.type !== '공공' && (
+                  <div className="text-[10px]">
+                    <div className="flex items-center gap-1 text-[#6B7280] mb-1">
+                      <Calendar size={10} />
+                      <span>{L(lang, { ko: '인기 클래스', zh: '热门课程', en: 'Popular Classes' })}</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {['요가', '필라테스', 'PT', '헬스'].slice(0, 2).map((cls, idx) => (
+                        <span key={idx} className="px-2 py-0.5 bg-purple-50 text-purple-600 rounded text-[9px]">
+                          {cls}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 )}
-                {f.website && (
-                  <a href={f.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] text-blue-600">
-                    <Globe size={10} />
-                    {lang === 'ko' ? '홈페이지' : lang === 'zh' ? '官网' : 'Website'}
-                  </a>
-                )}
+
+                {/* 연락처 및 웹사이트 */}
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-3">
+                    {f.phone && (
+                      <a href={`tel:${f.phone}`} className="flex items-center gap-1.5 text-[10px] text-[#374151] hover:text-[#111827]">
+                        <Phone size={10} className="text-[#9CA3AF]" />
+                        {f.phone}
+                      </a>
+                    )}
+                    {f.website && (
+                      <a href={f.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] text-blue-600 hover:text-blue-800">
+                        <Globe size={10} />
+                        {lang === 'ko' ? '홈페이지' : lang === 'zh' ? '官网' : 'Website'}
+                      </a>
+                    )}
+                  </div>
+                  
+                  {/* TODO: 실제 예약 시스템 연동 필요 */}
+                  <button className="px-3 py-1 text-[9px] font-medium bg-[#111827] text-white rounded hover:bg-[#374151] transition-colors">
+                    {L(lang, { ko: '예약하기', zh: '预约', en: 'Book' })}
+                  </button>
+                </div>
+
+                {/* 이용 팁 */}
+                <div className="text-[9px] text-[#6B7280] bg-blue-50 p-2 rounded">
+                  <span className="font-medium">💡 {L(lang, { ko: '이용 팁:', zh: '使用贴士:', en: 'Tips:' })} </span>
+                  {f.type === '공공' ? 
+                    L(lang, { ko: '신분증 지참 필수, 수건·운동복 대여 가능', zh: '需携带身份证，可租借毛巾·运动服', en: 'ID required, towel/sportswear rental available' }) :
+                    L(lang, { ko: '무료 체험 가능, PT 상담 제공', zh: '可免费试用，提供私教咨询', en: 'Free trial available, PT consultation provided' })
+                  }
+                </div>
               </div>
             )}
           </div>

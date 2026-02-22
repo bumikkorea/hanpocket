@@ -1,7 +1,31 @@
 import { useState, useRef, useEffect } from 'react'
-import { Camera, CameraOff, Search, Copy, Check, ChevronLeft, Grid3x3, Type } from 'lucide-react'
+import { Camera, CameraOff, Search, Copy, Check, ChevronLeft, Grid3x3, Type, Image, Star, Bookmark } from 'lucide-react'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
+
+// Sign examples with visual context
+const signExamples = [
+  {
+    category: 'common',
+    title: { ko: '일반 간판', zh: '常见招牌', en: 'Common Signs' },
+    signs: [
+      { ko: '영업중', zh: '营业中', en: 'Open', color: 'bg-green-100 border-green-200 text-green-800', bgColor: '#dcfce7' },
+      { ko: '준비중', zh: '准备中', en: 'Preparing', color: 'bg-amber-100 border-amber-200 text-amber-800', bgColor: '#fef3c7' },
+      { ko: '화장실', zh: '洗手间', en: 'Restroom', color: 'bg-blue-100 border-blue-200 text-blue-800', bgColor: '#dbeafe' },
+      { ko: '출입금지', zh: '禁止出入', en: 'No Entry', color: 'bg-red-100 border-red-200 text-red-800', bgColor: '#fee2e2' },
+    ]
+  },
+  {
+    category: 'food',
+    title: { ko: '음식점', zh: '餐厅', en: 'Restaurant' },
+    signs: [
+      { ko: '김치찌개', zh: '泡菜汤', en: 'Kimchi Stew', color: 'bg-orange-100 border-orange-200 text-orange-800', bgColor: '#fed7aa' },
+      { ko: '삼겹살', zh: '五花肉', en: 'Pork Belly', color: 'bg-pink-100 border-pink-200 text-pink-800', bgColor: '#fce7f3' },
+      { ko: '계산대', zh: '收银台', en: 'Checkout', color: 'bg-purple-100 border-purple-200 text-purple-800', bgColor: '#f3e8ff' },
+      { ko: '포장', zh: '打包', en: 'Takeout', color: 'bg-indigo-100 border-indigo-200 text-indigo-800', bgColor: '#e0e7ff' },
+    ]
+  }
+]
 
 const signDict = [
   { ko: '출입금지', zh: '禁止出入', en: 'No Entry' },
@@ -67,7 +91,7 @@ const signDict = [
 ]
 
 export default function ARTranslateTab({ lang }) {
-  const [mode, setMode] = useState('camera') // camera | manual | dict
+  const [mode, setMode] = useState('examples') // examples | camera | manual | dict
   const [cameraOn, setCameraOn] = useState(false)
   const [captured, setCaptured] = useState(null)
   const [manualText, setManualText] = useState('')
@@ -139,6 +163,7 @@ export default function ARTranslateTab({ lang }) {
       {/* Mode switcher */}
       <div className="flex gap-2">
         {[
+          { id: 'examples', icon: Image, label: { ko: '간판 예시', zh: '招牌示例', en: 'Sign Examples' } },
           { id: 'camera', icon: Camera, label: { ko: '카메라', zh: '相机', en: 'Camera' } },
           { id: 'manual', icon: Type, label: { ko: '수동 입력', zh: '手动输入', en: 'Manual' } },
           { id: 'dict', icon: Search, label: { ko: '사전', zh: '词典', en: 'Dictionary' } },
@@ -151,6 +176,47 @@ export default function ARTranslateTab({ lang }) {
           </button>
         ))}
       </div>
+
+      {/* Sign Examples mode */}
+      {mode === 'examples' && (
+        <div className="space-y-4">
+          <p className="text-sm text-[#6B7280]">{L(lang, { ko: '실제 한국 간판 예시를 보고 학습하세요', zh: '查看实际韩国招牌示例进行学习', en: 'Learn from real Korean sign examples' })}</p>
+          {signExamples.map(category => (
+            <div key={category.category} className="space-y-3">
+              <h3 className="font-bold text-[#111827] text-sm">{L(lang, category.title)}</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {category.signs.map((sign, i) => (
+                  <div key={i} className="bg-white rounded-2xl p-4 border border-[#E5E7EB] card-glow">
+                    {/* Mock sign visual */}
+                    <div 
+                      className={`rounded-xl p-4 mb-3 text-center border-2 ${sign.color}`}
+                      style={{ backgroundColor: sign.bgColor }}
+                    >
+                      <span className="font-bold text-lg">{sign.ko}</span>
+                    </div>
+                    <div className="space-y-1 text-center">
+                      <p className="text-sm text-[#6B7280]">{sign.zh}</p>
+                      <p className="text-xs text-[#9CA3AF]">{sign.en}</p>
+                    </div>
+                    <button onClick={() => copyText(`${sign.ko} = ${sign.zh} = ${sign.en}`, `example-${category.category}-${i}`)}
+                      className="w-full mt-2 flex items-center justify-center gap-1 text-xs text-[#6B7280] hover:text-[#111827] py-1">
+                      {copiedIdx === `example-${category.category}-${i}` ? <Check size={12} /> : <Copy size={12} />}
+                      {L(lang, { ko: '복사', zh: '复制', en: 'Copy' })}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-700">
+            {L(lang, {
+              ko: '실제 간판을 보았을 때는 카메라 모드나 수동 입력 모드를 사용하여 번역해보세요.',
+              zh: '看到实际招牌时，请使用相机模式或手动输入模式进行翻译。',
+              en: 'When you see actual signs, use camera mode or manual input mode to translate them.'
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Camera mode */}
       {mode === 'camera' && (

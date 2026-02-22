@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { Volume2, Copy, Check, ChevronLeft, Search, Building2, Pill, Shield, Home, Landmark, Banknote, ShoppingCart, Car, MessageSquare, Languages } from 'lucide-react'
+import { Volume2, Copy, Check, ChevronLeft, Search, Building2, Pill, Shield, Home, Landmark, Banknote, ShoppingCart, Car, MessageSquare, Languages, Heart, Utensils, BookOpen } from 'lucide-react'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -126,6 +126,47 @@ const situations = [
       { zh: '请开空调。', ko: '에어컨 켜 주세요.', en: 'Please turn on the AC.', pron: 'e-eo-keon kyeo ju-se-yo' },
     ],
   },
+  {
+    id: 'emergency', icon: Heart, label: { ko: '응급상황', zh: '紧急情况', en: 'Emergency' },
+    phrases: [
+      { zh: '救命！', ko: '도와주세요!', en: 'Help!', pron: 'do-wa-ju-se-yo' },
+      { zh: '请叫救护车。', ko: '구급차를 불러주세요.', en: 'Please call an ambulance.', pron: 'gu-geup-cha-reul bul-leo-ju-se-yo' },
+      { zh: '请叫警察。', ko: '경찰을 불러주세요.', en: 'Please call the police.', pron: 'gyeong-chal-eul bul-leo-ju-se-yo' },
+      { zh: '我迷路了。', ko: '길을 잃었어요.', en: 'I am lost.', pron: 'gil-eul il-eo-sseo-yo' },
+      { zh: '我的钱包不见了。', ko: '지갑을 잃어버렸어요.', en: 'I lost my wallet.', pron: 'ji-gap-eul il-eo-beo-ryeo-sseo-yo' },
+      { zh: '火灾！', ko: '화재!', en: 'Fire!', pron: 'hwa-jae' },
+      { zh: '我需要翻译。', ko: '통역이 필요해요.', en: 'I need an interpreter.', pron: 'tong-yeok-i pil-yo-hae-yo' },
+      { zh: '请联系中国领事馆。', ko: '중국 영사관에 연락해주세요.', en: 'Please contact Chinese consulate.', pron: 'jung-guk yeong-sa-gwan-e yeol-lak-hae-ju-se-yo' },
+    ],
+  },
+  {
+    id: 'restaurant', icon: Utensils, label: { ko: '식당', zh: '餐厅', en: 'Restaurant' },
+    phrases: [
+      { zh: '请给我菜单。', ko: '메뉴판 주세요.', en: 'Please give me the menu.', pron: 'me-nyu-pan ju-se-yo' },
+      { zh: '我要点餐。', ko: '주문하고 싶어요.', en: 'I want to order.', pron: 'ju-mun-ha-go si-peo-yo' },
+      { zh: '我不吃辣。', ko: '매운 거 못 먹어요.', en: 'I can\'t eat spicy food.', pron: 'mae-un geo mot meo-geo-yo' },
+      { zh: '我是素食主义者。', ko: '저는 채식주의자예요.', en: 'I am vegetarian.', pron: 'jeo-neun chae-sik-ju-ui-ja-ye-yo' },
+      { zh: '这个多少钱？', ko: '이거 얼마예요?', en: 'How much is this?', pron: 'i-geo eol-ma-ye-yo' },
+      { zh: '结账。', ko: '계산해 주세요.', en: 'Check please.', pron: 'gye-san-hae ju-se-yo' },
+      { zh: '可以打包吗？', ko: '포장 가능한가요?', en: 'Can I take it to go?', pron: 'po-jang ga-neung-han-ga-yo' },
+      { zh: '很好吃！', ko: '맛있어요!', en: 'It\'s delicious!', pron: 'ma-si-sseo-yo' },
+      { zh: '请给我水。', ko: '물 주세요.', en: 'Please give me water.', pron: 'mul ju-se-yo' },
+      { zh: '我有过敏。', ko: '알레르기가 있어요.', en: 'I have allergies.', pron: 'al-le-reu-gi-ga i-sseo-yo' },
+    ],
+  },
+  {
+    id: 'school', icon: BookOpen, label: { ko: '학교', zh: '学校', en: 'School' },
+    phrases: [
+      { zh: '我是交换学生。', ko: '저는 교환학생이에요.', en: 'I am an exchange student.', pron: 'jeo-neun gyo-hwan-hak-saeng-i-e-yo' },
+      { zh: '我想选这门课。', ko: '이 과목을 수강하고 싶어요.', en: 'I want to take this course.', pron: 'i gwa-mok-eul su-gang-ha-go si-peo-yo' },
+      { zh: '作业什么时候交？', ko: '과제 언제 내야 해요?', en: 'When is the assignment due?', pron: 'gwa-je eon-je nae-ya hae-yo' },
+      { zh: '考试是什么时候？', ko: '시험이 언제예요?', en: 'When is the exam?', pron: 'si-heom-i eon-je-ye-yo' },
+      { zh: '我没听懂。', ko: '이해하지 못했어요.', en: 'I didn\'t understand.', pron: 'i-hae-ha-ji mot-hae-sseo-yo' },
+      { zh: '请再说一遍。', ko: '다시 말씀해 주세요.', en: 'Please say it again.', pron: 'da-si mal-sseum-hae ju-se-yo' },
+      { zh: '我需要帮助。', ko: '도움이 필요해요.', en: 'I need help.', pron: 'do-um-i pil-yo-hae-yo' },
+      { zh: '图书馆在哪里？', ko: '도서관이 어디예요?', en: 'Where is the library?', pron: 'do-seo-gwan-i eo-di-ye-yo' },
+    ],
+  },
 ]
 
 // Simple dictionary for custom translation
@@ -175,17 +216,40 @@ function speak(text) {
   }
 }
 
+const FAVORITES_KEY = 'hp_translator_favorites'
+
 export default function TranslatorTab({ lang }) {
   const [selected, setSelected] = useState(null)
   const [customText, setCustomText] = useState('')
   const [customResult, setCustomResult] = useState('')
   const [copiedIdx, setCopiedIdx] = useState(null)
   const [searchQ, setSearchQ] = useState('')
+  const [favorites, setFavorites] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [] }
+    catch { return [] }
+  })
 
   const copyText = (text, idx) => {
     navigator.clipboard.writeText(text).catch(() => {})
     setCopiedIdx(idx)
     setTimeout(() => setCopiedIdx(null), 1500)
+  }
+
+  const toggleFavorite = (phrase, situationId) => {
+    const key = `${situationId}-${phrase.zh}`
+    const isFav = favorites.some(f => f.key === key)
+    let newFavorites
+    if (isFav) {
+      newFavorites = favorites.filter(f => f.key !== key)
+    } else {
+      newFavorites = [...favorites, { ...phrase, key, situationId }]
+    }
+    setFavorites(newFavorites)
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(newFavorites))
+  }
+
+  const isFavorite = (phrase, situationId) => {
+    return favorites.some(f => f.key === `${situationId}-${phrase.zh}`)
   }
 
   const handleCustomTranslate = () => {
@@ -194,6 +258,68 @@ export default function TranslatorTab({ lang }) {
   }
 
   if (selected) {
+    if (selected === 'favorites') {
+      const filtered = searchQ
+        ? favorites.filter(p => p.zh.includes(searchQ) || p.ko.includes(searchQ) || p.en.toLowerCase().includes(searchQ.toLowerCase()))
+        : favorites
+      return (
+        <div className="space-y-4 animate-fade-up">
+          <button onClick={() => { setSelected(null); setSearchQ('') }} className="flex items-center gap-1 text-sm text-[#6B7280] hover:text-[#111827] transition-colors">
+            <ChevronLeft size={16} />
+            {L(lang, { ko: '뒤로', zh: '返回', en: 'Back' })}
+          </button>
+          <div className="flex items-center gap-3">
+            <Heart size={20} className="text-red-500" fill="currentColor" />
+            <div>
+              <h2 className="text-lg font-bold text-[#111827]">{L(lang, { ko: '즐겨찾기', zh: '收藏夹', en: 'Favorites' })}</h2>
+              <p className="text-xs text-[#6B7280]">{favorites.length} {L(lang, { ko: '개 표현', zh: '个表达', en: 'phrases' })}</p>
+            </div>
+          </div>
+
+          {favorites.length > 0 && (
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-3 text-[#9CA3AF]" />
+              <input type="text" value={searchQ} onChange={e => setSearchQ(e.target.value)}
+                placeholder={L(lang, { ko: '즐겨찾기 검색...', zh: '搜索收藏...', en: 'Search favorites...' })}
+                className="w-full bg-[#F3F4F6] rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-[#111827]/10" />
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {filtered.length === 0 && favorites.length === 0 && (
+              <div className="text-center py-12 text-[#9CA3AF] text-sm">
+                {L(lang, { ko: '즐겨찾기한 표현이 없습니다', zh: '没有收藏的表达', en: 'No favorite phrases yet' })}
+              </div>
+            )}
+            {filtered.map((p, i) => (
+              <div key={i} className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
+                <p className="text-sm font-semibold text-[#111827]">{p.zh}</p>
+                <p className="text-base font-bold text-[#111827] mt-2">{p.ko}</p>
+                <p className="text-xs text-[#9CA3AF] mt-1 italic">[{p.pron}]</p>
+                <p className="text-xs text-[#6B7280] mt-1">{p.en}</p>
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => speak(p.ko)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F3F4F6] rounded-lg text-xs text-[#111827] hover:bg-[#E5E7EB] transition-colors">
+                    <Volume2 size={14} /> {L(lang, { ko: '듣기', zh: '听', en: 'Listen' })}
+                  </button>
+                  <button onClick={() => copyText(p.ko, `fav-${i}`)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F3F4F6] rounded-lg text-xs text-[#111827] hover:bg-[#E5E7EB] transition-colors">
+                    {copiedIdx === `fav-${i}` ? <Check size={14} /> : <Copy size={14} />}
+                    {copiedIdx === `fav-${i}` ? L(lang, { ko: '복사됨', zh: '已复制', en: 'Copied' }) : L(lang, { ko: '복사', zh: '复制', en: 'Copy' })}
+                  </button>
+                  <button onClick={() => toggleFavorite(p, p.situationId)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs transition-colors">
+                    <Heart size={14} fill="currentColor" />
+                    {L(lang, { ko: '제거', zh: '移除', en: 'Remove' })}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )
+    }
+
     const sit = situations.find(s => s.id === selected)
     const filtered = searchQ
       ? sit.phrases.filter(p => p.zh.includes(searchQ) || p.ko.includes(searchQ) || p.en.toLowerCase().includes(searchQ.toLowerCase()))
@@ -238,6 +364,15 @@ export default function TranslatorTab({ lang }) {
                   {copiedIdx === `${selected}-${i}` ? <Check size={14} /> : <Copy size={14} />}
                   {copiedIdx === `${selected}-${i}` ? L(lang, { ko: '복사됨', zh: '已复制', en: 'Copied' }) : L(lang, { ko: '복사', zh: '复制', en: 'Copy' })}
                 </button>
+                <button onClick={() => toggleFavorite(p, selected)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors ${
+                    isFavorite(p, selected) 
+                      ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                      : 'bg-[#F3F4F6] text-[#111827] hover:bg-[#E5E7EB]'
+                  }`}>
+                  <Heart size={14} fill={isFavorite(p, selected) ? 'currentColor' : 'none'} />
+                  {L(lang, { ko: '즐겨찾기', zh: '收藏', en: 'Favorite' })}
+                </button>
               </div>
             </div>
           ))}
@@ -280,6 +415,14 @@ export default function TranslatorTab({ lang }) {
       {/* Situation templates */}
       <h3 className="font-bold text-[#111827] text-sm">{L(lang, { ko: '상황별 통역', zh: '场景翻译', en: 'Situation Templates' })}</h3>
       <div className="grid grid-cols-2 gap-3">
+        {/* Favorites section */}
+        <button onClick={() => setSelected('favorites')}
+          className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow text-left hover:border-[#111827]/20 transition-all">
+          <Heart size={22} className="text-red-500 mb-2" fill="currentColor" />
+          <p className="font-bold text-[#111827] text-sm">{L(lang, { ko: '즐겨찾기', zh: '收藏夹', en: 'Favorites' })}</p>
+          <p className="text-xs text-[#6B7280] mt-1">{favorites.length}</p>
+        </button>
+        
         {situations.map(sit => (
           <button key={sit.id} onClick={() => setSelected(sit.id)}
             className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow text-left hover:border-[#111827]/20 transition-all">

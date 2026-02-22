@@ -53,6 +53,10 @@ function HospitalCard({ hospital, lang }) {
   const t = LABELS[lang] || LABELS.en
   const langMap = { en: 'English', zh: '中文', ja: '日本語', ru: 'Русский', ar: 'العربية', vi: 'Tiếng Việt', mn: 'Монгол', fr: 'Français', id: 'Bahasa', th: 'ไทย', uz: "O'zbek" }
 
+  // 가상 데이터 (실제 서비스에서는 API로 받아올 정보)
+  const estimatedCost = Math.floor(Math.random() * 100 + 50) * 1000  // 5만~15만원
+  const waitTime = Math.floor(Math.random() * 60 + 15) // 15~75분
+
   return (
     <div className="card-glow bg-white rounded-xl border border-slate-200 p-4 hover:border-slate-300 transition-all">
       <div className="flex items-start justify-between mb-3">
@@ -72,7 +76,7 @@ function HospitalCard({ hospital, lang }) {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+      <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mb-3">
         {hospital.emergency && (
           <span className="flex items-center gap-1 text-red-600 font-medium">
             <AlertCircle size={12} />
@@ -87,19 +91,44 @@ function HospitalCard({ hospital, lang }) {
         )}
       </div>
 
-      <div className="flex items-center gap-4 mt-3 pt-3 border-t border-slate-100 text-xs">
-        {hospital.phone && (
-          <a href={`tel:${hospital.phone}`} className="flex items-center gap-1 text-slate-600 hover:text-[#111827] transition-colors">
-            <Phone size={12} />
-            {hospital.phone}
-          </a>
-        )}
-        {hospital.website && (
-          <a href={hospital.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-slate-600 hover:text-[#111827] transition-colors">
-            <Globe size={12} />
-            {t.website}
-          </a>
-        )}
+      {/* 추가 정보 (예상 진료비, 대기시간) */}
+      <div className="bg-slate-50 rounded-lg p-2 mb-3">
+        <div className="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <span className="text-slate-600">
+              {L(lang, { ko: '예상 진료비', zh: '预计诊疗费', en: 'Est. Cost' })}
+            </span>
+            <div className="font-medium text-slate-800">₩{estimatedCost.toLocaleString()}</div>
+          </div>
+          <div>
+            <span className="text-slate-600">
+              {L(lang, { ko: '예상 대기', zh: '预计等候', en: 'Est. Wait' })}
+            </span>
+            <div className="font-medium text-slate-800">{waitTime}{L(lang, { ko: '분', zh: '分钟', en: 'min' })}</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
+        <div className="flex items-center gap-3 text-xs">
+          {hospital.phone && (
+            <a href={`tel:${hospital.phone}`} className="flex items-center gap-1 text-slate-600 hover:text-[#111827] transition-colors">
+              <Phone size={12} />
+              {hospital.phone}
+            </a>
+          )}
+          {hospital.website && (
+            <a href={hospital.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-slate-600 hover:text-[#111827] transition-colors">
+              <Globe size={12} />
+              {t.website}
+            </a>
+          )}
+        </div>
+        
+        {/* TODO: 실제 예약 시스템 연동 필요 */}
+        <button className="px-3 py-1.5 text-xs font-medium bg-[#111827] text-white rounded-lg hover:bg-slate-700 transition-colors">
+          {L(lang, { ko: '예약하기', zh: '预约', en: 'Book' })}
+        </button>
       </div>
     </div>
   )

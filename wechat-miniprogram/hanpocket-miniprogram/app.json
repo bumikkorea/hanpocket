@@ -1,0 +1,51 @@
+{
+  "pages": [
+    "pages/webview/webview",
+    "pages/loading/loading", 
+    "pages/error/error",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#1a73e8",
+    "navigationBarTitleText": "HanPocket",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f8f9fa"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#1a73e8", 
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/webview/webview",
+        "text": "홈",
+        "iconPath": "images/icons/home.png",
+        "selectedIconPath": "images/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/settings/settings", 
+        "text": "설정",
+        "iconPath": "images/icons/settings.png",
+        "selectedIconPath": "images/icons/settings-active.png"
+      }
+    ]
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": false,
+  "navigateToMiniProgramAppIdList": [],
+  "permission": {
+    "scope.userLocation": {
+      "desc": "위치 기반 서비스 제공을 위해 필요합니다"
+    }
+  },
+  "requiredBackgroundModes": ["audio"],
+  "workers": "workers",
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

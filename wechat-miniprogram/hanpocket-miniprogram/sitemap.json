@@ -1,0 +1,10 @@
+{
+  "desc": "HanPocket 미니프로그램 sitemap 설정",
+  "rules": [{
+    "action": "allow",
+    "page": "pages/webview/webview"
+  }, {
+    "action": "disallow",
+    "page": "pages/settings/settings"
+  }]
+}

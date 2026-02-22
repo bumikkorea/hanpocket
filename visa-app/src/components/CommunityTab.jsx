@@ -99,7 +99,16 @@ export default function CommunityTab({ lang, profile }) {
   const [formContact, setFormContact] = useState('')
   const fileInputRef = useRef(null)
 
-  useEffect(() => { localStorage.setItem(STORAGE_KEY, JSON.stringify(posts)) }, [posts])
+  useEffect(() => {
+    try {
+      // Strip images before saving to avoid localStorage quota
+      const lite = posts.map(p => ({ ...p, images: (p.images || []).length > 0 ? [`img_placeholder_${p.images.length}`] : [] }))
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(lite))
+    } catch (e) {
+      console.warn('localStorage quota exceeded, clearing old posts')
+      try { const keep = posts.slice(0, 20).map(p => ({ ...p, images: [] })); localStorage.setItem(STORAGE_KEY, JSON.stringify(keep)) } catch {}
+    }
+  }, [posts])
 
   // Bookmarks
   const getBookmarks = () => { try { return JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || '[]') } catch { return [] } }
@@ -138,15 +147,32 @@ export default function CommunityTab({ lang, profile }) {
     }
   }
 
-  // Image handling
-  const handleImageUpload = (e) => {
+  // Image handling — compress to max 200KB each
+  const compressImage = (file, maxW = 800, quality = 0.6) => new Promise(resolve => {
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const img = new window.Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const ratio = Math.min(maxW / img.width, maxW / img.height, 1)
+        canvas.width = img.width * ratio
+        canvas.height = img.height * ratio
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        resolve(canvas.toDataURL('image/jpeg', quality))
+      }
+      img.src = ev.target.result
+    }
+    reader.readAsDataURL(file)
+  })
+
+  const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files)
     if (formImages.length + files.length > 5) return
-    files.forEach(file => {
-      const reader = new FileReader()
-      reader.onload = (ev) => setFormImages(prev => [...prev, ev.target.result])
-      reader.readAsDataURL(file)
-    })
+    for (const file of files) {
+      const compressed = await compressImage(file)
+      setFormImages(prev => [...prev, compressed])
+    }
   }
   const removeImage = (idx) => setFormImages(prev => prev.filter((_, i) => i !== idx))
 

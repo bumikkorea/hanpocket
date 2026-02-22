@@ -1,0 +1,26 @@
+<!-- pages/webview/webview.wxml -->
+<view class="container">
+  <!-- 로딩 인디케이터 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">HanPocket 로딩 중...</text>
+  </view>
+
+  <!-- 에러 화면 -->
+  <view wx:elif="{{error}}" class="error-container">
+    <image src="/images/icons/error-icon.png" class="error-icon"></image>
+    <text class="error-title">페이지를 불러올 수 없습니다</text>
+    <text class="error-desc">네트워크 연결을 확인하고 다시 시도해주세요</text>
+    <button class="retry-btn" bindtap="retryLoad">다시 시도</button>
+  </view>
+
+  <!-- WebView -->
+  <web-view 
+    wx:else
+    id="webview"
+    src="{{webviewUrl}}"
+    bindload="onWebViewLoad"
+    binderror="onWebViewError"
+    bindmessage="onWebViewMessage">
+  </web-view>
+</view>

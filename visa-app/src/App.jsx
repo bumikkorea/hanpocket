@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, Component } from 'react'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
 import { initKakao, loginWithKakao, loginWithKakaoPopup, logoutFromKakao, getKakaoUser, isKakaoLoggedIn, handleKakaoCallback } from './utils/kakaoAuth'
 import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
+import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
 import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2 } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
@@ -31,6 +32,7 @@ import VisaAlertTab from './components/VisaAlertTab'
 import FinanceTab from './components/FinanceTab'
 import ResumeTab from './components/ResumeTab'
 import DigitalWalletTab from './components/DigitalWalletTab'
+import AffiliateTracker from './components/AffiliateTracker'
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -167,19 +169,30 @@ function Onboarding({ onComplete, lang, setLang }) {
             </p>
             <div className="space-y-3">
               <button
-                onClick={() => { /* TODO: WeChat OAuth */ onComplete({ lang, userType: 'tourist' }) }}
+                onClick={() => { 
+                  /* TODO: WeChat OAuth */ 
+                  trackLogin('wechat', 'tourist')
+                  onComplete({ lang, userType: 'tourist' }) 
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-[#07C160] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.534c0 2.22 1.174 4.142 3.016 5.49a.75.75 0 01.27.87l-.458 1.597a.375.375 0 00.506.44l1.932-.901a.75.75 0 01.572-.036c1.014.305 2.1.472 3.228.472.169 0 .336-.005.502-.014a5.868 5.868 0 01-.254-1.718c0-3.56 3.262-6.45 7.282-6.45.215 0 .428.01.638.028C16.283 5.114 12.85 2.188 8.691 2.188zM5.785 7.095a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25zm5.813 0a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25z"/><path d="M23.997 15.268c0-3.29-3.262-5.96-7.285-5.96-4.023 0-7.285 2.67-7.285 5.96 0 3.292 3.262 5.96 7.285 5.96.89 0 1.746-.132 2.534-.375a.75.75 0 01.573.036l1.478.689a.375.375 0 00.506-.44l-.35-1.22a.75.75 0 01.27-.87c1.49-1.09 2.274-2.644 2.274-4.38zm-9.792-.75a.938.938 0 110-1.875.938.938 0 010 1.875zm5.015 0a.938.938 0 110-1.875.938.938 0 010 1.875z"/></svg>
                 {L(lang, { ko: 'WeChat으로 로그인', zh: '微信登录', en: 'Login with WeChat' })}
               </button>
               <button
-                onClick={() => { /* TODO: Alipay OAuth */ onComplete({ lang, userType: 'tourist' }) }}
+                onClick={() => { 
+                  /* TODO: Alipay OAuth */ 
+                  trackLogin('alipay', 'tourist')
+                  onComplete({ lang, userType: 'tourist' }) 
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-[#1677FF] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M21.422 13.482C19.558 12.614 17.46 11.6 15.998 10.952c.72-1.748 1.164-3.678 1.164-5.202 0-1.554-.87-3.75-3.828-3.75-2.478 0-4.038 1.86-4.038 4.11 0 2.598 1.806 4.764 4.362 5.424-.498.804-1.104 1.518-1.788 2.118-1.62 1.416-3.456 2.13-5.454 2.13C4.146 15.782 2 14.258 2 11.988 2 6.468 7.098 2 13.332 2 19.566 2 22 6.468 22 11.988c0 .516-.03 1.02-.084 1.494h-.494z"/></svg>
                 {L(lang, { ko: 'Alipay로 로그인', zh: '支付宝登录', en: 'Login with Alipay' })}
               </button>
               <button
-                onClick={() => onComplete({ lang, userType: 'tourist' })}
+                onClick={() => {
+                  trackLogin('guest', 'tourist')
+                  onComplete({ lang, userType: 'tourist' })
+                }}
                 className="w-full text-center text-[#6B7280] text-sm mt-2 hover:text-[#111827] transition-colors">
                 {L(lang, { ko: '로그인 없이 둘러보기', zh: '不登录直接浏览', en: 'Browse without login' })}
               </button>
@@ -201,25 +214,52 @@ function Onboarding({ onComplete, lang, setLang }) {
             </p>
             <div className="space-y-3">
               <button
-                onClick={() => { /* TODO: Google OAuth */ onComplete({ lang, userType: 'resident' }) }}
+                onClick={() => { 
+                  /* TODO: Google OAuth */ 
+                  trackLogin('google', 'resident')
+                  onComplete({ lang, userType: 'resident' }) 
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-white border border-[#E5E7EB] text-[#111827] rounded-xl p-4 font-medium hover:bg-gray-50 transition-all btn-press shadow-sm">
                 <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
                 {L(lang, { ko: 'Google로 로그인', zh: 'Google登录', en: 'Login with Google' })}
               </button>
               <button
-                onClick={() => { /* TODO: Apple OAuth */ onComplete({ lang, userType: 'resident' }) }}
+                onClick={() => { 
+                  /* TODO: Apple OAuth */ 
+                  trackLogin('apple', 'resident')
+                  onComplete({ lang, userType: 'resident' }) 
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-[#111827] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
                 {L(lang, { ko: 'Apple로 로그인', zh: 'Apple登录', en: 'Login with Apple' })}
               </button>
               <button
-                onClick={async () => { try { initKakao(); const u = await loginWithKakao(); if(u) onComplete({ lang, userType: 'resident' }); } catch(e) { alert('로그인 실패') } }}
+                onClick={async () => { 
+                  try { 
+                    trackKakaoEvent('kakao_login_attempt', { context: 'onboarding' })
+                    initKakao(); 
+                    const u = await loginWithKakao(); 
+                    if(u) {
+                      trackKakaoEvent('kakao_login_success', { context: 'onboarding', nickname: u.nickname })
+                      trackLogin('kakao', 'resident')
+                      onComplete({ lang, userType: 'resident' })
+                    } else {
+                      trackKakaoEvent('kakao_login_failed', { context: 'onboarding' })
+                    }
+                  } catch(e) { 
+                    trackKakaoEvent('kakao_login_error', { context: 'onboarding', error: e.message })
+                    alert('로그인 실패') 
+                  } 
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-[#FEE500] text-[#3C1E1E] rounded-xl p-4 font-medium hover:bg-[#FDD835] transition-all btn-press shadow-sm">
                 <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#3C1E1E" d="M12 3C6.48 3 2 6.36 2 10.44c0 2.62 1.75 4.93 4.38 6.24l-1.12 4.16c-.1.36.32.64.62.42l4.97-3.26c.37.04.75.06 1.15.06 5.52 0 10-3.36 10-7.62S17.52 3 12 3z"/></svg>
                 {L(lang, { ko: '카카오로 로그인', zh: 'Kakao登录', en: 'Login with Kakao' })}
               </button>
               <button
-                onClick={() => onComplete({ lang, userType: 'resident' })}
+                onClick={() => {
+                  trackLogin('guest', 'resident')
+                  onComplete({ lang, userType: 'resident' })
+                }}
                 className="w-full text-center text-[#6B7280] text-sm mt-2 hover:text-[#111827] transition-colors">
                 {L(lang, { ko: '로그인 없이 둘러보기', zh: '不登录直接浏览', en: 'Browse without login' })}
               </button>
@@ -1016,15 +1056,24 @@ function AppInner() {
     initKakao()
     const code = new URLSearchParams(window.location.search).get('code')
     if (code) {
+      trackKakaoEvent('kakao_oauth_callback_received')
       handleKakaoCallback().then(user => {
         if (user) {
           // 로그인 성공 → 온보딩 건너뛰고 프로필 설정
+          trackKakaoEvent('kakao_oauth_success', { nickname: user.nickname })
+          trackLogin('kakao', 'resident')
+          
           if (!profile) {
             const p = { lang, userType: 'resident' }
             setProfile(p)
             localStorage.setItem('hp_profile', JSON.stringify(p))
           }
+        } else {
+          trackKakaoEvent('kakao_oauth_failed')
         }
+      }).catch(error => {
+        console.error('Kakao OAuth error:', error)
+        trackKakaoEvent('kakao_oauth_error', { error: error.message })
       })
     }
   }, [])
@@ -1033,6 +1082,45 @@ function AppInner() {
   useEffect(() => {
     initServiceWorker()
   }, [])
+
+  // GA4 초기화 및 개인정보보호 설정
+  useEffect(() => {
+    // 사용자 동의 (한국의 개인정보보호법 고려)
+    const hasAnalyticsConsent = localStorage.getItem('hp_analytics_consent') === 'true'
+    
+    if (!hasAnalyticsConsent) {
+      // 첫 방문 시 기본 동의 설정 (분석 쿠키만, 광고 쿠키는 거부)
+      localStorage.setItem('hp_analytics_consent', 'true')
+    }
+    
+    // GA4 초기화
+    initGA()
+    
+    // 동의 모드 업데이트
+    setConsentMode(true, false) // 분석 쿠키 허용, 광고 쿠키 거부
+    
+    // 초기 페이지뷰 추적
+    trackPageView('App Start', window.location.href, 'onboarding')
+  }, [])
+
+  // 언어 변경 추적
+  const prevLangRef = useRef(lang)
+  useEffect(() => {
+    if (prevLangRef.current && prevLangRef.current !== lang) {
+      trackLanguageChange(prevLangRef.current, lang)
+    }
+    prevLangRef.current = lang
+  }, [lang])
+
+  // 탭 변경 추적
+  const prevTabRef = useRef(tab)
+  useEffect(() => {
+    if (prevTabRef.current && prevTabRef.current !== tab) {
+      trackTabSwitch(tab, prevTabRef.current)
+      trackPageView(`${tab} Tab`, window.location.href, tab)
+    }
+    prevTabRef.current = tab
+  }, [tab])
 
   // 내정보 탭 진입 시 캐시 갱신
   useEffect(() => {
@@ -1619,6 +1707,7 @@ function FloatingChatbot({ lang }) {
           )}
         </div>
       )}
+      <AffiliateTracker />
     </>
   )
 }

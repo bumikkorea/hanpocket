@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { Volume2, Copy, Check, ChevronLeft, Search, Building2, Pill, Shield, Home, Landmark, Banknote, ShoppingCart, Car, MessageSquare, Languages, Heart, Utensils, BookOpen } from 'lucide-react'
+import { trackTranslation, trackEvent } from '../utils/analytics'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -233,6 +234,14 @@ export default function TranslatorTab({ lang }) {
     navigator.clipboard.writeText(text).catch(() => {})
     setCopiedIdx(idx)
     setTimeout(() => setCopiedIdx(null), 1500)
+    
+    // 번역 텍스트 복사 이벤트 추적
+    trackEvent('translation_text_copied', {
+      event_category: 'translation',
+      event_label: 'copy_text',
+      text_length: text.length,
+      feature: 'translator'
+    })
   }
 
   const toggleFavorite = (phrase, situationId) => {
@@ -254,7 +263,16 @@ export default function TranslatorTab({ lang }) {
 
   const handleCustomTranslate = () => {
     if (!customText.trim()) return
-    setCustomResult(simpleTranslate(customText))
+    
+    const result = simpleTranslate(customText)
+    setCustomResult(result)
+    
+    // 번역 이벤트 추적
+    trackTranslation('auto', lang, 'text', {
+      source_text_length: customText.length,
+      feature: 'custom_translator',
+      has_result: !!result
+    })
   }
 
   if (selected) {
@@ -416,7 +434,14 @@ export default function TranslatorTab({ lang }) {
       <h3 className="font-bold text-[#111827] text-sm">{L(lang, { ko: '상황별 통역', zh: '场景翻译', en: 'Situation Templates' })}</h3>
       <div className="grid grid-cols-2 gap-3">
         {/* Favorites section */}
-        <button onClick={() => setSelected('favorites')}
+        <button onClick={() => {
+          setSelected('favorites')
+          trackEvent('translation_section_selected', {
+            section: 'favorites',
+            event_category: 'translation',
+            event_label: 'select_favorites'
+          })
+        }}
           className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow text-left hover:border-[#111827]/20 transition-all">
           <Heart size={22} className="text-red-500 mb-2" fill="currentColor" />
           <p className="font-bold text-[#111827] text-sm">{L(lang, { ko: '즐겨찾기', zh: '收藏夹', en: 'Favorites' })}</p>
@@ -424,7 +449,16 @@ export default function TranslatorTab({ lang }) {
         </button>
         
         {situations.map(sit => (
-          <button key={sit.id} onClick={() => setSelected(sit.id)}
+          <button key={sit.id} onClick={() => {
+            setSelected(sit.id)
+            trackEvent('translation_section_selected', {
+              section: sit.id,
+              section_label: L(lang, sit.label),
+              phrase_count: sit.phrases.length,
+              event_category: 'translation',
+              event_label: `select_${sit.id}`
+            })
+          }}
             className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow text-left hover:border-[#111827]/20 transition-all">
             <sit.icon size={22} className="text-[#111827] mb-2" />
             <p className="font-bold text-[#111827] text-sm">{L(lang, sit.label)}</p>

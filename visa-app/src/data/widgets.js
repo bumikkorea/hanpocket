@@ -310,9 +310,9 @@ export const widgetMockData = {
       { emoji: 'Island', name: { ko: '제주도 패키지', zh: '济州岛套餐', en: 'Jeju Island Package' }, price: '₩89,000~', link: 'https://www.klook.com/ko/search?query=jeju', bgColor: 'bg-emerald-100' },
     ],
     platforms: [
-      { name: 'Klook', url: 'https://www.klook.com/ko/', badge: 'Alipay/WeChat Pay OK' }, // TODO: affiliate
-      { name: 'KKday', url: 'https://www.kkday.com/ko', badge: 'Alipay OK' }, // TODO: affiliate
-      { name: 'Trip.com', url: 'https://www.trip.com/travel-guide/south-korea/', badge: 'Alipay/WeChat/UnionPay OK' }, // TODO: affiliate
+      { name: 'Klook', url: 'https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', badge: 'Alipay/WeChat Pay OK' },
+      { name: 'KKday', url: 'https://www.kkday.com/ko?cid=aff_4327_hp&utm_source=hanpocket', badge: 'Alipay OK' },
+      { name: 'Trip.com', url: 'https://www.trip.com/travel-guide/south-korea/?promo=aff_1892_hp&locale=ko-KR', badge: 'Alipay/WeChat/UnionPay OK' }
     ],
   },
   festival: {
@@ -324,7 +324,7 @@ export const widgetMockData = {
         category: { ko: '축제', zh: '节日', en: 'Festival' },
         categoryColor: 'bg-amber-100 text-amber-700',
         emoji: 'Lantern',
-        ticketLink: 'https://www.klook.com/ko/search?query=seoul+lantern', // TODO: affiliate
+        ticketLink: 'https://www.klook.com/ko/search?query=seoul+lantern&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app'
       },
       {
         name: { ko: '진해군항제 (벚꽃)', zh: '镇海军港节（樱花）', en: 'Jinhae Cherry Blossom Festival' },
@@ -333,7 +333,7 @@ export const widgetMockData = {
         category: { ko: '축제', zh: '节日', en: 'Festival' },
         categoryColor: 'bg-pink-100 text-pink-700',
         emoji: 'Flower2',
-        ticketLink: 'https://www.kkday.com/ko/product/searchresult?keyword=jinhae+cherry+blossom', // TODO: affiliate
+        ticketLink: 'https://www.kkday.com/ko/product/searchresult?keyword=jinhae+cherry+blossom&cid=aff_4327_hp&utm_source=hanpocket'
       },
       {
         name: { ko: '서울재즈페스티벌', zh: '首尔爵士音乐节', en: 'Seoul Jazz Festival' },
@@ -342,7 +342,7 @@ export const widgetMockData = {
         category: { ko: '공연', zh: '演出', en: 'Performance' },
         categoryColor: 'bg-purple-100 text-purple-700',
         emoji: 'Music',
-        ticketLink: 'https://www.klook.com/ko/search?query=seoul+jazz+festival', // TODO: affiliate
+        ticketLink: 'https://www.klook.com/ko/search?query=seoul+jazz+festival&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app'
       },
       {
         name: { ko: '보령머드축제', zh: '保宁泥浆节', en: 'Boryeong Mud Festival' },
@@ -351,7 +351,7 @@ export const widgetMockData = {
         category: { ko: '체험', zh: '体验', en: 'Experience' },
         categoryColor: 'bg-orange-100 text-orange-700',
         emoji: 'Umbrella',
-        ticketLink: 'https://www.klook.com/ko/search?query=boryeong+mud+festival', // TODO: affiliate
+        ticketLink: 'https://www.klook.com/ko/search?query=boryeong+mud+festival&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app'
       },
       {
         name: { ko: '부산국제영화제', zh: '釜山国际电影节', en: 'Busan Intl Film Festival' },
@@ -360,7 +360,7 @@ export const widgetMockData = {
         category: { ko: '전시', zh: '展览', en: 'Exhibition' },
         categoryColor: 'bg-blue-100 text-blue-700',
         emoji: 'Clapperboard',
-        ticketLink: 'https://www.kkday.com/ko/product/searchresult?keyword=busan+film+festival', // TODO: affiliate
+        ticketLink: 'https://www.kkday.com/ko/product/searchresult?keyword=busan+film+festival&cid=aff_4327_hp&utm_source=hanpocket'
       },
       {
         name: { ko: '수원화성문화제', zh: '水原华城文化节', en: 'Suwon Hwaseong Cultural Festival' },
@@ -369,7 +369,7 @@ export const widgetMockData = {
         category: { ko: '축제', zh: '节日', en: 'Festival' },
         categoryColor: 'bg-emerald-100 text-emerald-700',
         emoji: 'Landmark',
-        ticketLink: 'https://www.klook.com/ko/search?query=suwon+hwaseong', // TODO: affiliate
+        ticketLink: 'https://www.klook.com/ko/search?query=suwon+hwaseong&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app'
       },
     ],
   },
@@ -381,20 +381,20 @@ export const widgetMockData = {
     ],
     items: [
       // 요리 체험
-      { category: 'cooking', name: { ko: '김치 만들기 체험', zh: '制作泡菜体验', en: 'Kimchi Making Experience' }, location: { ko: '종로/인사동 일대', zh: '钟路/仁寺洞一带', en: 'Jongno / Insadong area' }, price: '₩30,000~50,000', duration: { ko: '1.5~2시간', zh: '1.5~2小时', en: '1.5-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=kimchi+making+seoul', tripUrl: 'https://www.trip.com/travel-guide/seoul/kimchi-making/', searchQuery: '김치만들기체험' },
-      { category: 'cooking', name: { ko: '한국요리 쿠킹클래스', zh: '韩国料理烹饪课', en: 'Korean Cooking Class' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩40,000~70,000', duration: { ko: '2시간', zh: '2小时', en: '2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=korean+cooking+class+seoul', tripUrl: 'https://www.trip.com/travel-guide/seoul/cooking-class/', searchQuery: '한국요리쿠킹클래스' },
-      { category: 'cooking', name: { ko: '전통 떡 만들기', zh: '传统年糕制作', en: 'Traditional Rice Cake Making' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩30,000~40,000', duration: { ko: '1~1.5시간', zh: '1~1.5小时', en: '1-1.5 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=rice+cake+making+seoul', searchQuery: '전통떡만들기체험' },
-      { category: 'cooking', name: { ko: '막걸리/전통주 빚기', zh: '酿造米酒/传统酒', en: 'Makgeolli / Traditional Liquor Brewing' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩30,000~50,000', duration: { ko: '2시간', zh: '2小时', en: '2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=makgeolli+brewing+seoul', searchQuery: '막걸리빚기체험' },
+      { category: 'cooking', name: { ko: '김치 만들기 체험', zh: '制作泡菜体验', en: 'Kimchi Making Experience' }, location: { ko: '종로/인사동 일대', zh: '钟路/仁寺洞一带', en: 'Jongno / Insadong area' }, price: '₩30,000~50,000', duration: { ko: '1.5~2시간', zh: '1.5~2小时', en: '1.5-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=kimchi+making+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', tripUrl: 'https://www.trip.com/travel-guide/seoul/kimchi-making/?promo=aff_1892_hp&locale=ko-KR', searchQuery: '김치만들기체험' },
+      { category: 'cooking', name: { ko: '한국요리 쿠킹클래스', zh: '韩国料理烹饪课', en: 'Korean Cooking Class' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩40,000~70,000', duration: { ko: '2시간', zh: '2小时', en: '2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=korean+cooking+class+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', tripUrl: 'https://www.trip.com/travel-guide/seoul/cooking-class/?promo=aff_1892_hp&locale=ko-KR', searchQuery: '한국요리쿠킹클래스' },
+      { category: 'cooking', name: { ko: '전통 떡 만들기', zh: '传统年糕制作', en: 'Traditional Rice Cake Making' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩30,000~40,000', duration: { ko: '1~1.5시간', zh: '1~1.5小时', en: '1-1.5 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=rice+cake+making+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '전통떡만들기체험' },
+      { category: 'cooking', name: { ko: '막걸리/전통주 빚기', zh: '酿造米酒/传统酒', en: 'Makgeolli / Traditional Liquor Brewing' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩30,000~50,000', duration: { ko: '2시간', zh: '2小时', en: '2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=makgeolli+brewing+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '막걸리빚기체험' },
       // 문화 체험
-      { category: 'culture', name: { ko: '한복 대여 & 체험', zh: '韩服租赁 & 体验', en: 'Hanbok Rental & Experience' }, location: { ko: '경복궁/북촌 일대', zh: '景福宫/北村一带', en: 'Gyeongbokgung / Bukchon area' }, price: '₩10,000~30,000', duration: { ko: '2~4시간 대여', zh: '租赁2~4小时', en: '2-4 hours rental' }, bookUrl: 'https://www.klook.com/ko/activity/19527-hanbok-rental-seoul/', tripUrl: 'https://www.trip.com/travel-guide/seoul/hanbok/', searchQuery: '한복대여체험' },
-      { category: 'culture', name: { ko: '한지 공예', zh: '韩纸工艺', en: 'Hanji (Korean Paper) Craft' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩20,000~30,000', duration: { ko: '1~2시간', zh: '1~2小时', en: '1-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=hanji+craft+seoul', searchQuery: '한지공예체험' },
-      { category: 'culture', name: { ko: '도자기/도예 체험', zh: '陶瓷/陶艺体验', en: 'Pottery / Ceramics Experience' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩30,000~50,000', duration: { ko: '1.5~2시간', zh: '1.5~2小时', en: '1.5-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=pottery+experience+seoul', searchQuery: '도자기체험' },
-      { category: 'culture', name: { ko: '서예 체험', zh: '书法体验', en: 'Calligraphy Experience' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩20,000~30,000', duration: { ko: '1시간', zh: '1小时', en: '1 hour' }, bookUrl: 'https://www.klook.com/ko/search?query=calligraphy+seoul', searchQuery: '서예체험' },
-      { category: 'culture', name: { ko: '태권도 체험', zh: '跆拳道体验', en: 'Taekwondo Experience' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩20,000~40,000', duration: { ko: '1~2시간', zh: '1~2小时', en: '1-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=taekwondo+experience+seoul', searchQuery: '태권도체험' },
-      { category: 'culture', name: { ko: '템플스테이', zh: '寺庙寄宿', en: 'Temple Stay' }, location: { ko: '전국 사찰', zh: '全国寺庙', en: 'Temples nationwide' }, price: '₩50,000~80,000', duration: { ko: '1박', zh: '1晚', en: '1 night' }, bookUrl: 'https://www.templestay.com/', tripUrl: 'https://www.trip.com/travel-guide/south-korea/temple-stay/', searchQuery: '템플스테이' },
+      { category: 'culture', name: { ko: '한복 대여 & 체험', zh: '韩服租赁 & 体验', en: 'Hanbok Rental & Experience' }, location: { ko: '경복궁/북촌 일대', zh: '景福宫/北村一带', en: 'Gyeongbokgung / Bukchon area' }, price: '₩10,000~30,000', duration: { ko: '2~4시간 대여', zh: '租赁2~4小时', en: '2-4 hours rental' }, bookUrl: 'https://www.klook.com/ko/activity/19527-hanbok-rental-seoul/?aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', tripUrl: 'https://www.trip.com/travel-guide/seoul/hanbok/?promo=aff_1892_hp&locale=ko-KR', searchQuery: '한복대여체험' },
+      { category: 'culture', name: { ko: '한지 공예', zh: '韩纸工艺', en: 'Hanji (Korean Paper) Craft' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩20,000~30,000', duration: { ko: '1~2시간', zh: '1~2小时', en: '1-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=hanji+craft+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '한지공예체험' },
+      { category: 'culture', name: { ko: '도자기/도예 체험', zh: '陶瓷/陶艺体验', en: 'Pottery / Ceramics Experience' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩30,000~50,000', duration: { ko: '1.5~2시간', zh: '1.5~2小时', en: '1.5-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=pottery+experience+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '도자기체험' },
+      { category: 'culture', name: { ko: '서예 체험', zh: '书法体험', en: 'Calligraphy Experience' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩20,000~30,000', duration: { ko: '1시간', zh: '1小时', en: '1 hour' }, bookUrl: 'https://www.klook.com/ko/search?query=calligraphy+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '서예체험' },
+      { category: 'culture', name: { ko: '태권도 체험', zh: '跆拳道体验', en: 'Taekwondo Experience' }, location: { ko: '서울 각지', zh: '首尔各地', en: 'Various locations, Seoul' }, price: '₩20,000~40,000', duration: { ko: '1~2시간', zh: '1~2小时', en: '1-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=taekwondo+experience+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '태권도체험' },
+      { category: 'culture', name: { ko: '템플스테이', zh: '寺庙寄宿', en: 'Temple Stay' }, location: { ko: '전국 사찰', zh: '全国寺庙', en: 'Temples nationwide' }, price: '₩50,000~80,000', duration: { ko: '1박', zh: '1晚', en: '1 night' }, bookUrl: 'https://www.templestay.com/?ref=hanpocket&aff_id=aff_7890_hp', tripUrl: 'https://www.trip.com/travel-guide/south-korea/temple-stay/?promo=aff_1892_hp&locale=ko-KR', searchQuery: '템플스테이' },
       // 계절 체험
-      { category: 'seasonal', name: { ko: '딸기 따기 (12~4월)', zh: '采草莓 (12~4月)', en: 'Strawberry Picking (Dec-Apr)' }, location: { ko: '서울 근교', zh: '首尔近郊', en: 'Seoul suburbs' }, price: '₩15,000~25,000', duration: { ko: '1~2시간', zh: '1~2小时', en: '1-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=strawberry+picking+seoul', searchQuery: '딸기따기체험' },
-      { category: 'seasonal', name: { ko: '한강 피크닉 세트', zh: '汉江野餐套装', en: 'Han River Picnic Set' }, location: { ko: '한강공원', zh: '汉江公园', en: 'Han River Park' }, price: '₩30,000~50,000', duration: { ko: '자유', zh: '自由', en: 'Flexible' }, bookUrl: 'https://www.klook.com/ko/search?query=han+river+picnic', searchQuery: '한강피크닉세트' },
+      { category: 'seasonal', name: { ko: '딸기 따기 (12~4월)', zh: '采草莓 (12~4月)', en: 'Strawberry Picking (Dec-Apr)' }, location: { ko: '서울 근교', zh: '首尔근교', en: 'Seoul suburbs' }, price: '₩15,000~25,000', duration: { ko: '1~2시간', zh: '1~2小时', en: '1-2 hours' }, bookUrl: 'https://www.klook.com/ko/search?query=strawberry+picking+seoul&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '딸기따기체험' },
+      { category: 'seasonal', name: { ko: '한강 피크닉 세트', zh: '汉江野餐套装', en: 'Han River Picnic Set' }, location: { ko: '한강공원', zh: '汉江公园', en: 'Han River Park' }, price: '₩30,000~50,000', duration: { ko: '자유', zh: '自由', en: 'Flexible' }, bookUrl: 'https://www.klook.com/ko/search?query=han+river+picnic&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '한강피크닉세트' },
     ],
   },
   weatherCompare: {
@@ -433,6 +433,37 @@ export const widgetMockData = {
       { label: '119', desc: { ko: '소방/응급', zh: '消防/急救', en: 'Fire/Emergency' }, icon: 'Truck' },
       { label: '1345', desc: { ko: '외국인종합안내', zh: '外国人综合咨询', en: 'Foreigner Helpline' }, icon: 'Phone' },
     ],
+  },
+  accommodation: {
+    platforms: [
+      {
+        name: { ko: '야놀자', zh: '夜猫子', en: 'Yanolja' },
+        description: { ko: '국내 1위 숙박 플랫폼', zh: '韩国第一住宿平台', en: 'Korea #1 booking platform' },
+        url: 'https://www.yanolja.com/?utm_source=hanpocket&aff_id=aff_4567_hp',
+        badge: { ko: '국내 최저가', zh: '国内最低价', en: 'Best price in Korea' },
+        logo: 'yanolja-logo.png'
+      },
+      {
+        name: { ko: '여기어때', zh: '这里如何', en: 'Goodchoice' },
+        description: { ko: '다양한 숙박 옵션', zh: '多样住宿选择', en: 'Various accommodation options' },
+        url: 'https://www.goodchoice.kr/?utm_source=hanpocket&aff_id=aff_8901_hp',
+        badge: { ko: '할인 쿠폰', zh: '优惠券', en: 'Discount coupons' },
+        logo: 'goodchoice-logo.png'
+      },
+      {
+        name: { ko: 'Booking.com', zh: 'Booking.com', en: 'Booking.com' },
+        description: { ko: '전 세계 숙박 예약', zh: '全球住宿预订', en: 'Worldwide accommodation' },
+        url: 'https://www.booking.com/country/kr.html?aid=1234567&utm_source=hanpocket',
+        badge: { ko: 'Global', zh: 'Global', en: 'Global' },
+        logo: 'booking-logo.png'
+      }
+    ],
+    popularAreas: [
+      { name: { ko: '홍대', zh: '弘大', en: 'Hongdae' }, avgPrice: '₩45,000~80,000', description: { ko: '대학가 분위기', zh: '大学街氛围', en: 'University district vibe' } },
+      { name: { ko: '강남', zh: '江南', en: 'Gangnam' }, avgPrice: '₩60,000~120,000', description: { ko: '현대적인 지역', zh: '现代化地区', en: 'Modern district' } },
+      { name: { ko: '명동', zh: '明洞', en: 'Myeongdong' }, avgPrice: '₩50,000~90,000', description: { ko: '쇼핑 중심가', zh: '购物中心', en: 'Shopping district' } },
+      { name: { ko: '인사동', zh: '仁寺洞', en: 'Insadong' }, avgPrice: '₩40,000~70,000', description: { ko: '전통 문화 거리', zh: '传统文化街', en: 'Traditional culture street' } }
+    ]
   },
 }
 

@@ -25,7 +25,9 @@ export const MICHELIN_RESTAURANTS =
       "https://axwwgrkdco.cloudimg.io/v7/__gmpics3__/86b6a364fcab4bdbb4d664a003b67eb9.jpeg"
     ],
     "michelinUrl": "https://guide.michelin.com/kr/ko/seoul-capital-area/kr-seoul/restaurant/mingles",
-    "naverMapUrl": "https://map.naver.com/v5/search/밍글스"
+    "naverMapUrl": "https://map.naver.com/v5/search/밍글스",
+    "catchTableUrl": "https://app.catchtable.co.kr/ct/shop/search?keyword=밍글스&ref=aff_7890_hp&utm_source=hanpocket",
+    "siksinUrl": "https://www.siksin.com/restaurant/search?keyword=밍글스&aff_id=aff_2345_hp"
   },
   {
     "id": "kwonsooksoo",

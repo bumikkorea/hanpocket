@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter } from 'lucide-react'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES, LOCATION_FILTERS, LOCATION_HIERARCHY } from '../data/restaurantData'
+import { trackSearch, trackEvent } from '../utils/analytics'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -142,6 +143,13 @@ export default function FoodTab({ lang }) {
               setSelectedGu('')
               setSelectedDong('')
               setShown(PAGE_SIZE)
+              
+              // 맛집 탭 전환 이벤트 추적
+              trackEvent('restaurant_tab_switch', {
+                tab: t.id,
+                event_category: 'restaurant_search',
+                event_label: `switch_to_${t.id}`
+              })
             }}
             className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
               tab === t.id
@@ -161,8 +169,14 @@ export default function FoodTab({ lang }) {
           type="text"
           value={search}
           onChange={e => { 
-            setSearch(e.target.value)
+            const value = e.target.value
+            setSearch(value)
             setShown(PAGE_SIZE)
+            
+            // 검색 이벤트 추적 (3글자 이상일 때만)
+            if (value.trim().length >= 3) {
+              trackSearch(value.trim(), 'restaurant', 0) // results_count는 나중에 업데이트됨
+            }
           }}
           placeholder={lang === 'ko' ? '레스토랑 검색...' : lang === 'zh' ? '搜索餐厅...' : 'Search restaurants...'}
           className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border border-[#E5E7EB] rounded-xl outline-none focus:border-[#111827] hover:border-[#9CA3AF] transition-colors text-[#111827] placeholder:text-[#9CA3AF]"
@@ -176,10 +190,21 @@ export default function FoodTab({ lang }) {
           <select
             value={selectedSi}
             onChange={e => { 
-              setSelectedSi(e.target.value)
+              const value = e.target.value
+              setSelectedSi(value)
               setSelectedGu('')
               setSelectedDong('')
               setShown(PAGE_SIZE)
+              
+              // 지역 필터 변경 이벤트 추적
+              if (value) {
+                trackEvent('restaurant_location_filter', {
+                  filter_type: 'si',
+                  filter_value: value,
+                  event_category: 'restaurant_search',
+                  event_label: `filter_si_${value}`
+                })
+              }
             }}
             className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
           >
@@ -197,9 +222,21 @@ export default function FoodTab({ lang }) {
             <select
               value={selectedGu}
               onChange={e => { 
-                setSelectedGu(e.target.value)
+                const value = e.target.value
+                setSelectedGu(value)
                 setSelectedDong('')
                 setShown(PAGE_SIZE)
+                
+                // 구/군 필터 변경 이벤트 추적
+                if (value) {
+                  trackEvent('restaurant_location_filter', {
+                    filter_type: 'gu',
+                    filter_value: value,
+                    parent_si: selectedSi,
+                    event_category: 'restaurant_search',
+                    event_label: `filter_gu_${value}`
+                  })
+                }
               }}
               className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
             >
@@ -218,8 +255,21 @@ export default function FoodTab({ lang }) {
             <select
               value={selectedDong}
               onChange={e => { 
-                setSelectedDong(e.target.value)
+                const value = e.target.value
+                setSelectedDong(value)
                 setShown(PAGE_SIZE)
+                
+                // 동 필터 변경 이벤트 추적
+                if (value) {
+                  trackEvent('restaurant_location_filter', {
+                    filter_type: 'dong',
+                    filter_value: value,
+                    parent_si: selectedSi,
+                    parent_gu: selectedGu,
+                    event_category: 'restaurant_search',
+                    event_label: `filter_dong_${value}`
+                  })
+                }
               }}
               className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
             >

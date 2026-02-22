@@ -9,6 +9,7 @@ const SECTIONS = [
   { id: 'transport', label: { ko: '교통', zh: '交通', en: 'Transport' } },
   { id: 'stay', label: { ko: '숙소', zh: '住宿', en: 'Stay' } },
   { id: 'itinerary', label: { ko: '코스 추천', zh: '行程推荐', en: 'Itineraries' } },
+  { id: 'curation', label: { ko: '큐레이션', zh: '精选推荐', en: 'Curation' } },
   { id: 'parks', label: { ko: '테마파크', zh: '主题公园', en: 'Theme Parks' } },
 ]
 
@@ -134,6 +135,36 @@ const PARKS = [
   { name: { ko: '경주월드', zh: '庆州世界', en: 'Gyeongju World' }, location: { ko: '경북 경주시 보문단지', zh: '庆北庆州市普门园区', en: 'Bomun Complex, Gyeongju' }, hours: '10:00~18:00', price: { adult: '₩42,000', child: '₩33,000' }, access: { ko: 'KTX 신경주역 → 버스 30분', zh: 'KTX新庆州站→巴士30分钟', en: 'KTX Singyeongju → bus 30min' }, tips: { ko: '경주 관광과 연계 추천. 불국사, 석굴암 후 방문.', zh: '建议与庆州观光结合。参观佛国寺、石窟庵后前往。', en: 'Combine with Gyeongju sightseeing. Visit after Bulguksa, Seokguram.' } },
 ]
 
+const CURATION_CATEGORIES = [
+  { id: 'all', name: { ko: '전체', zh: '全部', en: 'All' } },
+  { id: 'cafe', name: { ko: '카페 덕후', zh: '咖啡爱好者', en: 'Cafe Lover' } },
+  { id: 'kdrama', name: { ko: 'K-드라마 성지순례', zh: 'K-剧圣地巡礼', en: 'K-Drama Spots' } },
+  { id: 'subculture', name: { ko: '서브컬처', zh: '亚文化', en: 'Subculture' } },
+  { id: 'mainstream', name: { ko: '메인스트림', zh: '主流文化', en: 'Mainstream' } },
+]
+
+const CURATION_SPOTS = [
+  // 카페 덕후
+  { id: 'onion-cafe', name: { ko: '어니언', zh: 'Onion', en: 'Onion' }, category: 'cafe', location: { ko: '성동구 성수동', zh: '城东区圣水洞', en: 'Seongdong-gu Seongsu-dong' }, desc: { ko: '공장을 개조한 독특한 인테리어의 로스터리 카페', zh: '改造工厂的独特室内设计烘焙咖啡店', en: 'Unique roastery cafe in converted factory space' }, price: '₩8,000-12,000', tags: ['카페', '로스터리', '인테리어'], image: '/images/onion-cafe.jpg' },
+  { id: 'takeoutdrawing', name: { ko: '테이크아웃드로잉', zh: 'Takeout Drawing', en: 'Takeout Drawing' }, category: 'cafe', location: { ko: '마포구 연남동', zh: '麻浦区延南洞', en: 'Mapo-gu Yeonnam-dong' }, desc: { ko: '만화책 읽으며 차 마시는 독립 서점 카페', zh: '可以边看漫画边喝茶的独立书店咖啡馆', en: 'Independent bookstore cafe where you can read manga while drinking tea' }, price: '₩7,000-10,000', tags: ['서점', '카페', '만화'], image: '/images/takeoutdrawing.jpg' },
+  { id: 'kong-cafe', name: { ko: '콩', zh: '콩', en: 'Kong' }, category: 'cafe', location: { ko: '종로구 익선동', zh: '钟路区益善洞', en: 'Jongno-gu Ikseon-dong' }, desc: { ko: '한옥을 개조한 감성 카페', zh: '改造韩屋的感性咖啡馆', en: 'Emotional cafe in renovated hanok' }, price: '₩6,000-9,000', tags: ['한옥', '전통', '감성'], image: '/images/kong-cafe.jpg' },
+  
+  // K-드라마 성지순례
+  { id: 'namsan-tower', name: { ko: 'N서울타워 (별에서 온 그대)', zh: 'N首尔塔（来自星星的你）', en: 'N Seoul Tower (My Love from the Star)' }, category: 'kdrama', location: { ko: '중구 남산동', zh: '中区南山洞', en: 'Jung-gu Namsan-dong' }, desc: { ko: '수많은 드라마의 데이트 신 촬영지', zh: '众多电视剧约会场面的拍摄地', en: 'Filming location for countless drama date scenes' }, price: '₩16,000', tags: ['전망대', '야경', '데이트'], image: '/images/namsan-tower.jpg' },
+  { id: 'banpo-hangang', name: { ko: '반포 한강공원 (도깨비)', zh: '盤浦汉江公园（孤单又灿烂的神-鬼怪）', en: 'Banpo Hangang Park (Goblin)' }, category: 'kdrama', location: { ko: '서초구 반포동', zh: '瑞草区盘浦洞', en: 'Seocho-gu Banpo-dong' }, desc: { ko: '도깨비 등 인기 드라마 촬영지', zh: '《鬼怪》等热门电视剧拍摄地', en: 'Filming location for popular dramas like Goblin' }, price: '무료', tags: ['한강', '공원', '야경'], image: '/images/banpo-hangang.jpg' },
+  { id: 'gyeongbokgung-drama', name: { ko: '경복궁 (대장금, 사극)', zh: '景福宫（大长今、史剧）', en: 'Gyeongbokgung (Dae Jang Geum, Historical)' }, category: 'kdrama', location: { ko: '종로구 세종로', zh: '钟路区世宗路', en: 'Jongno-gu Sejong-ro' }, desc: { ko: '사극 드라마의 단골 촬영지', zh: '古装剧的常用拍摄地', en: 'Regular filming location for historical dramas' }, price: '₩3,000', tags: ['궁궐', '사극', '한복'], image: '/images/gyeongbokgung.jpg' },
+
+  // 서브컬처
+  { id: 'amado-artspace', name: { ko: '아마도 예술공간', zh: 'Amado艺术空间', en: 'Amado Art Space' }, category: 'subculture', location: { ko: '용산구 한남동', zh: '龙山区汉南洞', en: 'Yongsan-gu Hannam-dong' }, desc: { ko: '실험적 현대미술을 선보이는 대안공간', zh: '展示实验性当代艺术的替代空间', en: 'Alternative space showcasing experimental contemporary art' }, price: '무료-₩5,000', tags: ['갤러리', '현대미술', '실험'], image: '/images/amado-artspace.jpg' },
+  { id: 'dongmyo-vintage', name: { ko: '동묘 빈티지 마켓', zh: '东庙古着市场', en: 'Dongmyo Vintage Market' }, category: 'subculture', location: { ko: '종로구 숭인동', zh: '钟路区崇仁洞', en: 'Jongno-gu Sungin-dong' }, desc: { ko: '매주 토요일 열리는 빈티지 플리마켓', zh: '每周六举办的古着跳蚤市场', en: 'Vintage flea market held every Saturday' }, price: '₩5,000-50,000', tags: ['빈티지', '플리마켓', '토요일'], image: '/images/dongmyo-vintage.jpg' },
+  { id: 'club-mood', name: { ko: '클럽 무드', zh: 'Club Mood', en: 'Club Mood' }, category: 'subculture', location: { ko: '강남구 논현동', zh: '江南区论岘洞', en: 'Gangnam-gu Nonhyeon-dong' }, desc: { ko: '언더그라운드 테크노 클럽', zh: '地下电子音乐俱乐部', en: 'Underground techno club' }, price: '₩20,000-30,000', tags: ['클럽', '테크노', '언더그라운드'], image: '/images/club-mood.jpg' },
+
+  // 메인스트림
+  { id: 'hybe-insight', name: { ko: '하이브 인사이트', zh: 'HYBE Insight', en: 'HYBE Insight' }, category: 'mainstream', location: { ko: '용산구 한남동', zh: '龙山区汉南洞', en: 'Yongsan-gu Hannam-dong' }, desc: { ko: 'BTS 소속사 하이브의 공식 박물관', zh: 'BTS所属公司HYBE的官方博物馆', en: 'Official museum of BTS agency HYBE' }, price: '₩25,000', tags: ['BTS', 'K-POP', '박물관'], image: '/images/hybe-insight.jpg' },
+  { id: 'myeongdong-street', name: { ko: '명동 거리', zh: '明洞街', en: 'Myeongdong Street' }, category: 'mainstream', location: { ko: '중구 명동', zh: '中区明洞', en: 'Jung-gu Myeongdong' }, desc: { ko: '쇼핑과 먹거리의 중심지', zh: '购物和美食的中心地', en: 'Center of shopping and food' }, price: '₩50,000-200,000', tags: ['쇼핑', 'K-뷰티', '관광'], image: '/images/myeongdong.jpg' },
+  { id: 'samgyeopsal', name: { ko: '한국식 바비큐 (삼겹살)', zh: '韩式烤肉（五花肉）', en: 'Korean BBQ (Samgyeopsal)' }, category: 'mainstream', location: { ko: '서울 전역', zh: '首尔全境', en: 'Seoul wide' }, desc: { ko: '한국 대표 음식, 고기를 구워 먹는 문화', zh: '韩国代表性食物，烤肉饮食文化', en: 'Representative Korean food, grilling meat culture' }, price: '₩25,000-50,000', tags: ['음식', '고기', '회식문화'], image: '/images/samgyeopsal.jpg' },
+]
+
 const card = "bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow"
 
 // 개인화 추천을 위한 사용자 관심사 추적
@@ -154,6 +185,7 @@ export default function TravelTab({ lang, setTab, profile }) {
   const [favorites, setFavorites] = useState(() => {
     try { return JSON.parse(localStorage.getItem('travel_favorites') || '[]') } catch { return [] }
   })
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
   const toggleFavorite = (id) => {
     const updated = favorites.includes(id) 
@@ -167,6 +199,10 @@ export default function TravelTab({ lang, setTab, profile }) {
     saveUserInterest(category)
     setUserInterests(getUserInterests())
   }
+
+  const filteredSpots = selectedCategory === 'all' 
+    ? CURATION_SPOTS 
+    : CURATION_SPOTS.filter(spot => spot.category === selectedCategory)
 
   return (
     <div className="space-y-4">
@@ -338,6 +374,123 @@ export default function TravelTab({ lang, setTab, profile }) {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Curation */}
+      {section === 'curation' && (
+        <div className="space-y-4">
+          {/* Category filters */}
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+            {CURATION_CATEGORIES.map(cat => (
+              <button 
+                key={cat.id} 
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
+                  selectedCategory === cat.id 
+                    ? 'bg-[#111827] text-white shadow-md' 
+                    : 'bg-[#FAFAF8] text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]'
+                }`}>
+                {L(lang, cat.name)}
+              </button>
+            ))}
+          </div>
+
+          {/* Spot cards */}
+          <div className="grid gap-4">
+            {filteredSpots.map(spot => (
+              <div key={spot.id} className={`${card} hover:shadow-lg transition-all duration-200`}>
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex-1">
+                    <h3 className="text-sm font-bold text-[#111827] mb-1 leading-tight">{L(lang, spot.name)}</h3>
+                    <div className="flex items-center gap-1 text-xs text-[#6B7280] mb-2">
+                      <MapPin size={12} className="shrink-0" />
+                      <span>{L(lang, spot.location)}</span>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => toggleFavorite(spot.id)}
+                    className={`p-1.5 rounded-full transition-all ${
+                      favorites.includes(spot.id)
+                        ? 'text-red-500 bg-red-50 hover:bg-red-100'
+                        : 'text-[#9CA3AF] hover:text-red-500 hover:bg-red-50'
+                    }`}>
+                    <Heart size={16} className={favorites.includes(spot.id) ? 'fill-current' : ''} />
+                  </button>
+                </div>
+                
+                <p className="text-xs text-[#374151] mb-3 leading-relaxed">{L(lang, spot.desc)}</p>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap gap-1.5">
+                    {spot.tags.map((tag, i) => (
+                      <span key={i} className="text-[10px] px-2 py-0.5 bg-[#F3F4F6] rounded-full text-[#6B7280] font-medium">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-xs font-bold text-[#111827]">{spot.price}</span>
+                </div>
+                
+                {/* Rating/interest indicator */}
+                <div className="flex items-center gap-1 mt-3 pt-3 border-t border-[#F3F4F6]">
+                  <Star size={12} className="text-amber-400 fill-current" />
+                  <span className="text-xs text-[#6B7280]">
+                    {L(lang, { 
+                      ko: '추천도 높음', 
+                      zh: '推荐度高', 
+                      en: 'Highly recommended' 
+                    })}
+                  </span>
+                  <div className="ml-auto flex items-center gap-1 text-xs text-[#9CA3AF]">
+                    <Users size={12} />
+                    <span>{Math.floor(Math.random() * 50) + 20}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {filteredSpots.length === 0 && (
+            <div className="text-center py-8 text-[#9CA3AF]">
+              <Filter size={24} className="mx-auto mb-2 opacity-50" />
+              <p className="text-sm">
+                {L(lang, { 
+                  ko: '해당 카테고리의 장소가 없습니다', 
+                  zh: '该类别下暂无地点', 
+                  en: 'No places in this category' 
+                })}
+              </p>
+            </div>
+          )}
+
+          {/* Category info */}
+          {selectedCategory !== 'all' && (
+            <div className="bg-[#FAFAF8] border border-[#E5E7EB] rounded-xl p-4">
+              <p className="text-xs text-[#6B7280] leading-relaxed">
+                {selectedCategory === 'cafe' && L(lang, { 
+                  ko: '서울의 독특한 카페 문화를 체험해보세요. 로스터리부터 독립서점 카페까지 다양한 공간이 기다립니다.', 
+                  zh: '体验首尔独特的咖啡文化。从烘焙咖啡厅到独立书店咖啡厅，各种空间等待着您。', 
+                  en: 'Experience Seoul\'s unique cafe culture. From roasteries to independent bookstore cafes, various spaces await you.' 
+                })}
+                {selectedCategory === 'kdrama' && L(lang, { 
+                  ko: 'K-드라마 속 그 장소를 직접 방문해보세요. 주인공이 된 기분으로 특별한 추억을 만들어보세요.', 
+                  zh: '亲自访问K-剧中的那些地点。以主人公的心情创造特别的回忆。', 
+                  en: 'Visit those places from K-dramas in person. Create special memories feeling like the main character.' 
+                })}
+                {selectedCategory === 'subculture' && L(lang, { 
+                  ko: '서울의 숨겨진 문화를 발견하세요. 갤러리, 빈티지샵, 클럽 등 로컬만 아는 특별한 공간들입니다.', 
+                  zh: '发现首尔隐藏的文化。画廊、古着店、俱乐部等只有当地人知道的特别空间。', 
+                  en: 'Discover Seoul\'s hidden culture. Galleries, vintage shops, clubs - special spaces only locals know.' 
+                })}
+                {selectedCategory === 'mainstream' && L(lang, { 
+                  ko: '한국 여행의 필수 코스들입니다. K-POP부터 전통 음식까지 대표적인 한국 문화를 경험하세요.', 
+                  zh: '韩国旅行的必游景点。从K-POP到传统美食，体验代表性的韩国文化。', 
+                  en: 'Essential courses for Korea travel. Experience representative Korean culture from K-POP to traditional food.' 
+                })}
+              </p>
+            </div>
+          )}
         </div>
       )}
 

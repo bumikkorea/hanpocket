@@ -6,6 +6,12 @@ import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES as RESTA
 import AppleWidgetCard from './cards/AppleWidgetCard'
 import PersonalSection from './cards/PersonalSection'
 import TodaySection from './cards/TodaySection'
+import WeatherWidget from './widgets/WeatherWidget'
+import ExchangeRateWidget from './widgets/ExchangeRateWidget'
+import CalendarWidget from './widgets/CalendarWidget'
+import MemoWidget from './widgets/MemoWidget'
+import TimezoneWidget from './widgets/TimezoneWidget'
+import ParcelWidget from './widgets/ParcelWidget'
 
 const LUCIDE_ICON_MAP = { Stamp, FileText, BookOpen, ArrowLeftRight, Home, X, PawPrint, Newspaper, Music, TrendingUp, Cloud, MapPin, Settings, Calendar, Clock, DollarSign, Package, Utensils, ShoppingBag, Sparkles, Heart, Plane, Star, Play, Volume2, Flame, Train, Check, Tag, Bike, Wrench, GraduationCap, Users, Clapperboard, Shirt, Siren, Coins, MessageCircle, HelpCircle, Globe, Tv, Mic, Thermometer, Landmark, Briefcase, Building2, Dog }
 function LucideIcon({ name, size = 16, className = '' }) {

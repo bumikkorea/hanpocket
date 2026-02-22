@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter } from 'lucide-react'
-import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES, LOCATION_FILTERS } from '../data/restaurantData'
+import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES, LOCATION_FILTERS, LOCATION_HIERARCHY } from '../data/restaurantData'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -20,8 +20,9 @@ const PAGE_SIZE = 20
 export default function FoodTab({ lang }) {
   const [tab, setTab] = useState('all') // 'michelin' | 'blueribbon' | 'all'
   const [search, setSearch] = useState('')
-  const [city, setCity] = useState('')
-  const [gu, setGu] = useState('')
+  const [selectedSi, setSelectedSi] = useState('') // 시 (서울특별시, 부산광역시, 경기도 등)
+  const [selectedGu, setSelectedGu] = useState('') // 구
+  const [selectedDong, setSelectedDong] = useState('') // 동
   const [cuisine, setCuisine] = useState('all')
   const [sortBy, setSortBy] = useState('name') // 'name' | 'location' | 'award'
   const [shown, setShown] = useState(PAGE_SIZE)
@@ -32,10 +33,31 @@ export default function FoodTab({ lang }) {
     : tab === 'blueribbon' ? BLUE_RIBBON_RESTAURANTS
     : allRestaurants
 
-  const gusForCity = city ? (LOCATION_FILTERS.find(f => f.city === city)?.gus || []) : []
+  // Get available districts for selected city
+  const gusForSi = selectedSi ? Object.keys(LOCATION_HIERARCHY[selectedSi] || {}) : []
+  
+  // Get available neighborhoods for selected district
+  const dongsForGu = selectedSi && selectedGu ? (LOCATION_HIERARCHY[selectedSi]?.[selectedGu] || []) : []
+
+  // Helper function to match city names (handle legacy data format)
+  const matchesCity = (restaurant, targetSi) => {
+    if (!targetSi) return true
+    const city = restaurant.area.city
+    
+    // Map legacy city names to new format
+    const cityMapping = {
+      '서울': '서울특별시',
+      '부산': '부산광역시', 
+      '제주': '제주특별자치도'
+    }
+    
+    const mappedCity = cityMapping[city] || city
+    return mappedCity === targetSi
+  }
 
   const filtered = useMemo(() => {
     let list = [...sourceList]
+    
     if (search.trim()) {
       const q = search.trim().toLowerCase()
       list = list.filter(r =>
@@ -44,8 +66,10 @@ export default function FoodTab({ lang }) {
         r.name.zh.toLowerCase().includes(q)
       )
     }
-    if (city) list = list.filter(r => r.area.city === city)
-    if (gu) list = list.filter(r => r.area.gu === gu)
+    
+    if (selectedSi) list = list.filter(r => matchesCity(r, selectedSi))
+    if (selectedGu) list = list.filter(r => r.area.gu === selectedGu)
+    if (selectedDong) list = list.filter(r => r.area.dong === selectedDong)
     if (cuisine !== 'all') list = list.filter(r => r.cuisine === cuisine)
 
     list.sort((a, b) => {
@@ -56,7 +80,7 @@ export default function FoodTab({ lang }) {
       return (order[a.award] ?? 9) - (order[b.award] ?? 9)
     })
     return list
-  }, [sourceList, search, city, gu, cuisine, sortBy, lang])
+  }, [sourceList, search, selectedSi, selectedGu, selectedDong, cuisine, sortBy, lang])
 
   const visible = filtered.slice(0, shown)
   const hasMore = shown < filtered.length
@@ -112,7 +136,13 @@ export default function FoodTab({ lang }) {
         ].map(t => (
           <button
             key={t.id}
-            onClick={() => { setTab(t.id); setShown(PAGE_SIZE) }}
+            onClick={() => { 
+              setTab(t.id)
+              setSelectedSi('')
+              setSelectedGu('')
+              setSelectedDong('')
+              setShown(PAGE_SIZE)
+            }}
             className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
               tab === t.id
                 ? 'bg-[#111827] text-white'
@@ -130,40 +160,72 @@ export default function FoodTab({ lang }) {
         <input
           type="text"
           value={search}
-          onChange={e => { setSearch(e.target.value); setShown(PAGE_SIZE) }}
+          onChange={e => { 
+            setSearch(e.target.value)
+            setShown(PAGE_SIZE)
+          }}
           placeholder={lang === 'ko' ? '레스토랑 검색...' : lang === 'zh' ? '搜索餐厅...' : 'Search restaurants...'}
-          className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border border-[#E5E7EB] rounded-xl outline-none focus:border-[#111827] text-[#111827] placeholder:text-[#9CA3AF]"
+          className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border border-[#E5E7EB] rounded-xl outline-none focus:border-[#111827] hover:border-[#9CA3AF] transition-colors text-[#111827] placeholder:text-[#9CA3AF]"
         />
       </div>
 
       {/* Filters row */}
       <div className="flex flex-wrap gap-2">
-        {/* City */}
+        {/* 시/도 (Level 1) */}
         <div className="relative">
           <select
-            value={city}
-            onChange={e => { setCity(e.target.value); setGu(''); setShown(PAGE_SIZE) }}
-            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none"
+            value={selectedSi}
+            onChange={e => { 
+              setSelectedSi(e.target.value)
+              setSelectedGu('')
+              setSelectedDong('')
+              setShown(PAGE_SIZE)
+            }}
+            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
           >
-            <option value="">{lang === 'ko' ? '도시 전체' : lang === 'zh' ? '全部城市' : 'All Cities'}</option>
-            {LOCATION_FILTERS.map(f => (
-              <option key={f.city} value={f.city}>{f.city}</option>
+            <option value="">{lang === 'ko' ? '시/도 전체' : lang === 'zh' ? '全部省市' : 'All Regions'}</option>
+            {Object.keys(LOCATION_HIERARCHY).map(si => (
+              <option key={si} value={si}>{si}</option>
             ))}
           </select>
           <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
         </div>
 
-        {/* Gu */}
-        {city && gusForCity.length > 0 && (
+        {/* 구/군 (Level 2) */}
+        {selectedSi && gusForSi.length > 0 && (
           <div className="relative">
             <select
-              value={gu}
-              onChange={e => { setGu(e.target.value); setShown(PAGE_SIZE) }}
-              className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none"
+              value={selectedGu}
+              onChange={e => { 
+                setSelectedGu(e.target.value)
+                setSelectedDong('')
+                setShown(PAGE_SIZE)
+              }}
+              className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
             >
-              <option value="">{lang === 'ko' ? '구 전체' : lang === 'zh' ? '全部区' : 'All Districts'}</option>
-              {gusForCity.map(g => (
-                <option key={g} value={g}>{g}</option>
+              <option value="">{lang === 'ko' ? '구/군 전체' : lang === 'zh' ? '全部区县' : 'All Districts'}</option>
+              {gusForSi.map(gu => (
+                <option key={gu} value={gu}>{gu}</option>
+              ))}
+            </select>
+            <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
+          </div>
+        )}
+
+        {/* 동/읍/면 (Level 3) */}
+        {selectedSi && selectedGu && dongsForGu.length > 0 && (
+          <div className="relative">
+            <select
+              value={selectedDong}
+              onChange={e => { 
+                setSelectedDong(e.target.value)
+                setShown(PAGE_SIZE)
+              }}
+              className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
+            >
+              <option value="">{lang === 'ko' ? '동/읍/면 전체' : lang === 'zh' ? '全部街道' : 'All Areas'}</option>
+              {dongsForGu.map(dong => (
+                <option key={dong} value={dong}>{dong}</option>
               ))}
             </select>
             <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
@@ -175,7 +237,7 @@ export default function FoodTab({ lang }) {
           <select
             value={cuisine}
             onChange={e => { setCuisine(e.target.value); setShown(PAGE_SIZE) }}
-            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none"
+            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
           >
             {FOOD_CATEGORIES.map(c => (
               <option key={c.id} value={c.id}>{L(lang, c.label)}</option>
@@ -189,7 +251,7 @@ export default function FoodTab({ lang }) {
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
-            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none"
+            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
           >
             <option value="name">{lang === 'ko' ? '이름순' : lang === 'zh' ? '按名称' : 'By Name'}</option>
             <option value="location">{lang === 'ko' ? '지역순' : lang === 'zh' ? '按地区' : 'By Location'}</option>

@@ -1,18 +1,9 @@
-const CACHE_NAME = 'hanpocket-v3'
+const CACHE_NAME = 'hanpocket-v4'
 const STATIC_ASSETS = ['/', '/index.html']
-const USER_PROFILE_CACHE = 'hanpocket-userdata-v3'
+const USER_PROFILE_CACHE = 'hanpocket-userdata-v4'
 
-// Install
+// Install — skip waiting immediately
 self.addEventListener('install', e => {
-  e.waitUntil(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME)
-      await cache.addAll(STATIC_ASSETS)
-      
-      // Clear user profile cache to force refresh on profile data
-      await caches.delete(USER_PROFILE_CACHE)
-    })()
-  )
   self.skipWaiting()
 })
 
@@ -71,9 +62,20 @@ self.addEventListener('fetch', e => {
       })()
     )
   } else {
-    // Cache-first for static assets
+    // Network-first for ALL requests — always show latest version
     e.respondWith(
-      caches.match(e.request).then(r => r || fetch(e.request))
+      (async () => {
+        try {
+          const response = await fetch(e.request)
+          if (response.ok) {
+            const cache = await caches.open(CACHE_NAME)
+            cache.put(e.request, response.clone())
+          }
+          return response
+        } catch {
+          return await caches.match(e.request) || new Response('Offline', { status: 503 })
+        }
+      })()
     )
   }
 })

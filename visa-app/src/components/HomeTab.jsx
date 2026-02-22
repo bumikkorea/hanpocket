@@ -126,7 +126,7 @@ function getTimeInOffset(offset) {
   return city.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
 }
 
-function TimezoneWidget({ lang, compact }) {
+function TimezoneWidgetOld({ lang, compact }) {
   const [selected, setSelected] = useState(() => {
     try { return localStorage.getItem('tz_country') || 'china' } catch { return 'china' }
   })
@@ -302,7 +302,7 @@ const TRACK_COURIERS = [
   { name: '韵达快递', zh: '韵达快递', en: 'Yunda Express', url: 'https://www.yundaex.com/', badge: '' },
 ]
 
-function ParcelWidget({ lang }) {
+function ParcelWidgetOld({ lang }) {
   const [popup, setPopup] = useState(null)
 
   const couriers = popup === 'send' ? SEND_COURIERS : TRACK_COURIERS
@@ -1922,7 +1922,7 @@ function WidgetContent({ widgetId, lang, setTab }) {
       return <TimezoneWidget lang={lang} />
 
     case 'holiday':
-      return <HolidayCalendarWidget lang={lang} />
+      return <CalendarWidget lang={lang} />
 
     case 'parcel':
       return <ParcelWidget lang={lang} />

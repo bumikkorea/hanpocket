@@ -1212,7 +1212,7 @@ function AppInner() {
           })}
         </div>
       </div>
-      <FloatingChatbot lang={lang} />
+      {/* 챗봇 제거 */}
     </div>
   )
 }

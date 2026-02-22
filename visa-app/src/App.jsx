@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, Component } from 'react'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
+import { initKakao, loginWithKakao, logoutFromKakao, getKakaoUser, isKakaoLoggedIn } from './utils/kakaoAuth'
+import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2 } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
@@ -537,11 +539,40 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   const s = t[lang]
   const [exp, setExp] = useState(profile.expiryDate || '')
   const [saved, setSaved] = useState(false)
+  const [kakaoUser, setKakaoUser] = useState(() => getKakaoUser())
+  const [kakaoLoading, setKakaoLoading] = useState(false)
   const [notifPrefs, setNotifPrefs] = useState(() => {
     try { return JSON.parse(localStorage.getItem('visa_notif_prefs')) || { d90: true, d60: true, d30: true, d7: true } }
     catch { return { d90: true, d60: true, d30: true, d7: true } }
   })
   const days = getDaysUntil(exp)
+
+  // Kakao SDK 초기화
+  useEffect(() => {
+    initKakao()
+  }, [])
+
+  const handleKakaoLogin = async () => {
+    setKakaoLoading(true)
+    try {
+      const userInfo = await loginWithKakao()
+      setKakaoUser(userInfo)
+    } catch (error) {
+      console.error('카카오 로그인 오류:', error)
+      alert(lang === 'ko' ? '로그인에 실패했습니다.' : lang === 'zh' ? '登录失败' : 'Login failed')
+    } finally {
+      setKakaoLoading(false)
+    }
+  }
+
+  const handleKakaoLogout = async () => {
+    try {
+      await logoutFromKakao()
+      setKakaoUser(null)
+    } catch (error) {
+      console.error('카카오 로그아웃 오류:', error)
+    }
+  }
 
   const toggleNotif = (key) => {
     const updated = { ...notifPrefs, [key]: !notifPrefs[key] }
@@ -563,6 +594,76 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
 
   return (
     <div className="space-y-4 animate-fade-up font-['Inter']">
+      {/* 0. 카카오 로그인 카드 */}
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#E5E7EB]">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-[#F3F4F6] rounded-xl">
+            <User className="w-5 h-5 text-[#111827]" />
+          </div>
+          <div>
+            <h3 className="font-bold text-[#111827] text-lg">
+              {lang === 'ko' ? '계정 관리' : lang === 'zh' ? '账户管理' : 'Account Management'}
+            </h3>
+            <p className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '카카오 계정으로 편리하게 이용하세요' : lang === 'zh' ? '使用Kakao账户方便使用' : 'Use Kakao account for convenience'}
+            </p>
+          </div>
+        </div>
+        
+        {kakaoUser ? (
+          // 로그인됨 - 사용자 정보 표시
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-4 bg-[#F8F9FA] rounded-xl">
+              {kakaoUser.profile_image && (
+                <img 
+                  src={kakaoUser.profile_image} 
+                  alt="프로필" 
+                  className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-sm"
+                />
+              )}
+              <div className="flex-1">
+                <div className="font-semibold text-[#111827]">{kakaoUser.nickname}</div>
+                {kakaoUser.email && (
+                  <div className="text-sm text-[#6B7280]">{kakaoUser.email}</div>
+                )}
+                <div className="text-xs text-[#9CA3AF] mt-1">
+                  {lang === 'ko' ? '카카오 계정으로 로그인됨' : lang === 'zh' ? '已通过Kakao账户登录' : 'Logged in with Kakao'}
+                </div>
+              </div>
+            </div>
+            
+            <button
+              onClick={handleKakaoLogout}
+              className="w-full bg-[#F3F4F6] text-[#111827] font-semibold py-3 rounded-xl hover:bg-[#E5E7EB] transition-all btn-press"
+            >
+              {lang === 'ko' ? '로그아웃' : lang === 'zh' ? '退出登录' : 'Logout'}
+            </button>
+          </div>
+        ) : (
+          // 로그인 안됨 - 로그인 버튼 표시
+          <button
+            onClick={handleKakaoLogin}
+            disabled={kakaoLoading}
+            className="w-full bg-[#FEE500] text-[#3C1E1E] font-semibold py-4 rounded-xl hover:bg-[#FDD835] transition-all btn-press flex items-center justify-center gap-3 disabled:opacity-70"
+          >
+            {kakaoLoading ? (
+              <div className="w-5 h-5 border-2 border-[#3C1E1E] border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path fillRule="evenodd" clipRule="evenodd" d="M9 0C4.032 0 0 3.204 0 7.2c0 2.52 1.62 4.734 4.068 6.084L3.42 17.01c-.144.576.432 1.008.936.72L8.1 15.336c.3.036.6.054.9.054 4.968 0 9-3.204 9-7.2S13.968 0 9 0z" fill="#3C1E1E"/>
+              </svg>
+            )}
+            <span>
+              {kakaoLoading ? (
+                lang === 'ko' ? '로그인 중...' : lang === 'zh' ? '登录中...' : 'Logging in...'
+              ) : (
+                lang === 'ko' ? '카카오로 로그인' : lang === 'zh' ? '使用Kakao登录' : 'Login with Kakao'
+              )}
+            </span>
+          </button>
+        )}
+      </div>
+
       {/* 1. 만료일 카드 */}
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#E5E7EB]">
         <div className="flex items-center gap-3 mb-4">
@@ -899,6 +1000,19 @@ function AppInner() {
       })
     }).catch(() => {})
   }, [])
+
+  // Service Worker 초기화 및 업데이트 관리
+  useEffect(() => {
+    initServiceWorker()
+  }, [])
+
+  // 내정보 탭 진입 시 캐시 갱신
+  useEffect(() => {
+    if (tab === 'profile' || view === 'profile' || tab === 'visa-alert') {
+      forceProfileDataRefresh()
+      console.log('Profile data cache refreshed for tab:', tab)
+    }
+  }, [tab, view])
 
   const [pushEnabled, setPushEnabled] = useState(() => {
     return typeof Notification !== 'undefined' && Notification.permission === 'granted'

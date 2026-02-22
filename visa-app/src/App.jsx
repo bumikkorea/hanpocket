@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, Component } from 'react'
-import { MessageCircle, X } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Search, ChevronLeft, Globe } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -996,26 +996,42 @@ function AppInner() {
 
   if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); setLang(p.lang||'zh'); setShowNotice(true) }} />
 
-  const tabs = [
-    { id: 'home', label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'transition', label: { ko: '비자', zh: '签证', en: 'Visa' } },
-    { id: 'travel', label: { ko: '여행', zh: '旅行', en: 'Travel' } },
-    { id: 'food', label: { ko: '맛집', zh: '美食', en: 'Food' } },
-    { id: 'shopping', label: { ko: '쇼핑', zh: '购物', en: 'Shopping' } },
-    { id: 'hallyu', label: { ko: '한류', zh: '韩流', en: 'Hallyu' } },
-    { id: 'learn', label: { ko: '한국어', zh: '韩语', en: 'Korean' } },
-    { id: 'life', label: { ko: '생활', zh: '生活', en: 'Life' } },
-    { id: 'jobs', label: { ko: '구직', zh: '求职', en: 'Jobs' } },
-    { id: 'housing', label: { ko: '부동산', zh: '房产', en: 'Housing' } },
-    { id: 'medical', label: { ko: '의료', zh: '医疗', en: 'Medical' } },
-    { id: 'fitness', label: { ko: '운동', zh: '运动', en: 'Fitness' } },
-    { id: 'translator', label: { ko: '통역', zh: '翻译', en: 'Translate' } },
-    { id: 'sos', label: { ko: 'SOS', zh: 'SOS', en: 'SOS' } },
-    { id: 'community', label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
-    { id: 'finance', label: { ko: '금융', zh: '金融', en: 'Finance' } },
-    { id: 'wallet', label: { ko: '월렛', zh: '钱包', en: 'Wallet' } },
-    { id: 'profile', label: { ko: '내정보', zh: '我的', en: 'Me' } },
+  const [subPage, setSubPage] = useState(null)
+
+  const bottomTabs = [
+    { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
+    { id: 'transition', icon: Shield, label: { ko: '비자', zh: '签证', en: 'Visa' } },
+    { id: 'explore', icon: Grid3x3, label: { ko: '탐색', zh: '探索', en: 'Explore' } },
+    { id: 'tools', icon: Wrench, label: { ko: '도구', zh: '工具', en: 'Tools' } },
+    { id: 'profile', icon: User, label: { ko: '내정보', zh: '我的', en: 'Me' } },
   ]
+
+  const exploreItems = [
+    { id: 'travel', label: { ko: '여행', zh: '旅行', en: 'Travel' }, color: '#4285F4' },
+    { id: 'food', label: { ko: '맛집', zh: '美食', en: 'Food' }, color: '#EA4335' },
+    { id: 'shopping', label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, color: '#FBBC05' },
+    { id: 'hallyu', label: { ko: '한류', zh: '韩流', en: 'Hallyu' }, color: '#34A853' },
+    { id: 'learn', label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#4285F4' },
+    { id: 'life', label: { ko: '생활', zh: '生活', en: 'Life' }, color: '#EA4335' },
+    { id: 'jobs', label: { ko: '구직', zh: '求职', en: 'Jobs' }, color: '#FBBC05' },
+    { id: 'housing', label: { ko: '부동산', zh: '房产', en: 'Housing' }, color: '#34A853' },
+    { id: 'medical', label: { ko: '의료', zh: '医疗', en: 'Medical' }, color: '#4285F4' },
+    { id: 'fitness', label: { ko: '운동', zh: '运动', en: 'Fitness' }, color: '#EA4335' },
+    { id: 'community', label: { ko: '커뮤니티', zh: '社区', en: 'Community' }, color: '#34A853' },
+  ]
+
+  const toolItems = [
+    { id: 'translator', label: { ko: '통역', zh: '翻译', en: 'Translate' }, color: '#4285F4' },
+    { id: 'artranslate', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict' }, color: '#34A853' },
+    { id: 'sos', label: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, color: '#EA4335' },
+    { id: 'finance', label: { ko: '금융', zh: '金融', en: 'Finance' }, color: '#FBBC05' },
+    { id: 'wallet', label: { ko: '월렛', zh: '钱包', en: 'Wallet' }, color: '#4285F4' },
+    { id: 'resume', label: { ko: '이력서', zh: '简历', en: 'Resume' }, color: '#34A853' },
+    { id: 'visaalert', label: { ko: '비자 알림', zh: '签证提醒', en: 'Visa Alert' }, color: '#EA4335' },
+  ]
+
+  // Keep old tabs array for compatibility
+  const tabs = bottomTabs
 
   // 29CM-style sub-menus per tab
   const subMenus = {
@@ -1220,106 +1236,93 @@ function AppInner() {
   const currentHero = heroData[tab] || heroData.home
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F8F9FA] pb-20">
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
 
-      {/* Header — 29CM style: logo left, icons right */}
-      <div className="bg-white border-b border-[#E5E7EB] px-5 pt-12 pb-3">
-        <div className="flex items-center justify-between">
-          <Logo />
-          <div className="flex items-center gap-2">
-            <button onClick={() => setShowNotice(true)} className="text-[#6B7280] text-[11px] hover:text-[#111827] transition-all">{lang==='ko'?'공지':lang==='zh'?'公告':'Notice'}</button>
-            <span className="text-[#E5E7EB]">|</span>
-            <button onClick={() => setLang(nextLang(lang))} className="text-[#6B7280] text-[11px] hover:text-[#111827] transition-all">{langLabel(lang)}</button>
-            <span className="text-[#E5E7EB]">|</span>
-            <button onClick={() => {
-              if (window.confirm(lang === 'ko' ? '로그아웃 하시겠습니까?' : lang === 'zh' ? '确定要退出登录吗？' : 'Log out?')) {
-                localStorage.clear()
-                window.location.reload()
-              }
-            }} className="text-[#6B7280] text-[11px] hover:text-[#111827] transition-all">{lang==='ko'?'로그아웃':lang==='zh'?'退出':' Logout'}</button>
+      {/* Google-style Top Bar */}
+      <div className="bg-white sticky top-0 z-50 shadow-sm">
+        <div className="px-4 pt-12 pb-3">
+          <div className="flex items-center gap-3">
+            {subPage ? (
+              <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
+                <ChevronLeft size={24} />
+              </button>
+            ) : (
+              <Logo />
+            )}
+            <div className="flex-1 bg-[#F1F3F4] rounded-full px-4 py-2.5 flex items-center gap-2">
+              <Search size={18} className="text-[#9AA0A6]" />
+              <input placeholder={lang==='ko'?'HanPocket 검색':lang==='zh'?'搜索HanPocket':'Search HanPocket'}
+                className="bg-transparent outline-none text-sm text-[#202124] w-full placeholder:text-[#9AA0A6]" />
+            </div>
+            <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+              <Globe size={20} />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 29CM-style Tab Navigation */}
-      <div className="apple-top-nav" onMouseLeave={() => setHoveredTab(null)}>
-        <div className="tab-row">
-          {tabs.map(item => (
-            <button key={item.id}
-              onClick={() => {
-                if (tab === item.id && subMenus[item.id]) {
-                  // Already on this tab — toggle sub-menu (mobile)
-                  setMenuOpen(!menuOpen)
-                } else {
-                  setTab(item.id)
-                  setMenuOpen(false)
-                  setHoveredTab(null)
-                  if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')}
-                }
-              }}
-              onMouseEnter={() => setHoveredTab(item.id)}
-              className={`apple-tab-item ${tab===item.id ? 'apple-tab-active' : ''}`}>
-              {L(lang, item.label)}
-            </button>
-          ))}
-        </div>
-        {/* Sub-menu dropdown */}
-        {showSubMenu && (
-          <div className="sub-menu-panel">
-            <p className="sub-menu-title">{L(lang, showSubMenu.title)}</p>
-            <div className="sub-menu-grid">
-              {showSubMenu.items.map((item, i) => (
-                <div key={i} className="sub-menu-item"
-                  onClick={() => { if (item.action) item.action(); setHoveredTab(null); setMenuOpen(false); }}>
-                  {L(lang, item.label)}
-                </div>
+      {/* Content */}
+      <div className="px-4 pt-4 pb-4">
+        {/* Explore grid */}
+        {tab==='explore' && !subPage && (
+          <div>
+            <h2 className="text-lg font-medium text-[#202124] mb-4">{L(lang, { ko: '탐색', zh: '探索', en: 'Explore' })}</h2>
+            <div className="grid grid-cols-3 gap-3">
+              {exploreItems.map(item => (
+                <button key={item.id} onClick={() => { setSubPage(item.id) }}
+                  className="bg-white rounded-2xl p-4 flex flex-col items-center gap-2 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{ background: item.color }}>
+                    {L(lang, item.label).charAt(0)}
+                  </div>
+                  <span className="text-xs text-[#202124] font-medium">{L(lang, item.label)}</span>
+                </button>
               ))}
             </div>
           </div>
         )}
-      </div>
 
-      {/* Hero Section */}
-      {currentHero.title && (
-        <div className="hero-section">
-          <h1 className="hero-title">
-            {typeof currentHero.title === 'string' ? currentHero.title : L(lang, currentHero.title)}
-          </h1>
-          {currentHero.sub && <p className="hero-subtitle">{L(lang, currentHero.sub)}</p>}
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="px-5 pt-2 pb-8">
-        {tab==='home' && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={setTab} />}
-        {tab==='transition' && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
-        {tab==='chat' && <ChatTab profile={profile} lang={lang} />}
-        {tab==='profile' && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} />}
-        {tab==='learn' && <EducationTab lang={lang} />}
-        {tab==='travel' && <TravelTab lang={lang} setTab={setTab} />}
-        {tab==='food' && <FoodTab lang={lang} setTab={setTab} />}
-        {tab==='shopping' && <ShoppingTab lang={lang} setTab={setTab} />}
-        {tab==='hallyu' && <HallyuTab lang={lang} setTab={setTab} />}
-        {tab==='life' && <LifeToolsTab lang={lang} setTab={setTab} />}
-        {tab==='jobs' && <JobsTab lang={lang} profile={profile} />}
-        {tab==='housing' && <HousingTab lang={lang} profile={profile} />}
-        {tab==='medical' && <MedicalTab lang={lang} />}
-        {tab==='fitness' && <FitnessTab lang={lang} />}
-        {tab==='translator' && <TranslatorTab lang={lang} />}
-        {tab==='artranslate' && <ARTranslateTab lang={lang} />}
-        {tab==='sos' && <SOSTab lang={lang} profile={profile} />}
-        {tab==='community' && <CommunityTab lang={lang} profile={profile} />}
-        {tab==='visaalert' && <VisaAlertTab lang={lang} profile={profile} />}
-        {tab==='finance' && <FinanceTab lang={lang} profile={profile} />}
-        {tab==='resume' && <ResumeTab lang={lang} profile={profile} />}
-        {tab==='wallet' && <DigitalWalletTab lang={lang} profile={profile} />}
-        {tab==='fan' && (
-          <div className="min-h-[60vh] flex items-center justify-center">
-            <p className="text-sm text-[#9CA3AF]">{lang === 'ko' ? '준비 중입니다' : lang === 'zh' ? '准备中' : 'Coming soon'}</p>
+        {/* Tools grid */}
+        {tab==='tools' && !subPage && (
+          <div>
+            <h2 className="text-lg font-medium text-[#202124] mb-4">{L(lang, { ko: '도구', zh: '工具', en: 'Tools' })}</h2>
+            <div className="grid grid-cols-3 gap-3">
+              {toolItems.map(item => (
+                <button key={item.id} onClick={() => { setSubPage(item.id) }}
+                  className="bg-white rounded-2xl p-4 flex flex-col items-center gap-2 shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{ background: item.color }}>
+                    {L(lang, item.label).charAt(0)}
+                  </div>
+                  <span className="text-xs text-[#202124] font-medium">{L(lang, item.label)}</span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
-        {tab==='agency' && <AgencyTab profile={profile} lang={lang} />}
+
+        {/* Sub-pages from explore/tools */}
+        {subPage==='travel' && <TravelTab lang={lang} setTab={(t) => setSubPage(t)} />}
+        {subPage==='food' && <FoodTab lang={lang} setTab={(t) => setSubPage(t)} />}
+        {subPage==='shopping' && <ShoppingTab lang={lang} setTab={(t) => setSubPage(t)} />}
+        {subPage==='hallyu' && <HallyuTab lang={lang} setTab={(t) => setSubPage(t)} />}
+        {subPage==='learn' && <EducationTab lang={lang} />}
+        {subPage==='life' && <LifeToolsTab lang={lang} setTab={(t) => setSubPage(t)} />}
+        {subPage==='jobs' && <JobsTab lang={lang} profile={profile} />}
+        {subPage==='housing' && <HousingTab lang={lang} profile={profile} />}
+        {subPage==='medical' && <MedicalTab lang={lang} />}
+        {subPage==='fitness' && <FitnessTab lang={lang} />}
+        {subPage==='community' && <CommunityTab lang={lang} profile={profile} />}
+        {subPage==='translator' && <TranslatorTab lang={lang} />}
+        {subPage==='artranslate' && <ARTranslateTab lang={lang} />}
+        {subPage==='sos' && <SOSTab lang={lang} profile={profile} />}
+        {subPage==='finance' && <FinanceTab lang={lang} profile={profile} />}
+        {subPage==='wallet' && <DigitalWalletTab lang={lang} profile={profile} />}
+        {subPage==='resume' && <ResumeTab lang={lang} profile={profile} />}
+        {subPage==='visaalert' && <VisaAlertTab lang={lang} profile={profile} />}
+
+        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}
+        {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
+        {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} />}
         <div className="mt-12 mb-6 text-center text-[11px] text-[#9CA3AF] space-y-1">
           <p className="text-[9px] text-[#9CA3AF] max-w-xs mx-auto leading-relaxed">
             {lang === 'ko' ? '본 앱의 정보는 참고용이며 법적 효력이 없습니다. 비자, 법률, 의료 관련 사항은 반드시 관련 기관에 직접 확인하시기 바랍니다.' 
@@ -1327,6 +1330,24 @@ function AppInner() {
             : 'Information in this app is for reference only and has no legal effect. Please verify visa, legal, and medical matters directly with relevant authorities.'}
           </p>
           <p>© 2026 HanPocket. All rights reserved.</p>
+        </div>
+      </div>
+      {/* Google-style Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#DADCE0] z-50 safe-bottom">
+        <div className="flex items-center justify-around py-2">
+          {bottomTabs.map(item => {
+            const Icon = item.icon
+            const active = tab === item.id
+            return (
+              <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
+                className="flex flex-col items-center gap-0.5 min-w-[64px] py-1">
+                <div className={`px-4 py-1 rounded-full transition-all ${active ? 'bg-[#D2E3FC]' : ''}`}>
+                  <Icon size={22} className={active ? 'text-[#4285F4]' : 'text-[#5F6368]'} />
+                </div>
+                <span className={`text-[10px] font-medium ${active ? 'text-[#4285F4]' : 'text-[#5F6368]'}`}>{L(lang, item.label)}</span>
+              </button>
+            )
+          })}
         </div>
       </div>
       <FloatingChatbot lang={lang} />

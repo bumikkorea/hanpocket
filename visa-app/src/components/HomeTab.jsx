@@ -3049,11 +3049,11 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
 
   return (
     <HScrollSection>
-      {/* 0. Voice Translator */}
-      <VoiceTranslatorCard lang={lang} />
-
-      {/* 1. My Status */}
+      {/* 0. My Status */}
       <MyStatusCard profile={profile} lang={lang} setTab={setTab} />
+
+      {/* 1. Voice Translator */}
+      <VoiceTranslatorCard lang={lang} />
 
       {/* 2. Memo / Today's Plan */}
       <MemoCard lang={lang} />

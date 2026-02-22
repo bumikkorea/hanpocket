@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --gold: #B8956A;
-  --gold-light: #D4B896;
-  --gold-dark: #9A7B52;
+  --google-blue: #4285F4;
+  --google-red: #EA4335;
+  --google-yellow: #FBBC05;
+  --google-green: #34A853;
+  --accent: #4285F4;
 
   --bg: #FFFFFF;
   --bg-secondary: #F8F9FA;
-  --border: #E5E7EB;
-  --text-primary: #111827;
-  --text-secondary: #6B7280;
-  --text-muted: #9CA3AF;
+  --border: #DADCE0;
+  --text-primary: #202124;
+  --text-secondary: #5F6368;
+  --text-muted: #9AA0A6;
 }
 
 * {
@@ -19,15 +21,16 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 h1, h2, h3 {
-  letter-spacing: -0.03em;
-  font-weight: 700;
+  font-family: 'Google Sans', 'Roboto', sans-serif;
+  letter-spacing: -0.01em;
+  font-weight: 500;
 }
 
 /* Glass card — light */
@@ -313,22 +316,18 @@ h1, h2, h3 {
   background: linear-gradient(90deg, transparent, #111827, transparent);
 }
 
-/* ─── Card Glow / Vignette Effect ─── */
+/* ─── Material Design Card Shadow ─── */
 .card-glow {
-  box-shadow:
-    0 1px 3px rgba(0,0,0,0.06),
-    0 4px 12px rgba(0,0,0,0.04),
-    0 12px 36px rgba(0,0,0,0.03),
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    inset 0 0 20px rgba(255,255,255,0.3);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 1px 2px rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  border-radius: 12px;
 }
 .card-glow:hover {
-  box-shadow:
-    0 2px 6px rgba(0,0,0,0.08),
-    0 8px 24px rgba(0,0,0,0.06),
-    0 20px 48px rgba(0,0,0,0.04),
-    inset 0 1px 0 rgba(255,255,255,1),
-    inset 0 0 30px rgba(255,255,255,0.5);
-  transform: translateY(-2px);
+  box-shadow: 0 1px 3px rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+  transform: translateY(-1px);
+}
+
+/* Safe area for bottom nav */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }

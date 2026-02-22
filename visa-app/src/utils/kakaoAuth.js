@@ -32,7 +32,7 @@ export const loginWithKakao = () => {
   }
   
   window.Kakao.Auth.authorize({
-    redirectUri: window.location.origin,
+    redirectUri: window.location.origin + '/',
     scope: 'profile_nickname,profile_image'
   });
 };

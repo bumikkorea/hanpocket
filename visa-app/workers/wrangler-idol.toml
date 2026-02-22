@@ -1,0 +1,26 @@
+name = "hanpocket-idol-updater"
+main = "api-handler.js"
+compatibility_date = "2024-01-01"
+
+# Weekly schedule: Every Monday at 2 AM KST (Sunday 17:00 UTC)
+# Also daily health check: Every day at 1 AM KST (Previous day 16:00 UTC)
+[triggers]
+crons = ["0 17 * * 0", "0 16 * * *"]
+
+# KV namespace for caching idol data
+[[kv_namespaces]]
+binding = "IDOL_CACHE"
+id = "idol-data-cache-namespace"
+
+# Environment variables (set via wrangler secret)
+[vars]
+SPOTIFY_CLIENT_ID = ""
+YOUTUBE_API_KEY = ""
+WEBHOOK_URL = ""
+
+# Bindings for external APIs
+[vars.api_keys]
+SPOTIFY_TOKEN = ""
+YOUTUBE_MUSIC_KEY = ""
+NAVER_CLIENT_ID = ""
+NAVER_CLIENT_SECRET = ""

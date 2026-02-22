@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">HanPocket</string>
+    <string name="title_activity_main">HanPocket</string>
+    <string name="package_name">kr.hanpocket.app</string>
+    <string name="custom_url_scheme">kr.hanpocket.app</string>
+</resources>

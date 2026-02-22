@@ -907,6 +907,15 @@ function AppInner() {
   })
 
   const handleEnablePush = async () => {
+    if (!isPushSupported()) {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      if (isIOS) {
+        alert(lang === 'ko' ? 'Safari에서 하단 공유 버튼 → "홈 화면에 추가"를 먼저 해주세요. 앱으로 설치해야 알림을 받을 수 있습니다.' : lang === 'zh' ? '请先在Safari中点击底部分享按钮→"添加到主屏幕"。安装为App后才能接收通知。' : 'Please tap Share → "Add to Home Screen" in Safari first. Notifications require the app to be installed.')
+      } else {
+        alert(lang === 'ko' ? '이 브라우저에서는 알림을 지원하지 않습니다.' : lang === 'zh' ? '此浏览器不支持通知。' : 'Notifications are not supported in this browser.')
+      }
+      return
+    }
     const sub = await subscribePush()
     if (sub) {
       setPushEnabled(true)
@@ -1185,7 +1194,7 @@ function AppInner() {
       {/* Content */}
       <div className="px-4 pt-4 pb-4">
         {/* Push notification banner */}
-        {isPushSupported() && !pushEnabled && !pushDismissed && tab === 'home' && (
+        {!pushEnabled && !pushDismissed && tab === 'home' && (
           <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4 flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '알림 받기' : lang === 'zh' ? '开启通知' : 'Enable Notifications'}</p>

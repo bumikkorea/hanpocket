@@ -604,11 +604,24 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
 
   const handleKakaoLogin = async () => {
     setKakaoLoading(true)
+    trackKakaoEvent('kakao_login_attempt', { context: 'profile' })
+    
     try {
       const userInfo = await loginWithKakao()
-      setKakaoUser(userInfo)
+      if (userInfo) {
+        setKakaoUser(userInfo)
+        trackKakaoEvent('kakao_login_success', { 
+          context: 'profile', 
+          nickname: userInfo.nickname,
+          has_email: !!userInfo.email 
+        })
+        trackLogin('kakao', profile.userType || 'resident')
+      } else {
+        trackKakaoEvent('kakao_login_failed', { context: 'profile' })
+      }
     } catch (error) {
       console.error('카카오 로그인 실패:', error)
+      trackKakaoEvent('kakao_login_error', { context: 'profile', error: error.message })
       alert(lang === 'ko' ? '로그인에 실패했습니다.' : lang === 'zh' ? '登录失败' : 'Login failed')
     } finally {
       setKakaoLoading(false)
@@ -616,11 +629,15 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   }
 
   const handleKakaoLogout = async () => {
+    trackKakaoEvent('kakao_logout_attempt', { context: 'profile' })
+    
     try {
       await logoutFromKakao()
       setKakaoUser(null)
+      trackKakaoEvent('kakao_logout_success', { context: 'profile' })
     } catch (error) {
       console.error('카카오 로그아웃 오류:', error)
+      trackKakaoEvent('kakao_logout_error', { context: 'profile', error: error.message })
     }
   }
 
@@ -628,6 +645,13 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
     const updated = { ...notifPrefs, [key]: !notifPrefs[key] }
     setNotifPrefs(updated)
     localStorage.setItem('visa_notif_prefs', JSON.stringify(updated))
+    
+    // 알림 설정 변경 이벤트 추적
+    trackNotificationEvent('notification_preference_changed', 'visa_expiry', {
+      preference_key: key,
+      preference_value: updated[key],
+      all_preferences: updated
+    })
   }
 
   const save = () => {
@@ -808,17 +832,24 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
       {(
         <button
           onClick={async () => {
+            trackNotificationEvent('notification_permission_request', 'general')
+            
             if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
               // 이미 허용됨 — 안내만
+              trackNotificationEvent('notification_already_granted', 'general')
               alert(lang === 'ko' ? '알림이 이미 활성화되어 있습니다.' : lang === 'zh' ? '通知已启用。' : 'Notifications already enabled.')
             } else {
               localStorage.removeItem('hp_push_dismissed')
               if (onResetPushDismiss) onResetPushDismiss()
+              
               const { subscribePush } = await import('./utils/pushNotification')
               const sub = await subscribePush()
+              
               if (sub) {
+                trackNotificationEvent('notification_permission_granted', 'general')
                 alert(lang === 'ko' ? '알림이 활성화되었습니다!' : lang === 'zh' ? '通知已开启！' : 'Notifications enabled!')
               } else {
+                trackNotificationEvent('notification_permission_denied', 'general')
                 alert(lang === 'ko' ? '알림 권한을 허용해주세요. Safari에서 홈 화면에 추가 후 다시 시도해주세요.' : lang === 'zh' ? '请允许通知权限。请在Safari中添加到主屏幕后重试。' : 'Please allow notification permission. Add to Home Screen from Safari and try again.')
               }
             }
@@ -1066,7 +1097,7 @@ function AppInner() {
           if (!profile) {
             const p = { lang, userType: 'resident' }
             setProfile(p)
-            localStorage.setItem('hp_profile', JSON.stringify(p))
+            saveProfile(p)
           }
         } else {
           trackKakaoEvent('kakao_oauth_failed')
@@ -1160,7 +1191,7 @@ function AppInner() {
 
   const [subPage, setSubPage] = useState(null)
 
-  if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); setLang(p.lang||'zh'); void 0 }} />
+  if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); saveProfile(p); setLang(p.lang||'ko'); }} />
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },

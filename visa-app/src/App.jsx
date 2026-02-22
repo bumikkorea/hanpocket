@@ -1,6 +1,9 @@
 import { useState, useRef, useEffect, Component } from 'react'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
 import { initKakao, loginWithKakao, loginWithKakaoPopup, logoutFromKakao, getKakaoUser, isKakaoLoggedIn, handleKakaoCallback } from './utils/kakaoAuth'
+import { loginWithNaver, logoutFromNaver, getNaverUser, isNaverLoggedIn, handleNaverCallback } from './utils/naverAuth'
+import { loginWithWeChat, logoutFromWeChat, getWeChatUser, isWeChatLoggedIn, handleWeChatCallback } from './utils/wechatAuth'
+import { loginWithAlipay, logoutFromAlipay, getAlipayUser, isAlipayLoggedIn, handleAlipayCallback } from './utils/alipayAuth'
 import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
 import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2 } from 'lucide-react'
@@ -146,25 +149,80 @@ function Onboarding({ onComplete, lang, setLang }) {
                 {L(lang, { ko: '카카오로 로그인', zh: 'Kakao登录', en: 'Login with Kakao' })}
               </button>
               <button
-                onClick={() => { /* TODO: Google OAuth */ onComplete({ lang }) }}
+                onClick={() => { 
+                  // TODO: Google OAuth 구현 필요
+                  alert(lang === 'ko' ? 'Google 로그인은 준비 중입니다.' : lang === 'zh' ? 'Google登录正在准备中' : 'Google login is coming soon')
+                  // onComplete({ lang }) 
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-white border border-[#E5E7EB] text-[#111827] rounded-xl p-4 font-medium hover:bg-gray-50 transition-all btn-press shadow-sm">
                 <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
                 {L(lang, { ko: 'Google로 로그인', zh: 'Google登录', en: 'Login with Google' })}
               </button>
               <button
-                onClick={() => { /* TODO: Apple OAuth */ onComplete({ lang }) }}
+                onClick={async () => { 
+                  try {
+                    const userInfo = await loginWithNaver()
+                    if (userInfo) {
+                      trackLogin('naver', 'visitor')
+                      onComplete({ lang, socialLogin: { provider: 'naver', user: userInfo } })
+                    }
+                  } catch (error) {
+                    console.error('네이버 로그인 실패:', error)
+                    alert(lang === 'ko' ? '네이버 로그인에 실패했습니다. 나중에 다시 시도해주세요.' : 
+                          lang === 'zh' ? 'Naver登录失败，请稍后重试' : 'Naver login failed. Please try again later.')
+                    onComplete({ lang })
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-3 bg-[#03C75A] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M13.6 11.4L9.5 5.5h-3v13h4.3v-6.6l4.1 6.6H18v-13h-4.4v5.9z"/>
+                </svg>
+                {L(lang, { ko: '네이버로 로그인', zh: 'Naver登录', en: 'Login with Naver' })}
+              </button>
+              <button
+                onClick={() => { 
+                  // TODO: Apple OAuth 구현 필요
+                  alert(lang === 'ko' ? 'Apple 로그인은 준비 중입니다.' : lang === 'zh' ? 'Apple登录正在准备中' : 'Apple login is coming soon')
+                  // onComplete({ lang }) 
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-[#111827] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
                 {L(lang, { ko: 'Apple로 로그인', zh: 'Apple登录', en: 'Login with Apple' })}
               </button>
               <button
-                onClick={() => { /* TODO: WeChat OAuth */ onComplete({ lang }) }}
+                onClick={async () => { 
+                  try {
+                    const userInfo = await loginWithWeChat()
+                    if (userInfo) {
+                      trackLogin('wechat', 'visitor')
+                      onComplete({ lang, socialLogin: { provider: 'wechat', user: userInfo } })
+                    }
+                  } catch (error) {
+                    console.error('WeChat 로그인 실패:', error)
+                    alert(lang === 'ko' ? 'WeChat 로그인에 실패했습니다. 나중에 다시 시도해주세요.' : 
+                          lang === 'zh' ? '微信登录失败，请稍后重试' : 'WeChat login failed. Please try again later.')
+                    onComplete({ lang })
+                  }
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-[#07C160] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.534c0 2.22 1.174 4.142 3.016 5.49a.75.75 0 01.27.87l-.458 1.597a.375.375 0 00.506.44l1.932-.901a.75.75 0 01.572-.036c1.014.305 2.1.472 3.228.472.169 0 .336-.005.502-.014a5.868 5.868 0 01-.254-1.718c0-3.56 3.262-6.45 7.282-6.45.215 0 .428.01.638.028C16.283 5.114 12.85 2.188 8.691 2.188zM5.785 7.095a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25zm5.813 0a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25z"/><path d="M23.997 15.268c0-3.29-3.262-5.96-7.285-5.96-4.023 0-7.285 2.67-7.285 5.96 0 3.292 3.262 5.96 7.285 5.96.89 0 1.746-.132 2.534-.375a.75.75 0 01.573.036l1.478.689a.375.375 0 00.506-.44l-.35-1.22a.75.75 0 01.27-.87c1.49-1.09 2.274-2.644 2.274-4.38zm-9.792-.75a.938.938 0 110-1.875.938.938 0 010 1.875zm5.015 0a.938.938 0 110-1.875.938.938 0 010 1.875z"/></svg>
                 {L(lang, { ko: 'WeChat으로 로그인', zh: '微信登录', en: 'Login with WeChat' })}
               </button>
               <button
-                onClick={() => { /* TODO: Alipay OAuth */ onComplete({ lang }) }}
+                onClick={async () => { 
+                  try {
+                    const userInfo = await loginWithAlipay()
+                    if (userInfo) {
+                      trackLogin('alipay', 'visitor')
+                      onComplete({ lang, socialLogin: { provider: 'alipay', user: userInfo } })
+                    }
+                  } catch (error) {
+                    console.error('Alipay 로그인 실패:', error)
+                    alert(lang === 'ko' ? 'Alipay 로그인에 실패했습니다. 나중에 다시 시도해주세요.' : 
+                          lang === 'zh' ? '支付宝登录失败，请稍后重试' : 'Alipay login failed. Please try again later.')
+                    onComplete({ lang })
+                  }
+                }}
                 className="w-full flex items-center justify-center gap-3 bg-[#1677FF] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M21.422 13.482C19.558 12.614 17.46 11.6 15.998 10.952c.72-1.748 1.164-3.678 1.164-5.202 0-1.554-.87-3.75-3.828-3.75-2.478 0-4.038 1.86-4.038 4.11 0 2.598 1.806 4.764 4.362 5.424-.498.804-1.104 1.518-1.788 2.118-1.62 1.416-3.456 2.13-5.454 2.13C4.146 15.782 2 14.258 2 11.988 2 6.468 7.098 2 13.332 2 19.566 2 22 6.468 22 11.988c0 .516-.03 1.02-.084 1.494h-.494z"/></svg>
                 {L(lang, { ko: 'Alipay로 로그인', zh: '支付宝登录', en: 'Login with Alipay' })}
@@ -496,20 +554,40 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   const s = t[lang]
   const [exp, setExp] = useState(profile.expiryDate || '')
   const [saved, setSaved] = useState(false)
+  
+  // 소셜 로그인 states
   const [kakaoUser, setKakaoUser] = useState(() => getKakaoUser())
+  const [naverUser, setNaverUser] = useState(() => getNaverUser())
+  const [wechatUser, setWechatUser] = useState(() => getWeChatUser())
+  const [alipayUser, setAlipayUser] = useState(() => getAlipayUser())
+  
+  // Loading states
   const [kakaoLoading, setKakaoLoading] = useState(false)
+  const [naverLoading, setNaverLoading] = useState(false)
+  const [wechatLoading, setWechatLoading] = useState(false)
+  const [alipayLoading, setAlipayLoading] = useState(false)
+  
   const [notifPrefs, setNotifPrefs] = useState(() => {
     try { return JSON.parse(localStorage.getItem('visa_notif_prefs')) || { d90: true, d60: true, d30: true, d7: true } }
     catch { return { d90: true, d60: true, d30: true, d7: true } }
   })
   const days = getDaysUntil(exp)
 
-  // Kakao SDK 초기화 + OAuth 콜백 처리
+  // OAuth SDK 초기화 + 콜백 처리
   useEffect(() => {
     initKakao()
-    // OAuth redirect 콜백 처리
-    handleKakaoCallback().then(user => {
-      if (user) setKakaoUser(user)
+    
+    // 모든 OAuth 콜백 처리
+    Promise.all([
+      handleKakaoCallback(),
+      handleNaverCallback(),
+      handleWeChatCallback(),
+      handleAlipayCallback()
+    ]).then(([kakao, naver, wechat, alipay]) => {
+      if (kakao) setKakaoUser(kakao)
+      if (naver) setNaverUser(naver)
+      if (wechat) setWechatUser(wechat)
+      if (alipay) setAlipayUser(alipay)
     })
   }, [])
 
@@ -549,6 +627,87 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
     } catch (error) {
       console.error('카카오 로그아웃 오류:', error)
       trackKakaoEvent('kakao_logout_error', { context: 'profile', error: error.message })
+    }
+  }
+
+  // 네이버 로그인 핸들러
+  const handleNaverLogin = async () => {
+    setNaverLoading(true)
+    
+    try {
+      const userInfo = await loginWithNaver()
+      if (userInfo) {
+        setNaverUser(userInfo)
+        trackLogin('naver', profile.userType || 'resident')
+      }
+    } catch (error) {
+      console.error('네이버 로그인 실패:', error)
+      alert(lang === 'ko' ? '네이버 로그인에 실패했습니다.' : lang === 'zh' ? 'Naver登录失败' : 'Naver login failed')
+    } finally {
+      setNaverLoading(false)
+    }
+  }
+
+  const handleNaverLogout = async () => {
+    try {
+      await logoutFromNaver()
+      setNaverUser(null)
+    } catch (error) {
+      console.error('네이버 로그아웃 오류:', error)
+    }
+  }
+
+  // WeChat 로그인 핸들러
+  const handleWeChatLogin = async () => {
+    setWechatLoading(true)
+    
+    try {
+      const userInfo = await loginWithWeChat()
+      if (userInfo) {
+        setWechatUser(userInfo)
+        trackLogin('wechat', profile.userType || 'resident')
+      }
+    } catch (error) {
+      console.error('WeChat 로그인 실패:', error)
+      alert(lang === 'ko' ? 'WeChat 로그인에 실패했습니다.' : lang === 'zh' ? '微信登录失败' : 'WeChat login failed')
+    } finally {
+      setWechatLoading(false)
+    }
+  }
+
+  const handleWeChatLogout = async () => {
+    try {
+      await logoutFromWeChat()
+      setWechatUser(null)
+    } catch (error) {
+      console.error('WeChat 로그아웃 오류:', error)
+    }
+  }
+
+  // Alipay 로그인 핸들러
+  const handleAlipayLogin = async () => {
+    setAlipayLoading(true)
+    
+    try {
+      const userInfo = await loginWithAlipay()
+      if (userInfo) {
+        setAlipayUser(userInfo)
+        trackLogin('alipay', profile.userType || 'resident')
+      }
+    } catch (error) {
+      console.error('Alipay 로그인 실패:', error)
+      alert(lang === 'ko' ? 'Alipay 로그인에 실패했습니다.' : lang === 'zh' ? '支付宝登录失败' : 'Alipay login failed')
+    } finally {
+      setAlipayLoading(false)
+    }
+  }
+
+  const handleAlipayLogout = async () => {
+    try {
+      await logoutFromAlipay()
+      setAlipayUser(null)
+    } catch (error) {
+      console.error('Alipay 로그아웃 오류:', error)
     }
   }
 
@@ -657,7 +816,197 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
         </div>
       </div>
 
-      {/* 3. 저장 버튼 */}
+      {/* 3. 소셜 로그인 관리 */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#E5E7EB]">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="p-2 bg-[#F3F4F6] rounded-xl">
+            <User className="w-5 h-5 text-[#111827]" />
+          </div>
+          <div>
+            <h3 className="font-bold text-[#111827] text-lg">
+              {lang === 'ko' ? '소셜 로그인 관리' : lang === 'zh' ? '社交登录管理' : 'Social Login Management'}
+            </h3>
+            <p className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '계정을 연결하여 편리하게 로그인하세요' : lang === 'zh' ? '连接账户以便捷登录' : 'Connect accounts for convenient login'}
+            </p>
+          </div>
+        </div>
+        
+        <div className="space-y-3">
+          {/* 카카오 로그인 */}
+          <div className="flex items-center justify-between p-4 rounded-xl border border-[#E5E7EB] hover:bg-[#F8F9FA] transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#FEE500] rounded-full flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#3C1E1E" d="M12 3C6.48 3 2 6.36 2 10.44c0 2.62 1.75 4.93 4.38 6.24l-1.12 4.16c-.1.36.32.64.62.42l4.97-3.26c.37.04.75.06 1.15.06 5.52 0 10-3.36 10-7.62S17.52 3 12 3z"/></svg>
+              </div>
+              <div>
+                <div className="font-medium text-[#111827]">
+                  {lang === 'ko' ? '카카오' : lang === 'zh' ? 'Kakao' : 'Kakao'}
+                </div>
+                {kakaoUser ? (
+                  <div className="text-sm text-[#6B7280]">
+                    {lang === 'ko' ? `연결됨: ${kakaoUser.nickname || 'Unknown'}` : 
+                     lang === 'zh' ? `已连接: ${kakaoUser.nickname || 'Unknown'}` : 
+                     `Connected: ${kakaoUser.nickname || 'Unknown'}`}
+                  </div>
+                ) : (
+                  <div className="text-sm text-[#6B7280]">
+                    {lang === 'ko' ? '연결되지 않음' : lang === 'zh' ? '未连接' : 'Not connected'}
+                  </div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={kakaoUser ? handleKakaoLogout : handleKakaoLogin}
+              disabled={kakaoLoading}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                kakaoUser 
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                  : 'bg-[#FEE500] text-[#3C1E1E] hover:bg-[#FDD835]'
+              } ${kakaoLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {kakaoLoading ? '...' : kakaoUser ? 
+                (lang === 'ko' ? '연결 해제' : lang === 'zh' ? '断开连接' : 'Disconnect') :
+                (lang === 'ko' ? '연결' : lang === 'zh' ? '连接' : 'Connect')
+              }
+            </button>
+          </div>
+
+          {/* 네이버 로그인 */}
+          <div className="flex items-center justify-between p-4 rounded-xl border border-[#E5E7EB] hover:bg-[#F8F9FA] transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#03C75A] rounded-full flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M13.6 11.4L9.5 5.5h-3v13h4.3v-6.6l4.1 6.6H18v-13h-4.4v5.9z"/>
+                </svg>
+              </div>
+              <div>
+                <div className="font-medium text-[#111827]">
+                  {lang === 'ko' ? '네이버' : lang === 'zh' ? 'Naver' : 'Naver'}
+                </div>
+                {naverUser ? (
+                  <div className="text-sm text-[#6B7280]">
+                    {lang === 'ko' ? `연결됨: ${naverUser.nickname || naverUser.name || 'Unknown'}` : 
+                     lang === 'zh' ? `已连接: ${naverUser.nickname || naverUser.name || 'Unknown'}` : 
+                     `Connected: ${naverUser.nickname || naverUser.name || 'Unknown'}`}
+                  </div>
+                ) : (
+                  <div className="text-sm text-[#6B7280]">
+                    {lang === 'ko' ? '연결되지 않음' : lang === 'zh' ? '未连接' : 'Not connected'}
+                  </div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={naverUser ? handleNaverLogout : handleNaverLogin}
+              disabled={naverLoading}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                naverUser 
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                  : 'bg-[#03C75A] text-white hover:bg-[#02B050]'
+              } ${naverLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {naverLoading ? '...' : naverUser ? 
+                (lang === 'ko' ? '연결 해제' : lang === 'zh' ? '断开连接' : 'Disconnect') :
+                (lang === 'ko' ? '연결' : lang === 'zh' ? '连接' : 'Connect')
+              }
+            </button>
+          </div>
+
+          {/* WeChat 로그인 */}
+          <div className="flex items-center justify-between p-4 rounded-xl border border-[#E5E7EB] hover:bg-[#F8F9FA] transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#07C160] rounded-full flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.534c0 2.22 1.174 4.142 3.016 5.49a.75.75 0 01.27.87l-.458 1.597a.375.375 0 00.506.44l1.932-.901a.75.75 0 01.572-.036c1.014.305 2.1.472 3.228.472.169 0 .336-.005.502-.014a5.868 5.868 0 01-.254-1.718c0-3.56 3.262-6.45 7.282-6.45.215 0 .428.01.638.028C16.283 5.114 12.85 2.188 8.691 2.188zM5.785 7.095a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25zm5.813 0a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25z"/>
+                  <path d="M23.997 15.268c0-3.29-3.262-5.96-7.285-5.96-4.023 0-7.285 2.67-7.285 5.96 0 3.292 3.262 5.96 7.285 5.96.89 0 1.746-.132 2.534-.375a.75.75 0 01.573.036l1.478.689a.375.375 0 00.506-.44l-.35-1.22a.75.75 0 01.27-.87c1.49-1.09 2.274-2.644 2.274-4.38zm-9.792-.75a.938.938 0 110-1.875.938.938 0 010 1.875zm5.015 0a.938.938 0 110-1.875.938.938 0 010 1.875z"/>
+                </svg>
+              </div>
+              <div>
+                <div className="font-medium text-[#111827]">
+                  {lang === 'ko' ? '위챗' : lang === 'zh' ? '微信' : 'WeChat'}
+                </div>
+                {wechatUser ? (
+                  <div className="text-sm text-[#6B7280]">
+                    {lang === 'ko' ? `연결됨: ${wechatUser.nickname || 'Unknown'}` : 
+                     lang === 'zh' ? `已连接: ${wechatUser.nickname || 'Unknown'}` : 
+                     `Connected: ${wechatUser.nickname || 'Unknown'}`}
+                  </div>
+                ) : (
+                  <div className="text-sm text-[#6B7280]">
+                    {lang === 'ko' ? '연결되지 않음' : lang === 'zh' ? '未连接' : 'Not connected'}
+                  </div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={wechatUser ? handleWeChatLogout : handleWeChatLogin}
+              disabled={wechatLoading}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                wechatUser 
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                  : 'bg-[#07C160] text-white hover:bg-[#06B050]'
+              } ${wechatLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {wechatLoading ? '...' : wechatUser ? 
+                (lang === 'ko' ? '연결 해제' : lang === 'zh' ? '断开连接' : 'Disconnect') :
+                (lang === 'ko' ? '연결' : lang === 'zh' ? '连接' : 'Connect')
+              }
+            </button>
+          </div>
+
+          {/* Alipay 로그인 */}
+          <div className="flex items-center justify-between p-4 rounded-xl border border-[#E5E7EB] hover:bg-[#F8F9FA] transition-colors">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#1677FF] rounded-full flex items-center justify-center">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                  <path d="M21.422 13.482C19.558 12.614 17.46 11.6 15.998 10.952c.72-1.748 1.164-3.678 1.164-5.202 0-1.554-.87-3.75-3.828-3.75-2.478 0-4.038 1.86-4.038 4.11 0 2.598 1.806 4.764 4.362 5.424-.498.804-1.104 1.518-1.788 2.118-1.62 1.416-3.456 2.13-5.454 2.13C4.146 15.782 2 14.258 2 11.988 2 6.468 7.098 2 13.332 2 19.566 2 22 6.468 22 11.988c0 .516-.03 1.02-.084 1.494h-.494z"/>
+                </svg>
+              </div>
+              <div>
+                <div className="font-medium text-[#111827]">
+                  {lang === 'ko' ? '알리페이' : lang === 'zh' ? '支付宝' : 'Alipay'}
+                </div>
+                {alipayUser ? (
+                  <div className="text-sm text-[#6B7280]">
+                    {lang === 'ko' ? `연결됨: ${alipayUser.nickName || 'Unknown'}` : 
+                     lang === 'zh' ? `已连接: ${alipayUser.nickName || 'Unknown'}` : 
+                     `Connected: ${alipayUser.nickName || 'Unknown'}`}
+                  </div>
+                ) : (
+                  <div className="text-sm text-[#6B7280]">
+                    {lang === 'ko' ? '연결되지 않음' : lang === 'zh' ? '未连接' : 'Not connected'}
+                  </div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={alipayUser ? handleAlipayLogout : handleAlipayLogin}
+              disabled={alipayLoading}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                alipayUser 
+                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
+                  : 'bg-[#1677FF] text-white hover:bg-[#1465CC]'
+              } ${alipayLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              {alipayLoading ? '...' : alipayUser ? 
+                (lang === 'ko' ? '연결 해제' : lang === 'zh' ? '断开连接' : 'Disconnect') :
+                (lang === 'ko' ? '연결' : lang === 'zh' ? '连接' : 'Connect')
+              }
+            </button>
+          </div>
+        </div>
+        
+        <div className="mt-4 p-3 bg-[#E3F2FD] border border-[#1976D2]/30 rounded-xl">
+          <p className="text-xs text-[#1565C0] leading-relaxed">
+            💡 {lang === 'ko' ? '소셜 로그인을 연결하면 다음에 더 쉽게 로그인할 수 있습니다' : 
+                 lang === 'zh' ? '连接社交登录后，下次可以更轻松地登录' : 
+                 'Connect social logins for easier access next time'}
+          </p>
+        </div>
+      </div>
+
+      {/* 4. 저장 버튼 */}
       <button 
         onClick={save}
         className="w-full bg-[#111827] text-white font-semibold py-4 rounded-2xl hover:bg-[#1F2937] transition-all btn-press flex items-center justify-center gap-3 shadow-sm"
@@ -1408,6 +1757,7 @@ function AppInner() {
         {subPage==='wallet' && <DigitalWalletTab lang={lang} profile={profile} />}
         {subPage==='visaalert' && <VisaAlertTab lang={lang} profile={profile} />}
 
+        {tab==='community' && !subPage && <CommunityTab lang={lang} profile={profile} />}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} />}

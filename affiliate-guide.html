@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', 'Apple SD Gothic Neo', sans-serif; color: #111827; padding: 48px; line-height: 1.7; max-width: 800px; margin: 0 auto; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+  .subtitle { font-size: 14px; color: #6b7280; margin-bottom: 40px; }
+  h2 { font-size: 20px; font-weight: 600; margin-top: 40px; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #e5e7eb; }
+  h3 { font-size: 16px; font-weight: 600; margin-top: 20px; margin-bottom: 8px; }
+  p, li { font-size: 14px; margin-bottom: 6px; }
+  ol, ul { padding-left: 24px; }
+  ol > li { margin-bottom: 12px; }
+  .link-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; margin: 16px 0; }
+  .link-box .url { color: #111827; font-weight: 600; font-size: 15px; word-break: break-all; }
+  .link-box .desc { font-size: 13px; color: #6b7280; margin-top: 4px; }
+  .tip { background: #f0f9ff; border-left: 3px solid #111827; padding: 12px 16px; margin: 16px 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+  .warn { background: #fef3c7; border-left: 3px solid #d97706; padding: 12px 16px; margin: 16px 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+  .money { background: #ecfdf5; border-left: 3px solid #059669; padding: 12px 16px; margin: 16px 0; font-size: 13px; border-radius: 0 6px 6px 0; }
+  .step-num { display: inline-block; width: 28px; height: 28px; background: #111827; color: white; border-radius: 50%; text-align: center; line-height: 28px; font-size: 13px; font-weight: 600; margin-right: 8px; }
+  .section { margin-bottom: 32px; }
+  .divider { border: none; border-top: 1px solid #e5e7eb; margin: 32px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  th, td { border: 1px solid #e5e7eb; padding: 8px 12px; text-align: left; }
+  th { background: #f9fafb; font-weight: 600; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .badge-high { background: #ecfdf5; color: #059669; }
+  .badge-mid { background: #fef3c7; color: #d97706; }
+  .badge-low { background: #f3f4f6; color: #6b7280; }
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { padding: 6px 0; font-size: 14px; }
+  .checklist li::before { content: "☐ "; font-size: 16px; }
+  .footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid #e5e7eb; font-size: 11px; color: #9ca3af; text-align: center; }
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<h1>HanPocket 어필리에이트 가입 가이드</h1>
+<p class="subtitle">범범뻠용 — 사이트별 가입 절차 + 수익 구조 총정리</p>
+
+<div class="tip"><b>어필리에이트란?</b> HanPocket에서 상품/서비스 링크를 걸고, 유저가 클릭해서 구매하면 수수료를 받는 구조. 초기 비용 0원, 가입만 하면 바로 링크 생성 가능.</div>
+
+<!-- ===== 총괄 ===== -->
+<h2>한눈에 보기</h2>
+<table>
+  <tr><th>플랫폼</th><th>카테고리</th><th>수수료</th><th>정산</th><th>난이도</th></tr>
+  <tr><td>쿠팡 파트너스</td><td>종합쇼핑</td><td>3~3.5%</td><td>월 1회</td><td><span class="badge badge-high">쉬움</span></td></tr>
+  <tr><td>네이버 인플루언서</td><td>블로그+쇼핑</td><td>CPC + 수수료</td><td>월 1회</td><td><span class="badge badge-mid">보통</span></td></tr>
+  <tr><td>위메프 파트너스</td><td>종합쇼핑/딜</td><td>~3%</td><td>월 1회</td><td><span class="badge badge-high">쉬움</span></td></tr>
+  <tr><td>아마존 어소시에이트</td><td>글로벌 종합</td><td>1~10%</td><td>월 1회</td><td><span class="badge badge-mid">보통</span></td></tr>
+  <tr><td>클룩 (Klook)</td><td>여행/액티비티</td><td>2~5%</td><td>월 1회</td><td><span class="badge badge-high">쉬움</span></td></tr>
+  <tr><td>트리플 (Triple)</td><td>한국 여행</td><td>CPA</td><td>월 1회</td><td><span class="badge badge-mid">보통</span></td></tr>
+  <tr><td>야놀자/여기어때</td><td>숙소</td><td>CPA 2~5%</td><td>월 1회</td><td><span class="badge badge-mid">보통</span></td></tr>
+  <tr><td>올리브영 파트너</td><td>K-뷰티</td><td>~5%</td><td>월 1회</td><td><span class="badge badge-mid">보통</span></td></tr>
+  <tr><td>링크프라이스</td><td>CPS 네트워크</td><td>1~10%</td><td>월 1회</td><td><span class="badge badge-high">쉬움</span></td></tr>
+  <tr><td>애드픽</td><td>CPA 네트워크</td><td>건당 100~5,000원</td><td>수시</td><td><span class="badge badge-high">쉬움</span></td></tr>
+</table>
+
+<div class="money"><b>HanPocket 예상 수익:</b> MAU 1,000명 기준 → 쿠팡+클룩+올리브영만으로 월 30~50만원 가능. MAU 10,000명이면 월 300~500만원.</div>
+
+<hr class="divider">
+
+<!-- ===== 1. 쿠팡 파트너스 ===== -->
+<div class="section">
+<h2>1. 쿠팡 파트너스</h2>
+<p>한국 최대 쇼핑 어필리에이트. HanPocket 쇼핑탭 핵심 수익원.</p>
+
+<div class="link-box">
+  <span class="url">https://partners.coupang.com</span>
+  <div class="desc">쿠팡 파트너스 공식 사이트</div>
+</div>
+
+<h3>가입 절차 (5분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"회원가입"</b></li>
+  <li><span class="step-num">2</span>쿠팡 계정으로 로그인 (없으면 쿠팡 회원가입 먼저)</li>
+  <li><span class="step-num">3</span>파트너스 가입 정보 입력:
+    <ul>
+      <li>미디어 유형: <b>"웹사이트/블로그"</b> 선택</li>
+      <li>URL: <code>https://hanpocket.pages.dev</code></li>
+      <li>카테고리: <b>"라이프스타일"</b></li>
+      <li>월 방문자: <b>"1,000 미만"</b> (처음이니까)</li>
+    </ul>
+  </li>
+  <li><span class="step-num">4</span>정산 정보 입력: 본인 계좌 + 주민등록번호 (세금 신고용)</li>
+  <li><span class="step-num">5</span>가입 완료 → <b>즉시 승인</b> (심사 없음!)</li>
+</ol>
+
+<h3>링크 생성법</h3>
+<ol>
+  <li>대시보드 → <b>"링크 생성"</b></li>
+  <li>상품 URL 붙여넣기 or 검색</li>
+  <li>생성된 어필리에이트 URL 복사 → HanPocket에 삽입</li>
+</ol>
+
+<div class="money"><b>수수료:</b> 전 상품 3% (로켓배송 3.5%) / 최소 정산: 10,000원 / 매월 25일 지급</div>
+
+<div class="tip"><b>팁:</b> "딥링크" 기능으로 어떤 쿠팡 페이지든 어필리에이트 링크로 변환 가능. 카테고리 페이지, 기획전 페이지도 OK.</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 2. 클룩 ===== -->
+<div class="section">
+<h2>2. 클룩 (Klook) 어필리에이트</h2>
+<p>여행/액티비티 어필리에이트. HanPocket 여행탭 수익원.</p>
+
+<div class="link-box">
+  <span class="url">https://affiliate.klook.com</span>
+  <div class="desc">Klook Affiliate Program</div>
+</div>
+
+<h3>가입 절차 (5분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"Join Now"</b> or <b>"가입하기"</b></li>
+  <li><span class="step-num">2</span>계정 생성 (이메일 + 비밀번호)</li>
+  <li><span class="step-num">3</span>사이트 정보 입력:
+    <ul>
+      <li>Website URL: <code>https://hanpocket.pages.dev</code></li>
+      <li>Category: <b>"Travel"</b></li>
+      <li>Monthly Traffic: <b>"Under 5,000"</b></li>
+      <li>Description: <b>"Korean lifestyle app for Chinese tourists and residents"</b></li>
+    </ul>
+  </li>
+  <li><span class="step-num">4</span>제출 → <b>1~3일 내 이메일로 승인</b></li>
+</ol>
+
+<h3>링크 생성법</h3>
+<ol>
+  <li>승인 후 대시보드 로그인</li>
+  <li><b>"Links & Tools"</b> → 상품 검색 or URL 입력</li>
+  <li>생성된 링크 복사 → HanPocket 여행탭에 삽입</li>
+</ol>
+
+<div class="money"><b>수수료:</b> 예약 완료 시 2~5% / PayPal or 은행 송금 / 매월 지급</div>
+
+<div class="tip"><b>팁:</b> 한국 내 액티비티 (한복체험, 테마파크, 투어 등)가 특히 잘 맞음. 중국어 페이지 자동 지원!</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 3. 링크프라이스 ===== -->
+<div class="section">
+<h2>3. 링크프라이스 (LinkPrice)</h2>
+<p>한국 최대 CPS 네트워크. 한 번 가입으로 수백 개 브랜드 어필리에이트 가능.</p>
+
+<div class="link-box">
+  <span class="url">https://www.linkprice.com</span>
+  <div class="desc">링크프라이스 — 국내 1위 CPS 어필리에이트 네트워크</div>
+</div>
+
+<h3>가입 절차 (10분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"매체 회원가입"</b> (광고주 아님!)</li>
+  <li><span class="step-num">2</span>회원 정보 입력:
+    <ul>
+      <li>매체 유형: <b>"웹사이트"</b></li>
+      <li>매체 URL: <code>https://hanpocket.pages.dev</code></li>
+      <li>매체 설명: <b>"재한 중국인 대상 한국 생활 슈퍼앱"</b></li>
+    </ul>
+  </li>
+  <li><span class="step-num">3</span>가입 후 → 개별 광고주에게 <b>"제휴 신청"</b></li>
+  <li><span class="step-num">4</span>광고주가 승인하면 링크 생성 가능 (보통 1~3일)</li>
+</ol>
+
+<h3>HanPocket에 유용한 광고주들</h3>
+<table>
+  <tr><th>광고주</th><th>카테고리</th><th>수수료</th></tr>
+  <tr><td>11번가</td><td>종합쇼핑</td><td>~2.5%</td></tr>
+  <tr><td>G마켓/옥션</td><td>종합쇼핑</td><td>~2%</td></tr>
+  <tr><td>여기어때</td><td>숙소</td><td>~3%</td></tr>
+  <tr><td>야놀자</td><td>숙소</td><td>~3%</td></tr>
+  <tr><td>무신사</td><td>패션</td><td>~4%</td></tr>
+  <tr><td>올리브영</td><td>뷰티</td><td>~5%</td></tr>
+  <tr><td>교보문고</td><td>도서</td><td>~3%</td></tr>
+</table>
+
+<div class="money"><b>장점:</b> 하나의 플랫폼에서 여러 브랜드 관리 가능. 올리브영+무신사+야놀자 한 번에!</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 4. 애드픽 ===== -->
+<div class="section">
+<h2>4. 애드픽 (Adpick)</h2>
+<p>CPA 네트워크. 앱 설치/회원가입 건당 수수료. 빠른 수익 가능.</p>
+
+<div class="link-box">
+  <span class="url">https://www.adpick.co.kr</span>
+  <div class="desc">애드픽 — CPA 성과형 어필리에이트</div>
+</div>
+
+<h3>가입 절차 (3분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"회원가입"</b></li>
+  <li><span class="step-num">2</span>SNS 계정 or 이메일로 가입</li>
+  <li><span class="step-num">3</span>프로필에 활동 채널 등록: URL 입력</li>
+  <li><span class="step-num">4</span><b>즉시 승인</b> → 바로 캠페인 참여 가능</li>
+</ol>
+
+<h3>수익 구조</h3>
+<ul>
+  <li>앱 설치: 건당 100~500원</li>
+  <li>회원가입: 건당 500~2,000원</li>
+  <li>상담신청/견적: 건당 1,000~5,000원</li>
+  <li>정산: 5,000원 이상이면 <b>즉시 출금</b> 가능</li>
+</ul>
+
+<div class="tip"><b>팁:</b> 금융(카드 발급), 보험, 통신사 캠페인이 단가 높음. 재한 중국인에게 필요한 서비스와 매칭하면 전환율 좋음.</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 5. 네이버 인플루언서 ===== -->
+<div class="section">
+<h2>5. 네이버 인플루언서</h2>
+<p>블로그 콘텐츠 + 쇼핑 연계 수익. 장기적 SEO 효과.</p>
+
+<div class="link-box">
+  <span class="url">https://in.naver.com</span>
+  <div class="desc">네이버 인플루언서 센터</div>
+</div>
+
+<h3>가입 절차 (10분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → 네이버 로그인</li>
+  <li><span class="step-num">2</span><b>"인플루언서 지원"</b> 클릭</li>
+  <li><span class="step-num">3</span>분야 선택: <b>"여행" or "리빙"</b></li>
+  <li><span class="step-num">4</span>활동 채널 등록:
+    <ul>
+      <li>네이버 블로그 (있으면)</li>
+      <li>외부 채널: <code>https://hanpocket.pages.dev</code></li>
+    </ul>
+  </li>
+  <li><span class="step-num">5</span>심사 기간: <b>1~2주</b> (콘텐츠 품질 기반)</li>
+</ol>
+
+<div class="warn"><b>주의:</b> 네이버 블로그에 최소 20~30개 포스팅이 있어야 승인 확률 높음. 블로그가 없으면 나중에 신청해도 됨.</div>
+
+<div class="money"><b>수익 구조:</b> 인플루언서 검색 노출 → CPC 광고 수익 + 쇼핑 커미션</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 6. 올리브영 ===== -->
+<div class="section">
+<h2>6. 올리브영 글로벌</h2>
+<p>K-뷰티 어필리에이트. 중국인 유저에게 최고 전환율.</p>
+
+<div class="link-box">
+  <span class="url">https://global.oliveyoung.com/pages/affiliate</span>
+  <div class="desc">올리브영 글로벌 어필리에이트 (영문)</div>
+</div>
+
+<h3>가입 절차 (5분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"Apply Now"</b></li>
+  <li><span class="step-num">2</span>사이트 정보 입력:
+    <ul>
+      <li>Website: <code>https://hanpocket.pages.dev</code></li>
+      <li>Category: <b>"Beauty / Lifestyle"</b></li>
+      <li>Audience: <b>"Chinese nationals in Korea"</b></li>
+    </ul>
+  </li>
+  <li><span class="step-num">3</span>제출 → <b>3~7일 내 승인</b></li>
+</ol>
+
+<div class="money"><b>수수료:</b> 구매 완료 시 ~5% / K-뷰티는 중국인 구매력 최고 카테고리!</div>
+
+<div class="tip"><b>대안:</b> 올리브영 직접 어필리에이트가 안 되면, 링크프라이스를 통해 올리브영 제휴 가능.</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 7. 야놀자/여기어때 ===== -->
+<div class="section">
+<h2>7. 야놀자 / 여기어때</h2>
+<p>숙소 어필리에이트. 여행탭 숙소 추천에 연결.</p>
+
+<div class="link-box">
+  <span class="url">https://www.yanolja.com</span>
+  <div class="desc">야놀자 — 링크프라이스 통해 제휴 가능</div>
+</div>
+<div class="link-box">
+  <span class="url">https://www.goodchoice.kr</span>
+  <div class="desc">여기어때 — 링크프라이스 통해 제휴 가능</div>
+</div>
+
+<h3>가입 방법</h3>
+<p>야놀자/여기어때는 <b>직접 어필리에이트 프로그램이 없음</b>. 대신:</p>
+<ol>
+  <li><span class="step-num">1</span><b>링크프라이스</b> (위 3번) 가입</li>
+  <li><span class="step-num">2</span>링크프라이스 내에서 "야놀자" / "여기어때" 검색</li>
+  <li><span class="step-num">3</span>제휴 신청 → 승인 후 링크 생성</li>
+</ol>
+
+<div class="money"><b>수수료:</b> 예약 완료 시 2~5% / 숙소 단가가 높아서 건당 수익 큼</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 8. 아마존 ===== -->
+<div class="section">
+<h2>8. 아마존 어소시에이트 (선택)</h2>
+<p>글로벌 상품 연결. 한국에서 직배송 가능 상품 추천 시 유용.</p>
+
+<div class="link-box">
+  <span class="url">https://affiliate-program.amazon.com</span>
+  <div class="desc">Amazon Associates — 글로벌 어필리에이트</div>
+</div>
+
+<h3>가입 절차 (10분)</h3>
+<ol>
+  <li><span class="step-num">1</span>위 링크 접속 → <b>"Sign Up"</b></li>
+  <li><span class="step-num">2</span>아마존 계정으로 로그인 (없으면 생성)</li>
+  <li><span class="step-num">3</span>사이트 등록: URL + 설명 입력</li>
+  <li><span class="step-num">4</span>정산 방법: <b>은행 계좌 직접 입금</b> or 아마존 기프트카드</li>
+  <li><span class="step-num">5</span>가입 후 180일 내 <b>3건 이상 판매</b> 필요 (안 하면 해지)</li>
+</ol>
+
+<div class="warn"><b>주의:</b> 180일 내 3건 판매 조건. HanPocket 초기엔 후순위로 하고, 트래픽 올라오면 가입 추천.</div>
+
+<div class="money"><b>수수료:</b> 카테고리별 1~10% (뷰티 6%, 패션 7%, 전자 3%)</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 우선순위 ===== -->
+<div class="section page-break">
+<h2>가입 우선순위 (추천 순서)</h2>
+
+<table>
+  <tr><th>순서</th><th>플랫폼</th><th>이유</th><th>소요시간</th></tr>
+  <tr><td><b>1</b></td><td>쿠팡 파트너스</td><td>즉시 승인, 쇼핑탭 바로 연결</td><td>5분</td></tr>
+  <tr><td><b>2</b></td><td>링크프라이스</td><td>한 곳에서 올리브영+야놀자+여기어때+무신사 전부</td><td>10분</td></tr>
+  <tr><td><b>3</b></td><td>클룩</td><td>여행탭 액티비티 연결, 중국어 지원</td><td>5분</td></tr>
+  <tr><td><b>4</b></td><td>애드픽</td><td>즉시 승인, 빠른 수익</td><td>3분</td></tr>
+  <tr><td><b>5</b></td><td>올리브영 글로벌</td><td>K-뷰티 특화 (링크프라이스로 대체 가능)</td><td>5분</td></tr>
+  <tr><td>6</td><td>네이버 인플루언서</td><td>블로그 있으면 (없으면 나중에)</td><td>10분</td></tr>
+  <tr><td>7</td><td>아마존</td><td>트래픽 올라온 후 (180일 조건)</td><td>10분</td></tr>
+</table>
+
+<div class="tip"><b>1~4번만 하면 30분</b>이면 끝! 이것만으로 쇼핑+여행+뷰티+숙소+앱 전부 커버됨.</div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== HanPocket 연결 맵 ===== -->
+<div class="section">
+<h2>HanPocket 탭별 어필리에이트 연결</h2>
+
+<table>
+  <tr><th>앱 탭</th><th>어필리에이트</th><th>연결 방식</th></tr>
+  <tr><td>쇼핑</td><td>쿠팡 파트너스</td><td>상품 추천 → 쿠팡 딥링크</td></tr>
+  <tr><td>쇼핑 (패션)</td><td>링크프라이스 → 무신사</td><td>패션 아이템 → 무신사 링크</td></tr>
+  <tr><td>여행 (액티비티)</td><td>클룩</td><td>체험/투어 → 클룩 예약 링크</td></tr>
+  <tr><td>여행 (숙소)</td><td>링크프라이스 → 야놀자/여기어때</td><td>숙소 추천 → 예약 링크</td></tr>
+  <tr><td>한류 (K-뷰티)</td><td>올리브영 or 링크프라이스</td><td>뷰티 추천 → 구매 링크</td></tr>
+  <tr><td>생활 (배달/편의점)</td><td>애드픽</td><td>앱 설치 캠페인 연결</td></tr>
+  <tr><td>금융 (카드/보험)</td><td>애드픽</td><td>카드 발급/보험 가입 CPA</td></tr>
+  <tr><td>맛집</td><td>링크프라이스 → 캐치테이블</td><td>예약 링크 (추후)</td></tr>
+</table>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 체크리스트 ===== -->
+<div class="section">
+<h2>최종 체크리스트</h2>
+<ul class="checklist">
+  <li>쿠팡 파트너스 가입 → 어필리에이트 ID 확인</li>
+  <li>링크프라이스 가입 → 올리브영/야놀자/여기어때/무신사 제휴 신청</li>
+  <li>클룩 어필리에이트 가입 → 승인 대기</li>
+  <li>애드픽 가입 → 금융/앱설치 캠페인 확인</li>
+  <li>올리브영 글로벌 어필리에이트 가입 (선택)</li>
+  <li>가입 완료된 ID/링크를 구월에게 전달</li>
+</ul>
+
+<div class="money"><b>총 소요시간:</b> 약 30분 (1~4번 기준)<br><b>비용:</b> 전부 무료!<br><b>예상 수익:</b> MAU 1,000명 → 월 30~50만원 / MAU 10,000명 → 월 300~500만원</div>
+</div>
+
+<div class="footer">HanPocket 어필리에이트 가이드 — 구월 작성</div>
+
+</body>
+</html>

@@ -533,7 +533,7 @@ function ChatTab({ profile, lang }) {
   )
 }
 
-function ProfileTab({ profile, setProfile, lang }) {
+function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   const s = t[lang]
   const [exp, setExp] = useState(profile.expiryDate || '')
   const [saved, setSaved] = useState(false)
@@ -662,6 +662,7 @@ function ProfileTab({ profile, setProfile, lang }) {
               alert(lang === 'ko' ? '알림이 이미 활성화되어 있습니다.' : lang === 'zh' ? '通知已启用。' : 'Notifications already enabled.')
             } else {
               localStorage.removeItem('hp_push_dismissed')
+              if (onResetPushDismiss) onResetPushDismiss()
               const { subscribePush } = await import('./utils/pushNotification')
               const sub = await subscribePush()
               if (sub) {
@@ -1257,7 +1258,7 @@ function AppInner() {
 
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
-        {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} />}
+        {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} />}
         <div className="mt-12 mb-6 text-center text-[11px] text-[#9CA3AF] space-y-1">
           <p className="text-[9px] text-[#9CA3AF] max-w-xs mx-auto leading-relaxed">
             {lang === 'ko' ? '본 앱의 정보는 참고용이며 법적 효력이 없습니다. 비자, 법률, 의료 관련 사항은 반드시 관련 기관에 직접 확인하시기 바랍니다.' 

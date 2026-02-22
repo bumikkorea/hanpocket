@@ -562,9 +562,9 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   ]
 
   return (
-    <div className="space-y-6 animate-fade-up bg-[#FAFAF8] font-['Inter'] p-6">
+    <div className="space-y-4 animate-fade-up font-['Inter']">
       {/* 1. 만료일 카드 */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#E5E7EB]">
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#E5E7EB]">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-[#F3F4F6] rounded-xl">
             <Calendar className="w-5 h-5 text-[#111827]" />
@@ -591,7 +591,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
           <div className={`mt-4 p-4 rounded-xl text-center font-bold text-lg ${
             days<=0?'bg-red-50 text-red-600 border border-red-200':days<=30?'bg-red-50 text-red-600 border border-red-200':days<=90?'bg-amber-50 text-amber-700 border border-amber-200':'bg-green-50 text-green-600 border border-green-200'
           }`}>
-            {days<=0 ? `🚨 ${s.expired}` : `D-${days}`}
+            {days<=0 ? s.expired : `D-${days}`}
             <div className="text-sm font-normal mt-1 opacity-80">
               {days > 0 && `${days} ${s.daysLeft}`}
             </div>

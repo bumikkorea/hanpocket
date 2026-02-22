@@ -90,10 +90,10 @@ function Onboarding({ onComplete, lang, setLang }) {
     }).catch(() => {})
   }, [])
 
-  // 스플래시 → 국적 선택으로 바로 전환
+  // 스플래시 → 유저타입 선택으로 전환
   useEffect(() => {
     if (step === 'splash') {
-      const timer = setTimeout(() => setStep('nationality'), 1800)
+      const timer = setTimeout(() => setStep('usertype'), 1800)
       return () => clearTimeout(timer)
     }
   }, [step])
@@ -124,13 +124,107 @@ function Onboarding({ onComplete, lang, setLang }) {
           </div>
         )}
 
+        {/*  유저타입 선택: 관광객 vs 거주자  */}
+        {step === 'usertype' && (
+          <div className="w-full max-w-sm animate-fade-up">
+            <div className="text-center mb-8">
+              <Logo />
+            </div>
+            <p className="text-[#6B7280] text-sm mb-6 text-center">
+              {L(lang, { ko: '어떻게 오셨나요?', zh: '您是哪种身份？', en: 'How are you visiting?' })}
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => setStep('login-tourist')}
+                className="w-full text-left bg-white border border-[#E5E7EB] text-[#111827] rounded-xl p-5 hover:border-[#111827]/40 transition-all btn-press shadow-sm">
+                <div className="font-semibold text-base mb-1">{L(lang, { ko: '관광객입니다', zh: '我是游客', en: "I'm a tourist" })}</div>
+                <div className="text-xs text-[#6B7280]">{L(lang, { ko: '단기 방문 / 여행', zh: '短期访问 / 旅行', en: 'Short-term visit / travel' })}</div>
+              </button>
+              <button
+                onClick={() => setStep('login-resident')}
+                className="w-full text-left bg-white border border-[#E5E7EB] text-[#111827] rounded-xl p-5 hover:border-[#111827]/40 transition-all btn-press shadow-sm">
+                <div className="font-semibold text-base mb-1">{L(lang, { ko: '한국 거주중입니다', zh: '我住在韩国', en: "I live in Korea" })}</div>
+                <div className="text-xs text-[#6B7280]">{L(lang, { ko: '유학 / 취업 / 장기체류', zh: '留学 / 就业 / 长期居留', en: 'Study / Work / Long-term stay' })}</div>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/*  관광객 로그인  */}
+        {step === 'login-tourist' && (
+          <div className="w-full max-w-sm animate-fade-up">
+            <div className="text-center mb-8">
+              <Logo />
+            </div>
+            <button onClick={() => setStep('usertype')} className="text-[#6B7280] text-sm mb-4">
+              {L(lang, { ko: '뒤로', zh: '返回', en: 'Back' })}
+            </button>
+            <p className="text-[#6B7280] text-sm mb-6">
+              {L(lang, { ko: '로그인하고 시작하세요', zh: '登录后开始使用', en: 'Log in to get started' })}
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => { /* TODO: WeChat OAuth */ setStep('nationality') }}
+                className="w-full flex items-center justify-center gap-3 bg-[#07C160] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.534c0 2.22 1.174 4.142 3.016 5.49a.75.75 0 01.27.87l-.458 1.597a.375.375 0 00.506.44l1.932-.901a.75.75 0 01.572-.036c1.014.305 2.1.472 3.228.472.169 0 .336-.005.502-.014a5.868 5.868 0 01-.254-1.718c0-3.56 3.262-6.45 7.282-6.45.215 0 .428.01.638.028C16.283 5.114 12.85 2.188 8.691 2.188zM5.785 7.095a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25zm5.813 0a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25z"/><path d="M23.997 15.268c0-3.29-3.262-5.96-7.285-5.96-4.023 0-7.285 2.67-7.285 5.96 0 3.292 3.262 5.96 7.285 5.96.89 0 1.746-.132 2.534-.375a.75.75 0 01.573.036l1.478.689a.375.375 0 00.506-.44l-.35-1.22a.75.75 0 01.27-.87c1.49-1.09 2.274-2.644 2.274-4.38zm-9.792-.75a.938.938 0 110-1.875.938.938 0 010 1.875zm5.015 0a.938.938 0 110-1.875.938.938 0 010 1.875z"/></svg>
+                {L(lang, { ko: 'WeChat으로 로그인', zh: '微信登录', en: 'Login with WeChat' })}
+              </button>
+              <button
+                onClick={() => { /* TODO: Alipay OAuth */ setStep('nationality') }}
+                className="w-full flex items-center justify-center gap-3 bg-[#1677FF] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M21.422 13.482C19.558 12.614 17.46 11.6 15.998 10.952c.72-1.748 1.164-3.678 1.164-5.202 0-1.554-.87-3.75-3.828-3.75-2.478 0-4.038 1.86-4.038 4.11 0 2.598 1.806 4.764 4.362 5.424-.498.804-1.104 1.518-1.788 2.118-1.62 1.416-3.456 2.13-5.454 2.13C4.146 15.782 2 14.258 2 11.988 2 6.468 7.098 2 13.332 2 19.566 2 22 6.468 22 11.988c0 .516-.03 1.02-.084 1.494h-.494z"/></svg>
+                {L(lang, { ko: 'Alipay로 로그인', zh: '支付宝登录', en: 'Login with Alipay' })}
+              </button>
+              <button
+                onClick={() => setStep('nationality')}
+                className="w-full text-center text-[#6B7280] text-sm mt-2 hover:text-[#111827] transition-colors">
+                {L(lang, { ko: '로그인 없이 둘러보기', zh: '不登录直接浏览', en: 'Browse without login' })}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/*  거주자 로그인  */}
+        {step === 'login-resident' && (
+          <div className="w-full max-w-sm animate-fade-up">
+            <div className="text-center mb-8">
+              <Logo />
+            </div>
+            <button onClick={() => setStep('usertype')} className="text-[#6B7280] text-sm mb-4">
+              {L(lang, { ko: '뒤로', zh: '返回', en: 'Back' })}
+            </button>
+            <p className="text-[#6B7280] text-sm mb-6">
+              {L(lang, { ko: '로그인하고 시작하세요', zh: '登录后开始使用', en: 'Log in to get started' })}
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => { /* TODO: Google OAuth */ setStep('nationality') }}
+                className="w-full flex items-center justify-center gap-3 bg-white border border-[#E5E7EB] text-[#111827] rounded-xl p-4 font-medium hover:bg-gray-50 transition-all btn-press shadow-sm">
+                <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+                {L(lang, { ko: 'Google로 로그인', zh: 'Google登录', en: 'Login with Google' })}
+              </button>
+              <button
+                onClick={() => { /* TODO: Apple OAuth */ setStep('nationality') }}
+                className="w-full flex items-center justify-center gap-3 bg-[#111827] text-white rounded-xl p-4 font-medium hover:opacity-90 transition-all btn-press shadow-sm">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                {L(lang, { ko: 'Apple로 로그인', zh: 'Apple登录', en: 'Login with Apple' })}
+              </button>
+              <button
+                onClick={() => setStep('nationality')}
+                className="w-full text-center text-[#6B7280] text-sm mt-2 hover:text-[#111827] transition-colors">
+                {L(lang, { ko: '로그인 없이 둘러보기', zh: '不登录直接浏览', en: 'Browse without login' })}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/*  국적 선택  */}
         {step === 'nationality' && (
           <div className="w-full max-w-sm animate-fade-up">
             <div className="text-center mb-8">
               <Logo />
             </div>
-            <button onClick={() => setStep('splash')} className="text-[#6B7280] text-sm mb-4">{s.back}</button>
+            <button onClick={() => setStep('usertype')} className="text-[#6B7280] text-sm mb-4">{s.back}</button>
             <p className="text-[#6B7280] text-sm mb-4">{s.selectNationality}</p>
             <div className="space-y-3">
               {nationalityOptions.map(opt => (

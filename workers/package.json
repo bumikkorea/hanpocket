@@ -1,0 +1,29 @@
+{
+  "name": "translate-proxy-worker",
+  "version": "1.0.0",
+  "description": "DeepSeek API translation proxy for Cloudflare Workers",
+  "main": "translate-proxy.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:prod": "wrangler deploy --env production",
+    "deploy:dev": "wrangler deploy --env development",
+    "secret:set": "wrangler secret put DEEPSEEK_API_KEY",
+    "tail": "wrangler tail",
+    "test": "curl -X POST https://translate-proxy.your-subdomain.workers.dev/api/translate -H 'Content-Type: application/json' -d '{\"text\":\"Hello World\",\"sourceLang\":\"en\",\"targetLang\":\"ko\"}'"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers", 
+    "translation",
+    "deepseek",
+    "api",
+    "proxy"
+  ],
+  "author": "AI Assistant",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "wrangler": "^3.22.1"
+  }
+}

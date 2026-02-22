@@ -1,0 +1,34 @@
+name = "translate-proxy"
+main = "translate-proxy.js"
+compatibility_date = "2024-02-23"
+compatibility_flags = ["nodejs_compat"]
+
+# 환경변수 설정
+# 실제 배포시에는 wrangler secret put DEEPSEEK_API_KEY 명령어로 설정해야 함
+[vars]
+# DEEPSEEK_API_KEY = "your-api-key-here"  # 개발용 - 프로덕션에서는 secret으로 관리
+
+# 프로덕션 환경 설정
+[env.production]
+name = "translate-proxy-prod"
+
+# 개발 환경 설정
+[env.development]
+name = "translate-proxy-dev"
+
+# 라우팅 설정 (선택사항)
+# [[routes]]
+# pattern = "translate.yourdomain.com/*"
+# zone_name = "yourdomain.com"
+
+# KV 네임스페이스 (캐싱용 - 필요시 활성화)
+# [[kv_namespaces]]
+# binding = "TRANSLATION_CACHE"
+# id = "your-kv-namespace-id"
+# preview_id = "your-preview-kv-namespace-id"
+
+# D1 데이터베이스 (로그용 - 필요시 활성화)
+# [[d1_databases]]
+# binding = "TRANSLATION_DB"
+# database_name = "translation-logs"
+# database_id = "your-d1-database-id"

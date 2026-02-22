@@ -1,5 +1,14 @@
-# HEARTBEAT.md
+# HEARTBEAT.md — 자율 작업 스케줄러
 
-# Keep this file empty (or with only comments) to skip heartbeat API calls.
+## 매 하트비트마다:
+1. `TASKQUEUE.md` 읽기
+2. 첫 번째 미완료(`[ ]`) 작업 찾기
+3. 실행 (서브에이전트 or 직접)
+4. 완료 체크 + 로그 기록
+5. 범범뻠에게 알릴 필요 있으면 알림, 없으면 HEARTBEAT_OK 대신 조용히 작업
 
-# Add tasks below when you want the agent to check something periodically.
+## 알림 규칙:
+- 작업 완료 → 조용히 로그만 (알림 X)
+- 에러/실패 → 범범뻠에게 알림
+- 결정 필요 → 범범뻠에게 질문
+- 큰 마일스톤 달성 → 간단히 보고

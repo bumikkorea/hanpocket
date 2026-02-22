@@ -654,7 +654,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
       </button>
 
       {/* 4. 알림 설정 */}
-      {isPushSupported() && (
+      {(
         <button
           onClick={async () => {
             if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {

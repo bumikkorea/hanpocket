@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, Component } from 'react'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2 } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2 } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -862,9 +862,8 @@ function AppInner() {
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'transition', icon: Shield, label: { ko: '비자', zh: '签证', en: 'Visa' } },
-    { id: 'explore', icon: Grid3x3, label: { ko: '탐색', zh: '探索', en: 'Explore' } },
     { id: 'tools', icon: Wrench, label: { ko: '도구', zh: '工具', en: 'Tools' } },
+    { id: 'community', icon: Users, label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
     { id: 'profile', icon: User, label: { ko: '내정보', zh: '我的', en: 'Me' } },
   ]
 
@@ -883,6 +882,17 @@ function AppInner() {
   ]
 
   const toolItems = [
+    { id: 'transition', label: { ko: '비자', zh: '签证', en: 'Visa' }, color: '#111827' },
+    { id: 'travel', label: { ko: '여행', zh: '旅行', en: 'Travel' }, color: '#4285F4' },
+    { id: 'food', label: { ko: '맛집', zh: '美食', en: 'Food' }, color: '#EA4335' },
+    { id: 'shopping', label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, color: '#FBBC05' },
+    { id: 'hallyu', label: { ko: '한류', zh: '韩流', en: 'Hallyu' }, color: '#34A853' },
+    { id: 'learn', label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#4285F4' },
+    { id: 'life', label: { ko: '생활', zh: '生活', en: 'Life' }, color: '#EA4335' },
+    { id: 'jobs', label: { ko: '구직', zh: '求职', en: 'Jobs' }, color: '#FBBC05' },
+    { id: 'housing', label: { ko: '부동산', zh: '房产', en: 'Housing' }, color: '#34A853' },
+    { id: 'medical', label: { ko: '의료', zh: '医疗', en: 'Medical' }, color: '#4285F4' },
+    { id: 'fitness', label: { ko: '운동', zh: '运动', en: 'Fitness' }, color: '#EA4335' },
     { id: 'translator', label: { ko: '통역', zh: '翻译', en: 'Translate' }, color: '#4285F4' },
     { id: 'artranslate', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict' }, color: '#34A853' },
     { id: 'sos', label: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, color: '#EA4335' },

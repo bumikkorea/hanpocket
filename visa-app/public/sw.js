@@ -1,89 +1,134 @@
-const CACHE_NAME = 'hanpocket-v1'
-const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/icon.svg',
-  '/manifest.json'
-]
+const CACHE_NAME = 'hanpocket-v2'
+const STATIC_ASSETS = ['/', '/index.html']
 
-// Install event - cache static assets
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(STATIC_ASSETS))
-      .then(() => self.skipWaiting())
+// Install
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(c => c.addAll(STATIC_ASSETS))
   )
+  self.skipWaiting()
 })
 
-// Activate event - clean up old caches
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName)
-          }
-        })
-      )
-    }).then(() => self.clients.claim())
-  )
-})
-
-// Fetch event - cache-first for static assets, network-first for API calls
-self.addEventListener('fetch', (event) => {
-  const { request } = event
-  const url = new URL(request.url)
-
-  // Skip cross-origin requests and non-GET requests
-  if (url.origin !== location.origin || request.method !== 'GET') {
-    return
-  }
-
-  // Network-first for API calls
-  if (url.pathname.includes('/api/') || url.hostname.includes('api.') || url.hostname.includes('exchangerate') || url.hostname.includes('wttr.in')) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          // Optionally cache successful API responses
-          if (response.status === 200) {
-            const responseClone = response.clone()
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseClone)
-            })
-          }
-          return response
-        })
-        .catch(() => {
-          // Return cached version if network fails
-          return caches.match(request)
-        })
+// Activate
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
-    return
+  )
+  self.clients.claim()
+})
+
+// Fetch — cache-first for static, network-first for API
+self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url)
+  if (url.pathname.startsWith('/api') || url.hostname !== location.hostname) {
+    e.respondWith(
+      fetch(e.request).catch(() => caches.match(e.request))
+    )
+  } else {
+    e.respondWith(
+      caches.match(e.request).then(r => r || fetch(e.request))
+    )
+  }
+})
+
+// ─── Push Notification ───
+self.addEventListener('push', e => {
+  let data = { title: 'HanPocket', body: '새로운 알림이 있습니다.', icon: '/icon.svg', badge: '/icon.svg' }
+  
+  if (e.data) {
+    try {
+      const payload = e.data.json()
+      data = { ...data, ...payload }
+    } catch {
+      data.body = e.data.text()
+    }
   }
 
-  // Cache-first for static assets
-  event.respondWith(
-    caches.match(request)
-      .then((response) => {
-        if (response) {
-          return response
-        }
-        return fetch(request)
-          .then((response) => {
-            // Don't cache non-successful responses
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response
-            }
-            
-            const responseToCache = response.clone()
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(request, responseToCache)
-              })
-            
-            return response
-          })
-      })
+  const options = {
+    body: data.body,
+    icon: data.icon || '/icon.svg',
+    badge: data.badge || '/icon.svg',
+    vibrate: [200, 100, 200],
+    tag: data.tag || 'hanpocket-notification',
+    renotify: true,
+    data: {
+      url: data.url || '/',
+      type: data.type || 'general'
+    },
+    actions: data.actions || []
+  }
+
+  e.waitUntil(
+    self.registration.showNotification(data.title, options)
   )
 })
+
+// ─── Notification Click ───
+self.addEventListener('notificationclick', e => {
+  e.notification.close()
+  
+  const url = e.notification.data?.url || '/'
+  
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(windowClients => {
+      for (const client of windowClients) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.postMessage({ type: 'NOTIFICATION_CLICK', url, data: e.notification.data })
+          return client.focus()
+        }
+      }
+      return clients.openWindow(url)
+    })
+  )
+})
+
+// ─── Background Sync (for offline actions) ───
+self.addEventListener('sync', e => {
+  if (e.tag === 'check-visa-dday') {
+    e.waitUntil(checkVisaDday())
+  }
+})
+
+async function checkVisaDday() {
+  // This runs when connectivity is restored
+  // Can check localStorage via postMessage to client
+  const windowClients = await clients.matchAll({ type: 'window' })
+  for (const client of windowClients) {
+    client.postMessage({ type: 'CHECK_VISA_DDAY' })
+  }
+}
+
+// ─── Periodic Background Sync (if supported) ───
+self.addEventListener('periodicsync', e => {
+  if (e.tag === 'visa-dday-check') {
+    e.waitUntil(notifyVisaDday())
+  }
+})
+
+async function notifyVisaDday() {
+  // Read from cache or IndexedDB for D-day data
+  try {
+    const cache = await caches.open('hanpocket-data')
+    const response = await cache.match('/data/visa-profile')
+    if (response) {
+      const profile = await response.json()
+      if (profile.visaExpiry) {
+        const dday = Math.ceil((new Date(profile.visaExpiry) - new Date()) / 86400000)
+        if (dday <= 30 && dday > 0) {
+          await self.registration.showNotification('HanPocket 비자 알림', {
+            body: `비자 만료 D-${dday}일 남았습니다. 연장 준비하세요!`,
+            icon: '/icon.svg',
+            badge: '/icon.svg',
+            vibrate: [200, 100, 200],
+            tag: 'visa-dday',
+            data: { url: '/?tab=visaalert', type: 'visa' }
+          })
+        }
+      }
+    }
+  } catch (err) {
+    // Silently fail
+  }
+}

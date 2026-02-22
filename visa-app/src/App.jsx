@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, Component } from 'react'
+import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
 import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2 } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
@@ -226,6 +227,14 @@ function Onboarding({ onComplete, lang, setLang }) {
 
 function NoticePopup({ lang, onClose }) {
   const s = t[lang]
+  const handleDismiss = (type) => {
+    if (type === 'forever') {
+      localStorage.setItem('hp_notice_dismiss', 'forever')
+    } else if (type === 'today') {
+      localStorage.setItem('hp_notice_dismiss', new Date().toDateString())
+    }
+    onClose()
+  }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-hidden shadow-2xl animate-fade-up">
@@ -251,10 +260,19 @@ function NoticePopup({ lang, onClose }) {
             {dataSources[lang]?.map((src, i) => <p key={i} className="text-xs text-[#9CA3AF]">{src}</p>)}
           </div>
         </div>
-        <div className="p-4 border-t border-[#E5E7EB]">
-          <button onClick={onClose} className="w-full bg-[#111827] text-white font-semibold py-3 rounded-xl hover:bg-[#1F2937] transition-all btn-press">
+        <div className="p-4 border-t border-[#E5E7EB] space-y-2">
+          <button onClick={() => handleDismiss('close')} className="w-full bg-[#111827] text-white font-semibold py-3 rounded-xl hover:bg-[#1F2937] transition-all btn-press">
             {s.noticeClose}
           </button>
+          <div className="flex justify-center gap-4">
+            <button onClick={() => handleDismiss('today')} className="text-[11px] text-[#9CA3AF] hover:text-[#6B7280] transition-colors">
+              {lang === 'ko' ? '오늘 하루 보지 않기' : lang === 'zh' ? '今天不再显示' : "Don't show today"}
+            </button>
+            <span className="text-[11px] text-[#D1D5DB]">|</span>
+            <button onClick={() => handleDismiss('forever')} className="text-[11px] text-[#9CA3AF] hover:text-[#6B7280] transition-colors">
+              {lang === 'ko' ? '다시 보지 않기' : lang === 'zh' ? '不再显示' : "Don't show again"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -856,9 +874,24 @@ function AppInner() {
     }).catch(() => {})
   }, [])
 
+  // Push notification setup
+  useEffect(() => {
+    if (!profile || !isPushSupported()) return
+    // Auto-subscribe after 3 seconds (give page time to load)
+    const timer = setTimeout(async () => {
+      await subscribePush()
+      await registerPeriodicSync()
+      if (profile.visaExpiry) {
+        await cacheVisaProfile(profile)
+        scheduleDdayCheck(profile.visaExpiry)
+      }
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [profile])
+
   const [subPage, setSubPage] = useState(null)
 
-  if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); setLang(p.lang||'zh'); setShowNotice(true) }} />
+  if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); setLang(p.lang||'zh'); void 0 }} />
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
@@ -869,27 +902,24 @@ function AppInner() {
   ]
 
   const exploreItems = [
-    { id: 'travel', label: { ko: '여행', zh: '旅行', en: 'Travel' }, color: '#4285F4' },
-    { id: 'food', label: { ko: '맛집', zh: '美食', en: 'Food' }, color: '#EA4335' },
-    { id: 'shopping', label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, color: '#FBBC05' },
-    { id: 'hallyu', label: { ko: '한류', zh: '韩流', en: 'Hallyu' }, color: '#34A853' },
-    { id: 'learn', label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#4285F4' },
-    { id: 'life', label: { ko: '생활', zh: '生活', en: 'Life' }, color: '#EA4335' },
-    { id: 'jobs', label: { ko: '구직', zh: '求职', en: 'Jobs' }, color: '#FBBC05' },
-    { id: 'housing', label: { ko: '부동산', zh: '房产', en: 'Housing' }, color: '#34A853' },
-    { id: 'medical', label: { ko: '의료', zh: '医疗', en: 'Medical' }, color: '#4285F4' },
-    { id: 'fitness', label: { ko: '운동', zh: '运动', en: 'Fitness' }, color: '#EA4335' },
-    { id: 'community', label: { ko: '커뮤니티', zh: '社区', en: 'Community' }, color: '#34A853' },
+    { id: 'travel', label: { ko: '여행 (완료)', zh: '旅行 (完成)', en: 'Travel (Done)' } },
+    { id: 'food', label: { ko: '맛집 (완료)', zh: '美食 (完成)', en: 'Food (Done)' } },
+    { id: 'shopping', label: { ko: '쇼핑 (수정중)', zh: '购物 (修改中)', en: 'Shopping (WIP)' } },
+    { id: 'hallyu', label: { ko: '한류 (수정중)', zh: '韩流 (修改中)', en: 'Hallyu (WIP)' } },
+    { id: 'learn', label: { ko: '한국어 (완료)', zh: '韩语 (完成)', en: 'Korean (Done)' } },
+    { id: 'life', label: { ko: '생활 (수정중)', zh: '生活 (修改中)', en: 'Life (WIP)' } },
+    { id: 'medical', label: { ko: '의료 (수정중)', zh: '医疗 (修改中)', en: 'Medical (WIP)' } },
+    { id: 'fitness', label: { ko: '운동 (수정중)', zh: '运动 (修改中)', en: 'Fitness (WIP)' } },
+    { id: 'community', label: { ko: '커뮤니티 (수정중)', zh: '社区 (修改中)', en: 'Community (WIP)' } },
   ]
 
   const toolItems = [
-    { id: 'translator', label: { ko: '통역', zh: '翻译', en: 'Translate' }, color: '#4285F4' },
-    { id: 'artranslate', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict' }, color: '#34A853' },
-    { id: 'sos', label: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, color: '#EA4335' },
-    { id: 'finance', label: { ko: '금융', zh: '金融', en: 'Finance' }, color: '#FBBC05' },
-    { id: 'wallet', label: { ko: '월렛', zh: '钱包', en: 'Wallet' }, color: '#4285F4' },
-    { id: 'resume', label: { ko: '이력서', zh: '简历', en: 'Resume' }, color: '#34A853' },
-    { id: 'visaalert', label: { ko: '비자 알림', zh: '签证提醒', en: 'Visa Alert' }, color: '#EA4335' },
+    { id: 'translator', label: { ko: '통역 (수정중)', zh: '翻译 (修改中)', en: 'Translate (WIP)' } },
+    { id: 'artranslate', label: { ko: '간판 사전 (수정중)', zh: '招牌词典 (修改中)', en: 'Sign Dict (WIP)' } },
+    { id: 'sos', label: { ko: 'SOS (완료)', zh: 'SOS (完成)', en: 'SOS (Done)' } },
+    { id: 'finance', label: { ko: '금융 (수정중)', zh: '金融 (修改中)', en: 'Finance (WIP)' } },
+    { id: 'wallet', label: { ko: '월렛 (수정중)', zh: '钱包 (修改中)', en: 'Wallet (WIP)' } },
+    { id: 'visaalert', label: { ko: '비자 알림 (완료)', zh: '签证提醒 (完成)', en: 'Visa Alert (Done)' } },
   ]
 
   // Keep old tabs array for compatibility
@@ -904,7 +934,6 @@ function AppInner() {
         { label: { ko: '비자 변경/전환', zh: '签证变更', en: 'Visa Change' }, action: () => { setTab('transition'); setView('transition') } },
         { label: { ko: 'D-day 알림', zh: 'D-day提醒', en: 'D-day Alert' }, action: () => { setTab('visaalert') } },
         { label: { ko: '서류 대행', zh: '文件代办', en: 'Document Services' }, action: () => { setTab('transition'); setView('agency') } },
-        { label: { ko: '자동 상담', zh: '自动咨询', en: 'Auto Consult' }, action: () => { setTab('chat') } },
       ],
     },
     travel: {
@@ -1133,11 +1162,8 @@ function AppInner() {
             <div className="grid grid-cols-3 gap-3">
               {exploreItems.map(item => (
                 <button key={item.id} onClick={() => { setSubPage(item.id) }}
-                  className="bg-white rounded-2xl p-4 flex flex-col items-center gap-2 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{ background: item.color }}>
-                    {L(lang, item.label).charAt(0)}
-                  </div>
-                  <span className="text-xs text-[#202124] font-medium">{L(lang, item.label)}</span>
+                  className="bg-white rounded-2xl p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+                  <span className="text-sm text-[#111827] font-medium tracking-wide">{L(lang, item.label)}</span>
                 </button>
               ))}
             </div>
@@ -1151,11 +1177,8 @@ function AppInner() {
             <div className="grid grid-cols-3 gap-3">
               {toolItems.map(item => (
                 <button key={item.id} onClick={() => { setSubPage(item.id) }}
-                  className="bg-white rounded-2xl p-4 flex flex-col items-center gap-2 shadow-sm hover:shadow-md transition-shadow">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{ background: item.color }}>
-                    {L(lang, item.label).charAt(0)}
-                  </div>
-                  <span className="text-xs text-[#202124] font-medium">{L(lang, item.label)}</span>
+                  className="bg-white rounded-2xl p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+                  <span className="text-sm text-[#111827] font-medium tracking-wide">{L(lang, item.label)}</span>
                 </button>
               ))}
             </div>
@@ -1169,8 +1192,6 @@ function AppInner() {
         {subPage==='hallyu' && <HallyuTab lang={lang} setTab={(t) => setSubPage(t)} />}
         {subPage==='learn' && <EducationTab lang={lang} />}
         {subPage==='life' && <LifeToolsTab lang={lang} setTab={(t) => setSubPage(t)} />}
-        {subPage==='jobs' && <JobsTab lang={lang} profile={profile} />}
-        {subPage==='housing' && <HousingTab lang={lang} profile={profile} />}
         {subPage==='medical' && <MedicalTab lang={lang} />}
         {subPage==='fitness' && <FitnessTab lang={lang} />}
         {subPage==='community' && <CommunityTab lang={lang} profile={profile} />}
@@ -1179,7 +1200,6 @@ function AppInner() {
         {subPage==='sos' && <SOSTab lang={lang} profile={profile} />}
         {subPage==='finance' && <FinanceTab lang={lang} profile={profile} />}
         {subPage==='wallet' && <DigitalWalletTab lang={lang} profile={profile} />}
-        {subPage==='resume' && <ResumeTab lang={lang} profile={profile} />}
         {subPage==='visaalert' && <VisaAlertTab lang={lang} profile={profile} />}
 
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}

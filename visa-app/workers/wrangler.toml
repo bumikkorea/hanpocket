@@ -1,0 +1,10 @@
+name = "hanpocket-push"
+main = "push-server.js"
+compatibility_date = "2024-01-01"
+
+[triggers]
+crons = ["0 0 * * *"]
+
+[[kv_namespaces]]
+binding = "PUSH_SUBSCRIPTIONS"
+id = "a05b3892053a45f5bf8f6e5bcfa60ad1"

@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Heart, MessageSquare, Plus, ChevronLeft, Send, Image, X, Clock, Tag, User } from 'lucide-react'
+import { Heart, MessageSquare, Plus, ChevronLeft, Send, Image, X, Clock, Tag, User, Briefcase, Home, FileText } from 'lucide-react'
+import JobsTab from './JobsTab'
+import HousingTab from './HousingTab'
+import ResumeTab from './ResumeTab'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -47,6 +50,7 @@ function loadPosts() {
 
 export default function CommunityTab({ lang, profile }) {
   const [subTab, setSubTab] = useState('community')
+  const [communitySection, setCommunitySection] = useState('board') // board | jobs | housing | resume
   const [posts, setPosts] = useState(() => loadPosts())
   const [selectedPost, setSelectedPost] = useState(null)
   const [showCreate, setShowCreate] = useState(false)
@@ -194,6 +198,26 @@ export default function CommunityTab({ lang, profile }) {
 
   return (
     <div className="space-y-4 animate-fade-up">
+      {/* Section navigation */}
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {[
+          { id: 'board', label: { ko: '게시판', zh: '论坛', en: 'Board' } },
+          { id: 'jobs', label: { ko: '구직', zh: '求职', en: 'Jobs' } },
+          { id: 'housing', label: { ko: '부동산', zh: '房产', en: 'Housing' } },
+          { id: 'resume', label: { ko: '이력서', zh: '简历', en: 'Resume' } },
+        ].map(s => (
+          <button key={s.id} onClick={() => setCommunitySection(s.id)}
+            className={`shrink-0 px-4 py-2 text-sm font-semibold rounded-xl transition-all ${communitySection === s.id ? 'bg-[#111827] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'}`}>
+            {L(lang, s.label)}
+          </button>
+        ))}
+      </div>
+
+      {communitySection === 'jobs' && <JobsTab lang={lang} profile={profile} />}
+      {communitySection === 'housing' && <HousingTab lang={lang} profile={profile} />}
+      {communitySection === 'resume' && <ResumeTab lang={lang} profile={profile} />}
+
+      {communitySection === 'board' && <>
       {/* Demo notice */}
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
         {lang === 'ko' ? '현재 데모 버전입니다. 게시글은 이 기기에서만 보입니다.' 
@@ -263,6 +287,7 @@ export default function CommunityTab({ lang, profile }) {
           </div>
         )}
       </div>
+      </>}
     </div>
   )
 }

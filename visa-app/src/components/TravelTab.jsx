@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Plane, Train, Bus, Car, MapPin, Clock, DollarSign, Calendar, ChevronRight, ExternalLink, CreditCard, Bike, Building2, Ticket, Navigation, Shield } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Plane, Train, Bus, Car, MapPin, Clock, DollarSign, Calendar, ChevronRight, ExternalLink, CreditCard, Bike, Building2, Ticket, Navigation, Shield, Filter, Star, Heart, Users } from 'lucide-react'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -14,8 +14,8 @@ const SECTIONS = [
 
 const AIRPORTS = [
   { code: 'ICN', name: { ko: '인천국제공항', zh: '仁川国际机场', en: 'Incheon Intl Airport' }, terminals: 'T1, T2', toCity: [
-    { method: { ko: 'AREX 직통열차', zh: 'AREX直达列车', en: 'AREX Express' }, time: '43min', price: '₩9,500', dest: { ko: '서울역', zh: '首尔站', en: 'Seoul Stn' } },
-    { method: { ko: '공항 리무진버스', zh: '机场大巴', en: 'Airport Limousine' }, time: '60~90min', price: '₩16,000', dest: { ko: '서울 주요지역', zh: '首尔主要地区', en: 'Major Seoul areas' } },
+    { method: { ko: 'AREX 직통열차', zh: 'AREX直达列车', en: 'AREX Express' }, time: '43min', price: '₩10,300', dest: { ko: '서울역', zh: '首尔站', en: 'Seoul Stn' } },
+    { method: { ko: '공항 리무진버스', zh: '机场大巴', en: 'Airport Limousine' }, time: '60~90min', price: '₩17,000', dest: { ko: '서울 주요지역', zh: '首尔主要地区', en: 'Major Seoul areas' } },
     { method: { ko: '택시', zh: '出租车', en: 'Taxi' }, time: '60~80min', price: '₩65,000~80,000', dest: { ko: '서울 시내', zh: '首尔市内', en: 'Seoul city' } },
   ]},
   { code: 'GMP', name: { ko: '김포국제공항', zh: '金浦国际机场', en: 'Gimpo Intl Airport' }, terminals: 'Intl, Dom', toCity: [
@@ -72,17 +72,17 @@ const TRANSPORT = [
   { name: { ko: '지하철', zh: '地铁', en: 'Subway' }, icon: Train, info: [
     { ko: '서울: 1~9호선 + 신분당선 + 경의중앙 등', zh: '首尔：1~9号线+新盆唐线+京义中央线等', en: 'Seoul: Lines 1-9 + Sinbundang + more' },
     { ko: '부산: 1~4호선', zh: '釜山：1~4号线', en: 'Busan: Lines 1-4' },
-    { ko: '기본요금: ₩1,400 (T-money) / ₩1,500 (1회권)', zh: '基本票价：₩1,400（T-money）/ ₩1,500（单程票）', en: 'Base fare: ₩1,400 (T-money) / ₩1,500 (single ticket)' },
+    { ko: '기본요금: ₩1,500 (T-money) / ₩1,600 (1회권)', zh: '基本票价：₩1,500（T-money）/ ₩1,600（单程票）', en: 'Base fare: ₩1,500 (T-money) / ₩1,600 (single ticket)' },
     { ko: '운행시간: 05:30~24:00', zh: '运营时间：05:30~24:00', en: 'Hours: 05:30~24:00' },
   ]},
   { name: 'KTX', icon: Train, info: [
-    { ko: '서울→부산: 2시간 30분, ₩59,800', zh: '首尔→釜山：2小时30分，₩59,800', en: 'Seoul→Busan: 2.5h, ₩59,800' },
+    { ko: '서울→부산: 2시간 30분, ₩63,500', zh: '首尔→釜山：2小时30分，₩63,500', en: 'Seoul→Busan: 2.5h, ₩63,500' },
     { ko: '서울→대전: 1시간, ₩23,700', zh: '首尔→大田：1小时，₩23,700', en: 'Seoul→Daejeon: 1h, ₩23,700' },
     { ko: '서울→광주: 1시간 30분, ₩42,600', zh: '首尔→光州：1小时30分，₩42,600', en: 'Seoul→Gwangju: 1.5h, ₩42,600' },
     { ko: '예매: 코레일앱 / SRT앱 / 역 창구', zh: '预订：Korail APP / SRT APP / 车站窗口', en: 'Book: Korail app / SRT app / station counter' },
   ]},
   { name: { ko: '택시', zh: '出租车', en: 'Taxi' }, icon: Car, info: [
-    { ko: '기본요금: ₩4,800 (서울, 1.6km)', zh: '起步价：₩4,800（首尔，1.6km）', en: 'Base fare: ₩4,800 (Seoul, 1.6km)' },
+    { ko: '기본요금: ₩5,200 (서울, 1.6km)', zh: '起步价：₩5,200（首尔，1.6km）', en: 'Base fare: ₩5,200 (Seoul, 1.6km)' },
     { ko: '심야할증: 20% (22:00~04:00)', zh: '夜间加价：20%（22:00~04:00）', en: 'Late-night surcharge: 20% (22:00~04:00)' },
     { ko: '카카오T 앱 추천 (한국어 필요 없이 목적지 입력)', zh: '推荐KakaoT APP（无需韩语即可输入目的地）', en: 'Recommend KakaoT app (no Korean needed)' },
     { ko: '국제택시: 영어/중국어 가능 (예약 필요)', zh: '国际出租车：可用英语/中文（需预约）', en: 'Intl taxi: English/Chinese available (reservation needed)' },
@@ -136,9 +136,37 @@ const PARKS = [
 
 const card = "bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow"
 
-export default function TravelTab({ lang, setTab }) {
+// 개인화 추천을 위한 사용자 관심사 추적
+function getUserInterests() {
+  try { return JSON.parse(localStorage.getItem('travel_interests') || '{}') } catch { return {} }
+}
+
+function saveUserInterest(category) {
+  const interests = getUserInterests()
+  interests[category] = (interests[category] || 0) + 1
+  localStorage.setItem('travel_interests', JSON.stringify(interests))
+}
+
+export default function TravelTab({ lang, setTab, profile }) {
   const [section, setSection] = useState('arrival')
   const [expandedCity, setExpandedCity] = useState(null)
+  const [userInterests, setUserInterests] = useState(getUserInterests)
+  const [favorites, setFavorites] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('travel_favorites') || '[]') } catch { return [] }
+  })
+
+  const toggleFavorite = (id) => {
+    const updated = favorites.includes(id) 
+      ? favorites.filter(f => f !== id)
+      : [...favorites, id]
+    setFavorites(updated)
+    localStorage.setItem('travel_favorites', JSON.stringify(updated))
+  }
+
+  const trackInterest = (category) => {
+    saveUserInterest(category)
+    setUserInterests(getUserInterests())
+  }
 
   return (
     <div className="space-y-4">

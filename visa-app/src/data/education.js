@@ -40,7 +40,13 @@ export const sessions = [
     color: 'from-green-500 to-emerald-600',
     topikLevel: '1',
     units: [
-      { day: 1, title: { ko: '자기소개 하기', zh: '自我介绍', en: 'Self-introduction' } },
+      { day: 1, title: { ko: '자기소개 하기', zh: '自我介绍', en: 'Self-introduction' }, 
+        pronunciation: [
+          { word: '안녕하세요', pronunciation: 'an-nyeong-ha-se-yo', meaning: { ko: '인사말', zh: '问候语', en: 'greeting' } },
+          { word: '저는', pronunciation: 'jeo-neun', meaning: { ko: '나는 (정중하게)', zh: '我（敬语）', en: 'I am (polite)' } },
+          { word: '입니다', pronunciation: 'im-ni-da', meaning: { ko: '~입니다', zh: '是', en: 'is/am' } }
+        ] 
+      },
       { day: 2, title: { ko: '숫자 1-100 (한자어)', zh: '数字 1-100（汉字词）', en: 'Numbers 1-100 (Sino-Korean)' } },
       { day: 3, title: { ko: '숫자 하나-열 (고유어)', zh: '数字 一-十（固有词）', en: 'Numbers 1-10 (Native Korean)' } },
       { day: 4, title: { ko: '시간 말하기', zh: '表达时间', en: 'Telling time' } },

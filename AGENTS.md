@@ -52,6 +52,12 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - `trash` > `rm` (recoverable beats gone forever)
 - When in doubt, ask.
 
+### 필수 사전 알림 (3대 원칙)
+아래 3가지에 해당하면 **실행 전 반드시** 범범뻠에게 알림:
+1. **💰 과금 가능성** — API 호출 비용, 클라우드 서비스 요금, 유료 플랜 전환, 구독 등
+2. **🔒 보안 우려** — 키/토큰 노출, 권한 변경, 외부 접근 허용, 인증 정보 저장 등
+3. **⚠️ 기타 피해** — 데이터 손실, 계정 정지 위험, 법적 문제, 되돌릴 수 없는 작업 등
+
 ## External vs Internal
 
 **Safe to do freely:**

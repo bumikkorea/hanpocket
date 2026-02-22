@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Bell, BellOff, Calendar, CheckCircle2, Circle, Clock, ExternalLink, AlertTriangle, Shield, ChevronRight } from 'lucide-react'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
@@ -71,6 +71,9 @@ export default function VisaAlertTab({ lang, profile }) {
   const [checkedItems, setCheckedItems] = useState(() => {
     try { return JSON.parse(localStorage.getItem('hp_visa_checked') || '{}') } catch { return {} }
   })
+  const [alertsSet, setAlertsSet] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('hp_visa_alerts') || '[]') } catch { return [] }
+  })
 
   const days = getDaysUntil(profile?.visaExpiry || profile?.expiryDate)
   const visaType = profile?.currentVisa || 'default'
@@ -86,6 +89,73 @@ export default function VisaAlertTab({ lang, profile }) {
     if (!('Notification' in window)) return
     const perm = await Notification.requestPermission()
     setNotifGranted(perm === 'granted')
+    
+    if (perm === 'granted') {
+      setupAlerts()
+    }
+  }
+
+  // 실제 알림 설정 함수
+  const setupAlerts = () => {
+    if (!notifGranted || !profile?.expiryDate) return
+
+    const expiryDate = new Date(profile.expiryDate)
+    const now = new Date()
+    const alertDays = [90, 60, 30, 14, 7, 3, 1]
+    const newAlerts = []
+
+    alertDays.forEach(daysBefore => {
+      const alertDate = new Date(expiryDate)
+      alertDate.setDate(alertDate.getDate() - daysBefore)
+      
+      if (alertDate > now) {
+        const timeUntilAlert = alertDate.getTime() - now.getTime()
+        
+        if (timeUntilAlert <= 2147483647) { // setTimeout 최대값
+          const timeoutId = setTimeout(() => {
+            const message = daysBefore === 1 
+              ? (lang === 'ko' ? '⚠️ 비자가 내일 만료됩니다!' : lang === 'zh' ? '⚠️ 签证明天到期！' : '⚠️ Visa expires tomorrow!')
+              : (lang === 'ko' ? `⏰ 비자 만료 ${daysBefore}일 전입니다` : lang === 'zh' ? `⏰ 签证还有${daysBefore}天到期` : `⏰ ${daysBefore} days until visa expiry`)
+            
+            new Notification('HanPocket 비자 알림', {
+              body: message,
+              icon: '/favicon.ico',
+              badge: '/favicon.ico',
+              tag: `visa-alert-${daysBefore}`,
+              requireInteraction: daysBefore <= 7
+            })
+          }, timeUntilAlert)
+          
+          newAlerts.push({ daysBefore, timeoutId, alertDate: alertDate.toISOString() })
+        }
+      }
+    })
+
+    // 기존 알림 취소
+    alertsSet.forEach(alert => {
+      if (alert.timeoutId) {
+        clearTimeout(alert.timeoutId)
+      }
+    })
+
+    setAlertsSet(newAlerts)
+    localStorage.setItem('hp_visa_alerts', JSON.stringify(newAlerts.map(a => ({ daysBefore: a.daysBefore, alertDate: a.alertDate }))))
+  }
+
+  // 컴포넌트 마운트 시 알림 설정
+  useEffect(() => {
+    if (notifGranted && profile?.expiryDate) {
+      setupAlerts()
+    }
+  }, [notifGranted, profile?.expiryDate])
+
+  // 테스트 알림 함수
+  const testNotification = () => {
+    if (!notifGranted) return
+    new Notification('HanPocket 테스트', {
+      body: lang === 'ko' ? '알림이 정상 작동합니다!' : lang === 'zh' ? '通知功能正常！' : 'Notifications are working!',
+      icon: '/favicon.ico'
+    })
   }
 
   const colorClass = days === null ? 'text-[#9CA3AF]'
@@ -131,7 +201,7 @@ export default function VisaAlertTab({ lang, profile }) {
 
       {/* Notification Permission */}
       <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             {notifGranted ? <Bell size={18} className="text-green-600" /> : <BellOff size={18} className="text-[#9CA3AF]" />}
             <div>
@@ -145,6 +215,17 @@ export default function VisaAlertTab({ lang, profile }) {
             </button>
           )}
         </div>
+        
+        {notifGranted && (
+          <div className="flex gap-2 pt-2 border-t border-[#F3F4F6]">
+            <button onClick={testNotification} className="px-3 py-1.5 bg-[#F3F4F6] text-[#111827] text-xs font-semibold rounded-lg hover:bg-[#E5E7EB] transition-colors">
+              {L(lang, { ko: '테스트 알림', zh: '测试通知', en: 'Test Notification' })}
+            </button>
+            <div className="text-xs text-[#9CA3AF] flex items-center">
+              {alertsSet.length > 0 && `${alertsSet.length}${L(lang, { ko: '개 알림 설정됨', zh: '个提醒已设置', en: ' alerts set' })}`}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Monthly Checklist */}

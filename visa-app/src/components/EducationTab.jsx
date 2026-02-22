@@ -1,9 +1,92 @@
 import { useState, useEffect } from 'react'
+import { Play, Volume2, Mic, Award, Target, CheckCircle, XCircle, ChevronLeft } from 'lucide-react'
 import { sessions, minimaps, xpRules, levelTitles, getLevelFromXp, getNextLevelXp, levels } from '../data/education'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
+}
+
+// TTS 유틸리티
+function speakKorean(text, rate = 0.7) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text)
+    utterance.lang = 'ko-KR'
+    utterance.rate = rate
+    utterance.pitch = 1.1
+    speechSynthesis.speak(utterance)
+  }
+}
+
+// 발음 연습을 위한 미니 퀴즈 컴포넌트
+function PronunciationQuiz({ word, pronunciation, meaning, lang, onComplete }) {
+  const [isListening, setIsListening] = useState(false)
+  const [result, setResult] = useState(null)
+  
+  const handleSpeak = () => {
+    speakKorean(word)
+  }
+
+  const handleListen = () => {
+    setIsListening(true)
+    // TODO: 실제 STT 구현 필요
+    // 현재는 3초 후 랜덤 결과 시뮬레이션
+    setTimeout(() => {
+      const success = Math.random() > 0.3 // 70% 성공률
+      setResult(success ? 'correct' : 'retry')
+      setIsListening(false)
+      if (success) {
+        setTimeout(() => onComplete(true), 1500)
+      }
+    }, 3000)
+  }
+
+  return (
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+      <div className="text-center mb-4">
+        <h3 className="text-2xl font-bold text-gray-800 mb-2">{word}</h3>
+        <p className="text-sm text-gray-600 italic">[{pronunciation}]</p>
+        <p className="text-xs text-gray-500 mt-1">{L(lang, meaning)}</p>
+      </div>
+      
+      <div className="flex justify-center gap-3 mb-4">
+        <button onClick={handleSpeak}
+          className="flex items-center gap-2 px-4 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors">
+          <Volume2 size={18} />
+          {lang === 'ko' ? '듣기' : lang === 'zh' ? '听一下' : 'Listen'}
+        </button>
+        
+        <button onClick={handleListen} disabled={isListening}
+          className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-colors ${
+            isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-blue-500 text-white hover:bg-blue-600'
+          }`}>
+          <Mic size={18} />
+          {isListening 
+            ? (lang === 'ko' ? '듣는 중...' : lang === 'zh' ? '正在听...' : 'Listening...')
+            : (lang === 'ko' ? '발음하기' : lang === 'zh' ? '跟读' : 'Pronounce')
+          }
+        </button>
+      </div>
+
+      {result && (
+        <div className={`text-center p-3 rounded-lg ${
+          result === 'correct' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+        }`}>
+          {result === 'correct' ? (
+            <div className="flex items-center justify-center gap-2">
+              <CheckCircle size={20} />
+              {lang === 'ko' ? '완벽합니다!' : lang === 'zh' ? '完美！' : 'Perfect!'}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center gap-2">
+              <XCircle size={16} />
+              {lang === 'ko' ? '다시 한번 해보세요' : lang === 'zh' ? '再试一次' : 'Try again'}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // 로컬스토리지 유틸
@@ -102,7 +185,7 @@ function SessionCard({ session, isActive, isCurrent, isLocked, completedCount, t
 }
 
 // ─── 레슨 목록 ───
-function LessonList({ session, eduState, onComplete, onOpenMinimap, onBack, lang }) {
+function LessonList({ session, eduState, onComplete, onOpenMinimap, onOpenUnit, onBack, lang }) {
   return (
     <div className="space-y-3">
       <button onClick={onBack} className="text-blue-600 text-sm font-medium">
@@ -126,6 +209,7 @@ function LessonList({ session, eduState, onComplete, onOpenMinimap, onBack, lang
               key={unit.day}
               onClick={() => {
                 if (unit.minimap) { onOpenMinimap(unit.minimap) }
+                else if (isNext && !done && unit.pronunciation) { onOpenUnit(unit) }
                 else if (isNext || done) { onComplete(unitKey) }
               }}
               className={`w-full text-left rounded-xl p-3 flex items-center gap-3 transition-all border ${
@@ -280,11 +364,87 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
 }
 
 // ─── 메인 교육 탭 ───
+// 유닛 상세 학습 화면
+function UnitDetail({ session, unit, onBack, onComplete, lang }) {
+  const [currentStep, setCurrentStep] = useState(0)
+  const [completedPronunciations, setCompletedPronunciations] = useState([])
+  
+  const pronunciationWords = unit.pronunciation || []
+  const totalSteps = pronunciationWords.length + 1 // 발음 연습 + 마무리
+  
+  const handlePronunciationComplete = (wordIndex) => {
+    if (!completedPronunciations.includes(wordIndex)) {
+      setCompletedPronunciations([...completedPronunciations, wordIndex])
+    }
+    if (currentStep < pronunciationWords.length - 1) {
+      setCurrentStep(currentStep + 1)
+    } else {
+      setCurrentStep(totalSteps - 1) // 마무리 단계로
+    }
+  }
+
+  const handleUnitComplete = () => {
+    onComplete()
+    onBack()
+  }
+
+  return (
+    <div className="space-y-4 animate-fade-up">
+      <button onClick={onBack} className="text-blue-600 text-sm font-medium flex items-center gap-2">
+        <ChevronLeft size={16} />
+        {lang === 'ko' ? '세션으로 돌아가기' : lang === 'zh' ? '返回课程' : 'Back to Session'}
+      </button>
+      
+      <div className="bg-white rounded-xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-800">Day {unit.day}</h2>
+            <p className="text-gray-600">{L(lang, unit.title)}</p>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-gray-500">{currentStep + 1} / {totalSteps}</div>
+            <div className="w-16 bg-gray-200 rounded-full h-2 mt-1">
+              <div className="bg-blue-500 h-2 rounded-full transition-all" 
+                style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }} />
+            </div>
+          </div>
+        </div>
+        
+        {currentStep < pronunciationWords.length ? (
+          <PronunciationQuiz
+            word={pronunciationWords[currentStep].word}
+            pronunciation={pronunciationWords[currentStep].pronunciation}
+            meaning={pronunciationWords[currentStep].meaning}
+            lang={lang}
+            onComplete={() => handlePronunciationComplete(currentStep)}
+          />
+        ) : (
+          <div className="text-center py-8">
+            <div className="text-6xl mb-4">🎉</div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+              {lang === 'ko' ? '완료!' : lang === 'zh' ? '完成！' : 'Complete!'}
+            </h3>
+            <p className="text-gray-600 mb-6">
+              {lang === 'ko' ? '이 학습을 완료했습니다.' : lang === 'zh' ? '您已完成本课学习。' : 'You have completed this lesson.'}
+            </p>
+            <button onClick={handleUnitComplete}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+              <Award className="inline mr-2" size={20} />
+              {lang === 'ko' ? '완료하고 XP 받기' : lang === 'zh' ? '完成并获得XP' : 'Complete & Get XP'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function EducationTab({ lang }) {
   const [eduState, setEduState] = useState(loadEduState)
-  const [view, setView] = useState('main') // main | session | minimap
+  const [view, setView] = useState('main') // main | session | minimap | unit
   const [activeSession, setActiveSession] = useState(null)
   const [activeMinimap, setActiveMinimap] = useState(null)
+  const [activeUnit, setActiveUnit] = useState(null)
 
   // 오늘 출석 체크
   useEffect(() => {
@@ -334,6 +494,19 @@ export default function EducationTab({ lang }) {
     )
   }
 
+  if (view === 'unit' && activeUnit && activeSession !== null) {
+    const session = sessions[activeSession]
+    return (
+      <UnitDetail
+        session={session}
+        unit={activeUnit}
+        onBack={() => { setView('session'); setActiveUnit(null) }}
+        onComplete={() => completeUnit(`${session.id}-${activeUnit.day}`)}
+        lang={lang}
+      />
+    )
+  }
+
   if (view === 'session' && activeSession !== null) {
     const session = sessions[activeSession]
     return (
@@ -342,6 +515,7 @@ export default function EducationTab({ lang }) {
         eduState={eduState}
         onComplete={completeUnit}
         onOpenMinimap={(id) => { setActiveMinimap(id); setView('minimap') }}
+        onOpenUnit={(unit) => { setActiveUnit(unit); setView('unit') }}
         onBack={() => { setView('main'); setActiveSession(null) }}
         lang={lang}
       />

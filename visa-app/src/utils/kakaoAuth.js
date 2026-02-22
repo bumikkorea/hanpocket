@@ -3,7 +3,7 @@
 // 2. 카카오 로그인 → 활성화 ON
 // 3. 카카오 로그인 → Redirect URI: https://hanpocket.pages.dev
 
-const KAKAO_APP_KEY = '5e0e466ca30c0807b0c563f1d35f43a8';
+const KAKAO_APP_KEY = 'd93decd524c15c3455ff05983ca07fac';
 
 // Kakao SDK 초기화
 export const initKakao = () => {

@@ -1011,6 +1011,24 @@ function AppInner() {
     }).catch(() => {})
   }, [])
 
+  // 카카오 OAuth 리다이렉트 콜백 처리 (App 레벨)
+  useEffect(() => {
+    initKakao()
+    const code = new URLSearchParams(window.location.search).get('code')
+    if (code) {
+      handleKakaoCallback().then(user => {
+        if (user) {
+          // 로그인 성공 → 온보딩 건너뛰고 프로필 설정
+          if (!profile) {
+            const p = { lang, userType: 'resident' }
+            setProfile(p)
+            localStorage.setItem('hp_profile', JSON.stringify(p))
+          }
+        }
+      })
+    }
+  }, [])
+
   // Service Worker 초기화 및 업데이트 관리
   useEffect(() => {
     initServiceWorker()

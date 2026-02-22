@@ -213,6 +213,12 @@ function Onboarding({ onComplete, lang, setLang }) {
                 {L(lang, { ko: 'Apple로 로그인', zh: 'Apple登录', en: 'Login with Apple' })}
               </button>
               <button
+                onClick={() => { initKakao(); loginWithKakao() }}
+                className="w-full flex items-center justify-center gap-3 bg-[#FEE500] text-[#3C1E1E] rounded-xl p-4 font-medium hover:bg-[#FDD835] transition-all btn-press shadow-sm">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#3C1E1E" d="M12 3C6.48 3 2 6.36 2 10.44c0 2.62 1.75 4.93 4.38 6.24l-1.12 4.16c-.1.36.32.64.62.42l4.97-3.26c.37.04.75.06 1.15.06 5.52 0 10-3.36 10-7.62S17.52 3 12 3z"/></svg>
+                {L(lang, { ko: '카카오로 로그인', zh: 'Kakao登录', en: 'Login with Kakao' })}
+              </button>
+              <button
                 onClick={() => onComplete({ lang, userType: 'resident' })}
                 className="w-full text-center text-[#6B7280] text-sm mt-2 hover:text-[#111827] transition-colors">
                 {L(lang, { ko: '로그인 없이 둘러보기', zh: '不登录直接浏览', en: 'Browse without login' })}

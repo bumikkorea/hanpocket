@@ -1069,25 +1069,51 @@ function AppInner() {
     { id: 'profile', icon: User, label: { ko: '내정보', zh: '我的', en: 'Me' } },
   ]
 
+  // Feature completion scores from docs/feature-review-10k*.md
+  const featureScores = {
+    travel: 84,     // 수정중 (70-84)
+    food: 87,       // 완료 (85+)
+    shopping: 91,   // 완료 (85+)
+    hallyu: 92,     // 완료 (85+)
+    learn: 87,      // 완료 (85+)
+    life: 91,       // 완료 (85+)
+    medical: 90,    // 완료 (85+)
+    fitness: 89,    // 완료 (85+)
+    community: 87.5, // 완료 (85+)
+    translator: 92.5, // 완료 (85+)
+    artranslate: 93.2, // 완료 (85+)
+    sos: 97,        // 완료 (85+)
+    finance: 87,    // 완료 (85+)
+    wallet: 95,     // 완료 (85+)
+    visaalert: 86,  // 완료 (85+)
+  }
+  
+  // Generate status label based on completion score
+  const getStatusLabel = (score) => {
+    if (score >= 85) return { ko: '완료', zh: '完成', en: 'Done' }
+    if (score >= 70) return { ko: '수정중', zh: '修改中', en: 'WIP' }
+    return { ko: '개발중', zh: '开发中', en: 'Dev' }
+  }
+  
   const exploreItems = [
-    { id: 'travel', label: { ko: '여행 (완료)', zh: '旅行 (完成)', en: 'Travel (Done)' } },
-    { id: 'food', label: { ko: '맛집 (완료)', zh: '美食 (完成)', en: 'Food (Done)' } },
-    { id: 'shopping', label: { ko: '쇼핑 (수정중)', zh: '购物 (修改中)', en: 'Shopping (WIP)' } },
-    { id: 'hallyu', label: { ko: '한류 (수정중)', zh: '韩流 (修改中)', en: 'Hallyu (WIP)' } },
-    { id: 'learn', label: { ko: '한국어 (완료)', zh: '韩语 (完成)', en: 'Korean (Done)' } },
-    { id: 'life', label: { ko: '생활 (수정중)', zh: '生活 (修改中)', en: 'Life (WIP)' } },
-    { id: 'medical', label: { ko: '의료 (수정중)', zh: '医疗 (修改中)', en: 'Medical (WIP)' } },
-    { id: 'fitness', label: { ko: '운동 (수정중)', zh: '运动 (修改中)', en: 'Fitness (WIP)' } },
-    { id: 'community', label: { ko: '커뮤니티 (수정중)', zh: '社区 (修改中)', en: 'Community (WIP)' } },
+    { id: 'travel', label: { ko: `여행 (${getStatusLabel(featureScores.travel).ko})`, zh: `旅行 (${getStatusLabel(featureScores.travel).zh})`, en: `Travel (${getStatusLabel(featureScores.travel).en})` } },
+    { id: 'food', label: { ko: `맛집 (${getStatusLabel(featureScores.food).ko})`, zh: `美食 (${getStatusLabel(featureScores.food).zh})`, en: `Food (${getStatusLabel(featureScores.food).en})` } },
+    { id: 'shopping', label: { ko: `쇼핑 (${getStatusLabel(featureScores.shopping).ko})`, zh: `购物 (${getStatusLabel(featureScores.shopping).zh})`, en: `Shopping (${getStatusLabel(featureScores.shopping).en})` } },
+    { id: 'hallyu', label: { ko: `한류 (${getStatusLabel(featureScores.hallyu).ko})`, zh: `韩流 (${getStatusLabel(featureScores.hallyu).zh})`, en: `Hallyu (${getStatusLabel(featureScores.hallyu).en})` } },
+    { id: 'learn', label: { ko: `한국어 (${getStatusLabel(featureScores.learn).ko})`, zh: `韩语 (${getStatusLabel(featureScores.learn).zh})`, en: `Korean (${getStatusLabel(featureScores.learn).en})` } },
+    { id: 'life', label: { ko: `생활 (${getStatusLabel(featureScores.life).ko})`, zh: `生活 (${getStatusLabel(featureScores.life).zh})`, en: `Life (${getStatusLabel(featureScores.life).en})` } },
+    { id: 'medical', label: { ko: `의료 (${getStatusLabel(featureScores.medical).ko})`, zh: `医疗 (${getStatusLabel(featureScores.medical).zh})`, en: `Medical (${getStatusLabel(featureScores.medical).en})` } },
+    { id: 'fitness', label: { ko: `운동 (${getStatusLabel(featureScores.fitness).ko})`, zh: `运动 (${getStatusLabel(featureScores.fitness).zh})`, en: `Fitness (${getStatusLabel(featureScores.fitness).en})` } },
+    { id: 'community', label: { ko: `커뮤니티 (${getStatusLabel(featureScores.community).ko})`, zh: `社区 (${getStatusLabel(featureScores.community).zh})`, en: `Community (${getStatusLabel(featureScores.community).en})` } },
   ]
 
   const toolItems = [
-    { id: 'translator', label: { ko: '통역 (수정중)', zh: '翻译 (修改中)', en: 'Translate (WIP)' } },
-    { id: 'artranslate', label: { ko: '간판 사전 (수정중)', zh: '招牌词典 (修改中)', en: 'Sign Dict (WIP)' } },
-    { id: 'sos', label: { ko: 'SOS (완료)', zh: 'SOS (完成)', en: 'SOS (Done)' } },
-    { id: 'finance', label: { ko: '금융 (수정중)', zh: '金融 (修改中)', en: 'Finance (WIP)' } },
-    { id: 'wallet', label: { ko: '월렛 (수정중)', zh: '钱包 (修改中)', en: 'Wallet (WIP)' } },
-    { id: 'visaalert', label: { ko: '비자 알림 (완료)', zh: '签证提醒 (完成)', en: 'Visa Alert (Done)' } },
+    { id: 'translator', label: { ko: `통역 (${getStatusLabel(featureScores.translator).ko})`, zh: `翻译 (${getStatusLabel(featureScores.translator).zh})`, en: `Translate (${getStatusLabel(featureScores.translator).en})` } },
+    { id: 'artranslate', label: { ko: `간판 사전 (${getStatusLabel(featureScores.artranslate).ko})`, zh: `招牌词典 (${getStatusLabel(featureScores.artranslate).zh})`, en: `Sign Dict (${getStatusLabel(featureScores.artranslate).en})` } },
+    { id: 'sos', label: { ko: `SOS (${getStatusLabel(featureScores.sos).ko})`, zh: `SOS (${getStatusLabel(featureScores.sos).zh})`, en: `SOS (${getStatusLabel(featureScores.sos).en})` } },
+    { id: 'finance', label: { ko: `금융 (${getStatusLabel(featureScores.finance).ko})`, zh: `金融 (${getStatusLabel(featureScores.finance).zh})`, en: `Finance (${getStatusLabel(featureScores.finance).en})` } },
+    { id: 'wallet', label: { ko: `월렛 (${getStatusLabel(featureScores.wallet).ko})`, zh: `钱包 (${getStatusLabel(featureScores.wallet).zh})`, en: `Wallet (${getStatusLabel(featureScores.wallet).en})` } },
+    { id: 'visaalert', label: { ko: `비자 알림 (${getStatusLabel(featureScores.visaalert).ko})`, zh: `签证提醒 (${getStatusLabel(featureScores.visaalert).zh})`, en: `Visa Alert (${getStatusLabel(featureScores.visaalert).en})` } },
   ]
 
   // Keep old tabs array for compatibility

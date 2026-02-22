@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { widgetCategories } from '../../data/widgets'
-import { WidgetContent, LucideIcon, L } from '../HomeTab'
+import WidgetContent from '../home/common/WidgetContent'
+import LucideIcon from '../home/common/LucideIcon'
+import { L } from '../home/utils/helpers'
 
 // ─── Widget Section Groupings ───
 const SECTION_TODAY = ['editorpick', 'cvsnew', 'beautynew', 'kpop', 'fanevent', 'restaurant']

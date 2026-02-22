@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { L } from '../HomeTab'
+import { L } from '../home/utils/helpers'
 
 // ─── Weather Card ───
 

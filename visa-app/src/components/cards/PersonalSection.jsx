@@ -1,14 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Mic, Volume2, Check, X, Plus, ChevronRight, ChevronDown } from 'lucide-react'
 import { widgetMockData } from '../../data/widgets'
-import { TIMEZONE_COUNTRIES, L, getDaysUntil } from '../HomeTab'
-
-function getTimeInOffset(offset) {
-  const now = new Date()
-  const utc = now.getTime() + now.getTimezoneOffset() * 60000
-  const city = new Date(utc + offset * 3600000)
-  return city.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
-}
+import { L, getDaysUntil, getTimeInOffset } from '../home/utils/helpers'
+import { TIMEZONE_COUNTRIES } from '../home/utils/constants'
 
 // ─── Activity Tracker (global) ───
 const ACTIVITY_KEY = 'hp_last_activity'

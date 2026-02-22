@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { WidgetContent, LucideIcon, SECTION_CULTURE } from './HomeTab'
+import WidgetContent from './home/common/WidgetContent'
+import LucideIcon from './home/common/LucideIcon'
+import { SECTION_CULTURE } from './home/utils/constants'
 import { widgetCategories } from '../data/widgets'
 import { ChevronRight, ChevronDown } from 'lucide-react'
 

@@ -1,5 +1,6 @@
 import React from 'react'
-import { WidgetContent, LucideIcon, L } from '../HomeTab'
+import WidgetContent from '../home/common/WidgetContent'
+import { L } from '../home/utils/helpers'
 
 // ─── Widget Card (Apple style) ───
 

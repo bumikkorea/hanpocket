@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, Component } from 'react'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Search, ChevronLeft, Globe } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2 } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -518,33 +518,12 @@ function ChatTab({ profile, lang }) {
 function ProfileTab({ profile, setProfile, lang }) {
   const s = t[lang]
   const [exp, setExp] = useState(profile.expiryDate || '')
-  const [name, setName] = useState(profile.passportName || '')
-  const [num, setNum] = useState(profile.passportNumber || '')
   const [saved, setSaved] = useState(false)
-  const [unmasked, setUnmasked] = useState(false)
-  const [showVerifyModal, setShowVerifyModal] = useState(false)
   const [notifPrefs, setNotifPrefs] = useState(() => {
     try { return JSON.parse(localStorage.getItem('visa_notif_prefs')) || { d90: true, d60: true, d30: true, d7: true } }
     catch { return { d90: true, d60: true, d30: true, d7: true } }
   })
-  const unmaskTimerRef = useRef(null)
   const days = getDaysUntil(exp)
-  const vl = visaOptions.find(v => v.id === profile.currentVisa)?.label
-
-  // Re-mask when leaving profile tab or after 30 seconds
-  useEffect(() => {
-    return () => { setUnmasked(false); if (unmaskTimerRef.current) clearTimeout(unmaskTimerRef.current) }
-  }, [])
-
-  const maskName = (n) => { if (!n || n.length <= 1) return n || '—'; return n[0] + '*'.repeat(n.length - 1) }
-  const maskPassport = (p) => { if (!p || p.length <= 1) return p || '—'; return p[0] + '*'.repeat(p.length - 1) }
-
-  const handleVerify = () => {
-    setShowVerifyModal(false)
-    setUnmasked(true)
-    if (unmaskTimerRef.current) clearTimeout(unmaskTimerRef.current)
-    unmaskTimerRef.current = setTimeout(() => setUnmasked(false), 30000)
-  }
 
   const toggleNotif = (key) => {
     const updated = { ...notifPrefs, [key]: !notifPrefs[key] }
@@ -553,7 +532,7 @@ function ProfileTab({ profile, setProfile, lang }) {
   }
 
   const save = () => {
-    const u = { ...profile, expiryDate: exp, passportName: name, passportNumber: num }
+    const u = { ...profile, expiryDate: exp }
     setProfile(u); saveProfile(u); setSaved(true); setTimeout(() => setSaved(false), 2000)
   }
 
@@ -564,137 +543,109 @@ function ProfileTab({ profile, setProfile, lang }) {
     { key: 'd7', label: { ko: '7일 전', zh: '7天前', en: '7 days before' } },
   ]
 
-  const verifyMethods = [
-    { icon: '🛂', label: { ko: '여권', zh: '护照', en: 'Passport' } },
-    { icon: '📱', label: { ko: '모바일 외국인등록증', zh: '移动外国人登录证', en: 'Mobile ARC' } },
-    { icon: '💬', label: { ko: '카카오', zh: 'KakaoTalk', en: 'Kakao' } },
-    { icon: '🟢', label: { ko: '네이버', zh: 'Naver', en: 'Naver' } },
-    { icon: '🔐', label: { ko: 'PASS', zh: 'PASS', en: 'PASS' } },
-  ]
-
   return (
-    <div className="space-y-4 animate-fade-up">
-      {/* Verification Modal */}
-      {showVerifyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-lg w-full max-w-sm overflow-hidden shadow-2xl animate-fade-up">
-            <div className="bg-[#F8F9FA] border-b border-[#E5E7EB] p-5">
-              <h2 className="text-lg font-bold text-[#111827]">
-                {lang === 'ko' ? '본인 인증' : lang === 'zh' ? '身份验证' : 'Identity Verification'}
-              </h2>
-              <p className="text-[#6B7280] text-xs mt-1">
-                {lang === 'ko' ? '개인정보 확인을 위해 본인 인증이 필요합니다' : lang === 'zh' ? '查看个人信息需要身份验证' : 'Verification required to view personal info'}
-              </p>
+    <div className="space-y-6 animate-fade-up bg-[#FAFAF8] font-['Inter'] p-6">
+      {/* 1. 만료일 카드 */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#E5E7EB]">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-[#F3F4F6] rounded-xl">
+            <Calendar className="w-5 h-5 text-[#111827]" />
+          </div>
+          <div>
+            <h3 className="font-bold text-[#111827] text-lg">
+              {lang === 'ko' ? '비자 만료일이 언제인가요?' : lang === 'zh' ? '签证到期日期是什么时候?' : 'When does your visa expire?'}
+            </h3>
+            <p className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '정확한 날짜를 입력해주세요' : lang === 'zh' ? '请输入准确的日期' : 'Please enter the exact date'}
+            </p>
+          </div>
+        </div>
+        
+        <input 
+          type="date" 
+          value={exp} 
+          onChange={e => setExp(e.target.value)}
+          className="w-full bg-[#F8F9FA] rounded-xl px-4 py-3 text-[#111827] font-medium border border-[#E5E7EB] focus:border-[#111827] focus:ring-2 focus:ring-[#111827]/20 outline-none transition-all"
+        />
+        
+        {/* D-day 표시 */}
+        {exp && days !== null && (
+          <div className={`mt-4 p-4 rounded-xl text-center font-bold text-lg ${
+            days<=0?'bg-red-50 text-red-600 border border-red-200':days<=30?'bg-red-50 text-red-600 border border-red-200':days<=90?'bg-amber-50 text-amber-700 border border-amber-200':'bg-green-50 text-green-600 border border-green-200'
+          }`}>
+            {days<=0 ? `🚨 ${s.expired}` : `D-${days}`}
+            <div className="text-sm font-normal mt-1 opacity-80">
+              {days > 0 && `${days} ${s.daysLeft}`}
             </div>
-            <div className="p-5 space-y-3">
-              {verifyMethods.map((m, i) => (
-                <button key={i} onClick={handleVerify}
-                  className="w-full text-left bg-[#F3F4F6] hover:bg-[#D1D1D6] rounded-xl p-4 flex items-center gap-3 transition-all btn-press">
-                  <span className="text-xl">{m.icon}</span>
-                  <span className="font-semibold text-[#111827] text-sm">{L(lang, m.label)}</span>
-                </button>
-              ))}
-              <p className="text-[10px] text-[#9CA3AF] text-center mt-3">
-                {lang === 'ko' ? '실제 본인인증은 서버 연동 후 활성화됩니다' : lang === 'zh' ? '实际身份验证将在服务器对接后激活' : 'Actual verification will be activated after server integration'}
-              </p>
-            </div>
-            <div className="p-4 border-t border-[#E5E7EB]">
-              <button onClick={() => setShowVerifyModal(false)} className="w-full text-[#6B7280] text-sm py-2">
-                {lang === 'ko' ? '취소' : lang === 'zh' ? '取消' : 'Cancel'}
+          </div>
+        )}
+      </div>
+
+      {/* 2. 알림 설정 */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#E5E7EB]">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="p-2 bg-[#F3F4F6] rounded-xl">
+            <Bell className="w-5 h-5 text-[#111827]" />
+          </div>
+          <div>
+            <h3 className="font-bold text-[#111827] text-lg">
+              {lang === 'ko' ? '미리 알려드릴게요' : lang === 'zh' ? '我们会提前通知您' : "We'll remind you in advance"}
+            </h3>
+            <p className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '언제 알림을 받고 싶으신가요?' : lang === 'zh' ? '您希望何时收到提醒?' : 'When would you like to be reminded?'}
+            </p>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          {notifOptions.map(opt => (
+            <label key={opt.key} className="flex items-center justify-between cursor-pointer p-3 rounded-xl hover:bg-[#F8F9FA] transition-colors">
+              <span className="text-[#111827] font-medium">{L(lang, opt.label)}</span>
+              <button 
+                onClick={() => toggleNotif(opt.key)}
+                className={`w-12 h-7 rounded-full transition-all relative ${
+                  notifPrefs[opt.key] ? 'bg-[#111827]' : 'bg-[#D1D1D6]'
+                }`}
+              >
+                <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-sm transition-all ${
+                  notifPrefs[opt.key] ? 'left-[22px]' : 'left-0.5'
+                }`} />
               </button>
-            </div>
-          </div>
+            </label>
+          ))}
         </div>
-      )}
-
-      {/* 1. 여권 스타일 프로필 카드 - Masked by default */}
-      <div className="bg-[#F8F9FA] rounded-lg p-6 border border-[#E5E7EB]">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-xs text-[#111827] tracking-wider">PASSPORT INFO</div>
-          <Logo size="sm" />
-        </div>
-        <div className="space-y-2 text-sm">
-          <div><span className="text-[#6B7280] text-xs">NAME</span><p className="font-bold tracking-wide">{unmasked ? (name || '—') : maskName(name)}</p></div>
-          <div><span className="text-[#6B7280] text-xs">PASSPORT NO.</span><p className="font-mono tracking-wider">{unmasked ? (num || '—') : maskPassport(num)}</p></div>
-          <div className="flex gap-6">
-            <div><span className="text-[#6B7280] text-xs">NATIONALITY</span><p>{s[profile.nationality]}</p></div>
-            <div><span className="text-[#6B7280] text-xs">VISA</span><p>{L(lang, vl)}</p></div>
-          </div>
-        </div>
-        {!unmasked && (name || num) && (
-          <button onClick={() => setShowVerifyModal(true)}
-            className="mt-3 px-4 py-2 bg-[#111827]/20 text-[#111827] text-xs font-semibold rounded-xl hover:bg-[#111827]/30 transition-all btn-press">
-            🔓 {lang === 'ko' ? '정보 확인' : lang === 'zh' ? '查看信息' : 'View Info'}
-          </button>
-        )}
-        {unmasked && (
-          <p className="mt-2 text-[10px] text-[#6B7280]">
-            {lang === 'ko' ? '30초 후 자동으로 마스킹됩니다' : lang === 'zh' ? '30秒后自动隐藏' : 'Auto-masked after 30 seconds'}
-          </p>
-        )}
-      </div>
-
-      {/* 2. Visa type + D-day */}
-      {exp && days !== null && (
-        <div className={`glass rounded-lg p-4 text-center font-bold text-lg ${
-          days<=0?'bg-red-50 text-red-600':days<=30?'bg-red-50 text-red-600':days<=90?'bg-amber-50 text-[#111827]':'bg-green-50 text-green-600'
-        }`}>
-          <div className="text-xs text-[#6B7280] font-normal mb-1">{L(lang, vl)}</div>
-          {days<=0 ? `🚨 ${s.expired}` : `D-${days} (${days} ${s.daysLeft})`}
-        </div>
-      )}
-
-      {/* 입력 */}
-      <div className="glass rounded-lg p-5 space-y-4">
-        <Input label="NAME" value={name} onChange={setName} placeholder="HONG GILDONG" />
-        <Input label="PASSPORT NO." value={num} onChange={v => setNum(v.toUpperCase())} placeholder="M12345678" mono />
-        <div>
-          <label className="text-xs text-[#6B7280] font-medium block mb-1.5">VISA EXPIRY</label>
-          <input type="date" value={exp} onChange={e => setExp(e.target.value)}
-            className="w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#111827]/30" />
-        </div>
-      </div>
-
-      {/* 3. Push notification settings */}
-      <div className="glass rounded-lg p-5 space-y-3">
-        <h3 className="font-bold text-[#111827] text-sm">
-          🔔 {lang === 'ko' ? '비자 만료 알림 설정' : lang === 'zh' ? '签证到期提醒设置' : 'Visa Expiry Reminders'}
-        </h3>
-        {notifOptions.map(opt => (
-          <label key={opt.key} className="flex items-center justify-between cursor-pointer">
-            <span className="text-sm text-[#6B7280]">{L(lang, opt.label)}</span>
-            <button onClick={() => toggleNotif(opt.key)}
-              className={`w-10 h-6 rounded-full transition-all relative ${notifPrefs[opt.key] ? 'bg-[#111827]' : 'bg-[#D1D1D6]'}`}>
-              <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${notifPrefs[opt.key] ? 'left-[18px]' : 'left-0.5'}`} />
-            </button>
-          </label>
-        ))}
-        <p className="text-[10px] text-[#9CA3AF] mt-2">
-          {lang === 'ko' ? '⚙️ 서버 연동 후 활성화 예정' : lang === 'zh' ? '⚙️ 服务器对接后激活' : '⚙️ Will be activated after server integration'}
-        </p>
-        <div className="mt-3 p-3 bg-[#FFF3E0] border border-[#FFB74D]/30 rounded-xl">
-          <p className="text-[11px] text-[#E65100] leading-relaxed">
+        
+        <div className="mt-4 p-3 bg-[#FFF3E0] border border-[#FFB74D]/30 rounded-xl">
+          <p className="text-xs text-[#E65100] leading-relaxed">
             ⚠️ {lang === 'ko' ? '체류기간 만료 시 범칙금·과태료 부과 대상' : lang === 'zh' ? '居留期满将被处以罚款·滞纳金' : 'Overstay may result in fines or penalties'}
           </p>
         </div>
       </div>
 
-      {/* 4. Hi-Korea reservation button */}
-      <a href="https://www.hikorea.go.kr/resv/ResveInfo.pt" target="_blank" rel="noopener noreferrer"
-        className="block w-full bg-white text-center rounded-lg p-4 card-hover btn-press border border-[#111827]/30 shadow-sm">
-        <span className="text-[#111827] font-bold text-base">
-          🏛️ {lang === 'ko' ? '비자 연장 신청하러 가기' : lang === 'zh' ? '前往申请签证延期' : 'Apply for Visa Extension'}
-        </span>
-        <p className="text-[#6B7280] text-xs mt-1">Hi-Korea</p>
-      </a>
-
-      {/* 5. Save + Reset */}
-      <button onClick={save}
-        className="w-full bg-[#111827] text-white font-semibold py-3.5 rounded-lg hover:bg-[#1F2937] transition-all btn-press">
-        {saved ? '✅' : s.saveProfile}
+      {/* 3. 저장 버튼 */}
+      <button 
+        onClick={save}
+        className="w-full bg-[#111827] text-white font-semibold py-4 rounded-2xl hover:bg-[#1F2937] transition-all btn-press flex items-center justify-center gap-3 shadow-sm"
+      >
+        <Save className="w-5 h-5" />
+        {saved ? (
+          <span>✅ {lang === 'ko' ? '저장됨' : lang === 'zh' ? '已保存' : 'Saved'}</span>
+        ) : (
+          <span>{s.saveProfile || (lang === 'ko' ? '저장하기' : lang === 'zh' ? '保存' : 'Save')}</span>
+        )}
       </button>
-      <button onClick={() => { localStorage.removeItem('visa_profile'); localStorage.removeItem('edu_state'); localStorage.removeItem('visa_notif_prefs'); setProfile(null) }}
-        className="w-full text-[#9CA3AF] text-xs py-2 hover:text-[#6B7280]">
+
+      {/* 4. 초기화 버튼 */}
+      <button 
+        onClick={() => { 
+          localStorage.removeItem('visa_profile'); 
+          localStorage.removeItem('edu_state'); 
+          localStorage.removeItem('visa_notif_prefs'); 
+          setProfile(null) 
+        }}
+        className="w-full text-[#9CA3AF] text-sm py-3 hover:text-[#6B7280] transition-colors flex items-center justify-center gap-2"
+      >
+        <Trash2 className="w-4 h-4" />
         {lang === 'ko' ? '프로필 재설정' : lang === 'zh' ? '重置资料' : 'Reset Profile'}
       </button>
     </div>

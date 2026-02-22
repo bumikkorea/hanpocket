@@ -1194,21 +1194,44 @@ function AppInner() {
 
       {/* Content */}
       <div className="px-4 pt-4 pb-4">
-        {/* Push notification banner */}
-        {!pushEnabled && !pushDismissed && tab === 'home' && (
-          <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '알림 받기' : lang === 'zh' ? '开启通知' : 'Enable Notifications'}</p>
-              <p className="text-xs text-[#6B7280] mt-0.5">{lang === 'ko' ? '비자 만료, 공지사항 등을 놓치지 마세요' : lang === 'zh' ? '不要错过签证到期、公告等信息' : "Don't miss visa expiry alerts & updates"}</p>
+        {/* Install / Push notification banner */}
+        {!pushDismissed && tab === 'home' && (() => {
+          const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+          if (pushEnabled) return null
+          if (!isStandalone && isIOS) {
+            // iOS Safari — 앱 설치 안내
+            return (
+              <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '앱으로 설치하기' : lang === 'zh' ? '安装为App' : 'Install App'}</p>
+                  <button onClick={() => { setPushDismissed(true); localStorage.setItem('hp_push_dismissed', 'true') }}
+                    className="text-xs text-[#9CA3AF] px-2 py-1">X</button>
+                </div>
+                <p className="text-xs text-[#6B7280] leading-relaxed">
+                  {lang === 'ko' ? '하단 공유 버튼(▫︎↑) → "홈 화면에 추가"를 눌러주세요. 알림 수신, 전체화면 등 앱처럼 사용할 수 있습니다.' 
+                  : lang === 'zh' ? '点击底部分享按钮(▫︎↑) → "添加到主屏幕"。可以像App一样使用，接收通知。' 
+                  : 'Tap Share (▫︎↑) → "Add to Home Screen". Use like a real app with notifications.'}
+                </p>
+              </div>
+            )
+          }
+          // 일반 브라우저 — 알림 허용 배너
+          return (
+            <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '알림 받기' : lang === 'zh' ? '开启通知' : 'Enable Notifications'}</p>
+                <p className="text-xs text-[#6B7280] mt-0.5">{lang === 'ko' ? '비자 만료, 공지사항 등을 놓치지 마세요' : lang === 'zh' ? '不要错过签证到期、公告等信息' : "Don't miss visa expiry alerts & updates"}</p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button onClick={() => { setPushDismissed(true); localStorage.setItem('hp_push_dismissed', 'true') }}
+                  className="text-xs text-[#9CA3AF] px-2 py-1.5">{lang === 'ko' ? '닫기' : lang === 'zh' ? '关闭' : 'Close'}</button>
+                <button onClick={handleEnablePush}
+                  className="text-xs font-semibold text-white bg-[#111827] px-4 py-1.5 rounded-lg">{lang === 'ko' ? '허용' : lang === 'zh' ? '允许' : 'Allow'}</button>
+              </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-              <button onClick={() => { setPushDismissed(true); localStorage.setItem('hp_push_dismissed', 'true') }}
-                className="text-xs text-[#9CA3AF] px-2 py-1.5">{lang === 'ko' ? '닫기' : lang === 'zh' ? '关闭' : 'Close'}</button>
-              <button onClick={handleEnablePush}
-                className="text-xs font-semibold text-white bg-[#111827] px-4 py-1.5 rounded-lg">{lang === 'ko' ? '허용' : lang === 'zh' ? '允许' : 'Allow'}</button>
-            </div>
-          </div>
-        )}
+          )
+        })()}
         {/* Explore grid */}
         {tab==='explore' && !subPage && (
           <div>

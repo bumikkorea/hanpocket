@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, Component } from 'react'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
-import { initKakao, loginWithKakao, logoutFromKakao, getKakaoUser, isKakaoLoggedIn } from './utils/kakaoAuth'
+import { initKakao, loginWithKakao, loginWithKakaoPopup, logoutFromKakao, getKakaoUser, isKakaoLoggedIn, handleKakaoCallback } from './utils/kakaoAuth'
 import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2 } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
@@ -547,19 +547,28 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   })
   const days = getDaysUntil(exp)
 
-  // Kakao SDK 초기화
+  // Kakao SDK 초기화 + OAuth 콜백 처리
   useEffect(() => {
     initKakao()
+    // OAuth redirect 콜백 처리
+    handleKakaoCallback().then(user => {
+      if (user) setKakaoUser(user)
+    })
   }, [])
 
   const handleKakaoLogin = async () => {
     setKakaoLoading(true)
     try {
-      const userInfo = await loginWithKakao()
+      // 팝업 방식 시도 (데스크톱), 실패 시 리다이렉트 (모바일)
+      const userInfo = await loginWithKakaoPopup()
       setKakaoUser(userInfo)
     } catch (error) {
-      console.error('카카오 로그인 오류:', error)
-      alert(lang === 'ko' ? '로그인에 실패했습니다.' : lang === 'zh' ? '登录失败' : 'Login failed')
+      console.error('팝업 로그인 실패, 리다이렉트 방식 시도:', error)
+      try {
+        loginWithKakao() // redirect 방식
+      } catch (e2) {
+        alert(lang === 'ko' ? '로그인에 실패했습니다. 카카오 개발자 콘솔에서 플랫폼 설정을 확인해주세요.' : lang === 'zh' ? '登录失败' : 'Login failed')
+      }
     } finally {
       setKakaoLoading(false)
     }

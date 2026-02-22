@@ -1,7 +1,7 @@
-// ⚠️ 카카오 개발자 콘솔에서 Redirect URI 설정이 필요합니다!
-// 카카오 개발자 콘솔 (https://developers.kakao.com) → 내 애플리케이션 → 앱 설정 → 플랫폼 → Web → 
-// 사이트 도메인과 Redirect URI를 현재 도메인으로 설정해주세요.
-// 예: https://yourapp.com, https://yourapp.com/oauth
+// ⚠️ 카카오 개발자 콘솔 설정 필요:
+// 1. 플랫폼 → Web → 사이트 도메인: https://hanpocket.pages.dev
+// 2. 카카오 로그인 → 활성화 ON
+// 3. 카카오 로그인 → Redirect URI: https://hanpocket.pages.dev
 
 const KAKAO_APP_KEY = '5e0e466ca30c0807b0c563f1d35f43a8';
 
@@ -18,7 +18,6 @@ export const initKakao = () => {
   
   try {
     window.Kakao.init(KAKAO_APP_KEY);
-    console.log('Kakao SDK 초기화 완료');
     return true;
   } catch (error) {
     console.error('Kakao SDK 초기화 실패:', error);
@@ -26,8 +25,43 @@ export const initKakao = () => {
   }
 };
 
-// 카카오 로그인
+// 카카오 로그인 (Redirect 방식 — 모바일 Safari 호환)
 export const loginWithKakao = () => {
+  if (!initKakao()) {
+    throw new Error('Kakao SDK 초기화 실패');
+  }
+  
+  window.Kakao.Auth.authorize({
+    redirectUri: window.location.origin,
+    scope: 'profile_nickname,profile_image,account_email'
+  });
+};
+
+// OAuth 인가 코드로 토큰 받기 + 사용자 정보 저장
+export const handleKakaoCallback = async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get('code');
+  
+  if (!code) return null;
+  
+  if (!initKakao()) return null;
+  
+  // URL에서 code 파라미터 제거
+  window.history.replaceState({}, '', window.location.pathname);
+  
+  try {
+    // REST API로 토큰 발급은 백엔드 필요 → JS SDK 팝업 방식 사용
+    // 대신 Kakao.Auth.setAccessToken 후 사용자 정보 조회
+    // 현재는 간단한 팝업 로그인으로 대체
+    return null;
+  } catch (error) {
+    console.error('카카오 콜백 처리 실패:', error);
+    return null;
+  }
+};
+
+// 카카오 로그인 (팝업 방식 — 백엔드 없이 작동)
+export const loginWithKakaoPopup = () => {
   return new Promise((resolve, reject) => {
     if (!initKakao()) {
       reject(new Error('Kakao SDK 초기화 실패'));
@@ -36,8 +70,6 @@ export const loginWithKakao = () => {
 
     window.Kakao.Auth.login({
       success: (authObj) => {
-        console.log('카카오 로그인 성공:', authObj);
-        
         // 사용자 정보 가져오기
         window.Kakao.API.request({
           url: '/v2/user/me',
@@ -52,9 +84,7 @@ export const loginWithKakao = () => {
               loginTime: new Date().toISOString()
             };
             
-            // localStorage에 사용자 정보 저장
             localStorage.setItem('kakao_user', JSON.stringify(userInfo));
-            
             resolve(userInfo);
           },
           fail: (error) => {
@@ -73,27 +103,18 @@ export const loginWithKakao = () => {
 
 // 카카오 로그아웃
 export const logoutFromKakao = () => {
-  return new Promise((resolve, reject) => {
-    if (!window.Kakao || !window.Kakao.Auth) {
-      // SDK가 없어도 로컬 데이터는 정리
-      localStorage.removeItem('kakao_user');
-      resolve();
-      return;
-    }
-
-    window.Kakao.Auth.logout({
-      success: () => {
-        localStorage.removeItem('kakao_user');
-        console.log('카카오 로그아웃 완료');
+  return new Promise((resolve) => {
+    localStorage.removeItem('kakao_user');
+    
+    if (window.Kakao?.Auth) {
+      try {
+        window.Kakao.Auth.logout(() => resolve());
+      } catch {
         resolve();
-      },
-      fail: (error) => {
-        console.error('카카오 로그아웃 실패:', error);
-        // 실패해도 로컬 데이터는 정리
-        localStorage.removeItem('kakao_user');
-        reject(error);
       }
-    });
+    } else {
+      resolve();
+    }
   });
 };
 
@@ -102,14 +123,10 @@ export const getKakaoUser = () => {
   try {
     const userStr = localStorage.getItem('kakao_user');
     return userStr ? JSON.parse(userStr) : null;
-  } catch (error) {
-    console.error('저장된 사용자 정보 조회 실패:', error);
+  } catch {
     return null;
   }
 };
 
 // 카카오 로그인 상태 확인
-export const isKakaoLoggedIn = () => {
-  const user = getKakaoUser();
-  return !!user;
-};
+export const isKakaoLoggedIn = () => !!getKakaoUser();

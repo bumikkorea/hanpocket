@@ -1804,18 +1804,16 @@ function AppInner() {
       )}
 
       {/* Google-style Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#DADCE0] z-50 safe-bottom">
-        <div className="flex items-center justify-around py-2">
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-[#E5E7EB] z-50 safe-bottom">
+        <div className="flex items-center justify-around py-1">
           {bottomTabs.map(item => {
             const Icon = item.icon
             const active = tab === item.id
             return (
               <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
-                className="flex flex-col items-center gap-0.5 min-w-[64px] py-1">
-                <div className={`px-4 py-1 rounded-full transition-all ${active ? 'bg-[#D2E3FC]' : ''}`}>
-                  <Icon size={22} className={active ? 'text-[#4285F4]' : 'text-[#5F6368]'} />
-                </div>
-                <span className={`text-[10px] font-light tracking-wide ${active ? 'text-[#4285F4]' : 'text-[#5F6368]'}`}>{L(lang, item.label)}</span>
+                className="flex flex-col items-center gap-0 py-0.5">
+                <Icon size={16} strokeWidth={active ? 2 : 1.5} className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'} />
+                <span className={`text-[9px] font-light ${active ? 'text-[#111827]' : 'text-[#9CA3AF]'}`}>{L(lang, item.label)}</span>
               </button>
             )
           })}

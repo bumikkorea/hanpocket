@@ -540,520 +540,380 @@ function ChatTab({ profile, lang }) {
 }
 
 function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
-  const s = t[lang]
-  const [exp, setExp] = useState(profile.expiryDate || '')
-  const [saved, setSaved] = useState(false)
+  // 로그인 방식 확인을 위한 소셜 로그인 사용자 정보
+  const kakaoUser = getKakaoUser()
+  const naverUser = getNaverUser()
+  const wechatUser = getWeChatUser()
+  const alipayUser = getAlipayUser()
   
-  // 소셜 로그인 states
-  const [kakaoUser, setKakaoUser] = useState(() => getKakaoUser())
-  const [naverUser, setNaverUser] = useState(() => getNaverUser())
-  const [wechatUser, setWechatUser] = useState(() => getWeChatUser())
-  const [alipayUser, setAlipayUser] = useState(() => getAlipayUser())
+  // 모달 관리
+  const [showDateModal, setShowDateModal] = useState(false)
+  const [showNotifModal, setShowNotifModal] = useState(false)
+  const [showTimingModal, setShowTimingModal] = useState(false)
+  const [showToast, setShowToast] = useState(false)
   
-  // Loading states
-  const [kakaoLoading, setKakaoLoading] = useState(false)
-  const [naverLoading, setNaverLoading] = useState(false)
-  const [wechatLoading, setWechatLoading] = useState(false)
-  const [alipayLoading, setAlipayLoading] = useState(false)
+  // 비자 만료일 임시 저장
+  const [tempDate, setTempDate] = useState('')
   
+  // 알림 설정
   const [notifPrefs, setNotifPrefs] = useState(() => {
     try { return JSON.parse(localStorage.getItem('visa_notif_prefs')) || { d90: true, d60: true, d30: true, d7: true } }
     catch { return { d90: true, d60: true, d30: true, d7: true } }
   })
-  const days = getDaysUntil(exp)
 
-  // OAuth SDK 초기화 + 콜백 처리
-  useEffect(() => {
-    initKakao()
-    
-    // 모든 OAuth 콜백 처리
-    Promise.all([
-      handleKakaoCallback(),
-      handleNaverCallback(),
-      handleWeChatCallback(),
-      handleAlipayCallback()
-    ]).then(([kakao, naver, wechat, alipay]) => {
-      if (kakao) setKakaoUser(kakao)
-      if (naver) setNaverUser(naver)
-      if (wechat) setWechatUser(wechat)
-      if (alipay) setAlipayUser(alipay)
-    })
-  }, [])
+  // 로그인 방식 표시
+  const getLoginProvider = () => {
+    if (kakaoUser) return { provider: 'kakao', nickname: kakaoUser.nickname, icon: '💬' }
+    if (naverUser) return { provider: 'naver', nickname: naverUser.nickname || naverUser.name, icon: '🟢' }
+    if (wechatUser) return { provider: 'wechat', nickname: wechatUser.nickname, icon: '💚' }
+    if (alipayUser) return { provider: 'alipay', nickname: alipayUser.nickName, icon: '🔵' }
+    return null
+  }
 
-  const handleKakaoLogin = async () => {
-    setKakaoLoading(true)
-    trackKakaoEvent('kakao_login_attempt', { context: 'profile' })
+  // 국적 표시
+  const getNationalityLabel = () => {
+    const nationalityLabels = {
+      china_mainland: { ko: '중국(본토)', zh: '中国大陆', en: 'Mainland China' },
+      china_hk: { ko: '홍콩', zh: '香港', en: 'Hong Kong' },
+      china_macau: { ko: '마카오', zh: '澳门', en: 'Macau' },
+      china_taiwan: { ko: '대만', zh: '台湾', en: 'Taiwan' },
+      other: { ko: '기타', zh: '其他', en: 'Other' }
+    }
+    return nationalityLabels[profile?.nationality]?.[lang] || profile?.nationality || '-'
+  }
+
+  // 비자 타입 표시
+  const getVisaTypeLabel = () => {
+    const visaLabels = {
+      'd2_4': { ko: 'D-2 (유학)', zh: 'D-2 (留学)', en: 'D-2 (Study)' },
+      'd10': { ko: 'D-10 (구직)', zh: 'D-10 (求职)', en: 'D-10 (Job Seeking)' },
+      'h1': { ko: 'H-1 (관광취업)', zh: 'H-1 (观光就业)', en: 'H-1 (Working Holiday)' },
+      'f4': { ko: 'F-4 (재외동포)', zh: 'F-4 (海外同胞)', en: 'F-4 (Overseas Korean)' },
+      'f5': { ko: 'F-5 (영주)', zh: 'F-5 (永住)', en: 'F-5 (Permanent)' },
+      'f6': { ko: 'F-6 (결혼이민)', zh: 'F-6 (结婚移民)', en: 'F-6 (Marriage)' }
+    }
+    return visaLabels[profile?.visaType]?.[lang] || profile?.visaType || '-'
+  }
+
+  // 레벨 표시
+  const getUserLevel = () => {
+    return { ko: 'Lv.1 새내기', zh: 'Lv.1 新手', en: 'Lv.1 Newbie' }[lang]
+  }
+
+  // 구독 표시
+  const getSubscription = () => {
+    return { ko: 'Free', zh: 'Free', en: 'Free' }[lang]
+  }
+
+  // 비자 만료일 및 D-day 계산
+  const expiryDate = profile?.expiryDate
+  const days = getDaysUntil(expiryDate)
+
+  // 만료일 수정 버튼 클릭
+  const handleEditExpiry = () => {
+    setTempDate(expiryDate || '')
+    setShowDateModal(true)
+  }
+
+  // 만료일 저장
+  const handleSaveDate = () => {
+    const updatedProfile = { ...profile, expiryDate: tempDate }
+    setProfile(updatedProfile)
+    saveProfile(updatedProfile)
+    setShowDateModal(false)
+    setShowNotifModal(true)
+  }
+
+  // 알림 설정 Yes
+  const handleNotifYes = async () => {
+    setShowNotifModal(false)
     
+    if (typeof Notification === 'undefined') {
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
+      return
+    }
+
     try {
-      const userInfo = await loginWithKakao()
-      if (userInfo) {
-        setKakaoUser(userInfo)
-        trackKakaoEvent('kakao_login_success', { 
-          context: 'profile', 
-          nickname: userInfo.nickname,
-          has_email: !!userInfo.email 
-        })
-        trackLogin('kakao', profile.userType || 'resident')
+      const permission = await Notification.requestPermission()
+      if (permission === 'granted') {
+        setShowTimingModal(true)
       } else {
-        trackKakaoEvent('kakao_login_failed', { context: 'profile' })
+        setShowToast(true)
+        setTimeout(() => setShowToast(false), 3000)
       }
     } catch (error) {
-      console.error('카카오 로그인 실패:', error)
-      trackKakaoEvent('kakao_login_error', { context: 'profile', error: error.message })
-      alert(lang === 'ko' ? '로그인에 실패했습니다.' : lang === 'zh' ? '登录失败' : 'Login failed')
-    } finally {
-      setKakaoLoading(false)
+      setShowToast(true)
+      setTimeout(() => setShowToast(false), 3000)
     }
   }
 
-  const handleKakaoLogout = async () => {
-    trackKakaoEvent('kakao_logout_attempt', { context: 'profile' })
-    
-    try {
-      await logoutFromKakao()
-      setKakaoUser(null)
-      trackKakaoEvent('kakao_logout_success', { context: 'profile' })
-    } catch (error) {
-      console.error('카카오 로그아웃 오류:', error)
-      trackKakaoEvent('kakao_logout_error', { context: 'profile', error: error.message })
-    }
+  // 알림 시점 저장
+  const handleSaveTiming = () => {
+    localStorage.setItem('visa_notif_prefs', JSON.stringify(notifPrefs))
+    setShowTimingModal(false)
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 1000)
   }
 
-  // 네이버 로그인 핸들러
-  const handleNaverLogin = async () => {
-    setNaverLoading(true)
-    
-    try {
-      const userInfo = await loginWithNaver()
-      if (userInfo) {
-        setNaverUser(userInfo)
-        trackLogin('naver', profile.userType || 'resident')
-      }
-    } catch (error) {
-      console.error('네이버 로그인 실패:', error)
-      alert(lang === 'ko' ? '네이버 로그인에 실패했습니다.' : lang === 'zh' ? 'Naver登录失败' : 'Naver login failed')
-    } finally {
-      setNaverLoading(false)
-    }
-  }
-
-  const handleNaverLogout = async () => {
-    try {
-      await logoutFromNaver()
-      setNaverUser(null)
-    } catch (error) {
-      console.error('네이버 로그아웃 오류:', error)
-    }
-  }
-
-  // WeChat 로그인 핸들러
-  const handleWeChatLogin = async () => {
-    setWechatLoading(true)
-    
-    try {
-      const userInfo = await loginWithWeChat()
-      if (userInfo) {
-        setWechatUser(userInfo)
-        trackLogin('wechat', profile.userType || 'resident')
-      }
-    } catch (error) {
-      console.error('WeChat 로그인 실패:', error)
-      alert(lang === 'ko' ? 'WeChat 로그인에 실패했습니다.' : lang === 'zh' ? '微信登录失败' : 'WeChat login failed')
-    } finally {
-      setWechatLoading(false)
-    }
-  }
-
-  const handleWeChatLogout = async () => {
-    try {
-      await logoutFromWeChat()
-      setWechatUser(null)
-    } catch (error) {
-      console.error('WeChat 로그아웃 오류:', error)
-    }
-  }
-
-  // Alipay 로그인 핸들러
-  const handleAlipayLogin = async () => {
-    setAlipayLoading(true)
-    
-    try {
-      const userInfo = await loginWithAlipay()
-      if (userInfo) {
-        setAlipayUser(userInfo)
-        trackLogin('alipay', profile.userType || 'resident')
-      }
-    } catch (error) {
-      console.error('Alipay 로그인 실패:', error)
-      alert(lang === 'ko' ? 'Alipay 로그인에 실패했습니다.' : lang === 'zh' ? '支付宝登录失败' : 'Alipay login failed')
-    } finally {
-      setAlipayLoading(false)
-    }
-  }
-
-  const handleAlipayLogout = async () => {
-    try {
-      await logoutFromAlipay()
-      setAlipayUser(null)
-    } catch (error) {
-      console.error('Alipay 로그아웃 오류:', error)
-    }
-  }
-
+  // 알림 토글
   const toggleNotif = (key) => {
-    const updated = { ...notifPrefs, [key]: !notifPrefs[key] }
-    setNotifPrefs(updated)
-    localStorage.setItem('visa_notif_prefs', JSON.stringify(updated))
-    
-    // 알림 설정 변경 이벤트 추적
-    trackNotificationEvent('notification_preference_changed', 'visa_expiry', {
-      preference_key: key,
-      preference_value: updated[key],
-      all_preferences: updated
-    })
+    setNotifPrefs(prev => ({ ...prev, [key]: !prev[key] }))
   }
 
-  const save = () => {
-    const u = { ...profile, expiryDate: exp }
-    setProfile(u); saveProfile(u); setSaved(true); setTimeout(() => setSaved(false), 2000)
+  // 로그아웃
+  const handleLogout = () => {
+    if (kakaoUser) logoutFromKakao()
+    if (naverUser) logoutFromNaver()
+    if (wechatUser) logoutFromWeChat()
+    if (alipayUser) logoutFromAlipay()
+    localStorage.removeItem('visa_profile')
+    localStorage.removeItem('visa_notif_prefs')
+    setProfile(null)
   }
 
-  const notifOptions = [
-    { key: 'd90', label: { ko: '90일 전', zh: '90天前', en: '90 days before' } },
-    { key: 'd60', label: { ko: '60일 전', zh: '60天前', en: '60 days before' } },
-    { key: 'd30', label: { ko: '30일 전', zh: '30天前', en: '30 days before' } },
-    { key: 'd7', label: { ko: '7일 전', zh: '7天前', en: '7 days before' } },
-  ]
+  const loginInfo = getLoginProvider()
 
   return (
-    <div className="space-y-4 animate-fade-up font-['Inter']">
-      {/* 1. 만료일 카드 */}
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#E5E7EB]">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-[#F3F4F6] rounded-xl">
-            <Calendar className="w-5 h-5 text-[#111827]" />
+    <div className="min-h-screen bg-[#FAFAF8] p-4 pb-20 font-['Inter']">
+      {/* 메인 프로필 카드 */}
+      <div className="bg-white rounded-2xl p-6 shadow-sm">
+        {/* 프로필 헤더 */}
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-[#F3F4F6] rounded-full flex items-center justify-center mx-auto mb-3">
+            {loginInfo ? (
+              <span className="text-2xl">{loginInfo.icon}</span>
+            ) : (
+              <User className="w-8 h-8 text-[#6B7280]" />
+            )}
           </div>
-          <div>
-            <h3 className="font-bold text-[#111827] text-lg">
-              {lang === 'ko' ? '비자 만료일이 언제인가요?' : lang === 'zh' ? '签证到期日期是什么时候?' : 'When does your visa expire?'}
-            </h3>
-            <p className="text-[#6B7280] text-sm">
-              {lang === 'ko' ? '정확한 날짜를 입력해주세요' : lang === 'zh' ? '请输入准确的日期' : 'Please enter the exact date'}
-            </p>
+          
+          <div className="text-xl font-bold text-[#111827] mb-1">
+            {loginInfo?.nickname || (lang === 'ko' ? '사용자' : lang === 'zh' ? '用户' : 'User')}
           </div>
-        </div>
-        
-        <input 
-          type="date" 
-          value={exp} 
-          onChange={e => setExp(e.target.value)}
-          className="w-full max-w-full bg-[#F8F9FA] rounded-xl px-4 py-3 text-[#111827] font-medium border border-[#E5E7EB] focus:border-[#111827] focus:ring-2 focus:ring-[#111827]/20 outline-none transition-all box-border text-base"
-          style={{ WebkitAppearance: 'none', minWidth: 0 }}
-        />
-        
-        {/* D-day 표시 */}
-        {exp && days !== null && (
-          <div className={`mt-4 p-4 rounded-xl text-center font-bold text-lg ${
-            days<=0?'bg-red-50 text-red-600 border border-red-200':days<=30?'bg-red-50 text-red-600 border border-red-200':days<=90?'bg-amber-50 text-amber-700 border border-amber-200':'bg-green-50 text-green-600 border border-green-200'
-          }`}>
-            {days<=0 ? s.expired : `D-${days}`}
-            <div className="text-sm font-normal mt-1 opacity-80">
-              {days > 0 && `${days} ${s.daysLeft}`}
+          
+          {loginInfo && (
+            <div className="text-sm text-[#6B7280] flex items-center justify-center gap-1">
+              <span className="text-xs">{loginInfo.icon}</span>
+              {loginInfo.provider === 'kakao' && (lang === 'ko' ? '카카오로 로그인' : lang === 'zh' ? 'Kakao登录' : 'Login with Kakao')}
+              {loginInfo.provider === 'naver' && (lang === 'ko' ? '네이버로 로그인' : lang === 'zh' ? 'Naver登录' : 'Login with Naver')}
+              {loginInfo.provider === 'wechat' && (lang === 'ko' ? 'WeChat으로 로그인' : lang === 'zh' ? '微信登录' : 'Login with WeChat')}
+              {loginInfo.provider === 'alipay' && (lang === 'ko' ? 'Alipay로 로그인' : lang === 'zh' ? '支付宝登录' : 'Login with Alipay')}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* 2. 알림 설정 */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#E5E7EB]">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 bg-[#F3F4F6] rounded-xl">
-            <Bell className="w-5 h-5 text-[#111827]" />
-          </div>
-          <div>
-            <h3 className="font-bold text-[#111827] text-lg">
-              {lang === 'ko' ? '미리 알려드릴게요' : lang === 'zh' ? '我们会提前通知您' : "We'll remind you in advance"}
-            </h3>
-            <p className="text-[#6B7280] text-sm">
-              {lang === 'ko' ? '언제 알림을 받고 싶으신가요?' : lang === 'zh' ? '您希望何时收到提醒?' : 'When would you like to be reminded?'}
-            </p>
-          </div>
-        </div>
-        
-        <div className="space-y-4">
-          {notifOptions.map(opt => (
-            <label key={opt.key} className="flex items-center justify-between cursor-pointer p-3 rounded-xl hover:bg-[#F8F9FA] transition-colors">
-              <span className="text-[#111827] font-medium">{L(lang, opt.label)}</span>
-              <button 
-                onClick={() => toggleNotif(opt.key)}
-                className={`w-12 h-7 rounded-full transition-all relative ${
-                  notifPrefs[opt.key] ? 'bg-[#111827]' : 'bg-[#D1D1D6]'
-                }`}
-              >
-                <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-sm transition-all ${
-                  notifPrefs[opt.key] ? 'left-[22px]' : 'left-0.5'
-                }`} />
-              </button>
-            </label>
-          ))}
-        </div>
-        
-        <div className="mt-4 p-3 bg-[#FFF3E0] border border-[#FFB74D]/30 rounded-xl">
-          <p className="text-xs text-[#E65100] leading-relaxed">
-            ⚠️ {lang === 'ko' ? '체류기간 만료 시 범칙금·과태료 부과 대상' : lang === 'zh' ? '居留期满将被处以罚款·滞纳金' : 'Overstay may result in fines or penalties'}
-          </p>
-        </div>
-      </div>
+        {/* 구분선 */}
+        <div className="border-t border-[#E5E7EB] my-4"></div>
 
-      {/* 3. 소셜 로그인 관리 */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#E5E7EB]">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="p-2 bg-[#F3F4F6] rounded-xl">
-            <User className="w-5 h-5 text-[#111827]" />
-          </div>
-          <div>
-            <h3 className="font-bold text-[#111827] text-lg">
-              {lang === 'ko' ? '소셜 로그인 관리' : lang === 'zh' ? '社交登录管理' : 'Social Login Management'}
-            </h3>
-            <p className="text-[#6B7280] text-sm">
-              {lang === 'ko' ? '계정을 연결하여 편리하게 로그인하세요' : lang === 'zh' ? '连接账户以便捷登录' : 'Connect accounts for convenient login'}
-            </p>
-          </div>
-        </div>
-        
+        {/* 프로필 정보 */}
         <div className="space-y-3">
-          {/* 카카오 로그인 */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[#E5E7EB] hover:bg-[#F8F9FA] transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#FEE500] rounded-full flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#3C1E1E" d="M12 3C6.48 3 2 6.36 2 10.44c0 2.62 1.75 4.93 4.38 6.24l-1.12 4.16c-.1.36.32.64.62.42l4.97-3.26c.37.04.75.06 1.15.06 5.52 0 10-3.36 10-7.62S17.52 3 12 3z"/></svg>
-              </div>
-              <div>
-                <div className="font-medium text-[#111827]">
-                  {lang === 'ko' ? '카카오' : lang === 'zh' ? 'Kakao' : 'Kakao'}
-                </div>
-                {kakaoUser ? (
-                  <div className="text-sm text-[#6B7280]">
-                    {lang === 'ko' ? `연결됨: ${kakaoUser.nickname || 'Unknown'}` : 
-                     lang === 'zh' ? `已连接: ${kakaoUser.nickname || 'Unknown'}` : 
-                     `Connected: ${kakaoUser.nickname || 'Unknown'}`}
-                  </div>
-                ) : (
-                  <div className="text-sm text-[#6B7280]">
-                    {lang === 'ko' ? '연결되지 않음' : lang === 'zh' ? '未连接' : 'Not connected'}
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={kakaoUser ? handleKakaoLogout : handleKakaoLogin}
-              disabled={kakaoLoading}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                kakaoUser 
-                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
-                  : 'bg-[#FEE500] text-[#3C1E1E] hover:bg-[#FDD835]'
-              } ${kakaoLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {kakaoLoading ? '...' : kakaoUser ? 
-                (lang === 'ko' ? '연결 해제' : lang === 'zh' ? '断开连接' : 'Disconnect') :
-                (lang === 'ko' ? '연결' : lang === 'zh' ? '连接' : 'Connect')
-              }
-            </button>
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '국적' : lang === 'zh' ? '国籍' : 'Nationality'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm">{getNationalityLabel()}</span>
           </div>
-
-          {/* 네이버 로그인 */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[#E5E7EB] hover:bg-[#F8F9FA] transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#03C75A] rounded-full flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                  <path d="M13.6 11.4L9.5 5.5h-3v13h4.3v-6.6l4.1 6.6H18v-13h-4.4v5.9z"/>
-                </svg>
-              </div>
-              <div>
-                <div className="font-medium text-[#111827]">
-                  {lang === 'ko' ? '네이버' : lang === 'zh' ? 'Naver' : 'Naver'}
-                </div>
-                {naverUser ? (
-                  <div className="text-sm text-[#6B7280]">
-                    {lang === 'ko' ? `연결됨: ${naverUser.nickname || naverUser.name || 'Unknown'}` : 
-                     lang === 'zh' ? `已连接: ${naverUser.nickname || naverUser.name || 'Unknown'}` : 
-                     `Connected: ${naverUser.nickname || naverUser.name || 'Unknown'}`}
-                  </div>
-                ) : (
-                  <div className="text-sm text-[#6B7280]">
-                    {lang === 'ko' ? '연결되지 않음' : lang === 'zh' ? '未连接' : 'Not connected'}
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={naverUser ? handleNaverLogout : handleNaverLogin}
-              disabled={naverLoading}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                naverUser 
-                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
-                  : 'bg-[#03C75A] text-white hover:bg-[#02B050]'
-              } ${naverLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {naverLoading ? '...' : naverUser ? 
-                (lang === 'ko' ? '연결 해제' : lang === 'zh' ? '断开连接' : 'Disconnect') :
-                (lang === 'ko' ? '연결' : lang === 'zh' ? '连接' : 'Connect')
-              }
-            </button>
+          
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '비자' : lang === 'zh' ? '签证' : 'Visa'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm">{getVisaTypeLabel()}</span>
           </div>
-
-          {/* WeChat 로그인 */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[#E5E7EB] hover:bg-[#F8F9FA] transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#07C160] rounded-full flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                  <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.534c0 2.22 1.174 4.142 3.016 5.49a.75.75 0 01.27.87l-.458 1.597a.375.375 0 00.506.44l1.932-.901a.75.75 0 01.572-.036c1.014.305 2.1.472 3.228.472.169 0 .336-.005.502-.014a5.868 5.868 0 01-.254-1.718c0-3.56 3.262-6.45 7.282-6.45.215 0 .428.01.638.028C16.283 5.114 12.85 2.188 8.691 2.188zM5.785 7.095a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25zm5.813 0a1.125 1.125 0 110-2.25 1.125 1.125 0 010 2.25z"/>
-                  <path d="M23.997 15.268c0-3.29-3.262-5.96-7.285-5.96-4.023 0-7.285 2.67-7.285 5.96 0 3.292 3.262 5.96 7.285 5.96.89 0 1.746-.132 2.534-.375a.75.75 0 01.573.036l1.478.689a.375.375 0 00.506-.44l-.35-1.22a.75.75 0 01.27-.87c1.49-1.09 2.274-2.644 2.274-4.38zm-9.792-.75a.938.938 0 110-1.875.938.938 0 010 1.875zm5.015 0a.938.938 0 110-1.875.938.938 0 010 1.875z"/>
-                </svg>
-              </div>
-              <div>
-                <div className="font-medium text-[#111827]">
-                  {lang === 'ko' ? '위챗' : lang === 'zh' ? '微信' : 'WeChat'}
-                </div>
-                {wechatUser ? (
-                  <div className="text-sm text-[#6B7280]">
-                    {lang === 'ko' ? `연결됨: ${wechatUser.nickname || 'Unknown'}` : 
-                     lang === 'zh' ? `已连接: ${wechatUser.nickname || 'Unknown'}` : 
-                     `Connected: ${wechatUser.nickname || 'Unknown'}`}
-                  </div>
-                ) : (
-                  <div className="text-sm text-[#6B7280]">
-                    {lang === 'ko' ? '연결되지 않음' : lang === 'zh' ? '未连接' : 'Not connected'}
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={wechatUser ? handleWeChatLogout : handleWeChatLogin}
-              disabled={wechatLoading}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                wechatUser 
-                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
-                  : 'bg-[#07C160] text-white hover:bg-[#06B050]'
-              } ${wechatLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {wechatLoading ? '...' : wechatUser ? 
-                (lang === 'ko' ? '연결 해제' : lang === 'zh' ? '断开连接' : 'Disconnect') :
-                (lang === 'ko' ? '연결' : lang === 'zh' ? '连接' : 'Connect')
-              }
-            </button>
+          
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '레벨' : lang === 'zh' ? '等级' : 'Level'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm">{getUserLevel()}</span>
           </div>
-
-          {/* Alipay 로그인 */}
-          <div className="flex items-center justify-between p-4 rounded-xl border border-[#E5E7EB] hover:bg-[#F8F9FA] transition-colors">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#1677FF] rounded-full flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                  <path d="M21.422 13.482C19.558 12.614 17.46 11.6 15.998 10.952c.72-1.748 1.164-3.678 1.164-5.202 0-1.554-.87-3.75-3.828-3.75-2.478 0-4.038 1.86-4.038 4.11 0 2.598 1.806 4.764 4.362 5.424-.498.804-1.104 1.518-1.788 2.118-1.62 1.416-3.456 2.13-5.454 2.13C4.146 15.782 2 14.258 2 11.988 2 6.468 7.098 2 13.332 2 19.566 2 22 6.468 22 11.988c0 .516-.03 1.02-.084 1.494h-.494z"/>
-                </svg>
-              </div>
-              <div>
-                <div className="font-medium text-[#111827]">
-                  {lang === 'ko' ? '알리페이' : lang === 'zh' ? '支付宝' : 'Alipay'}
-                </div>
-                {alipayUser ? (
-                  <div className="text-sm text-[#6B7280]">
-                    {lang === 'ko' ? `연결됨: ${alipayUser.nickName || 'Unknown'}` : 
-                     lang === 'zh' ? `已连接: ${alipayUser.nickName || 'Unknown'}` : 
-                     `Connected: ${alipayUser.nickName || 'Unknown'}`}
-                  </div>
-                ) : (
-                  <div className="text-sm text-[#6B7280]">
-                    {lang === 'ko' ? '연결되지 않음' : lang === 'zh' ? '未连接' : 'Not connected'}
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={alipayUser ? handleAlipayLogout : handleAlipayLogin}
-              disabled={alipayLoading}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                alipayUser 
-                  ? 'bg-red-50 text-red-600 hover:bg-red-100' 
-                  : 'bg-[#1677FF] text-white hover:bg-[#1465CC]'
-              } ${alipayLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            >
-              {alipayLoading ? '...' : alipayUser ? 
-                (lang === 'ko' ? '연결 해제' : lang === 'zh' ? '断开连接' : 'Disconnect') :
-                (lang === 'ko' ? '연결' : lang === 'zh' ? '连接' : 'Connect')
-              }
-            </button>
+          
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '구독' : lang === 'zh' ? '订阅' : 'Subscription'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm flex items-center gap-1">
+              <Shield className="w-4 h-4 text-[#6B7280]" />
+              {getSubscription()}
+            </span>
           </div>
         </div>
-        
-        <div className="mt-4 p-3 bg-[#E3F2FD] border border-[#1976D2]/30 rounded-xl">
-          <p className="text-xs text-[#1565C0] leading-relaxed">
-            💡 {lang === 'ko' ? '소셜 로그인을 연결하면 다음에 더 쉽게 로그인할 수 있습니다' : 
-                 lang === 'zh' ? '连接社交登录后，下次可以更轻松地登录' : 
-                 'Connect social logins for easier access next time'}
-          </p>
+
+        {/* 구분선 */}
+        <div className="border-t border-[#E5E7EB] my-4"></div>
+
+        {/* 비자 만료일 */}
+        <div className="flex justify-between items-center py-2">
+          <div>
+            {expiryDate && days !== null ? (
+              <>
+                <span className="text-[#6B7280] text-sm">
+                  {lang === 'ko' ? '비자 만료' : lang === 'zh' ? '签证到期' : 'Visa Expiry'}
+                </span>
+                <div className="mt-1">
+                  <span className="font-medium text-[#111827] text-sm">{expiryDate}</span>
+                  <span className={`ml-2 text-xs px-2 py-1 rounded-full ${
+                    days <= 0 ? 'bg-red-100 text-red-600' :
+                    days <= 30 ? 'bg-red-100 text-red-600' :
+                    days <= 90 ? 'bg-amber-100 text-amber-700' :
+                    'bg-green-100 text-green-600'
+                  }`}>
+                    {days <= 0 ? (lang === 'ko' ? '만료됨' : lang === 'zh' ? '已过期' : 'Expired') : `D-${days}`}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <span className="text-[#6B7280] text-sm">
+                {lang === 'ko' ? '비자 만료일을 설정하세요' : lang === 'zh' ? '请设置签证到期日期' : 'Set visa expiry date'}
+              </span>
+            )}
+          </div>
+          
+          <button
+            onClick={handleEditExpiry}
+            className="w-7 h-7 bg-[#F3F4F6] rounded-full flex items-center justify-center hover:bg-[#E5E7EB] transition-colors"
+          >
+            <Pencil className="w-3.5 h-3.5 text-[#6B7280]" />
+          </button>
         </div>
+
+        {/* 구분선 */}
+        <div className="border-t border-[#E5E7EB] my-6"></div>
+
+        {/* 로그아웃 버튼 */}
+        <button
+          onClick={handleLogout}
+          className="w-full text-[#6B7280] text-sm py-3 hover:text-[#111827] transition-colors flex items-center justify-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          {lang === 'ko' ? '로그아웃' : lang === 'zh' ? '注销' : 'Logout'}
+        </button>
       </div>
 
-      {/* 4. 저장 버튼 */}
-      <button 
-        onClick={save}
-        className="w-full bg-[#111827] text-white font-semibold py-4 rounded-2xl hover:bg-[#1F2937] transition-all btn-press flex items-center justify-center gap-3 shadow-sm"
-      >
-        <Save className="w-5 h-5" />
-        {saved ? (
-          <span>✅ {lang === 'ko' ? '저장됨' : lang === 'zh' ? '已保存' : 'Saved'}</span>
-        ) : (
-          <span>{s.saveProfile || (lang === 'ko' ? '저장하기' : lang === 'zh' ? '保存' : 'Save')}</span>
-        )}
-      </button>
-
-      {/* 4. 알림 설정 */}
-      {(
-        <button
-          onClick={async () => {
-            trackNotificationEvent('notification_permission_request', 'general')
+      {/* 모달 1: 비자 만료일 입력 */}
+      {showDateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl">
+            <h3 className="text-lg font-bold text-[#111827] mb-4 text-center">
+              {lang === 'ko' ? '비자 만료일 설정' : lang === 'zh' ? '设置签证到期日期' : 'Set Visa Expiry Date'}
+            </h3>
             
-            if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-              // 이미 허용됨 — 안내만
-              trackNotificationEvent('notification_already_granted', 'general')
-              alert(lang === 'ko' ? '알림이 이미 활성화되어 있습니다.' : lang === 'zh' ? '通知已启用。' : 'Notifications already enabled.')
-            } else {
-              localStorage.removeItem('hp_push_dismissed')
-              if (onResetPushDismiss) onResetPushDismiss()
-              
-              const { subscribePush } = await import('./utils/pushNotification')
-              const sub = await subscribePush()
-              
-              if (sub) {
-                trackNotificationEvent('notification_permission_granted', 'general')
-                alert(lang === 'ko' ? '알림이 활성화되었습니다!' : lang === 'zh' ? '通知已开启！' : 'Notifications enabled!')
-              } else {
-                trackNotificationEvent('notification_permission_denied', 'general')
-                alert(lang === 'ko' ? '알림 권한을 허용해주세요. Safari에서 홈 화면에 추가 후 다시 시도해주세요.' : lang === 'zh' ? '请允许通知权限。请在Safari中添加到主屏幕后重试。' : 'Please allow notification permission. Add to Home Screen from Safari and try again.')
-              }
-            }
-          }}
-          className="w-full bg-[#F3F4F6] text-[#111827] font-semibold py-4 rounded-2xl hover:bg-[#E5E7EB] transition-all btn-press flex items-center justify-center gap-3"
-        >
-          <Bell className="w-5 h-5" />
-          {lang === 'ko' ? '알림 설정' : lang === 'zh' ? '通知设置' : 'Notification Settings'}
-        </button>
+            <input
+              type="date"
+              value={tempDate}
+              onChange={(e) => setTempDate(e.target.value)}
+              className="w-full bg-[#F8F9FA] rounded-xl px-4 py-3 text-[#111827] border border-[#E5E7EB] focus:border-[#111827] outline-none mb-6"
+            />
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDateModal(false)}
+                className="flex-1 py-3 text-[#6B7280] font-medium rounded-xl hover:bg-[#F3F4F6] transition-colors"
+              >
+                {lang === 'ko' ? '취소' : lang === 'zh' ? '取消' : 'Cancel'}
+              </button>
+              <button
+                onClick={handleSaveDate}
+                disabled={!tempDate}
+                className="flex-1 py-3 bg-[#111827] text-white font-medium rounded-xl hover:bg-[#1F2937] disabled:opacity-50 transition-colors"
+              >
+                {lang === 'ko' ? '저장' : lang === 'zh' ? '保存' : 'Save'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
-      {/* 5. 초기화 버튼 */}
-      <button 
-        onClick={() => { 
-          localStorage.removeItem('visa_profile'); 
-          localStorage.removeItem('edu_state'); 
-          localStorage.removeItem('visa_notif_prefs'); 
-          setProfile(null) 
-        }}
-        className="w-full text-[#9CA3AF] text-sm py-3 hover:text-[#6B7280] transition-colors flex items-center justify-center gap-2"
-      >
-        <Trash2 className="w-4 h-4" />
-        {lang === 'ko' ? '프로필 재설정' : lang === 'zh' ? '重置资料' : 'Reset Profile'}
-      </button>
+      {/* 모달 2: 알림 설정 확인 */}
+      {showNotifModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl">
+            <div className="text-center mb-6">
+              <Bell className="w-12 h-12 text-[#111827] mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-[#111827] mb-2">
+                {lang === 'ko' ? '비자 만료일 알림' : lang === 'zh' ? '签证到期提醒' : 'Visa Expiry Alert'}
+              </h3>
+              <p className="text-[#6B7280] text-sm">
+                {lang === 'ko' ? '비자 만료일 알림을 받으시겠습니까?' : lang === 'zh' ? '您希望收到签证到期提醒吗？' : 'Would you like to receive visa expiry reminders?'}
+              </p>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowNotifModal(false)}
+                className="flex-1 py-3 text-[#6B7280] font-medium rounded-xl hover:bg-[#F3F4F6] transition-colors"
+              >
+                {lang === 'ko' ? 'No' : 'No'}
+              </button>
+              <button
+                onClick={handleNotifYes}
+                className="flex-1 py-3 bg-[#111827] text-white font-medium rounded-xl hover:bg-[#1F2937] transition-colors"
+              >
+                {lang === 'ko' ? 'Yes' : 'Yes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 모달 3: 알림 시점 선택 */}
+      {showTimingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl">
+            <h3 className="text-lg font-bold text-[#111827] mb-4 text-center">
+              {lang === 'ko' ? '알림 시점 선택' : lang === 'zh' ? '选择提醒时间' : 'Choose Reminder Times'}
+            </h3>
+            
+            <div className="space-y-4 mb-6">
+              {[
+                { key: 'd90', label: { ko: '90일 전', zh: '90天前', en: '90 days before' } },
+                { key: 'd60', label: { ko: '60일 전', zh: '60天前', en: '60 days before' } },
+                { key: 'd30', label: { ko: '30일 전', zh: '30天前', en: '30 days before' } },
+                { key: 'd7', label: { ko: '7일 전', zh: '7天前', en: '7 days before' } }
+              ].map(opt => (
+                <label key={opt.key} className="flex items-center justify-between cursor-pointer">
+                  <span className="text-[#111827] font-medium">{L(lang, opt.label)}</span>
+                  <button 
+                    onClick={() => toggleNotif(opt.key)}
+                    className={`w-12 h-7 rounded-full transition-all relative ${
+                      notifPrefs[opt.key] ? 'bg-[#111827]' : 'bg-[#D1D1D6]'
+                    }`}
+                  >
+                    <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow-sm transition-all ${
+                      notifPrefs[opt.key] ? 'left-[22px]' : 'left-0.5'
+                    }`} />
+                  </button>
+                </label>
+              ))}
+            </div>
+            
+            <button
+              onClick={handleSaveTiming}
+              className="w-full py-3 bg-[#111827] text-white font-medium rounded-xl hover:bg-[#1F2937] transition-colors"
+            >
+              {lang === 'ko' ? '확인' : lang === 'zh' ? '确认' : 'Confirm'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 토스트 메시지 */}
+      {showToast && (
+        <div 
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#111827] text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg z-50 animate-fade-in"
+          style={{ animation: 'fadeInOut 1s ease-in-out' }}
+        >
+          {lang === 'ko' ? '비자 만료 알림이 설정되었습니다' : lang === 'zh' ? '已设置签证到期提醒' : 'Visa expiry alerts set'}
+        </div>
+      )}
+
+      <style jsx>{`
+        @keyframes fadeInOut {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 1; }
+        }
+      `}</style>
     </div>
   )
 }

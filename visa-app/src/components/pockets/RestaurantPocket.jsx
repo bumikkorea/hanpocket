@@ -1,13 +1,26 @@
-import { useState } from 'react'
-import { Plus, Minus, Copy } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Bookmark, Volume2, Copy, Plus, Minus, DoorOpen, UtensilsCrossed, CreditCard, ChefHat, Utensils, AlertTriangle } from 'lucide-react'
 
 // 다국어 헬퍼 함수
 const L = (lang, text) => text[lang] || text['ko']
 
 export default function RestaurantPocket({ lang }) {
+  const [activeTab, setActiveTab] = useState('entrance')
   const [peopleCount, setPeopleCount] = useState(2)
   const [selectedAllergies, setSelectedAllergies] = useState([])
   const [toastMessage, setToastMessage] = useState('')
+  const [bookmarkedCards, setBookmarkedCards] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('restaurant_bookmarks')) || []
+    } catch {
+      return []
+    }
+  })
+
+  // 북마크 저장
+  useEffect(() => {
+    localStorage.setItem('restaurant_bookmarks', JSON.stringify(bookmarkedCards))
+  }, [bookmarkedCards])
 
   // 토스트 메시지 표시 함수
   const showToast = (message) => {
@@ -22,6 +35,29 @@ export default function RestaurantPocket({ lang }) {
     })
   }
 
+  // TTS 함수
+  const speak = (text) => {
+    try {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text)
+        utterance.lang = 'ko-KR'
+        utterance.rate = 0.75
+        speechSynthesis.speak(utterance)
+      }
+    } catch (e) {
+      showToast('음성 재생을 지원하지 않습니다')
+    }
+  }
+
+  // 북마크 토글
+  const toggleBookmark = (cardId) => {
+    setBookmarkedCards(prev => 
+      prev.includes(cardId) 
+        ? prev.filter(id => id !== cardId)
+        : [...prev, cardId]
+    )
+  }
+
   // 알레르기 선택 토글
   const toggleAllergy = (allergy) => {
     setSelectedAllergies(prev => 
@@ -31,112 +67,220 @@ export default function RestaurantPocket({ lang }) {
     )
   }
 
-  // 알레르기 문장 생성
-  const generateAllergyText = () => {
-    if (selectedAllergies.length === 0) return ''
-    const allergyTexts = {
-      ko: selectedAllergies.map(a => {
-        const map = {
-          peanut: '땅콩', seafood: '해산물', dairy: '유제품', 
-          wheat: '밀가루', egg: '계란'
-        }
-        return map[a] || a
-      }),
-      zh: selectedAllergies.map(a => {
-        const map = {
-          peanut: '花生', seafood: '海鲜', dairy: '乳制品', 
-          wheat: '面粉', egg: '鸡蛋'
-        }
-        return map[a] || a
-      }),
-      en: selectedAllergies.map(a => {
-        const map = {
-          peanut: 'peanuts', seafood: 'seafood', dairy: 'dairy', 
-          wheat: 'wheat', egg: 'eggs'
-        }
-        return map[a] || a
-      })
-    }
-    
-    const allergyList = allergyTexts[lang].join(', ')
-    return {
-      ko: `${allergyList} 못 먹어요`,
-      zh: `不能吃${allergyList}`,
-      en: `I can't eat ${allergyList}`
-    }[lang]
-  }
+  // 소주제 탭 데이터
+  const tabs = [
+    { id: 'entrance', name: { ko: '입장', zh: '入店', en: 'Entrance' }, icon: DoorOpen },
+    { id: 'order', name: { ko: '주문', zh: '点餐', en: 'Order' }, icon: UtensilsCrossed },
+    { id: 'allergy', name: { ko: '알레르기', zh: '过敏', en: 'Allergy' }, icon: AlertTriangle },
+    { id: 'payment', name: { ko: '계산', zh: '结账', en: 'Payment' }, icon: CreditCard },
+    { id: 'banchan', name: { ko: '반찬', zh: '小菜', en: 'Banchan' }, icon: ChefHat }
+  ]
 
-  // 식당 표현 데이터
-  const expressions = {
-    entrance: {
-      title: { ko: '입장', zh: '入店', en: 'Entrance' },
-      items: [
-        {
-          ko: `${peopleCount}명이요`,
-          zh: `${peopleCount}个人`,
-          en: `${peopleCount} people`,
-          pronunciation: `${peopleCount}-myeong-i-yo`
-        }
-      ]
-    },
-    ordering: {
-      title: { ko: '주문', zh: '点餐', en: 'Ordering' },
-      items: [
-        {
-          ko: '이거 주세요',
-          zh: '要这个',
-          en: 'I want this',
-          pronunciation: 'i-geo ju-se-yo'
-        },
-        {
-          ko: '추천 메뉴 뭐예요?',
-          zh: '推荐菜是什么？',
-          en: 'What do you recommend?',
-          pronunciation: 'chu-cheon me-nyu mwo-ye-yo'
-        },
-        {
-          ko: '매운 거 빼주세요',
-          zh: '不要放辣的',
-          en: 'No spicy please',
-          pronunciation: 'mae-un geo ppae-ju-se-yo'
-        },
-        {
-          ko: '덜 맵게 해주세요',
-          zh: '少放点辣',
-          en: 'Make it less spicy',
-          pronunciation: 'deol maep-ge hae-ju-se-yo'
-        }
-      ]
-    },
-    payment: {
-      title: { ko: '계산', zh: '结账', en: 'Payment' },
-      items: [
-        {
-          ko: '계산이요',
-          zh: '买单',
-          en: 'Check please',
-          pronunciation: 'gye-san-i-yo'
-        },
-        {
-          ko: '카드 돼요?',
-          zh: '可以刷卡吗？',
-          en: 'Can I pay by card?',
-          pronunciation: 'ka-deu dwae-yo'
-        },
-        {
-          ko: '영수증 주세요',
-          zh: '请给我收据',
-          en: 'Receipt please',
-          pronunciation: 'yeong-su-jeung ju-se-yo'
-        },
-        {
-          ko: '따로따로 계산해주세요',
-          zh: '分开结账',
-          en: 'Separate bills please',
-          pronunciation: 'tta-ro-tta-ro gye-san-hae-ju-se-yo'
-        }
-      ]
-    }
+  // 플래시카드 데이터
+  const cardData = {
+    entrance: [
+      {
+        id: 'hello',
+        ko: '안녕하세요',
+        pronunciation: 'ān-nyeong-ha-se-yo',
+        zh: '你好',
+        example_ko: '안녕하세요, 예약한 김철수입니다',
+        example_zh: '你好，我是预约的金哲洙',
+        example_pronunciation: 'annyeonghaseyo, yeyakhan gimcheolsu-imnida',
+        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'people_count',
+        ko: `${peopleCount}명이요`,
+        pronunciation: `${peopleCount}-myeong-i-yo`,
+        zh: `${peopleCount}位`,
+        example_ko: `${peopleCount}명 자리 있나요?`,
+        example_zh: `有${peopleCount}位的位置吗？`,
+        example_pronunciation: `${peopleCount}myeong jari innayo?`,
+        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'reservation',
+        ko: '예약했어요',
+        pronunciation: 'ye-yak-haess-eo-yo',
+        zh: '我预约了',
+        example_ko: '7시에 예약했어요',
+        example_zh: '我7点预约了',
+        example_pronunciation: 'ilgopsi-e yeyakhaesseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'seats_available',
+        ko: '자리 있어요?',
+        pronunciation: 'ja-ri iss-eo-yo',
+        zh: '有位子吗？',
+        example_ko: '창가 자리 있어요?',
+        example_zh: '有靠窗的位子吗？',
+        example_pronunciation: 'changgajari isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'wait_time',
+        ko: '얼마나 기다려요?',
+        pronunciation: 'eol-ma-na gi-da-ryeo-yo',
+        zh: '要等多久？',
+        example_ko: '30분 정도 기다려요',
+        example_zh: '大概等30分钟',
+        example_pronunciation: 'samsipbun jeongdo gidaryeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    order: [
+      {
+        id: 'this_please',
+        ko: '이거 주세요',
+        pronunciation: 'i-geo ju-se-yo',
+        zh: '请给我这个',
+        example_ko: '이거 주세요, 매운 걸로요',
+        example_zh: '请给我这个，要辣的',
+        example_pronunciation: 'igeo juseyo, maeun geollo-yo',
+        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'recommend',
+        ko: '추천 메뉴 뭐예요?',
+        pronunciation: 'chu-cheon me-nyu mwo-ye-yo',
+        zh: '推荐菜是什么？',
+        example_ko: '가장 인기 있는 추천 메뉴 뭐예요?',
+        example_zh: '最受欢迎的推荐菜是什么？',
+        example_pronunciation: 'gajang ingi-inneun chucheon menyu mwoyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'no_spicy',
+        ko: '매운 거 빼주세요',
+        pronunciation: 'mae-un geo ppae-ju-se-yo',
+        zh: '请不要放辣的',
+        example_ko: '매운 거 빼고 만들어주세요',
+        example_zh: '请做不辣的',
+        example_pronunciation: 'maeun geo ppaego mandeureo-juseyo',
+        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'one_more',
+        ko: '한 개 더 주세요',
+        pronunciation: 'han gae deo ju-se-yo',
+        zh: '请再给一个',
+        example_ko: '같은 걸로 한 개 더 주세요',
+        example_zh: '请再给一个同样的',
+        example_pronunciation: 'gateun geollo han gae deo juseyo',
+        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'water',
+        ko: '물 주세요',
+        pronunciation: 'mul ju-se-yo',
+        zh: '请给我水',
+        example_ko: '찬물 좀 주세요',
+        example_zh: '请给我一些冰水',
+        example_pronunciation: 'chanmul jom juseyo',
+        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    payment: [
+      {
+        id: 'bill_please',
+        ko: '계산이요',
+        pronunciation: 'gye-san-i-yo',
+        zh: '结账',
+        example_ko: '계산이요, 카드로 할게요',
+        example_zh: '结账，用卡支付',
+        example_pronunciation: 'gyesaniyo, kadeu-ro halgeyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'card_ok',
+        ko: '카드 돼요?',
+        pronunciation: 'ka-deu dwae-yo',
+        zh: '可以刷卡吗？',
+        example_ko: '카드 결제 돼요?',
+        example_zh: '可以用卡支付吗？',
+        example_pronunciation: 'kadeu gyeolje dwaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'receipt',
+        ko: '영수증 주세요',
+        pronunciation: 'yeong-su-jeung ju-se-yo',
+        zh: '请给我收据',
+        example_ko: '영수증 따로 주세요',
+        example_zh: '请单独给我收据',
+        example_pronunciation: 'yeongsujeung ttaro juseyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'separate_bills',
+        ko: '따로따로 계산해주세요',
+        pronunciation: 'tta-ro-tta-ro gye-san-hae-ju-se-yo',
+        zh: '请分开结账',
+        example_ko: 'N빵으로 따로따로 계산해주세요',
+        example_zh: '请分N份结账',
+        example_pronunciation: 'enbppang-eulo ttarottaro gyesanhae-juseyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    banchan: [
+      {
+        id: 'kimchi',
+        ko: '김치',
+        pronunciation: 'gimchi',
+        zh: '泡菜',
+        example_ko: '김치 맛있어요',
+        example_zh: '泡菜很好吃',
+        example_pronunciation: 'gimchi masisseoyo',
+        description: '매운 배추 절임',
+        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'kkakdugi',
+        ko: '깍두기',
+        pronunciation: 'kkakdugi',
+        zh: '萝卜泡菜',
+        example_ko: '깍두기 더 주세요',
+        example_zh: '请再给一些萝卜泡菜',
+        example_pronunciation: 'kkakdugi deo juseyo',
+        description: '무 깍둑썰기',
+        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'spinach',
+        ko: '시금치나물',
+        pronunciation: 'sigeumchi-namul',
+        zh: '菠菜',
+        example_ko: '시금치나물 어떻게 만들어요?',
+        example_zh: '菠菜怎么做？',
+        example_pronunciation: 'sigeumchi-namul eotteoke mandeureoyo?',
+        description: '참기름 무침',
+        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'beansprouts',
+        ko: '콩나물',
+        pronunciation: 'kongnamul',
+        zh: '豆芽',
+        example_ko: '콩나물 아삭아삭해요',
+        example_zh: '豆芽很脆',
+        example_pronunciation: 'kongnamul asakasak-haeyo',
+        description: '삶은 콩나물',
+        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'japchae',
+        ko: '잡채',
+        pronunciation: 'japchae',
+        zh: '杂菜',
+        example_ko: '잡채 맛있게 만드셨네요',
+        example_zh: '杂菜做得很好吃',
+        example_pronunciation: 'japchae masitkke mandeusy-eotneyo',
+        description: '당면 볶음',
+        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+      }
+    ]
   }
 
   // 알레르기 항목
@@ -148,6 +292,162 @@ export default function RestaurantPocket({ lang }) {
     { id: 'egg', name: { ko: '계란', zh: '鸡蛋', en: 'Egg' } }
   ]
 
+  // 알레르기 문장 생성
+  const generateAllergyCards = () => {
+    return selectedAllergies.map(allergyId => {
+      const allergy = allergies.find(a => a.id === allergyId)
+      if (!allergy) return null
+      
+      const allergyName = L(lang, allergy.name)
+      return {
+        id: `allergy_${allergyId}`,
+        ko: `${allergyName} 못 먹어요`,
+        pronunciation: `${allergyName} mot meogeoyo`,
+        zh: `不能吃${L('zh', allergy.name)}`,
+        example_ko: `저는 ${allergyName} 알레르기가 있어요`,
+        example_zh: `我对${L('zh', allergy.name)}过敏`,
+        example_pronunciation: `jeoneun ${allergyName} allereugiga isseoyo`,
+        unsplash: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=200&fit=crop&q=80'
+      }
+    }).filter(Boolean)
+  }
+
+  // 그라데이션 클래스 매핑
+  const getGradientClass = (tabId, cardId = '') => {
+    const gradientMap = {
+      entrance: 'bg-gradient-to-br from-amber-100 to-orange-200',
+      order: 'bg-gradient-to-br from-red-100 to-pink-200', 
+      allergy: 'bg-gradient-to-br from-yellow-100 to-amber-200',
+      payment: 'bg-gradient-to-br from-blue-100 to-indigo-200',
+      banchan: 'bg-gradient-to-br from-green-100 to-emerald-200'
+    }
+    return gradientMap[tabId] || 'bg-gradient-to-br from-gray-100 to-gray-200'
+  }
+
+  // 아이콘 매핑
+  const getIcon = (tabId) => {
+    const iconMap = {
+      entrance: DoorOpen,
+      order: UtensilsCrossed,
+      allergy: AlertTriangle,
+      payment: CreditCard,
+      banchan: ChefHat
+    }
+    return iconMap[tabId] || Utensils
+  }
+
+  // 플래시카드 컴포넌트
+  const FlashCard = ({ card, tabId }) => {
+    const [imgError, setImgError] = useState(false)
+    const Icon = getIcon(tabId)
+    const gradientClass = getGradientClass(tabId)
+    const isBookmarked = bookmarkedCards.includes(card.id)
+
+    return (
+      <div className="bg-white rounded-lg border border-gray-100 overflow-hidden mb-4 shadow-sm">
+        {/* 이미지/그라데이션 영역 */}
+        <div className="relative w-full h-[200px]">
+          {!imgError && card.unsplash ? (
+            <img 
+              src={card.unsplash} 
+              onError={() => setImgError(true)} 
+              className="w-full h-[200px] object-cover" 
+              alt=""
+            />
+          ) : (
+            <div className={`w-full h-[200px] ${gradientClass} flex items-center justify-center`}>
+              <Icon size={48} className="text-white/60" />
+            </div>
+          )}
+          {/* 북마크 버튼 */}
+          <button
+            onClick={() => toggleBookmark(card.id)}
+            className={`absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+              isBookmarked 
+                ? 'bg-yellow-500 text-white' 
+                : 'bg-white/80 text-gray-600 hover:bg-yellow-500 hover:text-white'
+            }`}
+          >
+            <Bookmark size={16} className={isBookmarked ? 'fill-current' : ''} />
+          </button>
+        </div>
+
+        {/* 콘텐츠 영역 */}
+        <div className="p-4">
+          {/* 메인 문장 + 음성 버튼 */}
+          <div className="flex items-start justify-between mb-2">
+            <button
+              onClick={() => copyToClipboard(card.ko)}
+              className="flex-1 text-left"
+            >
+              <div className="text-2xl font-bold text-gray-900 mb-1">
+                {card.ko}
+              </div>
+            </button>
+            <button
+              onClick={() => speak(card.ko)}
+              className="ml-3 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+            >
+              <Volume2 size={16} className="text-gray-600" />
+            </button>
+          </div>
+
+          {/* 발음 */}
+          <div className="text-sm text-gray-500 mb-2">
+            [{card.pronunciation}]
+          </div>
+
+          {/* 중국어 번역 */}
+          <div className="text-lg text-gray-700 mb-4">
+            {card.zh}
+          </div>
+
+          {/* 설명 (반찬만) */}
+          {card.description && (
+            <div className="text-sm text-gray-600 mb-3 font-medium">
+              {card.description}
+            </div>
+          )}
+
+          {/* 예문 */}
+          <div className="space-y-2 mb-4">
+            <div className="text-gray-800">
+              "{card.example_ko}"
+            </div>
+            <div className="text-gray-600">
+              "{card.example_zh}"
+            </div>
+            <div className="text-sm text-gray-500">
+              {card.example_pronunciation}
+            </div>
+          </div>
+
+          {/* 하단 액션 버튼 */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => copyToClipboard(card.ko)}
+              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Copy size={16} />
+              <span className="text-sm font-medium">
+                {L(lang, { ko: '탭하면 복사', zh: '点击复制', en: 'Tap to copy' })}
+              </span>
+            </button>
+            <button
+              onClick={() => speak(card.ko)}
+              className="bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              <Volume2 size={16} />
+              <span className="text-sm font-medium">
+                {L(lang, { ko: '음성 재생', zh: '语音播放', en: 'Voice play' })}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* 토스트 메시지 */}
@@ -157,107 +457,121 @@ export default function RestaurantPocket({ lang }) {
         </div>
       )}
 
-      {/* 인원 수 선택 */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="font-semibold text-gray-800 mb-3">
-          {L(lang, { ko: '인원 수', zh: '人数', en: 'Number of people' })}
-        </h3>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setPeopleCount(Math.max(1, peopleCount - 1))}
-            className="w-8 h-8 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100"
-          >
-            <Minus className="w-4 h-4 text-gray-600" />
-          </button>
-          <span className="text-lg font-semibold text-gray-800 min-w-[3rem] text-center">
-            {peopleCount}
-          </span>
-          <button
-            onClick={() => setPeopleCount(Math.min(10, peopleCount + 1))}
-            className="w-8 h-8 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100"
-          >
-            <Plus className="w-4 h-4 text-gray-600" />
-          </button>
-        </div>
-      </div>
-
-      {/* 상황별 표현 */}
-      {Object.entries(expressions).map(([key, section]) => (
-        <div key={key} className="bg-gray-50 p-4 rounded-lg">
-          <h3 className="font-semibold text-gray-800 mb-3">
-            {L(lang, section.title)}
-          </h3>
-          <div className="space-y-2">
-            {section.items.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => copyToClipboard(item[lang])}
-                className="w-full p-3 bg-white border border-gray-200 rounded-lg text-left hover:bg-gray-100 transition-colors group"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="font-medium text-gray-800 mb-1">
-                      {item[lang]}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {item.pronunciation}
-                    </div>
-                  </div>
-                  <Copy className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
-
-      {/* 알레르기 */}
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <h3 className="font-semibold text-gray-800 mb-3">
-          {L(lang, { ko: '알레르기', zh: '过敏', en: 'Allergies' })}
-        </h3>
-        <div className="grid grid-cols-2 gap-2 mb-3">
-          {allergies.map((allergy) => (
+      {/* 소주제 탭 */}
+      <div className="flex overflow-x-auto gap-2 pb-2 scroll-smooth">
+        {tabs.map((tab) => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
+          return (
             <button
-              key={allergy.id}
-              onClick={() => toggleAllergy(allergy.id)}
-              className={`p-2 rounded-lg border transition-colors ${
-                selectedAllergies.includes(allergy.id)
-                  ? 'bg-red-100 border-red-300 text-red-700'
-                  : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+                isActive
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              <div className="text-sm font-medium">
-                {L(lang, allergy.name)}
-              </div>
+              <Icon size={16} />
+              <span className="font-medium">{L(lang, tab.name)}</span>
             </button>
-          ))}
-        </div>
-        
-        {/* 알레르기 문장 */}
-        {selectedAllergies.length > 0 && (
-          <button
-            onClick={() => copyToClipboard(generateAllergyText())}
-            className="w-full p-3 bg-white border border-gray-200 rounded-lg text-left hover:bg-gray-100 transition-colors group"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <div className="font-medium text-gray-800">
-                  {generateAllergyText()}
-                </div>
-              </div>
-              <Copy className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+          )
+        })}
+      </div>
+
+      {/* 활성 탭 밑줄 표시 */}
+      <div className="h-1 bg-gray-200 rounded-full relative mb-2">
+        <div 
+          className="absolute top-0 h-full bg-gray-900 rounded-full transition-all duration-300"
+          style={{
+            left: `${tabs.findIndex(t => t.id === activeTab) * (100 / tabs.length)}%`,
+            width: `${100 / tabs.length}%`
+          }}
+        />
+      </div>
+
+      {/* 플래시카드 영역 */}
+      <div className="space-y-4">
+        {/* 입장 탭 - 인원수 선택기 */}
+        {activeTab === 'entrance' && (
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <h3 className="font-semibold text-gray-800 mb-3">
+              {L(lang, { ko: '인원 수', zh: '人数', en: 'Number of people' })}
+            </h3>
+            <div className="flex items-center justify-center gap-4">
+              <button
+                onClick={() => setPeopleCount(Math.max(1, peopleCount - 1))}
+                className="w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+              >
+                <Minus className="w-4 h-4 text-gray-600" />
+              </button>
+              <span className="text-2xl font-bold text-gray-800 min-w-[4rem] text-center">
+                {peopleCount}
+              </span>
+              <button
+                onClick={() => setPeopleCount(Math.min(10, peopleCount + 1))}
+                className="w-10 h-10 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors"
+              >
+                <Plus className="w-4 h-4 text-gray-600" />
+              </button>
             </div>
-          </button>
+          </div>
+        )}
+
+        {/* 알레르기 탭 - 체크리스트 */}
+        {activeTab === 'allergy' && (
+          <div className="bg-gray-50 p-4 rounded-lg mb-4">
+            <h3 className="font-semibold text-gray-800 mb-3">
+              {L(lang, { ko: '알레르기 선택', zh: '选择过敏源', en: 'Select Allergies' })}
+            </h3>
+            <div className="grid grid-cols-2 gap-2 mb-4">
+              {allergies.map((allergy) => (
+                <button
+                  key={allergy.id}
+                  onClick={() => toggleAllergy(allergy.id)}
+                  className={`p-3 rounded-lg border transition-colors ${
+                    selectedAllergies.includes(allergy.id)
+                      ? 'bg-red-100 border-red-300 text-red-700'
+                      : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  <div className="text-sm font-medium">
+                    {L(lang, allergy.name)}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 플래시카드 렌더링 */}
+        {activeTab === 'allergy' ? (
+          // 알레르기 탭 - 선택된 알레르기 카드들
+          generateAllergyCards().map(card => (
+            <FlashCard key={card.id} card={card} tabId={activeTab} />
+          ))
+        ) : (
+          // 일반 탭 - 미리 정의된 카드들
+          cardData[activeTab]?.map(card => (
+            <FlashCard key={card.id} card={card} tabId={activeTab} />
+          ))
+        )}
+
+        {/* 알레르기가 선택되지 않았을 때 안내 */}
+        {activeTab === 'allergy' && selectedAllergies.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            <AlertTriangle size={48} className="mx-auto mb-4 text-gray-300" />
+            <p>{L(lang, { ko: '알레르기 항목을 선택해주세요', zh: '请选择过敏项目', en: 'Please select allergy items' })}</p>
+          </div>
         )}
       </div>
 
       {/* 사용법 안내 */}
-      <div className="text-xs text-gray-500 bg-blue-50 p-3 rounded-lg">
+      <div className="text-xs text-gray-500 bg-blue-50 p-3 rounded-lg mt-6">
         💡 {L(lang, { 
-          ko: '표현을 탭하면 클립보드에 복사됩니다', 
-          zh: '点击表达即可复制到剪贴板', 
-          en: 'Tap expressions to copy to clipboard' 
+          ko: '플래시카드를 탭하면 한국어가 복사됩니다. 🔊 버튼으로 음성을 들어보세요. 🔖 버튼으로 자주 쓰는 표현을 북마크하세요.', 
+          zh: '点击卡片复制韩语。🔊按钮播放语音。🔖按钮收藏常用表达。', 
+          en: 'Tap cards to copy Korean text. Use 🔊 for voice playback. Use 🔖 to bookmark frequently used expressions.' 
         })}
       </div>
     </div>

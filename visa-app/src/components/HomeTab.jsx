@@ -214,7 +214,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       <div
         ref={containerRef}
         className="relative overflow-hidden mx-4"
-        style={{ minHeight: '200px', maxHeight: '70vh', marginTop: '8px' }}
+        style={{ height: 'calc(100vh - 140px)', marginTop: '8px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -251,7 +251,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                     <LucideIcon name={pocket.icon} size={20} style={{ color: '#111827' }} />
                     <h2 className="text-lg font-semibold" style={{ color: '#111827' }}>{L(lang, pocket.name)}</h2>
                   </div>
-                  <div className="overflow-y-auto" style={{ height: 'calc(100% - 80px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
+                  <div className="overflow-y-auto scroll-smooth" style={{ height: 'calc(100% - 80px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
                     <PocketContent pocketId={pocketId} lang={lang} setTab={setTab} />
                   </div>
                 </div>

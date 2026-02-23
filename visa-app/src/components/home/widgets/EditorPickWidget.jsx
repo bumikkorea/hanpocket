@@ -23,7 +23,7 @@ export default function EditorPickWidget({ lang }) {
     <div>
       <div className="flex items-center gap-1.5 mb-3">
         <Flame size={14} className="text-[#111827]" />
-        <span className="text-xs font-bold text-[#111827]">EDITOR'S PICK</span>
+        <span className="text-xs font-bold text-[#111827]">TODAY'S SPOT</span>
       </div>
       <div className="space-y-2.5">
         {EDITOR_PICKS.map((item, i) => {

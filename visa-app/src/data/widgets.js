@@ -4,7 +4,7 @@ export const widgetCategories = [
     name: { ko: '생활 정보', zh: '生活信息', en: 'Daily Life' },
     icon: 'ClipboardList',
     widgets: [
-      { id: 'editorpick', name: { ko: '에디터 PICK', zh: '编辑推荐', en: "Editor's Pick" }, icon: 'Flame', description: { ko: '이번 주 핫 키워드', zh: '本周热门关键词', en: 'This week\'s hot keywords' }, size: 'md' },
+      { id: 'editorpick', name: { ko: '오늘의 SPOT', zh: '今日推荐', en: "Today's Spot" }, icon: 'Flame', description: { ko: '오늘의 추천 장소', zh: '今日推荐地点', en: "Today's recommended spot" }, size: 'md' },
       { id: 'cvsnew', name: { ko: '편의점 신상', zh: '便利店新品', en: 'CVS New Items' }, icon: 'ShoppingBag', description: { ko: 'CU/GS25/세븐일레븐 신상품', zh: 'CU/GS25/7-ELEVEN新品', en: 'New convenience store items' }, size: 'md' },
       { id: 'beautynew', name: { ko: 'K-뷰티 신상', zh: 'K-Beauty新品', en: 'K-Beauty New' }, icon: 'Sparkles', description: { ko: '올리브영 신상품', zh: 'Olive Young新品', en: 'Olive Young new arrivals' }, size: 'md' },
       { id: 'news', name: { ko: 'K-뉴스', zh: 'K-新闻', en: 'K-News' }, icon: 'Newspaper', description: { ko: '외국인 정책 뉴스', zh: '外国人政策新闻', en: 'Foreigner policy news' }, size: 'lg' },

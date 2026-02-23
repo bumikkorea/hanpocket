@@ -210,6 +210,19 @@ function Onboarding({ onComplete, lang, setLang }) {
                 {L(lang, { ko: 'Alipay로 로그인', zh: '支付宝登录', en: 'Login with Alipay' })}
               </button>
 
+              <div className="relative my-3">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
+                <div className="relative flex justify-center"><span className="bg-white px-3 text-xs text-gray-400">or</span></div>
+              </div>
+
+              <button
+                onClick={() => {
+                  onComplete({ lang, socialLogin: { provider: 'guest', user: { nickname: lang === 'ko' ? '게스트' : lang === 'zh' ? '访客' : 'Guest' } } })
+                }}
+                className="w-full text-center text-[#6B7280] text-sm py-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-all font-medium">
+                {L(lang, { ko: '게스트로 둘러보기', zh: '以访客身份浏览', en: 'Continue as Guest' })}
+              </button>
+
             </div>
           </div>
         )}

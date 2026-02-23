@@ -15,7 +15,7 @@ import { updateLog, autoUpdateInfo, dataSources } from './data/updateLog'
 import EducationTab from './components/EducationTab'
 import AgencyTab from './components/AgencyTab'
 import HomeTab, { trackActivity, LucideIcon } from './components/HomeTab'
-import { pocketCategories } from './data/pockets'
+import { pocketCategories, featureScores, serviceItems, subMenuData } from './data/pockets'
 import PetTab from './components/PetTab'
 import MedicalTab from './components/MedicalTab'
 import FitnessTab from './components/FitnessTab'
@@ -1292,179 +1292,67 @@ function AppInner() {
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]
 
-  // Feature completion scores from docs/feature-review-10k*.md
-  const featureScores = {
-    travel: 84,     // 수정중 (70-84)
-    food: 87,       // 완료 (85+)
-    shopping: 91,   // 완료 (85+)
-    hallyu: 92,     // 완료 (85+)
-    learn: 87,      // 완료 (85+)
-    life: 91,       // 완료 (85+)
-    medical: 90,    // 완료 (85+)
-    fitness: 89,    // 완료 (85+)
-    community: 87.5, // 완료 (85+)
-    translator: 92.5, // 완료 (85+)
-    artranslate: 93.2, // 완료 (85+)
-    sos: 97,        // 완료 (85+)
-    finance: 87,    // 완료 (85+)
-    wallet: 95,     // 완료 (85+)
-    visaalert: 86,  // 완료 (85+)
-  }
-  
   // Generate status label based on completion score
   const getStatusLabel = (score) => {
     if (score >= 85) return { ko: '완료', zh: '完成', en: 'Done' }
     if (score >= 70) return { ko: '수정중', zh: '修改中', en: 'WIP' }
-    return { ko: '개발중', zh: '开发中', en: 'Dev' }
+    return { ko: '개발중', zh: '开발中', en: 'Dev' }
   }
   
-  const exploreItems = [
-    { id: 'travel', label: { ko: `여행 (${getStatusLabel(featureScores.travel).ko})`, zh: `旅行 (${getStatusLabel(featureScores.travel).zh})`, en: `Travel (${getStatusLabel(featureScores.travel).en})` } },
-    { id: 'food', label: { ko: `맛집 (${getStatusLabel(featureScores.food).ko})`, zh: `美食 (${getStatusLabel(featureScores.food).zh})`, en: `Food (${getStatusLabel(featureScores.food).en})` } },
-    { id: 'shopping', label: { ko: `쇼핑 (${getStatusLabel(featureScores.shopping).ko})`, zh: `购物 (${getStatusLabel(featureScores.shopping).zh})`, en: `Shopping (${getStatusLabel(featureScores.shopping).en})` } },
-    { id: 'hallyu', label: { ko: `한류 (${getStatusLabel(featureScores.hallyu).ko})`, zh: `韩流 (${getStatusLabel(featureScores.hallyu).zh})`, en: `Hallyu (${getStatusLabel(featureScores.hallyu).en})` } },
-    { id: 'learn', label: { ko: `한국어 (${getStatusLabel(featureScores.learn).ko})`, zh: `韩语 (${getStatusLabel(featureScores.learn).zh})`, en: `Korean (${getStatusLabel(featureScores.learn).en})` } },
-    { id: 'life', label: { ko: `생활 (${getStatusLabel(featureScores.life).ko})`, zh: `生活 (${getStatusLabel(featureScores.life).zh})`, en: `Life (${getStatusLabel(featureScores.life).en})` } },
-    { id: 'medical', label: { ko: `의료 (${getStatusLabel(featureScores.medical).ko})`, zh: `医疗 (${getStatusLabel(featureScores.medical).zh})`, en: `Medical (${getStatusLabel(featureScores.medical).en})` } },
-    { id: 'fitness', label: { ko: `운동 (${getStatusLabel(featureScores.fitness).ko})`, zh: `运动 (${getStatusLabel(featureScores.fitness).zh})`, en: `Fitness (${getStatusLabel(featureScores.fitness).en})` } },
-    { id: 'community', label: { ko: `커뮤니티 (${getStatusLabel(featureScores.community).ko})`, zh: `社区 (${getStatusLabel(featureScores.community).zh})`, en: `Community (${getStatusLabel(featureScores.community).en})` } },
-  ]
+  // Build explore and tool items with dynamic status labels
+  const exploreItems = serviceItems
+    .filter(item => item.category === 'explore')
+    .map(item => ({
+      id: item.id,
+      label: {
+        ko: `${item.name.ko} (${getStatusLabel(featureScores[item.id]).ko})`,
+        zh: `${item.name.zh} (${getStatusLabel(featureScores[item.id]).zh})`,
+        en: `${item.name.en} (${getStatusLabel(featureScores[item.id]).en})`
+      }
+    }))
 
-  const toolItems = [
-    { id: 'translator', label: { ko: `통역 (${getStatusLabel(featureScores.translator).ko})`, zh: `翻译 (${getStatusLabel(featureScores.translator).zh})`, en: `Translate (${getStatusLabel(featureScores.translator).en})` } },
-    { id: 'artranslate', label: { ko: `간판 사전 (${getStatusLabel(featureScores.artranslate).ko})`, zh: `招牌词典 (${getStatusLabel(featureScores.artranslate).zh})`, en: `Sign Dict (${getStatusLabel(featureScores.artranslate).en})` } },
-    { id: 'sos', label: { ko: `SOS (${getStatusLabel(featureScores.sos).ko})`, zh: `SOS (${getStatusLabel(featureScores.sos).zh})`, en: `SOS (${getStatusLabel(featureScores.sos).en})` } },
-    { id: 'finance', label: { ko: `금융 (${getStatusLabel(featureScores.finance).ko})`, zh: `金融 (${getStatusLabel(featureScores.finance).zh})`, en: `Finance (${getStatusLabel(featureScores.finance).en})` } },
-    { id: 'wallet', label: { ko: `월렛 (${getStatusLabel(featureScores.wallet).ko})`, zh: `钱包 (${getStatusLabel(featureScores.wallet).zh})`, en: `Wallet (${getStatusLabel(featureScores.wallet).en})` } },
-    { id: 'visaalert', label: { ko: `비자 알림 (${getStatusLabel(featureScores.visaalert).ko})`, zh: `签证提醒 (${getStatusLabel(featureScores.visaalert).zh})`, en: `Visa Alert (${getStatusLabel(featureScores.visaalert).en})` } },
-  ]
+  const toolItems = serviceItems
+    .filter(item => item.category === 'tool')
+    .map(item => ({
+      id: item.id,
+      label: {
+        ko: `${item.name.ko} (${getStatusLabel(featureScores[item.id]).ko})`,
+        zh: `${item.name.zh} (${getStatusLabel(featureScores[item.id]).zh})`,
+        en: `${item.name.en} (${getStatusLabel(featureScores[item.id]).en})`
+      }
+    }))
 
   // Keep old tabs array for compatibility
   const tabs = bottomTabs
 
-  // 29CM-style sub-menus per tab
-  const subMenus = {
-    transition: {
-      title: { ko: '비자 · 서류', zh: '签证 · 文件', en: 'Visa · Docs' },
-      items: [
-        { label: { ko: '비자 종류별 안내', zh: '签证类型指南', en: 'Visa Types' }, action: () => { setTab('transition'); setView('home') } },
-        { label: { ko: '비자 변경/전환', zh: '签证变更', en: 'Visa Change' }, action: () => { setTab('transition'); setView('transition') } },
-        { label: { ko: 'D-day 알림', zh: 'D-day提醒', en: 'D-day Alert' }, action: () => { setTab('visaalert') } },
-        { label: { ko: '서류 대행', zh: '文件代办', en: 'Document Services' }, action: () => { setTab('transition'); setView('agency') } },
-      ],
-    },
-    travel: {
-      title: { ko: '여행', zh: '旅行', en: 'Travel' },
-      items: [
-        { label: { ko: '입국 가이드', zh: '入境指南', en: 'Arrival Guide' } },
-        { label: { ko: '도시 가이드', zh: '城市指南', en: 'City Guides' } },
-        { label: { ko: '교통', zh: '交通', en: 'Transportation' } },
-        { label: { ko: '숙소', zh: '住宿', en: 'Accommodation' } },
-        { label: { ko: '코스 추천', zh: '行程推荐', en: 'Itineraries' } },
-        { label: { ko: '테마파크', zh: '主题公园', en: 'Theme Parks' } },
-      ],
-    },
-    food: {
-      title: { ko: '맛집', zh: '美食', en: 'Food' },
-      items: [
-        { label: { ko: '미슐랭 가이드', zh: '米其林指南', en: 'Michelin Guide' } },
-        { label: { ko: '블루리본', zh: '蓝丝带', en: 'Blue Ribbon' } },
-        { label: { ko: '지역별', zh: '按地区', en: 'By Area' } },
-        { label: { ko: '종류별', zh: '按类型', en: 'By Cuisine' } },
-        { label: { ko: '가격대별', zh: '按价格', en: 'By Price' } },
-        { label: { ko: '범범뻠 PICK', zh: '范范呗精选', en: "Editor's Pick" } },
-      ],
-    },
-    shopping: {
-      title: { ko: '쇼핑', zh: '购物', en: 'Shopping' },
-      items: [
-        { label: { ko: 'K-뷰티', zh: 'K-Beauty', en: 'K-Beauty' } },
-        { label: { ko: 'K-패션', zh: 'K-Fashion', en: 'K-Fashion' } },
-        { label: { ko: '면세/택스리펀', zh: '免税/退税', en: 'Duty-free/Tax Refund' } },
-        { label: { ko: '할인/쿠폰', zh: '折扣/优惠', en: 'Coupons' } },
-      ],
-    },
-    hallyu: {
-      title: { ko: '한류', zh: '韩流', en: 'Hallyu' },
-      items: [
-        { label: { ko: 'K-POP 차트', zh: 'K-POP榜单', en: 'K-POP Chart' } },
-        { label: { ko: '내 아이돌', zh: '我的爱豆', en: 'My Idols' } },
-        { label: { ko: 'K-드라마', zh: '韩剧', en: 'K-Drama' } },
-        { label: { ko: '팬 이벤트', zh: '粉丝活动', en: 'Fan Events' } },
-        { label: { ko: '전통 체험', zh: '传统体验', en: 'Traditional' } },
-        { label: { ko: '축제', zh: '节日', en: 'Festivals' } },
-      ],
-    },
-    life: {
-      title: { ko: '생활', zh: '生活', en: 'Life' },
-      items: [
-        { label: { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency' } },
-        { label: { ko: '택배/배송', zh: '快递/配送', en: 'Delivery' } },
-        { label: { ko: '의료/병원', zh: '医疗/医院', en: 'Medical' }, action: () => { setTab('medical') } },
-        { label: { ko: '통신/SIM', zh: '通信/SIM', en: 'Telecom' } },
-        { label: { ko: '금융 가이드', zh: '金融指南', en: 'Finance Guide' }, action: () => { setTab('finance') } },
-      ],
-    },
-    jobs: {
-      title: { ko: '구직', zh: '求职', en: 'Jobs' },
-      items: [
-        { label: { ko: '아르바이트', zh: '兼职', en: 'Part-time' } },
-        { label: { ko: '정규직', zh: '全职', en: 'Full-time' } },
-        { label: { ko: '취업 가이드', zh: '就业指南', en: 'Job Guide' } },
-        { label: { ko: '이력서 변환', zh: '简历转换', en: 'Resume Builder' }, action: () => { setTab('resume') } },
-      ],
-    },
-    housing: {
-      title: { ko: '부동산', zh: '房产', en: 'Housing' },
-      items: [
-        { label: { ko: '원룸/셰어하우스', zh: '单间/合租', en: 'Studio/Share' } },
-        { label: { ko: '전월세 가이드', zh: '租房指南', en: 'Rent Guide' } },
-        { label: { ko: '실거래가', zh: '实际交易价', en: 'Price Check' } },
-      ],
-    },
-    medical: {
-      title: { ko: '의료', zh: '医疗', en: 'Medical' },
-      items: [
-        { label: { ko: '병원 검색', zh: '医院搜索', en: 'Hospital Search' } },
-        { label: { ko: '건강보험 가이드', zh: '健康保险指南', en: 'Health Insurance' } },
-        { label: { ko: '응급실 안내', zh: '急诊室指南', en: 'Emergency' } },
-        { label: { ko: '외국어 진료', zh: '外语诊疗', en: 'Foreign Language' } },
-      ],
-    },
-    fitness: {
-      title: { ko: '운동', zh: '运动', en: 'Fitness' },
-      items: [
-        { label: { ko: '공공 체육시설', zh: '公共体育设施', en: 'Public Facilities' } },
-        { label: { ko: '헬스장', zh: '健身房', en: 'Gym' } },
-        { label: { ko: '수영장', zh: '游泳池', en: 'Pool' } },
-        { label: { ko: '요가/필라테스', zh: '瑜伽/普拉提', en: 'Yoga/Pilates' } },
-      ],
-    },
-    translator: {
-      title: { ko: '통역 · 번역', zh: '口译 · 翻译', en: 'Interpreter · Translator' },
-      items: [
-        { label: { ko: '실시간 통역', zh: '实时口译', en: 'Real-time Translation' }, action: () => { setTab('translator') } },
-        { label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dictionary' }, action: () => { setTab('artranslate') } },
-      ],
-    },
-    wallet: {
-      title: { ko: '디지털 월렛', zh: '数字钱包', en: 'Digital Wallet' },
-      items: [
-        { label: { ko: '신분증 보관', zh: '证件保管', en: 'ID Storage' }, action: () => { setTab('wallet') } },
-        { label: { ko: '이름 관리', zh: '姓名管理', en: 'Name Management' }, action: () => { setTab('wallet') } },
-        { label: { ko: '본인인증 가이드', zh: '身份验证指南', en: 'Verification Guide' }, action: () => { setTab('wallet') } },
-        { label: { ko: '만료 알림', zh: '到期提醒', en: 'Expiry Alert' }, action: () => { setTab('wallet') } },
-      ],
-    },
-    learn: {
-      title: { ko: '한국어', zh: '韩语', en: 'Korean' },
-      items: [
-        { label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' } },
-        { label: { ko: '대학교 검색', zh: '大学搜索', en: 'University Search' } },
-        { label: { ko: 'TOPIK 가이드', zh: 'TOPIK指南', en: 'TOPIK Guide' } },
-      ],
-    },
-  }
+  // Build sub-menus with actions from imported data
+  const subMenus = Object.fromEntries(
+    Object.entries(subMenuData).map(([key, menu]) => [
+      key,
+      {
+        title: menu.title,
+        items: menu.items.map(item => ({
+          label: item.label,
+          action: item.action ? () => {
+            // Handle different action types
+            switch(item.action) {
+              case 'visaTypes': setTab('transition'); setView('home'); break;
+              case 'visaChange': setTab('transition'); setView('transition'); break;
+              case 'agency': setTab('transition'); setView('agency'); break;
+              case 'visaalert': setTab('visaalert'); break;
+              case 'medical': setTab('medical'); break;
+              case 'finance': setTab('finance'); break;
+              case 'resume': setTab('resume'); break;
+              case 'translator': setTab('translator'); break;
+              case 'artranslate': setTab('artranslate'); break;
+              case 'wallet': setTab('wallet'); break;
+              default: break;
+            }
+          } : item.action
+        }))
+      }
+    ])
+  )
 
   // Show sub-menu: on hover (desktop) or on tap when already on that tab (mobile)
   const showSubMenu = hoveredTab ? subMenus[hoveredTab] : (menuOpen ? subMenus[tab] : null)

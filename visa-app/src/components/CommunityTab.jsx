@@ -179,9 +179,9 @@ export default function CommunityTab({ lang, profile }) {
   // Filter + sort
   const filteredPosts = posts
     .filter(p => {
-      if (subTab === 'community') return p.type === 'community'
+      if (subTab === 'community') return p.type === 'community' && p.category !== 'travel'
+      if (subTab === 'travelreview') return p.type === 'community' && p.category === 'travel'
       if (subTab === 'marketplace') return p.type === 'marketplace'
-      if (subTab === 'sharing') return p.type === 'sharing'
       return true
     })
     .filter(p => !filterCat || p.category === filterCat)
@@ -197,14 +197,20 @@ export default function CommunityTab({ lang, profile }) {
       return new Date(b.time) - new Date(a.time)
     })
 
-  const cats = subTab === 'community' ? communityCategories : subTab === 'marketplace' ? marketCategories : []
+  const travelReviewCategories = [
+    { id: 'travel', label: { ko: '여행', zh: '旅行', en: 'Travel' }, color: '#059669' },
+    { id: 'food', label: { ko: '맛집', zh: '美食', en: 'Food' }, color: '#DC2626' },
+    { id: 'hotel', label: { ko: '숙소', zh: '住宿', en: 'Hotel' }, color: '#2563EB' },
+    { id: 'tip', label: { ko: '꿀팁', zh: '攻略', en: 'Tips' }, color: '#D97706' },
+  ]
+  const cats = subTab === 'community' ? communityCategories.filter(c => c.id !== 'travel') : subTab === 'travelreview' ? travelReviewCategories : subTab === 'marketplace' ? marketCategories : []
 
   // Create / Edit post
   const submitPost = () => {
     if (!formTitle.trim() || !formContent.trim()) return
     const postData = {
       id: editingPost ? editingPost.id : Date.now().toString(),
-      type: subTab === 'sharing' ? 'sharing' : subTab,
+      type: subTab === 'travelreview' ? 'community' : subTab,
       category: formCategory || (cats[0]?.id || 'free'),
       title: { ko: formTitle, zh: formTitle, en: formTitle },
       content: { ko: formContent, zh: formContent, en: formContent },
@@ -571,8 +577,8 @@ export default function CommunityTab({ lang, profile }) {
         <div className="flex gap-1.5 bg-[#F3F4F6] p-1 rounded-xl">
           {[
             { id: 'community', label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
+            { id: 'travelreview', label: { ko: '여행후기', zh: '旅行后记', en: 'Travel Review' } },
             { id: 'marketplace', label: { ko: '중고거래', zh: '二手', en: 'Market' } },
-            { id: 'sharing', label: { ko: '나눔', zh: '分享', en: 'Share' } },
           ].map(t => (
             <button key={t.id} onClick={() => { setSubTab(t.id); setFilterCat(null); setFilterLocation(null) }}
               className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${subTab === t.id ? 'bg-white text-[#111827] shadow-sm' : 'text-[#6B7280]'}`}>

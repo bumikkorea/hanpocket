@@ -435,6 +435,171 @@ export const pocketMockData = {
   },
 }
 
+// Feature completion scores from docs/feature-review-10k*.md
+export const featureScores = {
+  travel: 84,     // 수정중 (70-84)
+  food: 87,       // 완료 (85+)
+  shopping: 91,   // 완료 (85+)
+  hallyu: 92,     // 완료 (85+)
+  learn: 87,      // 완료 (85+)
+  life: 91,       // 완료 (85+)
+  medical: 90,    // 완료 (85+)
+  fitness: 89,    // 완료 (85+)
+  community: 87.5, // 완료 (85+)
+  translator: 92.5, // 완료 (85+)
+  artranslate: 93.2, // 완료 (85+)
+  sos: 97,        // 완료 (85+)
+  finance: 87,    // 완료 (85+)
+  wallet: 95,     // 완료 (85+)
+  visaalert: 86,  // 완료 (85+)
+}
+
+// Service items (exploreItems + toolItems from App.jsx but without dynamic labels)
+export const serviceItems = [
+  // Explore items
+  { id: 'travel', name: { ko: '여행', zh: '旅行', en: 'Travel' }, category: 'explore' },
+  { id: 'food', name: { ko: '맛집', zh: '美食', en: 'Food' }, category: 'explore' },
+  { id: 'shopping', name: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, category: 'explore' },
+  { id: 'hallyu', name: { ko: '한류', zh: '韩流', en: 'Hallyu' }, category: 'explore' },
+  { id: 'learn', name: { ko: '한국어', zh: '韩语', en: 'Korean' }, category: 'explore' },
+  { id: 'life', name: { ko: '생활', zh: '生活', en: 'Life' }, category: 'explore' },
+  { id: 'medical', name: { ko: '의료', zh: '医疗', en: 'Medical' }, category: 'explore' },
+  { id: 'fitness', name: { ko: '운동', zh: '运动', en: 'Fitness' }, category: 'explore' },
+  { id: 'community', name: { ko: '커뮤니티', zh: '社区', en: 'Community' }, category: 'explore' },
+  
+  // Tool items
+  { id: 'translator', name: { ko: '통역', zh: '翻译', en: 'Translate' }, category: 'tool' },
+  { id: 'artranslate', name: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict' }, category: 'tool' },
+  { id: 'sos', name: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, category: 'tool' },
+  { id: 'finance', name: { ko: '금융', zh: '金融', en: 'Finance' }, category: 'tool' },
+  { id: 'wallet', name: { ko: '월렛', zh: '钱包', en: 'Wallet' }, category: 'tool' },
+  { id: 'visaalert', name: { ko: '비자 알림', zh: '签证提醒', en: 'Visa Alert' }, category: 'tool' },
+]
+
+// Sub-menu data (from App.jsx but as data structure, not JSX)
+export const subMenuData = {
+  transition: {
+    title: { ko: '비자 · 서류', zh: '签证 · 文件', en: 'Visa · Docs' },
+    items: [
+      { label: { ko: '비자 종류별 안내', zh: '签证类型指南', en: 'Visa Types' }, action: 'visaTypes' },
+      { label: { ko: '비자 변경/전환', zh: '签证变更', en: 'Visa Change' }, action: 'visaChange' },
+      { label: { ko: 'D-day 알림', zh: 'D-day提醒', en: 'D-day Alert' }, action: 'visaalert' },
+      { label: { ko: '서류 대행', zh: '文件代办', en: 'Document Services' }, action: 'agency' },
+    ],
+  },
+  travel: {
+    title: { ko: '여행', zh: '旅行', en: 'Travel' },
+    items: [
+      { label: { ko: '입국 가이드', zh: '入境指南', en: 'Arrival Guide' } },
+      { label: { ko: '도시 가이드', zh: '城市指南', en: 'City Guides' } },
+      { label: { ko: '교통', zh: '交通', en: 'Transportation' } },
+      { label: { ko: '숙소', zh: '住宿', en: 'Accommodation' } },
+      { label: { ko: '코스 추천', zh: '行程推荐', en: 'Itineraries' } },
+      { label: { ko: '테마파크', zh: '主题公园', en: 'Theme Parks' } },
+    ],
+  },
+  food: {
+    title: { ko: '맛집', zh: '美食', en: 'Food' },
+    items: [
+      { label: { ko: '미슐랭 가이드', zh: '米其林指南', en: 'Michelin Guide' } },
+      { label: { ko: '블루리본', zh: '蓝丝带', en: 'Blue Ribbon' } },
+      { label: { ko: '지역별', zh: '按地区', en: 'By Area' } },
+      { label: { ko: '종류별', zh: '按类型', en: 'By Cuisine' } },
+      { label: { ko: '가격대별', zh: '按价格', en: 'By Price' } },
+      { label: { ko: '범범뻠 PICK', zh: '范范呗精选', en: "Editor's Pick" } },
+    ],
+  },
+  shopping: {
+    title: { ko: '쇼핑', zh: '购物', en: 'Shopping' },
+    items: [
+      { label: { ko: 'K-뷰티', zh: 'K-Beauty', en: 'K-Beauty' } },
+      { label: { ko: 'K-패션', zh: 'K-Fashion', en: 'K-Fashion' } },
+      { label: { ko: '면세/택스리펀', zh: '免税/退税', en: 'Duty-free/Tax Refund' } },
+      { label: { ko: '할인/쿠폰', zh: '折扣/优惠', en: 'Coupons' } },
+    ],
+  },
+  hallyu: {
+    title: { ko: '한류', zh: '韩流', en: 'Hallyu' },
+    items: [
+      { label: { ko: 'K-POP 차트', zh: 'K-POP榜单', en: 'K-POP Chart' } },
+      { label: { ko: '내 아이돌', zh: '我的爱豆', en: 'My Idols' } },
+      { label: { ko: 'K-드라마', zh: '韩剧', en: 'K-Drama' } },
+      { label: { ko: '팬 이벤트', zh: '粉丝活动', en: 'Fan Events' } },
+      { label: { ko: '전통 체험', zh: '传统体验', en: 'Traditional' } },
+      { label: { ko: '축제', zh: '节日', en: 'Festivals' } },
+    ],
+  },
+  life: {
+    title: { ko: '생활', zh: '生活', en: 'Life' },
+    items: [
+      { label: { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency' } },
+      { label: { ko: '택배/배송', zh: '快递/配送', en: 'Delivery' } },
+      { label: { ko: '의료/병원', zh: '医疗/医院', en: 'Medical' }, action: 'medical' },
+      { label: { ko: '통신/SIM', zh: '通信/SIM', en: 'Telecom' } },
+      { label: { ko: '금융 가이드', zh: '金融指南', en: 'Finance Guide' }, action: 'finance' },
+    ],
+  },
+  jobs: {
+    title: { ko: '구직', zh: '求职', en: 'Jobs' },
+    items: [
+      { label: { ko: '아르바이트', zh: '兼职', en: 'Part-time' } },
+      { label: { ko: '정규직', zh: '全职', en: 'Full-time' } },
+      { label: { ko: '취업 가이드', zh: '就业指南', en: 'Job Guide' } },
+      { label: { ko: '이력서 변환', zh: '简历转换', en: 'Resume Builder' }, action: 'resume' },
+    ],
+  },
+  housing: {
+    title: { ko: '부동산', zh: '房产', en: 'Housing' },
+    items: [
+      { label: { ko: '원룸/셰어하우스', zh: '单间/合租', en: 'Studio/Share' } },
+      { label: { ko: '전월세 가이드', zh: '租房指南', en: 'Rent Guide' } },
+      { label: { ko: '실거래가', zh: '实际交易价', en: 'Price Check' } },
+    ],
+  },
+  medical: {
+    title: { ko: '의료', zh: '医疗', en: 'Medical' },
+    items: [
+      { label: { ko: '병원 검색', zh: '医院搜索', en: 'Hospital Search' } },
+      { label: { ko: '건강보험 가이드', zh: '健康保险指南', en: 'Health Insurance' } },
+      { label: { ko: '응급실 안내', zh: '急诊室指南', en: 'Emergency' } },
+      { label: { ko: '외국어 진료', zh: '外语诊疗', en: 'Foreign Language' } },
+    ],
+  },
+  fitness: {
+    title: { ko: '운동', zh: '运动', en: 'Fitness' },
+    items: [
+      { label: { ko: '공공 체육시설', zh: '公共体育设施', en: 'Public Facilities' } },
+      { label: { ko: '헬스장', zh: '健身房', en: 'Gym' } },
+      { label: { ko: '수영장', zh: '游泳池', en: 'Pool' } },
+      { label: { ko: '요가/필라테스', zh: '瑜伽/普拉提', en: 'Yoga/Pilates' } },
+    ],
+  },
+  translator: {
+    title: { ko: '통역 · 번역', zh: '口译 · 翻译', en: 'Interpreter · Translator' },
+    items: [
+      { label: { ko: '실시간 통역', zh: '实时口译', en: 'Real-time Translation' }, action: 'translator' },
+      { label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dictionary' }, action: 'artranslate' },
+    ],
+  },
+  wallet: {
+    title: { ko: '디지털 월렛', zh: '数字钱包', en: 'Digital Wallet' },
+    items: [
+      { label: { ko: '신분증 보관', zh: '证件保管', en: 'ID Storage' }, action: 'wallet' },
+      { label: { ko: '이름 관리', zh: '姓名管理', en: 'Name Management' }, action: 'wallet' },
+      { label: { ko: '본인인증 가이드', zh: '身份验证指南', en: 'Verification Guide' }, action: 'wallet' },
+      { label: { ko: '만료 알림', zh: '到期提醒', en: 'Expiry Alert' }, action: 'wallet' },
+    ],
+  },
+  learn: {
+    title: { ko: '한국어', zh: '韩语', en: 'Korean' },
+    items: [
+      { label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' } },
+      { label: { ko: '대학교 검색', zh: '大学搜索', en: 'University Search' } },
+      { label: { ko: 'TOPIK 가이드', zh: 'TOPIK指南', en: 'TOPIK Guide' } },
+    ],
+  },
+}
+
 // Export 별칭 - 기존 코드와의 호환성 유지
 export const widgetCategories = pocketCategories
 export const widgetMockData = pocketMockData

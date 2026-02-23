@@ -1,4 +1,4 @@
-const NAVER_CLIENT_ID = 'YOUR_NAVER_CLIENT_ID'; // 네이버 개발자센터에서 발급받은 Client ID
+const NAVER_CLIENT_ID = import.meta.env.VITE_NAVER_CLIENT_ID || 'PzqPsRDvonSey7gqsGBO';
 const NAVER_CLIENT_SECRET = 'YOUR_NAVER_CLIENT_SECRET'; // 네이버 개발자센터에서 발급받은 Client Secret
 const NAVER_REDIRECT_URI = window.location.origin + '/naver-callback';
 

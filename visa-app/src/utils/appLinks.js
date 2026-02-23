@@ -1,258 +1,324 @@
-// 앱 딥링크 및 웹 폴백 유틸리티
-// 앱이 설치되어 있으면 앱을 열고, 없으면 웹으로 연결
+// App Links Utility - 앱 딥링크 및 웹 폴백 관리
+// HanPocket 프로젝트용 앱 연동 유틸리티
 
 /**
- * 앱 설치 여부를 체크하고 적절한 링크로 이동
- * @param {string} appUrl - 앱 딥링크 URL
- * @param {string} webUrl - 웹 폴백 URL
- * @param {number} timeout - 앱 열기 시도 타임아웃 (ms)
+ * 앱 딥링크를 시도하고, 실패할 경우 웹 폴백으로 이동하는 함수
+ * @param {string} deepLink - 앱 딥링크 URL
+ * @param {string} fallbackUrl - 웹 폴백 URL
+ * @param {number} timeout - 딥링크 시도 후 폴백까지 대기 시간 (ms)
  */
-const openAppOrWeb = (appUrl, webUrl, timeout = 2000) => {
-  // 모바일 환경인지 체크
-  const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const openAppWithFallback = (deepLink, fallbackUrl, timeout = 1500) => {
+  // 안드로이드에서는 intent:// 스킴 사용
+  const isAndroid = /Android/i.test(navigator.userAgent)
   
-  if (!isMobile) {
-    // 데스크톱에서는 웹 URL로 바로 이동
-    window.open(webUrl, '_blank');
-    return;
-  }
-
-  // 앱 링크 시도
-  const startTime = Date.now();
-  
-  // visibility change 이벤트로 앱이 열렸는지 감지
-  const handleVisibilityChange = () => {
-    if (document.hidden && Date.now() - startTime < timeout) {
-      // 앱이 열렸음을 감지
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      return;
+  if (isAndroid && deepLink.includes('://') && !deepLink.startsWith('intent:')) {
+    // Android intent 형식으로 변환
+    const packageMap = {
+      'kakaomap:': 'net.daum.android.map',
+      'kakaot:': 'com.kakao.taxi',
+      'nmap:': 'com.nhn.android.nmap',
+      'baemin:': 'com.sampleapp',
+      'yogiyo:': 'kr.co.ygy',
+      'coupang:': 'com.coupang.mobile',
+      'musinsa:': 'com.musinsa.store',
+      'yanolja:': 'com.yanolja.android',
+      'yeogi:': 'com.goodchoice.android.hotel'
     }
-  };
+    
+    const scheme = Object.keys(packageMap).find(s => deepLink.startsWith(s))
+    if (scheme) {
+      const packageName = packageMap[scheme]
+      const intentUrl = `intent:${deepLink.slice(scheme.length)}#Intent;scheme=${scheme.slice(0, -1)};package=${packageName};S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`
+      window.location.href = intentUrl
+      return
+    }
+  }
   
-  document.addEventListener('visibilitychange', handleVisibilityChange);
+  // iOS 및 기본 딥링크 처리
+  const startTime = Date.now()
+  let didFallback = false
   
-  // 앱 링크 시도
-  window.location.href = appUrl;
+  // 페이지가 숨겨지거나 블러되면 앱이 열린 것으로 간주
+  const onVisibilityChange = () => {
+    if (document.hidden || document.webkitHidden) {
+      didFallback = true
+    }
+  }
   
-  // 타임아웃 후 앱이 열리지 않았으면 웹으로 이동
+  const onBlur = () => {
+    didFallback = true
+  }
+  
+  document.addEventListener('visibilitychange', onVisibilityChange)
+  document.addEventListener('webkitvisibilitychange', onVisibilityChange)
+  window.addEventListener('blur', onBlur)
+  
+  // 딥링크 시도
+  try {
+    window.location.href = deepLink
+  } catch (e) {
+    console.warn('Deep link failed:', e)
+  }
+  
+  // 타임아웃 후 폴백 실행
   setTimeout(() => {
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
-    if (!document.hidden) {
-      window.open(webUrl, '_blank');
+    const elapsed = Date.now() - startTime
+    
+    // 정리
+    document.removeEventListener('visibilitychange', onVisibilityChange)
+    document.removeEventListener('webkitvisibilitychange', onVisibilityChange) 
+    window.removeEventListener('blur', onBlur)
+    
+    // 앱이 열리지 않았고 충분한 시간이 지났다면 폴백
+    if (!didFallback && elapsed >= timeout - 100) {
+      window.open(fallbackUrl, '_blank')
     }
-  }, timeout);
-};
+  }, timeout)
+}
 
-// 카카오맵 딥링크 헬퍼
-export const kakaoMap = {
-  // 장소 검색
-  search: (query) => {
-    const appUrl = `kakaomap://search?q=${encodeURIComponent(query)}`;
-    const webUrl = `https://map.kakao.com/?q=${encodeURIComponent(query)}`;
-    openAppOrWeb(appUrl, webUrl);
-  },
+// 카카오맵 연동
+export const openKakaoMap = (query = '주변 상점', lat = null, lng = null) => {
+  const encodedQuery = encodeURIComponent(query)
+  let deepLink = `kakaomap://search?q=${encodedQuery}`
   
-  // 길찾기
-  navigation: (destination, origin = '') => {
-    const appUrl = origin 
-      ? `kakaomap://route?sp=${encodeURIComponent(origin)}&ep=${encodeURIComponent(destination)}`
-      : `kakaomap://route?ep=${encodeURIComponent(destination)}`;
-    const webUrl = origin
-      ? `https://map.kakao.com/link/to/${encodeURIComponent(destination)}`
-      : `https://map.kakao.com/link/to/${encodeURIComponent(destination)}`;
-    openAppOrWeb(appUrl, webUrl);
-  },
-  
-  // 주변 검색 (카테고리별)
-  nearby: (category, lat, lng) => {
-    const appUrl = `kakaomap://search?q=${encodeURIComponent(category)}&p=${lat},${lng}`;
-    const webUrl = `https://map.kakao.com/?q=${encodeURIComponent(category)}`;
-    openAppOrWeb(appUrl, webUrl);
+  if (lat && lng) {
+    deepLink = `kakaomap://look?p=${lat},${lng}`
   }
-};
-
-// 네이버지도 딥링크
-export const naverMap = {
-  search: (query) => {
-    const appUrl = `nmap://search?query=${encodeURIComponent(query)}`;
-    const webUrl = `https://map.naver.com/v5/search/${encodeURIComponent(query)}`;
-    openAppOrWeb(appUrl, webUrl);
-  },
   
-  navigation: (destination) => {
-    const appUrl = `nmap://route/walk?dlat=0&dlng=0&dname=${encodeURIComponent(destination)}`;
-    const webUrl = `https://map.naver.com/v5/directions/-/-/${encodeURIComponent(destination)}`;
-    openAppOrWeb(appUrl, webUrl);
-  }
-};
-
-// 배달 앱들
-export const delivery = {
-  baemin: (query = '') => {
-    const appUrl = query 
-      ? `baemin://search?q=${encodeURIComponent(query)}`
-      : 'baemin://home';
-    const webUrl = 'https://www.baemin.com';
-    openAppOrWeb(appUrl, webUrl);
-  },
+  const fallbackUrl = `https://map.kakao.com/link/search/${encodedQuery}`
   
-  yogiyo: (query = '') => {
-    const appUrl = query 
-      ? `yogiyo://search?q=${encodeURIComponent(query)}`
-      : 'yogiyo://home';
-    const webUrl = 'https://www.yogiyo.co.kr';
-    openAppOrWeb(appUrl, webUrl);
-  }
-};
+  openAppWithFallback(deepLink, fallbackUrl)
+}
 
-// 택시 앱들
-export const taxi = {
-  kakao: (destination = '') => {
-    const appUrl = destination 
-      ? `kakaotaxi://taxi?destination=${encodeURIComponent(destination)}`
-      : 'kakaotaxi://home';
-    const webUrl = 'https://taxi.kakao.com';
-    openAppOrWeb(appUrl, webUrl);
-  },
+// 네이버지도 연동
+export const openNaverMap = (query = '주변 상점', lat = null, lng = null) => {
+  const encodedQuery = encodeURIComponent(query)
+  let deepLink = `nmap://search?query=${encodedQuery}`
   
-  tada: (destination = '') => {
-    const appUrl = destination 
-      ? `tada://call?destination=${encodeURIComponent(destination)}`
-      : 'tada://home';
-    const webUrl = 'https://tadatada.com';
-    openAppOrWeb(appUrl, webUrl);
+  if (lat && lng) {
+    deepLink = `nmap://place?lat=${lat}&lng=${lng}&name=${encodedQuery}`
   }
-};
-
-// 쇼핑 앱들
-export const shopping = {
-  coupang: (query = '') => {
-    const appUrl = query 
-      ? `coupang://search?q=${encodeURIComponent(query)}`
-      : 'coupang://home';
-    const webUrl = query 
-      ? `https://www.coupang.com/np/search?q=${encodeURIComponent(query)}`
-      : 'https://www.coupang.com';
-    openAppOrWeb(appUrl, webUrl);
-  },
   
-  musinsa: (query = '') => {
-    const appUrl = query 
-      ? `musinsa://search?keyword=${encodeURIComponent(query)}`
-      : 'musinsa://home';
-    const webUrl = query 
-      ? `https://www.musinsa.com/app/goods/lists?keyword=${encodeURIComponent(query)}`
-      : 'https://www.musinsa.com';
-    openAppOrWeb(appUrl, webUrl);
-  },
-
-  // 면세점 앱들
-  lotteDutyFree: () => {
-    const appUrl = 'lottedutyfree://home';
-    const webUrl = 'https://www.lottedfs.com';
-    openAppOrWeb(appUrl, webUrl);
-  },
-
-  shillaDutyFree: () => {
-    const appUrl = 'shilladfs://home';
-    const webUrl = 'https://www.shilladfs.com';
-    openAppOrWeb(appUrl, webUrl);
-  },
-
-  shinsegaeDutyFree: () => {
-    const appUrl = 'ssgdfs://home';
-    const webUrl = 'https://www.ssgdfs.com';
-    openAppOrWeb(appUrl, webUrl);
-  }
-};
-
-// 숙박 앱들
-export const accommodation = {
-  yanolja: (query = '') => {
-    const appUrl = query 
-      ? `yanolja://search?keyword=${encodeURIComponent(query)}`
-      : 'yanolja://home';
-    const webUrl = query 
-      ? `https://www.yanolja.com/search/domestic?keyword=${encodeURIComponent(query)}`
-      : 'https://www.yanolja.com';
-    openAppOrWeb(appUrl, webUrl);
-  },
+  const fallbackUrl = `https://map.naver.com/v5/search/${encodedQuery}`
   
-  goodchoice: (query = '') => {
-    const appUrl = query 
-      ? `goodchoice://search?q=${encodeURIComponent(query)}`
-      : 'goodchoice://home';
-    const webUrl = query 
-      ? `https://www.goodchoice.kr/product/search?keyword=${encodeURIComponent(query)}`
-      : 'https://www.goodchoice.kr';
-    openAppOrWeb(appUrl, webUrl);
-  },
+  openAppWithFallback(deepLink, fallbackUrl)
+}
 
-  airbnb: (location = '') => {
-    const appUrl = location 
-      ? `airbnb://d/search?location=${encodeURIComponent(location)}`
-      : 'airbnb://d/home';
-    const webUrl = location 
-      ? `https://www.airbnb.co.kr/s/${encodeURIComponent(location)}`
-      : 'https://www.airbnb.co.kr';
-    openAppOrWeb(appUrl, webUrl);
-  }
-};
-
-// 카카오톡 딥링크
-export const kakaoTalk = {
-  // 메시지 보내기 (URL 스킴)
-  sendMessage: (text = '') => {
-    const appUrl = `kakaotalk://send?text=${encodeURIComponent(text)}`;
-    const webUrl = 'https://talk.kakao.com';
-    openAppOrWeb(appUrl, webUrl);
-  },
+// 카카오택시 연동
+export const openKakaoTaxi = () => {
+  const deepLink = 'kakaot://launch'
+  const fallbackUrl = 'https://play.google.com/store/apps/details?id=com.kakao.taxi'
   
-  // 채널 추가
-  addChannel: (channelId) => {
-    const appUrl = `kakaotalk://plusfriend/friend/${channelId}`;
-    const webUrl = `https://pf.kakao.com/${channelId}`;
-    openAppOrWeb(appUrl, webUrl);
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 타다 연동
+export const openTada = () => {
+  const deepLink = 'tada://launch'
+  const fallbackUrl = 'https://play.google.com/store/apps/details?id=com.vcnc.tada'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 지하철 앱 연동 (서울지하철, Citymapper)
+export const openSubwayApp = (appType = 'seoul') => {
+  const links = {
+    seoul: {
+      deepLink: 'seoulsubway://launch',
+      fallback: 'https://play.google.com/store/apps/details?id=kr.go.seoul.subway'
+    },
+    citymapper: {
+      deepLink: 'citymapper://directions',
+      fallback: 'https://citymapper.com/seoul'
+    }
   }
-};
+  
+  const link = links[appType] || links.seoul
+  openAppWithFallback(link.deepLink, link.fallback)
+}
+
+// 버스 앱 연동
+export const openBusApp = () => {
+  const deepLink = 'busanduljjuk://launch' // 또는 지역별 버스앱
+  const fallbackUrl = 'https://m.bus.go.kr/'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 배달의민족 연동
+export const openBaemin = () => {
+  const deepLink = 'baemin://home'
+  const fallbackUrl = 'https://play.google.com/store/apps/details?id=com.sampleapp'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 요기요 연동
+export const openYogiyo = () => {
+  const deepLink = 'yogiyo://home'
+  const fallbackUrl = 'https://play.google.com/store/apps/details?id=kr.co.ygy'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 쿠팡 연동
+export const openCoupang = (query = '') => {
+  const deepLink = query 
+    ? `coupang://search?q=${encodeURIComponent(query)}`
+    : 'coupang://home'
+  const fallbackUrl = query
+    ? `https://www.coupang.com/np/search?q=${encodeURIComponent(query)}`
+    : 'https://www.coupang.com/'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 무신사 연동
+export const openMusinsa = (category = '') => {
+  const deepLink = category 
+    ? `musinsa://category/${category}`
+    : 'musinsa://home'
+  const fallbackUrl = 'https://www.musinsa.com/'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 야놀자 연동
+export const openYanolja = () => {
+  const deepLink = 'yanolja://launch'
+  const fallbackUrl = 'https://www.yanolja.com/'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 여기어때 연동
+export const openYeogieoddae = () => {
+  const deepLink = 'yeogi://launch'
+  const fallbackUrl = 'https://www.goodchoice.kr/'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 에어비앤비 연동
+export const openAirbnb = (city = 'Seoul') => {
+  const deepLink = `airbnb://d/search?location=${encodeURIComponent(city)}`
+  const fallbackUrl = `https://www.airbnb.co.kr/s/${encodeURIComponent(city)}`
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// KTX 예매 (코레일톡)
+export const openKorail = () => {
+  const deepLink = 'korail://launch'
+  const fallbackUrl = 'https://www.letskorail.com/'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 공항 리무진 버스
+export const openAirportLimousine = () => {
+  const deepLink = 'limousine://launch'
+  const fallbackUrl = 'https://www.airport.kr/ap/ko/svc/getFacilityMainInfo.do'
+  
+  openAppWithFallback(deepLink, fallbackUrl)
+}
+
+// 편의점별 앱 연동
+export const openConvenienceStore = (storeType) => {
+  const stores = {
+    cu: {
+      deepLink: 'cu://launch',
+      fallback: 'https://cu.bgfretail.com/'
+    },
+    gs25: {
+      deepLink: 'gs25://launch', 
+      fallback: 'http://gs25.gsretail.com/'
+    },
+    seven11: {
+      deepLink: 'seven11://launch',
+      fallback: 'https://www.7-eleven.co.kr/'
+    },
+    emart24: {
+      deepLink: 'emart24://launch',
+      fallback: 'http://emart24.co.kr/'
+    }
+  }
+  
+  const store = stores[storeType]
+  if (store) {
+    openAppWithFallback(store.deepLink, store.fallback)
+  }
+}
 
 // 유틸리티 함수들
-export const utils = {
-  // 현재 위치 기반 카카오맵 검색
-  searchNearby: async (category) => {
+export const isAppInstalled = async (scheme) => {
+  // 실제 앱 설치 여부 확인은 브라우저 제한으로 완벽하지 않음
+  // 대신 사용자 에이전트나 플랫폼 정보를 활용
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => resolve(false), 100)
+    
     try {
-      const position = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
+      const iframe = document.createElement('iframe')
+      iframe.style.display = 'none'
+      iframe.src = scheme
+      document.body.appendChild(iframe)
       
-      const { latitude, longitude } = position.coords;
-      kakaoMap.nearby(category, latitude, longitude);
-    } catch (error) {
-      // 위치 권한이 없으면 일반 검색으로 폴백
-      kakaoMap.search(category);
+      setTimeout(() => {
+        document.body.removeChild(iframe)
+        clearTimeout(timeout)
+        resolve(true)
+      }, 50)
+    } catch (e) {
+      clearTimeout(timeout)
+      resolve(false)
     }
-  },
-  
-  // 전화걸기
-  makeCall: (phoneNumber) => {
-    window.location.href = `tel:${phoneNumber}`;
-  },
-  
-  // SMS 보내기
-  sendSMS: (phoneNumber, message = '') => {
-    const url = `sms:${phoneNumber}${message ? `?body=${encodeURIComponent(message)}` : ''}`;
-    window.location.href = url;
-  }
-};
+  })
+}
 
-// 기본 내보내기
+// 위치 기반 추천
+export const getLocationAndOpenApp = (appOpener) => {
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords
+        appOpener(latitude, longitude)
+      },
+      () => {
+        // 위치 권한이 거부되면 일반 실행
+        appOpener()
+      },
+      { timeout: 5000 }
+    )
+  } else {
+    appOpener()
+  }
+}
+
+// 앱 설치 권장 알림
+export const showAppRecommendation = (appName, storeUrl) => {
+  if (confirm(`${appName} 앱을 설치하시겠습니까? 더 편리한 이용이 가능합니다.`)) {
+    window.open(storeUrl, '_blank')
+  }
+}
+
 export default {
-  kakaoMap,
-  naverMap,
-  delivery,
-  taxi,
-  shopping,
-  accommodation,
-  kakaoTalk,
-  utils
-};
+  openKakaoMap,
+  openNaverMap,
+  openKakaoTaxi,
+  openTada,
+  openSubwayApp,
+  openBusApp,
+  openBaemin,
+  openYogiyo,
+  openCoupang,
+  openMusinsa,
+  openYanolja,
+  openYeogieoddae,
+  openAirbnb,
+  openKorail,
+  openAirportLimousine,
+  openConvenienceStore,
+  isAppInstalled,
+  getLocationAndOpenApp,
+  showAppRecommendation
+}

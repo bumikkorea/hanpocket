@@ -148,6 +148,76 @@ export default function TransportPocket({ lang }) {
         example_zh: '请给我出租车收据',
         example_pronunciation: 'taeksi yeongsujeung juseyo',
         unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'wait_please',
+        ko: '잠깐 기다려주세요',
+        pronunciation: 'jam-kkan gi-da-ryeo-ju-se-yo',
+        zh: '请稍等一下',
+        example_ko: '5분만 기다려주세요',
+        example_zh: '请等5分钟',
+        example_pronunciation: '5bunman gidaryeojuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'turn_left',
+        ko: '왼쪽으로 가주세요',
+        pronunciation: 'oen-jjok-eu-ro ga-ju-se-yo',
+        zh: '请往左走',
+        example_ko: '다음 신호등에서 왼쪽으로 가주세요',
+        example_zh: '请在下个红绿灯往左走',
+        example_pronunciation: 'daeum sinhodeung-eseo oenjjogeuro gajuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'turn_right',
+        ko: '오른쪽으로 가주세요',
+        pronunciation: 'o-reun-jjok-eu-ro ga-ju-se-yo',
+        zh: '请往右走',
+        example_ko: '저기서 오른쪽으로 돌아주세요',
+        example_zh: '请在那里往右转',
+        example_pronunciation: 'jeogiseo oreunjjogeuro dorajuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'straight',
+        ko: '직진해주세요',
+        pronunciation: 'jik-jin-hae-ju-se-yo',
+        zh: '请直走',
+        example_ko: '계속 직진해주세요',
+        example_zh: '请继续直走',
+        example_pronunciation: 'gyesok jikjin-haejuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'fast_please',
+        ko: '빨리 가주세요',
+        pronunciation: 'ppal-li ga-ju-se-yo',
+        zh: '请快一点',
+        example_ko: '급해서 빨리 가주세요',
+        example_zh: '很着急，请快一点',
+        example_pronunciation: 'geupaeseo ppalli gajuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'slowly_please',
+        ko: '천천히 가주세요',
+        pronunciation: 'cheon-cheon-hi ga-ju-se-yo',
+        zh: '请慢一点',
+        example_ko: '멀미가 나서 천천히 가주세요',
+        example_zh: '晕车了，请慢一点',
+        example_pronunciation: 'meolmiga naseo cheoncheonhi gajuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'card_payment',
+        ko: '카드로 계산할게요',
+        pronunciation: 'ka-deu-ro gye-san-hal-ge-yo',
+        zh: '我要用卡支付',
+        example_ko: '현금 없어서 카드로 계산할게요',
+        example_zh: '没有现金，用卡支付',
+        example_pronunciation: 'hyeongeum eopseo-seo kadeuro gyesanhalgeyo',
+        unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
       }
     ],
     subway: [
@@ -200,6 +270,76 @@ export default function TransportPocket({ lang }) {
         example_zh: '这条线路末班车几点？',
         example_pronunciation: 'i noseun makcha myeot siyeyo?',
         unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'which_direction',
+        ko: '어느 방향으로 가야 해요?',
+        pronunciation: 'eo-neu bang-hyang-eu-ro ga-ya hae-yo',
+        zh: '应该往哪个方向？',
+        example_ko: '홍대입구역 어느 방향으로 가야 해요?',
+        example_zh: '去弘大入口站应该往哪个方向？',
+        example_pronunciation: 'hongdaeipguyeok eoneu banghyangeu-ro gaya haeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'how_many_stops',
+        ko: '몇 정거장이에요?',
+        pronunciation: 'myeot jeong-geo-jang-i-e-yo',
+        zh: '几站？',
+        example_ko: '여기서 몇 정거장이에요?',
+        example_zh: '从这里几站？',
+        example_pronunciation: 'yeogiseo myeot jeonggeojang-ieyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'subway_map',
+        ko: '지하철 노선도 보여주세요',
+        pronunciation: 'ji-ha-cheol no-seon-do bo-yeo-ju-se-yo',
+        zh: '请给我看地铁线路图',
+        example_ko: '지하철 노선도 어디에 있어요?',
+        example_zh: '地铁线路图在哪里？',
+        example_pronunciation: 'jihacheol noseondo eodie isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'elevator',
+        ko: '엘리베이터 어디에 있어요?',
+        pronunciation: 'el-li-bei-teo eo-di-e iss-eo-yo',
+        zh: '电梯在哪里？',
+        example_ko: '짐이 많은데 엘리베이터 어디에 있어요?',
+        example_zh: '行李很多，电梯在哪里？',
+        example_pronunciation: 'jimi maneunde ellibeiteo eodie isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'wheelchair',
+        ko: '휠체어 접근 가능해요?',
+        pronunciation: 'hwil-che-eo jeop-geun ga-neung-hae-yo',
+        zh: '轮椅可以进入吗？',
+        example_ko: '이 역은 휠체어 접근 가능해요?',
+        example_zh: '这个站轮椅可以进入吗？',
+        example_pronunciation: 'i yeog-eun hwilcheeo jeopgeun ganeung-haeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'lost_and_found',
+        ko: '분실물 센터 어디예요?',
+        pronunciation: 'bun-sil-mul sen-teo eo-di-ye-yo',
+        zh: '失物招领处在哪里？',
+        example_ko: '지갑을 잃어버렸는데 분실물 센터 어디예요?',
+        example_zh: '丢了钱包，失物招领处在哪里？',
+        example_pronunciation: 'jigabeul ireobeorin-neunde bunsilmul senteo eodiyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'express_train',
+        ko: '급행 전철이에요?',
+        pronunciation: 'geu-paeng jeon-cheol-i-e-yo',
+        zh: '是快车吗？',
+        example_ko: '이 전철은 급행이에요? 완행이에요?',
+        example_zh: '这列车是快车还是慢车？',
+        example_pronunciation: 'i jeoncheer-eun geupaeng-ieyo? wanhaeng-ieyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
       }
     ],
     bus: [
@@ -242,6 +382,86 @@ export default function TransportPocket({ lang }) {
         example_zh: '去市政厅要坐几号公交车？',
         example_pronunciation: 'sicheong garyeomyeon myeot beon beoseu taya haeyo?',
         unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'bus_stop_location',
+        ko: '버스 정류장이 어디예요?',
+        pronunciation: 'beo-seu jeong-ryu-jang-i eo-di-ye-yo',
+        zh: '公交站在哪里？',
+        example_ko: '146번 버스 정류장이 어디예요?',
+        example_zh: '146号公交站在哪里？',
+        example_pronunciation: '146beon beoseu jeongryujangi eodiyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'bus_schedule',
+        ko: '버스 시간표 있어요?',
+        pronunciation: 'beo-seu si-gan-pyo iss-eo-yo',
+        zh: '有公交时刻表吗？',
+        example_ko: '이 버스 시간표나 배차간격 어떻게 돼요?',
+        example_zh: '这班车的时刻表或发车间隔怎么样？',
+        example_pronunciation: 'i beoseu sigangangyona baechagan-gyeok eotteoke dwaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'express_bus',
+        ko: '급행버스예요?',
+        pronunciation: 'geu-paeng-beo-seu-ye-yo',
+        zh: '是快速公交吗？',
+        example_ko: '이 버스는 급행버스예요? 일반버스예요?',
+        example_zh: '这是快速公交还是普通公交？',
+        example_pronunciation: 'i beoseu-neun geupaengbeoseuyeyo? ilbanbeoseuyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'fare_amount',
+        ko: '요금이 얼마예요?',
+        pronunciation: 'yo-geum-i eol-ma-ye-yo',
+        zh: '车费多少钱？',
+        example_ko: '버스 요금이 얼마예요?',
+        example_zh: '公交车费多少钱？',
+        example_pronunciation: 'beoseu yogeumi eolmayeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'back_door',
+        ko: '뒷문으로 내릴게요',
+        pronunciation: 'dwit-mun-eu-ro nae-ril-ge-yo',
+        zh: '从后门下车',
+        example_ko: '뒷문으로 내리면 돼요?',
+        example_zh: '从后门下车可以吗？',
+        example_pronunciation: 'dwitmuneu-ro naerimyeon dwaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'seat_available',
+        ko: '자리 있어요?',
+        pronunciation: 'ja-ri iss-eo-yo',
+        zh: '有座位吗？',
+        example_ko: '앉을 자리 있어요?',
+        example_zh: '有可以坐的位置吗？',
+        example_pronunciation: 'anjeul jari isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'priority_seat',
+        ko: '노약자석이에요',
+        pronunciation: 'no-yak-ja-seok-i-e-yo',
+        zh: '这是优先座位',
+        example_ko: '저기는 노약자석이니까 조심하세요',
+        example_zh: '那里是优先座位，请注意',
+        example_pronunciation: 'jeogineun noyakja-seogi-nikka josimhaseyo',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'bus_arrival',
+        ko: '버스 언제 와요?',
+        pronunciation: 'beo-seu eon-je wa-yo',
+        zh: '公交车什么时候来？',
+        example_ko: '다음 버스 언제 와요?',
+        example_zh: '下一班车什么时候来？',
+        example_pronunciation: 'daeum beoseu eonje wayo?',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
       }
     ],
     ktx: [
@@ -283,6 +503,76 @@ export default function TransportPocket({ lang }) {
         example_ko: '부산행은 몇 번 승강장이에요?',
         example_zh: '去釜山的是几号站台？',
         example_pronunciation: 'busan-haengeun myeot beon seunggangjang-ieyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'arrival_time',
+        ko: '몇 시에 도착해요?',
+        pronunciation: 'myeot si-e do-chak-hae-yo',
+        zh: '几点到达？',
+        example_ko: '부산에 몇 시에 도착해요?',
+        example_zh: '几点到达釜山？',
+        example_pronunciation: 'busane myeot si-e dochakhaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'round_trip',
+        ko: '왕복표 주세요',
+        pronunciation: 'wang-bok-pyo ju-se-yo',
+        zh: '请给我往返票',
+        example_ko: '부산 왕복표로 주세요',
+        example_zh: '请给我去釜山的往返票',
+        example_pronunciation: 'busan wangbok-pyoro juseyo',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'discount_ticket',
+        ko: '할인 티켓 있어요?',
+        pronunciation: 'hal-in ti-ket iss-eo-yo',
+        zh: '有优惠票吗？',
+        example_ko: '청소년 할인이나 외국인 할인 있어요?',
+        example_zh: '有青少年折扣或外国人折扣吗？',
+        example_pronunciation: 'cheongsonyeon harini-na oegugin harin isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'change_ticket',
+        ko: '표 변경하고 싶어요',
+        pronunciation: 'pyo byeon-gyeong-ha-go si-peo-yo',
+        zh: '我想改票',
+        example_ko: '다른 시간으로 표 변경하고 싶어요',
+        example_zh: '我想改到其他时间',
+        example_pronunciation: 'dareun siganeuro pyo byeongyeonghago sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'refund_ticket',
+        ko: '환불하고 싶어요',
+        pronunciation: 'hwan-bul-ha-go si-peo-yo',
+        zh: '我想退票',
+        example_ko: '급한 일이 생겨서 환불하고 싶어요',
+        example_zh: '有急事想退票',
+        example_pronunciation: 'geupan iri saenggyeoseo hwanbul-hago sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'dining_car',
+        ko: '식당칸 있어요?',
+        pronunciation: 'sik-dang-kan iss-eo-yo',
+        zh: '有餐车吗？',
+        example_ko: 'KTX에 식당칸이나 매점 있어요?',
+        example_zh: 'KTX有餐车或小卖部吗？',
+        example_pronunciation: 'KTX-e sikdangkani-na maejeom isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'wifi_available',
+        ko: '와이파이 돼요?',
+        pronunciation: 'wa-i-pa-i dwae-yo',
+        zh: '有wifi吗？',
+        example_ko: 'KTX에서 와이파이 사용할 수 있어요?',
+        example_zh: 'KTX里可以使用wifi吗？',
+        example_pronunciation: 'KTX-eseo waipayi sayonghal su isseoyo?',
         unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
       }
     ],
@@ -336,6 +626,76 @@ export default function TransportPocket({ lang }) {
         example_zh: '出境大厅免税店在哪里？',
         example_pronunciation: 'chulgugjang myeonsejeom eodiyeyo?',
         unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'security_check',
+        ko: '보안검색대 어디예요?',
+        pronunciation: 'bo-an-geom-saek-dae eo-di-ye-yo',
+        zh: '安检处在哪里？',
+        example_ko: '보안검색대 통과하는 곳 어디예요?',
+        example_zh: '通过安检的地方在哪里？',
+        example_pronunciation: 'boangeomsaek-dae tongga-haneun got eodiyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'immigration',
+        ko: '출입국 사무소 어디예요?',
+        pronunciation: 'chul-ip-guk sa-mu-so eo-di-ye-yo',
+        zh: '出入境处在哪里？',
+        example_ko: '출국 심사대 어디예요?',
+        example_zh: '出境审查台在哪里？',
+        example_pronunciation: 'chulguk simsadae eodiyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'currency_exchange',
+        ko: '환전소 어디예요?',
+        pronunciation: 'hwan-jeon-so eo-di-ye-yo',
+        zh: '兑换处在哪里？',
+        example_ko: '달러 환전할 수 있는 곳 어디예요?',
+        example_zh: '可以兑换美元的地方在哪里？',
+        example_pronunciation: 'dalleo hwanjeonhal su inneun got eodiyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'taxi_bus_stop',
+        ko: '공항버스 정류장 어디예요?',
+        pronunciation: 'gong-hang-beo-seu jeong-ryu-jang eo-di-ye-yo',
+        zh: '机场巴士站在哪里？',
+        example_ko: '시내 가는 공항버스 어디서 타요?',
+        example_zh: '去市内的机场巴士在哪里坐？',
+        example_pronunciation: 'sinae ganeun gonghangbeoseu eodiseo tayo?',
+        unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'flight_delay',
+        ko: '항공편이 지연됐어요?',
+        pronunciation: 'hang-gong-pyeon-i ji-yeon-dwae-sseo-yo',
+        zh: '航班延误了吗？',
+        example_ko: '제 항공편이 지연되었나요?',
+        example_zh: '我的航班延误了吗？',
+        example_pronunciation: 'je hanggongpyeoni jiyeondoe-eonnayo?',
+        unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'airport_wifi',
+        ko: '공항 와이파이 비밀번호 뭐예요?',
+        pronunciation: 'gong-hang wa-i-pa-i bi-mil-beon-ho mwo-ye-yo',
+        zh: '机场wifi密码是什么？',
+        example_ko: '무료 와이파이 어떻게 연결해요?',
+        example_zh: '免费wifi怎么连接？',
+        example_pronunciation: 'muryo waipai eotteoke yeongyeolhaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'lost_luggage',
+        ko: '짐을 잃어버렸어요',
+        pronunciation: 'jim-eul ir-eo-beo-ryeo-sseo-yo',
+        zh: '我的行李丢了',
+        example_ko: '수하물을 찾을 수 없어요',
+        example_zh: '找不到行李',
+        example_pronunciation: 'suhamureul chajeul su eopseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
       }
     ],
     rental: [
@@ -367,6 +727,76 @@ export default function TransportPocket({ lang }) {
         example_ko: '공항에서 차 반납하려고 해요',
         example_zh: '我要在机场还车',
         example_pronunciation: 'gonghang-eseo cha bannapharyeogo haeyo',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'car_type',
+        ko: '어떤 종류 차가 있어요?',
+        pronunciation: 'eo-tteon jong-ryu cha-ga iss-eo-yo',
+        zh: '有什么类型的车？',
+        example_ko: '소형차부터 SUV까지 어떤 차가 있어요?',
+        example_zh: '从小型车到SUV有什么车？',
+        example_pronunciation: 'sohyeongcha-buteo SUV-kkaji eotteon chaga isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'daily_rate',
+        ko: '하루 요금이 얼마예요?',
+        pronunciation: 'ha-ru yo-geum-i eol-ma-ye-yo',
+        zh: '一天租金多少？',
+        example_ko: '이 차 하루 렌탈료가 얼마예요?',
+        example_zh: '这辆车一天租金多少？',
+        example_pronunciation: 'i cha haru rentalryoga eolmayeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'insurance',
+        ko: '보험이 포함되어 있어요?',
+        pronunciation: 'bo-heom-i po-ham-doe-eo iss-eo-yo',
+        zh: '包含保险吗？',
+        example_ko: '종합보험이 포함된 가격이에요?',
+        example_zh: '是包含综合保险的价格吗？',
+        example_pronunciation: 'jonghap-boeomi pohamdoen gagyeogi-eyo?',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'fuel_policy',
+        ko: '기름은 어떻게 해요?',
+        pronunciation: 'gi-reum-eun eo-tteo-ke hae-yo',
+        zh: '油费怎么算？',
+        example_ko: '기름을 가득 채워서 반납해야 해요?',
+        example_zh: '需要加满油还车吗？',
+        example_pronunciation: 'gireumeul gadeuk chaewoseo bannap-haeya haeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'deposit',
+        ko: '보증금이 얼마예요?',
+        pronunciation: 'bo-jeung-geum-i eol-ma-ye-yo',
+        zh: '押金多少？',
+        example_ko: '신용카드로 보증금을 걸어야 해요?',
+        example_zh: '需要用信用卡交押金吗？',
+        example_pronunciation: 'sinyong-kadeu-ro boj-eung-geumeul georeoya haeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'gps_navigation',
+        ko: 'GPS 네비게이션 있어요?',
+        pronunciation: 'GPS ne-bi-ge-i-syeon iss-eo-yo',
+        zh: '有GPS导航吗？',
+        example_ko: '한국어 GPS 네비게이션 사용할 수 있어요?',
+        example_zh: '可以使用韩语GPS导航吗？',
+        example_pronunciation: 'hangugeo GPS nebigeisyeon sayonghal su isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'emergency_contact',
+        ko: '응급상황 연락처 알려주세요',
+        pronunciation: 'eung-geup-sang-hwang yeon-rak-cheo al-lyeo-ju-se-yo',
+        zh: '请告诉我紧急联系方式',
+        example_ko: '사고가 나면 어디로 연락해야 해요?',
+        example_zh: '发生事故应该联系哪里？',
+        example_pronunciation: 'sagoga namyeon eodiro yeonrak-haeya haeyo?',
         unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
       }
     ],

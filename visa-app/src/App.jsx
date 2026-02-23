@@ -139,7 +139,7 @@ function Onboarding({ onComplete, lang, setLang }) {
               <Logo />
             </div>
             <p className="text-[#6B7280] text-sm mb-6 text-center">
-              {L(lang, { ko: '로그인하고 시작하세요', zh: '登录后开始使用', en: 'Log in to get started' })}
+              {L(lang, { ko: '간편 로그인으로 시작하세요', zh: '快速登录开始使用', en: 'Get started with quick login' })}
             </p>
             <div className="space-y-3">
               <button
@@ -209,13 +209,7 @@ function Onboarding({ onComplete, lang, setLang }) {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M21.422 13.482C19.558 12.614 17.46 11.6 15.998 10.952c.72-1.748 1.164-3.678 1.164-5.202 0-1.554-.87-3.75-3.828-3.75-2.478 0-4.038 1.86-4.038 4.11 0 2.598 1.806 4.764 4.362 5.424-.498.804-1.104 1.518-1.788 2.118-1.62 1.416-3.456 2.13-5.454 2.13C4.146 15.782 2 14.258 2 11.988 2 6.468 7.098 2 13.332 2 19.566 2 22 6.468 22 11.988c0 .516-.03 1.02-.084 1.494h-.494z"/></svg>
                 {L(lang, { ko: 'Alipay로 로그인', zh: '支付宝登录', en: 'Login with Alipay' })}
               </button>
-              <div className="pt-2">
-                <button
-                  onClick={() => onComplete({ lang })}
-                  className="w-full text-center text-[#6B7280] text-sm hover:text-[#111827] transition-colors">
-                  {L(lang, { ko: '로그인 없이 둘러보기', zh: '不登录直接浏览', en: 'Browse without login' })}
-                </button>
-              </div>
+
             </div>
           </div>
         )}

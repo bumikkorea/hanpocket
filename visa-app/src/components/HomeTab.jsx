@@ -209,12 +209,12 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   }
 
   return (
-    <div className="bg-[#FCFCFA] overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', touchAction: 'pan-y', height: '120px' }}>
+    <div className="bg-[#FCFCFA] overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', touchAction: 'pan-y', height: 'calc(100vh - 140px)' }}>
       {/* Pockets stack */}
       <div
         ref={containerRef}
         className="relative overflow-hidden mx-0.5"
-        style={{ height: '120px', marginTop: '4px' }}
+        style={{ height: 'calc(100vh - 140px)', marginTop: '4px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

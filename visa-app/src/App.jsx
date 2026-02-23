@@ -1100,6 +1100,8 @@ function AppInner() {
   const [selVisa, setSelVisa] = useState(null)
   const [sq, setSq] = useState('')
   const [exchangeRate, setExchangeRate] = useState(null)
+  const [showSearch, setShowSearch] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
   const [hoveredTab, setHoveredTab] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const s = t[lang]
@@ -1513,11 +1515,13 @@ function AppInner() {
             ) : (
               <Logo />
             )}
-            <div className="flex-1 bg-[#F1F3F4] rounded-full px-4 py-2.5 flex items-center gap-2">
+            <button
+              onClick={() => setShowSearch(true)}
+              className="flex-1 bg-[#F1F3F4] rounded-full px-4 py-2.5 flex items-center gap-2"
+            >
               <Search size={18} className="text-[#9AA0A6]" />
-              <input placeholder={lang==='ko'?'HanPocket 검색':lang==='zh'?'搜索HanPocket':'Search HanPocket'}
-                className="bg-transparent outline-none text-sm text-[#202124] w-full placeholder:text-[#9AA0A6]" />
-            </div>
+              <span className="text-sm text-[#9AA0A6]">{lang==='ko'?'검색':lang==='zh'?'搜索':'Search'}</span>
+            </button>
             <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
               <Globe size={20} />
             </button>
@@ -1625,6 +1629,136 @@ function AppInner() {
           <p>© 2026 HanPocket. All rights reserved.</p>
         </div>
       </div>
+      {/* 검색 모달 */}
+      {showSearch && (
+        <div className="fixed inset-0 z-50 bg-white" style={{ fontFamily: 'Inter, sans-serif' }}>
+          {/* 검색 헤더 */}
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => { setShowSearch(false); setSearchQuery('') }} className="p-1">
+              <ChevronLeft size={24} className="text-[#111827]" />
+            </button>
+            <div className="flex-1 bg-[#F1F3F4] rounded-full px-4 py-2.5 flex items-center gap-2">
+              <Search size={18} className="text-[#9AA0A6]" />
+              <input
+                autoFocus
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder={lang==='ko'?'검색어를 입력하세요':lang==='zh'?'请输入搜索词':'Search...'}
+                className="bg-transparent outline-none text-sm text-[#202124] w-full placeholder:text-[#9AA0A6]"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')}>
+                  <X size={16} className="text-[#9AA0A6]" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* 검색 결과 / 바로가기 */}
+          <div className="p-4 overflow-y-auto" style={{ height: 'calc(100vh - 60px)' }}>
+            {!searchQuery ? (
+              <>
+                <p className="text-xs text-[#9AA0A6] uppercase tracking-wider font-semibold mb-3">
+                  {lang==='ko'?'바로가기':lang==='zh'?'快捷入口':'Quick Access'}
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: { ko: '비자', zh: '签证', en: 'Visa' }, tab: 'explore', sub: 'visa' },
+                    { label: { ko: '맛집', zh: '美食', en: 'Food' }, tab: 'explore', sub: 'food' },
+                    { label: { ko: '여행', zh: '旅行', en: 'Travel' }, tab: 'explore', sub: 'travel' },
+                    { label: { ko: '한류', zh: '韩流', en: 'Hallyu' }, tab: 'explore', sub: 'hallyu' },
+                    { label: { ko: '한국어', zh: '韩语', en: 'Korean' }, tab: 'explore', sub: 'korean' },
+                    { label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, tab: 'explore', sub: 'shopping' },
+                    { label: { ko: '구직', zh: '求职', en: 'Jobs' }, tab: 'community', sub: 'jobs' },
+                    { label: { ko: '부동산', zh: '房产', en: 'Housing' }, tab: 'community', sub: 'housing' },
+                    { label: { ko: '금융', zh: '金融', en: 'Finance' }, tab: 'tools', sub: 'finance' },
+                    { label: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, tab: 'tools', sub: 'sos' },
+                    { label: { ko: '의료', zh: '医疗', en: 'Medical' }, tab: 'explore', sub: 'medical' },
+                    { label: { ko: '커뮤니티', zh: '社区', en: 'Community' }, tab: 'community', sub: null },
+                  ].map((item, i) => (
+                    <button
+                      key={i}
+                      onClick={() => {
+                        setShowSearch(false)
+                        setSearchQuery('')
+                        setTab(item.tab)
+                        if (item.sub) setSubPage(item.sub)
+                      }}
+                      className="bg-[#F8F9FA] rounded-xl py-3 px-2 text-center hover:bg-[#E5E7EB] transition-colors"
+                    >
+                      <span className="text-sm font-medium text-[#111827]">{L(lang, item.label)}</span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-xs text-[#9AA0A6] uppercase tracking-wider font-semibold mb-3">
+                  {lang==='ko'?'검색 결과':lang==='zh'?'搜索结果':'Results'}
+                </p>
+                {(() => {
+                  const q = searchQuery.toLowerCase()
+                  const allItems = [
+                    { keywords: ['비자','visa','签证','체류','거소'], label: { ko: '비자 정보', zh: '签证信息', en: 'Visa Info' }, tab: 'explore', sub: 'visa' },
+                    { keywords: ['맛집','음식','food','美食','restaurant','밥'], label: { ko: '맛집', zh: '美食', en: 'Food' }, tab: 'explore', sub: 'food' },
+                    { keywords: ['여행','travel','旅行','관광','tourism'], label: { ko: '여행', zh: '旅行', en: 'Travel' }, tab: 'explore', sub: 'travel' },
+                    { keywords: ['한류','kpop','k-pop','韩流','아이돌','idol','드라마'], label: { ko: '한류', zh: '韩流', en: 'Hallyu' }, tab: 'explore', sub: 'hallyu' },
+                    { keywords: ['한국어','korean','韩语','topik','학습'], label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean' }, tab: 'explore', sub: 'korean' },
+                    { keywords: ['쇼핑','shopping','购物','올리브영','무신사'], label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, tab: 'explore', sub: 'shopping' },
+                    { keywords: ['생활','life','生活','편의점','배달'], label: { ko: '생활', zh: '生活', en: 'Life' }, tab: 'explore', sub: 'life' },
+                    { keywords: ['의료','병원','hospital','医疗','약국','pharmacy'], label: { ko: '의료', zh: '医疗', en: 'Medical' }, tab: 'explore', sub: 'medical' },
+                    { keywords: ['운동','gym','fitness','健身','헬스'], label: { ko: '운동', zh: '健身', en: 'Fitness' }, tab: 'explore', sub: 'fitness' },
+                    { keywords: ['구직','알바','job','求职','work','일자리'], label: { ko: '구직', zh: '求职', en: 'Jobs' }, tab: 'community', sub: 'jobs' },
+                    { keywords: ['부동산','집','house','housing','房产','월세','전세','rent'], label: { ko: '부동산', zh: '房产', en: 'Housing' }, tab: 'community', sub: 'housing' },
+                    { keywords: ['이력서','resume','简历','cv'], label: { ko: '이력서', zh: '简历', en: 'Resume' }, tab: 'community', sub: 'resume' },
+                    { keywords: ['금융','은행','bank','finance','金融','환율','송금'], label: { ko: '금융', zh: '金融', en: 'Finance' }, tab: 'tools', sub: 'finance' },
+                    { keywords: ['sos','긴급','emergency','紧急','경찰','소방'], label: { ko: 'SOS 긴급', zh: 'SOS 紧急', en: 'SOS Emergency' }, tab: 'tools', sub: 'sos' },
+                    { keywords: ['통역','번역','translate','翻译','interpreter'], label: { ko: '통역', zh: '翻译', en: 'Translate' }, tab: 'tools', sub: 'translator' },
+                    { keywords: ['간판','sign','看板','사전'], label: { ko: '간판 사전', zh: '看板词典', en: 'Sign Dictionary' }, tab: 'tools', sub: 'ar-translate' },
+                    { keywords: ['월렛','wallet','钱包','서류','document'], label: { ko: '디지털 월렛', zh: '数字钱包', en: 'Digital Wallet' }, tab: 'tools', sub: 'wallet' },
+                    { keywords: ['알림','비자알림','visa alert','签证提醒','만료'], label: { ko: '비자 알림', zh: '签证提醒', en: 'Visa Alert' }, tab: 'tools', sub: 'visa-alert' },
+                    { keywords: ['날씨','weather','天气'], label: { ko: '날씨', zh: '天气', en: 'Weather' }, tab: 'home', sub: null },
+                    { keywords: ['환율','exchange','汇率','원화','위안'], label: { ko: '환율', zh: '汇率', en: 'Exchange Rate' }, tab: 'home', sub: null },
+                    { keywords: ['커뮤니티','community','社区','게시판'], label: { ko: '커뮤니티', zh: '社区', en: 'Community' }, tab: 'community', sub: null },
+                  ]
+                  const results = allItems.filter(item => item.keywords.some(kw => kw.includes(q) || q.includes(kw)))
+                  
+                  if (results.length === 0) {
+                    return (
+                      <div className="text-center py-12">
+                        <p className="text-[#9AA0A6] text-sm">
+                          {lang==='ko'?'검색 결과가 없습니다':lang==='zh'?'没有搜索结果':'No results found'}
+                        </p>
+                      </div>
+                    )
+                  }
+                  
+                  return (
+                    <div className="space-y-2">
+                      {results.map((item, i) => (
+                        <button
+                          key={i}
+                          onClick={() => {
+                            setShowSearch(false)
+                            setSearchQuery('')
+                            setTab(item.tab)
+                            if (item.sub) setSubPage(item.sub)
+                          }}
+                          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#F8F9FA] transition-colors text-left"
+                        >
+                          <Search size={16} className="text-[#9AA0A6] shrink-0" />
+                          <span className="text-sm font-medium text-[#111827]">{L(lang, item.label)}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )
+                })()}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Google-style Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#DADCE0] z-50 safe-bottom">
         <div className="flex items-center justify-around py-2">

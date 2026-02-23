@@ -72,7 +72,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       // 이미 넘긴 카드들 - 화면 밖으로
       return { 
         opacity: 0, 
-        transform: `translateX(-120%) rotate(-15deg) scale(0.8)`,
+        transform: `translateX(-110%) rotate(-5deg) scale(0.95)`,
         zIndex: 1,
         pointerEvents: 'none'
       }
@@ -80,7 +80,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     
     if (diff === 0) {
       // 현재 카드 - 드래그에 반응
-      const rotate = Math.max(-15, Math.min(15, (dragX / cw) * 15))
+      const rotate = Math.max(-5, Math.min(5, (dragX / cw) * 5))
       return {
         transform: `translateX(${dragX}px) rotate(${rotate}deg)`,
         transition: dragX === 0 ? 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',

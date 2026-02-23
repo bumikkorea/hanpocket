@@ -1558,6 +1558,9 @@ function AppInner() {
               <Logo />
             )}
             <div className="flex-1" />
+            <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+              <Globe size={20} />
+            </button>
             <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-1">
               <Menu size={20} />
             </button>
@@ -2104,20 +2107,6 @@ function FloatingChatbot({ lang }) {
                   />
                 </div>
               </div>
-            </div>
-
-            {/* Language Toggle at Bottom */}
-            <div className="p-4 border-t border-gray-200">
-              <button 
-                onClick={() => {
-                  setLang(nextLang(lang))
-                  setShowAppMenu(false)
-                }}
-                className="w-full flex items-center justify-center gap-2 p-3 bg-[#F3F4F6] text-[#111827] rounded-lg hover:bg-[#E5E7EB] transition-colors"
-              >
-                <Globe size={16} />
-                <span className="font-medium">{langLabel(lang)}</span>
-              </button>
             </div>
           </div>
         </>

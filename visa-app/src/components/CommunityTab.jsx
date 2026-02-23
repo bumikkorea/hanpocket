@@ -549,9 +549,8 @@ export default function CommunityTab({ lang, profile }) {
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
         {[
           { id: 'board', label: { ko: '게시판', zh: '论坛', en: 'Board' } },
-          { id: 'jobs', label: { ko: '구직', zh: '求职', en: 'Jobs' } },
+          { id: 'jobs', label: { ko: '구직/이력서', zh: '求职/简历', en: 'Jobs/Resume' } },
           { id: 'housing', label: { ko: '부동산', zh: '房产', en: 'Housing' } },
-          { id: 'resume', label: { ko: '이력서', zh: '简历', en: 'Resume' } },
         ].map(s => (
           <button key={s.id} onClick={() => setCommunitySection(s.id)}
             className={`shrink-0 px-4 py-2 text-sm font-semibold rounded-xl transition-all ${communitySection === s.id ? 'bg-[#111827] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'}`}>
@@ -560,9 +559,8 @@ export default function CommunityTab({ lang, profile }) {
         ))}
       </div>
 
-      {communitySection === 'jobs' && <JobsTab lang={lang} profile={profile} />}
+      {communitySection === 'jobs' && <div className="space-y-6"><JobsTab lang={lang} profile={profile} /><div className="border-t border-gray-200 pt-4"><h3 className="text-sm font-bold text-[#111827] mb-3">{L(lang, { ko: '이력서 작성', zh: '制作简历', en: 'Build Resume' })}</h3><ResumeTab lang={lang} profile={profile} /></div></div>}
       {communitySection === 'housing' && <HousingTab lang={lang} profile={profile} />}
-      {communitySection === 'resume' && <ResumeTab lang={lang} profile={profile} />}
 
       {communitySection === 'board' && <>
         {/* Demo notice */}

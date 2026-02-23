@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { X, Plus } from 'lucide-react'
+import PocketContent from './pockets/PocketContent'
 import { pocketCategories } from '../data/pockets'
 import AppleWidgetCard from './cards/AppleWidgetCard'
 import PersonalSection from './cards/PersonalSection'

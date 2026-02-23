@@ -1310,10 +1310,9 @@ function AppInner() {
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'explore', icon: Grid3x3, label: { ko: '탐색', zh: '探索', en: 'Explore' } },
-    { id: 'tools', icon: Wrench, label: { ko: '도구', zh: '工具', en: 'Tools' } },
+    { id: 'pocket', icon: Grid3x3, label: { ko: '포켓', zh: '口袋', en: 'Pocket' } },
     { id: 'community', icon: Users, label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
-    { id: 'profile', icon: User, label: { ko: '내정보', zh: '我的', en: 'Me' } },
+    { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]
 
   // Feature completion scores from docs/feature-review-10k*.md
@@ -1631,7 +1630,7 @@ function AppInner() {
           )
         })()}
         {/* Explore grid */}
-        {tab==='explore' && !subPage && (
+        {tab==='pocket' && !subPage && (
           <div>
             <h2 className="text-lg font-medium text-[#202124] mb-4">{L(lang, { ko: '탐색', zh: '探索', en: 'Explore' })}</h2>
             <div className="grid grid-cols-3 gap-3">
@@ -1642,13 +1641,7 @@ function AppInner() {
                 </button>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* Tools grid */}
-        {tab==='tools' && !subPage && (
-          <div>
-            <h2 className="text-lg font-medium text-[#202124] mb-4">{L(lang, { ko: '도구', zh: '工具', en: 'Tools' })}</h2>
+            <h2 className="text-lg font-medium text-[#202124] mt-6 mb-4">{L(lang, { ko: '도구', zh: '工具', en: 'Tools' })}</h2>
             <div className="grid grid-cols-3 gap-3">
               {toolItems.map(item => (
                 <button key={item.id} onClick={() => { setSubPage(item.id) }}

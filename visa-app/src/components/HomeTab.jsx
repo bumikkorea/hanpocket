@@ -13,7 +13,7 @@ import ParcelWidget from './widgets/ParcelWidget'
 import LucideIcon from './home/common/LucideIcon'
 import TreeSection from './home/common/TreeSection'
 import WidgetContent from './home/common/WidgetContent'
-import { L } from './home/utils/helpers'
+import { L, trackActivity } from './home/utils/helpers'
 import { SECTION_TODAY, SECTION_SHOPPING, SECTION_CULTURE, SECTION_TOOLS } from './home/utils/constants'
 
 // 섹션별 위젯 가져오기 함수
@@ -41,8 +41,88 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   const containerRef = useRef(null)
   const touchRef = useRef({ startX: 0, startY: 0, swiping: false, locked: false })
 
-  const SWIPE_THRESHOLD = 80
+  const SWIPE_THRESHOLD = 100
   const FOLD_MAX = 50
+
+  // 스와이프 효과음 함수
+  const playSwipeSound = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)()
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.frequency.setValueAtTime(800, ctx.currentTime)
+      osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1)
+      gain.gain.setValueAtTime(0.15, ctx.currentTime)
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1)
+      osc.start(ctx.currentTime)
+      osc.stop(ctx.currentTime + 0.1)
+    } catch (e) {
+      // AudioContext not available, fail silently
+    }
+  }
+
+  // 각 카드의 스타일 계산
+  const getCardStyle = (cardIndex) => {
+    const diff = cardIndex - currentIndex
+    const cw = containerW || 375
+    
+    if (diff < 0) {
+      // 이미 넘긴 카드들 - 화면 밖으로
+      return { 
+        opacity: 0, 
+        transform: `translateX(-120%) rotate(-15deg) scale(0.8)`,
+        zIndex: 1,
+        pointerEvents: 'none'
+      }
+    }
+    
+    if (diff === 0) {
+      // 현재 카드 - 드래그에 반응
+      const rotate = Math.max(-15, Math.min(15, (dragX / cw) * 15))
+      return {
+        transform: `translateX(${dragX}px) rotate(${rotate}deg)`,
+        transition: dragX === 0 ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+        zIndex: 10,
+        opacity: 1,
+        pointerEvents: 'auto'
+      }
+    }
+    
+    if (diff === 1) {
+      // 다음 카드 - 약간 작게 뒤에, 드래그에 따라 점점 커짐
+      const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)
+      const scale = 0.92 + (0.08 * progress)
+      const translateY = 8 - (8 * progress)
+      return {
+        transform: `scale(${scale}) translateY(${translateY}px)`,
+        transition: dragX === 0 ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+        zIndex: 5,
+        opacity: 0.8 + (0.2 * progress),
+        pointerEvents: 'none'
+      }
+    }
+    
+    if (diff === 2) {
+      // 그 다음 카드 - 더 작게
+      return {
+        transform: 'scale(0.84) translateY(16px)',
+        transition: dragX === 0 ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+        zIndex: 3,
+        opacity: 0.6,
+        pointerEvents: 'none'
+      }
+    }
+    
+    // 나머지 카드들 숨김
+    return { 
+      opacity: 0, 
+      zIndex: 1,
+      pointerEvents: 'none',
+      transform: 'scale(0.8) translateY(20px)'
+    }
+  }
 
   useEffect(() => { localStorage.setItem('home_cards', JSON.stringify(cards)) }, [cards])
 
@@ -55,8 +135,11 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 
   const totalSlides = cards.length + 1
 
-  const goTo = (idx) => {
+  const goTo = (idx, playSound = false) => {
     const clamped = Math.max(0, Math.min(idx, totalSlides - 1))
+    if (clamped !== currentIndex && playSound) {
+      playSwipeSound()
+    }
     setCurrentIndex(clamped)
     setDragX(0)
     setShowBookmark(false)
@@ -106,8 +189,8 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     }
     const lastIndex = totalSlides - 1
     if (Math.abs(dragX) >= SWIPE_THRESHOLD) {
-      if (dragX < 0 && currentIndex < lastIndex) goTo(currentIndex + 1)
-      else if (dragX > 0 && currentIndex > 0) goTo(currentIndex - 1)
+      if (dragX < 0 && currentIndex < lastIndex) goTo(currentIndex + 1, true)
+      else if (dragX > 0 && currentIndex > 0) goTo(currentIndex - 1, true)
       else { setDragX(0); setShowBookmark(false) }
     } else {
       setDragX(0)
@@ -120,7 +203,8 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       const newCards = [...cards, widgetId]
       setCards(newCards)
       setShowAdd(false)
-      setTimeout(() => setCurrentIndex(newCards.length - 1), 50)
+      // 새로 추가된 카드로 이동 (효과음 포함)
+      setTimeout(() => goTo(newCards.length - 1, true), 100)
     }
   }
 
@@ -128,7 +212,23 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     const idx = cards.indexOf(widgetId)
     const newCards = cards.filter(c => c !== widgetId)
     setCards(newCards)
-    if (currentIndex >= newCards.length) setCurrentIndex(Math.max(0, newCards.length))
+    
+    // 삭제된 카드가 현재 카드라면 자연스럽게 다음/이전 카드로 이동
+    if (idx === currentIndex) {
+      if (newCards.length === 0) {
+        // 모든 카드가 삭제되면 Add 카드로
+        setCurrentIndex(0)
+      } else if (currentIndex >= newCards.length) {
+        // 마지막 카드였다면 이전 카드로
+        goTo(newCards.length - 1)
+      } else {
+        // 같은 위치에 있는 다음 카드로 (인덱스는 유지)
+        setCurrentIndex(currentIndex)
+      }
+    } else if (idx < currentIndex) {
+      // 이전 카드가 삭제되면 현재 인덱스 조정
+      setCurrentIndex(currentIndex - 1)
+    }
   }
 
   const getWidgetById = (id) => {
@@ -139,89 +239,137 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     return null
   }
 
-  const cw = containerW || 375
-  const rawPx = -(currentIndex * cw) + dragX
-  const slidePx = Math.max(-(totalSlides - 1) * cw, Math.min(0, rawPx))
-
   return (
     <div className="h-full flex flex-col bg-[#FAFAF8] overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', touchAction: 'pan-y' }}>
-      {/* Cards track */}
+      {/* Cards stack */}
       <div
         ref={containerRef}
         className="flex-1 relative overflow-hidden"
+        style={{ height: 'calc(100vh - 120px)' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <div
-          className="flex h-full"
-          style={{
-            transform: `translateX(${slidePx}px)`,
-            transition: dragX === 0 ? 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
-            width: `${totalSlides * cw}px`,
-          }}
-        >
-          {cards.map((cardId, index) => {
-            const widget = getWidgetById(cardId)
-            if (!widget) return null
-            return (
-              <div key={cardId} className="shrink-0 flex items-center justify-center" style={{ width: cw + 'px', height: 'calc(100vh - 120px)' }}>
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 relative overflow-hidden" style={{ width: (cw - 32) + 'px', height: 'calc(100vh - 152px)' }}>
-                  {/* Page fold effect */}
-                  {dragX !== 0 && index === currentIndex && (() => {
-                    const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)
-                    const foldSize = Math.round(progress * FOLD_MAX)
-                    const passed = Math.abs(dragX) >= SWIPE_THRESHOLD
-                    if (foldSize < 5) return null
-                    return (
-                      <div className="absolute top-0 right-0 z-20" style={{ width: foldSize + 'px', height: foldSize + 'px' }}>
-                        <svg width={foldSize} height={foldSize} viewBox={`0 0 ${foldSize} ${foldSize}`}>
-                          <path d={`M0,0 L${foldSize},0 L${foldSize},${foldSize} Z`} fill={passed ? '#111827' : '#E5E7EB'} />
-                          <path d={`M0,0 L0,${foldSize} L${foldSize},${foldSize} Z`} fill={passed ? '#333' : '#F3F4F6'} />
-                        </svg>
-                      </div>
-                    )
-                  })()}
-                  <button
-                    onClick={() => removeCard(cardId)}
-                    className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
-                  >
-                    <X className="w-4 h-4 text-gray-600" />
-                  </button>
-                  <div className="flex items-center gap-3 mb-4">
-                    <LucideIcon name={widget.icon} size={20} style={{ color: '#111827' }} />
-                    <h2 className="text-lg font-semibold" style={{ color: '#111827' }}>{L(lang, widget.name)}</h2>
-                  </div>
-                  <div className="overflow-y-auto" style={{ height: 'calc(100% - 60px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
-                    <WidgetContent widgetId={cardId} lang={lang} setTab={setTab} />
-                  </div>
+        {/* All cards stacked */}
+        {cards.map((cardId, index) => {
+          const widget = getWidgetById(cardId)
+          if (!widget) return null
+          const cardStyle = getCardStyle(index)
+          
+          return (
+            <div 
+              key={cardId}
+              className="absolute inset-4"
+              style={{
+                ...cardStyle,
+                willChange: 'transform, opacity'
+              }}
+            >
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 relative overflow-hidden w-full h-full">
+                {/* Page fold effect */}
+                {dragX !== 0 && index === currentIndex && (() => {
+                  const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)
+                  const foldSize = Math.round(progress * FOLD_MAX)
+                  const passed = Math.abs(dragX) >= SWIPE_THRESHOLD
+                  if (foldSize < 5) return null
+                  return (
+                    <div className="absolute top-0 right-0 z-20" style={{ width: foldSize + 'px', height: foldSize + 'px' }}>
+                      <svg width={foldSize} height={foldSize} viewBox={`0 0 ${foldSize} ${foldSize}`}>
+                        <path d={`M0,0 L${foldSize},0 L${foldSize},${foldSize} Z`} fill={passed ? '#111827' : '#E5E7EB'} />
+                        <path d={`M0,0 L0,${foldSize} L${foldSize},${foldSize} Z`} fill={passed ? '#333' : '#F3F4F6'} />
+                      </svg>
+                    </div>
+                  )
+                })()}
+                <button
+                  onClick={() => removeCard(cardId)}
+                  className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+                >
+                  <X className="w-4 h-4 text-gray-600" />
+                </button>
+                <div className="flex items-center gap-3 mb-4">
+                  <LucideIcon name={widget.icon} size={20} style={{ color: '#111827' }} />
+                  <h2 className="text-lg font-semibold" style={{ color: '#111827' }}>{L(lang, widget.name)}</h2>
+                </div>
+                <div className="overflow-y-auto" style={{ height: 'calc(100% - 60px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
+                  <WidgetContent widgetId={cardId} lang={lang} setTab={setTab} />
                 </div>
               </div>
-            )
-          })}
-
-          {/* Add card */}
-          <div className="shrink-0 flex items-center justify-center" style={{ width: cw + 'px', height: 'calc(100vh - 120px)' }}>
-            <div
-              className="bg-white rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors"
-              style={{ width: (cw - 32) + 'px', height: 'calc(100vh - 152px)' }}
-              onClick={() => setShowAdd(true)}
-            >
-              <Plus className="w-12 h-12 text-gray-400 mb-4" />
-              <p className="text-lg font-medium text-gray-600">
-                {L(lang, { ko: '카드 추가', zh: '添加卡片', en: 'Add Card' })}
-              </p>
             </div>
+          )
+        })}
+
+        {/* Add card - also in the stack */}
+        <div 
+          className="absolute inset-4"
+          style={{
+            ...getCardStyle(cards.length),
+            willChange: 'transform, opacity'
+          }}
+        >
+          <div
+            className="bg-white rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full h-full"
+            onClick={() => setShowAdd(true)}
+          >
+            <Plus className="w-12 h-12 text-gray-400 mb-4" />
+            <p className="text-lg font-medium text-gray-600">
+              {L(lang, { ko: '카드 추가', zh: '添加卡片', en: 'Add Card' })}
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Dot indicators */}
-      {totalSlides > 1 && (
-        <div className="flex justify-center items-center py-3 gap-2">
-          {Array.from({ length: totalSlides }).map((_, i) => (
-            <div key={i} className={`w-2 h-2 rounded-full transition-all ${i === currentIndex ? 'bg-[#111827] w-4' : 'bg-gray-300'}`} />
-          ))}
+      {/* Card indicators with icons and names */}
+      {(cards.length > 0 || totalSlides > 1) && (
+        <div className="flex justify-center items-center py-3 gap-1 px-4 overflow-x-auto">
+          {cards.map((cardId, index) => {
+            const widget = getWidgetById(cardId)
+            if (!widget) return null
+            const isActive = index === currentIndex
+            return (
+              <button
+                key={cardId}
+                onClick={() => goTo(index)}
+                className={`flex flex-col items-center p-2 rounded-lg transition-all min-w-0 ${
+                  isActive ? 'bg-gray-100 scale-105' : 'hover:bg-gray-50'
+                }`}
+                style={{ minWidth: '60px' }}
+              >
+                <LucideIcon 
+                  name={widget.icon} 
+                  size={isActive ? 20 : 16} 
+                  style={{ color: isActive ? '#111827' : '#6B7280' }} 
+                />
+                <span 
+                  className={`text-xs mt-1 truncate max-w-full ${
+                    isActive ? 'font-semibold text-gray-900' : 'text-gray-500'
+                  }`}
+                >
+                  {L(lang, widget.name)}
+                </span>
+              </button>
+            )
+          })}
+          {/* Add card indicator - 항상 표시 */}
+          <button
+            onClick={() => goTo(cards.length)}
+            className={`flex flex-col items-center p-2 rounded-lg transition-all min-w-0 ${
+              currentIndex === cards.length ? 'bg-gray-100 scale-105' : 'hover:bg-gray-50'
+            }`}
+            style={{ minWidth: '60px' }}
+          >
+            <Plus 
+              size={currentIndex === cards.length ? 20 : 16} 
+              style={{ color: currentIndex === cards.length ? '#111827' : '#6B7280' }} 
+            />
+            <span 
+              className={`text-xs mt-1 truncate max-w-full ${
+                currentIndex === cards.length ? 'font-semibold text-gray-900' : 'text-gray-500'
+              }`}
+            >
+              {L(lang, { ko: '추가', zh: '添加', en: 'Add' })}
+            </span>
+          </button>
         </div>
       )}
 
@@ -270,4 +418,4 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 }
 
 // Export additional components and utilities for backward compatibility
-export { TreeSection, LucideIcon, WidgetContent, getEnabledWidgetsForSection }
+export { TreeSection, LucideIcon, WidgetContent, getEnabledWidgetsForSection, trackActivity }

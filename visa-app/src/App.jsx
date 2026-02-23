@@ -1952,16 +1952,16 @@ function FloatingChatbot({ lang }) {
       <AffiliateTracker />
 
       {/* App Shortcuts Sidebar */}
-      {showAppMenu && (
-        <>
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-50"
-            onClick={() => setShowAppMenu(false)}
-          />
-          <div 
-            className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg transform transition-transform duration-300 ease-out z-50"
-            style={{ transform: showAppMenu ? 'translateX(0)' : 'translateX(100%)' }}
-          >
+      <>
+        <div 
+          className="fixed inset-0 bg-black z-50 transition-opacity duration-300"
+          style={{ opacity: showAppMenu ? 0.5 : 0, pointerEvents: showAppMenu ? 'auto' : 'none' }}
+          onClick={() => setShowAppMenu(false)}
+        />
+        <div 
+          className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transition-transform duration-300 ease-out"
+          style={{ transform: showAppMenu ? 'translateX(0)' : 'translateX(100%)' }}
+        >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h2 className="text-lg font-bold text-[#111827]">앱 바로가기</h2>
@@ -2109,8 +2109,7 @@ function FloatingChatbot({ lang }) {
               </div>
             </div>
           </div>
-        </>
-      )}
+      </>
     </>
   )
 }

@@ -245,7 +245,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       <div
         ref={containerRef}
         className="relative overflow-hidden mx-4"
-        style={{ height: 'calc(100vh - 280px)', marginTop: '8px' }}
+        style={{ height: '250px', marginTop: '8px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

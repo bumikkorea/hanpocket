@@ -30,9 +30,16 @@ function getEnabledPocketsForSection(sectionIds, config) {
   return allPockets
 }
 
+const DEFAULT_POCKETS = ['restaurant', 'transport', 'convenience', 'emergency', 'cafe', 'shopping', 'accommodation']
+
 export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   const [pockets, setPockets] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('home_pockets')) || [] } catch { return [] }
+    try { 
+      const saved = JSON.parse(localStorage.getItem('home_pockets'))
+      return saved && saved.length > 0 ? saved : DEFAULT_POCKETS
+    } catch { 
+      return DEFAULT_POCKETS 
+    }
   })
   const [showAdd, setShowAdd] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)

@@ -72,7 +72,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       // 이미 넘긴 카드들 - 화면 밖으로
       return { 
         opacity: 0, 
-        transform: `translateX(-110%) rotate(-5deg) scale(0.95)`,
+        transform: `translateX(-110%) rotate(-2deg) scale(0.95)`,
         zIndex: 1,
         pointerEvents: 'none'
       }
@@ -80,10 +80,10 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     
     if (diff === 0) {
       // 현재 카드 - 드래그에 반응
-      const rotate = Math.max(-5, Math.min(5, (dragX / cw) * 5))
+      const rotate = Math.max(-2, Math.min(2, (dragX / cw) * 2))
       return {
         transform: `translateX(${dragX}px) rotate(${rotate}deg)`,
-        transition: dragX === 0 ? 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
+        transition: dragX === 0 ? 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
         zIndex: 10,
         opacity: 1,
         pointerEvents: 'auto'
@@ -97,7 +97,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       const translateY = 8 - (8 * progress)
       return {
         transform: `scale(${scale}) translateY(${translateY}px)`,
-        transition: dragX === 0 ? 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
+        transition: dragX === 0 ? 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
         zIndex: 5,
         opacity: 0.8 + (0.2 * progress),
         pointerEvents: 'none'
@@ -108,7 +108,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       // 그 다음 카드 - 더 작게
       return {
         transform: 'scale(0.84) translateY(16px)',
-        transition: dragX === 0 ? 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
+        transition: dragX === 0 ? 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
         zIndex: 3,
         opacity: 0.6,
         pointerEvents: 'none'
@@ -245,7 +245,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       <div
         ref={containerRef}
         className="relative overflow-hidden mx-4"
-        style={{ height: '230px', marginTop: '8px' }}
+        style={{ height: '250px', marginTop: '8px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

@@ -628,24 +628,17 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   const handleNotifYes = async () => {
     setShowNotifModal(false)
     
-    if (typeof Notification === 'undefined') {
-      setShowToast(true)
-      setTimeout(() => setShowToast(false), 3000)
-      return
-    }
-
-    try {
-      const permission = await Notification.requestPermission()
-      if (permission === 'granted') {
-        setShowTimingModal(true)
-      } else {
-        setShowToast(true)
-        setTimeout(() => setShowToast(false), 3000)
+    // 푸시 알림 권한 요청 (가능한 경우)
+    if (typeof Notification !== 'undefined') {
+      try {
+        await Notification.requestPermission()
+      } catch (e) {
+        console.log('Notification permission request failed:', e)
       }
-    } catch (error) {
-      setShowToast(true)
-      setTimeout(() => setShowToast(false), 3000)
     }
+    
+    // 권한 결과에 상관없이 타이밍 선택 모달 표시
+    setShowTimingModal(true)
   }
 
   // 알림 시점 저장
@@ -803,7 +796,8 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
               type="date"
               value={tempDate}
               onChange={(e) => setTempDate(e.target.value)}
-              className="w-full bg-[#F8F9FA] rounded-xl px-4 py-3 text-[#111827] border border-[#E5E7EB] focus:border-[#111827] outline-none mb-6"
+              className="w-full bg-[#F8F9FA] rounded-xl px-4 py-3 text-[#111827] border border-[#E5E7EB] focus:border-[#111827] outline-none mb-6 box-border max-w-full text-base"
+              style={{ WebkitAppearance: 'none', minWidth: 0 }}
             />
             
             <div className="flex gap-3">

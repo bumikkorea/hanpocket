@@ -1,18 +1,25 @@
 export const pocketCategories = [
   {
+    id: 'situational-korean',
+    name: { ko: '상황별 한국어', zh: '场景韩语', en: 'Situational Korean' },
+    icon: 'MessageCircle',
+    pockets: [
+      { id: 'restaurant', name: { ko: '식당', zh: '餐厅', en: 'Restaurant' }, icon: 'Utensils', description: { ko: '입장/주문/계산 표현', zh: '入店/点餐/结账表达', en: 'Entrance/order/payment phrases' }, size: 'md' },
+      { id: 'cafe', name: { ko: '카페', zh: '咖啡厅', en: 'Cafe' }, icon: 'Coffee', description: { ko: '주문/커스텀/포장 표현', zh: '点单/自定义/打包表达', en: 'Order/custom/takeout phrases' }, size: 'md' },
+      { id: 'transport', name: { ko: '교통', zh: '交通', en: 'Transport' }, icon: 'Train', description: { ko: '택시/지하철/버스 표현', zh: '出租车/地铁/公交表达', en: 'Taxi/subway/bus phrases' }, size: 'md' },
+      { id: 'convenience', name: { ko: '편의점', zh: '便利店', en: 'Convenience Store' }, icon: 'ShoppingBag', description: { ko: '편의점 표현 + 꿀조합', zh: '便利店表达 + 推荐组合', en: 'CVS phrases + combos' }, size: 'md' },
+      { id: 'shopping', name: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, icon: 'ShoppingCart', description: { ko: '사이즈/교환/환불 표현', zh: '尺码/换货/退款表达', en: 'Size/exchange/refund phrases' }, size: 'md' },
+      { id: 'accommodation', name: { ko: '숙소', zh: '住宿', en: 'Accommodation' }, icon: 'Building2', description: { ko: '체크인/요청/체크아웃 표현', zh: '入住/请求/退房表达', en: 'Check-in/request/checkout phrases' }, size: 'md' },
+      { id: 'emergency', name: { ko: '긴급', zh: '紧急', en: 'Emergency' }, icon: 'Siren', description: { ko: 'SOS + 긴급연락처 + 증상 표현', zh: 'SOS + 紧急联系 + 症状表达', en: 'SOS + emergency contacts + symptoms' }, size: 'md' },
+    ],
+  },
+  {
     id: 'travel-essential',
     name: { ko: '여행 필수', zh: '旅行必备', en: 'Travel Essential' },
     icon: 'ClipboardList',
     pockets: [
-      // 1순위 4개 새 주머니
-      { id: 'restaurant', name: { ko: '식당 주머니', zh: '餐厅口袋', en: 'Restaurant Pocket' }, icon: 'Utensils', description: { ko: '상황별 한국어 표현 + 중국어 발음', zh: '按情况韩语表达 + 中文发音', en: 'Korean expressions by situation + pronunciation' }, size: 'md' },
-      { id: 'transport', name: { ko: '교통 주머니', zh: '交通口袋', en: 'Transport Pocket' }, icon: 'Train', description: { ko: '택시 보여주기 모드 + 교통 표현', zh: '出租车显示模式 + 交通表达', en: 'Taxi display mode + transport phrases' }, size: 'md' },
-      { id: 'convenience', name: { ko: '편의점 주머니', zh: '便利店口袋', en: 'Convenience Pocket' }, icon: 'ShoppingBag', description: { ko: '편의점 표현 + 꿀조합 추천', zh: '便利店表达 + 推荐组合', en: 'CVS expressions + recommendations' }, size: 'md' },
-      { id: 'emergency', name: { ko: '긴급 주머니', zh: '紧急口袋', en: 'Emergency Pocket' }, icon: 'Siren', description: { ko: 'SOS 버튼 + 긴급 연락처 + 증상 표현', zh: 'SOS按钮 + 紧急联系方式 + 症状表达', en: 'SOS button + emergency contacts + symptoms' }, size: 'md' },
-      // 기존 필수 주머니
       { id: 'holiday', name: { ko: '한국 공휴일 캘린더', zh: '韩国公休日日历', en: 'Korean Holiday Calendar' }, icon: 'Calendar', description: { ko: '네이버 달력 스타일', zh: 'Naver日历风格', en: 'Naver Calendar style' }, size: 'lg' },
       { id: 'parcel', name: { ko: '택배', zh: '快递', en: 'Parcel' }, icon: 'Package', description: { ko: '택배 보내기/조회', zh: '快递寄送/查询', en: 'Send & Track packages' }, size: 'md' },
-      { id: 'accommodation', name: { ko: '숙박 예약', zh: '住宿预订', en: 'Accommodation' }, icon: 'Building2', description: { ko: '야놀자/여기어때/Booking.com', zh: '夜猫子/这里如何/Booking.com', en: 'Yanolja/Goodchoice/Booking.com' }, size: 'lg' },
       { id: 'taxrefund', name: { ko: '택스리펀드', zh: '退税指南', en: 'Tax Refund' }, icon: 'Coins', description: { ko: '환급 계산기 & 공항 안내', zh: '退税计算器 & 机场指南', en: 'Refund calculator & airport guide' }, size: 'lg' },
     ],
   },

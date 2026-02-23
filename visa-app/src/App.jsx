@@ -1632,18 +1632,8 @@ function AppInner() {
         {/* Explore grid */}
         {tab==='pocket' && !subPage && (
           <div>
-            <h2 className="text-lg font-medium text-[#202124] mb-4">{L(lang, { ko: '탐색', zh: '探索', en: 'Explore' })}</h2>
             <div className="grid grid-cols-3 gap-3">
-              {exploreItems.map(item => (
-                <button key={item.id} onClick={() => { setSubPage(item.id) }}
-                  className="bg-white rounded-lg p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
-                  <span className="text-sm text-[#111827] font-medium tracking-wide">{L(lang, item.label)}</span>
-                </button>
-              ))}
-            </div>
-            <h2 className="text-lg font-medium text-[#202124] mt-6 mb-4">{L(lang, { ko: '도구', zh: '工具', en: 'Tools' })}</h2>
-            <div className="grid grid-cols-3 gap-3">
-              {toolItems.map(item => (
+              {[...exploreItems, ...toolItems].map(item => (
                 <button key={item.id} onClick={() => { setSubPage(item.id) }}
                   className="bg-white rounded-lg p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
                   <span className="text-sm text-[#111827] font-medium tracking-wide">{L(lang, item.label)}</span>

@@ -213,7 +213,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       {/* Pockets stack */}
       <div
         ref={containerRef}
-        className="relative overflow-hidden mx-1"
+        className="relative overflow-hidden mx-0.5"
         style={{ height: 'calc(100vh - 120px)', marginTop: '4px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
@@ -240,7 +240,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-2 bg-gray-300 rounded-b-full"></div>
                 
                 {/* 주머니 본체 */}
-                <div className="bg-white rounded-t-2xl rounded-b-lg border border-gray-200 p-6 relative overflow-hidden w-full h-full pt-8 shadow-sm">
+                <div className="bg-white rounded-t-2xl rounded-b-lg border border-gray-200 px-3 py-2 relative overflow-hidden w-full h-full pt-4 shadow-sm">
                   <button
                     onClick={() => removePocket(pocketId)}
                     className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
@@ -251,7 +251,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                     <LucideIcon name={pocket.icon} size={20} style={{ color: '#111827' }} />
                     <h2 className="text-lg font-semibold" style={{ color: '#111827' }}>{L(lang, pocket.name)}</h2>
                   </div>
-                  <div className="overflow-y-auto scroll-smooth" style={{ height: 'calc(100% - 80px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
+                  <div className="overflow-y-auto scroll-smooth" style={{ height: 'calc(100% - 40px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
                     <PocketContent pocketId={pocketId} lang={lang} setTab={setTab} />
                   </div>
                 </div>

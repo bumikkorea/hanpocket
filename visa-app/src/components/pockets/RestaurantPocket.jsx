@@ -344,18 +344,18 @@ export default function RestaurantPocket({ lang }) {
     const isBookmarked = bookmarkedCards.includes(card.id)
 
     return (
-      <div className="bg-white rounded-lg border border-gray-100 overflow-hidden mb-4 shadow-sm">
+      <div className="bg-white rounded-lg border border-gray-100 overflow-hidden mb-3">
         {/* 이미지/그라데이션 영역 */}
-        <div className="relative w-full h-[200px]">
+        <div className="relative w-full h-[160px]">
           {!imgError && card.unsplash ? (
             <img 
               src={card.unsplash} 
               onError={() => setImgError(true)} 
-              className="w-full h-[200px] object-cover" 
+              className="w-full h-[160px] object-cover" 
               alt=""
             />
           ) : (
-            <div className={`w-full h-[200px] ${gradientClass} flex items-center justify-center`}>
+            <div className={`w-full h-[160px] ${gradientClass} flex items-center justify-center`}>
               <Icon size={48} className="text-white/60" />
             </div>
           )}
@@ -373,60 +373,40 @@ export default function RestaurantPocket({ lang }) {
         </div>
 
         {/* 콘텐츠 영역 */}
-        <div className="p-4">
-          {/* 메인 문장 + 음성 버튼 */}
-          <div className="flex items-start justify-between mb-2">
-            <button
-              onClick={() => copyToClipboard(card.ko)}
-              className="flex-1 text-left"
-            >
-              <div className="text-2xl font-bold text-gray-900 mb-1">
-                {card.ko}
-              </div>
+        <div className="px-2 py-2">
+          {/* 메인 문장 + 음성 */}
+          <div className="flex items-center justify-between mb-1">
+            <button onClick={() => copyToClipboard(card.ko)} className="flex-1 text-left">
+              <span className="text-xl font-bold text-gray-900 tracking-tight">{card.ko}</span>
             </button>
-            <button
-              onClick={() => speak(card.ko)}
-              className="ml-3 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
-            >
-              <Volume2 size={16} className="text-gray-600" />
+            <button onClick={() => speak(card.ko)} className="ml-2 w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center">
+              <Volume2 size={14} className="text-gray-400" />
             </button>
           </div>
 
-          {/* 발음 */}
-          <div className="text-sm text-gray-500 mb-2">
-            [{card.pronunciation}]
+          {/* 발음 + 중국어 한줄 */}
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="text-xs text-gray-400 font-light">[{card.pronunciation}]</span>
+            <span className="text-sm text-gray-600">{card.zh}</span>
           </div>
 
-          {/* 중국어 번역 */}
-          <div className="text-lg text-gray-700 mb-4">
-            {card.zh}
-          </div>
-
-          {/* 설명 (반찬만) */}
+          {/* 설명 */}
           {card.description && (
-            <div className="text-sm text-gray-600 mb-3 font-medium">
-              {card.description}
-            </div>
+            <p className="text-xs text-gray-500 font-light mb-2">{card.description}</p>
           )}
 
           {/* 예문 */}
-          <div className="space-y-2 mb-4">
-            <div className="text-gray-800">
-              "{card.example_ko}"
-            </div>
-            <div className="text-gray-600">
-              "{card.example_zh}"
-            </div>
-            <div className="text-sm text-gray-500">
-              {card.example_pronunciation}
-            </div>
+          <div className="bg-gray-50 rounded-md px-2 py-1.5 mb-2 space-y-0.5">
+            <p className="text-sm text-gray-800 font-medium">"{card.example_ko}"</p>
+            <p className="text-xs text-gray-500">"{card.example_zh}"</p>
+            <p className="text-[10px] text-gray-400 font-light italic">{card.example_pronunciation}</p>
           </div>
 
           {/* 하단 액션 버튼 */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <button
               onClick={() => copyToClipboard(card.ko)}
-              className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="flex-1 bg-gray-100 text-gray-600 py-1.5 px-3 rounded-md text-xs flex items-center justify-center gap-1"
             >
               <Copy size={16} />
               <span className="text-sm font-medium">
@@ -458,7 +438,7 @@ export default function RestaurantPocket({ lang }) {
       )}
 
       {/* 소주제 탭 */}
-      <div className="flex overflow-x-auto gap-2 pb-2 scroll-smooth">
+      <div className="flex flex-wrap gap-1.5 pb-2">
         {tabs.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -466,13 +446,13 @@ export default function RestaurantPocket({ lang }) {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-all ${
                 isActive
-                  ? 'bg-gray-900 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-gray-100 text-gray-500'
               }`}
             >
-              <Icon size={16} />
+              <Icon size={12} />
               <span className="font-medium">{L(lang, tab.name)}</span>
             </button>
           )

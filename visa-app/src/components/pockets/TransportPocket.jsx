@@ -478,7 +478,7 @@ export default function TransportPocket({ lang }) {
       {!showDisplayMode ? (
         <>
           {/* 소주제 탭 */}
-          <div className="flex overflow-x-auto gap-2 pb-2 scroll-smooth">
+          <div className="flex flex-wrap gap-1.5 pb-2">
             {tabs.map((tab) => {
               const Icon = tab.icon
               const isActive = activeTab === tab.id
@@ -486,7 +486,7 @@ export default function TransportPocket({ lang }) {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all ${
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-all ${
                     isActive
                       ? 'bg-gray-900 text-white shadow-md'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

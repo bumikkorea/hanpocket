@@ -133,9 +133,9 @@ export default function SOSTab({ lang, profile }) {
               <p className="text-sm text-[#111827] font-mono">{location.lat}, {location.lng}</p>
               {location.fallback && <p className="text-xs text-red-500 mt-1">{L(lang, { ko: '정확한 위치를 가져올 수 없습니다', zh: '无法获取精确位置', en: 'Could not get exact location' })}</p>}
               <div className="flex gap-2 mt-3">
-                <a href={`https://map.naver.com/v5/search/${location.lat},${location.lng}`} target="_blank" rel="noopener noreferrer"
+                <a href={`https://map.kakao.com/link/map/내위치,${location.lat},${location.lng}`} target="_blank" rel="noopener noreferrer"
                   className="text-xs px-3 py-1.5 bg-[#F3F4F6] rounded-lg text-[#111827] hover:bg-[#E5E7EB]">
-                  {L(lang, { ko: '네이버 지도', zh: 'Naver地图', en: 'Naver Map' })}
+                  {L(lang, { ko: '카카오맵', zh: 'Kakao地图', en: 'Kakao Map' })}
                 </a>
                 <a href={`https://www.google.com/maps?q=${location.lat},${location.lng}`} target="_blank" rel="noopener noreferrer"
                   className="text-xs px-3 py-1.5 bg-[#F3F4F6] rounded-lg text-[#111827] hover:bg-[#E5E7EB]">
@@ -194,7 +194,7 @@ export default function SOSTab({ lang, profile }) {
             { label: { ko: '가까운 약국', zh: '附近药店', en: 'Nearby Pharmacy' }, q: '약국', icon: Building },
             { label: { ko: '가까운 편의점', zh: '附近便利店', en: 'Nearby Convenience Store' }, q: '편의점', icon: Building },
           ].map((item, i) => (
-            <a key={i} href={`https://map.naver.com/v5/search/${encodeURIComponent(item.q)}`} target="_blank" rel="noopener noreferrer"
+            <a key={i} href={`https://map.kakao.com/link/search/${encodeURIComponent(item.q)}`} target="_blank" rel="noopener noreferrer"
               className="flex items-center gap-2 bg-[#F3F4F6] rounded-xl p-3 hover:bg-[#E5E7EB] transition-colors">
               <item.icon size={16} className="text-[#111827]" />
               <span className="text-xs font-semibold text-[#111827]">{L(lang, item.label)}</span>

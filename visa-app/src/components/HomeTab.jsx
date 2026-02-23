@@ -213,8 +213,8 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       {/* Pockets stack */}
       <div
         ref={containerRef}
-        className="relative overflow-hidden mx-4"
-        style={{ height: 'calc(100vh - 140px)', marginTop: '8px' }}
+        className="relative overflow-hidden mx-1"
+        style={{ height: 'calc(100vh - 120px)', marginTop: '4px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

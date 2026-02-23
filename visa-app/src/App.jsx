@@ -1515,13 +1515,7 @@ function AppInner() {
             ) : (
               <Logo />
             )}
-            <button
-              onClick={() => setShowSearch(true)}
-              className="flex-1 bg-[#F1F3F4] rounded-full px-4 py-2.5 flex items-center gap-2"
-            >
-              <Search size={18} className="text-[#9AA0A6]" />
-              <span className="text-sm text-[#9AA0A6]">{lang==='ko'?'검색':lang==='zh'?'搜索':'Search'}</span>
-            </button>
+            <div className="flex-1" />
             <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
               <Globe size={20} />
             </button>

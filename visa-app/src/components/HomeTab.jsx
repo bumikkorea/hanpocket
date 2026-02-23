@@ -208,7 +208,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   }
 
   return (
-    <div className="bg-[#FAFAF8] overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', touchAction: 'pan-y', height: 'calc(100vh - 120px)' }}>
+    <div className="bg-[#FCFCFA] overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', touchAction: 'pan-y', height: 'calc(100vh - 120px)' }}>
       {/* Cards stack */}
       <div
         ref={containerRef}

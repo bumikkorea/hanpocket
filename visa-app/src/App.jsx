@@ -107,7 +107,7 @@ function Onboarding({ onComplete, lang, setLang }) {
   }, [step])
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] flex flex-col">
+    <div className="min-h-screen bg-[#FCFCFA] flex flex-col">
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         {/* 언어 토글 */}
         <button onClick={() => setLang(nextLang(lang))}
@@ -668,7 +668,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   const loginInfo = getLoginProvider()
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8] pb-20 font-['Inter']">
+    <div className="min-h-screen bg-[#FCFCFA] pb-20 font-['Inter']">
       {/* 커버 배너 */}
       <div className="relative bg-gradient-to-br from-[#111827] via-[#374151] to-[#111827] h-[120px] rounded-b-lg">
         {/* 프로필 아바타 - 배너 하단에 걸치게 */}
@@ -1298,7 +1298,7 @@ function AppInner() {
   const hasOAuthCode = new URLSearchParams(window.location.search).get('code')
   if (!profile && hasOAuthCode) {
     return (
-      <div className="flex items-center justify-center h-screen bg-[#FAFAF8]" style={{ fontFamily: 'Inter, sans-serif' }}>
+      <div className="flex items-center justify-center h-screen bg-[#FCFCFA]" style={{ fontFamily: 'Inter, sans-serif' }}>
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-[#111827] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
           <p className="text-sm text-[#6B7280]">{lang === 'ko' ? '로그인 처리 중...' : lang === 'zh' ? '登录处理中...' : 'Logging in...'}</p>
@@ -1804,16 +1804,25 @@ function AppInner() {
       )}
 
       {/* Google-style Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-[#E5E7EB] z-50 safe-bottom">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] z-50 safe-bottom">
         <div className="flex items-center justify-around py-1">
           {bottomTabs.map(item => {
-            const Icon = item.icon
             const active = tab === item.id
             return (
               <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
                 className="flex flex-col items-center gap-0 py-0.5">
-                <Icon size={16} strokeWidth={active ? 2 : 1.5} className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'} />
-                <span className={`text-[9px] font-light ${active ? 'text-[#111827]' : 'text-[#9CA3AF]'}`}>{L(lang, item.label)}</span>
+                {item.id === 'pocket' ? (
+                  <svg width="20" height="20" viewBox="0 0 40 40" fill="none" className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'}>
+                    <path d="M20 4C14 4 8 8 8 8L6 12C6 12 5 16 6 20C7 24 10 28 14 31C17 33 20 36 20 36C20 36 23 33 26 31C30 28 33 24 34 20C35 16 34 12 34 12L32 8C32 8 26 4 20 4Z" fill={active ? '#D94F4F' : 'currentColor'} opacity={active ? 1 : 0.3}/>
+                    <path d="M14 12C14 12 13 14 14 17C15 20 17 22 20 24C23 22 25 20 26 17C27 14 26 12 26 12" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                    <circle cx="16" cy="10" r="1" fill="white" opacity="0.6"/>
+                    <line x1="18" y1="8" x2="18" y2="6" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
+                    <line x1="22" y1="8" x2="22" y2="5" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
+                  </svg>
+                ) : (
+                  <item.icon size={20} strokeWidth={active ? 2 : 1.5} className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'} />
+                )}
+                <span className={`text-[10px] font-light ${active ? 'text-[#111827]' : 'text-[#9CA3AF]'}`}>{L(lang, item.label)}</span>
               </button>
             )
           })}

@@ -670,7 +670,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   return (
     <div className="min-h-screen bg-[#FAFAF8] p-4 pb-20 font-['Inter']">
       {/* 메인 프로필 카드 */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm">
+      <div className="bg-white rounded-lg p-6 shadow-sm">
         {/* 프로필 헤더 */}
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-[#F3F4F6] rounded-full flex items-center justify-center mx-auto mb-3">
@@ -787,7 +787,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
       {/* 모달 1: 비자 만료일 입력 */}
       {showDateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl">
+          <div className="bg-white rounded-lg w-full max-w-sm p-6 shadow-xl">
             <h3 className="text-lg font-bold text-[#111827] mb-4 text-center">
               {lang === 'ko' ? '비자 만료일 설정' : lang === 'zh' ? '设置签证到期日期' : 'Set Visa Expiry Date'}
             </h3>
@@ -822,7 +822,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
       {/* 모달 2: 알림 설정 확인 */}
       {showNotifModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl">
+          <div className="bg-white rounded-lg w-full max-w-sm p-6 shadow-xl">
             <div className="text-center mb-6">
               <Bell className="w-12 h-12 text-[#111827] mx-auto mb-3" />
               <h3 className="text-lg font-bold text-[#111827] mb-2">
@@ -854,7 +854,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
       {/* 모달 3: 알림 시점 선택 */}
       {showTimingModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl">
+          <div className="bg-white rounded-lg w-full max-w-sm p-6 shadow-xl">
             <h3 className="text-lg font-bold text-[#111827] mb-4 text-center">
               {lang === 'ko' ? '알림 시점 선택' : lang === 'zh' ? '选择提醒时间' : 'Choose Reminder Times'}
             </h3>
@@ -1570,7 +1570,7 @@ function AppInner() {
             <div className="grid grid-cols-3 gap-3">
               {exploreItems.map(item => (
                 <button key={item.id} onClick={() => { setSubPage(item.id) }}
-                  className="bg-white rounded-2xl p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+                  className="bg-white rounded-lg p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
                   <span className="text-sm text-[#111827] font-medium tracking-wide">{L(lang, item.label)}</span>
                 </button>
               ))}
@@ -1585,7 +1585,7 @@ function AppInner() {
             <div className="grid grid-cols-3 gap-3">
               {toolItems.map(item => (
                 <button key={item.id} onClick={() => { setSubPage(item.id) }}
-                  className="bg-white rounded-2xl p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+                  className="bg-white rounded-lg p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
                   <span className="text-sm text-[#111827] font-medium tracking-wide">{L(lang, item.label)}</span>
                 </button>
               ))}
@@ -1861,7 +1861,7 @@ function FloatingChatbot({ lang }) {
 
       {/* Chat panel */}
       {open && (
-        <div className="fixed bottom-6 right-6 z-50 w-[320px] h-[420px] bg-white rounded-2xl shadow-2xl border border-[#E5E7EB] flex flex-col overflow-hidden">
+        <div className="fixed bottom-6 right-6 z-50 w-[320px] h-[420px] bg-white rounded-lg shadow-2xl border border-[#E5E7EB] flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] bg-[#111827]">
             <span className="text-sm font-bold text-white">{lang === 'ko' ? '개선 요청' : lang === 'zh' ? '改进建议' : 'Feedback'}</span>

@@ -233,7 +233,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                 willChange: 'transform, opacity'
               }}
             >
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 relative overflow-hidden w-full h-full">
+              <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 relative overflow-hidden w-full h-full">
                 {/* Page fold effect */}
                 {dragX !== 0 && index === currentIndex && (() => {
                   const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)
@@ -276,7 +276,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           }}
         >
           <div
-            className="bg-white rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full h-full"
+            className="bg-white rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full h-full"
             onClick={() => setShowAdd(true)}
           >
             <Plus className="w-12 h-12 text-gray-400 mb-4" />

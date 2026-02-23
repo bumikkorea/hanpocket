@@ -14,7 +14,8 @@ import { generateChatResponse } from './data/chatResponses'
 import { updateLog, autoUpdateInfo, dataSources } from './data/updateLog'
 import EducationTab from './components/EducationTab'
 import AgencyTab from './components/AgencyTab'
-import HomeTab, { trackActivity } from './components/HomeTab'
+import HomeTab, { trackActivity, LucideIcon } from './components/HomeTab'
+import { pocketCategories } from './data/pockets'
 import PetTab from './components/PetTab'
 import MedicalTab from './components/MedicalTab'
 import FitnessTab from './components/FitnessTab'
@@ -1608,16 +1609,34 @@ function AppInner() {
             </div>
           )
         })()}
-        {/* Explore grid */}
+        {/* Pocket grid - pockets.js 데이터 기반 */}
         {tab==='pocket' && !subPage && (
-          <div>
-            <div className="grid grid-cols-3 gap-3">
-              {[...exploreItems, ...toolItems].map(item => (
-                <button key={item.id} onClick={() => { setSubPage(item.id) }}
-                  className="bg-white rounded-lg p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
-                  <span className="text-sm text-[#111827] font-medium tracking-wide">{L(lang, item.label)}</span>
-                </button>
-              ))}
+          <div className="space-y-6">
+            {pocketCategories.map(cat => (
+              <div key={cat.id}>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{L(lang, cat.name)}</h3>
+                <div className="grid grid-cols-3 gap-2">
+                  {cat.pockets.map(p => (
+                    <button key={p.id} onClick={() => setSubPage(p.id)}
+                      className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm hover:shadow-md transition-shadow">
+                      <LucideIcon name={p.icon} size={20} style={{ color: '#111827' }} />
+                      <span className="text-xs text-[#111827] font-medium text-center leading-tight">{L(lang, p.name)}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {/* 기존 탐색/도구 항목 (탭 전용 기능) */}
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{L(lang, { ko: '서비스', zh: '服务', en: 'Services' })}</h3>
+              <div className="grid grid-cols-3 gap-2">
+                {[...exploreItems, ...toolItems].map(item => (
+                  <button key={item.id} onClick={() => setSubPage(item.id)}
+                    className="bg-white rounded-lg p-3 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
+                    <span className="text-xs text-[#111827] font-medium text-center">{L(lang, item.label)}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         )}

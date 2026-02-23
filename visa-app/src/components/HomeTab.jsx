@@ -83,7 +83,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       const rotate = Math.max(-15, Math.min(15, (dragX / cw) * 15))
       return {
         transform: `translateX(${dragX}px) rotate(${rotate}deg)`,
-        transition: dragX === 0 ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+        transition: dragX === 0 ? 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
         zIndex: 10,
         opacity: 1,
         pointerEvents: 'auto'
@@ -97,7 +97,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       const translateY = 8 - (8 * progress)
       return {
         transform: `scale(${scale}) translateY(${translateY}px)`,
-        transition: dragX === 0 ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+        transition: dragX === 0 ? 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
         zIndex: 5,
         opacity: 0.8 + (0.2 * progress),
         pointerEvents: 'none'
@@ -108,7 +108,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       // 그 다음 카드 - 더 작게
       return {
         transform: 'scale(0.84) translateY(16px)',
-        transition: dragX === 0 ? 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)' : 'none',
+        transition: dragX === 0 ? 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
         zIndex: 3,
         opacity: 0.6,
         pointerEvents: 'none'

@@ -66,62 +66,30 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   // 각 카드의 스타일 계산
   const getCardStyle = (cardIndex) => {
     const diff = cardIndex - currentIndex
-    const cw = containerW || 375
+    const T = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
     
     if (diff < 0) {
-      // 이미 넘긴 카드들 - 화면 밖으로
-      return { 
-        opacity: 0, 
-        transform: `translateX(-110%) rotate(-2deg) scale(0.95)`,
-        zIndex: 1,
-        pointerEvents: 'none'
-      }
+      return { opacity: 0, transform: 'translateX(-100%) scale(0.95)', zIndex: 1, pointerEvents: 'none', transition: T }
     }
     
     if (diff === 0) {
-      // 현재 카드 - 드래그에 반응
-      const rotate = Math.max(-2, Math.min(2, (dragX / cw) * 2))
       return {
-        transform: `translateX(${dragX}px) rotate(${rotate}deg)`,
-        transition: dragX === 0 ? 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
-        zIndex: 10,
-        opacity: 1,
-        pointerEvents: 'auto'
+        transform: `translateX(${dragX}px)`,
+        transition: dragX === 0 ? T : 'none',
+        zIndex: 10, opacity: 1, pointerEvents: 'auto'
       }
     }
     
     if (diff === 1) {
-      // 다음 카드 - 약간 작게 뒤에, 드래그에 따라 점점 커짐
       const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)
-      const scale = 0.92 + (0.08 * progress)
-      const translateY = 8 - (8 * progress)
       return {
-        transform: `scale(${scale}) translateY(${translateY}px)`,
-        transition: dragX === 0 ? 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
-        zIndex: 5,
-        opacity: 0.8 + (0.2 * progress),
-        pointerEvents: 'none'
+        transform: `scale(${0.95 + 0.05 * progress})`,
+        transition: dragX === 0 ? T : 'none',
+        zIndex: 5, opacity: 0.6 + 0.4 * progress, pointerEvents: 'none'
       }
     }
     
-    if (diff === 2) {
-      // 그 다음 카드 - 더 작게
-      return {
-        transform: 'scale(0.84) translateY(16px)',
-        transition: dragX === 0 ? 'transform 0.8s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none',
-        zIndex: 3,
-        opacity: 0.6,
-        pointerEvents: 'none'
-      }
-    }
-    
-    // 나머지 카드들 숨김
-    return { 
-      opacity: 0, 
-      zIndex: 1,
-      pointerEvents: 'none',
-      transform: 'scale(0.8) translateY(20px)'
-    }
+    return { opacity: 0, zIndex: 1, pointerEvents: 'none', transform: 'scale(0.9)' }
   }
 
   useEffect(() => { localStorage.setItem('home_cards', JSON.stringify(cards)) }, [cards])
@@ -245,7 +213,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       <div
         ref={containerRef}
         className="relative overflow-hidden mx-4"
-        style={{ height: '250px', marginTop: '8px' }}
+        style={{ height: '300px', marginTop: '8px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

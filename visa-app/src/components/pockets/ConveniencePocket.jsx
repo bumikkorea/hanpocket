@@ -101,7 +101,7 @@ export default function ConveniencePocket({ lang }) {
         example_ko: '결제 카드로 할게요',
         example_zh: '支付用刷卡',
         example_pronunciation: 'gyeolje kadeuro halgeyo',
-        unsplash: 'https://images.unsplash.com/photo-1555961403-6e2a0b57ce27?w=400&h=200&fit=crop&q=80'
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
       },
       {
         id: 'pay_cash',
@@ -111,7 +111,47 @@ export default function ConveniencePocket({ lang }) {
         example_ko: '현금으로 결제할게요',
         example_zh: '用现金支付',
         example_pronunciation: 'hyeongeumeuro gyeolje-halgeyo',
-        unsplash: 'https://images.unsplash.com/photo-1555961403-6e2a0b57ce27?w=400&h=200&fit=crop&q=80'
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'samsung_pay',
+        ko: '삼성페이로 결제할게요',
+        pronunciation: 'sam-seong-pe-i-ro gyeol-je-hal-ge-yo',
+        zh: '我用三星支付',
+        example_ko: '삼성페이 되나요?',
+        example_zh: '可以用三星支付吗？',
+        example_pronunciation: 'samseongpei doenayo?',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'kakao_pay',
+        ko: '카카오페이로 해주세요',
+        pronunciation: 'ka-ka-o-pe-i-ro hae-ju-se-yo',
+        zh: '请用KaKao支付',
+        example_ko: '카카오페이 QR코드 찍어주세요',
+        example_zh: '请扫KaKao支付二维码',
+        example_pronunciation: 'kakaopei QR kodeu jjigeojuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'contactless_pay',
+        ko: '터치 결제 돼요?',
+        pronunciation: 'teo-chi gyeol-je dwae-yo',
+        zh: '可以碰触支付吗？',
+        example_ko: '카드 터치해서 결제할게요',
+        example_zh: '我要碰触卡片支付',
+        example_pronunciation: 'kadeu teochiaeseo gyeoljehalgeyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'installment',
+        ko: '할부로 해주세요',
+        pronunciation: 'hal-bu-ro hae-ju-se-yo',
+        zh: '请分期付款',
+        example_ko: '3개월 할부 가능해요?',
+        example_zh: '可以3个月分期吗？',
+        example_pronunciation: 'sam-gaewol halbu ganeunghaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
       },
       {
         id: 'bag_please',
@@ -121,7 +161,7 @@ export default function ConveniencePocket({ lang }) {
         example_ko: '비닐봉투 하나 주세요',
         example_zh: '请给我一个塑料袋',
         example_pronunciation: 'binyeol bongtu hana juseyo',
-        unsplash: 'https://images.unsplash.com/photo-1555961403-6e2a0b57ce27?w=400&h=200&fit=crop&q=80'
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
       },
       {
         id: 'receipt_please',
@@ -131,7 +171,27 @@ export default function ConveniencePocket({ lang }) {
         example_ko: '영수증 꼭 주세요',
         example_zh: '请一定给我收据',
         example_pronunciation: 'yeongsujeung kkok juseyo',
-        unsplash: 'https://images.unsplash.com/photo-1555961403-6e2a0b57ce27?w=400&h=200&fit=crop&q=80'
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'points_card',
+        ko: '포인트카드 있어요',
+        pronunciation: 'po-in-teu-ka-deu iss-eo-yo',
+        zh: '我有积分卡',
+        example_ko: '포인트 적립해주세요',
+        example_zh: '请给我积分',
+        example_pronunciation: 'pointeu jeokripaejuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'change_money',
+        ko: '잔돈 받을게요',
+        pronunciation: 'jan-don bad-eul-ge-yo',
+        zh: '我要找零',
+        example_ko: '잔돈은 현금으로 주세요',
+        example_zh: '找零请给现金',
+        example_pronunciation: 'jandoneun hyeongeumeuro juseyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
       }
     ],
     search: [
@@ -156,6 +216,66 @@ export default function ConveniencePocket({ lang }) {
         unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
       },
       {
+        id: 'drinks_section',
+        ko: '음료수는 어디 있어요?',
+        pronunciation: 'eum-ryo-su-neun eo-di iss-eo-yo',
+        zh: '饮料在哪里？',
+        example_ko: '냉장고에서 음료수 찾고 있어요',
+        example_zh: '我在冰箱里找饮料',
+        example_pronunciation: 'naengjanggoeseo eumryosu chatgo isseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'snacks_section',
+        ko: '과자 코너는 어디예요?',
+        pronunciation: 'gwa-ja ko-neo-neun eo-di-ye-yo',
+        zh: '零食区在哪里？',
+        example_ko: '과자랑 초콜릿 사려고 해요',
+        example_zh: '我想买零食和巧克力',
+        example_pronunciation: 'gwajarang chokollit saryeogo haeyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'instant_food',
+        ko: '인스턴트 음식은 어디 있어요?',
+        pronunciation: 'in-seu-teon-teu eum-sik-eun eo-di iss-eo-yo',
+        zh: '方便食品在哪里？',
+        example_ko: '컵라면이랑 즉석밥 찾고 있어요',
+        example_zh: '我在找杯面和速食米饭',
+        example_pronunciation: 'keommyeonirang jeuktseok-bap chatgo isseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'dairy_products',
+        ko: '유제품은 어디에 있어요?',
+        pronunciation: 'yu-je-pum-eun eo-di-e iss-eo-yo',
+        zh: '乳制品在哪里？',
+        example_ko: '우유랑 요거트 사려고 해요',
+        example_zh: '我想买牛奶和酸奶',
+        example_pronunciation: 'uyurang yogeoteu saryeogo haeyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'bathroom_items',
+        ko: '화장실 용품 어디 있어요?',
+        pronunciation: 'hwa-jang-sil yong-pum eo-di iss-eo-yo',
+        zh: '卫生用品在哪里？',
+        example_ko: '휴지랑 치약 사려고 해요',
+        example_zh: '我想买纸巾和牙膏',
+        example_pronunciation: 'hyujirang chiyak saryeogo haeyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'ice_cream',
+        ko: '아이스크림 어디 있어요?',
+        pronunciation: 'a-i-seu-keu-rim eo-di iss-eo-yo',
+        zh: '冰淇淋在哪里？',
+        example_ko: '냉동고에 아이스크림 있나요?',
+        example_zh: '冷冻柜里有冰淇淋吗？',
+        example_pronunciation: 'naengdonggo-e aiseukeulim innayo?',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
         id: 'similar_item',
         ko: '비슷한 거 있어요?',
         pronunciation: 'bi-seu-tan geo iss-eo-yo',
@@ -174,6 +294,16 @@ export default function ConveniencePocket({ lang }) {
         example_zh: '这个零食多少钱？',
         example_pronunciation: 'i gwaja eolmayeyo?',
         unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'cheaper_option',
+        ko: '더 싼 거 있어요?',
+        pronunciation: 'deo ssan geo iss-eo-yo',
+        zh: '有更便宜的吗？',
+        example_ko: '이거보다 싼 거 있나요?',
+        example_zh: '有比这个便宜的吗？',
+        example_pronunciation: 'igeoboda ssan geo innayo?',
+        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
       }
     ],
     lunchbox: [
@@ -188,6 +318,26 @@ export default function ConveniencePocket({ lang }) {
         unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
       },
       {
+        id: 'microwave_please',
+        ko: '전자레인지 써도 돼요?',
+        pronunciation: 'jeon-ja-re-in-ji sseo-do dwae-yo',
+        zh: '可以用微波炉吗？',
+        example_ko: '도시락 데우고 싶어요',
+        example_zh: '我想加热便当',
+        example_pronunciation: 'dosirak deugo sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'heat_time',
+        ko: '몇 분 돌리면 돼요?',
+        pronunciation: 'myeot bun dol-li-myeon dwae-yo',
+        zh: '转几分钟就行？',
+        example_ko: '이거 2분 정도 데우면 돼요?',
+        example_zh: '这个加热2分钟就行吗？',
+        example_pronunciation: 'igeo i-bun jeongdo daeumyeon dwaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
+      },
+      {
         id: 'fresh_lunchbox',
         ko: '방금 나온 도시락 있어요?',
         pronunciation: 'bang-geum na-on do-si-rak iss-eo-yo',
@@ -198,6 +348,56 @@ export default function ConveniencePocket({ lang }) {
         unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
       },
       {
+        id: 'spicy_level',
+        ko: '이거 매워요?',
+        pronunciation: 'i-geo mae-wo-yo',
+        zh: '这个辣吗？',
+        example_ko: '안 매운 도시락 있어요?',
+        example_zh: '有不辣的便当吗？',
+        example_pronunciation: 'an maeun dosirak isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'korean_meal',
+        ko: '한국식 도시락 있어요?',
+        pronunciation: 'han-guk-sik do-si-rak iss-eo-yo',
+        zh: '有韩式便当吗？',
+        example_ko: '김치찜이나 불고기 도시락 있나요?',
+        example_zh: '有泡菜炖肉或烤肉便当吗？',
+        example_pronunciation: 'gimchijjimina bulgogi dosirak innayo?',
+        unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'cheap_meal',
+        ko: '싸고 맛있는 도시락 있어요?',
+        pronunciation: 'ssa-go ma-sinn-neun do-si-rak iss-eo-yo',
+        zh: '有便宜又好吃的便当吗？',
+        example_ko: '5000원 이하 도시락 있나요?',
+        example_zh: '有5000韩元以下的便当吗？',
+        example_pronunciation: 'ocheon-won iha dosirak innayo?',
+        unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'rice_bowl',
+        ko: '즉석밥도 있어요?',
+        pronunciation: 'jeuk-seok-bap-do iss-eo-yo',
+        zh: '也有速食米饭吗？',
+        example_ko: '밥만 따로 사고 싶어요',
+        example_zh: '我只想买米饭',
+        example_pronunciation: 'bapman ttaro sago sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'sandwich',
+        ko: '샌드위치도 있어요?',
+        pronunciation: 'saen-deu-wi-chi-do iss-eo-yo',
+        zh: '也有三明治吗？',
+        example_ko: '가벼운 샌드위치 사고 싶어요',
+        example_zh: '我想买轻便的三明治',
+        example_pronunciation: 'gabyeoun saendeuwichi sago sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
+      },
+      {
         id: 'discount_lunchbox',
         ko: '할인하는 도시락 있어요?',
         pronunciation: 'hal-in-ha-neun do-si-rak iss-eo-yo',
@@ -205,6 +405,16 @@ export default function ConveniencePocket({ lang }) {
         example_ko: '저녁 시간 할인 도시락 있어요?',
         example_zh: '有晚餐时间打折便当吗？',
         example_pronunciation: 'jeonyeok sigan halin dosirak isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'salad',
+        ko: '샐러드도 있어요?',
+        pronunciation: 'sael-leo-deu-do iss-eo-yo',
+        zh: '也有沙拉吗？',
+        example_ko: '건강한 샐러드 사고 싶어요',
+        example_zh: '我想买健康的沙拉',
+        example_pronunciation: 'geonganhan saelleodeu sago sipeoyo',
         unsplash: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=200&fit=crop&q=80'
       }
     ],
@@ -220,6 +430,46 @@ export default function ConveniencePocket({ lang }) {
         unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
       },
       {
+        id: 'cu_postbox',
+        ko: 'CU 택배 보낼 수 있어요?',
+        pronunciation: 'si-yu taek-bae bo-nael su iss-eo-yo',
+        zh: '可以在CU寄快递吗？',
+        example_ko: 'CU POST 서비스 되나요?',
+        example_zh: 'CU POST服务可以吗？',
+        example_pronunciation: 'CU POST seobiseu doenayo?',
+        unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'gs_postbox',
+        ko: 'GS편의점택배 되나요?',
+        pronunciation: 'GS-pyeon-ui-jeom-taek-bae doe-na-yo',
+        zh: 'GS便利店快递可以吗？',
+        example_ko: 'GS편의점에서 택배 접수해요?',
+        example_zh: 'GS便利店可以收快递吗？',
+        example_pronunciation: 'GS-pyeonyijeomeseo taekbae jeopsurhaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'parcel_fee',
+        ko: '택배비 얼마예요?',
+        pronunciation: 'taek-bae-bi eol-ma-ye-yo',
+        zh: '快递费多少钱？',
+        example_ko: '서울까지 보내는데 얼마예요?',
+        example_zh: '寄到首尔要多少钱？',
+        example_pronunciation: 'seoul-kkaji bonaeneunde eolmayeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'parcel_size',
+        ko: '이 크기 보낼 수 있어요?',
+        pronunciation: 'i keu-gi bo-nael su iss-eo-yo',
+        zh: '这个尺寸可以寄吗？',
+        example_ko: '너무 큰가요?',
+        example_zh: '会不会太大？',
+        example_pronunciation: 'neomu keungayo?',
+        unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
+      },
+      {
         id: 'receive_parcel',
         ko: '택배 찾으러 왔어요',
         pronunciation: 'taek-bae chat-eu-reo wass-eo-yo',
@@ -230,6 +480,16 @@ export default function ConveniencePocket({ lang }) {
         unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
       },
       {
+        id: 'parcel_code',
+        ko: '송장번호 알려드릴게요',
+        pronunciation: 'song-jang-beon-ho al-lyeo-deu-ril-ge-yo',
+        zh: '我告诉您运单号',
+        example_ko: '택배 송장번호가 필요해요?',
+        example_zh: '需要快递单号吗？',
+        example_pronunciation: 'taekbae songjang-beonho-ga piryohaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
+      },
+      {
         id: 'parcel_box',
         ko: '박스 필요해요',
         pronunciation: 'bak-seu pi-ryo-hae-yo',
@@ -237,6 +497,26 @@ export default function ConveniencePocket({ lang }) {
         example_ko: '택배 보낼 박스 있어요?',
         example_zh: '有寄快递的箱子吗？',
         example_pronunciation: 'taekbae bonael bakseu isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'bubble_wrap',
+        ko: '뽁뽁이 있어요?',
+        pronunciation: 'ppok-ppok-i iss-eo-yo',
+        zh: '有泡沫包装纸吗？',
+        example_ko: '포장재료 사고 싶어요',
+        example_zh: '我想买包装材料',
+        example_pronunciation: 'pojang-jaeryo sago sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'parcel_time',
+        ko: '언제 도착해요?',
+        pronunciation: 'eon-je do-chak-hae-yo',
+        zh: '什么时候到？',
+        example_ko: '내일까지 도착할 수 있어요?',
+        example_zh: '明天能到吗？',
+        example_pronunciation: 'naeil-kkaji dochakal su isseoyo?',
         unsplash: 'https://images.unsplash.com/photo-1566139427285-95a7923c9b4c?w=400&h=200&fit=crop&q=80'
       }
     ],
@@ -252,13 +532,13 @@ export default function ConveniencePocket({ lang }) {
         unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
       },
       {
-        id: 'atm_not_working',
-        ko: 'ATM이 안 돼요',
-        pronunciation: 'ATM-i an dwae-yo',
-        zh: 'ATM不工作',
-        example_ko: '카드가 안 들어가요',
-        example_zh: '卡插不进去',
-        example_pronunciation: 'kadeuga an deureogayo',
+        id: 'atm_fee',
+        ko: '수수료 얼마예요?',
+        pronunciation: 'su-su-ryo eol-ma-ye-yo',
+        zh: '手续费多少？',
+        example_ko: 'ATM 수수료가 비싸요?',
+        example_zh: 'ATM手续费贵吗？',
+        example_pronunciation: 'ATM susuryo-ga bissayo?',
         unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
       },
       {
@@ -269,6 +549,76 @@ export default function ConveniencePocket({ lang }) {
         example_ko: '외국 카드로 인출 돼요?',
         example_zh: '用外国卡可以取钱吗？',
         example_pronunciation: 'oeguk kadeuro inchul dwaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'visa_mastercard',
+        ko: '비자 마스터카드 돼요?',
+        pronunciation: 'bi-ja ma-seu-teo-ka-deu dwae-yo',
+        zh: 'VISA万事达卡可以吗？',
+        example_ko: '비자카드로 출금할 수 있어요?',
+        example_zh: '可以用VISA卡取钱吗？',
+        example_pronunciation: 'bijaka-deuro chulgeum-hal su isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'exchange_money',
+        ko: '환전도 돼요?',
+        pronunciation: 'hwan-jeon-do dwae-yo',
+        zh: '也可以换钱吗？',
+        example_ko: '달러를 원화로 바꿀 수 있어요?',
+        example_zh: '可以把美元换成韩元吗？',
+        example_pronunciation: 'dalleoreul wonhwa-ro bakkul su isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'daily_limit',
+        ko: '하루에 얼마까지 뽑을 수 있어요?',
+        pronunciation: 'ha-ru-e eol-ma-kka-ji ppop-eul su iss-eo-yo',
+        zh: '一天可以取多少钱？',
+        example_ko: '인출 한도가 있어요?',
+        example_zh: '有取款限额吗？',
+        example_pronunciation: 'inchul hando-ga isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'atm_not_working',
+        ko: 'ATM이 안 돼요',
+        pronunciation: 'ATM-i an dwae-yo',
+        zh: 'ATM不工作',
+        example_ko: '카드가 안 들어가요',
+        example_zh: '卡插不进去',
+        example_pronunciation: 'kadeuga an deureogayo',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'card_stuck',
+        ko: '카드가 안 나와요',
+        pronunciation: 'ka-deu-ga an na-wa-yo',
+        zh: '卡出不来',
+        example_ko: '카드가 ATM에 끼었어요',
+        example_zh: '卡卡在ATM里了',
+        example_pronunciation: 'kadeuga ATM-e kkieosseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'receipt_needed',
+        ko: '영수증 뽑을 수 있어요?',
+        pronunciation: 'yeong-su-jeung ppop-eul su iss-eo-yo',
+        zh: '可以打印收据吗？',
+        example_ko: 'ATM 영수증 필요해요',
+        example_zh: '我需要ATM收据',
+        example_pronunciation: 'ATM yeongsujeung piryohaeyo',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'balance_check',
+        ko: '잔액 확인하고 싶어요',
+        pronunciation: 'jan-aek hwak-in-ha-go si-peo-yo',
+        zh: '我想查余额',
+        example_ko: '통장 잔고 봐도 돼요?',
+        example_zh: '可以看账户余额吗？',
+        example_pronunciation: 'tongjang jango bwado dwaeyo?',
         unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
       }
     ],

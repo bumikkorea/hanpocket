@@ -41,8 +41,8 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   const containerRef = useRef(null)
   const touchRef = useRef({ startX: 0, startY: 0, swiping: false, locked: false })
 
-  const SWIPE_THRESHOLD = 100
-  const FOLD_MAX = 50
+  const SWIPE_THRESHOLD = 50
+  const FOLD_MAX = 0
 
   // 스와이프 효과음 함수
   const playSwipeSound = () => {

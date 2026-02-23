@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Calculator, Percent, MapPin, RefreshCw, CreditCard, Smartphone, Gift } from 'lucide-react';
-import { shopping, utils } from '../../utils/appLinks';
+import { openCoupang, openMusinsa, openKakaoMap } from '../../utils/appLinks';
 
 function L(lang, obj) {
   return obj[lang] || obj.ko;
@@ -219,19 +219,19 @@ export default function ShoppingPocket({ lang = 'ko' }) {
       name: '롯데면세점',
       locations: '명동, 김포공항, 인천공항',
       specialties: '화장품, 명품, 주류',
-      openApp: () => shopping.lotteDutyFree()
+      openApp: () => window.open('https://www.lottedfs.com', '_blank')
     },
     {
       name: '신라면세점',
       locations: '인천공항, 김포공항, 제주공항',
       specialties: '한국 전통 상품, 화장품',
-      openApp: () => shopping.shillaDutyFree()
+      openApp: () => window.open('https://www.shilladfs.com', '_blank')
     },
     {
       name: '신세계면세점',
       locations: '인천공항, 부산',
       specialties: '패션, 액세서리, 가전',
-      openApp: () => shopping.shinsegaeDutyFree()
+      openApp: () => window.open('https://www.ssgdfs.com', '_blank')
     }
   ];
 
@@ -241,13 +241,13 @@ export default function ShoppingPocket({ lang = 'ko' }) {
       name: '쿠팡',
       description: '생필품, 전자제품, 빠른 배송',
       features: '로켓배송, 새벽배송',
-      openApp: () => shopping.coupang()
+      openApp: () => openCoupang()
     },
     {
       name: '무신사',
       description: '패션 전문, 스트릿 브랜드',
       features: '무료배송, 무료반품',
-      openApp: () => shopping.musinsa()
+      openApp: () => openMusinsa()
     }
   ];
 
@@ -261,11 +261,11 @@ export default function ShoppingPocket({ lang = 'ko' }) {
 
   // 쇼핑 스팟
   const shoppingSpots = [
-    { name: '명동', desc: '글로벌 브랜드 집결지, 관광객 특화', search: () => utils.searchNearby('명동 쇼핑') },
-    { name: '홍대', desc: '젊은 패션, 독특한 브랜드', search: () => utils.searchNearby('홍대 쇼핑') },
-    { name: '강남', desc: '프리미엄 브랜드, 고급 쇼핑몰', search: () => utils.searchNearby('강남 쇼핑') },
-    { name: '동대문', desc: '24시간 도매시장, 저렴한 가격', search: () => utils.searchNearby('동대문 쇼핑') },
-    { name: '남대문', desc: '전통시장, 생활용품 위주', search: () => utils.searchNearby('남대문시장') }
+    { name: '명동', desc: '글로벌 브랜드 집결지, 관광객 특화', search: () => openKakaoMap('명동 쇼핑') },
+    { name: '홍대', desc: '젊은 패션, 독특한 브랜드', search: () => openKakaoMap('홍대 쇼핑') },
+    { name: '강남', desc: '프리미엄 브랜드, 고급 쇼핑몰', search: () => openKakaoMap('강남 쇼핑') },
+    { name: '동대문', desc: '24시간 도매시장, 저렴한 가격', search: () => openKakaoMap('동대문 쇼핑') },
+    { name: '남대문', desc: '전통시장, 생활용품 위주', search: () => openKakaoMap('남대문시장') }
   ];
 
   const renderPhraseItem = (phrase, index, onCopy) => (

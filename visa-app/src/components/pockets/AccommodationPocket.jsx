@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Home, AlertTriangle, MapPin, Luggage, Info, ExternalLink, Clock, MessageCircle, Bed } from 'lucide-react';
-import { accommodation, kakaoMap, utils } from '../../utils/appLinks';
+import { openYanolja, openYeogieoddae, openAirbnb, openKakaoMap } from '../../utils/appLinks';
 
 function L(lang, obj) {
   return obj[lang] || obj.ko;
@@ -306,19 +306,19 @@ export default function AccommodationPocket({ lang = 'ko' }) {
       name: '야놀자',
       description: '국내 최대 숙박 플랫폼',
       features: '실시간 할인, 포인트 적립',
-      openApp: () => accommodation.yanolja()
+      openApp: () => openYanolja()
     },
     {
       name: '여기어때',
       description: '다양한 숙박 옵션',
       features: '특가 상품, 리뷰 시스템',
-      openApp: () => accommodation.goodchoice()
+      openApp: () => openYeogieoddae()
     },
     {
       name: '에어비앤비',
       description: '개인 숙소 전문',
       features: '독특한 숙소, 현지 체험',
-      openApp: () => accommodation.airbnb()
+      openApp: () => openAirbnb()
     }
   ];
 
@@ -599,25 +599,25 @@ export default function AccommodationPocket({ lang = 'ko' }) {
             </h4>
             <div className="grid grid-cols-2 gap-2">
               <button
-                onClick={() => utils.searchNearby('호텔')}
+                onClick={() => openKakaoMap('호텔')}
                 className="p-3 bg-white rounded hover:bg-gray-50 text-sm"
               >
                 🏨 호텔 찾기
               </button>
               <button
-                onClick={() => utils.searchNearby('모텔')}
+                onClick={() => openKakaoMap('모텔')}
                 className="p-3 bg-white rounded hover:bg-gray-50 text-sm"
               >
                 🏨 모텔 찾기
               </button>
               <button
-                onClick={() => utils.searchNearby('게스트하우스')}
+                onClick={() => openKakaoMap('게스트하우스')}
                 className="p-3 bg-white rounded hover:bg-gray-50 text-sm"
               >
                 🏠 게스트하우스
               </button>
               <button
-                onClick={() => utils.searchNearby('한옥')}
+                onClick={() => openKakaoMap('한옥')}
                 className="p-3 bg-white rounded hover:bg-gray-50 text-sm"
               >
                 🏘️ 한옥 찾기

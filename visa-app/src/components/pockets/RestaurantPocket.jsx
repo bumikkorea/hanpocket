@@ -69,7 +69,7 @@ export default function RestaurantPocket({ lang }) {
 
   // 앱 연동 함수들 - appLinks.js에서 import
   const openKakaoMap = (query = '주변 식당') => {
-    import('../utils/appLinks.js').then(({ openKakaoMap }) => {
+    import('../../utils/appLinks.js').then(({ openKakaoMap }) => {
       openKakaoMap(query)
     }).catch(() => {
       // 폴백: 직접 구현
@@ -84,7 +84,7 @@ export default function RestaurantPocket({ lang }) {
   }
 
   const openDeliveryApp = (appType) => {
-    import('../utils/appLinks.js').then(({ openBaemin, openYogiyo }) => {
+    import('../../utils/appLinks.js').then(({ openBaemin, openYogiyo }) => {
       if (appType === 'baemin') openBaemin()
       if (appType === 'yogiyo') openYogiyo()
     }).catch(() => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Bookmark, Volume2, Copy, Car, Train, Bus, Plane, Navigation, MapPin, ArrowRight, CreditCard, Smartphone } from 'lucide-react'
-import { openKakaoTaxi, openTada, openKakaoMap, openNaverMap, openSubwayApp, openBusApp, openKorail, openAirportLimousine } from '../utils/appLinks'
+import { openKakaoTaxi, openTada, openKakaoMap, openNaverMap, openSubwayApp, openBusApp, openKorail, openAirportLimousine } from '../../utils/appLinks'
 
 // 다국어 헬퍼 함수
 const L = (lang, text) => text[lang] || text['ko']

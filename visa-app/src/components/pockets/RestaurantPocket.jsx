@@ -414,8 +414,8 @@ export default function RestaurantPocket({ lang }) {
               </span>
             </button>
             <button
-              onClick={() => speak(card.ko)}
-              className="bg-blue-100 hover:bg-blue-200 text-blue-700 py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+              onClick={() => speak(`${card.ko}. ${card.example_ko}`)}
+              className="bg-blue-50 text-blue-600 py-1.5 px-3 rounded-md text-xs flex items-center justify-center gap-1"
             >
               <Volume2 size={16} />
               <span className="text-sm font-medium">

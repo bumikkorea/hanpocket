@@ -241,16 +241,26 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                 willChange: 'transform, opacity'
               }}
             >
-              {/* 주머니 모양 디자인 */}
+              {/* 포켓 디자인 */}
               <div className="relative w-full h-full">
-                {/* 주머니 상단 탭 (주머니 입구) */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-2 bg-gray-300 rounded-b-full"></div>
+                {/* 왼쪽 상단 포스트잇 카테고리 탭 */}
+                {(() => {
+                  const cat = pocketCategories.find(c => c.pockets.some(p => p.id === pocketId))
+                  if (!cat) return null
+                  return (
+                    <div className="absolute top-3 left-0 z-20 bg-[#111827] text-white text-[10px] font-medium px-3 py-1 rounded-r-md shadow-sm"
+                      style={{ letterSpacing: '0.05em' }}>
+                      {L(lang, cat.name)}
+                    </div>
+                  )
+                })()}
                 
-                {/* 주머니 본체 */}
-                <div className="bg-white rounded-t-2xl rounded-b-lg border border-gray-200 px-3 py-2 relative overflow-hidden w-full h-full pt-4 shadow-sm">
+                {/* 포켓 본체: 왼쪽 상단 둥글게, 오른쪽 상단 직각 */}
+                <div className="bg-white border border-gray-200 px-3 py-2 relative overflow-hidden w-full h-full pt-10 shadow-sm"
+                  style={{ borderRadius: '16px 0 8px 8px' }}>
                   <button
                     onClick={() => removePocket(pocketId)}
-                    className="absolute top-4 right-4 z-10 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+                    className="absolute top-3 right-3 z-10 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
                   >
                     <X className="w-4 h-4 text-gray-600" />
                   </button>
@@ -275,14 +285,11 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
             willChange: 'transform, opacity'
           }}
         >
-          {/* 주머니 모양 디자인 */}
+          {/* 포켓 추가 디자인 */}
           <div className="relative w-full h-full">
-            {/* 주머니 상단 탭 (주머니 입구) */}
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-2 bg-gray-300 rounded-b-full"></div>
-            
-            {/* 주머니 본체 */}
             <div
-              className="bg-white rounded-t-2xl rounded-b-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full h-full pt-8 shadow-sm"
+              className="bg-white border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full h-full shadow-sm"
+              style={{ borderRadius: '16px 0 8px 8px' }}
               onClick={() => setShowAdd(true)}
             >
               <Plus className="w-12 h-12 text-gray-400 mb-4" />

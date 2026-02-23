@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Plane, Train, Bus, Car, MapPin, Clock, DollarSign, Calendar, ChevronRight, ExternalLink, CreditCard, Bike, Building2, Ticket, Navigation, Shield, Filter, Star, Heart, Users } from 'lucide-react'
+import { Plane, Train, Bus, Car, MapPin, Clock, DollarSign, Calendar, ChevronRight, ExternalLink, CreditCard, Bike, Building2, Ticket, Navigation, Shield, Filter, Star, Heart, Users, BookOpen } from 'lucide-react'
+import TravelDiary from './TravelDiary/TravelDiary'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -186,6 +187,7 @@ export default function TravelTab({ lang, setTab, profile }) {
     try { return JSON.parse(localStorage.getItem('travel_favorites') || '[]') } catch { return [] }
   })
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [showDiary, setShowDiary] = useState(false)
 
   const toggleFavorite = (id) => {
     const updated = favorites.includes(id) 
@@ -204,8 +206,38 @@ export default function TravelTab({ lang, setTab, profile }) {
     ? CURATION_SPOTS 
     : CURATION_SPOTS.filter(spot => spot.category === selectedCategory)
 
+  // Show TravelDiary if diary mode is active
+  if (showDiary) {
+    return <TravelDiary lang={lang} onBack={() => setShowDiary(false)} />
+  }
+
   return (
     <div className="space-y-4">
+      {/* Travel Diary button */}
+      <div className="bg-gradient-to-r from-[#111827] to-[#374151] rounded-2xl p-4 text-white">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-bold text-lg mb-1">
+              {L(lang, { ko: '내 여행 다이어리', zh: '我的旅行日记', en: 'My Travel Diary' })}
+            </h3>
+            <p className="text-sm opacity-90">
+              {L(lang, { 
+                ko: '출국부터 귀국까지 체계적인 일정 관리', 
+                zh: '从出境到回国的系统行程管理', 
+                en: 'Systematic schedule management from departure to return' 
+              })}
+            </p>
+          </div>
+          <button 
+            onClick={() => setShowDiary(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg font-semibold hover:bg-opacity-30 transition-all"
+          >
+            <BookOpen size={16} />
+            {L(lang, { ko: '열기', zh: '打开', en: 'Open' })}
+          </button>
+        </div>
+      </div>
+
       {/* Section nav */}
       <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
         {SECTIONS.map(s => (

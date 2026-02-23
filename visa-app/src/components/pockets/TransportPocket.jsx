@@ -89,7 +89,11 @@ export default function TransportPocket({ lang }) {
     { id: 'subway', name: { ko: '지하철', zh: '地铁', en: 'Subway' }, icon: Train },
     { id: 'bus', name: { ko: '버스', zh: '公交车', en: 'Bus' }, icon: Bus },
     { id: 'ktx', name: { ko: 'KTX', zh: '高铁', en: 'KTX' }, icon: Train },
-    { id: 'airport', name: { ko: '공항', zh: '机场', en: 'Airport' }, icon: Plane }
+    { id: 'airport', name: { ko: '공항', zh: '机场', en: 'Airport' }, icon: Plane },
+    { id: 'rental', name: { ko: '렌터카', zh: '租车', en: 'Rental Car' }, icon: Car },
+    { id: 'transport_card', name: { ko: '교통카드', zh: '交通卡', en: 'Transport Card' }, icon: Copy },
+    { id: 'transfer', name: { ko: '환승', zh: '换乘', en: 'Transfer' }, icon: ArrowRight },
+    { id: 'night', name: { ko: '심야교통', zh: '深夜交通', en: 'Night Transport' }, icon: Navigation }
   ]
 
   // 플래시카드 데이터
@@ -333,6 +337,134 @@ export default function TransportPocket({ lang }) {
         example_pronunciation: 'chulgugjang myeonsejeom eodiyeyo?',
         unsplash: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&h=200&fit=crop&q=80'
       }
+    ],
+    rental: [
+      {
+        id: 'rent_car',
+        ko: '차 빌리고 싶어요',
+        pronunciation: 'cha bil-ri-go si-peo-yo',
+        zh: '我想租车',
+        example_ko: '하루 동안 차 빌리고 싶어요',
+        example_zh: '我想租一天车',
+        example_pronunciation: 'haru dong-an cha billigo sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'license_ok',
+        ko: '국제 운전면허증 있어요',
+        pronunciation: 'guk-je un-jeon-myeon-heo-jeung iss-eo-yo',
+        zh: '我有国际驾照',
+        example_ko: '국제 운전면허증으로 운전할 수 있어요',
+        example_zh: '可以用国际驾照开车',
+        example_pronunciation: 'gukje unjeonmyeonheojeugeuro unjeonhal su isseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'return_car',
+        ko: '차 반납하려고 해요',
+        pronunciation: 'cha ban-nap-ha-ryeo-go hae-yo',
+        zh: '我要还车',
+        example_ko: '공항에서 차 반납하려고 해요',
+        example_zh: '我要在机场还车',
+        example_pronunciation: 'gonghang-eseo cha bannapharyeogo haeyo',
+        unsplash: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    transport_card: [
+      {
+        id: 'buy_tmoney',
+        ko: 'T머니카드 사고 싶어요',
+        pronunciation: 'ti-meo-ni-ka-deu sa-go si-peo-yo',
+        zh: '我想买T-money卡',
+        example_ko: 'T머니카드 어디서 사요?',
+        example_zh: 'T-money卡在哪里买？',
+        example_pronunciation: 'timeoni kadeu eodiseo sayo?',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'recharge_card',
+        ko: '교통카드 충전해주세요',
+        pronunciation: 'gyo-tong-ka-deu chung-jeon-hae-ju-se-yo',
+        zh: '请给交通卡充值',
+        example_ko: '2만원 충전해주세요',
+        example_zh: '请充值2万韩元',
+        example_pronunciation: 'i-manwon chungjeonhaejuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'check_balance',
+        ko: '잔액 확인하고 싶어요',
+        pronunciation: 'jan-aek hwag-in-ha-go si-peo-yo',
+        zh: '我想查看余额',
+        example_ko: '카드 잔액 얼마나 남았어요?',
+        example_zh: '卡里余额还有多少？',
+        example_pronunciation: 'kadeu janaek eolmana namasseyo?',
+        unsplash: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    transfer: [
+      {
+        id: 'need_transfer',
+        ko: '갈아타야 해요?',
+        pronunciation: 'ga-ra-ta-ya hae-yo',
+        zh: '需要换乘吗？',
+        example_ko: '명동 가려면 갈아타야 해요?',
+        example_zh: '去明洞需要换乘吗？',
+        example_pronunciation: 'myeongdong garyeomyeon garataya haeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'transfer_station',
+        ko: '환승역이 어디예요?',
+        pronunciation: 'hwan-seung-yeok-i eo-di-ye-yo',
+        zh: '换乘站在哪里？',
+        example_ko: '2호선 환승역이 어디예요?',
+        example_zh: '2号线换乘站在哪里？',
+        example_pronunciation: '2ho-seon hwanseung-yeogi eodiyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'free_transfer',
+        ko: '무료 환승 돼요?',
+        pronunciation: 'mu-ryo hwan-seung dwae-yo',
+        zh: '可以免费换乘吗？',
+        example_ko: '버스에서 지하철로 무료 환승 돼요?',
+        example_zh: '从公交车换地铁可以免费换乘吗？',
+        example_pronunciation: 'beoseueseo jihacheollo muryo hwanseung dwaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    night: [
+      {
+        id: 'night_bus',
+        ko: '심야버스 있어요?',
+        pronunciation: 'sim-ya-beo-seu iss-eo-yo',
+        zh: '有深夜公交车吗？',
+        example_ko: '새벽까지 운행하는 버스 있어요?',
+        example_zh: '有运行到凌晨的公交车吗？',
+        example_pronunciation: 'saebyeok-kkaji unhaenghaneun beoseu isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1570125909517-53cb21c89ff2?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'last_subway',
+        ko: '막차 몇 시예요?',
+        pronunciation: 'mak-cha myeot si-ye-yo',
+        zh: '末班车几点？',
+        example_ko: '지하철 막차 시간 알려주세요',
+        example_zh: '请告诉我地铁末班车时间',
+        example_pronunciation: 'jihacheol makcha sigan allyeojuseyo',
+        unsplash: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'night_taxi',
+        ko: '심야 할증이 있어요?',
+        pronunciation: 'sim-ya hal-jeung-i iss-eo-yo',
+        zh: '有深夜加价吗？',
+        example_ko: '밤 12시 이후에 택시 할증 있어요?',
+        example_zh: '晚上12点以后出租车有加价吗？',
+        example_pronunciation: 'bam 12si ihu-e taeksi haljeung isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop&q=80'
+      }
     ]
   }
 
@@ -343,7 +475,11 @@ export default function TransportPocket({ lang }) {
       subway: 'bg-gradient-to-br from-blue-100 to-indigo-200', 
       bus: 'bg-gradient-to-br from-green-100 to-emerald-200',
       ktx: 'bg-gradient-to-br from-purple-100 to-violet-200',
-      airport: 'bg-gradient-to-br from-sky-100 to-cyan-200'
+      airport: 'bg-gradient-to-br from-sky-100 to-cyan-200',
+      rental: 'bg-gradient-to-br from-orange-100 to-red-200',
+      transport_card: 'bg-gradient-to-br from-teal-100 to-blue-200',
+      transfer: 'bg-gradient-to-br from-indigo-100 to-purple-200',
+      night: 'bg-gradient-to-br from-gray-100 to-slate-200'
     }
     return gradientMap[tabId] || 'bg-gradient-to-br from-gray-100 to-gray-200'
   }
@@ -355,7 +491,11 @@ export default function TransportPocket({ lang }) {
       subway: Train,
       bus: Bus,
       ktx: Train,
-      airport: Plane
+      airport: Plane,
+      rental: Car,
+      transport_card: Copy,
+      transfer: ArrowRight,
+      night: Navigation
     }
     return iconMap[tabId] || Navigation
   }

@@ -1,0 +1,59 @@
+# Cloudflare Workers Configuration for Michelin Refresh Worker
+name = "michelin-refresh-worker"
+main = "src/index.js"
+compatibility_date = "2024-02-01"
+
+# Worker configuration
+workers_dev = true
+route = ""
+zone_name = ""
+
+# Cron triggers for automatic data refresh
+[triggers]
+crons = [
+  # Every day at 6:00 AM KST (21:00 UTC previous day)
+  "0 21 * * *",
+  # Every Monday at 2:00 PM KST (05:00 UTC)  
+  "0 5 * * 1",
+  # Every Friday at 10:00 PM KST (13:00 UTC)
+  "0 13 * * 5"
+]
+
+# Environment variables (set these in Cloudflare dashboard)
+[env.production.vars]
+ENVIRONMENT = "production"
+
+[env.staging.vars] 
+ENVIRONMENT = "staging"
+
+# KV storage for caching (optional)
+[[kv_namespaces]]
+binding = "MICHELIN_CACHE"
+id = "your-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+# Durable Objects (for state management if needed)
+# [[durable_objects.bindings]]
+# name = "MICHELIN_STATE"
+# class_name = "MichelinState"
+
+# R2 storage (for backup data if needed)
+# [[r2_buckets]]
+# binding = "MICHELIN_BACKUP"
+# bucket_name = "michelin-data-backup"
+
+# Analytics and observability
+[observability]
+enabled = true
+
+# Build configuration
+[build]
+command = "npm run build"
+cwd = "."
+watch_dir = "src"
+
+# Miniflare dev server settings
+[miniflare]
+kv_persist = true
+cache_persist = true
+d1_persist = true

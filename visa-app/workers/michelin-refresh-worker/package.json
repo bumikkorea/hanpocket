@@ -1,0 +1,42 @@
+{
+  "name": "michelin-refresh-worker",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker for automatically refreshing Michelin Guide Seoul restaurant data",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:production": "wrangler deploy --env production",
+    "tail": "wrangler tail",
+    "build": "echo 'No build step required for this worker'",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "michelin-guide", 
+    "restaurant-data",
+    "cron",
+    "web-scraping"
+  ],
+  "author": "HanPocket Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240117.0",
+    "wrangler": "^3.28.0",
+    "vitest": "^1.2.0"
+  },
+  "dependencies": {
+    "htmlparser2": "^9.0.0",
+    "cheerio": "^1.0.0-rc.12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/visa-app.git",
+    "directory": "workers/michelin-refresh-worker"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

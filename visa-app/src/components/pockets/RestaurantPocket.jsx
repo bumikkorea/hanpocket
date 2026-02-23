@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Bookmark, Volume2, Copy, Plus, Minus, DoorOpen, UtensilsCrossed, CreditCard, ChefHat, Utensils, AlertTriangle } from 'lucide-react'
+import { Bookmark, Volume2, Copy, Plus, Minus, DoorOpen, UtensilsCrossed, CreditCard, ChefHat, Utensils, AlertTriangle, MapPin, Smartphone } from 'lucide-react'
 
 // 다국어 헬퍼 함수
 const L = (lang, text) => text[lang] || text['ko']
@@ -67,13 +67,53 @@ export default function RestaurantPocket({ lang }) {
     )
   }
 
+  // 카카오맵 연동 함수
+  const openKakaoMap = (query = '주변 식당') => {
+    const deepLink = `kakaomap://search?q=${encodeURIComponent(query)}`
+    const webFallback = `https://map.kakao.com/link/search/${encodeURIComponent(query)}`
+    
+    // 딥링크 시도
+    window.location.href = deepLink
+    
+    // 1.5초 후 앱이 안열리면 웹 페이지로 이동
+    setTimeout(() => {
+      window.open(webFallback, '_blank')
+    }, 1500)
+  }
+
+  // 배달앱 연동 함수
+  const openDeliveryApp = (appType) => {
+    const apps = {
+      baemin: {
+        deepLink: 'baemin://home',
+        fallback: 'https://play.google.com/store/apps/details?id=com.sampleapp'
+      },
+      yogiyo: {
+        deepLink: 'yogiyo://home',
+        fallback: 'https://play.google.com/store/apps/details?id=kr.co.ygy'
+      }
+    }
+    
+    if (apps[appType]) {
+      window.location.href = apps[appType].deepLink
+      setTimeout(() => {
+        window.open(apps[appType].fallback, '_blank')
+      }, 1500)
+    }
+  }
+
   // 소주제 탭 데이터
   const tabs = [
     { id: 'entrance', name: { ko: '입장', zh: '入店', en: 'Entrance' }, icon: DoorOpen },
     { id: 'order', name: { ko: '주문', zh: '点餐', en: 'Order' }, icon: UtensilsCrossed },
     { id: 'allergy', name: { ko: '알레르기', zh: '过敏', en: 'Allergy' }, icon: AlertTriangle },
     { id: 'payment', name: { ko: '계산', zh: '结账', en: 'Payment' }, icon: CreditCard },
-    { id: 'banchan', name: { ko: '반찬', zh: '小菜', en: 'Banchan' }, icon: ChefHat }
+    { id: 'banchan', name: { ko: '반찬', zh: '小菜', en: 'Banchan' }, icon: ChefHat },
+    { id: 'reservation', name: { ko: '예약', zh: '预约', en: 'Reservation' }, icon: Volume2 },
+    { id: 'menu', name: { ko: '메뉴판 읽기', zh: '看菜单', en: 'Menu Reading' }, icon: Utensils },
+    { id: 'delivery', name: { ko: '배달앱', zh: '外卖App', en: 'Delivery App' }, icon: ChefHat },
+    { id: 'etiquette', name: { ko: '식사예절', zh: '用餐礼仪', en: 'Dining Etiquette' }, icon: UtensilsCrossed },
+    { id: 'tip', name: { ko: '팁문화', zh: '小费文化', en: 'Tip Culture' }, icon: CreditCard }
   ]
 
   // 플래시카드 데이터
@@ -279,6 +319,166 @@ export default function RestaurantPocket({ lang }) {
         example_pronunciation: 'japchae masitkke mandeusy-eotneyo',
         description: '당면 볶음',
         unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    reservation: [
+      {
+        id: 'make_reservation',
+        ko: '예약하고 싶어요',
+        pronunciation: 'ye-yak-ha-go si-peo-yo',
+        zh: '我想预约',
+        example_ko: '내일 저녁에 예약하고 싶어요',
+        example_zh: '我想预约明天晚上',
+        example_pronunciation: 'naeil jeonyeoge yeyakha-go sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'what_time',
+        ko: '몇 시에 가능해요?',
+        pronunciation: 'myeot si-e ga-neung-hae-yo',
+        zh: '几点可以？',
+        example_ko: '오늘 몇 시에 가능해요?',
+        example_zh: '今天几点可以？',
+        example_pronunciation: 'oneul myeot si-e ganeunghaeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'cancel_reservation',
+        ko: '예약 취소할게요',
+        pronunciation: 'ye-yak chwi-so-hal-ge-yo',
+        zh: '我要取消预约',
+        example_ko: '죄송하지만 예약 취소할게요',
+        example_zh: '不好意思，我要取消预约',
+        example_pronunciation: 'joesonghajiman yeyak chwisohalgeyo',
+        unsplash: 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    menu: [
+      {
+        id: 'whats_this',
+        ko: '이거 뭐예요?',
+        pronunciation: 'i-geo mwo-ye-yo',
+        zh: '这是什么？',
+        example_ko: '메뉴에서 이거 뭐예요?',
+        example_zh: '菜单上这个是什么？',
+        example_pronunciation: 'menyueseo igeo mwoyeyo?',
+        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'how_spicy',
+        ko: '얼마나 매워요?',
+        pronunciation: 'eol-ma-na mae-wo-yo',
+        zh: '有多辣？',
+        example_ko: '이 음식 얼마나 매워요?',
+        example_zh: '这个菜有多辣？',
+        example_pronunciation: 'i eumsik eolmana maewoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'set_menu',
+        ko: '세트 메뉴 있어요?',
+        pronunciation: 'se-teu me-nyu iss-eo-yo',
+        zh: '有套餐吗？',
+        example_ko: '2인 세트 메뉴 있어요?',
+        example_zh: '有2人套餐吗？',
+        example_pronunciation: 'i-in seteu menyu isseoyo?',
+        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    delivery: [
+      {
+        id: 'delivery_order',
+        ko: '배달 주문하고 싶어요',
+        pronunciation: 'bae-dal ju-mun-ha-go si-peo-yo',
+        zh: '我想叫外卖',
+        example_ko: '여기서 배달 주문하고 싶어요',
+        example_zh: '我想在这里叫外卖',
+        example_pronunciation: 'yeogiseo baedal jumunhago sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1586816001966-79b736744398?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'baemin_app',
+        ko: '배달의민족 앱',
+        pronunciation: 'bae-dal-ui min-jok aep',
+        zh: '配送的民族App',
+        example_ko: '배달의민족 앱으로 주문할게요',
+        example_zh: '用配送的民族App点单',
+        example_pronunciation: 'baedal-ui minjok aepeuro jumunhalgeyo',
+        unsplash: 'https://images.unsplash.com/photo-1586816001966-79b736744398?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'yogiyo_app',
+        ko: '요기요 앱',
+        pronunciation: 'yo-gi-yo aep',
+        zh: '这里呀App',
+        example_ko: '요기요 앱도 사용할 수 있어요',
+        example_zh: '也可以用这里呀App',
+        example_pronunciation: 'yogiyo aepdo sayonghal su isseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1586816001966-79b736744398?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    etiquette: [
+      {
+        id: 'chopsticks',
+        ko: '젓가락 사용법',
+        pronunciation: 'jeot-ga-rak sa-yong-beop',
+        zh: '筷子使用方法',
+        example_ko: '젓가락 사용법을 배우고 싶어요',
+        example_zh: '我想学习筷子使用方法',
+        example_pronunciation: 'jeotgarak sayongbeobeul baeugo sipeoyo',
+        unsplash: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'dont_stick_chopsticks',
+        ko: '젓가락을 밥에 세우면 안돼요',
+        pronunciation: 'jeot-ga-rak-eul bab-e se-u-myeon an-dwae-yo',
+        zh: '不能把筷子插在米饭里',
+        example_ko: '젓가락을 밥에 세우는 건 예의에 어긋나요',
+        example_zh: '把筷子插在米饭里是不礼貌的',
+        example_pronunciation: 'jeotgarageul babe seuneun geon yeuie eogeutnayo',
+        unsplash: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'share_banchan',
+        ko: '반찬은 함께 나눠먹어요',
+        pronunciation: 'ban-chan-eun ham-kke na-nwo-meog-eo-yo',
+        zh: '小菜要一起分享',
+        example_ko: '반찬은 모두 함께 나눠먹는 거예요',
+        example_zh: '小菜是大家一起分享的',
+        example_pronunciation: 'banchaneun modu hamkke nanwomeogneun geoyeyo',
+        unsplash: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=200&fit=crop&q=80'
+      }
+    ],
+    tip: [
+      {
+        id: 'no_tip',
+        ko: '한국은 팁 문화가 없어요',
+        pronunciation: 'han-guk-eun tip mun-hwa-ga eop-seo-yo',
+        zh: '韩国没有小费文化',
+        example_ko: '한국 식당은 팁을 주지 않아요',
+        example_zh: '韩国餐厅不给小费',
+        example_pronunciation: 'hanguk sikdangeun tibeul juji anayo',
+        unsplash: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'service_included',
+        ko: '서비스는 포함되어 있어요',
+        pronunciation: 'seo-bi-seu-neun po-ham-doe-eo iss-eo-yo',
+        zh: '服务费已包含',
+        example_ko: '계산서에 서비스가 포함되어 있어요',
+        example_zh: '账单里已包含服务费',
+        example_pronunciation: 'gyesanseoe seobiseuga pohamdoeeo isseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=400&h=200&fit=crop&q=80'
+      },
+      {
+        id: 'just_pay_bill',
+        ko: '계산서 금액만 내면 돼요',
+        pronunciation: 'gye-san-seo geum-aek-man nae-myeon dwae-yo',
+        zh: '只要付账单金额就可以了',
+        example_ko: '추가로 팁을 줄 필요 없어요',
+        example_zh: '不需要额外给小费',
+        example_pronunciation: 'chugaro tibeul jul piryo eopseoyo',
+        unsplash: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=400&h=200&fit=crop&q=80'
       }
     ]
   }
@@ -544,6 +744,72 @@ export default function RestaurantPocket({ lang }) {
             <p>{L(lang, { ko: '알레르기 항목을 선택해주세요', zh: '请选择过敏项目', en: 'Please select allergy items' })}</p>
           </div>
         )}
+      </div>
+
+      {/* 카카오맵 & 배달앱 연동 버튼 */}
+      <div className="space-y-3 mt-6">
+        <h3 className="font-semibold text-gray-800 text-sm">
+          {L(lang, { ko: '편리한 앱 연결', zh: '便利应用连接', en: 'Convenient App Links' })}
+        </h3>
+        
+        <div className="grid grid-cols-1 gap-2">
+          {/* 카카오맵 - 주변 식당 찾기 */}
+          <button
+            onClick={() => openKakaoMap('주변 식당')}
+            className="flex items-center justify-between p-3 bg-yellow-50 border border-yellow-200 rounded-lg hover:bg-yellow-100 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <MapPin size={20} className="text-yellow-600" />
+              <div className="text-left">
+                <p className="font-medium text-gray-800">
+                  {L(lang, { ko: '주변 식당 찾기', zh: '寻找附近餐厅', en: 'Find nearby restaurants' })}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {L(lang, { ko: '카카오맵으로 연결', zh: '连接到KakaoMap', en: 'Connect to KakaoMap' })}
+                </p>
+              </div>
+            </div>
+            <div className="text-yellow-600">→</div>
+          </button>
+
+          {/* 배달의민족 */}
+          <button
+            onClick={() => openDeliveryApp('baemin')}
+            className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Smartphone size={20} className="text-blue-600" />
+              <div className="text-left">
+                <p className="font-medium text-gray-800">
+                  {L(lang, { ko: '배달의민족', zh: '配送的民族', en: 'Baemin' })}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {L(lang, { ko: '배달 주문하기', zh: '外卖订餐', en: 'Order delivery' })}
+                </p>
+              </div>
+            </div>
+            <div className="text-blue-600">→</div>
+          </button>
+
+          {/* 요기요 */}
+          <button
+            onClick={() => openDeliveryApp('yogiyo')}
+            className="flex items-center justify-between p-3 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Smartphone size={20} className="text-red-600" />
+              <div className="text-left">
+                <p className="font-medium text-gray-800">
+                  {L(lang, { ko: '요기요', zh: '这里呀', en: 'Yogiyo' })}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {L(lang, { ko: '배달 주문하기', zh: '外卖订餐', en: 'Order delivery' })}
+                </p>
+              </div>
+            </div>
+            <div className="text-red-600">→</div>
+          </button>
+        </div>
       </div>
 
       {/* 사용법 안내 */}

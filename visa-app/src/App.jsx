@@ -1231,6 +1231,18 @@ function AppInner() {
 
   const [subPage, setSubPage] = useState(null)
 
+  // OAuth 리다이렉트 중이면 온보딩 대신 로딩 표시 (콜백 처리 대기)
+  const hasOAuthCode = new URLSearchParams(window.location.search).get('code')
+  if (!profile && hasOAuthCode) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#FAFAF8]" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-[#111827] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <p className="text-sm text-[#6B7280]">{lang === 'ko' ? '로그인 처리 중...' : lang === 'zh' ? '登录处理中...' : 'Logging in...'}</p>
+        </div>
+      </div>
+    )
+  }
   if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); saveProfile(p); setLang(p.lang||'ko'); }} />
 
   const bottomTabs = [

@@ -244,8 +244,8 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       {/* Cards stack */}
       <div
         ref={containerRef}
-        className="relative overflow-hidden"
-        style={{ height: 'calc(100vh - 160px)' }}
+        className="relative overflow-hidden mx-4"
+        style={{ height: 'calc(100vh - 200px)', marginTop: '8px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -259,7 +259,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           return (
             <div 
               key={cardId}
-              className="absolute inset-4"
+              className="absolute inset-0"
               style={{
                 ...cardStyle,
                 willChange: 'transform, opacity'
@@ -301,7 +301,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 
         {/* Add card - also in the stack */}
         <div 
-          className="absolute inset-4"
+          className="absolute inset-0"
           style={{
             ...getCardStyle(cards.length),
             willChange: 'transform, opacity'

@@ -1506,7 +1506,7 @@ function AppInner() {
 
       {/* Google-style Top Bar */}
       <div className="bg-white sticky top-0 z-50 shadow-sm">
-        <div className="px-4 pt-12 pb-3">
+        <div className="px-4 pt-3 pb-2">
           <div className="flex items-center gap-3">
             {subPage ? (
               <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">

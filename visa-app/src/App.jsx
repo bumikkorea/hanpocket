@@ -668,187 +668,120 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
   const loginInfo = getLoginProvider()
 
   return (
-    <div className="min-h-screen bg-[#FCFCFA] pb-20 font-['Inter']">
-      {/* 커버 배너 */}
-      <div className="relative bg-gradient-to-br from-[#111827] via-[#374151] to-[#111827] h-[120px] rounded-b-lg">
-        {/* 프로필 아바타 - 배너 하단에 걸치게 */}
-        <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2">
-          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+    <div className="min-h-screen bg-[#FAFAF8] p-4 pb-20 font-['Inter']">
+      {/* 메인 프로필 카드 */}
+      <div className="bg-white rounded-lg p-6 shadow-sm">
+        {/* 프로필 헤더 */}
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-[#F3F4F6] rounded-full flex items-center justify-center mx-auto mb-3">
             {loginInfo ? (
-              <span className="text-3xl">{loginInfo.icon}</span>
+              <span className="text-2xl">{loginInfo.icon}</span>
             ) : (
-              <User className="w-10 h-10 text-[#6B7280]" />
+              <User className="w-8 h-8 text-[#6B7280]" />
             )}
           </div>
-        </div>
-      </div>
-
-      {/* 메인 컨텐츠 */}
-      <div className="px-4 pt-14">
-        {/* 이름 + 로그인 방식 */}
-        <div className="text-center mb-4">
-          <div className="text-2xl font-bold text-[#111827] mb-1">
-            {loginInfo?.nickname || L(lang, { ko: '사용자', zh: '用户', en: 'User' })}
+          
+          <div className="text-xl font-bold text-[#111827] mb-1">
+            {loginInfo?.nickname || (lang === 'ko' ? '사용자' : lang === 'zh' ? '用户' : 'User')}
           </div>
           
           {loginInfo && (
             <div className="text-sm text-[#6B7280] flex items-center justify-center gap-1">
               <span className="text-xs">{loginInfo.icon}</span>
-              {loginInfo.provider === 'kakao' && L(lang, { ko: '카카오로 로그인', zh: 'Kakao登录', en: 'Login with Kakao' })}
-              {loginInfo.provider === 'naver' && L(lang, { ko: '네이버로 로그인', zh: 'Naver登录', en: 'Login with Naver' })}
-              {loginInfo.provider === 'wechat' && L(lang, { ko: 'WeChat으로 로그인', zh: '微信登录', en: 'Login with WeChat' })}
-              {loginInfo.provider === 'alipay' && L(lang, { ko: 'Alipay로 로그인', zh: '支付宝登录', en: 'Login with Alipay' })}
+              {loginInfo.provider === 'kakao' && (lang === 'ko' ? '카카오로 로그인' : lang === 'zh' ? 'Kakao登录' : 'Login with Kakao')}
+              {loginInfo.provider === 'naver' && (lang === 'ko' ? '네이버로 로그인' : lang === 'zh' ? 'Naver登录' : 'Login with Naver')}
+              {loginInfo.provider === 'wechat' && (lang === 'ko' ? 'WeChat으로 로그인' : lang === 'zh' ? '微信登录' : 'Login with WeChat')}
+              {loginInfo.provider === 'alipay' && (lang === 'ko' ? 'Alipay로 로그인' : lang === 'zh' ? '支付宝登录' : 'Login with Alipay')}
             </div>
           )}
         </div>
 
-        {/* 태그 라인 - 국적, 비자 타입 */}
-        <div className="flex justify-center gap-2 mb-6">
-          <span className="bg-white px-3 py-1 rounded-full text-xs font-medium text-[#111827] shadow-sm border border-[#E5E7EB]">
-            {getNationalityLabel()}
-          </span>
-          <span className="bg-white px-3 py-1 rounded-full text-xs font-medium text-[#111827] shadow-sm border border-[#E5E7EB]">
-            {getVisaTypeLabel()}
-          </span>
-        </div>
+        {/* 구분선 */}
+        <div className="border-t border-[#E5E7EB] my-4"></div>
 
-        {/* 스탯 행 - 비자 D-day | 레벨 | 구독 */}
-        <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
-          <div className="grid grid-cols-3 gap-4 text-center">
-            {/* 비자 D-day */}
-            <div>
-              <div className="text-2xl font-bold text-[#111827] mb-1">
-                {expiryDate && days !== null ? (
-                  days <= 0 ? L(lang, { ko: '만료', zh: '过期', en: 'Exp' }) : `D-${days}`
-                ) : '-'}
-              </div>
-              <div className="text-xs text-[#6B7280]">
-                {L(lang, { ko: '비자 D-day', zh: '签证倒计时', en: 'Visa D-day' })}
-              </div>
-            </div>
-            
-            {/* 레벨 */}
-            <div>
-              <div className="text-2xl font-bold text-[#111827] mb-1">Lv.1</div>
-              <div className="text-xs text-[#6B7280]">
-                {L(lang, { ko: '레벨', zh: '等级', en: 'Level' })}
-              </div>
-            </div>
-            
-            {/* 구독 */}
-            <div>
-              <div className="text-2xl font-bold text-[#111827] mb-1 flex items-center justify-center gap-1">
-                <Shield className="w-5 h-5" />
-                <span className="text-sm">Free</span>
-              </div>
-              <div className="text-xs text-[#6B7280]">
-                {L(lang, { ko: '구독', zh: '订阅', en: 'Plan' })}
-              </div>
-            </div>
+        {/* 프로필 정보 */}
+        <div className="space-y-3">
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '국적' : lang === 'zh' ? '国籍' : 'Nationality'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm">{getNationalityLabel()}</span>
+          </div>
+          
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '비자' : lang === 'zh' ? '签证' : 'Visa'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm">{getVisaTypeLabel()}</span>
+          </div>
+          
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '레벨' : lang === 'zh' ? '等级' : 'Level'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm">{getUserLevel()}</span>
+          </div>
+          
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '구독' : lang === 'zh' ? '订阅' : 'Subscription'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm flex items-center gap-1">
+              <Shield className="w-4 h-4 text-[#6B7280]" />
+              {getSubscription()}
+            </span>
           </div>
         </div>
 
-        {/* 비자 만료일 섹션 */}
-        <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="text-sm font-medium text-[#111827] mb-1">
-                {L(lang, { ko: '비자 만료일', zh: '签证到期日', en: 'Visa Expiry' })}
-              </div>
-              
-              {expiryDate && days !== null ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-[#6B7280]">{expiryDate}</span>
-                  <span className={`text-xs px-2 py-1 rounded-lg font-bold ${
+        {/* 구분선 */}
+        <div className="border-t border-[#E5E7EB] my-4"></div>
+
+        {/* 비자 만료일 */}
+        <div className="flex justify-between items-center py-2">
+          <div>
+            {expiryDate && days !== null ? (
+              <>
+                <span className="text-[#6B7280] text-sm">
+                  {lang === 'ko' ? '비자 만료' : lang === 'zh' ? '签证到期' : 'Visa Expiry'}
+                </span>
+                <div className="mt-1">
+                  <span className="font-medium text-[#111827] text-sm">{expiryDate}</span>
+                  <span className={`ml-2 text-xs px-2 py-1 rounded-full ${
                     days <= 0 ? 'bg-red-100 text-red-600' :
                     days <= 30 ? 'bg-red-100 text-red-600' :
                     days <= 90 ? 'bg-amber-100 text-amber-700' :
                     'bg-green-100 text-green-600'
                   }`}>
-                    {days <= 0 ? L(lang, { ko: '만료됨', zh: '已过期', en: 'Expired' }) : `D-${days}`}
+                    {days <= 0 ? (lang === 'ko' ? '만료됨' : lang === 'zh' ? '已过期' : 'Expired') : `D-${days}`}
                   </span>
                 </div>
-              ) : (
-                <div className="text-sm text-[#6B7280]">
-                  {L(lang, { ko: '비자 만료일을 설정하세요', zh: '请设置签证到期日期', en: 'Set visa expiry date' })}
-                </div>
-              )}
-            </div>
-            
-            <button
-              onClick={handleEditExpiry}
-              className="w-9 h-9 bg-[#F3F4F6] rounded-lg flex items-center justify-center hover:bg-[#E5E7EB] transition-colors"
-            >
-              <Pencil className="w-4 h-4 text-[#6B7280]" />
-            </button>
+              </>
+            ) : (
+              <span className="text-[#6B7280] text-sm">
+                {lang === 'ko' ? '비자 만료일을 설정하세요' : lang === 'zh' ? '请设置签证到期日期' : 'Set visa expiry date'}
+              </span>
+            )}
           </div>
+          
+          <button
+            onClick={handleEditExpiry}
+            className="w-7 h-7 bg-[#F3F4F6] rounded-full flex items-center justify-center hover:bg-[#E5E7EB] transition-colors"
+          >
+            <Pencil className="w-3.5 h-3.5 text-[#6B7280]" />
+          </button>
         </div>
 
-        {/* 액션 버튼들 */}
-        <div className="bg-white rounded-lg p-4 mb-4 shadow-sm">
-          <div className="space-y-3">
-            <button
-              onClick={() => setShowNotifModal(true)}
-              className="w-full flex items-center justify-between py-3 hover:bg-[#F8F9FA] transition-colors rounded-lg px-2"
-            >
-              <div className="flex items-center gap-3">
-                <Bell className="w-5 h-5 text-[#6B7280]" />
-                <span className="text-[#111827] font-medium">
-                  {L(lang, { ko: '알림 설정', zh: '通知设置', en: 'Notifications' })}
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#6B7280]" />
-            </button>
-            
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-between py-3 hover:bg-[#F8F9FA] transition-colors rounded-lg px-2"
-            >
-              <div className="flex items-center gap-3">
-                <LogOut className="w-5 h-5 text-[#6B7280]" />
-                <span className="text-[#111827] font-medium">
-                  {L(lang, { ko: '로그아웃', zh: '注销', en: 'Logout' })}
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#6B7280]" />
-            </button>
-          </div>
-        </div>
+        {/* 구분선 */}
+        <div className="border-t border-[#E5E7EB] my-6"></div>
 
-        {/* 하단 메뉴 리스트 */}
-        <div className="bg-white rounded-lg p-4 shadow-sm">
-          <div className="space-y-3">
-            <button className="w-full flex items-center justify-between py-3 hover:bg-[#F8F9FA] transition-colors rounded-lg px-2">
-              <div className="flex items-center gap-3">
-                <Settings className="w-5 h-5 text-[#6B7280]" />
-                <span className="text-[#111827] font-medium">
-                  {L(lang, { ko: '설정', zh: '设置', en: 'Settings' })}
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#6B7280]" />
-            </button>
-            
-            <button className="w-full flex items-center justify-between py-3 hover:bg-[#F8F9FA] transition-colors rounded-lg px-2">
-              <div className="flex items-center gap-3">
-                <HelpCircle className="w-5 h-5 text-[#6B7280]" />
-                <span className="text-[#111827] font-medium">
-                  {L(lang, { ko: '고객센터', zh: '客服中心', en: 'Help Center' })}
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#6B7280]" />
-            </button>
-            
-            <button className="w-full flex items-center justify-between py-3 hover:bg-[#F8F9FA] transition-colors rounded-lg px-2">
-              <div className="flex items-center gap-3">
-                <FileText className="w-5 h-5 text-[#6B7280]" />
-                <span className="text-[#111827] font-medium">
-                  {L(lang, { ko: '법적고지', zh: '法律声明', en: 'Legal Notice' })}
-                </span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-[#6B7280]" />
-            </button>
-          </div>
-        </div>
+        {/* 로그아웃 버튼 */}
+        <button
+          onClick={handleLogout}
+          className="w-full text-[#6B7280] text-sm py-3 hover:text-[#111827] transition-colors flex items-center justify-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          {lang === 'ko' ? '로그아웃' : lang === 'zh' ? '注销' : 'Logout'}
+        </button>
       </div>
 
       {/* 모달 1: 비자 만료일 입력 */}

@@ -170,34 +170,51 @@ const situations = [
   },
 ]
 
-// Simple dictionary for custom translation
-const dict = {
-  '你好': '안녕하세요', '谢谢': '감사합니다', '对不起': '죄송합니다', '再见': '안녕히 가세요',
-  '是': '네', '不是': '아니요', '多少钱': '얼마예요', '在哪里': '어디예요',
-  '我': '저', '你': '당신', '他': '그', '她': '그녀', '我们': '우리',
-  '吃': '먹다', '喝': '마시다', '去': '가다', '来': '오다', '看': '보다',
-  '好': '좋아요', '不好': '안 좋아요', '可以': '가능해요', '不可以': '안 돼요',
-  '今天': '오늘', '明天': '내일', '昨天': '어제', '现在': '지금',
-  '请问': '실례합니다', '没关系': '괜찮아요', '不客气': '천만에요',
-  '水': '물', '饭': '밥', '咖啡': '커피', '茶': '차',
-  '厕所': '화장실', '地铁': '지하철', '公交车': '버스', '出租车': '택시',
-  'hello': '안녕하세요', 'thank you': '감사합니다', 'sorry': '죄송합니다',
-  'yes': '네', 'no': '아니요', 'how much': '얼마예요', 'where': '어디예요',
-  'help': '도와주세요', 'please': '주세요', 'excuse me': '실례합니다',
+// Detect if text is primarily Chinese characters
+function isChinese(text) {
+  const zhChars = text.match(/[\u4e00-\u9fff]/g)
+  return zhChars && zhChars.length > text.replace(/\s/g, '').length * 0.3
 }
 
-function simpleTranslate(text) {
-  if (!text.trim()) return ''
-  const lower = text.toLowerCase().trim()
-  if (dict[lower] || dict[text.trim()]) return dict[lower] || dict[text.trim()]
-  // Try partial matches
-  let result = text
-  let found = false
-  for (const [src, tgt] of Object.entries(dict)) {
-    if (result.includes(src)) { result = result.replace(src, tgt); found = true }
+// Detect if text is primarily Korean characters
+function isKorean(text) {
+  const koChars = text.match(/[\uac00-\ud7af\u3130-\u318f]/g)
+  return koChars && koChars.length > text.replace(/\s/g, '').length * 0.3
+}
+
+// Real translation via Google Translate API
+async function translateText(text) {
+  if (!text.trim()) return { result: '', from: '', to: '' }
+  const trimmed = text.trim()
+
+  // Auto-detect direction
+  let sl, tl
+  if (isChinese(trimmed)) {
+    sl = 'zh-CN'; tl = 'ko'
+  } else if (isKorean(trimmed)) {
+    sl = 'ko'; tl = 'zh-CN'
+  } else {
+    // English or other → Korean
+    sl = 'auto'; tl = 'ko'
   }
-  if (found) return result
-  return L('ko', { ko: '(사전에 없는 표현입니다. 상황별 템플릿을 이용해 주세요.)', zh: '(词典中没有此表达。请使用情景模板。)', en: '(Not in dictionary. Please use situation templates.)' })
+
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(trimmed)}`
+    const resp = await fetch(url)
+    const data = await resp.json()
+    const result = data[0].map(s => s[0]).join('')
+    return { result, from: sl, to: tl }
+  } catch (err) {
+    console.error('Translation error:', err)
+    return {
+      result: L('ko', {
+        ko: '(번역 서비스에 연결할 수 없습니다. 인터넷 연결을 확인해주세요.)',
+        zh: '(无法连接翻译服务。请检查网络连接。)',
+        en: '(Cannot connect to translation service. Check your internet.)'
+      }),
+      from: sl, to: tl
+    }
+  }
 }
 
 function speak(text) {
@@ -224,6 +241,8 @@ export default function TranslatorTab({ lang }) {
   const [customText, setCustomText] = useState('')
   const [customResult, setCustomResult] = useState('')
   const [copiedIdx, setCopiedIdx] = useState(null)
+  const [translating, setTranslating] = useState(false)
+  const [translateDir, setTranslateDir] = useState('')
   const [searchQ, setSearchQ] = useState('')
   const [favorites, setFavorites] = useState(() => {
     try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [] }
@@ -261,18 +280,28 @@ export default function TranslatorTab({ lang }) {
     return favorites.some(f => f.key === `${situationId}-${phrase.zh}`)
   }
 
-  const handleCustomTranslate = () => {
-    if (!customText.trim()) return
+  const handleCustomTranslate = async () => {
+    if (!customText.trim() || translating) return
+    setTranslating(true)
+    setCustomResult('')
     
-    const result = simpleTranslate(customText)
-    setCustomResult(result)
-    
-    // 번역 이벤트 추적
-    trackTranslation('auto', lang, 'text', {
-      source_text_length: customText.length,
-      feature: 'custom_translator',
-      has_result: !!result
-    })
+    try {
+      const { result, from, to } = await translateText(customText)
+      setCustomResult(result)
+      const dirLabel = from === 'zh-CN' ? '中→韩' : from === 'ko' ? '韩→中' : '→韩'
+      setTranslateDir(dirLabel)
+      
+      trackTranslation('auto', lang, 'text', {
+        source_text_length: customText.length,
+        feature: 'realtime_translator',
+        direction: `${from}→${to}`,
+        has_result: !!result
+      })
+    } catch (err) {
+      setCustomResult(L(lang, { ko: '번역 중 오류가 발생했습니다.', zh: '翻译出错。', en: 'Translation error.' }))
+    } finally {
+      setTranslating(false)
+    }
   }
 
   if (selected) {
@@ -401,28 +430,40 @@ export default function TranslatorTab({ lang }) {
 
   return (
     <div className="space-y-5 animate-fade-up">
-      {/* Free text translation */}
+      {/* Real-time translation */}
       <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
-        <div className="flex items-center gap-2 mb-3">
-          <Languages size={18} className="text-[#111827]" />
-          <h3 className="font-bold text-[#111827] text-sm">{L(lang, { ko: '자유 번역', zh: '自由翻译', en: 'Free Translation' })}</h3>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Languages size={18} className="text-[#111827]" />
+            <h3 className="font-bold text-[#111827] text-sm">{L(lang, { ko: '실시간 통역', zh: '实时翻译', en: 'Real-time Translation' })}</h3>
+          </div>
+          <span className="text-[10px] text-[#9CA3AF] bg-[#F3F4F6] px-2 py-0.5 rounded-full">
+            {L(lang, { ko: '자동 감지', zh: '自动检测', en: 'Auto-detect' })}
+          </span>
         </div>
+        <p className="text-[11px] text-[#9CA3AF] mb-2">
+          {L(lang, { ko: '중국어 → 한국어 / 한국어 → 중국어 / 영어 → 한국어', zh: '中文→韩文 / 韩文→中文 / 英文→韩文', en: 'CN→KR / KR→CN / EN→KR' })}
+        </p>
         <textarea value={customText} onChange={e => setCustomText(e.target.value)}
-          placeholder={L(lang, { ko: '중국어 또는 영어를 입력하세요...', zh: '请输入中文或英文...', en: 'Enter Chinese or English...' })}
-          className="w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#111827]/10 resize-none h-20 placeholder:text-[#9CA3AF]" />
-        <button onClick={handleCustomTranslate}
-          className="w-full mt-2 bg-[#111827] text-white font-semibold py-2.5 rounded-xl text-sm hover:bg-[#1F2937] transition-colors">
-          {L(lang, { ko: '번역하기', zh: '翻译', en: 'Translate' })}
+          onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleCustomTranslate() } }}
+          placeholder={L(lang, { ko: '아무 언어나 입력하세요...', zh: '输入任何语言...', en: 'Type in any language...' })}
+          className="w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#111827]/10 resize-none h-24 placeholder:text-[#9CA3AF]" />
+        <button onClick={handleCustomTranslate} disabled={translating}
+          className="w-full mt-2 bg-[#111827] text-white font-semibold py-2.5 rounded-xl text-sm hover:bg-[#1F2937] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          {translating
+            ? L(lang, { ko: '통역 중...', zh: '翻译中...', en: 'Translating...' })
+            : L(lang, { ko: '통역하기', zh: '翻译', en: 'Translate' })}
         </button>
         {customResult && (
           <div className="mt-3 bg-[#F8F9FA] rounded-xl p-4 border border-[#E5E7EB]">
-            <p className="text-sm font-bold text-[#111827]">{customResult}</p>
-            <div className="flex gap-2 mt-2">
-              <button onClick={() => speak(customResult)} className="flex items-center gap-1 px-2 py-1 bg-white rounded-lg text-xs text-[#111827] border border-[#E5E7EB]">
-                <Volume2 size={12} /> {L(lang, { ko: '듣기', zh: '听', en: 'Listen' })}
+            {translateDir && <p className="text-[10px] text-[#9CA3AF] mb-1">{translateDir}</p>}
+            <p className="text-base font-bold text-[#111827]">{customResult}</p>
+            <div className="flex gap-2 mt-3">
+              <button onClick={() => speak(customResult)} className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg text-xs text-[#111827] border border-[#E5E7EB] hover:bg-[#F3F4F6] transition-colors">
+                <Volume2 size={14} /> {L(lang, { ko: '듣기', zh: '听', en: 'Listen' })}
               </button>
-              <button onClick={() => copyText(customResult, 'custom')} className="flex items-center gap-1 px-2 py-1 bg-white rounded-lg text-xs text-[#111827] border border-[#E5E7EB]">
-                {copiedIdx === 'custom' ? <Check size={12} /> : <Copy size={12} />}
+              <button onClick={() => copyText(customResult, 'custom')} className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-lg text-xs text-[#111827] border border-[#E5E7EB] hover:bg-[#F3F4F6] transition-colors">
+                {copiedIdx === 'custom' ? <Check size={14} /> : <Copy size={14} />}
                 {copiedIdx === 'custom' ? L(lang, { ko: '복사됨', zh: '已复制', en: 'Copied' }) : L(lang, { ko: '복사', zh: '复制', en: 'Copy' })}
               </button>
             </div>

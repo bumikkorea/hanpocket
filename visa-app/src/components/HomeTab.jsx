@@ -240,12 +240,12 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-[#FAFAF8] overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', touchAction: 'pan-y' }}>
+    <div className="bg-[#FAFAF8] overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', touchAction: 'pan-y', height: 'calc(100vh - 120px)' }}>
       {/* Cards stack */}
       <div
         ref={containerRef}
-        className="flex-1 relative overflow-hidden"
-        style={{ height: 'calc(100vh - 120px)' }}
+        className="relative overflow-hidden"
+        style={{ height: 'calc(100vh - 160px)' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}

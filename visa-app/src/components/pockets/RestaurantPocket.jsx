@@ -87,7 +87,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '안녕하세요, 예약한 김철수입니다',
         example_zh: '你好，我是预约的金哲洙',
         example_pronunciation: 'annyeonghaseyo, yeyakhan gimcheolsu-imnida',
-        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'people_count',
@@ -97,7 +97,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: `${peopleCount}명 자리 있나요?`,
         example_zh: `有${peopleCount}位的位置吗？`,
         example_pronunciation: `${peopleCount}myeong jari innayo?`,
-        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'reservation',
@@ -107,7 +107,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '7시에 예약했어요',
         example_zh: '我7点预约了',
         example_pronunciation: 'ilgopsi-e yeyakhaesseoyo',
-        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'seats_available',
@@ -117,7 +117,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '창가 자리 있어요?',
         example_zh: '有靠窗的位子吗？',
         example_pronunciation: 'changgajari isseoyo?',
-        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'wait_time',
@@ -127,7 +127,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '30분 정도 기다려요',
         example_zh: '大概等30分钟',
         example_pronunciation: 'samsipbun jeongdo gidaryeoyo',
-        unsplash: 'https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       }
     ],
     order: [
@@ -139,7 +139,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '이거 주세요, 매운 걸로요',
         example_zh: '请给我这个，要辣的',
         example_pronunciation: 'igeo juseyo, maeun geollo-yo',
-        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'recommend',
@@ -149,7 +149,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '가장 인기 있는 추천 메뉴 뭐예요?',
         example_zh: '最受欢迎的推荐菜是什么？',
         example_pronunciation: 'gajang ingi-inneun chucheon menyu mwoyeyo?',
-        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'no_spicy',
@@ -159,7 +159,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '매운 거 빼고 만들어주세요',
         example_zh: '请做不辣的',
         example_pronunciation: 'maeun geo ppaego mandeureo-juseyo',
-        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'one_more',
@@ -169,7 +169,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '같은 걸로 한 개 더 주세요',
         example_zh: '请再给一个同样的',
         example_pronunciation: 'gateun geollo han gae deo juseyo',
-        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'water',
@@ -179,7 +179,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '찬물 좀 주세요',
         example_zh: '请给我一些冰水',
         example_pronunciation: 'chanmul jom juseyo',
-        unsplash: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       }
     ],
     payment: [
@@ -191,7 +191,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '계산이요, 카드로 할게요',
         example_zh: '结账，用卡支付',
         example_pronunciation: 'gyesaniyo, kadeu-ro halgeyo',
-        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'card_ok',
@@ -201,7 +201,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '카드 결제 돼요?',
         example_zh: '可以用卡支付吗？',
         example_pronunciation: 'kadeu gyeolje dwaeyo?',
-        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'receipt',
@@ -211,7 +211,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: '영수증 따로 주세요',
         example_zh: '请单独给我收据',
         example_pronunciation: 'yeongsujeung ttaro juseyo',
-        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'separate_bills',
@@ -221,7 +221,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: 'N빵으로 따로따로 계산해주세요',
         example_zh: '请分N份结账',
         example_pronunciation: 'enbppang-eulo ttarottaro gyesanhae-juseyo',
-        unsplash: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       }
     ],
     banchan: [
@@ -234,7 +234,7 @@ export default function RestaurantPocket({ lang }) {
         example_zh: '泡菜很好吃',
         example_pronunciation: 'gimchi masisseoyo',
         description: '매운 배추 절임',
-        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'kkakdugi',
@@ -245,7 +245,7 @@ export default function RestaurantPocket({ lang }) {
         example_zh: '请再给一些萝卜泡菜',
         example_pronunciation: 'kkakdugi deo juseyo',
         description: '무 깍둑썰기',
-        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'spinach',
@@ -256,7 +256,7 @@ export default function RestaurantPocket({ lang }) {
         example_zh: '菠菜怎么做？',
         example_pronunciation: 'sigeumchi-namul eotteoke mandeureoyo?',
         description: '참기름 무침',
-        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'beansprouts',
@@ -267,7 +267,7 @@ export default function RestaurantPocket({ lang }) {
         example_zh: '豆芽很脆',
         example_pronunciation: 'kongnamul asakasak-haeyo',
         description: '삶은 콩나물',
-        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       },
       {
         id: 'japchae',
@@ -278,7 +278,7 @@ export default function RestaurantPocket({ lang }) {
         example_zh: '杂菜做得很好吃',
         example_pronunciation: 'japchae masitkke mandeusy-eotneyo',
         description: '당면 볶음',
-        unsplash: 'https://images.unsplash.com/photo-1582313142862-988d2373ef1f?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       }
     ]
   }
@@ -307,7 +307,7 @@ export default function RestaurantPocket({ lang }) {
         example_ko: `저는 ${allergyName} 알레르기가 있어요`,
         example_zh: `我对${L('zh', allergy.name)}过敏`,
         example_pronunciation: `jeoneun ${allergyName} allereugiga isseoyo`,
-        unsplash: 'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=200&fit=crop&q=80'
+        unsplash: null
       }
     }).filter(Boolean)
   }

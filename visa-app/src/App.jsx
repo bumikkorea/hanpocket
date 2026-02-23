@@ -1765,7 +1765,7 @@ function AppInner() {
                 <div className={`px-4 py-1 rounded-full transition-all ${active ? 'bg-[#D2E3FC]' : ''}`}>
                   <Icon size={22} className={active ? 'text-[#4285F4]' : 'text-[#5F6368]'} />
                 </div>
-                <span className={`text-[10px] font-medium ${active ? 'text-[#4285F4]' : 'text-[#5F6368]'}`}>{L(lang, item.label)}</span>
+                <span className={`text-[10px] font-light tracking-wide ${active ? 'text-[#4285F4]' : 'text-[#5F6368]'}`}>{L(lang, item.label)}</span>
               </button>
             )
           })}

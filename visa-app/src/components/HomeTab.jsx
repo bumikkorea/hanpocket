@@ -233,7 +233,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                 willChange: 'transform, opacity'
               }}
             >
-              <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6 relative overflow-hidden w-full h-full">
+              <div className="bg-white rounded-lg border border-gray-200 p-6 relative overflow-hidden w-full h-full">
                 {/* Page fold effect */}
                 {dragX !== 0 && index === currentIndex && (() => {
                   const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)

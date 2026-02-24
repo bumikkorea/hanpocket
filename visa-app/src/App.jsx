@@ -1521,8 +1521,8 @@ function AppInner() {
             <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
               <Globe size={20} />
             </button>
-            <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-1">
-              <Menu size={20} />
+            <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -mr-2">
+              <Menu size={22} />
             </button>
           </div>
         </div>
@@ -1979,12 +1979,12 @@ function FloatingChatbot({ lang }) {
       {/* App Shortcuts Sidebar */}
       <>
         <div 
-          className="fixed inset-0 bg-black z-50 transition-opacity duration-300"
+          className="fixed inset-0 bg-black z-[100] transition-opacity duration-300"
           style={{ opacity: showAppMenu ? 0.5 : 0, pointerEvents: showAppMenu ? 'auto' : 'none' }}
           onClick={() => setShowAppMenu(false)}
         />
         <div 
-          className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-50 transition-transform duration-300 ease-out"
+          className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-[101] transition-transform duration-300 ease-out"
           style={{ transform: showAppMenu ? 'translateX(0)' : 'translateX(100%)' }}
         >
             {/* Header */}

@@ -572,6 +572,11 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
     if (naverUser) return { provider: 'naver', nickname: naverUser.nickname || naverUser.name, icon: '🟢' }
     if (wechatUser) return { provider: 'wechat', nickname: wechatUser.nickname, icon: '💚' }
     if (alipayUser) return { provider: 'alipay', nickname: alipayUser.nickName, icon: '🔵' }
+    // profile에 저장된 loginMethod도 체크
+    if (profile?.loginMethod) {
+      const icons = { kakao: '💬', naver: '🟢', wechat: '💚', alipay: '🔵' }
+      return { provider: profile.loginMethod, nickname: profile.nickname || '사용자', icon: icons[profile.loginMethod] || '👤' }
+    }
     return null
   }
 
@@ -690,15 +695,21 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
             {loginInfo?.nickname || (lang === 'ko' ? '사용자' : lang === 'zh' ? '用户' : 'User')}
           </div>
           
-          {loginInfo && (
-            <div className="text-sm flex items-center justify-center gap-1" style={{ color: 'var(--text-secondary)' }}>
-              <span className="text-xs">{loginInfo.icon}</span>
-              {loginInfo.provider === 'kakao' && (lang === 'ko' ? '카카오로 로그인' : lang === 'zh' ? 'Kakao登录' : 'Login with Kakao')}
-              {loginInfo.provider === 'naver' && (lang === 'ko' ? '네이버로 로그인' : lang === 'zh' ? 'Naver登录' : 'Login with Naver')}
-              {loginInfo.provider === 'wechat' && (lang === 'ko' ? 'WeChat으로 로그인' : lang === 'zh' ? '微信登录' : 'Login with WeChat')}
-              {loginInfo.provider === 'alipay' && (lang === 'ko' ? 'Alipay로 로그인' : lang === 'zh' ? '支付宝登录' : 'Login with Alipay')}
-            </div>
-          )}
+          <div className="text-sm flex items-center justify-center gap-1" style={{ color: 'var(--text-secondary)' }}>
+            {loginInfo ? (
+              <>
+                <span className="text-xs">{loginInfo.icon}</span>
+                {loginInfo.provider === 'kakao' && (lang === 'ko' ? '카카오로 로그인' : lang === 'zh' ? 'Kakao登录' : 'Login with Kakao')}
+                {loginInfo.provider === 'naver' && (lang === 'ko' ? '네이버로 로그인' : lang === 'zh' ? 'Naver登录' : 'Login with Naver')}
+                {loginInfo.provider === 'wechat' && (lang === 'ko' ? 'WeChat으로 로그인' : lang === 'zh' ? '微信登录' : 'Login with WeChat')}
+                {loginInfo.provider === 'alipay' && (lang === 'ko' ? 'Alipay로 로그인' : lang === 'zh' ? '支付宝登录' : 'Login with Alipay')}
+              </>
+            ) : (
+              <span style={{ color: '#EF4444' }}>
+                {lang === 'ko' ? '⚠️ 소셜 로그인 안 됨' : lang === 'zh' ? '⚠️ 未登录社交账号' : '⚠️ No social login'}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* 구분선 */}

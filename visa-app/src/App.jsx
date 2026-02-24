@@ -1814,14 +1814,14 @@ function AppInner() {
 
       {/* Google-style Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom" style={{ backgroundColor: 'var(--bg-primary)', borderTop: '1px solid var(--border-primary)' }}>
-        <div className="flex items-center justify-around py-1">
+        <div className="flex items-center justify-around py-1.5">
           {bottomTabs.map(item => {
             const active = tab === item.id
             return (
               <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
-                className="flex flex-col items-center gap-0 py-0.5">
+                className="flex flex-col items-center gap-0.5 py-1">
                 {item.id === 'pocket' ? (
-                  <svg width="20" height="20" viewBox="0 0 40 40" fill="none" className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'}>
+                  <svg width="22" height="22" viewBox="0 0 40 40" fill="none" className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'}>
                     <path d="M20 4C14 4 8 8 8 8L6 12C6 12 5 16 6 20C7 24 10 28 14 31C17 33 20 36 20 36C20 36 23 33 26 31C30 28 33 24 34 20C35 16 34 12 34 12L32 8C32 8 26 4 20 4Z" fill={active ? '#D94F4F' : 'currentColor'} opacity={active ? 1 : 0.3}/>
                     <path d="M14 12C14 12 13 14 14 17C15 20 17 22 20 24C23 22 25 20 26 17C27 14 26 12 26 12" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
                     <circle cx="16" cy="10" r="1" fill="white" opacity="0.6"/>
@@ -1829,9 +1829,9 @@ function AppInner() {
                     <line x1="22" y1="8" x2="22" y2="5" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
                   </svg>
                 ) : (
-                  <item.icon size={20} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />
+                  <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />
                 )}
-                <span className="text-[10px] font-light" style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
+                <span className="text-[11px] font-light" style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
               </button>
             )
           })}

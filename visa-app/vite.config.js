@@ -10,6 +10,10 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
+        cleanupOutdatedCaches: true,
+        // 오프라인 fallback 설정
+        navigateFallback: '/offline.html',
+        navigateFallbackDenylist: [/^\/_/, /\/[^\/]+\.[^\/]+$/],
         // App shell (HTML/CSS/JS) - Cache First
         runtimeCaching: [
           {
@@ -171,19 +175,19 @@ export default defineConfig({
             return 'tab-services';
           }
           
-          // Pocket 관련 컴포넌트들
-          if (id.includes('/pockets/')) {
-            return 'pockets';
+          // Home 관련 (순환 의존성 방지를 위해 가장 먼저 체크)
+          if (id.includes('/home/')) {
+            return 'home-components';
           }
           
-          // Widgets
+          // Widgets (home 다음에 체크)
           if (id.includes('/widgets/') || id.includes('/cards/')) {
             return 'widgets';
           }
           
-          // Home 관련
-          if (id.includes('/home/')) {
-            return 'home-components';
+          // Pocket 관련 컴포넌트들 (위젯과 분리)
+          if (id.includes('/pockets/')) {
+            return 'pockets';
           }
         }
       }

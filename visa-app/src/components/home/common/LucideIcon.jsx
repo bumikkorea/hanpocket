@@ -1,19 +1,19 @@
 import { 
   Stamp, FileText, BookOpen, ArrowLeftRight, Home, X, User, PawPrint, Newspaper, 
   Music, TrendingUp, Cloud, MapPin, Settings, Calendar, Clock, DollarSign, Package, 
-  Utensils, ShoppingBag, Sparkles, Heart, Plane, Star, Play, Volume2, Flame, Train, 
+  Utensils, ShoppingBag, ShoppingCart, Sparkles, Heart, Plane, Star, Play, Volume2, Flame, Train, 
   Check, Tag, Bike, Wrench, GraduationCap, Users, Clapperboard, Shirt, Siren, Coins, 
   MessageCircle, HelpCircle, Globe, Tv, Mic, Thermometer, Landmark, Briefcase, 
-  Building2, Dog, ChevronRight, ChevronDown, Plus 
+  Building2, Dog, ChevronRight, ChevronDown, Plus, Coffee, PartyPopper, Store
 } from 'lucide-react'
 
 const LUCIDE_ICON_MAP = { 
   Stamp, FileText, BookOpen, ArrowLeftRight, Home, X, User, PawPrint, Newspaper, 
   Music, TrendingUp, Cloud, MapPin, Settings, Calendar, Clock, DollarSign, Package, 
-  Utensils, ShoppingBag, Sparkles, Heart, Plane, Star, Play, Volume2, Flame, Train, 
+  Utensils, ShoppingBag, ShoppingCart, Sparkles, Heart, Plane, Star, Play, Volume2, Flame, Train, 
   Check, Tag, Bike, Wrench, GraduationCap, Users, Clapperboard, Shirt, Siren, Coins, 
   MessageCircle, HelpCircle, Globe, Tv, Mic, Thermometer, Landmark, Briefcase, 
-  Building2, Dog, ChevronRight, ChevronDown, Plus 
+  Building2, Dog, ChevronRight, ChevronDown, Plus, Coffee, PartyPopper, Store
 }
 
 export default function LucideIcon({ name, size = 16, className = '', ...props }) {

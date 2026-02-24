@@ -387,49 +387,64 @@ export default function AccommodationPocket({ lang = 'ko' }) {
     </div>
   );
 
+  // 소주제 탭 데이터
+  const tabs = [
+    { id: 'checkin', name: { ko: '체크인/아웃', zh: '入住/退房', en: 'Check-in/out' }, icon: DoorOpen },
+    { id: 'requests', name: { ko: '요청사항', zh: '要求事项', en: 'Requests' }, icon: MessageCircle },
+    { id: 'problems', name: { ko: '문제신고', zh: '问题报告', en: 'Problems' }, icon: AlertTriangle },
+    { id: 'extension', name: { ko: '연장', zh: '延长', en: 'Extension' }, icon: Clock },
+    { id: 'airbnb', name: { ko: '에어비앤비', zh: '爱彼迎', en: 'Airbnb' }, icon: Home },
+    { id: 'types', name: { ko: '숙소유형', zh: '住宿类型', en: 'Types' }, icon: Bed },
+    { id: 'booking', name: { ko: '예약앱', zh: '预订App', en: 'Booking' }, icon: Smartphone },
+    { id: 'tools', name: { ko: '도구', zh: '工具', en: 'Tools' }, icon: MapPin }
+  ]
+
   return (
-    <div className="p-6 bg-white" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="space-y-4" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* 토스트 메시지 */}
       {toast && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-lg z-50">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm z-50">
           {toast}
         </div>
       )}
 
-      <div className="flex items-center gap-3 mb-6">
-        <Home className="w-8 h-8" style={{ color: '#111827' }} />
-        <h2 className="text-2xl font-bold" style={{ color: '#111827' }}>
-          {L(lang, { ko: '숙소 주머니', zh: '住宿袋', en: 'Accommodation Pocket' })}
-        </h2>
+      {/* 소주제 탭 */}
+      <div className="flex flex-wrap gap-1.5 pb-2">
+        {tabs.map((tab) => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-all ${
+                isActive
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-gray-100 text-gray-500'
+              }`}
+            >
+              <Icon size={12} />
+              <span className="font-medium">{L(lang, tab.name)}</span>
+            </button>
+          )
+        })}
       </div>
 
-      {/* 탭 네비게이션 */}
-      <div className="flex mb-6 bg-gray-100 rounded-lg p-1 overflow-x-auto">
-        {[
-          { key: 'checkin', label: '체크인/아웃', icon: '🏨' },
-          { key: 'requests', label: '요청사항', icon: '🛎️' },
-          { key: 'problems', label: '문제신고', icon: '⚠️' },
-          { key: 'extension', label: '연장', icon: '⏰' },
-          { key: 'airbnb', label: '에어비앤비', icon: '🏠' },
-          { key: 'types', label: '숙소유형', icon: '🏘️' },
-          { key: 'booking', label: '예약앱', icon: '📱' },
-          { key: 'tools', label: '도구', icon: '🔧' }
-        ].map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded whitespace-nowrap ${
-              activeTab === tab.key ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <span>{tab.icon}</span>
-            <span className="text-sm">{tab.label}</span>
-          </button>
-        ))}
+      {/* 활성 탭 밑줄 표시 */}
+      <div className="h-1 bg-gray-200 rounded-full relative mb-2">
+        <div 
+          className="absolute top-0 h-full bg-gray-900 rounded-full transition-all duration-300"
+          style={{
+            left: `${tabs.findIndex(t => t.id === activeTab) * (100 / tabs.length)}%`,
+            width: `${100 / tabs.length}%`
+          }}
+        />
       </div>
 
-      {/* 체크인/아웃 */}
-      {activeTab === 'checkin' && (
+      {/* 콘텐츠 영역 */}
+      <div className="space-y-4">
+        {/* 체크인/아웃 */}
+        {activeTab === 'checkin' && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold" style={{ color: '#111827' }}>
             체크인/아웃 표현
@@ -698,6 +713,7 @@ export default function AccommodationPocket({ lang = 'ko' }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

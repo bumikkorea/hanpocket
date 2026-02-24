@@ -309,48 +309,63 @@ export default function ShoppingPocket({ lang = 'ko' }) {
     </div>
   );
 
+  // 소주제 탭 데이터
+  const tabs = [
+    { id: 'basic', name: { ko: '기본', zh: '基本', en: 'Basic' }, icon: ShoppingBag },
+    { id: 'refund', name: { ko: '환불/교환', zh: '退款/换货', en: 'Refund' }, icon: RefreshCw },
+    { id: 'payment', name: { ko: '결제', zh: '支付', en: 'Payment' }, icon: CreditCard },
+    { id: 'bargain', name: { ko: '흥정', zh: '讨价还价', en: 'Bargain' }, icon: Percent },
+    { id: 'online', name: { ko: '온라인', zh: '在线', en: 'Online' }, icon: Smartphone },
+    { id: 'dutyfree', name: { ko: '면세점', zh: '免税店', en: 'Duty-free' }, icon: Gift },
+    { id: 'tools', name: { ko: '도구', zh: '工具', en: 'Tools' }, icon: Calculator }
+  ]
+
   return (
-    <div className="p-6 bg-white" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="space-y-4" style={{ fontFamily: 'Inter, sans-serif' }}>
       {/* 토스트 메시지 */}
       {toast && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-black text-white px-4 py-2 rounded-lg z-50">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm z-50">
           {toast}
         </div>
       )}
 
-      <div className="flex items-center gap-3 mb-6">
-        <ShoppingBag className="w-8 h-8" style={{ color: '#111827' }} />
-        <h2 className="text-2xl font-bold" style={{ color: '#111827' }}>
-          {L(lang, { ko: '쇼핑 주머니', zh: '购物袋', en: 'Shopping Pocket' })}
-        </h2>
+      {/* 소주제 탭 */}
+      <div className="flex flex-wrap gap-1.5 pb-2">
+        {tabs.map((tab) => {
+          const Icon = tab.icon
+          const isActive = activeTab === tab.id
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs transition-all ${
+                isActive
+                  ? 'bg-gray-900 text-white'
+                  : 'bg-gray-100 text-gray-500'
+              }`}
+            >
+              <Icon size={12} />
+              <span className="font-medium">{L(lang, tab.name)}</span>
+            </button>
+          )
+        })}
       </div>
 
-      {/* 탭 네비게이션 */}
-      <div className="flex mb-6 bg-gray-100 rounded-lg p-1 overflow-x-auto">
-        {[
-          { key: 'basic', label: '기본', icon: '🛍️' },
-          { key: 'refund', label: '환불/교환', icon: '🔄' },
-          { key: 'payment', label: '결제', icon: '💳' },
-          { key: 'bargain', label: '흥정', icon: '💬' },
-          { key: 'online', label: '온라인', icon: '📱' },
-          { key: 'dutyfree', label: '면세점', icon: '✈️' },
-          { key: 'tools', label: '도구', icon: '🔧' }
-        ].map(tab => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded whitespace-nowrap ${
-              activeTab === tab.key ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <span>{tab.icon}</span>
-            <span className="text-sm">{tab.label}</span>
-          </button>
-        ))}
+      {/* 활성 탭 밑줄 표시 */}
+      <div className="h-1 bg-gray-200 rounded-full relative mb-2">
+        <div 
+          className="absolute top-0 h-full bg-gray-900 rounded-full transition-all duration-300"
+          style={{
+            left: `${tabs.findIndex(t => t.id === activeTab) * (100 / tabs.length)}%`,
+            width: `${100 / tabs.length}%`
+          }}
+        />
       </div>
 
-      {/* 기본 쇼핑 표현 */}
-      {activeTab === 'basic' && (
+      {/* 콘텐츠 영역 */}
+      <div className="space-y-4">
+        {/* 기본 쇼핑 표현 */}
+        {activeTab === 'basic' && (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold" style={{ color: '#111827' }}>
             기본 쇼핑 표현
@@ -619,6 +634,7 @@ export default function ShoppingPocket({ lang = 'ko' }) {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

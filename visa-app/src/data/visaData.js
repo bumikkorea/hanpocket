@@ -495,6 +495,44 @@ export const documentAuth = {
   ],
 };
 
+// ─── 신규 정부 서비스 (2026년) ───
+export const newGovernmentServices = {
+  personalSignatureSystem: {
+    title: { 
+      ko: '개인서명확인서 제도 (2026년 신규)', 
+      zh: '个人签名确认书制度（2026年新政策）', 
+      en: 'Personal Signature Verification System (New 2026)' 
+    },
+    description: {
+      ko: '외국인도 인감증명서와 동일한 법적 효력을 가진 개인서명확인서를 발급받을 수 있게 되었습니다.',
+      zh: '外国人现在也可以获得与印章证明书具有同等法律效力的个人签名确认书。',
+      en: 'Foreign residents can now obtain Personal Signature Verification Certificates with the same legal effect as personal seal certificates.'
+    },
+    icon: '✍️',
+    startDate: '2026-01-09',
+    requirements: {
+      ko: ['거주증 또는 국외거주신고증', '본인 방문 필수'],
+      zh: ['居住证或海外居住申报证', '必须本人访问'],
+      en: ['Residence Card or Overseas Korean Resident Card', 'Personal visit required']
+    },
+    location: {
+      ko: '관할 시/군/구청 또는 읍/면/동 주민센터',
+      zh: '管辖市/郡/区政府或邑/面/洞居民中心',
+      en: 'Local Community Service Center (Si/Gun/Gu Office or Eup/Myeon/Dong)'
+    },
+    process: {
+      ko: ['신분증 지참 방문', '전자패드에 서명', '즉시 발급'],
+      zh: ['携带身份证访问', '在电子板上签字', '立即发放'],
+      en: ['Visit with ID', 'Sign on electronic pad', 'Immediate issuance']
+    },
+    benefits: {
+      ko: '개인 인감 불필요, 간편한 절차, 즉시 발급, 법적 효력 동일',
+      zh: '无需个人印章，手续简便，立即发放，法律效力相同',
+      en: 'No personal seal needed, simple process, immediate issuance, same legal effect'
+    }
+  }
+};
+
 // ─── 여권 요건 ───
 export const passportRequirements = [
   { ko: '유효기간 6개월 이상 남아 있어야 함', zh: '有效期需剩余6个月以上', en: 'Must have 6+ months validity remaining' },

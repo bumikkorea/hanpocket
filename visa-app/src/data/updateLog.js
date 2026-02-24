@@ -1,6 +1,23 @@
 // 업데이트 로그 (공지사항용)
 export const updateLog = [
   {
+    date: '2026-02-25',
+    type: 'policy_update',
+    status: 'new_feature',
+    description: {
+      ko: '새로운 정책 발견: 개인서명확인서 제도 도입 (2026.01.09)',
+      zh: '发现新政策：引入个人签名确认书制度 (2026.01.09)',
+      en: 'New policy found: Personal Signature Verification System introduced (2026.01.09)'
+    },
+    details: {
+      ko: '외국인도 인감증명서와 동일한 법적 효력을 가진 개인서명확인서를 발급받을 수 있게 됨. 거주증 또는 국외거주신고증으로 관할 시/군/구청 또는 읍/면/동에서 신청 가능.',
+      zh: '外国人也可以获得与印章证明书具有同等法律效力的个人签名确认书。可凭居住证或海外居住申报证在管辖市/郡/区政府或邑/面/洞申请。',
+      en: 'Foreign residents can now obtain Personal Signature Verification Certificates with the same legal effect as personal seal certificates using their Residence Card or Overseas Korean Resident Card at local community service centers.'
+    },
+    sources: ['immigration.go.kr'],
+    next_check: '2026-02-26'
+  },
+  {
     date: '2026-02-24',
     type: 'system_check',
     status: 'no_changes',
@@ -11,7 +28,7 @@ export const updateLog = [
     },
     details: {
       ko: '출입국청, 비자포털, 하이코리아 사이트 확인. 현재 데이터(2/20 최종 업데이트)가 최신 상태 유지.',
-      zh: '检查了出入境管理所、签证门户、Hi Korea网站。当前数据（2/20最后更新）保持最新状态。',
+      zh: '检查了出입境管理所、签证门户、Hi Korea网站。当前数据（2/20最后更新）保持最新状态。',
       en: 'Checked immigration office, visa portal, and Hi Korea sites. Current data (last updated 2/20) remains up to date.'
     },
     sources: ['immigration.go.kr', 'visa.go.kr', 'hikorea.go.kr'],
@@ -38,9 +55,9 @@ export const updateLog = [
 
 // 자동 업데이트 스케줄 정보
 export const autoUpdateInfo = {
-  ko: '매일 오전 9시 자동 업데이트 확인 (마지막: 2026-02-24)',
-  zh: '每日上午9点自动更新检查 (最后: 2026-02-24)',
-  en: 'Automatic update check at 9 AM daily (Last: 2026-02-24)',
+  ko: '매일 오전 9시 자동 업데이트 확인 (마지막: 2026-02-25)',
+  zh: '每日上午9点自动更新检查 (最后: 2026-02-25)',
+  en: 'Automatic update check at 9 AM daily (Last: 2026-02-25)',
 };
 
 // 데이터 소스

@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🇺🇸 US MARKET Analytics (Mobile)</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#f5f5f7;color:#1d1d1f;font-family:'Pretendard Variable',-apple-system,sans-serif;line-height:1.4;margin:0;padding:8px;font-size:12px;overflow-x:hidden}
+.wrap{max-width:100vw;margin:0 auto;overflow:hidden}
+
+.header{margin-bottom:16px}
+.header h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-0.5px}
+.header p{font-size:11px;color:#86868b;margin:4px 0 0}
+
+details{margin-bottom:16px;background:#ffffff;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.04)}
+details[open]{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+summary{padding:16px;font-size:14px;font-weight:700;color:#1d1d1f;cursor:pointer;user-select:none;border-bottom:1px solid #f0f0f0;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'▼';float:right;font-size:12px;color:#86868b;transition:transform .25s}
+details:not([open]) summary::after{transform:rotate(-90deg)}
+.details-content{padding:16px}
+
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px}
+.m-card{background:#f9f9fb;border:1px solid #f0f0f0;border-radius:8px;padding:8px;text-align:center}
+.m-label{font-size:8px;color:#86868b;font-weight:600;margin-bottom:2px}
+.m-val{font-size:12px;font-weight:800}
+.m-chg{font-size:9px;font-weight:700}
+
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:calc(100vw - 60px)}
+table{width:100%;border-collapse:collapse;font-size:10px;min-width:600px}
+thead th{background:#fefefe;padding:6px 4px;text-align:left;font-size:8px;color:#86868b;border-bottom:1px solid #f5f5f7;white-space:nowrap}
+tbody td{padding:6px 4px;border-bottom:1px solid #f8f8fa;font-size:9px}
+
+.sec-row td{background:#f9f9fb;font-weight:700;color:#1d1d1f;padding:8px 4px}
+.stock-info{display:flex;flex-direction:column}
+.stock-ticker{font-weight:700;color:#000;font-size:10px}
+.stock-name{font-size:8px;color:#86868b}
+
+.tag-danger{color:#ff3b30;font-weight:700;font-size:8px}
+.tag-warn{color:#f59e0b;font-weight:700;font-size:8px}
+.tag-safe{color:#10b981;font-weight:700;font-size:8px}
+
+.rs-row{display:flex;align-items:center;margin-bottom:8px;padding:8px;background:#fafafa;border-radius:6px;border:1px solid #eee}
+.rs-name{width:80px;font-size:10px;font-weight:600;color:#333;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rs-track{flex:1;height:8px;background:#f0f0f0;border-radius:4px;position:relative;overflow:hidden;margin:0 6px}
+.rs-bar{position:absolute;height:100%;border-radius:4px}
+.rs-zero{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:#ccc}
+.rs-val{width:40px;text-align:right;font-size:10px;font-weight:600;flex-shrink:0}
+
+.insider-card{background:#fff;border:1px solid #f0f0f0;border-radius:8px;padding:10px;margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <h1>🇺🇸 US MARKET Analytics (Mobile)</h1>
+    <p>2026-02-25 00:58 기준 · 101종목 · JS 없이 동작</p>
+  </div>
+
+  <details open>
+    <summary>🌍 거시경제 & 지정학 브리핑</summary>
+    <div class="details-content">
+      <p style="font-size:12px;line-height:1.6;color:#333;padding:10px;background:#f8f8fa;border-radius:6px;border-left:3px solid #000">
+        <b>[글로벌 지정학 투자 레이더]</b> (2026-02-24 16:42)<br>
+        뉴스 데이터 기반 주식 시장 낙수효과 분석
+      </p>
+    </div>
+  </details>
+
+  <details open>
+    <summary>📈 지표 인텔리전스 (1M 기본값)</summary>
+    <div class="details-content">
+      <h3 style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:8px">지수</h3>
+      <div class="card-grid"><div class="m-card">
+          <p class="m-label">S&P500</p>
+          <p class="m-val">6,871</p>
+          <p class="m-chg" id="idx-S&P500" style="color:#007aff">-0.2%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">Nasdaq 100</p>
+          <p class="m-val">24,920</p>
+          <p class="m-chg" id="idx-Nasdaq100" style="color:#ff3b30">+0.1%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">Dow Jones</p>
+          <p class="m-val">49,163</p>
+          <p class="m-chg" id="idx-DowJones" style="color:#007aff">-0.7%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">Russell 2000</p>
+          <p class="m-val">2,650</p>
+          <p class="m-chg" id="idx-Russell2000" style="color:#ff3b30">+1.0%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">EWY (Korea ETF)</p>
+          <p class="m-val">144.58</p>
+          <p class="m-chg" id="idx-EWYKoreaETF" style="color:#ff3b30">+20.2%</p>
+        </div></div>
+      
+      <h3 style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:8px">매크로</h3>
+      <div class="card-grid"><div class="m-card">
+          <p class="m-label">VIX</p>
+          <p class="m-val">19.94</p>
+          <p class="m-chg" id="macro-VIX" style="color:#ff3b30">+7.0%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">US 10Y</p>
+          <p class="m-val">4.04</p>
+          <p class="m-chg" id="macro-US10Y" style="color:#007aff">-5.5%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">US 2Y</p>
+          <p class="m-val">3.59</p>
+          <p class="m-chg" id="macro-US2Y" style="color:#007aff">-0.2%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">DXY</p>
+          <p class="m-val">97.89</p>
+          <p class="m-chg" id="macro-DXY" style="color:#ff3b30">+0.3%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">Gold</p>
+          <p class="m-val">5,171</p>
+          <p class="m-chg" id="macro-Gold" style="color:#ff3b30">+5.1%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">Brent Oil</p>
+          <p class="m-val">70.76</p>
+          <p class="m-chg" id="macro-BrentOil" style="color:#ff3b30">+1.9%</p>
+        </div>
+<div class="m-card">
+          <p class="m-label">Bitcoin</p>
+          <p class="m-val">63,838</p>
+          <p class="m-chg" id="macro-Bitcoin" style="color:#007aff">-12.6%</p>
+        </div></div>
+    </div>
+  </details>
+
+  <details open>
+    <summary>🔥 종목 히트맵 (Nasdaq 100)</summary>
+    <div class="details-content">
+      <h3 style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:8px">6컬럼 히트맵</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Ticker</th>
+            <th>RSI</th>
+            <th>DEV</th>
+            <th>BB%</th>
+            <th>STOCH</th>
+            <th>VOL</th>
+            <th>SCORE</th>
+          </tr></thead>
+          <tbody><tr class="sec-row" data-sector="Utilities">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Utilities">▶</span>
+              <strong>Utilities</strong>
+              <span class="sec-stat">평균 RSI: 76.8 | 지수: <span class="tag-warn">2.2</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Utilities" data-name="컨스텔레이션에너지" data-ticker="CEG" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CEG</span>
+                  <span class="stock-name">컨스텔레이션에너지</span>
+                </div>
+              </td>
+              <td class="col-num">77</td>
+              <td class="col-num">+6.9%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">96</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">3/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Utilities" data-name="아메리칸일렉트릭파워" data-ticker="AEP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">AEP</span>
+                  <span class="stock-name">아메리칸일렉트릭파워</span>
+                </div>
+              </td>
+              <td class="col-num">77</td>
+              <td class="col-num">+3.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">90</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Utilities" data-name="엑셀론" data-ticker="EXC" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">EXC</span>
+                  <span class="stock-name">엑셀론</span>
+                </div>
+              </td>
+              <td class="col-num">73</td>
+              <td class="col-num">+2.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">83</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Utilities" data-name="엑셀에너지" data-ticker="XEL" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">XEL</span>
+                  <span class="stock-name">엑셀에너지</span>
+                </div>
+              </td>
+              <td class="col-num">79</td>
+              <td class="col-num">+4.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">97</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Financials">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Financials">▶</span>
+              <strong>Financials</strong>
+              <span class="sec-stat">평균 RSI: 60.4 | 지수: <span class="tag-warn">2.0</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Financials" data-name="PayPal" data-ticker="PYPL" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">PYPL</span>
+                  <span class="stock-name">PayPal</span>
+                </div>
+              </td>
+              <td class="col-num">60</td>
+              <td class="col-num">+5.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">83</td>
+              <td class="col-num">0.4x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Energy">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Energy">▶</span>
+              <strong>Energy</strong>
+              <span class="sec-stat">평균 RSI: 67.2 | 지수: <span class="tag-safe">1.5</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Energy" data-name="베이커휴즈" data-ticker="BKR" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">BKR</span>
+                  <span class="stock-name">베이커휴즈</span>
+                </div>
+              </td>
+              <td class="col-num">81</td>
+              <td class="col-num">+5.9%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">3/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Energy" data-name="다이아몬드백에너지" data-ticker="FANG" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">FANG</span>
+                  <span class="stock-name">다이아몬드백에너지</span>
+                </div>
+              </td>
+              <td class="col-num">53</td>
+              <td class="col-num">-1.9%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">0</td>
+              <td class="col-num">0.7x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Consumer Staples">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Consumer Staples">▶</span>
+              <strong>Consumer Staples</strong>
+              <span class="sec-stat">평균 RSI: 61.3 | 지수: <span class="tag-safe">1.2</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Consumer Staples" data-name="큐릭닥터페퍼" data-ticker="KDP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">KDP</span>
+                  <span class="stock-name">큐릭닥터페퍼</span>
+                </div>
+              </td>
+              <td class="col-num">78</td>
+              <td class="col-num">+5.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.6x</td>
+              <td class="col-tag"><span class="tag-danger">4/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Staples" data-name="몬스터베버리지" data-ticker="MNST" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MNST</span>
+                  <span class="stock-name">몬스터베버리지</span>
+                </div>
+              </td>
+              <td class="col-num">81</td>
+              <td class="col-num">+2.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">98</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Staples" data-name="펩시코" data-ticker="PEP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">PEP</span>
+                  <span class="stock-name">펩시코</span>
+                </div>
+              </td>
+              <td class="col-num">53</td>
+              <td class="col-num">+0.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">85</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Staples" data-name="코스트코" data-ticker="COST" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">COST</span>
+                  <span class="stock-name">코스트코</span>
+                </div>
+              </td>
+              <td class="col-num">61</td>
+              <td class="col-num">-0.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">34</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Staples" data-name="크래프트하인즈" data-ticker="KHC" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">KHC</span>
+                  <span class="stock-name">크래프트하인즈</span>
+                </div>
+              </td>
+              <td class="col-num">42</td>
+              <td class="col-num">-0.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">52</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Staples" data-name="몬데렐즈" data-ticker="MDLZ" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MDLZ</span>
+                  <span class="stock-name">몬데렐즈</span>
+                </div>
+              </td>
+              <td class="col-num">50</td>
+              <td class="col-num">+0.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">50</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Other">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Other">▶</span>
+              <strong>Other</strong>
+              <span class="sec-stat">평균 RSI: 51.5 | 지수: <span class="tag-safe">0.8</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Other" data-name="베리스크" data-ticker="VRSK" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">VRSK</span>
+                  <span class="stock-name">베리스크</span>
+                </div>
+              </td>
+              <td class="col-num">81</td>
+              <td class="col-num">+5.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-danger">4/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="코카콜라유로퍼시픽" data-ticker="CCEP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CCEP</span>
+                  <span class="stock-name">코카콜라유로퍼시픽</span>
+                </div>
+              </td>
+              <td class="col-num">99</td>
+              <td class="col-num">+6.7%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-warn">3/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="GE헬스케어" data-ticker="GEHC" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">GEHC</span>
+                  <span class="stock-name">GE헬스케어</span>
+                </div>
+              </td>
+              <td class="col-num">87</td>
+              <td class="col-num">+3.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="Linde plc" data-ticker="LIN" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">LIN</span>
+                  <span class="stock-name">Linde plc</span>
+                </div>
+              </td>
+              <td class="col-num">99</td>
+              <td class="col-num">+5.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="Thomson Reuters" data-ticker="TRI" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">TRI</span>
+                  <span class="stock-name">Thomson Reuters</span>
+                </div>
+              </td>
+              <td class="col-num">51</td>
+              <td class="col-num">+5.6%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">1.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="암홀딩스" data-ticker="ARM" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ARM</span>
+                  <span class="stock-name">암홀딩스</span>
+                </div>
+              </td>
+              <td class="col-num">57</td>
+              <td class="col-num">+3.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="CoStar Group" data-ticker="CSGP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CSGP</span>
+                  <span class="stock-name">CoStar Group</span>
+                </div>
+              </td>
+              <td class="col-num">44</td>
+              <td class="col-num">+2.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">90</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="Monolithic Power Systems" data-ticker="MPWR" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MPWR</span>
+                  <span class="stock-name">Monolithic Power Systems</span>
+                </div>
+              </td>
+              <td class="col-num">69</td>
+              <td class="col-num">+3.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="핀둬둬" data-ticker="PDD" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">PDD</span>
+                  <span class="stock-name">핀둬둬</span>
+                </div>
+              </td>
+              <td class="col-num">53</td>
+              <td class="col-num">+2.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="로퍼테크놀로지" data-ticker="ROP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ROP</span>
+                  <span class="stock-name">로퍼테크놀로지</span>
+                </div>
+              </td>
+              <td class="col-num">39</td>
+              <td class="col-num">+0.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="앱러빈" data-ticker="APP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">APP</span>
+                  <span class="stock-name">앱러빈</span>
+                </div>
+              </td>
+              <td class="col-num">30</td>
+              <td class="col-num">-5.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">17</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="액손" data-ticker="AXON" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">AXON</span>
+                  <span class="stock-name">액손</span>
+                </div>
+              </td>
+              <td class="col-num">39</td>
+              <td class="col-num">+1.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">55</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="코그니전트" data-ticker="CTSH" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CTSH</span>
+                  <span class="stock-name">코그니전트</span>
+                </div>
+              </td>
+              <td class="col-num">19</td>
+              <td class="col-num">-9.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">10</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="페로비알" data-ticker="FER" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">FER</span>
+                  <span class="stock-name">페로비알</span>
+                </div>
+              </td>
+              <td class="col-num">48</td>
+              <td class="col-num">+0.7%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">48</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="Insmed Incorporated" data-ticker="INSM" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">INSM</span>
+                  <span class="stock-name">Insmed Incorporated</span>
+                </div>
+              </td>
+              <td class="col-num">68</td>
+              <td class="col-num">+3.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">66</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="인튜이트" data-ticker="INTU" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">INTU</span>
+                  <span class="stock-name">인튜이트</span>
+                </div>
+              </td>
+              <td class="col-num">18</td>
+              <td class="col-num">-9.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">12</td>
+              <td class="col-num">0.7x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="마벨테크놀로지" data-ticker="MRVL" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MRVL</span>
+                  <span class="stock-name">마벨테크놀로지</span>
+                </div>
+              </td>
+              <td class="col-num">30</td>
+              <td class="col-num">-0.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">30</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="MicroStrategy" data-ticker="MSTR" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MSTR</span>
+                  <span class="stock-name">MicroStrategy</span>
+                </div>
+              </td>
+              <td class="col-num">38</td>
+              <td class="col-num">-4.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">2</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="팔란티어" data-ticker="PLTR" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">PLTR</span>
+                  <span class="stock-name">팔란티어</span>
+                </div>
+              </td>
+              <td class="col-num">27</td>
+              <td class="col-num">-4.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">0</td>
+              <td class="col-num">0.4x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="씨게이트" data-ticker="STX" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">STX</span>
+                  <span class="stock-name">씨게이트</span>
+                </div>
+              </td>
+              <td class="col-num">54</td>
+              <td class="col-num">-3.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">0</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="Shopify" data-ticker="SHOP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">SHOP</span>
+                  <span class="stock-name">Shopify</span>
+                </div>
+              </td>
+              <td class="col-num">40</td>
+              <td class="col-num">+1.6%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">55</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="Walmart" data-ticker="WMT" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">WMT</span>
+                  <span class="stock-name">Walmart</span>
+                </div>
+              </td>
+              <td class="col-num">50</td>
+              <td class="col-num">-1.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">36</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="웨스턴디지털" data-ticker="WDC" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">WDC</span>
+                  <span class="stock-name">웨스턴디지털</span>
+                </div>
+              </td>
+              <td class="col-num">60</td>
+              <td class="col-num">-2.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">6</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Other" data-name="지스케일러" data-ticker="ZS" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ZS</span>
+                  <span class="stock-name">지스케일러</span>
+                </div>
+              </td>
+              <td class="col-num">24</td>
+              <td class="col-num">-11.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">15</td>
+              <td class="col-num">0.6x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Technology">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Technology">▶</span>
+              <strong>Technology</strong>
+              <span class="sec-stat">평균 RSI: 44.2 | 지수: <span class="tag-safe">0.7</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Technology" data-name="아날로그디바이스" data-ticker="ADI" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ADI</span>
+                  <span class="stock-name">아날로그디바이스</span>
+                </div>
+              </td>
+              <td class="col-num">85</td>
+              <td class="col-num">+6.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">3/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="어플라이드머티어리얼즈" data-ticker="AMAT" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">AMAT</span>
+                  <span class="stock-name">어플라이드머티어리얼즈</span>
+                </div>
+              </td>
+              <td class="col-num">81</td>
+              <td class="col-num">+6.9%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">95</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-warn">3/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="ASML" data-ticker="ASML" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ASML</span>
+                  <span class="stock-name">ASML</span>
+                </div>
+              </td>
+              <td class="col-num">75</td>
+              <td class="col-num">+4.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.4x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="KLA" data-ticker="KLAC" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">KLAC</span>
+                  <span class="stock-name">KLA</span>
+                </div>
+              </td>
+              <td class="col-num">71</td>
+              <td class="col-num">+2.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="램리서치" data-ticker="LRCX" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">LRCX</span>
+                  <span class="stock-name">램리서치</span>
+                </div>
+              </td>
+              <td class="col-num">73</td>
+              <td class="col-num">+3.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">85</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="마이크론" data-ticker="MU" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MU</span>
+                  <span class="stock-name">마이크론</span>
+                </div>
+              </td>
+              <td class="col-num">75</td>
+              <td class="col-num">+4.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">91</td>
+              <td class="col-num">0.4x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="AMD" data-ticker="AMD" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">AMD</span>
+                  <span class="stock-name">AMD</span>
+                </div>
+              </td>
+              <td class="col-num">45</td>
+              <td class="col-num">+2.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">80</td>
+              <td class="col-num">1.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="애플" data-ticker="AAPL" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">AAPL</span>
+                  <span class="stock-name">애플</span>
+                </div>
+              </td>
+              <td class="col-num">50</td>
+              <td class="col-num">+2.6%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">92</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="엔비디아" data-ticker="NVDA" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">NVDA</span>
+                  <span class="stock-name">엔비디아</span>
+                </div>
+              </td>
+              <td class="col-num">59</td>
+              <td class="col-num">+3.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.4x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="퀄컴" data-ticker="QCOM" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">QCOM</span>
+                  <span class="stock-name">퀄컴</span>
+                </div>
+              </td>
+              <td class="col-num">62</td>
+              <td class="col-num">+3.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="어도비" data-ticker="ADBE" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ADBE</span>
+                  <span class="stock-name">어도비</span>
+                </div>
+              </td>
+              <td class="col-num">38</td>
+              <td class="col-num">-2.9%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">45</td>
+              <td class="col-num">0.4x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="아틀라시안" data-ticker="TEAM" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">TEAM</span>
+                  <span class="stock-name">아틀라시안</span>
+                </div>
+              </td>
+              <td class="col-num">11</td>
+              <td class="col-num">-16.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">10</td>
+              <td class="col-num">0.6x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="오토데스크" data-ticker="ADSK" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ADSK</span>
+                  <span class="stock-name">오토데스크</span>
+                </div>
+              </td>
+              <td class="col-num">29</td>
+              <td class="col-num">-4.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">22</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="브로드컴" data-ticker="AVGO" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">AVGO</span>
+                  <span class="stock-name">브로드컴</span>
+                </div>
+              </td>
+              <td class="col-num">28</td>
+              <td class="col-num">-2.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">0</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="케이던스" data-ticker="CDNS" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CDNS</span>
+                  <span class="stock-name">케이던스</span>
+                </div>
+              </td>
+              <td class="col-num">46</td>
+              <td class="col-num">+0.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">50</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="Cisco" data-ticker="CSCO" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CSCO</span>
+                  <span class="stock-name">Cisco</span>
+                </div>
+              </td>
+              <td class="col-num">27</td>
+              <td class="col-num">-2.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">32</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="크라우드스트라이크" data-ticker="CRWD" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CRWD</span>
+                  <span class="stock-name">크라우드스트라이크</span>
+                </div>
+              </td>
+              <td class="col-num">26</td>
+              <td class="col-num">-12.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">4</td>
+              <td class="col-num">0.6x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="데이터독" data-ticker="DDOG" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">DDOG</span>
+                  <span class="stock-name">데이터독</span>
+                </div>
+              </td>
+              <td class="col-num">2</td>
+              <td class="col-num">-12.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">2</td>
+              <td class="col-num">0.5x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="Fortinet" data-ticker="FTNT" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">FTNT</span>
+                  <span class="stock-name">Fortinet</span>
+                </div>
+              </td>
+              <td class="col-num">27</td>
+              <td class="col-num">-7.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">6</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="Intel" data-ticker="INTC" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">INTC</span>
+                  <span class="stock-name">Intel</span>
+                </div>
+              </td>
+              <td class="col-num">41</td>
+              <td class="col-num">-2.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">43</td>
+              <td class="col-num">0.4x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="Microchip Technology" data-ticker="MCHP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MCHP</span>
+                  <span class="stock-name">Microchip Technology</span>
+                </div>
+              </td>
+              <td class="col-num">54</td>
+              <td class="col-num">+0.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">33</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="마이크로소프트" data-ticker="MSFT" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MSFT</span>
+                  <span class="stock-name">마이크로소프트</span>
+                </div>
+              </td>
+              <td class="col-num">13</td>
+              <td class="col-num">-3.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">11</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="NXP Semiconductors" data-ticker="NXPI" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">NXPI</span>
+                  <span class="stock-name">NXP Semiconductors</span>
+                </div>
+              </td>
+              <td class="col-num">49</td>
+              <td class="col-num">+0.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">28</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="팔로알토네트웍스" data-ticker="PANW" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">PANW</span>
+                  <span class="stock-name">팔로알토네트웍스</span>
+                </div>
+              </td>
+              <td class="col-num">17</td>
+              <td class="col-num">-8.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">5</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="시놉시스" data-ticker="SNPS" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">SNPS</span>
+                  <span class="stock-name">시놉시스</span>
+                </div>
+              </td>
+              <td class="col-num">48</td>
+              <td class="col-num">+0.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">66</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="텍사스인스트루먼트" data-ticker="TXN" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">TXN</span>
+                  <span class="stock-name">텍사스인스트루먼트</span>
+                </div>
+              </td>
+              <td class="col-num">42</td>
+              <td class="col-num">-2.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">0</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Technology" data-name="워크데이" data-ticker="WDAY" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">WDAY</span>
+                  <span class="stock-name">워크데이</span>
+                </div>
+              </td>
+              <td class="col-num">5</td>
+              <td class="col-num">-10.7%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">7</td>
+              <td class="col-num">0.6x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Healthcare">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Healthcare">▶</span>
+              <strong>Healthcare</strong>
+              <span class="sec-stat">평균 RSI: 60.5 | 지수: <span class="tag-safe">0.6</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Healthcare" data-name="Amgen" data-ticker="AMGN" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">AMGN</span>
+                  <span class="stock-name">Amgen</span>
+                </div>
+              </td>
+              <td class="col-num">81</td>
+              <td class="col-num">+2.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Healthcare" data-name="덱스콤" data-ticker="DXCM" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">DXCM</span>
+                  <span class="stock-name">덱스콤</span>
+                </div>
+              </td>
+              <td class="col-num">66</td>
+              <td class="col-num">+2.6%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">89</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Healthcare" data-name="아이덱스" data-ticker="IDXX" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">IDXX</span>
+                  <span class="stock-name">아이덱스</span>
+                </div>
+              </td>
+              <td class="col-num">48</td>
+              <td class="col-num">+1.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">81</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Healthcare" data-name="버텍스" data-ticker="VRTX" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">VRTX</span>
+                  <span class="stock-name">버텍스</span>
+                </div>
+              </td>
+              <td class="col-num">65</td>
+              <td class="col-num">+1.9%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">81</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Healthcare" data-name="알닐람" data-ticker="ALNY" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ALNY</span>
+                  <span class="stock-name">알닐람</span>
+                </div>
+              </td>
+              <td class="col-num">57</td>
+              <td class="col-num">+1.6%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">73</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Healthcare" data-name="길리어드" data-ticker="GILD" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">GILD</span>
+                  <span class="stock-name">길리어드</span>
+                </div>
+              </td>
+              <td class="col-num">52</td>
+              <td class="col-num">-2.6%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">0</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Healthcare" data-name="인튜이티브서지컬" data-ticker="ISRG" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ISRG</span>
+                  <span class="stock-name">인튜이티브서지컬</span>
+                </div>
+              </td>
+              <td class="col-num">48</td>
+              <td class="col-num">+0.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">57</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Healthcare" data-name="리제네론" data-ticker="REGN" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">REGN</span>
+                  <span class="stock-name">리제네론</span>
+                </div>
+              </td>
+              <td class="col-num">64</td>
+              <td class="col-num">-0.7%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">4</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Industrials">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Industrials">▶</span>
+              <strong>Industrials</strong>
+              <span class="sec-stat">평균 RSI: 42.3 | 지수: <span class="tag-safe">0.6</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Industrials" data-name="CSX" data-ticker="CSX" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CSX</span>
+                  <span class="stock-name">CSX</span>
+                </div>
+              </td>
+              <td class="col-num">71</td>
+              <td class="col-num">+2.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Industrials" data-name="신타스" data-ticker="CTAS" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CTAS</span>
+                  <span class="stock-name">신타스</span>
+                </div>
+              </td>
+              <td class="col-num">50</td>
+              <td class="col-num">+1.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">82</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Industrials" data-name="허니웰" data-ticker="HON" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">HON</span>
+                  <span class="stock-name">허니웰</span>
+                </div>
+              </td>
+              <td class="col-num">53</td>
+              <td class="col-num">+1.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Industrials" data-name="올드도미니언" data-ticker="ODFL" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ODFL</span>
+                  <span class="stock-name">올드도미니언</span>
+                </div>
+              </td>
+              <td class="col-num">55</td>
+              <td class="col-num">+0.9%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">80</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">1/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Industrials" data-name="Automatic Data Processing" data-ticker="ADP" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ADP</span>
+                  <span class="stock-name">Automatic Data Processing</span>
+                </div>
+              </td>
+              <td class="col-num">22</td>
+              <td class="col-num">-5.3%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">5</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Industrials" data-name="코파트" data-ticker="CPRT" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CPRT</span>
+                  <span class="stock-name">코파트</span>
+                </div>
+              </td>
+              <td class="col-num">15</td>
+              <td class="col-num">-7.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">0</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Industrials" data-name="파스날" data-ticker="FAST" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">FAST</span>
+                  <span class="stock-name">파스날</span>
+                </div>
+              </td>
+              <td class="col-num">40</td>
+              <td class="col-num">-2.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">25</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Industrials" data-name="파카" data-ticker="PCAR" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">PCAR</span>
+                  <span class="stock-name">파카</span>
+                </div>
+              </td>
+              <td class="col-num">48</td>
+              <td class="col-num">-0.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">30</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Industrials" data-name="페이첵스" data-ticker="PAYX" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">PAYX</span>
+                  <span class="stock-name">페이첵스</span>
+                </div>
+              </td>
+              <td class="col-num">24</td>
+              <td class="col-num">-5.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">24</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Communication">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Communication">▶</span>
+              <strong>Communication</strong>
+              <span class="sec-stat">평균 RSI: 42.3 | 지수: <span class="tag-safe">0.4</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Communication" data-name="티모바일" data-ticker="TMUS" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">TMUS</span>
+                  <span class="stock-name">티모바일</span>
+                </div>
+              </td>
+              <td class="col-num">82</td>
+              <td class="col-num">+5.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="워너브라더스" data-ticker="WBD" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">WBD</span>
+                  <span class="stock-name">워너브라더스</span>
+                </div>
+              </td>
+              <td class="col-num">81</td>
+              <td class="col-num">+3.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">100</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="알파벳A" data-ticker="GOOGL" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">GOOGL</span>
+                  <span class="stock-name">알파벳A</span>
+                </div>
+              </td>
+              <td class="col-num">37</td>
+              <td class="col-num">-1.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">61</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="알파벳C" data-ticker="GOOG" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">GOOG</span>
+                  <span class="stock-name">알파벳C</span>
+                </div>
+              </td>
+              <td class="col-num">37</td>
+              <td class="col-num">-1.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">60</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="차터커뮤니케이션" data-ticker="CHTR" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CHTR</span>
+                  <span class="stock-name">차터커뮤니케이션</span>
+                </div>
+              </td>
+              <td class="col-num">26</td>
+              <td class="col-num">-0.8%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">40</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="컴캐스트" data-ticker="CMCSA" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">CMCSA</span>
+                  <span class="stock-name">컴캐스트</span>
+                </div>
+              </td>
+              <td class="col-num">32</td>
+              <td class="col-num">+0.4%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">31</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="Electronic Arts" data-ticker="EA" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">EA</span>
+                  <span class="stock-name">Electronic Arts</span>
+                </div>
+              </td>
+              <td class="col-num">32</td>
+              <td class="col-num">+0.2%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">45</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="메타" data-ticker="META" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">META</span>
+                  <span class="stock-name">메타</span>
+                </div>
+              </td>
+              <td class="col-num">24</td>
+              <td class="col-num">-2.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">0</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="넷플릭스" data-ticker="NFLX" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">NFLX</span>
+                  <span class="stock-name">넷플릭스</span>
+                </div>
+              </td>
+              <td class="col-num">30</td>
+              <td class="col-num">-2.7%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">20</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Communication" data-name="Take-Two Interactive" data-ticker="TTWO" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">TTWO</span>
+                  <span class="stock-name">Take-Two Interactive</span>
+                </div>
+              </td>
+              <td class="col-num">38</td>
+              <td class="col-num">+1.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">75</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="sec-row" data-sector="Consumer Disc">
+          <td colspan="7">
+            <div class="sec-info">
+              <span id="icon-Consumer Disc">▶</span>
+              <strong>Consumer Disc</strong>
+              <span class="sec-stat">평균 RSI: 45.0 | 지수: <span class="tag-safe">0.2</span></span>
+            </div>
+          </td>
+        </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="Ross Stores" data-ticker="ROST" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ROST</span>
+                  <span class="stock-name">Ross Stores</span>
+                </div>
+              </td>
+              <td class="col-num">85</td>
+              <td class="col-num">+2.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">82</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-warn">2/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="에어비앤비" data-ticker="ABNB" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ABNB</span>
+                  <span class="stock-name">에어비앤비</span>
+                </div>
+              </td>
+              <td class="col-num">60</td>
+              <td class="col-num">+2.1%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">78</td>
+              <td class="col-num">0.2x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="아마존" data-ticker="AMZN" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">AMZN</span>
+                  <span class="stock-name">아마존</span>
+                </div>
+              </td>
+              <td class="col-num">51</td>
+              <td class="col-num">+0.7%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">77</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="부킹홀딩스" data-ticker="BKNG" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">BKNG</span>
+                  <span class="stock-name">부킹홀딩스</span>
+                </div>
+              </td>
+              <td class="col-num">38</td>
+              <td class="col-num">-3.7%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">38</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="도어대시" data-ticker="DASH" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">DASH</span>
+                  <span class="stock-name">도어대시</span>
+                </div>
+              </td>
+              <td class="col-num">31</td>
+              <td class="col-num">-4.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">33</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="메리어트" data-ticker="MAR" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MAR</span>
+                  <span class="stock-name">메리어트</span>
+                </div>
+              </td>
+              <td class="col-num">31</td>
+              <td class="col-num">-0.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">26</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="메르카도리브레" data-ticker="MELI" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">MELI</span>
+                  <span class="stock-name">메르카도리브레</span>
+                </div>
+              </td>
+              <td class="col-num">25</td>
+              <td class="col-num">-4.5%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">21</td>
+              <td class="col-num">0.4x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="오라일리" data-ticker="ORLY" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">ORLY</span>
+                  <span class="stock-name">오라일리</span>
+                </div>
+              </td>
+              <td class="col-num">56</td>
+              <td class="col-num">+0.7%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">60</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="스타벅스" data-ticker="SBUX" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">SBUX</span>
+                  <span class="stock-name">스타벅스</span>
+                </div>
+              </td>
+              <td class="col-num">44</td>
+              <td class="col-num">-1.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">33</td>
+              <td class="col-num">0.1x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr>
+<tr class="stock-row sec-group-Consumer Disc" data-name="테슬라" data-ticker="TSLA" style="display:table-row;">
+              <td>
+                <div class="stock-info">
+                  <span class="stock-ticker">TSLA</span>
+                  <span class="stock-name">테슬라</span>
+                </div>
+              </td>
+              <td class="col-num">24</td>
+              <td class="col-num">-2.0%</td>
+              <td class="col-num">0.00</td>
+              <td class="col-num">17</td>
+              <td class="col-num">0.3x</td>
+              <td class="col-tag"><span class="tag-safe">0/5</span></td>
+            </tr></tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+
+  <details open>
+    <summary>📊 Relative Strength (vs NDX)</summary>
+    <div class="details-content">
+      <div><p class="rs-label" style="color:#16a34a;font-size:11px;font-weight:600;margin-bottom:8px">▲ TOP 20</p>
+<div class="rs-row" data-ticker="AMAT" data-name="어플라이드머티어리얼즈">
+          <span class="rs-name" style="width:80px;font-size:10px">어플라이드머티어리얼즈</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:27.39636195776706%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+23.3</span>
+        </div>
+<div class="rs-row" data-ticker="ARM" data-name="암홀딩스">
+          <span class="rs-name" style="width:80px;font-size:10px">암홀딩스</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:24.906364164883215%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+21.2</span>
+        </div>
+<div class="rs-row" data-ticker="CEG" data-name="컨스텔레이션에너지">
+          <span class="rs-name" style="width:80px;font-size:10px">컨스텔레이션에너지</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:22.50430914258604%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+19.1</span>
+        </div>
+<div class="rs-row" data-ticker="LRCX" data-name="램리서치">
+          <span class="rs-name" style="width:80px;font-size:10px">램리서치</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:17.635248072481474%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+15.0</span>
+        </div>
+<div class="rs-row" data-ticker="KLAC" data-name="KLA">
+          <span class="rs-name" style="width:80px;font-size:10px">KLA</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:16.72525972163288%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+14.2</span>
+        </div>
+<div class="rs-row" data-ticker="CCEP" data-name="코카콜라유로퍼시픽">
+          <span class="rs-name" style="width:80px;font-size:10px">코카콜라유로퍼시픽</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:15.088666348064567%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+12.8</span>
+        </div>
+<div class="rs-row" data-ticker="MU" data-name="마이크론">
+          <span class="rs-name" style="width:80px;font-size:10px">마이크론</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:14.275780619612537%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+12.1</span>
+        </div>
+<div class="rs-row" data-ticker="ADI" data-name="아날로그디바이스">
+          <span class="rs-name" style="width:80px;font-size:10px">아날로그디바이스</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:13.361293632017286%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+11.4</span>
+        </div>
+<div class="rs-row" data-ticker="ASML" data-name="ASML">
+          <span class="rs-name" style="width:80px;font-size:10px">ASML</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:12.880215944417808%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+11.0</span>
+        </div>
+<div class="rs-row" data-ticker="NVDA" data-name="엔비디아">
+          <span class="rs-name" style="width:80px;font-size:10px">엔비디아</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:11.74728307359506%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+10.0</span>
+        </div>
+<div class="rs-row" data-ticker="EXC" data-name="엑셀론">
+          <span class="rs-name" style="width:80px;font-size:10px">엑셀론</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:11.451053570310473%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+9.7</span>
+        </div>
+<div class="rs-row" data-ticker="TMUS" data-name="티모바일">
+          <span class="rs-name" style="width:80px;font-size:10px">티모바일</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:11.351230448594789%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+9.7</span>
+        </div>
+<div class="rs-row" data-ticker="AEP" data-name="아메리칸일렉트릭파워">
+          <span class="rs-name" style="width:80px;font-size:10px">아메리칸일렉트릭파워</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:11.285387600560922%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+9.6</span>
+        </div>
+<div class="rs-row" data-ticker="BKR" data-name="베이커휴즈">
+          <span class="rs-name" style="width:80px;font-size:10px">베이커휴즈</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:10.472042235365226%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+8.9</span>
+        </div>
+<div class="rs-row" data-ticker="XEL" data-name="엑셀에너지">
+          <span class="rs-name" style="width:80px;font-size:10px">엑셀에너지</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:10.266152072229474%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+8.7</span>
+        </div>
+<div class="rs-row" data-ticker="CDNS" data-name="케이던스">
+          <span class="rs-name" style="width:80px;font-size:10px">케이던스</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:9.860180737234906%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+8.4</span>
+        </div>
+<div class="rs-row" data-ticker="MPWR" data-name="Monolithic Power Systems">
+          <span class="rs-name" style="width:80px;font-size:10px">Monolithic Power Systems</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:9.706866235939529%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+8.3</span>
+        </div>
+<div class="rs-row" data-ticker="KDP" data-name="큐릭닥터페퍼">
+          <span class="rs-name" style="width:80px;font-size:10px">큐릭닥터페퍼</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:9.451433146671839%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+8.0</span>
+        </div>
+<div class="rs-row" data-ticker="WBD" data-name="워너브라더스">
+          <span class="rs-name" style="width:80px;font-size:10px">워너브라더스</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:8.425638858465762%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+7.2</span>
+        </div>
+<div class="rs-row" data-ticker="MRVL" data-name="마벨테크놀로지">
+          <span class="rs-name" style="width:80px;font-size:10px">마벨테크놀로지</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:8.27254016810689%;left:50%;background:#16a34a"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#16a34a">+7.0</span>
+        </div>
+<div style="border-top:1px dashed #d6d3d1;margin:12px 0"></div>
+<p class="rs-label" style="color:#dc2626;font-size:11px;font-weight:600;margin-bottom:8px">▼ BOTTOM 5</p>
+<div class="rs-row" data-ticker="INTU" data-name="인튜이트">
+          <span class="rs-name" style="width:80px;font-size:10px">인튜이트</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:23.03920546732444%;left:26.96079453267556%;background:#dc2626"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#dc2626">-19.6</span>
+        </div>
+<div class="rs-row" data-ticker="CTSH" data-name="코그니전트">
+          <span class="rs-name" style="width:80px;font-size:10px">코그니전트</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:23.45715265003257%;left:26.54284734996743%;background:#dc2626"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#dc2626">-20.0</span>
+        </div>
+<div class="rs-row" data-ticker="ZS" data-name="지스케일러">
+          <span class="rs-name" style="width:80px;font-size:10px">지스케일러</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:24.7662107664669%;left:25.2337892335331%;background:#dc2626"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#dc2626">-21.1</span>
+        </div>
+<div class="rs-row" data-ticker="WDAY" data-name="워크데이">
+          <span class="rs-name" style="width:80px;font-size:10px">워크데이</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:30.600602578002597%;left:19.399397421997403%;background:#dc2626"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#dc2626">-26.0</span>
+        </div>
+<div class="rs-row" data-ticker="TEAM" data-name="아틀라시안">
+          <span class="rs-name" style="width:80px;font-size:10px">아틀라시안</span>
+          <div class="rs-track">
+            <div class="rs-bar" style="width:45.0%;left:5.0%;background:#dc2626"></div>
+            <div class="rs-zero"></div>
+          </div>
+          <span class="rs-val" style="color:#dc2626">-38.3</span>
+        </div></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>🕵️ 내부자 거래 신호</summary>
+    <div class="details-content">
+      <div class="insider-grid"><div class="insider-card" data-ticker="PAYX">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">PAYX</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">페이첵스</span>
+            </div>
+            <span style="font-size:12px">🔥🔥 강함</span>
+          </div>
+          <div style="color:#16a34a;font-size:12px;font-weight:600">매수 $197K</div>
+        </div>
+<div class="insider-card" data-ticker="MSFT">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">MSFT</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">마이크로소프트</span>
+            </div>
+            <span style="font-size:12px">🔥 보통</span>
+          </div>
+          <div style="color:#16a34a;font-size:12px;font-weight:600">매수 $1987K</div>
+        </div>
+<div class="insider-card" data-ticker="ROP">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">ROP</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">로퍼테크놀로지</span>
+            </div>
+            <span style="font-size:12px">🔥 보통</span>
+          </div>
+          <div style="color:#16a34a;font-size:12px;font-weight:600">매수 $502K</div>
+        </div>
+<div class="insider-card" data-ticker="FAST">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">FAST</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">파스날</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#ca8a04;font-size:12px;font-weight:600">혼재 매수$5K/매도$2368K</div>
+        </div>
+<div class="insider-card" data-ticker="AMD">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">AMD</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">AMD</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $4080K</div>
+        </div>
+<div class="insider-card" data-ticker="ABNB">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">ABNB</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">에어비앤비</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $7514K</div>
+        </div>
+<div class="insider-card" data-ticker="ALNY">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">ALNY</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">알닐람</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $5440K</div>
+        </div>
+<div class="insider-card" data-ticker="GOOGL">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">GOOGL</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">알파벳A</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $9877K</div>
+        </div>
+<div class="insider-card" data-ticker="GOOG">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">GOOG</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">알파벳C</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $9877K</div>
+        </div>
+<div class="insider-card" data-ticker="AMZN">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">AMZN</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">아마존</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $1340K</div>
+        </div>
+<div class="insider-card" data-ticker="AMGN">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">AMGN</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">AMGEN INC</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $376K</div>
+        </div>
+<div class="insider-card" data-ticker="ADI">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">ADI</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">아날로그디바이스</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $5065K</div>
+        </div>
+<div class="insider-card" data-ticker="AMAT">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">AMAT</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">어플라이드머티어리얼즈</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $1806K</div>
+        </div>
+<div class="insider-card" data-ticker="APP">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">APP</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">앱러빈</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#a8a29e;font-size:12px;font-weight:600">거래 없음</div>
+        </div>
+<div class="insider-card" data-ticker="TEAM">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>
+              <span style="font-weight:700;font-size:13px">TEAM</span>
+              <span style="font-size:11px;color:#a8a29e;margin-left:8px">아틀라시안</span>
+            </div>
+            <span style="font-size:12px">⚪ 약함</span>
+          </div>
+          <div style="color:#dc2626;font-size:12px;font-weight:600">매도 $563K</div>
+        </div></div>
+    </div>
+  </details>
+
+</div>
+</body>
+</html>

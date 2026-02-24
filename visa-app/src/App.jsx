@@ -1521,18 +1521,6 @@ function AppInner() {
                 </div>
               </div>
             ))}
-            {/* 기존 탐색/도구 항목 (탭 전용 기능) */}
-            <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{L(lang, { ko: '서비스', zh: '服务', en: 'Services' })}</h3>
-              <div className="grid grid-cols-3 gap-2">
-                {[...exploreItems, ...toolItems].map(item => (
-                  <button key={item.id} onClick={() => setSubPage(item.id)}
-                    className="bg-white rounded-lg p-3 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow">
-                    <span className="text-xs text-[#111827] font-medium text-center">{L(lang, item.label)}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 

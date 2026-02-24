@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { X, Plus } from 'lucide-react'
+import { X, Plus, Lock, Unlock } from 'lucide-react'
 import PocketContent from './pockets/PocketContent'
 import { pocketCategories } from '../data/pockets'
 import AppleWidgetCard from './cards/AppleWidgetCard'
@@ -45,6 +45,13 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [dragX, setDragX] = useState(0)
   const [showBookmark, setShowBookmark] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(null) // pocketId to confirm
+  const [lockedPockets, setLockedPockets] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('locked_pockets'))
+      return saved || {}
+    } catch { return {} }
+  })
   const [containerW, setContainerW] = useState(0)
   const containerRef = useRef(null)
   const touchRef = useRef({ startX: 0, startY: 0, swiping: false, locked: false })
@@ -101,6 +108,11 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   }
 
   useEffect(() => { localStorage.setItem('home_pockets', JSON.stringify(pockets)) }, [pockets])
+  useEffect(() => { localStorage.setItem('locked_pockets', JSON.stringify(lockedPockets)) }, [lockedPockets])
+
+  const toggleLock = (pocketId) => {
+    setLockedPockets(prev => ({ ...prev, [pocketId]: !prev[pocketId] }))
+  }
 
   useEffect(() => {
     const measure = () => { if (containerRef.current) setContainerW(containerRef.current.offsetWidth) }
@@ -255,14 +267,29 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                   )
                 })()}
                 
-                {/* 포켓 본체: 왼쪽 상단 둥글게, 오른쪽 상단 직각 */}
+                {/* 포켓 본체 */}
                 <div className="bg-white border border-gray-200 px-3 py-2 relative overflow-hidden w-full h-full pt-10 shadow-sm"
                   style={{ borderRadius: '0' }}>
+                  {/* 잠금/해제 버튼 (왼쪽 상단, 카테고리 탭 아래) */}
                   <button
-                    onClick={() => removePocket(pocketId)}
-                    className="absolute top-3 right-3 z-10 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
+                    onClick={() => toggleLock(pocketId)}
+                    className="absolute top-12 left-3 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors"
+                    style={{ backgroundColor: lockedPockets[pocketId] ? '#EF4444' : '#3B82F6' }}
                   >
-                    <X className="w-4 h-4 text-gray-600" />
+                    {lockedPockets[pocketId] 
+                      ? <Lock className="w-3.5 h-3.5 text-white" strokeWidth={1} />
+                      : <Unlock className="w-3.5 h-3.5 text-white" strokeWidth={1} />
+                    }
+                  </button>
+                  {/* X 삭제 버튼 */}
+                  <button
+                    onClick={() => {
+                      if (lockedPockets[pocketId]) return
+                      setConfirmDelete(pocketId)
+                    }}
+                    className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center transition-colors"
+                  >
+                    <X className="w-4 h-4 text-gray-400" strokeWidth={1} />
                   </button>
                   <div className="flex items-center gap-3 mb-4">
                     <LucideIcon name={pocket.icon} size={20} style={{ color: '#111827' }} />
@@ -352,6 +379,31 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
               {L(lang, { ko: '추가', zh: '添加', en: 'Add' })}
             </span>
           </button>
+        </div>
+      )}
+
+      {/* 삭제 확인 모달 */}
+      {confirmDelete && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setConfirmDelete(null)}>
+          <div className="bg-white rounded-xl p-6 mx-8 shadow-lg max-w-xs w-full" onClick={e => e.stopPropagation()}>
+            <p className="text-center text-sm font-medium text-gray-800 mb-5">
+              {L(lang, { ko: '이 포켓을 지우겠습니까?', zh: '要删除这个口袋吗？', en: 'Delete this pocket?' })}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50"
+              >
+                {L(lang, { ko: '아니요', zh: '不', en: 'No' })}
+              </button>
+              <button
+                onClick={() => { removePocket(confirmDelete); setConfirmDelete(null) }}
+                className="flex-1 py-2.5 rounded-lg bg-[#111827] text-white text-sm font-medium hover:bg-gray-800"
+              >
+                {L(lang, { ko: '네', zh: '是', en: 'Yes' })}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

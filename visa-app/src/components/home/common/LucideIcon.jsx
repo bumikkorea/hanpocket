@@ -19,5 +19,5 @@ const LUCIDE_ICON_MAP = {
 export default function LucideIcon({ name, size = 16, className = '', ...props }) {
   const Icon = LUCIDE_ICON_MAP[name]
   if (!Icon) return <span className={className}>{name}</span>
-  return <Icon size={size} className={className} {...props} />
+  return <Icon size={size} strokeWidth={1} className={className} {...props} />
 }

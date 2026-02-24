@@ -1292,22 +1292,30 @@ function AppInner() {
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]
 
-  // Generate status label based on completion score
-  const getStatusLabel = (score) => {
-    if (score >= 85) return { ko: '완료', zh: '完成', en: 'Done' }
-    if (score >= 70) return { ko: '수정중', zh: '修改中', en: 'WIP' }
-    return { ko: '개발중', zh: '开발中', en: 'Dev' }
+  // Check if a service item has been migrated to pocket categories
+  const getMigratedPocketIds = () => {
+    const pocketIds = new Set()
+    pocketCategories.forEach(cat => cat.pockets.forEach(p => pocketIds.add(p.id)))
+    return pocketIds
+  }
+  const migratedIds = getMigratedPocketIds()
+
+  // Generate status label based on migration state
+  const getMigrationLabel = (itemId) => {
+    if (migratedIds.has(itemId)) return { ko: '이관 완료', zh: '已迁移', en: 'Migrated' }
+    return { ko: '이관 중', zh: '迁移中', en: 'Migrating' }
   }
   
-  // Build explore and tool items with dynamic status labels
+  // Build explore and tool items with migration status
   const exploreItems = serviceItems
     .filter(item => item.category === 'explore')
     .map(item => ({
       id: item.id,
+      migrated: migratedIds.has(item.id),
       label: {
-        ko: `${item.name.ko} (${getStatusLabel(featureScores[item.id]).ko})`,
-        zh: `${item.name.zh} (${getStatusLabel(featureScores[item.id]).zh})`,
-        en: `${item.name.en} (${getStatusLabel(featureScores[item.id]).en})`
+        ko: `${item.name.ko} (${getMigrationLabel(item.id).ko})`,
+        zh: `${item.name.zh} (${getMigrationLabel(item.id).zh})`,
+        en: `${item.name.en} (${getMigrationLabel(item.id).en})`
       }
     }))
 
@@ -1315,15 +1323,14 @@ function AppInner() {
     .filter(item => item.category === 'tool')
     .map(item => ({
       id: item.id,
+      migrated: migratedIds.has(item.id),
       label: {
-        ko: `${item.name.ko} (${getStatusLabel(featureScores[item.id]).ko})`,
-        zh: `${item.name.zh} (${getStatusLabel(featureScores[item.id]).zh})`,
-        en: `${item.name.en} (${getStatusLabel(featureScores[item.id]).en})`
+        ko: `${item.name.ko} (${getMigrationLabel(item.id).ko})`,
+        zh: `${item.name.zh} (${getMigrationLabel(item.id).zh})`,
+        en: `${item.name.en} (${getMigrationLabel(item.id).en})`
       }
     }))
 
-  // Keep old tabs array for compatibility
-  const tabs = bottomTabs
 
   // Build sub-menus with actions from imported data
   const subMenus = Object.fromEntries(

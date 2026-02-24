@@ -270,17 +270,6 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                 {/* 포켓 본체 */}
                 <div className="bg-white border border-gray-200 px-3 py-2 relative overflow-hidden w-full h-full pt-10 shadow-sm"
                   style={{ borderRadius: '0' }}>
-                  {/* 잠금/해제 버튼 (왼쪽 상단, 카테고리 탭 아래) */}
-                  <button
-                    onClick={() => toggleLock(pocketId)}
-                    className="absolute top-12 left-3 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-colors"
-                    style={{ backgroundColor: lockedPockets[pocketId] ? '#EF4444' : '#3B82F6' }}
-                  >
-                    {lockedPockets[pocketId] 
-                      ? <Lock className="w-3.5 h-3.5 text-white" strokeWidth={1} />
-                      : <Unlock className="w-3.5 h-3.5 text-white" strokeWidth={1} />
-                    }
-                  </button>
                   {/* X 삭제 버튼 */}
                   <button
                     onClick={() => {
@@ -292,6 +281,17 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                     <X className="w-4 h-4 text-gray-400" strokeWidth={1} />
                   </button>
                   <div className="flex items-center gap-3 mb-4">
+                    {/* 잠금/해제 버튼 */}
+                    <button
+                      onClick={() => toggleLock(pocketId)}
+                      className="w-6 h-6 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
+                      style={{ backgroundColor: lockedPockets[pocketId] ? '#EF4444' : '#3B82F6' }}
+                    >
+                      {lockedPockets[pocketId] 
+                        ? <Lock className="w-3 h-3 text-white" strokeWidth={1.5} />
+                        : <Unlock className="w-3 h-3 text-white" strokeWidth={1.5} />
+                      }
+                    </button>
                     <LucideIcon name={pocket.icon} size={20} style={{ color: '#111827' }} />
                     <h2 className="text-lg font-semibold" style={{ color: '#111827' }}>{L(lang, pocket.name)}</h2>
                   </div>

@@ -294,7 +294,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
             >
               <Plus className="w-12 h-12 text-gray-400 mb-4" />
               <p className="text-lg font-medium text-gray-600">
-                {L(lang, { ko: '주머니 추가', zh: '添加口袋', en: 'Add Pocket' })}
+                {L(lang, { ko: '포켓 추가', zh: '添加口袋', en: 'Add Pocket' })}
               </p>
             </div>
           </div>

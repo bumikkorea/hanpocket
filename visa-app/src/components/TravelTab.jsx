@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Plane, Train, Bus, Car, MapPin, Clock, DollarSign, Calendar, ChevronRight, ExternalLink, CreditCard, Bike, Building2, Ticket, Navigation, Shield, Filter, Star, Heart, Users, BookOpen } from 'lucide-react'
-import TravelDiary from './TravelDiary/TravelDiary'
+
+const TravelDiary = lazy(() => import('./TravelDiary/TravelDiary'))
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -208,7 +209,15 @@ export default function TravelTab({ lang, setTab, profile }) {
 
   // Show TravelDiary if diary mode is active
   if (showDiary) {
-    return <TravelDiary lang={lang} onBack={() => setShowDiary(false)} />
+    return (
+      <Suspense fallback={
+        <div className="flex items-center justify-center p-8">
+          <div className="w-8 h-8 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin"></div>
+        </div>
+      }>
+        <TravelDiary lang={lang} onBack={() => setShowDiary(false)} />
+      </Suspense>
+    )
   }
 
   return (

@@ -543,7 +543,7 @@ function ChatTab({ profile, lang }) {
   )
 }
 
-function ProfileTab({ profile, setProfile, lang, onResetPushDismiss }) {
+function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, toggleDarkMode }) {
   // 로그인 방식 확인을 위한 소셜 로그인 사용자 정보
   const kakaoUser = getKakaoUser()
   const naverUser = getNaverUser()
@@ -1151,6 +1151,7 @@ function AppInner() {
   const [hoveredTab, setHoveredTab] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [showAppMenu, setShowAppMenu] = useState(false)
+  const { isDark, toggleDarkMode } = useDarkMode()
   const s = t[lang]
 
   useEffect(() => {

@@ -1,15 +1,11 @@
 const KAKAO_JS_KEY = import.meta.env.VITE_KAKAO_JS_KEY || 'd93decd524c15c3455ff05983ca07fac';
 const AUTH_WORKER_URL = import.meta.env.VITE_KAKAO_AUTH_WORKER_URL || 'https://hanpocket-kakao-auth.bumik-korea.workers.dev';
 
-// 테스트 환경 감지
+// 테스트 환경 감지 (실제 카카오 SDK가 로드되면 mock 사용 안 함)
 const isTestEnvironment = () => {
-  return (
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1' ||
-    window.location.hostname.includes('test') ||
-    window.location.hostname.includes('staging') ||
-    process.env.NODE_ENV === 'test'
-  );
+  // 카카오 SDK가 실제로 로드되어 있으면 테스트 환경 아님
+  if (window.Kakao && !window.Kakao._isMock) return false;
+  return process.env.NODE_ENV === 'test';
 };
 
 // Kakao SDK 초기화 (개선된 버전)

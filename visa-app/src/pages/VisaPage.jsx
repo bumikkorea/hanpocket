@@ -4,6 +4,7 @@ import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, 
 import { visaTransitions } from '../data/visaTransitions'
 import TransitionTab from '../components/TransitionTab'
 import AgencyTab from '../components/AgencyTab'
+import VisaSimulator from '../components/VisaSimulator'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -260,7 +261,7 @@ export default function VisaPage({ profile, lang, view, setView, selCat, setSelC
         </button>
         <button onClick={() => setSubTab('transition')}
           className={`flex-1 py-2 text-sm font-semibold rounded-xl transition-all ${subTab === 'transition' ? 'bg-[#111827] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'}`}>
-          {lang === 'ko' ? '비자 변경' : lang === 'zh' ? '签证变更' : 'Visa Change'}
+          {lang === 'ko' ? '시뮬레이터' : lang === 'zh' ? '模拟器' : 'Simulator'}
         </button>
         <button onClick={() => setSubTab('agency')}
           className={`flex-1 py-2 text-sm font-semibold rounded-xl transition-all ${subTab === 'agency' ? 'bg-[#111827] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'}`}>
@@ -271,7 +272,7 @@ export default function VisaPage({ profile, lang, view, setView, selCat, setSelC
       {subTab === 'agency' ? (
         <AgencyTab profile={profile} lang={lang} />
       ) : subTab === 'transition' ? (
-        <TransitionTab profile={profile} lang={lang} />
+        <VisaSimulator profile={profile} lang={lang} />
       ) : (
         <>
           <SearchBar query={sq} setQuery={setSq} lang={lang} />

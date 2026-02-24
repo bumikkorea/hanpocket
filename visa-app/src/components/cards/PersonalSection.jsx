@@ -3,6 +3,7 @@ import { Mic, Volume2, Check, X, Plus, ChevronRight, ChevronDown } from 'lucide-
 import { widgetMockData } from '../../data/widgets'
 import { L, getDaysUntil, getTimeInOffset } from '../home/utils/helpers'
 import { TIMEZONE_COUNTRIES } from '../home/utils/constants'
+import VisaWidget from '../widgets/VisaWidget'
 
 // ─── Activity Tracker (global) ───
 const ACTIVITY_KEY = 'hp_last_activity'
@@ -628,13 +629,18 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
       {/* 0. My Status */}
       <MyStatusCard profile={profile} lang={lang} setTab={setTab} />
 
-      {/* 1. Voice Translator */}
+      {/* 1. Visa Widget */}
+      <div className={card} style={snapStyle}>
+        <VisaWidget lang={lang} onClick={() => setTab && setTab('visaalert')} />
+      </div>
+
+      {/* 2. Voice Translator */}
       <VoiceTranslatorCard lang={lang} />
 
-      {/* 2. Memo / Today's Plan */}
+      {/* 3. Memo / Today's Plan */}
       <MemoCard lang={lang} />
 
-      {/* 3. Korean Calendar */}
+      {/* 4. Korean Calendar */}
       <div className={card + " overflow-hidden"} style={snapStyle}>
         <p className="text-[10px] text-[#6B7280] font-medium mb-1">{lang === 'ko' ? '한국 달력' : lang === 'zh' ? '韩国日历' : 'Korean Calendar'}</p>
         <div className="overflow-y-auto no-scrollbar flex-1">
@@ -642,7 +648,7 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
         </div>
       </div>
 
-      {/* 4. Today's Korean Expression */}
+      {/* 5. Today's Korean Expression */}
       {koreanData && (
         <div className={card} style={snapStyle}>
           <div className="flex items-center justify-between mb-1">
@@ -692,10 +698,10 @@ function PersonalSection({ profile, lang, setTab, exchangeRate }) {
         </div>
       )}
 
-      {/* 5. Tax Refund Calculator */}
+      {/* 6. Tax Refund Calculator */}
       <TaxRefundMiniCard lang={lang} />
 
-      {/* 6. Exchange Rate Calculator */}
+      {/* 7. Exchange Rate Calculator */}
       <div className={card} style={snapStyle}>
         <p className="text-[10px] text-[#6B7280] font-medium mb-2">{lang === 'ko' ? '환율 계산기' : lang === 'zh' ? '汇率计算器' : 'Currency Converter'}</p>
         <ExchangeRateCard exchangeRate={exchangeRate} lang={lang} compact />

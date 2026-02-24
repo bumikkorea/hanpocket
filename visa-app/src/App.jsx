@@ -1673,12 +1673,7 @@ function AppInner() {
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
-        <div className="mt-12 mb-6 text-center text-[11px] text-[#9CA3AF] space-y-1">
-          <p className="text-[9px] text-[#9CA3AF] max-w-xs mx-auto leading-relaxed">
-            {lang === 'ko' ? '본 앱의 정보는 참고용이며 법적 효력이 없습니다. 비자, 법률, 의료 관련 사항은 반드시 관련 기관에 직접 확인하시기 바랍니다.' 
-            : lang === 'zh' ? '本应用信息仅供参考，不具有法律效力。签证、法律、医疗相关事项请务必直接向相关机构确认。'
-            : 'Information in this app is for reference only and has no legal effect. Please verify visa, legal, and medical matters directly with relevant authorities.'}
-          </p>
+        <div className="mt-12 mb-6 text-center text-[11px] text-[#9CA3AF]">
           <p>© 2026 HanPocket. All rights reserved.</p>
         </div>
       </div>

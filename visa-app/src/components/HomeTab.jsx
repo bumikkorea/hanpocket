@@ -36,7 +36,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   const [pockets, setPockets] = useState(() => {
     try { 
       const saved = JSON.parse(localStorage.getItem('home_pockets'))
-      return saved && saved.length > 0 ? saved : DEFAULT_POCKETS
+      return saved !== null ? saved : DEFAULT_POCKETS
     } catch { 
       return DEFAULT_POCKETS 
     }

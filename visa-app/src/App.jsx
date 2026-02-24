@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, Component } from 'react'
+import { useState, useRef, useEffect, Component, lazy, Suspense } from 'react'
+import useDarkMode from './hooks/useDarkMode'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
 import { initKakao, loginWithKakao, loginWithKakaoPopup, logoutFromKakao, getKakaoUser, isKakaoLoggedIn, handleKakaoCallback } from './utils/kakaoAuth'
 import { loginWithNaver, logoutFromNaver, getNaverUser, isNaverLoggedIn, handleNaverCallback } from './utils/naverAuth'
@@ -12,31 +13,33 @@ import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTra
 import { t } from './data/i18n'
 import { generateChatResponse } from './data/chatResponses'
 import { updateLog, autoUpdateInfo, dataSources } from './data/updateLog'
-import EducationTab from './components/EducationTab'
-import AgencyTab from './components/AgencyTab'
 import HomeTab, { trackActivity, LucideIcon } from './components/HomeTab'
 import { pocketCategories, featureScores, serviceItems, subMenuData } from './data/pockets'
-import PetTab from './components/PetTab'
-import MedicalTab from './components/MedicalTab'
-import FitnessTab from './components/FitnessTab'
-import ShoppingTab from './components/ShoppingTab'
-import CultureTab from './components/CultureTab'
-import LifeToolsTab from './components/LifeToolsTab'
-import JobsTab from './components/JobsTab'
-import HousingTab from './components/HousingTab'
-// New tabs
-import TravelTab from './components/TravelTab'
-import FoodTab from './components/FoodTab'
-import HallyuTab from './components/HallyuTab'
-import TranslatorTab from './components/TranslatorTab'
-import ARTranslateTab from './components/ARTranslateTab'
-import SOSTab from './components/SOSTab'
-import CommunityTab from './components/CommunityTab'
-import VisaAlertTab from './components/VisaAlertTab'
-import FinanceTab from './components/FinanceTab'
-import ResumeTab from './components/ResumeTab'
-import DigitalWalletTab from './components/DigitalWalletTab'
 import AffiliateTracker from './components/AffiliateTracker'
+import LoadingSpinner from './components/LoadingSpinner'
+
+// Lazy-loaded tab components for better code splitting
+const EducationTab = lazy(() => import('./components/EducationTab'))
+const AgencyTab = lazy(() => import('./components/AgencyTab'))
+const PetTab = lazy(() => import('./components/PetTab'))
+const MedicalTab = lazy(() => import('./components/MedicalTab'))
+const FitnessTab = lazy(() => import('./components/FitnessTab'))
+const ShoppingTab = lazy(() => import('./components/ShoppingTab'))
+const CultureTab = lazy(() => import('./components/CultureTab'))
+const LifeToolsTab = lazy(() => import('./components/LifeToolsTab'))
+const JobsTab = lazy(() => import('./components/JobsTab'))
+const HousingTab = lazy(() => import('./components/HousingTab'))
+const TravelTab = lazy(() => import('./components/TravelTab'))
+const FoodTab = lazy(() => import('./components/FoodTab'))
+const HallyuTab = lazy(() => import('./components/HallyuTab'))
+const TranslatorTab = lazy(() => import('./components/TranslatorTab'))
+const ARTranslateTab = lazy(() => import('./components/ARTranslateTab'))
+const SOSTab = lazy(() => import('./components/SOSTab'))
+const CommunityTab = lazy(() => import('./components/CommunityTab'))
+const VisaAlertTab = lazy(() => import('./components/VisaAlertTab'))
+const FinanceTab = lazy(() => import('./components/FinanceTab'))
+const ResumeTab = lazy(() => import('./components/ResumeTab'))
+const DigitalWalletTab = lazy(() => import('./components/DigitalWalletTab'))
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -1525,23 +1528,87 @@ function AppInner() {
         )}
 
         {/* Sub-pages from explore/tools */}
-        {subPage==='travel' && <TravelTab lang={lang} setTab={(t) => setSubPage(t)} />}
-        {subPage==='food' && <FoodTab lang={lang} setTab={(t) => setSubPage(t)} />}
-        {subPage==='shopping' && <ShoppingTab lang={lang} setTab={(t) => setSubPage(t)} />}
-        {subPage==='hallyu' && <HallyuTab lang={lang} setTab={(t) => setSubPage(t)} />}
-        {subPage==='learn' && <EducationTab lang={lang} />}
-        {subPage==='life' && <LifeToolsTab lang={lang} setTab={(t) => setSubPage(t)} />}
-        {subPage==='medical' && <MedicalTab lang={lang} />}
-        {subPage==='fitness' && <FitnessTab lang={lang} />}
-        {subPage==='community' && <CommunityTab lang={lang} profile={profile} />}
-        {subPage==='translator' && <TranslatorTab lang={lang} />}
-        {subPage==='artranslate' && <ARTranslateTab lang={lang} />}
-        {subPage==='sos' && <SOSTab lang={lang} profile={profile} />}
-        {subPage==='finance' && <FinanceTab lang={lang} profile={profile} />}
-        {subPage==='wallet' && <DigitalWalletTab lang={lang} profile={profile} />}
-        {subPage==='visaalert' && <VisaAlertTab lang={lang} profile={profile} />}
+        {subPage==='travel' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <TravelTab lang={lang} setTab={(t) => setSubPage(t)} />
+          </Suspense>
+        )}
+        {subPage==='food' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <FoodTab lang={lang} setTab={(t) => setSubPage(t)} />
+          </Suspense>
+        )}
+        {subPage==='shopping' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ShoppingTab lang={lang} setTab={(t) => setSubPage(t)} />
+          </Suspense>
+        )}
+        {subPage==='hallyu' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <HallyuTab lang={lang} setTab={(t) => setSubPage(t)} />
+          </Suspense>
+        )}
+        {subPage==='learn' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <EducationTab lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='life' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <LifeToolsTab lang={lang} setTab={(t) => setSubPage(t)} />
+          </Suspense>
+        )}
+        {subPage==='medical' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <MedicalTab lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='fitness' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <FitnessTab lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='community' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <CommunityTab lang={lang} profile={profile} />
+          </Suspense>
+        )}
+        {subPage==='translator' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <TranslatorTab lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='artranslate' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ARTranslateTab lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='sos' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <SOSTab lang={lang} profile={profile} />
+          </Suspense>
+        )}
+        {subPage==='finance' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <FinanceTab lang={lang} profile={profile} />
+          </Suspense>
+        )}
+        {subPage==='wallet' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DigitalWalletTab lang={lang} profile={profile} />
+          </Suspense>
+        )}
+        {subPage==='visaalert' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <VisaAlertTab lang={lang} profile={profile} />
+          </Suspense>
+        )}
 
-        {tab==='community' && !subPage && <CommunityTab lang={lang} profile={profile} />}
+        {tab==='community' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <CommunityTab lang={lang} profile={profile} />
+          </Suspense>
+        )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} />}

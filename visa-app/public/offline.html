@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>오프라인 - HanPocket</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px 30px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .offline-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      border: 3px solid currentColor;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      opacity: 0.8;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      opacity: 0.9;
+    }
+
+    .retry-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .retry-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .features {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .feature {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .feature::before {
+      content: "✓";
+      margin-right: 10px;
+      font-weight: bold;
+      color: #4ade80;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="offline-icon">📱</div>
+    <h1>오프라인 모드</h1>
+    <p>인터넷 연결이 없어도 HanPocket의 일부 기능을 사용할 수 있습니다.</p>
+    
+    <div class="features">
+      <div class="feature">저장된 비자 정보 확인</div>
+      <div class="feature">오프라인 체크리스트</div>
+      <div class="feature">기본 가이드 열람</div>
+      <div class="feature">임시 저장된 데이터 보기</div>
+    </div>
+    
+    <br>
+    <button class="retry-btn" onclick="window.location.reload()">
+      다시 연결하기
+    </button>
+  </div>
+
+  <script>
+    // 연결 상태 확인
+    function checkConnection() {
+      if (navigator.onLine) {
+        window.location.href = '/';
+      }
+    }
+
+    // 연결 상태 변화 감지
+    window.addEventListener('online', checkConnection);
+    window.addEventListener('offline', () => {
+      console.log('네트워크 연결이 끊어졌습니다.');
+    });
+
+    // 주기적으로 연결 상태 확인
+    setInterval(checkConnection, 5000);
+  </script>
+</body>
+</html>

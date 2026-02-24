@@ -257,7 +257,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                 
                 {/* 포켓 본체: 왼쪽 상단 둥글게, 오른쪽 상단 직각 */}
                 <div className="bg-white border border-gray-200 px-3 py-2 relative overflow-hidden w-full h-full pt-10 shadow-sm"
-                  style={{ borderRadius: '16px 0 8px 8px' }}>
+                  style={{ borderRadius: '0' }}>
                   <button
                     onClick={() => removePocket(pocketId)}
                     className="absolute top-3 right-3 z-10 w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center transition-colors"
@@ -288,8 +288,8 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           {/* 포켓 추가 디자인 */}
           <div className="relative w-full h-full">
             <div
-              className="bg-white border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full h-full shadow-sm"
-              style={{ borderRadius: '16px 0 8px 8px' }}
+              className="bg-white border border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full h-full shadow-sm"
+              style={{ borderRadius: '0' }}
               onClick={() => setShowAdd(true)}
             >
               <Plus className="w-12 h-12 text-gray-400 mb-4" />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Home, AlertTriangle, MapPin, Luggage, Info, ExternalLink, Clock, MessageCircle, Bed } from 'lucide-react';
+import { Home, AlertTriangle, MapPin, Luggage, Info, ExternalLink, Clock, MessageCircle, Bed, DoorOpen, Bell, Wrench, CalendarClock, Building2, Smartphone } from 'lucide-react';
 import { openYanolja, openYeogieoddae, openAirbnb, openKakaoMap } from '../../utils/appLinks';
 
 function L(lang, obj) {

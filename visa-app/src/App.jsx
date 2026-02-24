@@ -1185,29 +1185,58 @@ function AppInner() {
     }).catch(() => {})
   }, [])
 
-  // 카카오 OAuth 리다이렉트 콜백 처리 (App 레벨)
+  // OAuth 리다이렉트 콜백 처리 (카카오 + 네이버)
   useEffect(() => {
     initKakao()
-    const code = new URLSearchParams(window.location.search).get('code')
-    if (code) {
+    const params = new URLSearchParams(window.location.search)
+    const code = params.get('code')
+    const state = params.get('state')
+    
+    if (!code) return
+    
+    // 네이버인지 카카오인지 구분: 네이버는 naver_oauth_state가 localStorage에 있음
+    const naverState = localStorage.getItem('naver_oauth_state')
+    const isNaver = naverState && state === naverState
+    
+    const handleOAuthSuccess = (user, provider) => {
+      const p = profile || { lang, userType: 'resident' }
+      if (user.nickname || user.name) p.nickname = user.nickname || user.name
+      if (user.profileImage) p.profileImage = user.profileImage
+      p.loginMethod = provider
+      setProfile(p)
+      saveProfile(p)
+      // URL에서 OAuth 파라미터 제거 → 홈으로
+      window.history.replaceState({}, '', window.location.origin + '/')
+    }
+    
+    if (isNaver) {
+      // 네이버 콜백
+      handleNaverCallback().then(user => {
+        if (user) {
+          trackLogin('naver', 'resident')
+          handleOAuthSuccess(user, 'naver')
+        } else {
+          window.history.replaceState({}, '', window.location.origin + '/')
+        }
+      }).catch(() => {
+        window.history.replaceState({}, '', window.location.origin + '/')
+      })
+    } else {
+      // 카카오 콜백
       trackKakaoEvent('kakao_oauth_callback_received')
       handleKakaoCallback().then(user => {
         if (user) {
-          // 로그인 성공 → 온보딩 건너뛰고 프로필 설정
           trackKakaoEvent('kakao_oauth_success', { nickname: user.nickname })
           trackLogin('kakao', 'resident')
-          
-          if (!profile) {
-            const p = { lang, userType: 'resident' }
-            setProfile(p)
-            saveProfile(p)
-          }
+          handleOAuthSuccess(user, 'kakao')
         } else {
           trackKakaoEvent('kakao_oauth_failed')
+          window.history.replaceState({}, '', window.location.origin + '/')
         }
       }).catch(error => {
         console.error('Kakao OAuth error:', error)
         trackKakaoEvent('kakao_oauth_error', { error: error.message })
+        window.history.replaceState({}, '', window.location.origin + '/')
       })
     }
   }, [])

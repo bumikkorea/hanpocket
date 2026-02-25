@@ -416,6 +416,22 @@ export async function smartTranslate(input) {
     console.log('쇼핑몰 DB 로드 실패:', err)
   }
   
+  // 5. 병원 매핑
+  try {
+    const { translateHospitalName } = await import('./seoulHospitals.js')
+    result = translateHospitalName(result)
+  } catch (err) {
+    console.log('병원 DB 로드 실패:', err)
+  }
+  
+  // 6. 공공시설 매핑
+  try {
+    const { translatePublicFacilityName } = await import('./seoulPublicFacilities.js')
+    result = translatePublicFacilityName(result)
+  } catch (err) {
+    console.log('공공시설 DB 로드 실패:', err)
+  }
+  
   return result
 }
 

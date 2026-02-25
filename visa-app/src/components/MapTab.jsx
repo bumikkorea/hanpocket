@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { MapPin, Search, Filter, Navigation, Info, Palette, Sun, Moon, Minimize2 } from 'lucide-react'
+import { MapPin, Search, Filter, Navigation, Info, ArrowUpDown, Route, X } from 'lucide-react'
 
 export default function MapTab({ lang }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -15,6 +15,13 @@ export default function MapTab({ lang }) {
   const [showSearchResults, setShowSearchResults] = useState(false)
   const [geocoder, setGeocoder] = useState(null)
   const [clusterer, setClusterer] = useState(null)
+  const [showRoutePanel, setShowRoutePanel] = useState(false)
+  const [startLocation, setStartLocation] = useState('')
+  const [endLocation, setEndLocation] = useState('')
+  const [startResults, setStartResults] = useState([])
+  const [endResults, setEndResults] = useState([])
+  const [showStartResults, setShowStartResults] = useState(false)
+  const [showEndResults, setShowEndResults] = useState(false)
   const mapRef = useRef(null)
 
   const L = (data) => {
@@ -236,6 +243,12 @@ export default function MapTab({ lang }) {
       if (!event.target.closest('.search-container')) {
         setShowSearchResults(false)
       }
+      if (!event.target.closest('.route-search-start')) {
+        setShowStartResults(false)
+      }
+      if (!event.target.closest('.route-search-end')) {
+        setShowEndResults(false)
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
@@ -391,6 +404,84 @@ export default function MapTab({ lang }) {
     return `https://map.kakao.com/link/to/${name},${marker.lat},${marker.lng}`
   }
 
+  // 출발지/도착지 스마트 검색
+  const searchLocation = (query, isStart = true) => {
+    if (!geocoder || !query.trim()) return
+
+    const setResults = isStart ? setStartResults : setEndResults
+    const setShowResults = isStart ? setShowStartResults : setShowEndResults
+
+    setResults([]) // 기존 검색 결과 초기화
+
+    // 주소로 검색
+    geocoder.addressSearch(query, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const results = result.map(place => ({
+          id: `address_${place.x}_${place.y}`,
+          name: place.address_name,
+          x: place.x,
+          y: place.y,
+          type: 'address'
+        }))
+        setResults(prev => [...prev, ...results])
+        setShowResults(true)
+      }
+    })
+
+    // 키워드로 장소 검색
+    const ps = new window.kakao.maps.services.Places()
+    ps.keywordSearch(query, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const results = result.slice(0, 5).map(place => ({
+          id: place.id,
+          name: place.place_name,
+          address: place.address_name,
+          x: place.x,
+          y: place.y,
+          phone: place.phone,
+          category: place.category_name,
+          type: 'place'
+        }))
+        setResults(prev => [...prev, ...results])
+        setShowResults(true)
+      }
+    })
+  }
+
+  // 출발지/도착지 선택
+  const selectLocation = (result, isStart = true) => {
+    const setLocation = isStart ? setStartLocation : setEndLocation
+    const setShowResults = isStart ? setShowStartResults : setShowEndResults
+
+    setLocation(result.name)
+    setShowResults(false)
+  }
+
+  // 출발지/도착지 위치 바꾸기
+  const switchLocations = () => {
+    const temp = startLocation
+    setStartLocation(endLocation)
+    setEndLocation(temp)
+  }
+
+  // 카카오맵 길찾기 실행
+  const startNavigation = () => {
+    if (!startLocation || !endLocation) {
+      alert(L({ 
+        ko: '출발지와 도착지를 모두 입력해주세요.', 
+        zh: '请输入出发地和目的地。', 
+        en: 'Please enter both start and destination.' 
+      }))
+      return
+    }
+
+    const startQuery = encodeURIComponent(startLocation)
+    const endQuery = encodeURIComponent(endLocation)
+    const navigationUrl = `https://map.kakao.com/link/from/${startQuery}/to/${endQuery}`
+    
+    window.open(navigationUrl, '_blank')
+  }
+
   // 지도 테마 (카카오맵은 기본 스타일만 제공)
   const mapThemes = [
     {
@@ -501,16 +592,130 @@ export default function MapTab({ lang }) {
                 )}
               </div>
 
-
+              <button
+                onClick={() => setShowRoutePanel(!showRoutePanel)}
+                className={`p-2 transition-colors ${showRoutePanel ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                title={L({ ko: '길찾기', zh: '导航', en: 'Navigation' })}
+              >
+                <Route size={20} />
+              </button>
             </div>
           </div>
         </div>
       </div>
 
+      {/* 출발지/도착지 입력 패널 */}
+      {showRoutePanel && (
+        <div className="bg-white border-b border-gray-100 sticky top-[70px] z-30">
+          <div className="px-4 py-3">
+            <div className="flex items-center space-x-3">
+              {/* 출발지 입력 */}
+              <div className="flex-1 relative route-search-start">
+                <input
+                  type="text"
+                  value={startLocation}
+                  onChange={(e) => {
+                    setStartLocation(e.target.value)
+                    if (e.target.value.length > 1) {
+                      searchLocation(e.target.value, true)
+                    } else {
+                      setShowStartResults(false)
+                    }
+                  }}
+                  placeholder={L({ ko: '출발지', zh: '出发地', en: 'Start' })}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+                
+                {/* 출발지 검색 결과 */}
+                {showStartResults && startResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
+                    {startResults.map((result) => (
+                      <button
+                        key={result.id}
+                        onClick={() => selectLocation(result, true)}
+                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                      >
+                        <div className="font-medium text-xs">{result.name}</div>
+                        {result.address && (
+                          <div className="text-xs text-gray-500">{result.address}</div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
 
+              {/* 위치 바꾸기 버튼 */}
+              <button
+                onClick={switchLocations}
+                className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                title={L({ ko: '출발지/도착지 바꾸기', zh: '交换出发地和目的地', en: 'Switch locations' })}
+              >
+                <ArrowUpDown size={16} />
+              </button>
+
+              {/* 도착지 입력 */}
+              <div className="flex-1 relative route-search-end">
+                <input
+                  type="text"
+                  value={endLocation}
+                  onChange={(e) => {
+                    setEndLocation(e.target.value)
+                    if (e.target.value.length > 1) {
+                      searchLocation(e.target.value, false)
+                    } else {
+                      setShowEndResults(false)
+                    }
+                  }}
+                  placeholder={L({ ko: '도착지', zh: '目的地', en: 'Destination' })}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                />
+
+                {/* 도착지 검색 결과 */}
+                {showEndResults && endResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
+                    {endResults.map((result) => (
+                      <button
+                        key={result.id}
+                        onClick={() => selectLocation(result, false)}
+                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                      >
+                        <div className="font-medium text-xs">{result.name}</div>
+                        {result.address && (
+                          <div className="text-xs text-gray-500">{result.address}</div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 길찾기 실행 버튼 */}
+              <button
+                onClick={startNavigation}
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                {L({ ko: '길찾기', zh: '导航', en: 'Go' })}
+              </button>
+
+              {/* 패널 닫기 버튼 */}
+              <button
+                onClick={() => {
+                  setShowRoutePanel(false)
+                  setShowStartResults(false)
+                  setShowEndResults(false)
+                }}
+                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 카테고리 탭 */}
-      <div className="bg-white border-b border-gray-100 sticky top-[70px] z-30">
+      <div className={`bg-white border-b border-gray-100 sticky z-30 ${showRoutePanel ? 'top-[130px]' : 'top-[70px]'}`}>
         <div className="px-4 py-3">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (
@@ -535,7 +740,11 @@ export default function MapTab({ lang }) {
         {/* 카카오 지도 컨테이너 */}
         <div 
           ref={mapRef}
-          className="w-full h-[calc(100vh-200px)] md:h-[calc(100vh-160px)]"
+          className={`w-full ${
+            showRoutePanel 
+              ? 'h-[calc(100vh-260px)] md:h-[calc(100vh-220px)]'
+              : 'h-[calc(100vh-200px)] md:h-[calc(100vh-160px)]'
+          }`}
           style={{ 
             minHeight: '300px',
             maxHeight: 'calc(100vh - 150px)'

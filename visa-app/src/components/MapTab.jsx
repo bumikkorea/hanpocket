@@ -196,6 +196,40 @@ export default function MapTab({ lang }) {
     initMap()
   }, [])
 
+  // 지도 크기 재조정 (화면 크기 변경 시)
+  useEffect(() => {
+    const handleResize = () => {
+      if (map && window.kakao) {
+        // 약간의 지연 후 크기 재조정
+        setTimeout(() => {
+          map.relayout()
+        }, 100)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    window.addEventListener('orientationchange', handleResize)
+    
+    // 초기 로드 시에도 크기 조정
+    if (map) {
+      setTimeout(() => map.relayout(), 100)
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('orientationchange', handleResize)
+    }
+  }, [map])
+
+  // 스타일 패널 토글 시 지도 크기 재조정
+  useEffect(() => {
+    if (map && mapReady) {
+      setTimeout(() => {
+        map.relayout()
+      }, 300) // 애니메이션 완료 후 크기 재조정
+    }
+  }, [showStylePanel, map, mapReady])
+
   // 검색 결과 외부 클릭 시 닫기
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -566,8 +600,15 @@ export default function MapTab({ lang }) {
         {/* 카카오 지도 컨테이너 */}
         <div 
           ref={mapRef}
-          className={`w-full ${showStylePanel ? 'h-[calc(100vh-260px)]' : 'h-[calc(100vh-140px)]'}`}
-          style={{ minHeight: '400px' }}
+          className={`w-full ${
+            showStylePanel 
+              ? 'h-[calc(100vh-320px)] md:h-[calc(100vh-280px)]' 
+              : 'h-[calc(100vh-200px)] md:h-[calc(100vh-160px)]'
+          }`}
+          style={{ 
+            minHeight: '300px',
+            maxHeight: 'calc(100vh - 150px)'
+          }}
         />
 
         {/* 사용자 위치 버튼 */}

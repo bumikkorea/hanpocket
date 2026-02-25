@@ -10,6 +10,11 @@ export default function MapTab({ lang }) {
   const [mapReady, setMapReady] = useState(false)
   const [currentTheme, setCurrentTheme] = useState('hanpocket')
   const [showStylePanel, setShowStylePanel] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])
+  const [showSearchResults, setShowSearchResults] = useState(false)
+  const [geocoder, setGeocoder] = useState(null)
+  const [clusterer, setClusterer] = useState(null)
   const mapRef = useRef(null)
 
   const L = (data) => {
@@ -80,7 +85,7 @@ export default function MapTab({ lang }) {
     }
   ]
 
-  // 카카오맵 API 동적 로드
+  // 카카오맵 API 동적 로드 (라이브러리 포함)
   const loadKakaoMapAPI = () => {
     return new Promise((resolve, reject) => {
       if (window.kakao && window.kakao.maps) {
@@ -97,7 +102,8 @@ export default function MapTab({ lang }) {
 
       const script = document.createElement('script')
       script.type = 'text/javascript'
-      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`
+      // services, clusterer 라이브러리 추가
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`
       script.onload = () => {
         window.kakao.maps.load(() => {
           resolve(window.kakao)
@@ -133,6 +139,18 @@ export default function MapTab({ lang }) {
         // 줌 컨트롤 추가
         const zoomControl = new window.kakao.maps.ZoomControl()
         kakaoMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT)
+
+        // Services 라이브러리 - 주소 검색용
+        const geoCoderInstance = new window.kakao.maps.services.Geocoder()
+        setGeocoder(geoCoderInstance)
+
+        // Clusterer 라이브러리 - 마커 클러스터링
+        const clustererInstance = new window.kakao.maps.MarkerClusterer({
+          map: kakaoMap,
+          averageCenter: true,  // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+          minLevel: 10         // 클러스터 할 최소 지도 레벨
+        })
+        setClusterer(clustererInstance)
 
         // 사용자 위치 가져오기
         if (navigator.geolocation) {
@@ -178,12 +196,27 @@ export default function MapTab({ lang }) {
     initMap()
   }, [])
 
-  // 마커 렌더링
+  // 검색 결과 외부 클릭 시 닫기
   useEffect(() => {
-    if (!map || !mapReady || !window.kakao) return
+    const handleClickOutside = (event) => {
+      if (!event.target.closest('.search-container')) {
+        setShowSearchResults(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  // 마커 렌더링 (클러스터링 포함)
+  useEffect(() => {
+    if (!map || !mapReady || !window.kakao || !clusterer) return
 
     // 기존 마커 제거
     markers.forEach(marker => marker.setMap(null))
+    clusterer.clear() // 클러스터러에서 모든 마커 제거
 
     // 카테고리 필터링
     const filteredMarkers = selectedCategory === 'all' 
@@ -205,8 +238,6 @@ export default function MapTab({ lang }) {
         image: markerImage
       })
 
-      marker.setMap(map)
-
       // 마커 클릭 이벤트
       window.kakao.maps.event.addListener(marker, 'click', () => {
         setSelectedMarker(markerData)
@@ -215,8 +246,13 @@ export default function MapTab({ lang }) {
       return marker
     })
 
+    // 마커들을 클러스터러에 추가
+    if (newMarkers.length > 0) {
+      clusterer.addMarkers(newMarkers)
+    }
+
     setMarkers(newMarkers)
-  }, [map, selectedCategory, mapReady])
+  }, [map, selectedCategory, mapReady, clusterer])
 
   // 카테고리별 마커 이미지 생성
   const getCategoryMarkerImage = (category) => {
@@ -236,6 +272,89 @@ export default function MapTab({ lang }) {
         <text x="15" y="20" text-anchor="middle" font-size="14">${emoji}</text>
       </svg>
     `)
+  }
+
+  // 장소 검색 함수
+  const searchPlace = (query) => {
+    if (!geocoder || !query.trim()) return
+
+    setSearchResults([]) // 기존 검색 결과 초기화
+
+    // 주소로 검색
+    geocoder.addressSearch(query, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const results = result.map(place => ({
+          id: `address_${place.x}_${place.y}`,
+          name: place.address_name,
+          x: place.x,
+          y: place.y,
+          type: 'address'
+        }))
+        setSearchResults(prev => [...prev, ...results])
+        setShowSearchResults(true)
+      }
+    })
+
+    // 키워드로 장소 검색 (Places 서비스)
+    const ps = new window.kakao.maps.services.Places()
+    ps.keywordSearch(query, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const results = result.slice(0, 5).map(place => ({
+          id: place.id,
+          name: place.place_name,
+          address: place.address_name,
+          x: place.x,
+          y: place.y,
+          phone: place.phone,
+          category: place.category_name,
+          type: 'place'
+        }))
+        setSearchResults(prev => [...prev, ...results])
+        setShowSearchResults(true)
+      }
+    })
+  }
+
+  // 검색 결과 선택
+  const selectSearchResult = (result) => {
+    if (!map) return
+
+    const moveLatLng = new window.kakao.maps.LatLng(result.y, result.x)
+    map.setCenter(moveLatLng)
+    map.setLevel(3) // 확대
+
+    // 검색 결과 마커 추가
+    const marker = new window.kakao.maps.Marker({
+      position: moveLatLng,
+      map: map
+    })
+
+    // 검색 결과를 selectedMarker로 설정 (정보 패널 표시용)
+    setSelectedMarker({
+      id: result.id,
+      category: 'search',
+      name: { ko: result.name, zh: result.name, en: result.name },
+      description: { ko: result.address || '검색 결과', zh: result.address || '搜索结果', en: result.address || 'Search Result' },
+      lat: parseFloat(result.y),
+      lng: parseFloat(result.x),
+      phone: result.phone,
+      categoryName: result.category
+    })
+
+    setShowSearchResults(false)
+    setSearchQuery('')
+  }
+
+  // 카카오맵 크게보기 URL 생성
+  const getKakaoMapUrl = (marker) => {
+    const name = encodeURIComponent(L(marker.name))
+    return `https://map.kakao.com/link/map/${name},${marker.lat},${marker.lng}`
+  }
+
+  // 카카오맵 길찾기 URL 생성
+  const getKakaoDirectionUrl = (marker) => {
+    const name = encodeURIComponent(L(marker.name))
+    return `https://map.kakao.com/link/to/${name},${marker.lat},${marker.lng}`
   }
 
   // 지도 테마 (카카오맵은 기본 스타일만 제공)
@@ -328,9 +447,49 @@ export default function MapTab({ lang }) {
               {L({ ko: '한국 지도', zh: '韩国地图', en: 'Korea Map' })}
             </h1>
             <div className="flex items-center space-x-2">
-              <button className="p-2 text-gray-500 hover:text-gray-700">
-                <Search size={20} />
-              </button>
+              {/* 검색 입력창 */}
+              <div className="relative search-container">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      searchPlace(searchQuery)
+                    }
+                  }}
+                  placeholder={L({ ko: '장소, 주소 검색', zh: '搜索地点、地址', en: 'Search places, addresses' })}
+                  className="w-48 px-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-gray-500"
+                />
+                <button 
+                  onClick={() => searchPlace(searchQuery)}
+                  className="absolute right-1 top-1 p-1 text-gray-500 hover:text-gray-700"
+                >
+                  <Search size={16} />
+                </button>
+
+                {/* 검색 결과 드롭다운 */}
+                {showSearchResults && searchResults.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
+                    {searchResults.map((result) => (
+                      <button
+                        key={result.id}
+                        onClick={() => selectSearchResult(result)}
+                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                      >
+                        <div className="font-medium text-sm">{result.name}</div>
+                        {result.address && (
+                          <div className="text-xs text-gray-500">{result.address}</div>
+                        )}
+                        {result.category && (
+                          <div className="text-xs text-blue-600">{result.category}</div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <button 
                 onClick={() => setShowStylePanel(!showStylePanel)}
                 className={`p-2 transition-colors ${showStylePanel ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
@@ -464,6 +623,28 @@ export default function MapTab({ lang }) {
                   {selectedMarker.ticketPrice && (
                     <div className="text-gray-500">🎫 {L(selectedMarker.ticketPrice)}</div>
                   )}
+                  {selectedMarker.phone && (
+                    <div className="text-gray-500">📞 {selectedMarker.phone}</div>
+                  )}
+                  {selectedMarker.categoryName && (
+                    <div className="text-gray-500">🏷️ {selectedMarker.categoryName}</div>
+                  )}
+                </div>
+
+                {/* 카카오맵 연동 버튼들 */}
+                <div className="flex space-x-2 mt-3 pt-3 border-t border-gray-100">
+                  <button
+                    onClick={() => window.open(getKakaoMapUrl(selectedMarker), '_blank')}
+                    className="flex-1 px-3 py-2 text-xs font-medium text-white bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors"
+                  >
+                    {L({ ko: '크게보기', zh: '放大查看', en: 'View Large' })}
+                  </button>
+                  <button
+                    onClick={() => window.open(getKakaoDirectionUrl(selectedMarker), '_blank')}
+                    className="flex-1 px-3 py-2 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
+                  >
+                    {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
+                  </button>
                 </div>
               </div>
               <button 

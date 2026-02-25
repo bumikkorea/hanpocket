@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { MapPin, Search, Filter, Navigation, Info } from 'lucide-react'
+import { MapPin, Search, Filter, Navigation, Info, Palette, Sun, Moon, Minimize2 } from 'lucide-react'
+import { applyMapStyle, switchMapTheme } from '../utils/mapStyles'
 
 export default function MapTab({ lang }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -8,6 +9,8 @@ export default function MapTab({ lang }) {
   const [selectedMarker, setSelectedMarker] = useState(null)
   const [userLocation, setUserLocation] = useState(null)
   const [mapReady, setMapReady] = useState(false)
+  const [currentTheme, setCurrentTheme] = useState('hanpocket')
+  const [showStylePanel, setShowStylePanel] = useState(false)
   const mapRef = useRef(null)
 
   const L = (data) => {
@@ -123,6 +126,11 @@ export default function MapTab({ lang }) {
         setMap(naverMap)
         setMapReady(true)
 
+        // 기본 HanPocket 테마 적용
+        setTimeout(() => {
+          switchMapTheme(naverMap, 'hanpocket')
+        }, 500)
+
         // 사용자 위치 가져오기
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(
@@ -226,6 +234,54 @@ export default function MapTab({ lang }) {
     `
   }
 
+  // 지도 테마 옵션
+  const mapThemes = [
+    {
+      id: 'default',
+      name: { ko: '기본', zh: '默认', en: 'Default' },
+      icon: <MapPin size={16} />,
+      color: '#4285F4',
+      description: { ko: '네이버 기본 스타일', zh: 'Naver默认样式', en: 'Naver Default Style' }
+    },
+    {
+      id: 'hanpocket', 
+      name: { ko: '한포켓', zh: '韩口袋', en: 'HanPocket' },
+      icon: <Palette size={16} />,
+      color: '#D32F2F',
+      description: { ko: '한국 전통 색상', zh: '韩国传统色彩', en: 'Korean Traditional Colors' }
+    },
+    {
+      id: 'chinese',
+      name: { ko: '중국인 친화', zh: '中国人友好', en: 'Chinese Friendly' },
+      icon: '🇨🇳',
+      color: '#FF1744', 
+      description: { ko: '중국인 관심 장소 강조', zh: '突出中国人感兴趣的地方', en: 'Highlight Chinese-friendly places' }
+    },
+    {
+      id: 'dark',
+      name: { ko: '다크 모드', zh: '深色模式', en: 'Dark Mode' },
+      icon: <Moon size={16} />,
+      color: '#424242',
+      description: { ko: '야간 모드', zh: '夜间模式', en: 'Night Mode' }
+    },
+    {
+      id: 'minimal',
+      name: { ko: '미니멀', zh: '极简', en: 'Minimal' },
+      icon: <Minimize2 size={16} />,
+      color: '#9E9E9E',
+      description: { ko: '깔끔한 디자인', zh: '简洁设计', en: 'Clean Design' }
+    }
+  ]
+
+  // 테마 변경 함수
+  const changeMapTheme = (themeId) => {
+    if (!map) return
+    
+    setCurrentTheme(themeId)
+    switchMapTheme(map, themeId)
+    setShowStylePanel(false)
+  }
+
   // 지도 카테고리
   const mapCategories = [
     { 
@@ -279,16 +335,59 @@ export default function MapTab({ lang }) {
               <button className="p-2 text-gray-500 hover:text-gray-700">
                 <Search size={20} />
               </button>
-              <button className="p-2 text-gray-500 hover:text-gray-700">
-                <Filter size={20} />
+              <button 
+                onClick={() => setShowStylePanel(!showStylePanel)}
+                className={`p-2 transition-colors ${showStylePanel ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
+              >
+                <Palette size={20} />
               </button>
             </div>
           </div>
         </div>
       </div>
 
+      {/* 스타일 선택 패널 */}
+      {showStylePanel && (
+        <div className="bg-white border-b border-gray-100 sticky top-[70px] z-30">
+          <div className="px-4 py-3">
+            <div className="mb-2">
+              <h3 className="text-sm font-semibold text-gray-900">
+                {L({ ko: '지도 테마', zh: '地图主题', en: 'Map Theme' })}
+              </h3>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {mapThemes.map((theme) => (
+                <button
+                  key={theme.id}
+                  onClick={() => changeMapTheme(theme.id)}
+                  className={`flex items-center space-x-2 p-3 rounded-lg border transition-all ${
+                    currentTheme === theme.id
+                      ? 'bg-gray-900 text-white border-gray-900'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex-shrink-0">
+                    {typeof theme.icon === 'string' ? (
+                      <span className="text-lg">{theme.icon}</span>
+                    ) : (
+                      <div className={currentTheme === theme.id ? 'text-white' : 'text-gray-500'}>
+                        {theme.icon}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-left">
+                    <div className="text-sm font-medium">{L(theme.name)}</div>
+                    <div className="text-xs opacity-70">{L(theme.description)}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 카테고리 탭 */}
-      <div className="bg-white border-b border-gray-100 sticky top-[70px] z-30">
+      <div className={`bg-white border-b border-gray-100 sticky z-30 ${showStylePanel ? 'top-[190px]' : 'top-[70px]'}`}>
         <div className="px-4 py-3">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (
@@ -316,7 +415,7 @@ export default function MapTab({ lang }) {
         {/* 네이버 지도 컨테이너 */}
         <div 
           ref={mapRef}
-          className="h-[calc(100vh-140px)] w-full"
+          className={`w-full ${showStylePanel ? 'h-[calc(100vh-260px)]' : 'h-[calc(100vh-140px)]'}`}
           style={{ minHeight: '400px' }}
         />
 

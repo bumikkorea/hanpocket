@@ -41,6 +41,7 @@ const VisaAlertTab = lazy(() => import('./components/VisaAlertTab'))
 const FinanceTab = lazy(() => import('./components/FinanceTab'))
 const ResumeTab = lazy(() => import('./components/ResumeTab'))
 const DigitalWalletTab = lazy(() => import('./components/DigitalWalletTab'))
+const MapTab = lazy(() => import('./components/MapTab'))
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -1351,6 +1352,7 @@ function AppInner() {
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
     { id: 'pocket', icon: Grid3x3, label: { ko: '포켓', zh: '口袋', en: 'Pocket' } },
+    { id: 'map', icon: 'taegeuk', label: { ko: '지도', zh: '地图', en: 'Map' } },
     { id: 'community', icon: Users, label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]
@@ -1670,6 +1672,11 @@ function AppInner() {
             <CommunityTab lang={lang} profile={profile} />
           </Suspense>
         )}
+        {tab==='map' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <MapTab lang={lang} />
+          </Suspense>
+        )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
@@ -1822,6 +1829,15 @@ function AppInner() {
                     <circle cx="16" cy="10" r="1" fill="white" opacity="0.6"/>
                     <line x1="18" y1="8" x2="18" y2="6" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
                     <line x1="22" y1="8" x2="22" y2="5" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
+                  </svg>
+                ) : item.id === 'map' ? (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'}>
+                    {/* 태극 문양 */}
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" opacity={0.3}/>
+                    <path d="M 12 2 A 10 10 0 0 1 12 22 A 5 5 0 0 1 12 12 A 5 5 0 0 0 12 2" fill={active ? '#FF4444' : 'currentColor'} opacity={active ? 0.8 : 0.4}/>
+                    <path d="M 12 2 A 10 10 0 0 0 12 22 A 5 5 0 0 0 12 12 A 5 5 0 0 1 12 2" fill={active ? '#4444FF' : 'currentColor'} opacity={active ? 0.8 : 0.4}/>
+                    <circle cx="12" cy="7" r="1.5" fill="white" opacity={0.9}/>
+                    <circle cx="12" cy="17" r="1.5" fill="white" opacity={0.9}/>
                   </svg>
                 ) : (
                   <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />

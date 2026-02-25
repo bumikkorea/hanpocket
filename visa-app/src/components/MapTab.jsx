@@ -9,7 +9,7 @@ export default function MapTab({ lang }) {
   const [userLocation, setUserLocation] = useState(null)
   const [mapReady, setMapReady] = useState(false)
   const [currentTheme, setCurrentTheme] = useState('hanpocket')
-  const [showStylePanel, setShowStylePanel] = useState(false)
+
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
   const [showSearchResults, setShowSearchResults] = useState(false)
@@ -396,26 +396,9 @@ export default function MapTab({ lang }) {
     {
       id: 'normal',
       name: { ko: '기본', zh: '默认', en: 'Normal' },
-      icon: <MapPin size={16} />,
       color: '#4285F4',
       description: { ko: '카카오맵 기본 스타일', zh: '카카오맵默认样式', en: 'KakaoMap Default Style' },
       mapType: window.kakao?.maps?.MapTypeId?.ROADMAP
-    },
-    {
-      id: 'satellite', 
-      name: { ko: '위성', zh: '卫星', en: 'Satellite' },
-      icon: <Sun size={16} />,
-      color: '#FF9800',
-      description: { ko: '위성 이미지', zh: '卫星图像', en: 'Satellite Image' },
-      mapType: window.kakao?.maps?.MapTypeId?.SKYVIEW
-    },
-    {
-      id: 'hybrid',
-      name: { ko: '위성+라벨', zh: '卫星+标签', en: 'Hybrid' },
-      icon: <Palette size={16} />,
-      color: '#9C27B0', 
-      description: { ko: '위성 + 도로명', zh: '卫星 + 道路名', en: 'Satellite + Roads' },
-      mapType: window.kakao?.maps?.MapTypeId?.HYBRID
     }
   ]
 
@@ -436,37 +419,31 @@ export default function MapTab({ lang }) {
     { 
       id: 'all', 
       name: { ko: '전체', zh: '全部', en: 'All' },
-      icon: '📍',
       color: '#111827'
     },
     { 
       id: 'restaurant', 
       name: { ko: '맛집', zh: '美食', en: 'Food' },
-      icon: '🍜',
       color: '#FF6B6B'
     },
     { 
       id: 'medical', 
       name: { ko: '의료', zh: '医疗', en: 'Medical' },
-      icon: '🏥',
       color: '#4ECDC4'
     },
     { 
       id: 'transport', 
       name: { ko: '교통', zh: '交通', en: 'Transport' },
-      icon: '🚇',
       color: '#45B7D1'
     },
     { 
       id: 'shopping', 
       name: { ko: '쇼핑', zh: '购物', en: 'Shopping' },
-      icon: '🛍️',
       color: '#96CEB4'
     },
     { 
       id: 'tourism', 
       name: { ko: '관광', zh: '旅游', en: 'Tourism' },
-      icon: '🏛️',
       color: '#FECA57'
     }
   ]
@@ -524,71 +501,29 @@ export default function MapTab({ lang }) {
                 )}
               </div>
 
-              <button 
-                onClick={() => setShowStylePanel(!showStylePanel)}
-                className={`p-2 transition-colors ${showStylePanel ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}`}
-              >
-                <Palette size={20} />
-              </button>
+
             </div>
           </div>
         </div>
       </div>
 
-      {/* 스타일 선택 패널 */}
-      {showStylePanel && (
-        <div className="bg-white border-b border-gray-100 sticky top-[70px] z-30">
-          <div className="px-4 py-3">
-            <div className="mb-2">
-              <h3 className="text-sm font-semibold text-gray-900">
-                {L({ ko: '지도 타입', zh: '地图类型', en: 'Map Type' })}
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 gap-2">
-              {mapThemes.map((theme) => (
-                <button
-                  key={theme.id}
-                  onClick={() => changeMapTheme(theme.id)}
-                  className={`flex items-center space-x-3 p-3 rounded-lg border transition-all ${
-                    currentTheme === theme.id
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="flex-shrink-0">
-                    <div className={currentTheme === theme.id ? 'text-white' : 'text-gray-500'}>
-                      {theme.icon}
-                    </div>
-                  </div>
-                  <div className="text-left">
-                    <div className="text-sm font-medium">{L(theme.name)}</div>
-                    <div className="text-xs opacity-70">{L(theme.description)}</div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* 카테고리 탭 */}
-      <div className={`bg-white border-b border-gray-100 sticky z-30 ${showStylePanel ? 'top-[190px]' : 'top-[70px]'}`}>
+      <div className="bg-white border-b border-gray-100 sticky top-[70px] z-30">
         <div className="px-4 py-3">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`flex-shrink-0 px-4 py-2 rounded-full border transition-all ${
+                className={`flex-shrink-0 px-2 py-1 rounded-full border transition-all text-xs ${
                   selectedCategory === category.id
                     ? 'bg-gray-900 text-white border-gray-900'
                     : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                 }`}
               >
-                <div className="flex items-center space-x-1.5">
-                  <span className="text-sm">{category.icon}</span>
-                  <span className="text-sm font-medium">{L(category.name)}</span>
-                </div>
+                <span className="font-medium">{L(category.name)}</span>
               </button>
             ))}
           </div>
@@ -600,11 +535,7 @@ export default function MapTab({ lang }) {
         {/* 카카오 지도 컨테이너 */}
         <div 
           ref={mapRef}
-          className={`w-full ${
-            showStylePanel 
-              ? 'h-[calc(100vh-320px)] md:h-[calc(100vh-280px)]' 
-              : 'h-[calc(100vh-200px)] md:h-[calc(100vh-160px)]'
-          }`}
+          className="w-full h-[calc(100vh-200px)] md:h-[calc(100vh-160px)]"
           style={{ 
             minHeight: '300px',
             maxHeight: 'calc(100vh - 150px)'
@@ -633,9 +564,6 @@ export default function MapTab({ lang }) {
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="text-lg">
-                    {mapCategories.find(cat => cat.id === selectedMarker.category)?.icon}
-                  </span>
                   <h3 className="font-bold text-gray-900">{L(selectedMarker.name)}</h3>
                   {selectedMarker.chineseSupport && (
                     <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">

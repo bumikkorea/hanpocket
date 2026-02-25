@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
 import { MapPin, Search, Filter, Navigation, Info, Palette, Sun, Moon, Minimize2 } from 'lucide-react'
-import { applyMapStyle, switchMapTheme } from '../utils/mapStyles'
 
 export default function MapTab({ lang }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -81,26 +80,30 @@ export default function MapTab({ lang }) {
     }
   ]
 
-  // 네이버지도 API 동적 로드
-  const loadNaverMapAPI = () => {
+  // 카카오맵 API 동적 로드
+  const loadKakaoMapAPI = () => {
     return new Promise((resolve, reject) => {
-      if (window.naver) {
-        resolve(window.naver)
+      if (window.kakao && window.kakao.maps) {
+        resolve(window.kakao)
         return
       }
 
-      const clientId = import.meta.env.VITE_NAVER_MAP_CLIENT_ID
-      if (!clientId) {
-        console.warn('네이버 지도 API 클라이언트 ID가 설정되지 않았습니다.')
+      const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY
+      if (!apiKey) {
+        console.warn('카카오맵 API 키가 설정되지 않았습니다. 데모 모드로 실행합니다.')
         reject(new Error('API 키가 필요합니다'))
         return
       }
 
       const script = document.createElement('script')
       script.type = 'text/javascript'
-      script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${clientId}`
-      script.onload = () => resolve(window.naver)
-      script.onerror = () => reject(new Error('네이버 지도 API 로드 실패'))
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`
+      script.onload = () => {
+        window.kakao.maps.load(() => {
+          resolve(window.kakao)
+        })
+      }
+      script.onerror = () => reject(new Error('카카오맵 API 로드 실패'))
       document.head.appendChild(script)
     })
   }
@@ -109,27 +112,27 @@ export default function MapTab({ lang }) {
   useEffect(() => {
     const initMap = async () => {
       try {
-        await loadNaverMapAPI()
+        await loadKakaoMapAPI()
         if (!mapRef.current) return
 
         // 서울 중심으로 지도 초기화
-        const mapOptions = {
-          center: new window.naver.maps.LatLng(37.5665, 126.9780),
-          zoom: 13,
-          minZoom: 10,
-          maxZoom: 18,
-          mapTypeControl: true,
-          zoomControl: true
+        const container = mapRef.current
+        const options = {
+          center: new window.kakao.maps.LatLng(37.5665, 126.9780), // 명동
+          level: 3 // 확대 레벨 (1~14)
         }
 
-        const naverMap = new window.naver.maps.Map(mapRef.current, mapOptions)
-        setMap(naverMap)
+        const kakaoMap = new window.kakao.maps.Map(container, options)
+        setMap(kakaoMap)
         setMapReady(true)
 
-        // 기본 HanPocket 테마 적용
-        setTimeout(() => {
-          switchMapTheme(naverMap, 'hanpocket')
-        }, 500)
+        // 지도 타입 컨트롤 추가
+        const mapTypeControl = new window.kakao.maps.MapTypeControl()
+        kakaoMap.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT)
+
+        // 줌 컨트롤 추가
+        const zoomControl = new window.kakao.maps.ZoomControl()
+        kakaoMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT)
 
         // 사용자 위치 가져오기
         if (navigator.geolocation) {
@@ -143,17 +146,22 @@ export default function MapTab({ lang }) {
 
               // 한국 내 위치인 경우 지도 중심 이동
               if (userPos.lat > 33 && userPos.lat < 39 && userPos.lng > 125 && userPos.lng < 132) {
-                naverMap.setCenter(new window.naver.maps.LatLng(userPos.lat, userPos.lng))
+                const moveLatLng = new window.kakao.maps.LatLng(userPos.lat, userPos.lng)
+                kakaoMap.setCenter(moveLatLng)
                 
                 // 사용자 위치 마커
-                new window.naver.maps.Marker({
-                  position: new window.naver.maps.LatLng(userPos.lat, userPos.lng),
-                  map: naverMap,
-                  icon: {
-                    content: '<div style="background: #4285F4; border: 3px solid white; border-radius: 50%; width: 20px; height: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
-                    anchor: new window.naver.maps.Point(10, 10)
-                  }
+                const userMarker = new window.kakao.maps.Marker({
+                  position: moveLatLng,
+                  image: new window.kakao.maps.MarkerImage(
+                    'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                        <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+                      </svg>
+                    `),
+                    new window.kakao.maps.Size(20, 20)
+                  )
                 })
+                userMarker.setMap(kakaoMap)
               }
             },
             (error) => console.log('위치 정보를 가져올 수 없습니다:', error),
@@ -172,7 +180,7 @@ export default function MapTab({ lang }) {
 
   // 마커 렌더링
   useEffect(() => {
-    if (!map || !mapReady) return
+    if (!map || !mapReady || !window.kakao) return
 
     // 기존 마커 제거
     markers.forEach(marker => marker.setMap(null))
@@ -184,17 +192,23 @@ export default function MapTab({ lang }) {
 
     // 새 마커 생성
     const newMarkers = filteredMarkers.map(markerData => {
-      const marker = new window.naver.maps.Marker({
-        position: new window.naver.maps.LatLng(markerData.lat, markerData.lng),
-        map: map,
-        icon: {
-          content: getCategoryIcon(markerData.category),
-          anchor: new window.naver.maps.Point(15, 30)
-        }
+      const position = new window.kakao.maps.LatLng(markerData.lat, markerData.lng)
+      
+      // 커스텀 마커 이미지
+      const markerImage = new window.kakao.maps.MarkerImage(
+        getCategoryMarkerImage(markerData.category),
+        new window.kakao.maps.Size(30, 30)
+      )
+
+      const marker = new window.kakao.maps.Marker({
+        position: position,
+        image: markerImage
       })
 
+      marker.setMap(map)
+
       // 마커 클릭 이벤트
-      window.naver.maps.Event.addListener(marker, 'click', () => {
+      window.kakao.maps.event.addListener(marker, 'click', () => {
         setSelectedMarker(markerData)
       })
 
@@ -204,8 +218,8 @@ export default function MapTab({ lang }) {
     setMarkers(newMarkers)
   }, [map, selectedCategory, mapReady])
 
-  // 카테고리별 아이콘 생성
-  const getCategoryIcon = (category) => {
+  // 카테고리별 마커 이미지 생성
+  const getCategoryMarkerImage = (category) => {
     const iconMap = {
       restaurant: { emoji: '🍜', color: '#FF6B6B' },
       medical: { emoji: '🏥', color: '#4ECDC4' }, 
@@ -216,69 +230,51 @@ export default function MapTab({ lang }) {
     
     const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#111827' }
     
-    return `
-      <div style="
-        background: ${color}; 
-        color: white; 
-        border: 2px solid white; 
-        border-radius: 20px; 
-        width: 30px; 
-        height: 30px; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        font-size: 14px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        cursor: pointer;
-      ">${emoji}</div>
-    `
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+      <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" width="30" height="30">
+        <circle cx="15" cy="15" r="15" fill="${color}" stroke="white" stroke-width="2"/>
+        <text x="15" y="20" text-anchor="middle" font-size="14">${emoji}</text>
+      </svg>
+    `)
   }
 
-  // 지도 테마 옵션
+  // 지도 테마 (카카오맵은 기본 스타일만 제공)
   const mapThemes = [
     {
-      id: 'default',
-      name: { ko: '기본', zh: '默认', en: 'Default' },
+      id: 'normal',
+      name: { ko: '기본', zh: '默认', en: 'Normal' },
       icon: <MapPin size={16} />,
       color: '#4285F4',
-      description: { ko: '네이버 기본 스타일', zh: 'Naver默认样式', en: 'Naver Default Style' }
+      description: { ko: '카카오맵 기본 스타일', zh: '카카오맵默认样式', en: 'KakaoMap Default Style' },
+      mapType: window.kakao?.maps?.MapTypeId?.ROADMAP
     },
     {
-      id: 'hanpocket', 
-      name: { ko: '한포켓', zh: '韩口袋', en: 'HanPocket' },
+      id: 'satellite', 
+      name: { ko: '위성', zh: '卫星', en: 'Satellite' },
+      icon: <Sun size={16} />,
+      color: '#FF9800',
+      description: { ko: '위성 이미지', zh: '卫星图像', en: 'Satellite Image' },
+      mapType: window.kakao?.maps?.MapTypeId?.SKYVIEW
+    },
+    {
+      id: 'hybrid',
+      name: { ko: '위성+라벨', zh: '卫星+标签', en: 'Hybrid' },
       icon: <Palette size={16} />,
-      color: '#D32F2F',
-      description: { ko: '한국 전통 색상', zh: '韩国传统色彩', en: 'Korean Traditional Colors' }
-    },
-    {
-      id: 'chinese',
-      name: { ko: '중국인 친화', zh: '中国人友好', en: 'Chinese Friendly' },
-      icon: '🇨🇳',
-      color: '#FF1744', 
-      description: { ko: '중국인 관심 장소 강조', zh: '突出中国人感兴趣的地方', en: 'Highlight Chinese-friendly places' }
-    },
-    {
-      id: 'dark',
-      name: { ko: '다크 모드', zh: '深色模式', en: 'Dark Mode' },
-      icon: <Moon size={16} />,
-      color: '#424242',
-      description: { ko: '야간 모드', zh: '夜间模式', en: 'Night Mode' }
-    },
-    {
-      id: 'minimal',
-      name: { ko: '미니멀', zh: '极简', en: 'Minimal' },
-      icon: <Minimize2 size={16} />,
-      color: '#9E9E9E',
-      description: { ko: '깔끔한 디자인', zh: '简洁设计', en: 'Clean Design' }
+      color: '#9C27B0', 
+      description: { ko: '위성 + 도로명', zh: '卫星 + 道路名', en: 'Satellite + Roads' },
+      mapType: window.kakao?.maps?.MapTypeId?.HYBRID
     }
   ]
 
   // 테마 변경 함수
   const changeMapTheme = (themeId) => {
-    if (!map) return
+    if (!map || !window.kakao) return
+    
+    const theme = mapThemes.find(t => t.id === themeId)
+    if (!theme || !theme.mapType) return
     
     setCurrentTheme(themeId)
-    switchMapTheme(map, themeId)
+    map.setMapTypeId(theme.mapType)
     setShowStylePanel(false)
   }
 
@@ -352,28 +348,24 @@ export default function MapTab({ lang }) {
           <div className="px-4 py-3">
             <div className="mb-2">
               <h3 className="text-sm font-semibold text-gray-900">
-                {L({ ko: '지도 테마', zh: '地图主题', en: 'Map Theme' })}
+                {L({ ko: '지도 타입', zh: '地图类型', en: 'Map Type' })}
               </h3>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
               {mapThemes.map((theme) => (
                 <button
                   key={theme.id}
                   onClick={() => changeMapTheme(theme.id)}
-                  className={`flex items-center space-x-2 p-3 rounded-lg border transition-all ${
+                  className={`flex items-center space-x-3 p-3 rounded-lg border transition-all ${
                     currentTheme === theme.id
                       ? 'bg-gray-900 text-white border-gray-900'
                       : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex-shrink-0">
-                    {typeof theme.icon === 'string' ? (
-                      <span className="text-lg">{theme.icon}</span>
-                    ) : (
-                      <div className={currentTheme === theme.id ? 'text-white' : 'text-gray-500'}>
-                        {theme.icon}
-                      </div>
-                    )}
+                    <div className={currentTheme === theme.id ? 'text-white' : 'text-gray-500'}>
+                      {theme.icon}
+                    </div>
                   </div>
                   <div className="text-left">
                     <div className="text-sm font-medium">{L(theme.name)}</div>
@@ -412,7 +404,7 @@ export default function MapTab({ lang }) {
 
       {/* 지도 영역 */}
       <div className="relative flex-1 bg-gray-50">
-        {/* 네이버 지도 컨테이너 */}
+        {/* 카카오 지도 컨테이너 */}
         <div 
           ref={mapRef}
           className={`w-full ${showStylePanel ? 'h-[calc(100vh-260px)]' : 'h-[calc(100vh-140px)]'}`}
@@ -423,9 +415,10 @@ export default function MapTab({ lang }) {
         {userLocation && mapReady && (
           <button
             onClick={() => {
-              if (map && userLocation) {
-                map.setCenter(new window.naver.maps.LatLng(userLocation.lat, userLocation.lng))
-                map.setZoom(15)
+              if (map && userLocation && window.kakao) {
+                const moveLatLng = new window.kakao.maps.LatLng(userLocation.lat, userLocation.lng)
+                map.setCenter(moveLatLng)
+                map.setLevel(3) // 줌 레벨 3 (가까이)
               }
             }}
             className="absolute top-4 right-4 bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow"
@@ -492,15 +485,18 @@ export default function MapTab({ lang }) {
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold text-gray-700">
-                  {L({ ko: '네이버 지도 API 키 필요', zh: '需要Naver地图API密钥', en: 'Naver Map API Key Required' })}
+                  {L({ ko: '카카오맵 API 키 필요', zh: '需要카카오맵API密钥', en: 'KakaoMap API Key Required' })}
                 </h3>
                 <p className="text-sm text-gray-500 max-w-xs mx-auto">
                   {L({ 
-                    ko: '네이버 클라우드 플랫폼에서 Maps API 키를 발급받으세요.',
-                    zh: '请从Naver云平台获取Maps API密钥。',
-                    en: 'Please get Maps API key from Naver Cloud Platform.'
+                    ko: 'Kakao Developers에서 Maps API 키를 발급받으세요. 일 30만회 무료!',
+                    zh: '请从Kakao Developers获取Maps API密钥。每日30万次免费！',
+                    en: 'Get Maps API key from Kakao Developers. 300K requests/day free!'
                   })}
                 </p>
+                <div className="text-xs text-blue-600">
+                  https://developers.kakao.com
+                </div>
               </div>
             </div>
           </div>

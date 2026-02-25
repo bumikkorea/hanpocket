@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOREAN MARKET Analytics</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#fafaf9;color:#1c1917;
+  font-family:'Pretendard Variable',system-ui,-apple-system,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:40px 24px 80px}
+
+/* ── Header ── */
+.header{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  padding-bottom:20px;margin-bottom:32px;
+  border-bottom:1px solid #e7e5e4;
+}
+.header h1{font-size:20px;font-weight:700;letter-spacing:-.3px}
+.header .sub{font-size:12px;color:#a8a29e;margin-top:4px;font-weight:400}
+.header .badge-season{
+  font-size:11px;padding:4px 12px;border-radius:20px;
+  background:#f5f5f4;border:1px solid #e7e5e4;color:#78716c;font-weight:500;
+  position:relative;cursor:help;
+}
+.badge-season .tip{
+  visibility:hidden;opacity:0;
+  position:absolute;top:calc(100% + 10px);right:0;
+  width:320px;padding:14px 16px;
+  background:#1c1917;color:#fafaf9;
+  border-radius:10px;font-size:11px;line-height:1.8;
+  font-weight:400;text-align:left;
+  box-shadow:0 4px 20px rgba(0,0,0,.15);
+  transition:opacity .2s ease,visibility .2s ease;
+  z-index:100;pointer-events:none;
+}
+.badge-season .tip::after{
+  content:'';position:absolute;bottom:100%;right:24px;
+  border:6px solid transparent;border-bottom-color:#1c1917;
+}
+.badge-season:hover .tip{visibility:visible;opacity:1}
+
+/* ── Section ── */
+.section{margin-bottom:28px}
+.sec-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 0;cursor:pointer;user-select:none;
+  border-bottom:1px solid #e7e5e4;
+}
+.sec-head h2{font-size:14px;font-weight:600;letter-spacing:-.2px;color:#44403c}
+.sec-head .arrow{
+  width:20px;height:20px;transition:transform .25s ease;
+  display:flex;align-items:center;justify-content:center;
+  color:#a8a29e;font-size:12px;
+}
+.sec-head .arrow.open{transform:rotate(180deg)}
+.sec-body{overflow:hidden;transition:max-height .4s ease,opacity .25s ease;max-height:0;opacity:0}
+.sec-body.open{max-height:6000px;opacity:1}
+.sec-body-inner{padding:16px 0}
+.sec-right{display:flex;align-items:center;gap:8px}
+
+/* ── Metric Cards ── */
+.card-grid{display:grid;gap:10px}
+.card-grid.g5{grid-template-columns:repeat(5,1fr)}
+.card-grid.g3{grid-template-columns:repeat(3,1fr)}
+.m-card{
+  background:#fff;border:1px solid #f0efed;border-radius:10px;
+  padding:14px 16px;text-align:center;
+  transition:box-shadow .2s ease,transform .15s ease;
+}
+.m-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.05);transform:translateY(-1px)}
+.idx-card{border-left:3px solid #2563eb}
+.m-label{font-size:11px;color:#a8a29e;font-weight:500;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.m-val{font-size:17px;font-weight:700;color:#1c1917}
+.m-chg{font-size:12px;font-weight:600;margin-top:4px}
+
+/* ── Period Buttons ── */
+.period-btns{display:flex;gap:4px}
+.p-btn{
+  background:#fff;border:1px solid #e7e5e4;color:#78716c;
+  font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;
+  font-weight:500;transition:all .15s ease;font-family:inherit;
+}
+.p-btn:hover{border-color:#a8a29e}
+.p-btn.on{background:#1c1917;color:#fff;border-color:#1c1917}
+
+/* ── Table ── */
+.tbl-wrap{overflow-x:auto;max-height:600px;overflow-y:auto}
+.tbl-wrap table{position:relative}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{
+  text-align:left;padding:10px 12px;color:#a8a29e;
+  font-weight:500;font-size:11px;text-transform:uppercase;
+  letter-spacing:.5px;border-bottom:1px solid #e7e5e4;
+  background:#fafaf9;position:sticky;top:0;z-index:2;
+}
+th.has-tip{position:relative;cursor:help}
+th.has-tip .col-tip{
+  visibility:hidden;opacity:0;
+  position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  width:260px;padding:12px 14px;
+  background:#1c1917;color:#fafaf9;
+  border-radius:8px;font-size:11px;line-height:1.7;
+  font-weight:400;text-align:left;text-transform:none;letter-spacing:0;
+  box-shadow:0 4px 16px rgba(0,0,0,.18);
+  transition:opacity .15s ease,visibility .15s ease;
+  z-index:50;pointer-events:none;white-space:normal;
+}
+th.has-tip .col-tip::after{
+  content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-bottom-color:#1c1917;
+}
+th.has-tip:hover .col-tip{visibility:visible;opacity:1}
+tbody td{padding:8px 12px;border-bottom:1px solid #f5f5f4}
+.col-name{font-weight:600;color:#1c1917;min-width:80px;font-size:12px}
+.col-num{text-align:center;font-variant-numeric:tabular-nums;color:#57534e;font-size:12px}
+.col-tag{text-align:right}
+
+/* ── Sector Row ── */
+.sec-row td{
+  background:#f5f5f4;font-size:11px;font-weight:700;color:#78716c;
+  padding:6px 12px;letter-spacing:.3px;
+  border-bottom:1px solid #e7e5e4;
+  position:sticky;top:37px;z-index:1;
+}
+
+.tag-danger{
+  display:inline-block;padding:2px 10px;border-radius:10px;
+  font-size:11px;font-weight:700;background:#fef2f2;color:#dc2626;
+}
+.tag-warn{
+  display:inline-block;padding:2px 10px;border-radius:10px;
+  font-size:11px;font-weight:700;background:#fefce8;color:#ca8a04;
+}
+.tag-safe{
+  display:inline-block;padding:2px 10px;border-radius:10px;
+  font-size:11px;font-weight:700;background:#f0fdf4;color:#16a34a;
+}
+
+/* ── RS Bar ── */
+.rs-row{display:flex;align-items:center;margin-bottom:5px}
+.rs-name{width:72px;font-size:11px;font-weight:500;color:#57534e;flex-shrink:0}
+.rs-track{flex:1;height:10px;background:#f5f5f4;border-radius:5px;position:relative;overflow:hidden}
+.rs-bar{position:absolute;height:100%;border-radius:5px;transition:width .4s ease}
+.rs-zero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:#d6d3d1}
+.rs-val{width:48px;text-align:right;font-size:11px;font-weight:600;flex-shrink:0;padding-left:8px;font-variant-numeric:tabular-nums}
+.rs-label{font-size:10px;color:#a8a29e;font-weight:600;margin-bottom:6px}
+.rs-wrap{display:flex;flex-direction:column;height:100%}
+.rs-header{margin-bottom:10px}
+.rs-sub{font-size:10px;color:#a8a29e;line-height:1.6;margin-top:4px}
+.rs-sub b{color:#78716c}
+.rs-scroll{overflow-y:auto;max-height:560px;padding-right:4px}
+.rs-scroll::-webkit-scrollbar{width:3px}
+.rs-scroll::-webkit-scrollbar-thumb{background:#d6d3d1;border-radius:3px}
+
+/* ── Market Row (Indices + Macro side-by-side) ── */
+.market-row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.col-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0efed;
+}
+.col-header h3{font-size:13px;font-weight:600;color:#44403c;letter-spacing:-.2px}
+
+/* ── Two Column ── */
+.grid-2{display:grid;grid-template-columns:1.3fr .7fr;gap:20px}
+
+/* ── MSCI ── */
+.msci-box{
+  background:#fff;border:1px solid #f0efed;border-radius:12px;
+  padding:28px 24px;text-align:center;
+}
+.msci-val{font-size:36px;font-weight:800;margin:8px 0}
+.msci-sub{font-size:11px;color:#a8a29e;line-height:1.6}
+.msci-legend{
+  font-size:11px;color:#a8a29e;margin-top:14px;
+  padding-top:14px;border-top:1px solid #f0efed;line-height:1.7;
+}
+
+/* ── Pair Cards ── */
+.pair-card{
+  background:#fff;border:1px solid #f0efed;border-radius:10px;
+  padding:16px;margin-bottom:10px;border-left:3px solid #2563eb;
+}
+.pair-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.pair-label{font-size:13px;font-weight:700;color:#1c1917}
+.pair-gap{font-size:12px;font-weight:700;color:#dc2626}
+.pair-desc{font-size:11px;color:#a8a29e;margin-bottom:8px}
+.pair-detail{font-size:12px;font-weight:600;color:#2563eb}
+.pair-warn{font-size:10px;color:#dc2626;margin-top:6px;font-weight:500}
+.empty-msg{font-size:12px;color:#a8a29e;padding:12px 0}
+
+/* ── Footer ── */
+.footer{
+  text-align:center;padding:32px 0 0;
+  font-size:11px;color:#d6d3d1;
+  border-top:1px solid #f0efed;margin-top:20px;
+}
+
+/* ── Responsive ── */
+@media(max-width:768px){
+  .wrap{padding:16px 12px 40px}
+  .header{flex-direction:column;align-items:flex-start;gap:8px}
+  .card-grid.g5{grid-template-columns:repeat(2,1fr)}
+  .card-grid.g3{grid-template-columns:repeat(2,1fr)}
+  .grid-2{grid-template-columns:1fr}
+  .market-row{grid-template-columns:1fr}
+  .m-card{padding:10px 12px}
+  .m-val{font-size:14px}
+  .m-label{font-size:10px}
+  .m-chg{font-size:11px}
+  /* 테이블 모바일 */
+  .tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;max-height:none}
+  table{font-size:11px;min-width:580px}
+  thead th{padding:8px 6px;font-size:10px;white-space:nowrap}
+  tbody td{padding:6px;font-size:11px;white-space:nowrap}
+  .col-name{min-width:70px;font-size:11px}
+  .col-num{font-size:11px}
+  /* RS 바 모바일 */
+  .rs-name{width:60px;font-size:10px}
+  .rs-val{width:42px;font-size:10px}
+  .rs-row{margin-bottom:4px}
+  .rs-scroll{max-height:none}
+  /* MSCI */
+  .msci-val{font-size:28px}
+  .msci-box{padding:20px 16px}
+  /* 섹션 */
+  .sec-head h2{font-size:13px}
+  .sec-body-inner{padding:12px 0}
+  /* 페어 */
+  .pair-card{padding:12px}
+  /* 컬럼 헤더 */
+  .col-header{flex-direction:column;align-items:flex-start;gap:6px}
+  /* 툴팁 숨기기 (모바일에서 hover 불가) */
+  th.has-tip .col-tip{display:none}
+  .badge-season .tip{display:none}
+}
+@media(max-width:480px){
+  .wrap{padding:10px 8px 30px}
+  .card-grid.g5{grid-template-columns:repeat(2,1fr)}
+  .card-grid.g3{grid-template-columns:repeat(2,1fr)}
+  .m-val{font-size:13px}
+  .m-card{padding:8px 10px}
+  .header h1{font-size:16px}
+  .rs-name{width:50px;font-size:9px}
+  .rs-val{width:38px;font-size:9px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <h1>KOREAN MARKET Analytics</h1>
+      <p class="sub">2026-02-24 14:06 KST · 62종목</p>
+    </div>
+    <span class="badge-season">11~4월 매수 시즌 (29년 월평균 +1.9%)<span class="tip">KOSPI 1997~2026년 29년치 월별 데이터 기반<br><br><b>가장 강한 달</b><br>1월(+3.3%) · 11월(+2.9%) · 4월(+2.2%) · 12월(+2.0%)<br><br><b>가장 약한 달</b><br>9월(-1.3%) · 8월(-1.0%) · 10월(-0.4%)<br><br>64% 확률로 겨울이 여름보다 수익률 좋음<br>(절대적이진 않고 참고용)</span></span>
+  </div>
+
+  <!-- 시장 지표 (Indices + Macro 병렬) -->
+  <details open>
+  <summary style="cursor:pointer;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e7e5e4">Market Overview</summary>
+  <div style="padding:16px 0">
+        <div class="market-row">
+          <div>
+            <h3>Indices &amp; FX</h3>
+            <div class="card-grid g3"><div class="m-card idx-card"><p class="m-label">KOSPI</p><p class="m-val">5,968</p><p class="m-chg" id="chg-dom-kospi" style="color:#16a34a">+17.4%</p></div><div class="m-card idx-card"><p class="m-label">코스피200</p><p class="m-val">886</p><p class="m-chg" id="chg-dom-kos200" style="color:#16a34a">+19.0%</p></div><div class="m-card idx-card"><p class="m-label">코스피100</p><p class="m-val">25,430</p><p class="m-chg" id="chg-dom-kos100" style="color:#16a34a">+14.8%</p></div><div class="m-card idx-card"><p class="m-label">KOSDAQ</p><p class="m-val">1,161</p><p class="m-chg" id="chg-dom-kosdaq" style="color:#16a34a">+7.3%</p></div><div class="m-card idx-card"><p class="m-label">코스닥150</p><p class="m-val">20,100</p><p class="m-chg" id="chg-dom-kq150" style="color:#16a34a">+6.3%</p></div><div class="m-card idx-card"><p class="m-label">KRX300</p><p class="m-val">73,735</p><p class="m-chg" id="chg-dom-krx300" style="color:#16a34a">+37.0%</p></div><div class="m-card idx-card"><p class="m-label">밸류업</p><p class="m-val">26,430</p><p class="m-chg" id="chg-dom-valueup" style="color:#16a34a">+19.8%</p></div><div class="m-card idx-card"><p class="m-label">USD/KRW</p><p class="m-val">1,446.2</p><p class="m-chg" id="chg-dom-krw" style="color:#16a34a">+0.4%</p></div></div>
+          </div>
+          <div>
+            <h3>Global Macro</h3>
+            <div class="card-grid g3"><div class="m-card"><p class="m-label">VIX</p><p class="m-val">21.0</p><p class="m-chg" id="chg-vix" style="color:#16a34a">+28.5%</p></div><div class="m-card"><p class="m-label">Gold</p><p class="m-val">5,188</p><p class="m-chg" id="chg-gold" style="color:#16a34a">+2.1%</p></div><div class="m-card"><p class="m-label">US 10Y</p><p class="m-val">4.03%</p><p class="m-chg" id="chg-tnx" style="color:#dc2626">-4.6%</p></div><div class="m-card"><p class="m-label">DXY</p><p class="m-val">97.9</p><p class="m-chg" id="chg-dxy" style="color:#16a34a">+1.7%</p></div><div class="m-card"><p class="m-label">Brent</p><p class="m-val">71.6</p><p class="m-chg" id="chg-oil" style="color:#16a34a">+6.0%</p></div><div class="m-card"><p class="m-label">CNH</p><p class="m-val">6.9</p><p class="m-chg" id="chg-cnh" style="color:#16a34a">+0.0%</p></div><div class="m-card"><p class="m-label">JPY</p><p class="m-val">155</p><p class="m-chg" id="chg-jpy" style="color:#16a34a">+0.6%</p></div><div class="m-card"><p class="m-label">CAD</p><p class="m-val">1.4</p><p class="m-chg" id="chg-cad" style="color:#dc2626">-0.0%</p></div><div class="m-card"><p class="m-label">HKD</p><p class="m-val">7.8</p><p class="m-chg" id="chg-hkd" style="color:#16a34a">+0.3%</p></div><div class="m-card"><p class="m-label">GBP</p><p class="m-val">0.7</p><p class="m-chg" id="chg-gbp" style="color:#16a34a">+1.4%</p></div></div>
+          </div>
+        </div>
+  </div>
+</details>
+
+  <!-- 히트맵 + RS -->
+  <details open>
+  <summary style="cursor:pointer;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e7e5e4">Heatmap & Relative Strength (62)</summary>
+  <div style="padding:16px 0">
+        <div class="grid-2">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>Name</th>
+                <th class="has-tip" style="text-align:center">RSI<span class="col-tip"><b>RSI (14일)</b><br>최근 14일간 상승폭 vs 하락폭의 비율. 0~100 사이 값.<br><br>· 70 이상 = 과매수 (단기 과열, 조정 가능성)<br>· 30 이하 = 과매도 (저점 매수 기회 탐색)<br>· 50 근처 = 방향성 미정</span></th>
+                <th class="has-tip" style="text-align:center">Dev<span class="col-tip"><b>이격도 (20일 MA 대비)</b><br>현재 주가가 20일 이동평균선에서 얼마나 벌어졌는지(%).<br><br>· +5% 이상 = MA20 위로 과이격 (단기 고점 경계)<br>· -5% 이하 = MA20 아래로 과이격 (반등 가능성)<br>· 0% 근처 = 이평선 근접 (추세 결정 구간)</span></th>
+                <th class="has-tip" style="text-align:center">BB%<span class="col-tip"><b>볼린저밴드 %B</b><br>현재가가 볼린저밴드(MA20 ± 2σ) 내 어디에 위치하는지.<br><br>· 1.0 이상 = 상단밴드 돌파 (과열)<br>· 0.0 이하 = 하단밴드 이탈 (침체/반등 탐색)<br>· 0.5 근처 = 밴드 중심 (중립)</span></th>
+                <th class="has-tip" style="text-align:center">Stoch<span class="col-tip"><b>스토캐스틱 %K (14일)</b><br>최근 14일 고가-저가 범위에서 현재가 위치(0~100).<br><br>· 80 이상 = 단기 고점 영역 (매도 압력 증가 가능)<br>· 20 이하 = 단기 저점 영역 (매수 관심 구간)<br>· RSI와 함께 교차 확인시 신뢰도 ↑</span></th>
+                <th class="has-tip" style="text-align:center">Vol<span class="col-tip"><b>거래량 비율 (20일 평균 대비)</b><br>오늘 거래량 ÷ 최근 20일 평균 거래량.<br><br>· 1.5x 이상 = 평소의 1.5배, 수급 이벤트 발생<br>· 2.0x 이상 = 급등/급락 동반 가능성<br>· 0.5x 이하 = 거래 실종, 관심 이탈</span></th>
+                <th class="has-tip" style="text-align:right">Score<span class="col-tip"><b>과열 점수 (0~5)</b><br>5개 지표 중 과열 기준 초과 개수:<br>RSI>70, Dev>5%, BB%>1.0, Stoch>80, Vol>1.5x<br><br>· 4~5 = 🔴 복합 과열 (차익실현 고려)<br>· 2~3 = 🟡 부분 과열 (주의 관찰)<br>· 0~1 = 🟢 안정 또는 침체권</span></th>
+              </tr></thead>
+              <tbody><tr class="sec-row"><td colspan="6">기타 (9)</td><td class="col-tag"><span class="tag-danger">3.1</span></td></tr><tr><td class="col-name">SK이노베이션</td><td class="col-num">79</td><td class="col-num">+19.2%</td><td class="col-num">1.21</td><td class="col-num">100</td><td class="col-num">1.9x</td><td class="col-tag"><span class="tag-danger">5/5</span></td></tr><tr><td class="col-name">SK</td><td class="col-num">81</td><td class="col-num">+15.9%</td><td class="col-num">1.06</td><td class="col-num">100</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-danger">4/5</span></td></tr><tr><td class="col-name">현대건설</td><td class="col-num">79</td><td class="col-num">+21.1%</td><td class="col-num">1.10</td><td class="col-num">100</td><td class="col-num">0.8x</td><td class="col-tag"><span class="tag-danger">4/5</span></td></tr><tr><td class="col-name">LG전자</td><td class="col-num">77</td><td class="col-num">+20.8%</td><td class="col-num">0.97</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">삼성생명</td><td class="col-num">72</td><td class="col-num">+13.0%</td><td class="col-num">0.98</td><td class="col-num">90</td><td class="col-num">0.9x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">대한항공</td><td class="col-num">78</td><td class="col-num">+8.3%</td><td class="col-num">0.99</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">삼성물산</td><td class="col-num">60</td><td class="col-num">+7.8%</td><td class="col-num">0.96</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">LG</td><td class="col-num">67</td><td class="col-num">+6.0%</td><td class="col-num">0.93</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">HD한국조선해양</td><td class="col-num">61</td><td class="col-num">+10.7%</td><td class="col-num">0.96</td><td class="col-num">83</td><td class="col-num">0.9x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr class="sec-row"><td colspan="6">반도체 (6)</td><td class="col-tag"><span class="tag-danger">3.0</span></td></tr><tr><td class="col-name">삼성전기</td><td class="col-num">83</td><td class="col-num">+39.2%</td><td class="col-num">1.17</td><td class="col-num">100</td><td class="col-num">1.3x</td><td class="col-tag"><span class="tag-danger">4/5</span></td></tr><tr><td class="col-name">삼성전자</td><td class="col-num">79</td><td class="col-num">+15.4%</td><td class="col-num">0.99</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">SK하이닉스</td><td class="col-num">67</td><td class="col-num">+12.5%</td><td class="col-num">1.17</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">LG이노텍</td><td class="col-num">67</td><td class="col-num">+10.4%</td><td class="col-num">1.10</td><td class="col-num">100</td><td class="col-num">0.5x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">SK스퀘어</td><td class="col-num">62</td><td class="col-num">+14.2%</td><td class="col-num">1.16</td><td class="col-num">100</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">한미반도체</td><td class="col-num">58</td><td class="col-num">+5.9%</td><td class="col-num">0.89</td><td class="col-num">100</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr class="sec-row"><td colspan="6">금융 (10)</td><td class="col-tag"><span class="tag-warn">2.1</span></td></tr><tr><td class="col-name">KB금융</td><td class="col-num">83</td><td class="col-num">+7.9%</td><td class="col-num">0.72</td><td class="col-num">94</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">우리금융</td><td class="col-num">83</td><td class="col-num">+10.5%</td><td class="col-num">0.73</td><td class="col-num">83</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">카카오뱅크</td><td class="col-num">71</td><td class="col-num">+8.0%</td><td class="col-num">0.74</td><td class="col-num">91</td><td class="col-num">0.2x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">DB손해보험</td><td class="col-num">86</td><td class="col-num">+16.6%</td><td class="col-num">0.84</td><td class="col-num">90</td><td class="col-num">1.1x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">신한지주</td><td class="col-num">74</td><td class="col-num">+6.1%</td><td class="col-num">0.69</td><td class="col-num">71</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">하나금융</td><td class="col-num">72</td><td class="col-num">+6.1%</td><td class="col-num">0.67</td><td class="col-num">71</td><td class="col-num">1.0x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">기업은행</td><td class="col-num">73</td><td class="col-num">+7.7%</td><td class="col-num">0.72</td><td class="col-num">62</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">한국금융지주</td><td class="col-num">71</td><td class="col-num">+13.3%</td><td class="col-num">0.77</td><td class="col-num">75</td><td class="col-num">0.9x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">메리츠금융</td><td class="col-num">67</td><td class="col-num">+5.9%</td><td class="col-num">0.68</td><td class="col-num">57</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">삼성화재</td><td class="col-num">58</td><td class="col-num">+3.2%</td><td class="col-num">0.62</td><td class="col-num">44</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr class="sec-row"><td colspan="6">소재/화학 (4)</td><td class="col-tag"><span class="tag-warn">2.0</span></td></tr><tr><td class="col-name">POSCO홀딩스</td><td class="col-num">73</td><td class="col-num">+7.1%</td><td class="col-num">0.95</td><td class="col-num">100</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">LG화학</td><td class="col-num">66</td><td class="col-num">+7.3%</td><td class="col-num">0.89</td><td class="col-num">100</td><td class="col-num">0.9x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">고려아연</td><td class="col-num">54</td><td class="col-num">+8.4%</td><td class="col-num">0.91</td><td class="col-num">100</td><td class="col-num">1.5x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">S-Oil</td><td class="col-num">69</td><td class="col-num">+7.6%</td><td class="col-num">0.83</td><td class="col-num">69</td><td class="col-num">0.9x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr class="sec-row"><td colspan="6">전력/인프라 (4)</td><td class="col-tag"><span class="tag-warn">2.0</span></td></tr><tr><td class="col-name">HD현대일렉트릭</td><td class="col-num">68</td><td class="col-num">+13.7%</td><td class="col-num">1.01</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">한화솔루션</td><td class="col-num">70</td><td class="col-num">+21.2%</td><td class="col-num">0.73</td><td class="col-num">66</td><td class="col-num">0.3x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">두산에너빌</td><td class="col-num">59</td><td class="col-num">+6.6%</td><td class="col-num">0.86</td><td class="col-num">86</td><td class="col-num">0.3x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">한국전력</td><td class="col-num">49</td><td class="col-num">+2.9%</td><td class="col-num">0.78</td><td class="col-num">84</td><td class="col-num">0.4x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr class="sec-row"><td colspan="6">자동차 (5)</td><td class="col-tag"><span class="tag-warn">1.8</span></td></tr><tr><td class="col-name">기아</td><td class="col-num">77</td><td class="col-num">+8.5%</td><td class="col-num">0.93</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">한국타이어</td><td class="col-num">77</td><td class="col-num">+8.0%</td><td class="col-num">0.81</td><td class="col-num">97</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">현대차</td><td class="col-num">57</td><td class="col-num">+4.4%</td><td class="col-num">0.84</td><td class="col-num">96</td><td class="col-num">0.5x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">현대모비스</td><td class="col-num">52</td><td class="col-num">+2.3%</td><td class="col-num">0.83</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">한온시스템</td><td class="col-num">63</td><td class="col-num">+10.5%</td><td class="col-num">0.68</td><td class="col-num">54</td><td class="col-num">0.4x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr class="sec-row"><td colspan="6">통신 (2)</td><td class="col-tag"><span class="tag-warn">1.5</span></td></tr><tr><td class="col-name">KT</td><td class="col-num">82</td><td class="col-num">+9.7%</td><td class="col-num">0.82</td><td class="col-num">87</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">SK텔레콤</td><td class="col-num">55</td><td class="col-num">+4.6%</td><td class="col-num">0.65</td><td class="col-num">68</td><td class="col-num">0.4x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr class="sec-row"><td colspan="6">2차전지 (5)</td><td class="col-tag"><span class="tag-safe">1.4</span></td></tr><tr><td class="col-name">삼성SDI</td><td class="col-num">61</td><td class="col-num">+9.3%</td><td class="col-num">1.11</td><td class="col-num">100</td><td class="col-num">2.3x</td><td class="col-tag"><span class="tag-danger">4/5</span></td></tr><tr><td class="col-name">LG엔솔</td><td class="col-num">55</td><td class="col-num">+3.3%</td><td class="col-num">0.78</td><td class="col-num">100</td><td class="col-num">1.2x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">에코프로</td><td class="col-num">45</td><td class="col-num">+4.5%</td><td class="col-num">0.70</td><td class="col-num">86</td><td class="col-num">0.8x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">포스코퓨처엠</td><td class="col-num">50</td><td class="col-num">+2.8%</td><td class="col-num">0.76</td><td class="col-num">91</td><td class="col-num">1.0x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">에코프로비엠</td><td class="col-num">42</td><td class="col-num">-0.7%</td><td class="col-num">0.47</td><td class="col-num">75</td><td class="col-num">0.5x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr class="sec-row"><td colspan="6">바이오 (3)</td><td class="col-tag"><span class="tag-safe">1.3</span></td></tr><tr><td class="col-name">셀트리온</td><td class="col-num">86</td><td class="col-num">+8.8%</td><td class="col-num">0.86</td><td class="col-num">100</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">SK바이오팜</td><td class="col-num">55</td><td class="col-num">+4.2%</td><td class="col-num">0.82</td><td class="col-num">100</td><td class="col-num">0.8x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">삼성바이오</td><td class="col-num">41</td><td class="col-num">-0.1%</td><td class="col-num">0.48</td><td class="col-num">79</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr class="sec-row"><td colspan="6">소비/게임 (6)</td><td class="col-tag"><span class="tag-safe">1.3</span></td></tr><tr><td class="col-name">크래프톤</td><td class="col-num">74</td><td class="col-num">+5.3%</td><td class="col-num">0.87</td><td class="col-num">100</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">KT&G</td><td class="col-num">82</td><td class="col-num">+4.9%</td><td class="col-num">0.69</td><td class="col-num">82</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">엔씨소프트</td><td class="col-num">63</td><td class="col-num">+5.3%</td><td class="col-num">0.78</td><td class="col-num">95</td><td class="col-num">0.4x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">아모레퍼시픽</td><td class="col-num">70</td><td class="col-num">+4.2%</td><td class="col-num">0.64</td><td class="col-num">74</td><td class="col-num">0.3x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">LG생활건강</td><td class="col-num">58</td><td class="col-num">+0.2%</td><td class="col-num">0.52</td><td class="col-num">53</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr><td class="col-name">CJ제일제당</td><td class="col-num">51</td><td class="col-num">-0.1%</td><td class="col-num">0.49</td><td class="col-num">12</td><td class="col-num">0.5x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr class="sec-row"><td colspan="6">조선/방산 (5)</td><td class="col-tag"><span class="tag-safe">1.2</span></td></tr><tr><td class="col-name">HMM</td><td class="col-num">81</td><td class="col-num">+8.6%</td><td class="col-num">0.91</td><td class="col-num">93</td><td class="col-num">0.4x</td><td class="col-tag"><span class="tag-warn">3/5</span></td></tr><tr><td class="col-name">HD현대중공업</td><td class="col-num">54</td><td class="col-num">+5.6%</td><td class="col-num">0.82</td><td class="col-num">82</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-warn">2/5</span></td></tr><tr><td class="col-name">한화에어로</td><td class="col-num">40</td><td class="col-num">+3.4%</td><td class="col-num">0.63</td><td class="col-num">100</td><td class="col-num">0.4x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">한화오션</td><td class="col-num">49</td><td class="col-num">+4.2%</td><td class="col-num">0.72</td><td class="col-num">63</td><td class="col-num">0.7x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr><td class="col-name">삼성중공업</td><td class="col-num">47</td><td class="col-num">+1.5%</td><td class="col-num">0.62</td><td class="col-num">70</td><td class="col-num">0.5x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr class="sec-row"><td colspan="6">IT플랫폼 (3)</td><td class="col-tag"><span class="tag-safe">0.3</span></td></tr><tr><td class="col-name">삼성에스디에스</td><td class="col-num">56</td><td class="col-num">+2.2%</td><td class="col-num">0.81</td><td class="col-num">97</td><td class="col-num">0.6x</td><td class="col-tag"><span class="tag-safe">1/5</span></td></tr><tr><td class="col-name">NAVER</td><td class="col-num">35</td><td class="col-num">-1.8%</td><td class="col-num">0.39</td><td class="col-num">71</td><td class="col-num">0.3x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr><tr><td class="col-name">카카오</td><td class="col-num">46</td><td class="col-num">-1.0%</td><td class="col-num">0.40</td><td class="col-num">63</td><td class="col-num">0.5x</td><td class="col-tag"><span class="tag-safe">0/5</span></td></tr></tbody>
+            </table>
+          </div>
+          <div class="rs-wrap">
+            <div class="rs-header">
+              <p class="rs-label">Relative Strength vs KOSPI (20일)</p>
+              <p class="rs-sub">각 종목의 20일간 일별 수익률에서 KOSPI 수익률을 뺀 누적값. <b>+10 = KOSPI보다 10%p 더 상승</b>, <b>-10 = KOSPI보다 10%p 더 하락</b></p>
+            </div>
+            <div class="rs-scroll">
+              <p class="rs-label" style="color:#16a34a">▲ TOP 20</p>
+              <div class="rs-row"><span class="rs-name">한화솔루션</span><div class="rs-track"><div class="rs-bar" style="width:48.0%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+52.2</span></div><div class="rs-row"><span class="rs-name">삼성전기</span><div class="rs-track"><div class="rs-bar" style="width:31.09683261938011%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+33.8</span></div><div class="rs-row"><span class="rs-name">DB손해보험</span><div class="rs-track"><div class="rs-bar" style="width:21.854639233228937%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+23.8</span></div><div class="rs-row"><span class="rs-name">한온시스템</span><div class="rs-track"><div class="rs-bar" style="width:20.14943838132942%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+21.9</span></div><div class="rs-row"><span class="rs-name">SK스퀘어</span><div class="rs-track"><div class="rs-bar" style="width:14.171428881081267%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+15.4</span></div><div class="rs-row"><span class="rs-name">LG전자</span><div class="rs-track"><div class="rs-bar" style="width:13.936403259843473%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+15.2</span></div><div class="rs-row"><span class="rs-name">한국금융지주</span><div class="rs-track"><div class="rs-bar" style="width:13.039582924960559%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+14.2</span></div><div class="rs-row"><span class="rs-name">SK</span><div class="rs-track"><div class="rs-bar" style="width:12.174207058461421%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+13.2</span></div><div class="rs-row"><span class="rs-name">현대건설</span><div class="rs-track"><div class="rs-bar" style="width:11.195685977482093%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+12.2</span></div><div class="rs-row"><span class="rs-name">우리금융</span><div class="rs-track"><div class="rs-bar" style="width:8.15521106598878%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+8.9</span></div><div class="rs-row"><span class="rs-name">삼성전자</span><div class="rs-track"><div class="rs-bar" style="width:6.781247904271749%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+7.4</span></div><div class="rs-row"><span class="rs-name">SK하이닉스</span><div class="rs-track"><div class="rs-bar" style="width:6.7743996375297195%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+7.4</span></div><div class="rs-row"><span class="rs-name">에코프로</span><div class="rs-track"><div class="rs-bar" style="width:6.740832334780272%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+7.3</span></div><div class="rs-row"><span class="rs-name">메리츠금융</span><div class="rs-track"><div class="rs-bar" style="width:4.5541258129361495%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+5.0</span></div><div class="rs-row"><span class="rs-name">SK이노베이션</span><div class="rs-track"><div class="rs-bar" style="width:4.537081561595375%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+4.9</span></div><div class="rs-row"><span class="rs-name">한미반도체</span><div class="rs-track"><div class="rs-bar" style="width:4.404846492718852%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+4.8</span></div><div class="rs-row"><span class="rs-name">기업은행</span><div class="rs-track"><div class="rs-bar" style="width:3.915686953684193%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+4.3</span></div><div class="rs-row"><span class="rs-name">카카오뱅크</span><div class="rs-track"><div class="rs-bar" style="width:3.5932435795949216%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+3.9</span></div><div class="rs-row"><span class="rs-name">삼성생명</span><div class="rs-track"><div class="rs-bar" style="width:3.354681509375407%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+3.7</span></div><div class="rs-row"><span class="rs-name">하나금융</span><div class="rs-track"><div class="rs-bar" style="width:2.262730205709786%;left:50%;background:#16a34a"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#16a34a">+2.5</span></div><div style="border-top:1px dashed #d6d3d1;margin:8px 0;position:relative"><span style="position:absolute;left:50%;transform:translateX(-50%);top:-8px;background:#fafaf9;padding:0 6px;font-size:9px;color:#a8a29e">···</span></div><div class="rs-row"><span class="rs-name">고려아연</span><div class="rs-track"><div class="rs-bar" style="width:10.760870901813593%;left:39.23912909818641%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-11.7</span></div><div class="rs-row"><span class="rs-name">한국전력</span><div class="rs-track"><div class="rs-bar" style="width:11.838607937222672%;left:38.161392062777324%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-12.9</span></div><div class="rs-row"><span class="rs-name">CJ제일제당</span><div class="rs-track"><div class="rs-bar" style="width:12.80711434058242%;left:37.192885659417584%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-13.9</span></div><div class="rs-row"><span class="rs-name">한화오션</span><div class="rs-track"><div class="rs-bar" style="width:12.955959915155585%;left:37.04404008484441%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-14.1</span></div><div class="rs-row"><span class="rs-name">포스코퓨처엠</span><div class="rs-track"><div class="rs-bar" style="width:13.168166319554587%;left:36.83183368044541%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-14.3</span></div><div class="rs-row"><span class="rs-name">LG화학</span><div class="rs-track"><div class="rs-bar" style="width:13.230483998547186%;left:36.769516001452814%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-14.4</span></div><div class="rs-row"><span class="rs-name">한화에어로</span><div class="rs-track"><div class="rs-bar" style="width:13.281798660677367%;left:36.71820133932263%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-14.5</span></div><div class="rs-row"><span class="rs-name">HD현대중공업</span><div class="rs-track"><div class="rs-bar" style="width:13.702796652651225%;left:36.29720334734878%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-14.9</span></div><div class="rs-row"><span class="rs-name">LG엔솔</span><div class="rs-track"><div class="rs-bar" style="width:13.794351513750836%;left:36.20564848624916%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-15.0</span></div><div class="rs-row"><span class="rs-name">크래프톤</span><div class="rs-track"><div class="rs-bar" style="width:14.510705051411623%;left:35.48929494858838%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-15.8</span></div><div class="rs-row"><span class="rs-name">에코프로비엠</span><div class="rs-track"><div class="rs-bar" style="width:15.197395352340788%;left:34.80260464765921%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-16.5</span></div><div class="rs-row"><span class="rs-name">엔씨소프트</span><div class="rs-track"><div class="rs-bar" style="width:15.716422675650637%;left:34.283577324349366%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-17.1</span></div><div class="rs-row"><span class="rs-name">삼성에스디에스</span><div class="rs-track"><div class="rs-bar" style="width:15.82109381494875%;left:34.17890618505125%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-17.2</span></div><div class="rs-row"><span class="rs-name">SK바이오팜</span><div class="rs-track"><div class="rs-bar" style="width:16.19160110253076%;left:33.80839889746924%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-17.6</span></div><div class="rs-row"><span class="rs-name">현대모비스</span><div class="rs-track"><div class="rs-bar" style="width:16.79854962626959%;left:33.20145037373041%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-18.3</span></div><div class="rs-row"><span class="rs-name">LG생활건강</span><div class="rs-track"><div class="rs-bar" style="width:17.16365808126133%;left:32.83634191873867%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-18.7</span></div><div class="rs-row"><span class="rs-name">삼성바이오</span><div class="rs-track"><div class="rs-bar" style="width:18.801630091165574%;left:31.198369908834426%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-20.5</span></div><div class="rs-row"><span class="rs-name">삼성중공업</span><div class="rs-track"><div class="rs-bar" style="width:19.123957696265435%;left:30.876042303734565%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-20.8</span></div><div class="rs-row"><span class="rs-name">카카오</span><div class="rs-track"><div class="rs-bar" style="width:21.69940584101244%;left:28.30059415898756%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-23.6</span></div><div class="rs-row"><span class="rs-name">NAVER</span><div class="rs-track"><div class="rs-bar" style="width:24.153460067492027%;left:25.846539932507973%;background:#dc2626"></div><div class="rs-zero"></div></div><span class="rs-val" style="color:#dc2626">-26.3</span></div>
+              <p class="rs-label" style="margin-top:4px;color:#dc2626">▼ BOTTOM 20</p>
+            </div>
+          </div>
+        </div>
+  </div>
+</details>
+
+  <!-- MSCI + 공급망 -->
+  <details open>
+  <summary style="cursor:pointer;font-size:14px;font-weight:700;padding:12px 0;border-bottom:1px solid #e7e5e4">MSCI Flow & Pair Analysis</summary>
+  <div style="padding:16px 0">
+        <div class="grid-2" style="grid-template-columns:1fr 1fr">
+          <div>
+            <div class="msci-box">
+              <p class="msci-sub">MSCI 한국 패시브 자금 강도</p>
+              <p class="msci-val" style="color:#dc2626">-3.8%p</p>
+              <p class="msci-sub" style="font-weight:600;color:#dc2626">외인 이탈 주의</p>
+              <div class="msci-legend">
+                +1.5% 이상 : 외인 대량 매수<br>
+                -1.5% 이하 : 외인 이탈 주의
+              </div>
+            </div>
+          </div>
+          <div>
+            <p style="font-size:11px;color:#a8a29e;margin-bottom:12px;font-weight:500">60일 2σ 이상 괴리만 표시</p>
+            <p class="empty-msg">비정상적 괴리가 발견되지 않았습니다.</p>
+          </div>
+        </div>
+  </div>
+</details>
+
+  <div class="footer">
+    KOREAN MARKET Analytics &middot; Data via Yahoo Finance &middot; Not financial advice
+  </div>
+
+</div>
+
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { MapPin, Search, Filter, Navigation, Info, ArrowUpDown, Route, X } from 'lucide-react'
+import { translateBrandName, smartTranslate } from '../data/brandMapping.js'
 
 export default function MapTab({ lang }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -322,13 +323,17 @@ export default function MapTab({ lang }) {
   }
 
   // 장소 검색 함수
-  const searchPlace = (query) => {
+  const searchPlace = async (query) => {
     if (!geocoder || !query.trim()) return
 
     setSearchResults([]) // 기존 검색 결과 초기화
 
+    // 🧠 스마트 통합 번역 적용 (전체 DB)
+    const translatedQuery = await smartTranslate(query.trim())
+    console.log(`🔄 스마트 번역: "${query}" → "${translatedQuery}"`)
+
     // 주소로 검색
-    geocoder.addressSearch(query, (result, status) => {
+    geocoder.addressSearch(translatedQuery, (result, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
         const results = result.map(place => ({
           id: `address_${place.x}_${place.y}`,
@@ -344,7 +349,7 @@ export default function MapTab({ lang }) {
 
     // 키워드로 장소 검색 (Places 서비스)
     const ps = new window.kakao.maps.services.Places()
-    ps.keywordSearch(query, (result, status) => {
+    ps.keywordSearch(translatedQuery, (result, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
         const results = result.slice(0, 5).map(place => ({
           id: place.id,
@@ -405,7 +410,7 @@ export default function MapTab({ lang }) {
   }
 
   // 출발지/도착지 스마트 검색
-  const searchLocation = (query, isStart = true) => {
+  const searchLocation = async (query, isStart = true) => {
     if (!geocoder || !query.trim()) return
 
     const setResults = isStart ? setStartResults : setEndResults
@@ -413,8 +418,12 @@ export default function MapTab({ lang }) {
 
     setResults([]) // 기존 검색 결과 초기화
 
+    // 🧠 스마트 통합 번역 적용 (전체 DB)
+    const translatedQuery = await smartTranslate(query.trim())
+    console.log(`🔄 네비게이션 번역: "${query}" → "${translatedQuery}"`)
+
     // 주소로 검색
-    geocoder.addressSearch(query, (result, status) => {
+    geocoder.addressSearch(translatedQuery, (result, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
         const results = result.map(place => ({
           id: `address_${place.x}_${place.y}`,
@@ -430,7 +439,7 @@ export default function MapTab({ lang }) {
 
     // 키워드로 장소 검색
     const ps = new window.kakao.maps.services.Places()
-    ps.keywordSearch(query, (result, status) => {
+    ps.keywordSearch(translatedQuery, (result, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
         const results = result.slice(0, 5).map(place => ({
           id: place.id,
@@ -482,6 +491,64 @@ export default function MapTab({ lang }) {
     window.open(navigationUrl, '_blank')
   }
 
+  // 카카오 카테고리 검색
+  const searchByCategory = (categoryId) => {
+    setSelectedCategory(categoryId)
+    
+    if (categoryId === 'all') {
+      // 전체 카테고리는 기존 마커들 표시
+      return
+    }
+
+    const category = mapCategories.find(cat => cat.id === categoryId)
+    if (!category || !category.kakaoCode) return
+
+    if (!map) return
+
+    // 기존 마커 제거
+    markers.forEach(marker => marker.setMap(null))
+    setMarkers([])
+
+    const ps = new window.kakao.maps.services.Places()
+    const center = map.getCenter()
+    
+    ps.categorySearch(category.kakaoCode, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const newMarkers = []
+        
+        result.forEach((place, index) => {
+          const position = new window.kakao.maps.LatLng(place.y, place.x)
+          const marker = new window.kakao.maps.Marker({
+            position: position,
+            map: map
+          })
+
+          // 마커 클릭 이벤트
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            setSelectedMarker({
+              id: place.id,
+              name: { ko: place.place_name, zh: place.place_name, en: place.place_name },
+              description: { ko: place.address_name, zh: place.address_name, en: place.address_name },
+              lat: place.y,
+              lng: place.x,
+              category: categoryId,
+              phone: place.phone,
+              url: place.place_url
+            })
+          })
+
+          newMarkers.push(marker)
+        })
+        
+        setMarkers(newMarkers)
+      }
+    }, {
+      location: center,
+      radius: 1000, // 1km 반경
+      sort: window.kakao.maps.services.SortBy.DISTANCE
+    })
+  }
+
   // 지도 테마 (카카오맵은 기본 스타일만 제공)
   const mapThemes = [
     {
@@ -506,36 +573,61 @@ export default function MapTab({ lang }) {
   }
 
   // 지도 카테고리
+  // 카카오맵 순정 카테고리 (categorySearch API 코드 기반)
   const mapCategories = [
     { 
       id: 'all', 
       name: { ko: '전체', zh: '全部', en: 'All' },
-      color: '#111827'
+      color: '#111827',
+      kakaoCode: null
     },
     { 
       id: 'restaurant', 
-      name: { ko: '맛집', zh: '美食', en: 'Food' },
-      color: '#FF6B6B'
+      name: { ko: '음식점', zh: '餐厅', en: 'Restaurant' },
+      color: '#FF6B6B',
+      kakaoCode: 'FD6'
     },
     { 
-      id: 'medical', 
-      name: { ko: '의료', zh: '医疗', en: 'Medical' },
-      color: '#4ECDC4'
+      id: 'cafe', 
+      name: { ko: '카페', zh: '咖啡店', en: 'Cafe' },
+      color: '#FFA726',
+      kakaoCode: 'CE7'
     },
     { 
-      id: 'transport', 
-      name: { ko: '교통', zh: '交通', en: 'Transport' },
-      color: '#45B7D1'
+      id: 'convenience', 
+      name: { ko: '편의점', zh: '便利店', en: 'Conv Store' },
+      color: '#42A5F5',
+      kakaoCode: 'CS2'
     },
     { 
-      id: 'shopping', 
-      name: { ko: '쇼핑', zh: '购物', en: 'Shopping' },
-      color: '#96CEB4'
+      id: 'gas', 
+      name: { ko: '주유소', zh: '加油站', en: 'Gas' },
+      color: '#66BB6A',
+      kakaoCode: 'OL7'
     },
     { 
-      id: 'tourism', 
-      name: { ko: '관광', zh: '旅游', en: 'Tourism' },
-      color: '#FECA57'
+      id: 'hospital', 
+      name: { ko: '병원', zh: '医院', en: 'Hospital' },
+      color: '#EF5350',
+      kakaoCode: 'HP8'
+    },
+    { 
+      id: 'pharmacy', 
+      name: { ko: '약국', zh: '药店', en: 'Pharmacy' },
+      color: '#AB47BC',
+      kakaoCode: 'PM9'
+    },
+    { 
+      id: 'bank', 
+      name: { ko: '은행', zh: '银行', en: 'Bank' },
+      color: '#26A69A',
+      kakaoCode: 'BK9'
+    },
+    { 
+      id: 'mart', 
+      name: { ko: '마트', zh: '超市', en: 'Mart' },
+      color: '#FF7043',
+      kakaoCode: 'MT1'
     }
   ]
 
@@ -721,8 +813,8 @@ export default function MapTab({ lang }) {
             {mapCategories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`flex-shrink-0 px-2 py-1 rounded-full border transition-all text-xs ${
+                onClick={() => searchByCategory(category.id)}
+                className={`flex-shrink-0 px-3 py-2 rounded-full border transition-all text-sm ${
                   selectedCategory === category.id
                     ? 'bg-gray-900 text-white border-gray-900'
                     : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'

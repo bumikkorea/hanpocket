@@ -615,7 +615,7 @@ export default function MapTab({ lang }) {
     // 800ms 후 검색 실행 (API 사용량 최적화)
     searchTimeoutRef.current = setTimeout(() => {
       searchPlace(query)
-    }, 1000)
+    }, 800)
   }, [searchPlace])
 
   // 검색어 변경 핸들러
@@ -640,7 +640,7 @@ export default function MapTab({ lang }) {
 
     startSearchTimeoutRef.current = setTimeout(() => {
       searchLocation(query, true)
-    }, 1000)
+    }, 800)
   }, [searchLocation])
   const debouncedEndSearch = useCallback((query) => {
     if (endSearchTimeoutRef.current) {
@@ -657,7 +657,7 @@ export default function MapTab({ lang }) {
 
     endSearchTimeoutRef.current = setTimeout(() => {
       searchLocation(query, false)
-    }, 1000)
+    }, 800)
   }, [searchLocation])
 
   // 출발지 검색어 변경 핸들러
@@ -815,27 +815,16 @@ export default function MapTab({ lang }) {
   return (
     <div className="min-h-screen bg-white">
       {/* 헤더 */}
+      {/* 헤더 + 검색창 통합 */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div className="px-4 py-3">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-900">
-              {L({ ko: '어디가?', zh: '去哪里?', en: 'Where to?' })}
-            </h1>
-            <button
-              onClick={() => setShowRoutePanel(!showRoutePanel)}
-              className={`p-2 transition-colors ${showRoutePanel ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-              title={L({ ko: '길찾기', zh: '导航', en: 'Navigation' })}
-            >
-              <Route size={20} />
-            </button>
-          </div>
-        </div>
-
-      {/* 상단 검색창 */}
-      <div className="bg-white border-b border-gray-100 sticky top-[130px] z-40">
-        <div className="px-4 py-3">
           <div className="flex items-center space-x-3">
-            {/* 검색 입력창 */}
+            {/* 어디가? 제목 */}
+            <h1 className="text-lg font-bold text-gray-900 flex-shrink-0">
+              {L({ ko: "어디가?", zh: "去哪里?", en: "Where to?" })}
+            </h1>
+            
+            {/* 검색창 */}
             <div className="flex-1 relative search-container">
               <input
                 type="text"
@@ -855,14 +844,14 @@ export default function MapTab({ lang }) {
                   className="p-1 text-blue-500 hover:text-blue-700"
                   title={L({ ko: "카카오맵에서 검색", zh: "在Kakao地图搜索", en: "Search in Kakao Map" })}
                 >
-                  <Globe size={16} />
+                  <Globe size={14} />
                 </button>
                 <button 
                   onClick={() => searchPlace(searchQuery)}
                   className="p-1 text-gray-500 hover:text-gray-700"
                   title={L({ ko: "검색", zh: "搜索", en: "Search" })}
                 >
-                  <Search size={16} />
+                  <Search size={14} />
                 </button>
               </div>
 
@@ -904,7 +893,7 @@ export default function MapTab({ lang }) {
                     className="w-full px-3 py-2 text-left hover:bg-blue-50 border-t border-gray-200 text-blue-600 font-medium text-sm"
                   >
                     <div className="flex items-center space-x-2">
-                      <Globe size={14} />
+                      <Globe size={12} />
                       <span>{L({ ko: "카카오맵에서 더 보기", zh: "在Kakao地图查看更多", en: "More in Kakao Map" })}</span>
                     </div>
                   </button>
@@ -924,7 +913,7 @@ export default function MapTab({ lang }) {
                         onClick={() => openKakaoWebView(searchQuery)}
                         className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
                       >
-                        <Globe size={16} />
+                        <Globe size={14} />
                         <span>{L({ ko: "카카오맵에서 검색", zh: "在Kakao地图搜索", en: "Search in Kakao Map" })}</span>
                       </button>
                     </div>
@@ -932,15 +921,23 @@ export default function MapTab({ lang }) {
                 )
               )}
             </div>
+            
+            {/* 길찾기 버튼 */}
+            <button
+              onClick={() => setShowRoutePanel(!showRoutePanel)}
+              className={`p-2 transition-colors flex-shrink-0 ${showRoutePanel ? "text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
+              title={L({ ko: "길찾기", zh: "导航", en: "Navigation" })}
+            >
+              <Route size={20} />
+            </button>
           </div>
         </div>
-      </div>
       </div>
 
 
       {/* 출발지/도착지 입력 패널 */}
       {showRoutePanel && (
-        <div className="bg-white border-b border-gray-100 sticky top-[130px] z-30">
+        <div className="bg-white border-b border-gray-100 sticky top-[70px] z-30">
           <div className="px-4 py-3">
             <div className="flex items-start space-x-3">
               {/* 출발지 + 도착지 입력창들 */}
@@ -1040,7 +1037,7 @@ export default function MapTab({ lang }) {
         </div>
       )}
       {/* 카테고리 탭 */}
-      <div className={`bg-white border-b border-gray-100 sticky z-30 ${showRoutePanel ? 'top-[270px]' : 'top-[130px]'}`}>
+      <div className={`bg-white border-b border-gray-100 sticky z-30 ${showRoutePanel ? 'top-[200px]' : 'top-[70px]'}`}>
         <div className="px-4 py-3">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (

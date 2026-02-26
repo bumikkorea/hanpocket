@@ -636,62 +636,57 @@ export default function MapTab({ lang }) {
       {/* 헤더 */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div className="px-4 py-3">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-gray-900">
-              {L({ ko: '한국 지도', zh: '韩国地图', en: 'Korea Map' })}
-            </h1>
-            <div className="flex items-center space-x-2">
-              {/* 검색 입력창 */}
-              <div className="relative search-container">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      searchPlace(searchQuery)
-                    }
-                  }}
-                  placeholder={L({ ko: '장소, 주소 검색', zh: '搜索地点、地址', en: 'Search places, addresses' })}
-                  className="w-48 px-3 py-1 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-gray-500"
-                />
-                <button 
-                  onClick={() => searchPlace(searchQuery)}
-                  className="absolute right-1 top-1 p-1 text-gray-500 hover:text-gray-700"
-                >
-                  <Search size={16} />
-                </button>
-
-                {/* 검색 결과 드롭다운 */}
-                {showSearchResults && searchResults.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
-                    {searchResults.map((result) => (
-                      <button
-                        key={result.id}
-                        onClick={() => selectSearchResult(result)}
-                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
-                      >
-                        <div className="font-medium text-sm">{result.name}</div>
-                        {result.address && (
-                          <div className="text-xs text-gray-500">{result.address}</div>
-                        )}
-                        {result.category && (
-                          <div className="text-xs text-blue-600">{result.category}</div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <button
-                onClick={() => setShowRoutePanel(!showRoutePanel)}
-                className={`p-2 transition-colors ${showRoutePanel ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
-                title={L({ ko: '길찾기', zh: '导航', en: 'Navigation' })}
+          <div className="flex items-center space-x-3">
+            {/* 검색 입력창 - 더 넓게 */}
+            <div className="flex-1 relative search-container">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    searchPlace(searchQuery)
+                  }
+                }}
+                placeholder={L({ ko: '장소, 주소 검색', zh: '搜索地点、地址', en: 'Search places, addresses' })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+              <button 
+                onClick={() => searchPlace(searchQuery)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-gray-700"
               >
-                <Route size={20} />
+                <Search size={16} />
               </button>
+
+              {/* 검색 결과 드롭다운 */}
+              {showSearchResults && searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
+                  {searchResults.map((result) => (
+                    <button
+                      key={result.id}
+                      onClick={() => selectSearchResult(result)}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="font-medium text-sm">{result.name}</div>
+                      {result.address && (
+                        <div className="text-xs text-gray-500">{result.address}</div>
+                      )}
+                      {result.category && (
+                        <div className="text-xs text-blue-600">{result.category}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+
+            <button
+              onClick={() => setShowRoutePanel(!showRoutePanel)}
+              className={`p-2 transition-colors ${showRoutePanel ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+              title={L({ ko: '길찾기', zh: '导航', en: 'Navigation' })}
+            >
+              <Route size={20} />
+            </button>
           </div>
         </div>
       </div>
@@ -699,45 +694,45 @@ export default function MapTab({ lang }) {
       {/* 출발지/도착지 입력 패널 */}
       {showRoutePanel && (
         <div className="bg-white border-b border-gray-100 sticky top-[70px] z-30">
-          <div className="px-4 py-3">
-            <div className="flex items-center space-x-3">
-              {/* 출발지 입력 */}
-              <div className="flex-1 relative route-search-start">
-                <input
-                  type="text"
-                  value={startLocation}
-                  onChange={(e) => {
-                    setStartLocation(e.target.value)
-                    if (e.target.value.length > 1) {
-                      searchLocation(e.target.value, true)
-                    } else {
-                      setShowStartResults(false)
-                    }
-                  }}
-                  placeholder={L({ ko: '출발지', zh: '出发地', en: 'Start' })}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-                
-                {/* 출발지 검색 결과 */}
-                {showStartResults && startResults.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
-                    {startResults.map((result) => (
-                      <button
-                        key={result.id}
-                        onClick={() => selectLocation(result, true)}
-                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
-                      >
-                        <div className="font-medium text-xs">{result.name}</div>
-                        {result.address && (
-                          <div className="text-xs text-gray-500">{result.address}</div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+          <div className="px-4 py-3 space-y-3">
+            {/* 출발지 입력 */}
+            <div className="relative route-search-start">
+              <input
+                type="text"
+                value={startLocation}
+                onChange={(e) => {
+                  setStartLocation(e.target.value)
+                  if (e.target.value.length > 1) {
+                    searchLocation(e.target.value, true)
+                  } else {
+                    setShowStartResults(false)
+                  }
+                }}
+                placeholder={L({ ko: '출발지', zh: '出发地', en: 'Start' })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+              
+              {/* 출발지 검색 결과 */}
+              {showStartResults && startResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
+                  {startResults.map((result) => (
+                    <button
+                      key={result.id}
+                      onClick={() => selectLocation(result, true)}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="font-medium text-xs">{result.name}</div>
+                      {result.address && (
+                        <div className="text-xs text-gray-500">{result.address}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
-              {/* 위치 바꾸기 버튼 */}
+            {/* 중간 버튼들 (위치 바꾸기, 길찾기, 닫기) */}
+            <div className="flex items-center justify-center space-x-3">
               <button
                 onClick={switchLocations}
                 className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
@@ -746,43 +741,6 @@ export default function MapTab({ lang }) {
                 <ArrowUpDown size={16} />
               </button>
 
-              {/* 도착지 입력 */}
-              <div className="flex-1 relative route-search-end">
-                <input
-                  type="text"
-                  value={endLocation}
-                  onChange={(e) => {
-                    setEndLocation(e.target.value)
-                    if (e.target.value.length > 1) {
-                      searchLocation(e.target.value, false)
-                    } else {
-                      setShowEndResults(false)
-                    }
-                  }}
-                  placeholder={L({ ko: '도착지', zh: '目的地', en: 'Destination' })}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-
-                {/* 도착지 검색 결과 */}
-                {showEndResults && endResults.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
-                    {endResults.map((result) => (
-                      <button
-                        key={result.id}
-                        onClick={() => selectLocation(result, false)}
-                        className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
-                      >
-                        <div className="font-medium text-xs">{result.name}</div>
-                        {result.address && (
-                          <div className="text-xs text-gray-500">{result.address}</div>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* 길찾기 실행 버튼 */}
               <button
                 onClick={startNavigation}
                 className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
@@ -790,7 +748,6 @@ export default function MapTab({ lang }) {
                 {L({ ko: '길찾기', zh: '导航', en: 'Go' })}
               </button>
 
-              {/* 패널 닫기 버튼 */}
               <button
                 onClick={() => {
                   setShowRoutePanel(false)
@@ -802,12 +759,48 @@ export default function MapTab({ lang }) {
                 <X size={16} />
               </button>
             </div>
+
+            {/* 도착지 입력 */}
+            <div className="relative route-search-end">
+              <input
+                type="text"
+                value={endLocation}
+                onChange={(e) => {
+                  setEndLocation(e.target.value)
+                  if (e.target.value.length > 1) {
+                    searchLocation(e.target.value, false)
+                  } else {
+                    setShowEndResults(false)
+                  }
+                }}
+                placeholder={L({ ko: '도착지', zh: '目的地', en: 'Destination' })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+
+              {/* 도착지 검색 결과 */}
+              {showEndResults && endResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
+                  {endResults.map((result) => (
+                    <button
+                      key={result.id}
+                      onClick={() => selectLocation(result, false)}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="font-medium text-xs">{result.name}</div>
+                      {result.address && (
+                        <div className="text-xs text-gray-500">{result.address}</div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
 
       {/* 카테고리 탭 */}
-      <div className={`bg-white border-b border-gray-100 sticky z-30 ${showRoutePanel ? 'top-[130px]' : 'top-[70px]'}`}>
+      <div className={`bg-white border-b border-gray-100 sticky z-30 ${showRoutePanel ? 'top-[210px]' : 'top-[70px]'}`}>
         <div className="px-4 py-3">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (
@@ -834,7 +827,7 @@ export default function MapTab({ lang }) {
           ref={mapRef}
           className={`w-full ${
             showRoutePanel 
-              ? 'h-[calc(100vh-260px)] md:h-[calc(100vh-220px)]'
+              ? 'h-[calc(100vh-340px)] md:h-[calc(100vh-300px)]'
               : 'h-[calc(100vh-200px)] md:h-[calc(100vh-160px)]'
           }`}
           style={{ 
@@ -901,8 +894,30 @@ export default function MapTab({ lang }) {
                   )}
                 </div>
 
-                {/* 카카오맵 연동 버튼들 */}
+                {/* 출발지/도착지 지정 버튼들 */}
                 <div className="flex space-x-2 mt-3 pt-3 border-t border-gray-100">
+                  <button
+                    onClick={() => {
+                      setStartLocation(L(selectedMarker.name))
+                      setShowRoutePanel(true)
+                    }}
+                    className="flex-1 px-3 py-2 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
+                    {L({ ko: '출발지로', zh: '设为起点', en: 'Set Start' })}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEndLocation(L(selectedMarker.name))
+                      setShowRoutePanel(true)
+                    }}
+                    className="flex-1 px-3 py-2 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
+                  >
+                    {L({ ko: '도착지로', zh: '设为终点', en: 'Set End' })}
+                  </button>
+                </div>
+
+                {/* 카카오맵 연동 버튼들 */}
+                <div className="flex space-x-2 mt-2">
                   <button
                     onClick={() => window.open(getKakaoMapUrl(selectedMarker), '_blank')}
                     className="flex-1 px-3 py-2 text-xs font-medium text-white bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors"

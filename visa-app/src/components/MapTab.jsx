@@ -110,12 +110,20 @@ export default function MapTab({ lang }) {
         return
       }
 
+      // 카카오맵 로드 전 언어 설정
+      const currentLang = getCurrentLanguage()
+      const originalLang = document.documentElement.lang
+      document.documentElement.lang = currentLang
+
       const script = document.createElement('script')
       script.type = 'text/javascript'
-      // services, clusterer 라이브러리 추가
-      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false`
+      // services, clusterer 라이브러리 추가 + 언어 파라미터 시도
+      const langParam = currentLang !== 'ko' ? `&hl=${currentLang}` : ''
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false${langParam}`
       script.onload = () => {
         window.kakao.maps.load(() => {
+          // 원래 언어로 복원
+          document.documentElement.lang = originalLang
           resolve(window.kakao)
         })
       }
@@ -493,11 +501,52 @@ export default function MapTab({ lang }) {
     window.open(navigationUrl, '_blank')
   }
 
-  // 카카오맵 웹뷰에서 검색
+  // 현재 앱 언어 감지 함수
+  const getCurrentLanguage = () => {
+    // HanPocket 앱의 언어 설정 확인 (localStorage)
+    const savedLang = localStorage.getItem('hanpocket-language')
+    if (savedLang) return savedLang
+    
+    // URL에서 언어 파라미터 확인
+    const urlParams = new URLSearchParams(window.location.search)
+    const urlLang = urlParams.get('lang')
+    if (urlLang && ['ko', 'zh', 'en'].includes(urlLang)) return urlLang
+    
+    // 브라우저 언어 감지
+    const browserLang = navigator.language || navigator.userLanguage
+    if (browserLang.startsWith('zh')) return 'zh'
+    if (browserLang.startsWith('en')) return 'en'
+    return 'ko'  // 기본값
+  }
+
+  // 카카오맵 웹뷰에서 검색 (언어 설정 포함)
   const openKakaoWebView = (query) => {
     setKakaoWebViewQuery(query)
     setShowKakaoWebView(true)
   }
+
+  // 현재 앱 언어에 맞는 카카오맵 웹뷰 URL 생성
+  const getKakaoMapWebViewUrl = (query) => {
+    const baseUrl = 'https://map.kakao.com'
+    const params = new URLSearchParams({
+      q: query
+    })
+    
+    // 앱 언어 설정에 따른 파라미터 추가
+    const currentLang = getCurrentLanguage()
+    if (currentLang === 'en') {
+      params.append('hl', 'en')  // 영어 인터페이스
+      params.append('region', 'KR')  // 한국 지역 데이터
+    } else if (currentLang === 'zh') {
+      params.append('hl', 'zh-CN')  // 중국어 인터페이스
+      params.append('region', 'KR')  // 한국 지역 데이터
+    }
+    // 한국어는 기본값이므로 파라미터 추가하지 않음
+    
+    return `${baseUrl}?${params.toString()}`
+  }
+
+
 
   // 웹뷰 닫기
   const closeKakaoWebView = () => {
@@ -963,7 +1012,7 @@ export default function MapTab({ lang }) {
             {/* 카카오맵 iframe */}
             <div className="flex-1 relative">
               <iframe
-                src={`https://map.kakao.com/?q=${encodeURIComponent(kakaoWebViewQuery)}`}
+                src={getKakaoMapWebViewUrl(kakaoWebViewQuery)}
                 className="w-full h-full border-0"
                 title="Kakao Map Search"
                 allowFullScreen
@@ -982,7 +1031,7 @@ export default function MapTab({ lang }) {
                   })}
                 </div>
                 <button
-                  onClick={() => window.open(`https://map.kakao.com/?q=${encodeURIComponent(kakaoWebViewQuery)}`, '_blank')}
+                  onClick={() => window.open(getKakaoMapWebViewUrl(kakaoWebViewQuery), '_blank')}
                   className="flex items-center space-x-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                 >
                   <ExternalLink size={14} />

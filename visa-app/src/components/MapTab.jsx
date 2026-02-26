@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { MapPin, Search, Filter, Navigation, Info, ArrowUpDown, Route, X, ExternalLink, Globe } from 'lucide-react'
 import { translateBrandName, smartTranslate } from '../data/brandMapping.js'
 
@@ -25,7 +25,9 @@ export default function MapTab({ lang }) {
   const [showEndResults, setShowEndResults] = useState(false)
   const [showKakaoWebView, setShowKakaoWebView] = useState(false)
   const [kakaoWebViewQuery, setKakaoWebViewQuery] = useState('')
+  const [isSearching, setIsSearching] = useState(false)  // 검색 중 상태
   const mapRef = useRef(null)
+  const searchTimeoutRef = useRef(null)
 
   const L = (data) => {
     if (typeof data === 'string') return data
@@ -214,6 +216,15 @@ export default function MapTab({ lang }) {
     initMap()
   }, [])
 
+  // 컴포넌트 언마운트 시 타이머 클리어
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current)
+      }
+    }
+  }, [])
+
   // 지도 크기 재조정 (화면 크기 변경 시)
   useEffect(() => {
     const handleResize = () => {
@@ -336,6 +347,7 @@ export default function MapTab({ lang }) {
   const searchPlace = async (query) => {
     if (!geocoder || !query.trim()) return
 
+    setIsSearching(true)  // 검색 시작
     setSearchResults([]) // 기존 검색 결과 초기화
 
     // 🧠 스마트 통합 번역 적용 (전체 DB)
@@ -355,6 +367,7 @@ export default function MapTab({ lang }) {
         setSearchResults(prev => [...prev, ...results])
         setShowSearchResults(true)
       }
+      setIsSearching(false)  // 검색 완료
     })
 
     // 키워드로 장소 검색 (Places 서비스)
@@ -374,6 +387,7 @@ export default function MapTab({ lang }) {
         setSearchResults(prev => [...prev, ...results])
         setShowSearchResults(true)
       }
+      setIsSearching(false)  // 검색 완료
     })
   }
 
@@ -552,6 +566,33 @@ export default function MapTab({ lang }) {
   const closeKakaoWebView = () => {
     setShowKakaoWebView(false)
     setKakaoWebViewQuery('')
+  }
+
+  // 실시간 자동완성 검색 (Debounced)
+  const debouncedSearch = useCallback((query) => {
+    // 이전 타이머 클리어
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
+
+    // 검색어가 비어있거나 너무 짧으면 결과 숨기기
+    if (!query || query.length < 2) {
+      setSearchResults([])
+      setShowSearchResults(false)
+      setIsSearching(false)
+      return
+    }
+
+    // 400ms 후 검색 실행 (더 빠른 반응)
+    searchTimeoutRef.current = setTimeout(() => {
+      searchPlace(query)
+    }, 400)
+  }, [searchPlace])
+
+  // 검색어 변경 핸들러
+  const handleSearchQueryChange = (newQuery) => {
+    setSearchQuery(newQuery)
+    debouncedSearch(newQuery) // 실시간 자동완성
   }
 
   // 카카오 카테고리 검색
@@ -1052,7 +1093,7 @@ export default function MapTab({ lang }) {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => handleSearchQueryChange(e.target.value)}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter') {
                     searchPlace(searchQuery)
@@ -1079,8 +1120,20 @@ export default function MapTab({ lang }) {
               </div>
 
               {/* 검색 결과 드롭다운 - 위쪽으로 */}
-              {showSearchResults && (
-                searchResults.length > 0 ? (
+              {(showSearchResults || isSearching) && (
+                isSearching ? (
+                  /* 검색 중 로딩 */
+                  <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+                    <div className="px-3 py-4 text-center">
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                        <span className="text-sm text-gray-500">
+                          {L({ ko: '검색 중...', zh: '搜索中...', en: 'Searching...' })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ) : searchResults.length > 0 ? (
                 <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                   {searchResults.map((result) => (
                     <button

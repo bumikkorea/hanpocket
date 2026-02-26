@@ -615,7 +615,7 @@ export default function MapTab({ lang }) {
     // 800ms 후 검색 실행 (API 사용량 최적화)
     searchTimeoutRef.current = setTimeout(() => {
       searchPlace(query)
-    }, 800)
+    }, 1000)
   }, [searchPlace])
 
   // 검색어 변경 핸들러
@@ -640,7 +640,7 @@ export default function MapTab({ lang }) {
 
     startSearchTimeoutRef.current = setTimeout(() => {
       searchLocation(query, true)
-    }, 800)
+    }, 1000)
   }, [searchLocation])
   const debouncedEndSearch = useCallback((query) => {
     if (endSearchTimeoutRef.current) {
@@ -657,7 +657,7 @@ export default function MapTab({ lang }) {
 
     endSearchTimeoutRef.current = setTimeout(() => {
       searchLocation(query, false)
-    }, 800)
+    }, 1000)
   }, [searchLocation])
 
   // 출발지 검색어 변경 핸들러

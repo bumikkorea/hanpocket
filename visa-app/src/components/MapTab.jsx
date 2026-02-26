@@ -650,93 +650,10 @@ export default function MapTab({ lang }) {
       {/* 헤더 */}
       <div className="bg-white border-b border-gray-100 sticky top-0 z-40">
         <div className="px-4 py-3">
-          <div className="flex items-center space-x-3">
-            {/* 검색 입력창 - 더 넓게 */}
-            <div className="flex-1 relative search-container">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    searchPlace(searchQuery)
-                  }
-                }}
-                placeholder={L({ ko: '장소, 주소 검색', zh: '搜索地点、地址', en: 'Search places, addresses' })}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              />
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
-                <button 
-                  onClick={() => openKakaoWebView(searchQuery)}
-                  className="p-1 text-blue-500 hover:text-blue-700"
-                  title={L({ ko: '카카오맵에서 검색', zh: '在Kakao地图搜索', en: 'Search in Kakao Map' })}
-                >
-                  <Globe size={16} />
-                </button>
-                <button 
-                  onClick={() => searchPlace(searchQuery)}
-                  className="p-1 text-gray-500 hover:text-gray-700"
-                  title={L({ ko: '검색', zh: '搜索', en: 'Search' })}
-                >
-                  <Search size={16} />
-                </button>
-              </div>
-
-              {/* 검색 결과 드롭다운 */}
-              {showSearchResults && (
-                searchResults.length > 0 ? (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
-                  {searchResults.map((result) => (
-                    <button
-                      key={result.id}
-                      onClick={() => selectSearchResult(result)}
-                      className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
-                    >
-                      <div className="font-medium text-sm">{result.name}</div>
-                      {result.address && (
-                        <div className="text-xs text-gray-500">{result.address}</div>
-                      )}
-                      {result.category && (
-                        <div className="text-xs text-blue-600">{result.category}</div>
-                      )}
-                    </button>
-                  ))}
-                  
-                  {/* 카카오맵에서 더 보기 */}
-                  <button
-                    onClick={() => openKakaoWebView(searchQuery)}
-                    className="w-full px-3 py-2 text-left hover:bg-blue-50 border-t border-gray-200 text-blue-600 font-medium text-sm"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <Globe size={14} />
-                      <span>{L({ ko: '카카오맵에서 더 보기', zh: '在Kakao地图查看更多', en: 'More in Kakao Map' })}</span>
-                    </div>
-                  </button>
-                </div>
-                ) : (
-                  /* 검색 결과 없을 때 */
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
-                    <div className="px-3 py-4 text-center">
-                      <div className="text-sm text-gray-500 mb-3">
-                        {L({ 
-                          ko: '검색 결과가 없습니다', 
-                          zh: '没有搜索结果', 
-                          en: 'No results found' 
-                        })}
-                      </div>
-                      <button
-                        onClick={() => openKakaoWebView(searchQuery)}
-                        className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
-                      >
-                        <Globe size={16} />
-                        <span>{L({ ko: '카카오맵에서 검색', zh: '在Kakao地图搜索', en: 'Search in Kakao Map' })}</span>
-                      </button>
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-bold text-gray-900">
+              {L({ ko: '어디가?', zh: '去哪里?', en: 'Where to?' })}
+            </h1>
             <button
               onClick={() => setShowRoutePanel(!showRoutePanel)}
               className={`p-2 transition-colors ${showRoutePanel ? 'text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
@@ -747,6 +664,7 @@ export default function MapTab({ lang }) {
           </div>
         </div>
       </div>
+
 
       {/* 출발지/도착지 입력 패널 */}
       {showRoutePanel && (
@@ -893,21 +811,7 @@ export default function MapTab({ lang }) {
           }}
         />
 
-        {/* 사용자 위치 버튼 */}
-        {userLocation && mapReady && (
-          <button
-            onClick={() => {
-              if (map && userLocation && window.kakao) {
-                const moveLatLng = new window.kakao.maps.LatLng(userLocation.lat, userLocation.lng)
-                map.setCenter(moveLatLng)
-                map.setLevel(3) // 줌 레벨 3 (가까이)
-              }
-            }}
-            className="absolute top-4 right-4 bg-white p-3 rounded-full shadow-lg hover:shadow-xl transition-shadow"
-          >
-            <Navigation size={20} className="text-gray-700" />
-          </button>
-        )}
+
 
         {/* 마커 상세 정보 패널 */}
         {selectedMarker && (
@@ -1089,6 +993,99 @@ export default function MapTab({ lang }) {
           </div>
         </div>
       )}
+
+      {/* 하단 검색창 */}
+      <div className="fixed bottom-20 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg">
+        <div className="px-4 py-3">
+          <div className="flex items-center space-x-3">
+            {/* 검색 입력창 */}
+            <div className="flex-1 relative search-container">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    searchPlace(searchQuery)
+                  }
+                }}
+                placeholder={L({ ko: '장소, 주소 검색', zh: '搜索地点、地址', en: 'Search places, addresses' })}
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
+                <button 
+                  onClick={() => openKakaoWebView(searchQuery)}
+                  className="p-1 text-blue-500 hover:text-blue-700"
+                  title={L({ ko: '카카오맵에서 검색', zh: '在Kakao地图搜索', en: 'Search in Kakao Map' })}
+                >
+                  <Globe size={16} />
+                </button>
+                <button 
+                  onClick={() => searchPlace(searchQuery)}
+                  className="p-1 text-gray-500 hover:text-gray-700"
+                  title={L({ ko: '검색', zh: '搜索', en: 'Search' })}
+                >
+                  <Search size={16} />
+                </button>
+              </div>
+
+              {/* 검색 결과 드롭다운 - 위쪽으로 */}
+              {showSearchResults && (
+                searchResults.length > 0 ? (
+                <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  {searchResults.map((result) => (
+                    <button
+                      key={result.id}
+                      onClick={() => selectSearchResult(result)}
+                      className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="font-medium text-sm">{result.name}</div>
+                      {result.address && (
+                        <div className="text-xs text-gray-500">{result.address}</div>
+                      )}
+                      {result.category && (
+                        <div className="text-xs text-blue-600">{result.category}</div>
+                      )}
+                    </button>
+                  ))}
+                  
+                  {/* 카카오맵에서 더 보기 */}
+                  <button
+                    onClick={() => openKakaoWebView(searchQuery)}
+                    className="w-full px-3 py-2 text-left hover:bg-blue-50 border-t border-gray-200 text-blue-600 font-medium text-sm"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Globe size={14} />
+                      <span>{L({ ko: '카카오맵에서 더 보기', zh: '在Kakao地图查看更多', en: 'More in Kakao Map' })}</span>
+                    </div>
+                  </button>
+                </div>
+                ) : (
+                  /* 검색 결과 없을 때 */
+                  <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg">
+                    <div className="px-3 py-4 text-center">
+                      <div className="text-sm text-gray-500 mb-3">
+                        {L({ 
+                          ko: '검색 결과가 없습니다', 
+                          zh: '没有搜索结果', 
+                          en: 'No results found' 
+                        })}
+                      </div>
+                      <button
+                        onClick={() => openKakaoWebView(searchQuery)}
+                        className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+                      >
+                        <Globe size={16} />
+                        <span>{L({ ko: '카카오맵에서 검색', zh: '在Kakao地图搜索', en: 'Search in Kakao Map' })}</span>
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

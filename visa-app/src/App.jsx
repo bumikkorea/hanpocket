@@ -1485,7 +1485,7 @@ function AppInner() {
       <PWAInstallPrompt />
 
       {/* PWA 업데이트 프롬프트 */}
-      {(needRefresh || offlineReady) && (
+      {false && (needRefresh || offlineReady) && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-lg max-w-sm mx-4">
           <div className="flex items-center justify-between space-x-3">
             <div className="flex items-center space-x-2">

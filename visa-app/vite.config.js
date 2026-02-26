@@ -8,7 +8,7 @@ export default defineConfig({
     react(), 
     tailwindcss(),
     VitePWA({
-      registerType: "prompt",
+      registerType: "autoUpdate",
       workbox: {
         cleanupOutdatedCaches: true,
         // 오프라인 fallback 설정

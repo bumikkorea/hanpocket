@@ -19,6 +19,8 @@ export default function MapTab({ lang }) {
   const [showRoutePanel, setShowRoutePanel] = useState(false)
   const [startLocation, setStartLocation] = useState('')
   const [endLocation, setEndLocation] = useState('')
+  const [startCoords, setStartCoords] = useState(null)
+  const [endCoords, setEndCoords] = useState(null)
   const [startResults, setStartResults] = useState([])
   const [endResults, setEndResults] = useState([])
   const [showStartResults, setShowStartResults] = useState(false)
@@ -492,34 +494,48 @@ export default function MapTab({ lang }) {
   // 출발지/도착지 선택
   const selectLocation = (result, isStart = true) => {
     const setLocation = isStart ? setStartLocation : setEndLocation
+    const setCoords = isStart ? setStartCoords : setEndCoords
     const setShowResults = isStart ? setShowStartResults : setShowEndResults
 
     setLocation(result.name)
+    setCoords({ x: result.x, y: result.y })
     setShowResults(false)
   }
 
   // 출발지/도착지 위치 바꾸기
   const switchLocations = () => {
     const temp = startLocation
+    const tempCoords = startCoords
     setStartLocation(endLocation)
+    setStartCoords(endCoords)
     setEndLocation(temp)
+    setEndCoords(tempCoords)
   }
 
   // 카카오맵 길찾기 실행
   const startNavigation = () => {
     if (!startLocation || !endLocation) {
-      alert(L({ 
-        ko: '출발지와 도착지를 모두 입력해주세요.', 
-        zh: '请输入出发地和目的地。', 
-        en: 'Please enter both start and destination.' 
+      alert(L({
+        ko: '출발지와 도착지를 모두 입력해주세요.',
+        zh: '请输入出发地和目的地。',
+        en: 'Please enter both start and destination.'
       }))
       return
     }
 
-    const startQuery = encodeURIComponent(startLocation)
-    const endQuery = encodeURIComponent(endLocation)
-    const navigationUrl = `https://map.kakao.com/link/from/${startQuery}/to/${endQuery}`
-    
+    if (!startCoords || !endCoords) {
+      alert(L({
+        ko: '검색 결과에서 출발지와 도착지를 선택해주세요.',
+        zh: '请从搜索结果中选择出发地和目的地。',
+        en: 'Please select start and destination from search results.'
+      }))
+      return
+    }
+
+    const startName = encodeURIComponent(startLocation)
+    const endName = encodeURIComponent(endLocation)
+    const navigationUrl = `https://map.kakao.com/link/from/${startName},${startCoords.y},${startCoords.x}/to/${endName},${endCoords.y},${endCoords.x}`
+
     window.open(navigationUrl, '_blank')
   }
 

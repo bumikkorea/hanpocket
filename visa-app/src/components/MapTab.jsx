@@ -575,6 +575,26 @@ export default function MapTab({ lang }) {
     setShowKakaoWebView(false)
     setKakaoWebViewQuery('')
   }
+  // 언어별 최소 글자수 검사 함수
+  const getMinimumSearchLength = (query) => {
+    // 한글 감지 (자음/모음/완성형 한글)
+    if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(query)) {
+      return 2  // 한글: 2글자
+    }
+    
+    // 중국어 감지 (중국어 유니코드 범위)
+    if (/[u4e00-u9fff]/.test(query)) {
+      return 2  // 중국어: 2글자
+    }
+    
+    // 영어 감지 (라틴 문자)
+    if (/[a-zA-Z]/.test(query)) {
+      return 4  // 영어: 4글자
+    }
+    
+    // 기타 언어: 기본값 3글자
+    return 3
+  }
 
   // 실시간 자동완성 검색 (Debounced)
   const debouncedSearch = useCallback((query) => {
@@ -583,18 +603,19 @@ export default function MapTab({ lang }) {
       clearTimeout(searchTimeoutRef.current)
     }
 
-    // 검색어가 비어있거나 너무 짧으면 결과 숨기기
-    if (!query || query.length < 2) {
+    // 언어별 최소 글자수 확인
+    const minLength = getMinimumSearchLength(query)
+    if (!query || query.length < minLength) {
       setSearchResults([])
       setShowSearchResults(false)
       setIsSearching(false)
       return
     }
 
-    // 400ms 후 검색 실행 (더 빠른 반응)
+    // 800ms 후 검색 실행 (API 사용량 최적화)
     searchTimeoutRef.current = setTimeout(() => {
       searchPlace(query)
-    }, 400)
+    }, 800)
   }, [searchPlace])
 
   // 검색어 변경 핸들러
@@ -609,7 +630,9 @@ export default function MapTab({ lang }) {
       clearTimeout(startSearchTimeoutRef.current)
     }
 
-    if (!query || query.length < 2) {
+    // 언어별 최소 글자수 확인
+    const minLength = getMinimumSearchLength(query)
+    if (!query || query.length < minLength) {
       setStartResults([])
       setShowStartResults(false)
       return
@@ -617,16 +640,16 @@ export default function MapTab({ lang }) {
 
     startSearchTimeoutRef.current = setTimeout(() => {
       searchLocation(query, true)
-    }, 400)
+    }, 800)
   }, [searchLocation])
-
-  // 도착지 실시간 자동완성 검색 (Debounced)
   const debouncedEndSearch = useCallback((query) => {
     if (endSearchTimeoutRef.current) {
       clearTimeout(endSearchTimeoutRef.current)
     }
 
-    if (!query || query.length < 2) {
+    // 언어별 최소 글자수 확인
+    const minLength = getMinimumSearchLength(query)
+    if (!query || query.length < minLength) {
       setEndResults([])
       setShowEndResults(false)
       return
@@ -634,7 +657,7 @@ export default function MapTab({ lang }) {
 
     endSearchTimeoutRef.current = setTimeout(() => {
       searchLocation(query, false)
-    }, 400)
+    }, 800)
   }, [searchLocation])
 
   // 출발지 검색어 변경 핸들러

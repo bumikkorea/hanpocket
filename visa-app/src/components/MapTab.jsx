@@ -745,14 +745,18 @@ export default function MapTab({ lang }) {
 
           // 마커 클릭 이벤트
           window.kakao.maps.event.addListener(marker, 'click', () => {
+            // 클릭한 마커 위치로 지도 중심 이동
+            map.setCenter(position)
+
             setSelectedMarker({
               id: place.id,
               name: { ko: place.place_name, zh: place.place_name, en: place.place_name },
               description: { ko: place.address_name, zh: place.address_name, en: place.address_name },
-              lat: place.y,
-              lng: place.x,
+              lat: parseFloat(place.y),
+              lng: parseFloat(place.x),
               category: categoryId,
               phone: place.phone,
+              categoryName: place.category_name,
               url: place.place_url
             })
           })
@@ -1119,7 +1123,7 @@ export default function MapTab({ lang }) {
 
         {/* 마커 상세 정보 패널 */}
         {selectedMarker && (
-          <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-xl p-4 max-h-48 overflow-y-auto">
+          <div className="absolute bottom-4 left-4 right-4 z-50 bg-white rounded-lg shadow-xl p-4 max-h-48 overflow-y-auto">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
@@ -1164,6 +1168,7 @@ export default function MapTab({ lang }) {
                   <button
                     onClick={() => {
                       setStartLocation(L(selectedMarker.name))
+                      setStartCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
                       setShowRoutePanel(true)
                     }}
                     className="flex-1 px-3 py-2 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
@@ -1173,6 +1178,7 @@ export default function MapTab({ lang }) {
                   <button
                     onClick={() => {
                       setEndLocation(L(selectedMarker.name))
+                      setEndCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
                       setShowRoutePanel(true)
                     }}
                     className="flex-1 px-3 py-2 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"

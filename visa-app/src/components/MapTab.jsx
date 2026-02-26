@@ -500,6 +500,29 @@ export default function MapTab({ lang }) {
     setLocation(result.name)
     setCoords({ x: result.x, y: result.y })
     setShowResults(false)
+
+    // 지도 이동 + 마커 + 장소정보 표시 (메인 검색과 동일)
+    if (map) {
+      const moveLatLng = new window.kakao.maps.LatLng(result.y, result.x)
+      map.setCenter(moveLatLng)
+      map.setLevel(3)
+
+      new window.kakao.maps.Marker({
+        position: moveLatLng,
+        map: map
+      })
+
+      setSelectedMarker({
+        id: result.id,
+        category: 'search',
+        name: { ko: result.name, zh: result.name, en: result.name },
+        description: { ko: result.address || (isStart ? '출발지' : '도착지'), zh: result.address || (isStart ? '出发地' : '目的地'), en: result.address || (isStart ? 'Departure' : 'Destination') },
+        lat: parseFloat(result.y),
+        lng: parseFloat(result.x),
+        phone: result.phone,
+        categoryName: result.category
+      })
+    }
   }
 
   // 출발지/도착지 위치 바꾸기

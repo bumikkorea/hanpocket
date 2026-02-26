@@ -6,7 +6,7 @@ import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleA
 
 import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -1304,7 +1304,7 @@ function AppInner() {
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
     { id: 'pocket', icon: Grid3x3, label: { ko: '포켓', zh: '口袋', en: 'Pocket' } },
-    { id: 'map', icon: 'taegeuk', label: { ko: '지도', zh: '地图', en: 'Map' } },
+    { id: 'map', icon: Footprints, label: { ko: '지도', zh: '地图', en: 'Map' } },
     { id: 'community', icon: Users, label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]

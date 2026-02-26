@@ -316,7 +316,14 @@ export default function MapTab({ lang }) {
       })
 
       // 마커 클릭 이벤트
-      window.kakao.maps.event.addListener(marker, 'click', () => {
+      window.kakao.maps.event.addListener(marker, "click", () => {
+        console.log("마커 클릭됨:", markerData.name)
+        // 이벤트 전파 중단
+        if (event) {
+          event.stopPropagation()
+        }
+        map.setCenter(position)
+        map.setLevel(3)
         setSelectedMarker(markerData)
       })
 
@@ -675,6 +682,7 @@ export default function MapTab({ lang }) {
   // 카카오 카테고리 검색
   const searchByCategory = (categoryId) => {
     setSelectedCategory(categoryId)
+    setSelectedMarker(null) // 카테고리 변경 시 선택된 마커 초기화
     
     if (categoryId === 'all') {
       // 전체 카테고리는 기존 마커들 표시
@@ -705,7 +713,14 @@ export default function MapTab({ lang }) {
           })
 
           // 마커 클릭 이벤트
-          window.kakao.maps.event.addListener(marker, 'click', () => {
+          window.kakao.maps.event.addListener(marker, "click", () => {
+        console.log("마커 클릭됨:", markerData.name)
+        // 이벤트 전파 중단
+        if (event) {
+          event.stopPropagation()
+        }
+        map.setCenter(position)
+        map.setLevel(3)
             setSelectedMarker({
               id: place.id,
               name: { ko: place.place_name, zh: place.place_name, en: place.place_name },
@@ -1077,7 +1092,7 @@ export default function MapTab({ lang }) {
 
         {/* 마커 상세 정보 패널 */}
         {selectedMarker && (
-          <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-xl p-4 max-h-48 overflow-y-auto">
+          <div className="absolute bottom-4 left-4 right-4 bg-white rounded-lg shadow-xl p-4 max-h-48 overflow-y-auto z-50">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">

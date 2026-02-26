@@ -39,6 +39,12 @@ const useDarkMode = () => {
 
     // localStorage에 설정 저장
     localStorage.setItem('hp_dark_mode', JSON.stringify(isDark))
+
+    // 메타 테마 컬러 업데이트 (모바일 상단바 색상)
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', isDark ? '#111827' : '#ffffff')
+    }
   }, [isDark])
 
   // 시스템 다크모드 변경 감지

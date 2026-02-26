@@ -9,10 +9,35 @@
 
   --bg: #FFFFFF;
   --bg-secondary: #F8F9FA;
+  --bg-primary: #FFFFFF;
   --border: #DADCE0;
   --text-primary: #202124;
   --text-secondary: #5F6368;
   --text-muted: #9AA0A6;
+}
+
+/* 다크모드 CSS 변수 */
+.dark {
+  --bg: #111827;
+  --bg-secondary: #1F2937;
+  --bg-primary: #111827;
+  --border: #374151;
+  --text-primary: #F9FAFB;
+  --text-secondary: #D1D5DB;
+  --text-muted: #9CA3AF;
+}
+
+/* 시스템 다크모드 기본 지원 */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-override) {
+    --bg: #111827;
+    --bg-secondary: #1F2937;
+    --bg-primary: #111827;
+    --border: #374151;
+    --text-primary: #F9FAFB;
+    --text-secondary: #D1D5DB;
+    --text-muted: #9CA3AF;
+  }
 }
 
 * {
@@ -25,6 +50,7 @@ body {
   background: var(--bg);
   color: var(--text-primary);
   letter-spacing: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3 {

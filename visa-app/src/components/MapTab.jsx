@@ -236,7 +236,7 @@ export default function MapTab({ lang }) {
         map.relayout()
       }, 300) // 애니메이션 완료 후 크기 재조정
     }
-  }, [showStylePanel, map, mapReady])
+  }, [map, mapReady])
 
   // 검색 결과 외부 클릭 시 닫기
   useEffect(() => {

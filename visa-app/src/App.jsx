@@ -1,3 +1,4 @@
+import { useRegisterSW } from "virtual:pwa-register/react"
 import { useState, useRef, useEffect, Component, lazy, Suspense } from 'react'
 import useDarkMode from './hooks/useDarkMode'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
@@ -1135,6 +1136,29 @@ function AppInner() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showAppMenu, setShowAppMenu] = useState(false)
   const { isDark, toggleDarkMode } = useDarkMode()
+
+  // PWA 업데이트 로직
+  const {
+    needRefresh: [needRefresh, setNeedRefresh],
+    offlineReady: [offlineReady, setOfflineReady],
+    updateServiceWorker,
+  } = useRegisterSW({
+    onRegistered(r) {
+      console.log("SW Registered: " + r)
+    },
+    onRegisterError(error) {
+      console.log("SW registration error", error)
+    },
+  })
+
+  const close = () => {
+    setOfflineReady(false)
+    setNeedRefresh(false)
+  }
+
+  const updateApp = () => {
+    updateServiceWorker(true)
+  }
   const s = t[lang]
 
   useEffect(() => {
@@ -1459,6 +1483,42 @@ function AppInner() {
     <div className="min-h-screen pb-20" style={{ backgroundColor: 'var(--bg-secondary)' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
+
+      {/* PWA 업데이트 프롬프트 */}
+      {(needRefresh || offlineReady) && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-lg max-w-sm mx-4">
+          <div className="flex items-center justify-between space-x-3">
+            <div className="flex items-center space-x-2">
+              <div className="bg-white bg-opacity-20 rounded-full p-1">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="text-sm">
+                {offlineReady 
+                  ? { ko: "오프라인 사용 가능", zh: "可离线使用", en: "Ready for offline" }[lang]
+                  : { ko: "새 버전 사용 가능", zh: "新版本可用", en: "New version available" }[lang]}
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              {needRefresh && (
+                <button
+                  onClick={updateApp}
+                  className="bg-white text-blue-500 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors"
+                >
+                  {{ ko: "업데이트", zh: "更新", en: "Update" }[lang]}
+                </button>
+              )}
+              <button
+                onClick={close}
+                className="text-white hover:text-gray-200 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Google-style Top Bar */}
       <div className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: 'var(--bg-primary)' }}>

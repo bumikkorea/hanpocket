@@ -16,15 +16,27 @@
   --text-muted: #9AA0A6;
 }
 
-/* 다크모드 CSS 변수 */
+/* 다크모드 CSS 변수 - 시인성 최우선 */
 .dark {
   --bg: #111827;
   --bg-secondary: #1F2937;
   --bg-primary: #111827;
-  --border: #374151;
-  --text-primary: #F9FAFB;
-  --text-secondary: #D1D5DB;
-  --text-muted: #9CA3AF;
+  --border: #4B5563;
+  
+  /* 텍스트 - 높은 대비로 가독성 극대화 */
+  --text-primary: #FFFFFF;     /* 순백색 - 최고 가독성 */
+  --text-secondary: #E5E7EB;   /* 밝은 회색 - 잘 보임 */
+  --text-muted: #D1D5DB;       /* 중간 회색 - 여전히 읽기 쉬움 */
+  
+  /* 브랜드 색상 - 다크모드에서 더 생생하게 */
+  --google-blue: #60A5FA;      /* 더 밝은 파란색 */
+  --accent: #60A5FA;
+  
+  /* 상태별 색상 - 다크모드 최적화 */
+  --success: #10B981;          /* 밝은 초록 */
+  --warning: #F59E0B;          /* 밝은 주황 */
+  --error: #EF4444;            /* 밝은 빨강 */
+  --info: #3B82F6;             /* 밝은 파랑 */
 }
 
 /* 시스템 다크모드 기본 지원 */
@@ -33,10 +45,22 @@
     --bg: #111827;
     --bg-secondary: #1F2937;
     --bg-primary: #111827;
-    --border: #374151;
-    --text-primary: #F9FAFB;
-    --text-secondary: #D1D5DB;
-    --text-muted: #9CA3AF;
+    --border: #4B5563;
+    
+    /* 텍스트 - 높은 대비 */
+    --text-primary: #FFFFFF;
+    --text-secondary: #E5E7EB;
+    --text-muted: #D1D5DB;
+    
+    /* 브랜드 색상 - 다크모드 최적화 */
+    --google-blue: #60A5FA;
+    --accent: #60A5FA;
+    
+    /* 상태 색상 */
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
   }
 }
 
@@ -356,4 +380,50 @@ h1, h2, h3 {
 /* Safe area for bottom nav */
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* 다크모드 시인성 향상 */
+.dark .text-gray-500 {
+  color: #D1D5DB !important;
+}
+
+.dark .text-gray-600 {
+  color: #E5E7EB !important;
+}
+
+.dark .text-gray-400 {
+  color: #D1D5DB !important;
+}
+
+/* 다크모드에서 아이콘 밝기 향상 */
+.dark svg {
+  filter: brightness(1.2) contrast(1.1);
+}
+
+/* 다크모드에서 로고 텍스트 더 선명하게 */
+.dark h1, .dark h2, .dark h3 {
+  color: #FFFFFF !important;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* 다크모드에서 버튼 텍스트 더 밝게 */
+.dark button {
+  color: #E5E7EB;
+}
+
+.dark button:hover {
+  color: #FFFFFF;
+}
+
+/* 다크모드에서 활성 상태 더 생생하게 */
+.dark .text-blue-500 {
+  color: #60A5FA !important;
+}
+
+.dark .text-red-500 {
+  color: #F87171 !important;
+}
+
+.dark .text-green-500 {
+  color: #10B981 !important;
 }

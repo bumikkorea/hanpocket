@@ -1,21 +1,48 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { MapPin, Search, Filter, Navigation, Info, ArrowUpDown, Route, X, ExternalLink, Globe } from 'lucide-react'
 import { translateBrandName, smartTranslate } from '../data/brandMapping.js'
-import { Capacitor } from '@capacitor/core'
-import { Geolocation } from '@capacitor/geolocation'
+// Capacitor는 네이티브 환경에서만 동적 로드 (웹에서 import 에러 방지)
+let _Capacitor = null
+let _Geolocation = null
+
+const isNativePlatform = () => {
+  try {
+    return _Capacitor && _Capacitor.isNativePlatform()
+  } catch {
+    return false
+  }
+}
+
+const loadCapacitor = async () => {
+  if (_Capacitor) return
+  try {
+    const core = await import('@capacitor/core')
+    _Capacitor = core.Capacitor
+    if (_Capacitor.isNativePlatform()) {
+      const geo = await import('@capacitor/geolocation')
+      _Geolocation = geo.Geolocation
+    }
+  } catch {
+    // 웹 환경에서는 Capacitor 패키지 없을 수 있음
+  }
+}
+
+// 앱 시작 시 Capacitor 로드 시도
+loadCapacitor()
 
 // 네이티브 or 브라우저 위치 가져오기 통합 함수
 const getPosition = async (options = {}) => {
+  await loadCapacitor()
   // Capacitor 네이티브 환경이면 네이티브 GPS 사용
-  if (Capacitor.isNativePlatform()) {
-    const perm = await Geolocation.checkPermissions()
+  if (isNativePlatform() && _Geolocation) {
+    const perm = await _Geolocation.checkPermissions()
     if (perm.location === 'denied') {
-      const requested = await Geolocation.requestPermissions()
+      const requested = await _Geolocation.requestPermissions()
       if (requested.location === 'denied') {
         throw { code: 1, message: 'Permission denied' }
       }
     }
-    const pos = await Geolocation.getCurrentPosition({
+    const pos = await _Geolocation.getCurrentPosition({
       enableHighAccuracy: true,
       timeout: options.timeout || 15000,
       ...options
@@ -35,9 +62,9 @@ const getPosition = async (options = {}) => {
 
 // 네이티브 watchPosition 래퍼
 const watchPositionCompat = (successCb, errorCb, options = {}) => {
-  if (Capacitor.isNativePlatform()) {
+  if (isNativePlatform() && _Geolocation) {
     let callbackId = null
-    Geolocation.watchPosition(
+    _Geolocation.watchPosition(
       { enableHighAccuracy: true, timeout: 15000, ...options },
       (position, err) => {
         if (err) {
@@ -50,7 +77,7 @@ const watchPositionCompat = (successCb, errorCb, options = {}) => {
     // clearWatch 함수 반환
     return () => {
       if (callbackId !== null) {
-        Geolocation.clearWatch({ id: callbackId })
+        _Geolocation.clearWatch({ id: callbackId })
       }
     }
   }

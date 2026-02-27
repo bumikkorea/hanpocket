@@ -1090,9 +1090,9 @@ export default function MapTab({ lang }) {
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
                   />
 
-                  {/* 도착지 검색 결과 */}
+                  {/* 도착지 검색 결과 (위로 펼침 — 카테고리 탭에 가려지지 않도록) */}
                   {showEndResults && endResults.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
+                    <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
                       {endResults.map((result) => (
                         <button
                           key={result.id}

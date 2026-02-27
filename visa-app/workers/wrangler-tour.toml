@@ -1,0 +1,6 @@
+name = "hanpocket-tour-proxy"
+main = "tour-api-proxy.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+TOUR_API_KEY = "40490c648d17e72faabd00bfc8be9994ee2cc64946edb68f4beb374eae1d482b"

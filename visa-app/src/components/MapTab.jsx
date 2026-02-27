@@ -850,7 +850,47 @@ export default function MapTab({ lang }) {
     }
 
     const category = mapCategories.find(cat => cat.id === categoryId)
-    if (!category || !category.kakaoCode) return
+    if (!category) return
+
+    // TourAPI 카테고리 처리
+    if (category.tourApiType) {
+      if (!map) return
+      markers.forEach(marker => marker.setMap(null))
+      setMarkers([])
+      const center = map.getCenter()
+      import('../api/tourApi').then(({ getLocationBasedList }) => {
+        getLocationBasedList({
+          mapX: center.getLng(), mapY: center.getLat(),
+          radius: 10000, contentTypeId: category.tourApiType, numOfRows: 30,
+        }).then(result => {
+          const newMarkers = []
+          ;(result.items || []).forEach(item => {
+            if (!item.mapx || !item.mapy) return
+            const position = new window.kakao.maps.LatLng(parseFloat(item.mapy), parseFloat(item.mapx))
+            const marker = new window.kakao.maps.Marker({ position, map })
+            window.kakao.maps.event.addListener(marker, 'click', () => {
+              map.setCenter(position)
+              setSelectedMarker({
+                id: item.contentid,
+                name: { ko: item.title, zh: item.title, en: item.title },
+                description: { ko: item.addr1 || '', zh: item.addr1 || '', en: item.addr1 || '' },
+                lat: parseFloat(item.mapy),
+                lng: parseFloat(item.mapx),
+                category: categoryId,
+                phone: item.tel,
+                image: item.firstimage,
+                tourApiItem: item,
+              })
+            })
+            newMarkers.push(marker)
+          })
+          setMarkers(newMarkers)
+        })
+      })
+      return
+    }
+
+    if (!category.kakaoCode) return
 
     if (!map) return
 
@@ -981,6 +1021,27 @@ export default function MapTab({ lang }) {
       name: { ko: '마트', zh: '超市', en: 'Mart' },
       color: '#FF7043',
       kakaoCode: 'MT1'
+    },
+    {
+      id: 'tour_spot',
+      name: { ko: '관광지', zh: '景点', en: 'Attractions' },
+      color: '#7C4DFF',
+      kakaoCode: null,
+      tourApiType: 76
+    },
+    {
+      id: 'tour_festival',
+      name: { ko: '축제', zh: '庆典', en: 'Festivals' },
+      color: '#FF4081',
+      kakaoCode: null,
+      tourApiType: 85
+    },
+    {
+      id: 'tour_stay',
+      name: { ko: '숙박', zh: '住宿', en: 'Stay' },
+      color: '#00BCD4',
+      kakaoCode: null,
+      tourApiType: 80
     }
   ]
 

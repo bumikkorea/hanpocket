@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
+import { MapPin, Loader2, PawPrint } from 'lucide-react'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -227,6 +228,60 @@ export default function PetTab({ lang, setTab }) {
           {lang === 'ko' ? '검역 서류 준비부터 동물등록까지' : lang === 'zh' ? '从检疫文件准备到动物登记' : 'From quarantine docs to animal registration'}
         </p>
       </button>
+      {/* TourAPI 반려동물 동반 여행지 */}
+      <TourApiPetSection lang={lang} />
+    </div>
+  )
+}
+
+const TourDetailModal = lazy(() => import('./TourDetailModal'))
+
+function TourApiPetSection({ lang }) {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [detailItem, setDetailItem] = useState(null)
+
+  useEffect(() => {
+    import('../api/tourApi').then(({ getAreaBasedList }) => {
+      // 관광지 중 반려동물 동반 가능한 곳
+      getAreaBasedList({ contentTypeId: 76, numOfRows: 12, arrange: 'R' })
+        .then(r => setItems(r.items || []))
+        .finally(() => setLoading(false))
+    })
+  }, [])
+
+  if (!loading && items.length === 0) return null
+
+  return (
+    <div className="mt-6 space-y-3">
+      <h3 className="text-sm font-bold text-[#111827] flex items-center gap-1.5">
+        🐾 {L(lang, { ko: '반려동물 동반 여행지', zh: '宠物友好旅游地', en: 'Pet-Friendly Spots' })}
+      </h3>
+
+      {loading && <div className="flex justify-center py-4"><Loader2 size={20} className="animate-spin text-blue-500" /></div>}
+
+      <div className="grid grid-cols-2 gap-3">
+        {items.map((item, i) => (
+          <div key={item.contentid || i} onClick={() => setDetailItem(item)}
+            className="rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm cursor-pointer">
+            {item.firstimage ? (
+              <img src={item.firstimage} alt={item.title} className="w-full h-28 object-cover" loading="lazy" />
+            ) : (
+              <div className="w-full h-28 bg-gray-100 flex items-center justify-center"><MapPin size={20} className="text-gray-400" /></div>
+            )}
+            <div className="p-2.5">
+              <h4 className="text-xs font-semibold line-clamp-1">{item.title}</h4>
+              {item.addr1 && <p className="text-[10px] text-[#9CA3AF] mt-0.5 line-clamp-1">{item.addr1}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {detailItem && (
+        <Suspense fallback={null}>
+          <TourDetailModal item={detailItem} lang={lang} darkMode={false} onClose={() => setDetailItem(null)} />
+        </Suspense>
+      )}
     </div>
   )
 }

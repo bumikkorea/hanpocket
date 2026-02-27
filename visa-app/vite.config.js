@@ -109,6 +109,9 @@ export default defineConfig({
       },
     },
   },
+  optimizeDeps: {
+    exclude: ['@capacitor/core', '@capacitor/geolocation']
+  },
   build: {
     rollupOptions: {
       output: {

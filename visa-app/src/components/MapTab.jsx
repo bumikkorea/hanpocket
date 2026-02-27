@@ -98,6 +98,7 @@ export default function MapTab({ lang }) {
   const [selectedMarker, setSelectedMarker] = useState(null)
   const [userLocation, setUserLocation] = useState(null)
   const [mapReady, setMapReady] = useState(false)
+  const [mapError, setMapError] = useState(null)
   const [locatingUser, setLocatingUser] = useState(false)
   const [locationAccuracy, setLocationAccuracy] = useState(null)
   const userMarkerRef = useRef(null)
@@ -301,6 +302,7 @@ export default function MapTab({ lang }) {
 
       } catch (error) {
         console.error('지도 초기화 실패:', error)
+        setMapError(error.message || '알 수 없는 오류')
         setMapReady(false)
       }
     }
@@ -1563,24 +1565,33 @@ export default function MapTab({ lang }) {
           </div>
         )}
 
-        {/* API 키 없을 때 메시지 */}
+        {/* 지도 로드 실패 시 메시지 */}
         {!mapReady && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-            <div className="text-center space-y-4">
+            <div className="text-center space-y-4 px-6">
               <div className="w-16 h-16 mx-auto bg-yellow-200 rounded-full flex items-center justify-center">
                 <Info size={24} className="text-yellow-600" />
               </div>
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold text-gray-700">
-                  {L({ ko: '카카오맵 API 키 필요', zh: '需要카카오맵API密钥', en: 'KakaoMap API Key Required' })}
+                  {L({ ko: '카카오맵 로드 실패', zh: '카카오맵加载失败', en: 'KakaoMap Load Failed' })}
                 </h3>
-                <p className="text-sm text-gray-500 max-w-xs mx-auto">
-                  {L({ 
-                    ko: 'Kakao Developers에서 Maps API 키를 발급받으세요. 일 30만회 무료!',
-                    zh: '请从Kakao Developers获取Maps API密钥。每日30万次免费！',
-                    en: 'Get Maps API key from Kakao Developers. 300K requests/day free!'
-                  })}
-                </p>
+                {mapError ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-red-500 font-medium">{mapError}</p>
+                    <div className="text-xs text-gray-500 text-left max-w-xs mx-auto space-y-1">
+                      <p className="font-semibold text-gray-700">{L({ ko: '확인사항:', zh: '检查事项:', en: 'Checklist:' })}</p>
+                      <p>1. Kakao Developers → 내 애플리케이션 → 플랫폼 → Web → 사이트 도메인에 <strong>http://localhost:3000</strong> 등록</p>
+                      <p>2. JavaScript 키 (REST API 키 아님) 를 .env에 입력</p>
+                      <p>3. 제품 설정 → 카카오맵 활성화</p>
+                      <p>4. .env 수정 후 서버 재시작 (npm run dev)</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500 max-w-xs mx-auto">
+                    {L({ ko: '지도를 불러오는 중...', zh: '正在加载地图...', en: 'Loading map...' })}
+                  </p>
+                )}
                 <div className="text-xs text-blue-600">
                   https://developers.kakao.com
                 </div>

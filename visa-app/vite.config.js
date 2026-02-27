@@ -127,6 +127,11 @@ export default defineConfig({
             return 'vendor-libs';
           }
           
+          // 화장실 데이터 별도 청크 (409KB, lazy load)
+          if (id.includes('toiletData')) {
+            return 'data-toilet';
+          }
+          
           // 큰 데이터 파일들을 별도 청크로 분리
           if (id.includes('/src/data/')) {
             return 'data';

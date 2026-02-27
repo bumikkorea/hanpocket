@@ -852,6 +852,48 @@ export default function MapTab({ lang }) {
     const category = mapCategories.find(cat => cat.id === categoryId)
     if (!category) return
 
+    // 화장실 카테고리 처리
+    if (category.isToilet) {
+      if (!map) return
+      markers.forEach(marker => marker.setMap(null))
+      setMarkers([])
+      import('../data/toiletData.js').then(({ SEOUL_TOILETS }) => {
+        const bounds = map.getBounds()
+        const sw = bounds.getSouthWest()
+        const ne = bounds.getNorthEast()
+        const visible = SEOUL_TOILETS.filter(t =>
+          t.lat >= sw.getLat() && t.lat <= ne.getLat() &&
+          t.lng >= sw.getLng() && t.lng <= ne.getLng()
+        ).slice(0, 100) // 성능을 위해 최대 100개
+
+        const newMarkers = []
+        visible.forEach(t => {
+          const position = new window.kakao.maps.LatLng(t.lat, t.lng)
+          const marker = new window.kakao.maps.Marker({ position, map })
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            map.setCenter(position)
+            const features = [
+              t.d === 'Y' ? '♿ ' + L({ ko: '장애인용', zh: '无障碍', en: 'Accessible' }) : '',
+              t.dp === 'Y' ? '👶 ' + L({ ko: '기저귀교환대', zh: '换尿台', en: 'Diaper' }) : '',
+              t.cc === 'Y' ? '📹 CCTV' : '',
+              t.bl === 'Y' ? '🔔 ' + L({ ko: '비상벨', zh: '紧急铃', en: 'Emergency Bell' }) : '',
+            ].filter(Boolean).join(' · ')
+            setSelectedMarker({
+              id: `toilet-${t.lat}-${t.lng}`,
+              name: { ko: t.n, zh: t.n, en: t.n },
+              description: { ko: `${t.a}\n🕐 ${t.h || '정보없음'}\n${features}`, zh: `${t.a}\n🕐 ${t.h || '暂无信息'}\n${features}`, en: `${t.a}\n🕐 ${t.h || 'N/A'}\n${features}` },
+              lat: t.lat, lng: t.lng,
+              category: 'toilet',
+              phone: t.p,
+            })
+          })
+          newMarkers.push(marker)
+        })
+        setMarkers(newMarkers)
+      })
+      return
+    }
+
     // TourAPI 카테고리 처리
     if (category.tourApiType) {
       if (!map) return
@@ -1021,6 +1063,13 @@ export default function MapTab({ lang }) {
       name: { ko: '마트', zh: '超市', en: 'Mart' },
       color: '#FF7043',
       kakaoCode: 'MT1'
+    },
+    {
+      id: 'toilet',
+      name: { ko: '화장실', zh: '洗手间', en: 'Toilet' },
+      color: '#8D6E63',
+      kakaoCode: null,
+      isToilet: true
     },
     {
       id: 'tour_spot',
@@ -1272,15 +1321,15 @@ export default function MapTab({ lang }) {
           </div>
         </div>
       )}
-      {/* 카테고리 탭 */}
-      <div className={`bg-white border-b border-gray-100 sticky z-30 ${showRoutePanel ? 'top-[270px]' : 'top-[130px]'}`}>
-        <div className="px-4 py-3">
+      {/* 카테고리 탭 — 지도 밖 고정, 침범 안 함 */}
+      <div className="bg-white border-b border-gray-100 z-30 relative">
+        <div className="px-4 py-2">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => searchByCategory(category.id)}
-                className={`flex-shrink-0 px-3 py-2 rounded-full border transition-all text-sm ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full border transition-all text-xs ${
                   selectedCategory === category.id
                     ? 'bg-gray-900 text-white border-gray-900'
                     : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
@@ -1300,12 +1349,12 @@ export default function MapTab({ lang }) {
           ref={mapRef}
           className={`w-full ${
             showRoutePanel 
-              ? 'h-[calc(100vh-340px)] md:h-[calc(100vh-300px)]'
-              : 'h-[calc(100vh-200px)] md:h-[calc(100vh-160px)]'
+              ? 'h-[calc(100vh-380px)] md:h-[calc(100vh-340px)]'
+              : 'h-[calc(100vh-240px)] md:h-[calc(100vh-200px)]'
           }`}
           style={{ 
-            minHeight: '300px',
-            maxHeight: 'calc(100vh - 150px)'
+            minHeight: '250px',
+            maxHeight: 'calc(100vh - 200px)'
           }}
         />
 

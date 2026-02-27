@@ -1223,7 +1223,7 @@ export default function MapTab({ lang }) {
               )
             }
           }}
-          className="absolute top-4 right-4 z-30 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200"
+          className="absolute bottom-56 right-3 z-40 w-11 h-11 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200"
           title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
         >
           <Navigation size={18} className="text-blue-500" />

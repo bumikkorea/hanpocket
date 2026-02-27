@@ -156,10 +156,6 @@ export default function MapTab({ lang }) {
         setMap(kakaoMap)
         setMapReady(true)
 
-        // 지도 타입 컨트롤 추가
-        const mapTypeControl = new window.kakao.maps.MapTypeControl()
-        kakaoMap.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT)
-
         // 줌 컨트롤 추가
         const zoomControl = new window.kakao.maps.ZoomControl()
         kakaoMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT)

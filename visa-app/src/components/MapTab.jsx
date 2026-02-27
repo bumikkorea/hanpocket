@@ -535,8 +535,58 @@ export default function MapTab({ lang }) {
     setEndCoords(tempCoords)
   }
 
+  // 좌표로 카카오맵 길찾기 URL 열기
+  const openNavigationUrl = (sName, sCoords, eName, eCoords) => {
+    const startName = encodeURIComponent(sName)
+    const endName = encodeURIComponent(eName)
+
+    // 모바일에서 카카오맵 앱 딥링크 시도
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    if (isMobile) {
+      const appUrl = `kakaomap://route?sp=${sCoords.y},${sCoords.x}&ep=${eCoords.y},${eCoords.x}&by=CAR`
+      window.location.href = appUrl
+      // 앱이 없으면 웹으로 fallback (1.5초 후)
+      setTimeout(() => {
+        const webUrl = `https://map.kakao.com/link/from/${startName},${sCoords.y},${sCoords.x}/to/${endName},${eCoords.y},${eCoords.x}`
+        window.open(webUrl, '_blank')
+      }, 1500)
+      return
+    }
+
+    // PC/웹에서는 카카오맵 웹 링크
+    const navigationUrl = `https://map.kakao.com/link/from/${startName},${sCoords.y},${sCoords.x}/to/${endName},${eCoords.y},${eCoords.x}`
+    window.open(navigationUrl, '_blank')
+  }
+
+  // 장소명으로 좌표 자동 검색 (Promise)
+  const resolveCoords = (query) => {
+    return new Promise((resolve) => {
+      if (!geocoder || !query.trim()) {
+        resolve(null)
+        return
+      }
+
+      const ps = new window.kakao.maps.services.Places()
+      // 키워드 검색 우선 (장소명에 더 적합)
+      ps.keywordSearch(query.trim(), (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+          resolve({ x: result[0].x, y: result[0].y })
+          return
+        }
+        // 키워드 검색 실패 시 주소 검색
+        geocoder.addressSearch(query.trim(), (addrResult, addrStatus) => {
+          if (addrStatus === window.kakao.maps.services.Status.OK && addrResult.length > 0) {
+            resolve({ x: addrResult[0].x, y: addrResult[0].y })
+          } else {
+            resolve(null)
+          }
+        })
+      })
+    })
+  }
+
   // 카카오맵 길찾기 실행
-  const startNavigation = () => {
+  const startNavigation = async () => {
     if (!startLocation || !endLocation) {
       alert(L({
         ko: '출발지와 도착지를 모두 입력해주세요.',
@@ -546,20 +596,31 @@ export default function MapTab({ lang }) {
       return
     }
 
-    if (!startCoords || !endCoords) {
+    let finalStartCoords = startCoords
+    let finalEndCoords = endCoords
+
+    // 좌표가 없으면 자동으로 검색해서 찾기
+    if (!finalStartCoords) {
+      finalStartCoords = await resolveCoords(startLocation)
+    }
+    if (!finalEndCoords) {
+      finalEndCoords = await resolveCoords(endLocation)
+    }
+
+    if (!finalStartCoords || !finalEndCoords) {
       alert(L({
-        ko: '검색 결과에서 출발지와 도착지를 선택해주세요.',
-        zh: '请从搜索结果中选择出发地和目的地。',
-        en: 'Please select start and destination from search results.'
+        ko: '출발지 또는 도착지를 찾을 수 없습니다. 다른 검색어를 입력해주세요.',
+        zh: '无法找到出发地或目的地，请输入其他搜索词。',
+        en: 'Could not find start or destination. Please try different search terms.'
       }))
       return
     }
 
-    const startName = encodeURIComponent(startLocation)
-    const endName = encodeURIComponent(endLocation)
-    const navigationUrl = `https://map.kakao.com/link/from/${startName},${startCoords.y},${startCoords.x}/to/${endName},${endCoords.y},${endCoords.x}`
+    // 좌표 저장 (다음 번 검색 시 재사용)
+    if (!startCoords) setStartCoords(finalStartCoords)
+    if (!endCoords) setEndCoords(finalEndCoords)
 
-    window.open(navigationUrl, '_blank')
+    openNavigationUrl(startLocation, finalStartCoords, endLocation, finalEndCoords)
   }
 
   // 현재 앱 언어 감지 함수
@@ -702,12 +763,14 @@ export default function MapTab({ lang }) {
   // 출발지 검색어 변경 핸들러
   const handleStartLocationChange = (newQuery) => {
     setStartLocation(newQuery)
+    setStartCoords(null) // 텍스트 변경 시 이전 좌표 초기화
     debouncedStartSearch(newQuery)
   }
 
   // 도착지 검색어 변경 핸들러
   const handleEndLocationChange = (newQuery) => {
     setEndLocation(newQuery)
+    setEndCoords(null) // 텍스트 변경 시 이전 좌표 초기화
     debouncedEndSearch(newQuery)
   }
 
@@ -1120,6 +1183,51 @@ export default function MapTab({ lang }) {
         />
 
 
+
+        {/* 현재위치 버튼 */}
+        <button
+          onClick={() => {
+            if (!map) return
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const lat = position.coords.latitude
+                  const lng = position.coords.longitude
+                  const moveLatLng = new window.kakao.maps.LatLng(lat, lng)
+                  map.setCenter(moveLatLng)
+                  map.setLevel(3)
+                  setUserLocation({ lat, lng })
+
+                  // 기존 내 위치 마커 제거 후 새로 추가
+                  const userMarker = new window.kakao.maps.Marker({
+                    position: moveLatLng,
+                    map: map,
+                    image: new window.kakao.maps.MarkerImage(
+                      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                          <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+                        </svg>
+                      `),
+                      new window.kakao.maps.Size(24, 24)
+                    )
+                  })
+                },
+                (error) => {
+                  alert(L({
+                    ko: '위치 정보를 가져올 수 없습니다. 위치 권한을 허용해주세요.',
+                    zh: '无法获取位置信息，请允许位置权限。',
+                    en: 'Could not get location. Please allow location access.'
+                  }))
+                },
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+              )
+            }
+          }}
+          className="absolute top-4 right-4 z-30 w-10 h-10 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200"
+          title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
+        >
+          <Navigation size={18} className="text-blue-500" />
+        </button>
 
         {/* 마커 상세 정보 패널 */}
         {selectedMarker && (

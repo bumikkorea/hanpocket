@@ -10,7 +10,9 @@ export default function MapTab({ lang }) {
   const [userLocation, setUserLocation] = useState(null)
   const [mapReady, setMapReady] = useState(false)
   const [locatingUser, setLocatingUser] = useState(false)
+  const [locationAccuracy, setLocationAccuracy] = useState(null)
   const userMarkerRef = useRef(null)
+  const watchIdRef = useRef(null)
   const [currentTheme, setCurrentTheme] = useState('hanpocket')
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -234,6 +236,11 @@ export default function MapTab({ lang }) {
       }
       if (endSearchTimeoutRef.current) {
         clearTimeout(endSearchTimeoutRef.current)
+      }
+      // watchPosition 정리
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current)
+        watchIdRef.current = null
       }
     }
   }, [])
@@ -1199,61 +1206,103 @@ export default function MapTab({ lang }) {
               }))
               return
             }
-            setLocatingUser(true)
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                const lat = position.coords.latitude
-                const lng = position.coords.longitude
-                const moveLatLng = new window.kakao.maps.LatLng(lat, lng)
-                map.setCenter(moveLatLng)
-                map.setLevel(3)
-                setUserLocation({ lat, lng })
 
-                // 기존 내 위치 마커 제거 후 새로 추가
-                if (userMarkerRef.current) {
-                  userMarkerRef.current.setMap(null)
+            // 이전 watch 정리
+            if (watchIdRef.current !== null) {
+              navigator.geolocation.clearWatch(watchIdRef.current)
+              watchIdRef.current = null
+            }
+
+            setLocatingUser(true)
+            setLocationAccuracy(null)
+            let settled = false
+
+            const updateLocation = (position) => {
+              const lat = position.coords.latitude
+              const lng = position.coords.longitude
+              const accuracy = position.coords.accuracy // 미터 단위
+              const moveLatLng = new window.kakao.maps.LatLng(lat, lng)
+
+              map.setCenter(moveLatLng)
+              if (!settled) {
+                map.setLevel(3)
+              }
+              setUserLocation({ lat, lng })
+              setLocationAccuracy(Math.round(accuracy))
+
+              // 기존 내 위치 마커 제거 후 새로 추가
+              if (userMarkerRef.current) {
+                userMarkerRef.current.setMap(null)
+              }
+              const marker = new window.kakao.maps.Marker({
+                position: moveLatLng,
+                map: map,
+                image: new window.kakao.maps.MarkerImage(
+                  'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                      <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+                    </svg>
+                  `),
+                  new window.kakao.maps.Size(24, 24)
+                )
+              })
+              userMarkerRef.current = marker
+
+              // GPS 정확도 50m 이내면 충분히 정확 → watch 중단
+              if (accuracy <= 50) {
+                if (watchIdRef.current !== null) {
+                  navigator.geolocation.clearWatch(watchIdRef.current)
+                  watchIdRef.current = null
                 }
-                const marker = new window.kakao.maps.Marker({
-                  position: moveLatLng,
-                  map: map,
-                  image: new window.kakao.maps.MarkerImage(
-                    'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                        <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
-                      </svg>
-                    `),
-                    new window.kakao.maps.Size(24, 24)
-                  )
+                setLocatingUser(false)
+              }
+              settled = true
+            }
+
+            const handleError = (error) => {
+              if (watchIdRef.current !== null) {
+                navigator.geolocation.clearWatch(watchIdRef.current)
+                watchIdRef.current = null
+              }
+              setLocatingUser(false)
+              let msg
+              if (error.code === 1) {
+                msg = L({
+                  ko: '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.',
+                  zh: '位置权限被拒绝。请在浏览器设置中允许位置权限。',
+                  en: 'Location permission denied. Please allow location access in browser settings.'
                 })
-                userMarkerRef.current = marker
-                setLocatingUser(false)
-              },
-              (error) => {
-                setLocatingUser(false)
-                let msg
-                if (error.code === 1) {
-                  msg = L({
-                    ko: '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.',
-                    zh: '位置权限被拒绝。请在浏览器设置中允许位置权限。',
-                    en: 'Location permission denied. Please allow location access in browser settings.'
-                  })
-                } else if (error.code === 2) {
-                  msg = L({
-                    ko: '위치 정보를 사용할 수 없습니다. GPS를 확인해주세요.',
-                    zh: '无法获取位置信息。请检查GPS。',
-                    en: 'Location unavailable. Please check your GPS.'
-                  })
-                } else {
-                  msg = L({
-                    ko: '위치 요청 시간이 초과되었습니다. 다시 시도해주세요.',
-                    zh: '位置请求超时。请重试。',
-                    en: 'Location request timed out. Please try again.'
-                  })
-                }
-                alert(msg)
-              },
-              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+              } else if (error.code === 2) {
+                msg = L({
+                  ko: '위치 정보를 사용할 수 없습니다. GPS를 확인해주세요.',
+                  zh: '无法获取位置信息。请检查GPS。',
+                  en: 'Location unavailable. Please check your GPS.'
+                })
+              } else {
+                msg = L({
+                  ko: '위치 요청 시간이 초과되었습니다. 다시 시도해주세요.',
+                  zh: '位置请求超时。请重试。',
+                  en: 'Location request timed out. Please try again.'
+                })
+              }
+              alert(msg)
+            }
+
+            // watchPosition으로 GPS 정확도가 높아질 때까지 위치 업데이트
+            watchIdRef.current = navigator.geolocation.watchPosition(
+              updateLocation,
+              handleError,
+              { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
             )
+
+            // 최대 15초 후 자동 중단 (GPS 못 잡아도 마지막 결과 사용)
+            setTimeout(() => {
+              if (watchIdRef.current !== null) {
+                navigator.geolocation.clearWatch(watchIdRef.current)
+                watchIdRef.current = null
+                setLocatingUser(false)
+              }
+            }, 15000)
           }}
           className={`absolute bottom-56 right-3 z-40 w-11 h-11 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 ${locatingUser ? 'animate-pulse' : ''}`}
           title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
@@ -1263,6 +1312,12 @@ export default function MapTab({ lang }) {
             : <Navigation size={18} className="text-blue-500" />
           }
         </button>
+        {/* 위치 정확도 표시 */}
+        {locationAccuracy && (
+          <div className="absolute bottom-48 right-3 z-40 bg-white/90 rounded-full px-2 py-0.5 shadow text-xs text-gray-500 border border-gray-100">
+            ±{locationAccuracy}m
+          </div>
+        )}
 
         {/* 마커 상세 정보 패널 */}
         {selectedMarker && (

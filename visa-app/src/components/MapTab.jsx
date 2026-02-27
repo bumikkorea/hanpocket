@@ -9,6 +9,8 @@ export default function MapTab({ lang }) {
   const [selectedMarker, setSelectedMarker] = useState(null)
   const [userLocation, setUserLocation] = useState(null)
   const [mapReady, setMapReady] = useState(false)
+  const [locatingUser, setLocatingUser] = useState(false)
+  const userMarkerRef = useRef(null)
   const [currentTheme, setCurrentTheme] = useState('hanpocket')
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -186,7 +188,11 @@ export default function MapTab({ lang }) {
               if (userPos.lat > 33 && userPos.lat < 39 && userPos.lng > 125 && userPos.lng < 132) {
                 const moveLatLng = new window.kakao.maps.LatLng(userPos.lat, userPos.lng)
                 kakaoMap.setCenter(moveLatLng)
-                
+
+                // 기존 마커 제거
+                if (userMarkerRef.current) {
+                  userMarkerRef.current.setMap(null)
+                }
                 // 사용자 위치 마커
                 const userMarker = new window.kakao.maps.Marker({
                   position: moveLatLng,
@@ -200,6 +206,7 @@ export default function MapTab({ lang }) {
                   )
                 })
                 userMarker.setMap(kakaoMap)
+                userMarkerRef.current = userMarker
               }
             },
             (error) => console.log('위치 정보를 가져올 수 없습니다:', error),
@@ -1183,46 +1190,78 @@ export default function MapTab({ lang }) {
         {/* 현재위치 버튼 */}
         <button
           onClick={() => {
-            if (!map) return
-            if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(
-                (position) => {
-                  const lat = position.coords.latitude
-                  const lng = position.coords.longitude
-                  const moveLatLng = new window.kakao.maps.LatLng(lat, lng)
-                  map.setCenter(moveLatLng)
-                  map.setLevel(3)
-                  setUserLocation({ lat, lng })
-
-                  // 기존 내 위치 마커 제거 후 새로 추가
-                  const userMarker = new window.kakao.maps.Marker({
-                    position: moveLatLng,
-                    map: map,
-                    image: new window.kakao.maps.MarkerImage(
-                      'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                          <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
-                        </svg>
-                      `),
-                      new window.kakao.maps.Size(24, 24)
-                    )
-                  })
-                },
-                (error) => {
-                  alert(L({
-                    ko: '위치 정보를 가져올 수 없습니다. 위치 권한을 허용해주세요.',
-                    zh: '无法获取位置信息，请允许位置权限。',
-                    en: 'Could not get location. Please allow location access.'
-                  }))
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-              )
+            if (!map || locatingUser) return
+            if (!navigator.geolocation) {
+              alert(L({
+                ko: '이 브라우저에서는 위치 서비스를 지원하지 않습니다.',
+                zh: '此浏览器不支持位置服务。',
+                en: 'Geolocation is not supported by this browser.'
+              }))
+              return
             }
+            setLocatingUser(true)
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const lat = position.coords.latitude
+                const lng = position.coords.longitude
+                const moveLatLng = new window.kakao.maps.LatLng(lat, lng)
+                map.setCenter(moveLatLng)
+                map.setLevel(3)
+                setUserLocation({ lat, lng })
+
+                // 기존 내 위치 마커 제거 후 새로 추가
+                if (userMarkerRef.current) {
+                  userMarkerRef.current.setMap(null)
+                }
+                const marker = new window.kakao.maps.Marker({
+                  position: moveLatLng,
+                  map: map,
+                  image: new window.kakao.maps.MarkerImage(
+                    'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                        <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+                      </svg>
+                    `),
+                    new window.kakao.maps.Size(24, 24)
+                  )
+                })
+                userMarkerRef.current = marker
+                setLocatingUser(false)
+              },
+              (error) => {
+                setLocatingUser(false)
+                let msg
+                if (error.code === 1) {
+                  msg = L({
+                    ko: '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.',
+                    zh: '位置权限被拒绝。请在浏览器设置中允许位置权限。',
+                    en: 'Location permission denied. Please allow location access in browser settings.'
+                  })
+                } else if (error.code === 2) {
+                  msg = L({
+                    ko: '위치 정보를 사용할 수 없습니다. GPS를 확인해주세요.',
+                    zh: '无法获取位置信息。请检查GPS。',
+                    en: 'Location unavailable. Please check your GPS.'
+                  })
+                } else {
+                  msg = L({
+                    ko: '위치 요청 시간이 초과되었습니다. 다시 시도해주세요.',
+                    zh: '位置请求超时。请重试。',
+                    en: 'Location request timed out. Please try again.'
+                  })
+                }
+                alert(msg)
+              },
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            )
           }}
-          className="absolute bottom-56 right-3 z-40 w-11 h-11 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200"
+          className={`absolute bottom-56 right-3 z-40 w-11 h-11 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 ${locatingUser ? 'animate-pulse' : ''}`}
           title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
         >
-          <Navigation size={18} className="text-blue-500" />
+          {locatingUser
+            ? <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            : <Navigation size={18} className="text-blue-500" />
+          }
         </button>
 
         {/* 마커 상세 정보 패널 */}

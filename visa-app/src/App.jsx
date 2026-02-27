@@ -1783,13 +1783,11 @@ function AppInner() {
                     <line x1="22" y1="8" x2="22" y2="5" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
                   </svg>
                 ) : item.id === 'map' ? (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'}>
-                    {/* 태극 문양 */}
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" opacity={0.3}/>
-                    <path d="M 12 2 A 10 10 0 0 1 12 22 A 5 5 0 0 1 12 12 A 5 5 0 0 0 12 2" fill={active ? '#FF4444' : 'currentColor'} opacity={active ? 0.8 : 0.4}/>
-                    <path d="M 12 2 A 10 10 0 0 0 12 22 A 5 5 0 0 0 12 12 A 5 5 0 0 1 12 2" fill={active ? '#4444FF' : 'currentColor'} opacity={active ? 0.8 : 0.4}/>
-                    <circle cx="12" cy="7" r="1.5" fill="white" opacity={0.9}/>
-                    <circle cx="12" cy="17" r="1.5" fill="white" opacity={0.9}/>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'}>
+                    {/* 신발 아이콘 */}
+                    <path d="M3 16.5C3 16.5 3 14 5 13C7 12 8 12.5 10 12C12 11.5 13 10 13 8C13 6 14 4 16.5 4C19 4 20 6 20 6L21 10C21 10 21.5 13 21 15C20.5 17 19 18 16 18.5C13 19 8 19 5 18.5C3 18.2 3 16.5 3 16.5Z" stroke="currentColor" strokeWidth={active ? 1.8 : 1.5} fill={active ? 'currentColor' : 'none'} fillOpacity={active ? 0.15 : 0} strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M13 8.5C14.5 8 16 8.5 17 9.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" opacity={0.6}/>
+                    <path d="M3 16.5C5 16 8 15.5 11 15.5C14 15.5 17 15.8 21 15" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity={0.4}/>
                   </svg>
                 ) : (
                   <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />

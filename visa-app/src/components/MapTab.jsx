@@ -1360,7 +1360,7 @@ export default function MapTab({ lang }) {
               }
             }, 15000)
           }}
-          className={`absolute bottom-56 right-3 z-40 w-11 h-11 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 ${locatingUser ? 'animate-pulse' : ''}`}
+          className={`absolute top-3 left-3 z-40 w-11 h-11 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-200 ${locatingUser ? 'animate-pulse' : ''}`}
           title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
         >
           {locatingUser
@@ -1370,7 +1370,7 @@ export default function MapTab({ lang }) {
         </button>
         {/* 위치 정확도 표시 */}
         {locationAccuracy && (
-          <div className="absolute bottom-48 right-3 z-40 bg-white/90 rounded-full px-2 py-0.5 shadow text-xs text-gray-500 border border-gray-100">
+          <div className="absolute top-16 left-3 z-40 bg-white/90 rounded-full px-2 py-0.5 shadow text-xs text-gray-500 border border-gray-100">
             ±{locationAccuracy}m
           </div>
         )}

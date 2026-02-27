@@ -359,13 +359,16 @@ export default function MapTab({ lang }) {
   useEffect(() => {
     if (!map || !mapReady || !window.kakao || !clusterer) return
 
+    // toilet 카테고리는 searchByCategory에서 직접 처리
+    if (selectedCategory === 'toilet') return
+
     // 기존 마커 제거
     markers.forEach(marker => marker.setMap(null))
     clusterer.clear() // 클러스터러에서 모든 마커 제거
 
     // 카테고리 필터링
-    const filteredMarkers = selectedCategory === 'all' 
-      ? sampleMarkers 
+    const filteredMarkers = selectedCategory === 'all'
+      ? sampleMarkers
       : sampleMarkers.filter(marker => marker.category === selectedCategory)
 
     // 새 마커 생성
@@ -403,10 +406,11 @@ export default function MapTab({ lang }) {
   const getCategoryMarkerImage = (category) => {
     const iconMap = {
       restaurant: { emoji: '🍜', color: '#FF6B6B' },
-      medical: { emoji: '🏥', color: '#4ECDC4' }, 
+      medical: { emoji: '🏥', color: '#4ECDC4' },
       transport: { emoji: '🚇', color: '#45B7D1' },
       shopping: { emoji: '🛍️', color: '#96CEB4' },
-      tourism: { emoji: '🏛️', color: '#FECA57' }
+      tourism: { emoji: '🏛️', color: '#FECA57' },
+      toilet: { emoji: '🚻', color: '#8D6E63' }
     }
     
     const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#111827' }
@@ -841,11 +845,64 @@ export default function MapTab({ lang }) {
   }
 
   // 카카오 카테고리 검색
-  const searchByCategory = (categoryId) => {
+  const searchByCategory = async (categoryId) => {
     setSelectedCategory(categoryId)
-    
+    setSelectedMarker(null)
+
     if (categoryId === 'all') {
       // 전체 카테고리는 기존 마커들 표시
+      return
+    }
+
+    // 화장실 카테고리 — 로컬 CSV 데이터 사용
+    if (categoryId === 'toilet') {
+      if (!map || !clusterer) return
+
+      // 기존 마커 제거
+      markers.forEach(marker => marker.setMap(null))
+      if (clusterer) clusterer.clear()
+      setMarkers([])
+
+      // 동적 로드
+      const { seoulRestrooms } = await import('../data/seoulRestrooms.js')
+
+      // 마커 이미지 한 번만 생성 (2,188개에 재사용)
+      const toiletMarkerImage = new window.kakao.maps.MarkerImage(
+        getCategoryMarkerImage('toilet'),
+        new window.kakao.maps.Size(30, 30)
+      )
+
+      const newMarkers = seoulRestrooms.map(restroom => {
+        const position = new window.kakao.maps.LatLng(restroom.lat, restroom.lng)
+
+        const marker = new window.kakao.maps.Marker({
+          position: position,
+          image: toiletMarkerImage
+        })
+
+        // 마커 클릭 이벤트
+        window.kakao.maps.event.addListener(marker, 'click', () => {
+          map.setCenter(position)
+          setSelectedMarker({
+            id: restroom.id,
+            category: 'toilet',
+            name: { ko: restroom.name, zh: restroom.name, en: restroom.name },
+            description: { ko: '', zh: '', en: '' },
+            lat: restroom.lat,
+            lng: restroom.lng,
+            hours: restroom.hours,
+            lastModified: restroom.lastModified
+          })
+        })
+
+        return marker
+      })
+
+      // 클러스터러에 추가
+      if (clusterer && newMarkers.length > 0) {
+        clusterer.addMarkers(newMarkers)
+      }
+      setMarkers(newMarkers)
       return
     }
 
@@ -860,11 +917,11 @@ export default function MapTab({ lang }) {
 
     const ps = new window.kakao.maps.services.Places()
     const center = map.getCenter()
-    
+
     ps.categorySearch(category.kakaoCode, (result, status) => {
       if (status === window.kakao.maps.services.Status.OK) {
         const newMarkers = []
-        
+
         result.forEach((place, index) => {
           const position = new window.kakao.maps.LatLng(place.y, place.x)
           const marker = new window.kakao.maps.Marker({
@@ -892,7 +949,7 @@ export default function MapTab({ lang }) {
 
           newMarkers.push(marker)
         })
-        
+
         setMarkers(newMarkers)
       }
     }, {
@@ -976,11 +1033,17 @@ export default function MapTab({ lang }) {
       color: '#26A69A',
       kakaoCode: 'BK9'
     },
-    { 
-      id: 'mart', 
+    {
+      id: 'mart',
       name: { ko: '마트', zh: '超市', en: 'Mart' },
       color: '#FF7043',
       kakaoCode: 'MT1'
+    },
+    {
+      id: 'toilet',
+      name: { ko: '화장실', zh: '洗手间', en: 'Restroom' },
+      color: '#8D6E63',
+      kakaoCode: null
     }
   ]
 
@@ -1414,6 +1477,12 @@ export default function MapTab({ lang }) {
                   )}
                   {selectedMarker.categoryName && (
                     <div className="text-gray-500">🏷️ {selectedMarker.categoryName}</div>
+                  )}
+                  {selectedMarker.hours && (
+                    <div className="text-gray-500">🕐 {L({ ko: '이용시간', zh: '开放时间', en: 'Hours' })}: {selectedMarker.hours}</div>
+                  )}
+                  {selectedMarker.lastModified && (
+                    <div className="text-gray-400 text-xs">{L({ ko: '최종수정', zh: '最后更新', en: 'Last Updated' })}: {selectedMarker.lastModified}</div>
                   )}
                 </div>
 

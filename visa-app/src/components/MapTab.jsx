@@ -101,8 +101,11 @@ export default function MapTab({ lang }) {
   const [mapError, setMapError] = useState(null)
   const [locatingUser, setLocatingUser] = useState(false)
   const [locationAccuracy, setLocationAccuracy] = useState(null)
+  const [locationVerified, setLocationVerified] = useState(false) // GPS 정확도 검증 완료 여부
+  const [locationVerifying, setLocationVerifying] = useState(false) // GPS 검증 중
   const userMarkerRef = useRef(null)
   const watchIdRef = useRef(null)
+  const initWatchRef = useRef(null) // 초기 위치 watchPosition 정리용
   const [currentTheme, setCurrentTheme] = useState('hanpocket')
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -266,24 +269,39 @@ export default function MapTab({ lang }) {
         })
         setClusterer(clustererInstance)
 
-        // 사용자 위치 가져오기 (네이티브 GPS 우선)
-        getPosition({ timeout: 10000 }).then((position) => {
-          const userPos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
+        // 사용자 위치 가져오기 — watchPosition으로 정확도 검증
+        setLocationVerifying(true)
+        setLocationVerified(false)
+        let initSettled = false
+
+        const stopInitWatch = () => {
+          if (initWatchRef.current) {
+            initWatchRef.current()
+            initWatchRef.current = null
           }
+          setLocationVerifying(false)
+        }
+
+        const updateInitLocation = (position) => {
+          const lat = position.coords.latitude
+          const lng = position.coords.longitude
+          const accuracy = position.coords.accuracy
+
+          const userPos = { lat, lng }
           setUserLocation(userPos)
+          setLocationAccuracy(Math.round(accuracy))
 
           // 한국 내 위치인 경우 지도 중심 이동
-          if (userPos.lat > 33 && userPos.lat < 39 && userPos.lng > 125 && userPos.lng < 132) {
-            const moveLatLng = new window.kakao.maps.LatLng(userPos.lat, userPos.lng)
-            kakaoMap.setCenter(moveLatLng)
+          if (lat > 33 && lat < 39 && lng > 125 && lng < 132) {
+            const moveLatLng = new window.kakao.maps.LatLng(lat, lng)
+            if (!initSettled) {
+              kakaoMap.setCenter(moveLatLng)
+            }
 
-            // 기존 마커 제거
+            // 기존 마커 제거 후 새로 추가
             if (userMarkerRef.current) {
               userMarkerRef.current.setMap(null)
             }
-            // 사용자 위치 마커
             const userMarker = new window.kakao.maps.Marker({
               position: moveLatLng,
               image: new window.kakao.maps.MarkerImage(
@@ -297,8 +315,40 @@ export default function MapTab({ lang }) {
             })
             userMarker.setMap(kakaoMap)
             userMarkerRef.current = userMarker
+
+            // 정확도가 충분하면 (100m 이내) 검증 완료
+            if (accuracy <= 100) {
+              setLocationVerified(true)
+              stopInitWatch()
+            }
           }
-        }).catch((error) => console.log('위치 정보를 가져올 수 없습니다:', error))
+          initSettled = true
+        }
+
+        try {
+          initWatchRef.current = watchPositionCompat(
+            updateInitLocation,
+            (error) => {
+              console.log('위치 정보를 가져올 수 없습니다:', error)
+              stopInitWatch()
+            },
+            { enableHighAccuracy: true, timeout: 15000 }
+          )
+
+          // 최대 10초 후 자동 중단 — 그때까지 받은 최선의 위치 사용
+          setTimeout(() => {
+            if (initWatchRef.current) {
+              // 위치는 잡았지만 정확도가 충분하지 않은 경우에도 일단 사용
+              if (!locationVerified) {
+                setLocationVerified(true)
+              }
+              stopInitWatch()
+            }
+          }, 10000)
+        } catch (error) {
+          console.log('위치 정보를 가져올 수 없습니다:', error)
+          stopInitWatch()
+        }
 
       } catch (error) {
         console.error('지도 초기화 실패:', error)
@@ -326,6 +376,11 @@ export default function MapTab({ lang }) {
       if (watchIdRef.current) {
         watchIdRef.current()
         watchIdRef.current = null
+      }
+      // 초기 위치 watchPosition 정리
+      if (initWatchRef.current) {
+        initWatchRef.current()
+        initWatchRef.current = null
       }
     }
   }, [])
@@ -873,6 +928,75 @@ export default function MapTab({ lang }) {
     debouncedEndSearch(newQuery)
   }
 
+  // 위치 재검증 후 지도 중심 업데이트하는 헬퍼
+  const verifyAndUpdateLocation = () => {
+    return new Promise((resolve) => {
+      setLocationVerifying(true)
+      let bestAccuracy = Infinity
+      let bestPos = null
+      let cleanupFn = null
+
+      const done = () => {
+        if (cleanupFn) {
+          cleanupFn()
+          cleanupFn = null
+        }
+        setLocationVerifying(false)
+        if (bestPos && map) {
+          setUserLocation(bestPos)
+          setLocationVerified(true)
+          const moveLatLng = new window.kakao.maps.LatLng(bestPos.lat, bestPos.lng)
+          map.setCenter(moveLatLng)
+
+          if (userMarkerRef.current) {
+            userMarkerRef.current.setMap(null)
+          }
+          const marker = new window.kakao.maps.Marker({
+            position: moveLatLng,
+            map: map,
+            image: new window.kakao.maps.MarkerImage(
+              'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                  <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+                </svg>
+              `),
+              new window.kakao.maps.Size(20, 20)
+            )
+          })
+          userMarkerRef.current = marker
+        }
+        resolve(bestPos)
+      }
+
+      try {
+        cleanupFn = watchPositionCompat(
+          (position) => {
+            const { latitude: lat, longitude: lng, accuracy } = position.coords
+            setLocationAccuracy(Math.round(accuracy))
+            if (accuracy < bestAccuracy) {
+              bestAccuracy = accuracy
+              bestPos = { lat, lng }
+            }
+            // 정확도 100m 이내면 즉시 완료
+            if (accuracy <= 100) {
+              done()
+            }
+          },
+          (error) => {
+            console.log('위치 재검증 실패:', error)
+            done()
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        )
+
+        // 최대 8초 후 자동 완료
+        setTimeout(done, 8000)
+      } catch {
+        done()
+      }
+    })
+  }
+
   // 카카오 카테고리 검색
   const searchByCategory = async (categoryId) => {
     setSelectedCategory(categoryId)
@@ -881,6 +1005,11 @@ export default function MapTab({ lang }) {
     if (categoryId === 'all') {
       // 전체 카테고리는 기존 마커들 표시
       return
+    }
+
+    // 위치 검증이 안 되어 있으면 먼저 정확한 위치를 잡고 진행
+    if (!locationVerified && categoryId !== 'toilet') {
+      await verifyAndUpdateLocation()
     }
 
     // 화장실 카테고리 — 로컬 CSV 데이터 사용
@@ -1403,6 +1532,7 @@ export default function MapTab({ lang }) {
                   watchIdRef.current = null
                 }
                 setLocatingUser(false)
+                setLocationVerified(true)
               }
               settled = true
             }
@@ -1449,6 +1579,7 @@ export default function MapTab({ lang }) {
                 watchIdRef.current()
                 watchIdRef.current = null
                 setLocatingUser(false)
+                setLocationVerified(true)
               }
             }, 15000)
           }}
@@ -1462,8 +1593,23 @@ export default function MapTab({ lang }) {
         </button>
         {/* 위치 정확도 표시 */}
         {locationAccuracy && (
-          <div className="absolute top-16 left-3 z-40 bg-white/90 rounded-full px-2 py-0.5 shadow text-xs text-gray-500 border border-gray-100">
+          <div className={`absolute top-16 left-3 z-40 rounded-full px-2 py-0.5 shadow text-xs border ${
+            locationAccuracy <= 100
+              ? 'bg-green-50/90 text-green-600 border-green-200'
+              : locationAccuracy <= 500
+                ? 'bg-yellow-50/90 text-yellow-600 border-yellow-200'
+                : 'bg-red-50/90 text-red-600 border-red-200'
+          }`}>
+            {locationVerifying && <span className="inline-block w-2 h-2 bg-blue-400 rounded-full animate-pulse mr-1 align-middle" />}
             ±{locationAccuracy}m
+            {locationAccuracy > 500 && ` · ${L({ ko: '부정확', zh: '不准确', en: 'Inaccurate' })}`}
+          </div>
+        )}
+        {/* 위치 검증 중 오버레이 */}
+        {locationVerifying && (
+          <div className="absolute top-3 left-16 z-40 bg-white/95 rounded-lg px-3 py-1.5 shadow-md text-xs text-blue-600 border border-blue-100 flex items-center gap-2">
+            <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            {L({ ko: 'GPS 위치 확인 중...', zh: '正在确认GPS位置...', en: 'Verifying GPS location...' })}
           </div>
         )}
 

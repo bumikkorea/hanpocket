@@ -1,6 +1,68 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { MapPin, Search, Filter, Navigation, Info, ArrowUpDown, Route, X, ExternalLink, Globe } from 'lucide-react'
 import { translateBrandName, smartTranslate } from '../data/brandMapping.js'
+import { Capacitor } from '@capacitor/core'
+import { Geolocation } from '@capacitor/geolocation'
+
+// 네이티브 or 브라우저 위치 가져오기 통합 함수
+const getPosition = async (options = {}) => {
+  // Capacitor 네이티브 환경이면 네이티브 GPS 사용
+  if (Capacitor.isNativePlatform()) {
+    const perm = await Geolocation.checkPermissions()
+    if (perm.location === 'denied') {
+      const requested = await Geolocation.requestPermissions()
+      if (requested.location === 'denied') {
+        throw { code: 1, message: 'Permission denied' }
+      }
+    }
+    const pos = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: options.timeout || 15000,
+      ...options
+    })
+    return pos
+  }
+  // 웹 브라우저 fallback
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: options.timeout || 15000,
+      maximumAge: 0,
+      ...options
+    })
+  })
+}
+
+// 네이티브 watchPosition 래퍼
+const watchPositionCompat = (successCb, errorCb, options = {}) => {
+  if (Capacitor.isNativePlatform()) {
+    let callbackId = null
+    Geolocation.watchPosition(
+      { enableHighAccuracy: true, timeout: 15000, ...options },
+      (position, err) => {
+        if (err) {
+          errorCb(err)
+        } else if (position) {
+          successCb(position)
+        }
+      }
+    ).then(id => { callbackId = id })
+    // clearWatch 함수 반환
+    return () => {
+      if (callbackId !== null) {
+        Geolocation.clearWatch({ id: callbackId })
+      }
+    }
+  }
+  // 웹 브라우저 fallback
+  const id = navigator.geolocation.watchPosition(successCb, errorCb, {
+    enableHighAccuracy: true,
+    timeout: 15000,
+    maximumAge: 0,
+    ...options
+  })
+  return () => navigator.geolocation.clearWatch(id)
+}
 
 export default function MapTab({ lang }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -176,45 +238,39 @@ export default function MapTab({ lang }) {
         })
         setClusterer(clustererInstance)
 
-        // 사용자 위치 가져오기
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const userPos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-              }
-              setUserLocation(userPos)
+        // 사용자 위치 가져오기 (네이티브 GPS 우선)
+        getPosition({ timeout: 10000 }).then((position) => {
+          const userPos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          setUserLocation(userPos)
 
-              // 한국 내 위치인 경우 지도 중심 이동
-              if (userPos.lat > 33 && userPos.lat < 39 && userPos.lng > 125 && userPos.lng < 132) {
-                const moveLatLng = new window.kakao.maps.LatLng(userPos.lat, userPos.lng)
-                kakaoMap.setCenter(moveLatLng)
+          // 한국 내 위치인 경우 지도 중심 이동
+          if (userPos.lat > 33 && userPos.lat < 39 && userPos.lng > 125 && userPos.lng < 132) {
+            const moveLatLng = new window.kakao.maps.LatLng(userPos.lat, userPos.lng)
+            kakaoMap.setCenter(moveLatLng)
 
-                // 기존 마커 제거
-                if (userMarkerRef.current) {
-                  userMarkerRef.current.setMap(null)
-                }
-                // 사용자 위치 마커
-                const userMarker = new window.kakao.maps.Marker({
-                  position: moveLatLng,
-                  image: new window.kakao.maps.MarkerImage(
-                    'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                        <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
-                      </svg>
-                    `),
-                    new window.kakao.maps.Size(20, 20)
-                  )
-                })
-                userMarker.setMap(kakaoMap)
-                userMarkerRef.current = userMarker
-              }
-            },
-            (error) => console.log('위치 정보를 가져올 수 없습니다:', error),
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-          )
-        }
+            // 기존 마커 제거
+            if (userMarkerRef.current) {
+              userMarkerRef.current.setMap(null)
+            }
+            // 사용자 위치 마커
+            const userMarker = new window.kakao.maps.Marker({
+              position: moveLatLng,
+              image: new window.kakao.maps.MarkerImage(
+                'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                    <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+                  </svg>
+                `),
+                new window.kakao.maps.Size(20, 20)
+              )
+            })
+            userMarker.setMap(kakaoMap)
+            userMarkerRef.current = userMarker
+          }
+        }).catch((error) => console.log('위치 정보를 가져올 수 없습니다:', error))
 
       } catch (error) {
         console.error('지도 초기화 실패:', error)
@@ -238,8 +294,8 @@ export default function MapTab({ lang }) {
         clearTimeout(endSearchTimeoutRef.current)
       }
       // watchPosition 정리
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current)
+      if (watchIdRef.current) {
+        watchIdRef.current()
         watchIdRef.current = null
       }
     }
@@ -1198,7 +1254,7 @@ export default function MapTab({ lang }) {
         <button
           onClick={() => {
             if (!map || locatingUser) return
-            if (!navigator.geolocation) {
+            if (!navigator.geolocation && !Capacitor.isNativePlatform()) {
               alert(L({
                 ko: '이 브라우저에서는 위치 서비스를 지원하지 않습니다.',
                 zh: '此浏览器不支持位置服务。',
@@ -1208,8 +1264,8 @@ export default function MapTab({ lang }) {
             }
 
             // 이전 watch 정리
-            if (watchIdRef.current !== null) {
-              navigator.geolocation.clearWatch(watchIdRef.current)
+            if (watchIdRef.current) {
+              watchIdRef.current()
               watchIdRef.current = null
             }
 
@@ -1250,8 +1306,8 @@ export default function MapTab({ lang }) {
 
               // GPS 정확도 50m 이내면 충분히 정확 → watch 중단
               if (accuracy <= 50) {
-                if (watchIdRef.current !== null) {
-                  navigator.geolocation.clearWatch(watchIdRef.current)
+                if (watchIdRef.current) {
+                  watchIdRef.current()
                   watchIdRef.current = null
                 }
                 setLocatingUser(false)
@@ -1260,8 +1316,8 @@ export default function MapTab({ lang }) {
             }
 
             const handleError = (error) => {
-              if (watchIdRef.current !== null) {
-                navigator.geolocation.clearWatch(watchIdRef.current)
+              if (watchIdRef.current) {
+                watchIdRef.current()
                 watchIdRef.current = null
               }
               setLocatingUser(false)
@@ -1288,17 +1344,17 @@ export default function MapTab({ lang }) {
               alert(msg)
             }
 
-            // watchPosition으로 GPS 정확도가 높아질 때까지 위치 업데이트
-            watchIdRef.current = navigator.geolocation.watchPosition(
+            // watchPosition으로 GPS 정확도가 높아질 때까지 위치 업데이트 (네이티브 GPS 우선)
+            watchIdRef.current = watchPositionCompat(
               updateLocation,
               handleError,
-              { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+              { enableHighAccuracy: true, timeout: 15000 }
             )
 
             // 최대 15초 후 자동 중단 (GPS 못 잡아도 마지막 결과 사용)
             setTimeout(() => {
-              if (watchIdRef.current !== null) {
-                navigator.geolocation.clearWatch(watchIdRef.current)
+              if (watchIdRef.current) {
+                watchIdRef.current()
                 watchIdRef.current = null
                 setLocatingUser(false)
               }

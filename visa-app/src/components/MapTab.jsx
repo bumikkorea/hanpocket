@@ -1095,7 +1095,7 @@ export default function MapTab({ lang }) {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white" style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
       {/* 검색 헤더 */}
       <div className="bg-white sticky top-0 z-40 shadow-sm">
         <div className="px-3 py-2.5 flex items-center gap-2">
@@ -1174,19 +1174,11 @@ export default function MapTab({ lang }) {
       </div>
 
       {/* 지도 영역 */}
-      <div className="relative flex-1 bg-gray-50">
+      <div className="relative flex-1 bg-gray-50" style={{ flex: 1, minHeight: 0 }}>
         {/* 카카오 지도 컨테이너 */}
         <div 
           ref={mapRef}
-          className={`w-full ${
-            showRoutePanel 
-              ? 'h-[calc(100vh-380px)] md:h-[calc(100vh-340px)]'
-              : 'h-[calc(100vh-240px)] md:h-[calc(100vh-200px)]'
-          }`}
-          style={{ 
-            minHeight: '250px',
-            maxHeight: 'calc(100vh - 200px)'
-          }}
+          className="w-full h-full"
         />
 
 

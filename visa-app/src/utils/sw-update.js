@@ -48,8 +48,9 @@ export async function initServiceWorker() {
   }
 }
 
-// 업데이트 알림 표시
+// 업데이트 알림 표시 (비활성화 — SW 강제 해제로 대체)
 function showUpdateNotification() {
+  return; // 알림 표시 안 함
   const notification = document.createElement('div')
   notification.id = 'sw-update-notification'
   notification.innerHTML = `

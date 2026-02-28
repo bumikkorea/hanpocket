@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
-import { Music, Search, Users, Tv, Calendar, Ticket, Landmark, PartyPopper, ChevronRight, ExternalLink, Star, Filter, ChevronDown } from 'lucide-react'
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
+import { Music, Search, Users, Tv, Calendar, Ticket, Landmark, PartyPopper, ChevronRight, ExternalLink, Star, Filter, ChevronDown, MapPin, Loader2 } from 'lucide-react'
 import { idolDatabase, IDOL_GENERATIONS, IDOL_COMPANIES } from '../data/idolData'
 
 function L(lang, data) {
@@ -465,6 +465,89 @@ export default function HallyuTab({ lang }) {
             </div>
           ))}
         </div>
+      )}
+      {/* TourAPI 실시간 축제·행사 */}
+      {section === 'festival' && <TourFestivalSection lang={lang} />}
+    </div>
+  )
+}
+
+/** TourAPI 축제/행사 */
+const TourDetailModal = lazy(() => import('./TourDetailModal'))
+
+function TourFestivalSection({ lang }) {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [areaCode, setAreaCode] = useState(null)
+  const [detailItem, setDetailItem] = useState(null)
+
+  useEffect(() => {
+    setLoading(true)
+    const today = new Date().toISOString().slice(0, 10).replace(/-/g, '')
+    import('../api/tourApi').then(({ searchFestival }) => {
+      searchFestival(today, { areaCode: areaCode || undefined, numOfRows: 20, arrange: 'R' })
+        .then(r => setItems(r.items || []))
+        .finally(() => setLoading(false))
+    })
+  }, [areaCode])
+
+  const areas = [
+    { code: null, label: { ko: '전체', zh: '全部', en: 'All' } },
+    { code: 1, label: { ko: '서울', zh: '首尔', en: 'Seoul' } },
+    { code: 6, label: { ko: '부산', zh: '釜山', en: 'Busan' } },
+    { code: 39, label: { ko: '제주', zh: '济州', en: 'Jeju' } },
+    { code: 31, label: { ko: '경기', zh: '京畿', en: 'Gyeonggi' } },
+    { code: 32, label: { ko: '강원', zh: '江原', en: 'Gangwon' } },
+  ]
+
+  return (
+    <div className="space-y-3">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        {areas.map(a => (
+          <button key={a.code ?? 'all'} onClick={() => setAreaCode(a.code)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium shrink-0 ${
+              areaCode === a.code ? 'bg-[#111827] text-white' : 'bg-[#F3F4F6] text-[#6B7280]'
+            }`}>
+            {L(lang, a.label)}
+          </button>
+        ))}
+      </div>
+
+      {loading && <div className="flex justify-center py-6"><Loader2 size={20} className="animate-spin text-blue-500" /></div>}
+
+      <div className="space-y-3">
+        {items.map((item, i) => (
+          <div key={item.contentid || i} onClick={() => setDetailItem(item)}
+            className="flex gap-3 p-3 rounded-xl bg-white border border-gray-100 cursor-pointer">
+            {item.firstimage ? (
+              <img src={item.firstimage} alt={item.title} className="w-20 h-20 rounded-lg object-cover shrink-0" loading="lazy" />
+            ) : (
+              <div className="w-20 h-20 rounded-lg bg-gray-100 flex items-center justify-center shrink-0"><PartyPopper size={20} className="text-gray-400" /></div>
+            )}
+            <div className="flex-1 min-w-0">
+              <h4 className="text-sm font-semibold line-clamp-1">{item.title}</h4>
+              {item.addr1 && <p className="text-xs text-[#9CA3AF] mt-0.5 line-clamp-1 flex items-center gap-1"><MapPin size={10} />{item.addr1}</p>}
+              {(item.eventstartdate || item.eventenddate) && (
+                <p className="text-xs text-blue-500 mt-1 flex items-center gap-1">
+                  <Calendar size={10} />
+                  {item.eventstartdate?.replace(/(\d{4})(\d{2})(\d{2})/, '$1.$2.$3')} ~ {item.eventenddate?.replace(/(\d{4})(\d{2})(\d{2})/, '$1.$2.$3')}
+                </p>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {!loading && items.length === 0 && (
+        <div className="text-center py-8 text-sm text-[#9CA3AF]">
+          {L(lang, { ko: '진행 중인 행사가 없습니다', zh: '暂无进行中的活动', en: 'No ongoing events' })}
+        </div>
+      )}
+
+      {detailItem && (
+        <Suspense fallback={null}>
+          <TourDetailModal item={detailItem} lang={lang} darkMode={false} onClose={() => setDetailItem(null)} />
+        </Suspense>
       )}
     </div>
   )

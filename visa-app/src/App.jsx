@@ -1,4 +1,3 @@
-import { useRegisterSW } from "virtual:pwa-register/react"
 import { useState, useRef, useEffect, Component, lazy, Suspense } from 'react'
 import useDarkMode from './hooks/useDarkMode'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
@@ -7,7 +6,7 @@ import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleA
 
 import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints, Map } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints, Map, Heart, Compass, Layers, Wallet } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -212,16 +211,16 @@ function NoticePopup({ lang, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div className="bg-white rounded-lg w-full max-w-md max-h-[80vh] overflow-hidden shadow-2xl animate-fade-up">
         <div className="bg-white border-b border-[#E5E7EB] p-6">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white">{lang === 'ko' ? '공지사항' : lang === 'zh' ? '公告' : 'Notice'}</h2>
+          <h2 className="text-lg font-bold text-[#111827]">{lang === 'ko' ? '공지사항' : lang === 'zh' ? '公告' : 'Notice'}</h2>
           <p className="text-[#6B7280] text-xs mt-1">{lang === 'ko' ? '출입국관리법 기반 · 법무부 공개데이터' : lang === 'zh' ? '基于出入境管理法 · 法务部公开数据' : 'Based on Immigration Act · MOJ Open Data'}</p>
         </div>
         <div className="p-5 overflow-y-auto max-h-[50vh] space-y-5">
           {updateLog.map((entry, idx) => (
             <div key={idx}>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-xs font-bold bg-[#F3F4F6] text-gray-900 dark:text-white px-2 py-0.5 rounded-full">v{entry.version}</span>
+                <span className="text-xs font-bold bg-[#F3F4F6] text-[#111827] px-2 py-0.5 rounded-full">v{entry.version}</span>
                 <span className="text-xs text-[#6B7280]">{entry.date}</span>
-                {idx === 0 && <span className="text-xs bg-[#111827]/10 text-gray-900 dark:text-white px-2 py-0.5 rounded-full">NEW</span>}
+                {idx === 0 && <span className="text-xs bg-[#111827]/10 text-[#111827] px-2 py-0.5 rounded-full">NEW</span>}
               </div>
               <ul className="space-y-1">
                 {entry.items[lang]?.map((item, i) => <li key={i} className="text-sm text-[#6B7280]">{item}</li>)}
@@ -229,8 +228,8 @@ function NoticePopup({ lang, onClose }) {
             </div>
           ))}
           <div className="border-t border-[#E5E7EB] pt-3">
-            <p className="text-xs text-gray-400 dark:text-gray-300 font-semibold mb-1">{lang === 'ko' ? '데이터 출처' : lang === 'zh' ? '数据来源' : 'Data Sources'}</p>
-            {dataSources[lang]?.map((src, i) => <p key={i} className="text-xs text-gray-400 dark:text-gray-300">{src}</p>)}
+            <p className="text-xs text-[#9CA3AF] font-semibold mb-1">{lang === 'ko' ? '데이터 출처' : lang === 'zh' ? '数据来源' : 'Data Sources'}</p>
+            {dataSources[lang]?.map((src, i) => <p key={i} className="text-xs text-[#9CA3AF]">{src}</p>)}
           </div>
         </div>
         <div className="p-4 border-t border-[#E5E7EB] space-y-2">
@@ -238,11 +237,11 @@ function NoticePopup({ lang, onClose }) {
             {s.noticeClose}
           </button>
           <div className="flex justify-center gap-4">
-            <button onClick={() => handleDismiss('today')} className="text-[11px] text-gray-400 dark:text-gray-300 hover:text-[#6B7280] transition-colors">
+            <button onClick={() => handleDismiss('today')} className="text-[11px] text-[#9CA3AF] hover:text-[#6B7280] transition-colors">
               {lang === 'ko' ? '오늘 하루 보지 않기' : lang === 'zh' ? '今天不再显示' : "Don't show today"}
             </button>
             <span className="text-[11px] text-[#D1D5DB]">|</span>
-            <button onClick={() => handleDismiss('forever')} className="text-[11px] text-gray-400 dark:text-gray-300 hover:text-[#6B7280] transition-colors">
+            <button onClick={() => handleDismiss('forever')} className="text-[11px] text-[#9CA3AF] hover:text-[#6B7280] transition-colors">
               {lang === 'ko' ? '다시 보지 않기' : lang === 'zh' ? '不再显示' : "Don't show again"}
             </button>
           </div>
@@ -256,8 +255,8 @@ function SearchBar({ query, setQuery, lang }) {
   return (
     <div className="relative">
       <input type="text" placeholder={t[lang].search} value={query} onChange={e => setQuery(e.target.value)}
-        className="w-full glass rounded-lg px-5 py-3.5 pl-11 text-sm border-0 focus:ring-2 focus:ring-[#111827]/30 outline-none transition-all placeholder:text-gray-400 dark:text-gray-300" />
-      <span className="absolute left-4 top-3.5 text-gray-400 dark:text-gray-300">🔍</span>
+        className="w-full glass rounded-lg px-5 py-3.5 pl-11 text-sm border-0 focus:ring-2 focus:ring-[#111827]/30 outline-none transition-all placeholder:text-[#9CA3AF]" />
+      <span className="absolute left-4 top-3.5 text-[#9CA3AF]">🔍</span>
     </div>
   )
 }
@@ -266,12 +265,12 @@ function QuickGuideSection({ region, onSelectVisa, lang }) {
   const items = quickGuide[region] || []
   return (
     <div className="space-y-3">
-      <h2 className="text-base font-bold text-gray-900 dark:text-white tracking-tight">{t[lang].faq}</h2>
+      <h2 className="text-base font-bold text-[#111827] tracking-tight">{t[lang].faq}</h2>
       {items.map((item, i) => (
         <button key={i} onClick={() => onSelectVisa(item.visaId)}
           style={{ animationDelay: `${i * 0.05}s` }}
           className="w-full text-left glass rounded-lg p-4 card-hover btn-press animate-fade-up">
-          <div className="font-semibold text-gray-900 dark:text-white text-sm">{L(lang, item.question)}</div>
+          <div className="font-semibold text-[#111827] text-sm">{L(lang, item.question)}</div>
           <div className="text-[#6B7280] text-xs mt-1">{L(lang, item.answer)}</div>
         </button>
       ))}
@@ -284,12 +283,12 @@ function ComparisonTable({ lang }) {
   return (
     <div className="glass rounded-lg overflow-hidden">
       <div className="p-4 border-b border-[#E5E7EB]">
-        <h2 className="text-base font-bold text-gray-900 dark:text-white">{t[lang].comparison}</h2>
+        <h2 className="text-base font-bold text-[#111827]">{t[lang].comparison}</h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead><tr className="bg-[#F3F4F6]">
-            {headers.map((h, i) => <th key={i} className="px-3 py-2 text-left font-semibold text-gray-900 dark:text-white text-xs">{L(lang, h)}</th>)}
+            {headers.map((h, i) => <th key={i} className="px-3 py-2 text-left font-semibold text-[#111827] text-xs">{L(lang, h)}</th>)}
           </tr></thead>
           <tbody>
             {rows.map((row, i) => <tr key={i} className="border-t border-[#E5E7EB]">
@@ -310,7 +309,7 @@ function CategoryCards({ onSelect, lang }) {
           style={{ animationDelay: `${i * 0.06}s` }}
           className="glass rounded-lg p-4 card-hover btn-press text-left animate-fade-up">
           <div className="text-2xl mb-2">{cat.icon}</div>
-          <div className="font-bold text-gray-900 dark:text-white text-sm">{L(lang, cat.name)}</div>
+          <div className="font-bold text-[#111827] text-sm">{L(lang, cat.name)}</div>
           <div className="text-xs text-[#6B7280] mt-1">{L(lang, cat.description)}</div>
         </button>
       ))}
@@ -323,16 +322,16 @@ function VisaList({ categoryId, region, onSelectVisa, onBack, lang }) {
   const filtered = visaTypes.filter(v => v.category === categoryId && (region === 'mainland' ? v.forMainland : v.forHkMoTw))
   return (
     <div className="space-y-4 animate-fade-up">
-      <button onClick={onBack} className="text-gray-900 dark:text-white text-sm font-medium">{s.back}</button>
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white">{cat?.icon} {L(lang, cat?.name)}</h2>
+      <button onClick={onBack} className="text-[#111827] text-sm font-medium">{s.back}</button>
+      <h2 className="text-lg font-bold text-[#111827]">{cat?.icon} {L(lang, cat?.name)}</h2>
       {!filtered.length ? <div className="glass rounded-lg p-8 text-center text-[#6B7280]">{s.noVisaForRegion}</div> :
         filtered.map((visa, i) => (
           <button key={visa.id} onClick={() => onSelectVisa(visa.id)}
             style={{ animationDelay: `${i * 0.05}s` }}
             className="w-full text-left glass rounded-lg p-4 card-hover btn-press animate-fade-up">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-bold text-gray-900 dark:text-white">{visa.code}</span>
-              <span className="text-xs bg-[#111827] text-gray-900 dark:text-white px-2.5 py-1 rounded-full">{L(lang, visa.duration)}</span>
+              <span className="font-bold text-[#111827]">{visa.code}</span>
+              <span className="text-xs bg-[#111827] text-[#111827] px-2.5 py-1 rounded-full">{L(lang, visa.duration)}</span>
             </div>
             <div className="font-semibold text-[#374151] text-sm">{L(lang, visa.name)}</div>
             <div className="text-[#6B7280] text-xs mt-1 line-clamp-2">{L(lang, visa.summary)}</div>
@@ -348,12 +347,12 @@ function VisaDetail({ visaId, onBack, lang }) {
   if (!visa) return null
   return (
     <div className="space-y-4 animate-fade-up">
-      <button onClick={onBack} className="text-gray-900 dark:text-white text-sm font-medium">{s.back}</button>
+      <button onClick={onBack} className="text-[#111827] text-sm font-medium">{s.back}</button>
       <div className="bg-[#F8F9FA] rounded-lg p-6 border border-[#E5E7EB]">
-        <div className="text-xs text-gray-900 dark:text-white tracking-wider">{visa.code}</div>
+        <div className="text-xs text-[#111827] tracking-wider">{visa.code}</div>
         <div className="text-xl font-bold mt-2">{L(lang, visa.name)}</div>
         <div className="text-sm text-[#6B7280] mt-1">{L(lang === 'ko' ? 'zh' : 'ko', visa.name)}</div>
-        <div className="flex gap-4 mt-4 text-sm text-gray-400 dark:text-gray-300">
+        <div className="flex gap-4 mt-4 text-sm text-[#9CA3AF]">
           <span>⏱ {L(lang, visa.duration)}</span><span>💰 {L(lang, visa.fee)}</span>
         </div>
       </div>
@@ -362,7 +361,7 @@ function VisaDetail({ visaId, onBack, lang }) {
         <Section title={s.subtypes}>
           {visa.subtypes.map(st => (
             <div key={st.code} className="flex items-center gap-2 text-sm mb-1.5">
-              <span className="font-mono text-gray-900 dark:text-white bg-[#111827] px-2 py-0.5 rounded text-xs">{st.code}</span>
+              <span className="font-mono text-[#111827] bg-[#111827] px-2 py-0.5 rounded text-xs">{st.code}</span>
               <span className="text-[#6B7280]">{L(lang, st.name)}</span>
             </div>
           ))}
@@ -370,7 +369,7 @@ function VisaDetail({ visaId, onBack, lang }) {
       )}
       <Section title={s.requirements}>
         <ul className="space-y-2">{visa.requirements.map((r, i) => (
-          <li key={i} className="flex gap-2 text-sm text-[#6B7280]"><span className="text-gray-900 dark:text-white">•</span><span>{L(lang, r)}</span></li>
+          <li key={i} className="flex gap-2 text-sm text-[#6B7280]"><span className="text-[#111827]">•</span><span>{L(lang, r)}</span></li>
         ))}</ul>
       </Section>
       <Section title={s.processingTime}><p className="text-sm text-[#6B7280]">{L(lang, visa.processingTime)}</p></Section>
@@ -382,7 +381,7 @@ function VisaDetail({ visaId, onBack, lang }) {
       </Section>
       {visa.notes && (
         <div className="bg-[#111827]/5 rounded-lg p-4 border border-[#111827]/20">
-          <h3 className="font-bold text-gray-900 dark:text-white text-sm mb-2">{s.tips}</h3>
+          <h3 className="font-bold text-[#111827] text-sm mb-2">{s.tips}</h3>
           <p className="text-sm text-[#6B7280]">{L(lang, visa.notes)}</p>
         </div>
       )}
@@ -392,7 +391,7 @@ function VisaDetail({ visaId, onBack, lang }) {
 function Section({ title, children }) {
   return (
     <div className="glass rounded-lg p-4">
-      <h3 className="font-bold text-gray-900 dark:text-white text-sm mb-3">{title}</h3>
+      <h3 className="font-bold text-[#111827] text-sm mb-3">{title}</h3>
       {children}
     </div>
   )
@@ -416,7 +415,7 @@ function SearchResults({ query, region, onSelectVisa, lang }) {
       {results.map(v => (
         <button key={v.id} onClick={() => onSelectVisa(v.id)} className="w-full text-left glass rounded-lg p-4 card-hover btn-press">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-bold text-gray-900 dark:text-white">{v.code}</span>
+            <span className="font-bold text-[#111827]">{v.code}</span>
             <span className="font-semibold text-[#374151] text-sm">{L(lang, v.name)}</span>
           </div>
           <div className="text-[#6B7280] text-xs">{L(lang, v.summary)}</div>
@@ -434,21 +433,21 @@ function TransitionTab({ profile, lang }) {
   return (
     <div className="space-y-4 animate-fade-up">
       <div className="bg-[#F8F9FA] rounded-lg p-6 border border-[#E5E7EB]">
-        <div className="text-xs text-gray-900 dark:text-white tracking-wider">{s.myStatus}</div>
+        <div className="text-xs text-[#111827] tracking-wider">{s.myStatus}</div>
         <div className="text-lg font-bold mt-2">{L(lang, data.label)}</div>
         <div className="text-sm text-[#6B7280] mt-1">{s.nationality}: {s[profile.nationality]}</div>
       </div>
-      <h2 className="text-base font-bold text-gray-900 dark:text-white">{s.changeOptions}</h2>
+      <h2 className="text-base font-bold text-[#111827]">{s.changeOptions}</h2>
       <p className="text-sm text-[#6B7280]">{s.transitionDesc}</p>
       {!trans.length ? <div className="glass rounded-lg p-8 text-center text-[#6B7280]">{lang==='ko'?'변경 가능한 비자가 없습니다.':lang==='zh'?'没有可变更的签证。':'No transitions.'}</div>
         : trans.map((tr, i) => (
           <div key={i} className="glass rounded-lg p-4 animate-fade-up" style={{animationDelay:`${i*0.05}s`}}>
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-6 h-6 bg-[#111827]/10 rounded-full flex items-center justify-center text-gray-900 dark:text-white text-xs">→</span>
-              <span className="font-bold text-gray-900 dark:text-white text-sm">{L(lang, tr.label)}</span>
+              <span className="w-6 h-6 bg-[#111827]/10 rounded-full flex items-center justify-center text-[#111827] text-xs">→</span>
+              <span className="font-bold text-[#111827] text-sm">{L(lang, tr.label)}</span>
             </div>
             {tr.conditions[lang]?.map((c, j) => (
-              <div key={j} className="flex gap-2 text-sm text-[#6B7280] mb-1"><span className="text-gray-900 dark:text-white shrink-0">✓</span><span>{c}</span></div>
+              <div key={j} className="flex gap-2 text-sm text-[#6B7280] mb-1"><span className="text-[#111827] shrink-0">✓</span><span>{c}</span></div>
             ))}
           </div>
         ))
@@ -499,8 +498,8 @@ function ChatTab({ profile, lang }) {
       )}
       <div className="flex gap-2 pt-2">
         <input type="text" value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'){e.preventDefault();send()}}}
-          placeholder={s.chatPlaceholder} className="flex-1 glass rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#111827]/30 placeholder:text-gray-400 dark:text-gray-300" />
-        <button onClick={send} className="bg-[#111827] text-gray-900 dark:text-white w-12 rounded-lg hover:bg-[#1F2937] transition-all btn-press text-lg">↑</button>
+          placeholder={s.chatPlaceholder} className="flex-1 glass rounded-lg px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#111827]/30 placeholder:text-[#9CA3AF]" />
+        <button onClick={send} className="bg-[#111827] text-[#111827] w-12 rounded-lg hover:bg-[#1F2937] transition-all btn-press text-lg">↑</button>
       </div>
     </div>
   )
@@ -675,28 +674,28 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
             <span className="text-[#6B7280] text-sm">
               {lang === 'ko' ? '국적' : lang === 'zh' ? '国籍' : 'Nationality'}
             </span>
-            <span className="font-medium text-gray-900 dark:text-white text-sm">{getNationalityLabel()}</span>
+            <span className="font-medium text-[#111827] text-sm">{getNationalityLabel()}</span>
           </div>
           
           <div className="flex justify-between items-center py-2">
             <span className="text-[#6B7280] text-sm">
               {lang === 'ko' ? '비자' : lang === 'zh' ? '签证' : 'Visa'}
             </span>
-            <span className="font-medium text-gray-900 dark:text-white text-sm">{getVisaTypeLabel()}</span>
+            <span className="font-medium text-[#111827] text-sm">{getVisaTypeLabel()}</span>
           </div>
           
           <div className="flex justify-between items-center py-2">
             <span className="text-[#6B7280] text-sm">
               {lang === 'ko' ? '레벨' : lang === 'zh' ? '等级' : 'Level'}
             </span>
-            <span className="font-medium text-gray-900 dark:text-white text-sm">{getUserLevel()}</span>
+            <span className="font-medium text-[#111827] text-sm">{getUserLevel()}</span>
           </div>
           
           <div className="flex justify-between items-center py-2">
             <span className="text-[#6B7280] text-sm">
               {lang === 'ko' ? '구독' : lang === 'zh' ? '订阅' : 'Subscription'}
             </span>
-            <span className="font-medium text-gray-900 dark:text-white text-sm flex items-center gap-1">
+            <span className="font-medium text-[#111827] text-sm flex items-center gap-1">
               <Shield className="w-4 h-4 text-[#6B7280]" />
               {getSubscription()}
             </span>
@@ -715,7 +714,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                   {lang === 'ko' ? '비자 만료' : lang === 'zh' ? '签证到期' : 'Visa Expiry'}
                 </span>
                 <div className="mt-1">
-                  <span className="font-medium text-gray-900 dark:text-white text-sm">{expiryDate}</span>
+                  <span className="font-medium text-[#111827] text-sm">{expiryDate}</span>
                   <span className={`ml-2 text-xs px-2 py-1 rounded-full ${
                     days <= 0 ? 'bg-red-100 text-red-600' :
                     days <= 30 ? 'bg-red-100 text-red-600' :
@@ -765,7 +764,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         {/* 로그아웃 버튼 */}
         <button
           onClick={handleLogout}
-          className="w-full text-[#6B7280] text-sm py-3 hover:text-gray-900 dark:text-white transition-colors flex items-center justify-center gap-2"
+          className="w-full text-[#6B7280] text-sm py-3 hover:text-[#111827] transition-colors flex items-center justify-center gap-2"
         >
           <LogOut className="w-4 h-4" />
           {lang === 'ko' ? '로그아웃' : lang === 'zh' ? '注销' : 'Logout'}
@@ -776,7 +775,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
       {showDateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-lg w-full max-w-sm p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 text-center">
+            <h3 className="text-lg font-bold text-[#111827] mb-4 text-center">
               {lang === 'ko' ? '비자 만료일 설정' : lang === 'zh' ? '设置签证到期日期' : 'Set Visa Expiry Date'}
             </h3>
             
@@ -784,7 +783,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
               type="date"
               value={tempDate}
               onChange={(e) => setTempDate(e.target.value)}
-              className="w-full bg-[#F8F9FA] rounded-xl px-4 py-3 text-gray-900 dark:text-white border border-[#E5E7EB] focus:border-[#111827] outline-none mb-6 box-border max-w-full text-base"
+              className="w-full bg-[#F8F9FA] rounded-xl px-4 py-3 text-[#111827] border border-[#E5E7EB] focus:border-[#111827] outline-none mb-6 box-border max-w-full text-base"
               style={{ WebkitAppearance: 'none', minWidth: 0 }}
             />
             
@@ -812,8 +811,8 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-lg w-full max-w-sm p-6 shadow-xl">
             <div className="text-center mb-6">
-              <Bell className="w-12 h-12 text-gray-900 dark:text-white mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+              <Bell className="w-12 h-12 text-[#111827] mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-[#111827] mb-2">
                 {lang === 'ko' ? '비자 만료일 알림' : lang === 'zh' ? '签证到期提醒' : 'Visa Expiry Alert'}
               </h3>
               <p className="text-[#6B7280] text-sm">
@@ -843,7 +842,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
       {showTimingModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-lg w-full max-w-sm p-6 shadow-xl">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 text-center">
+            <h3 className="text-lg font-bold text-[#111827] mb-4 text-center">
               {lang === 'ko' ? '알림 시점 선택' : lang === 'zh' ? '选择提醒时间' : 'Choose Reminder Times'}
             </h3>
             
@@ -855,7 +854,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                 { key: 'd7', label: { ko: '7일 전', zh: '7天前', en: '7 days before' } }
               ].map(opt => (
                 <label key={opt.key} className="flex items-center justify-between cursor-pointer">
-                  <span className="text-gray-900 dark:text-white font-medium">{L(lang, opt.label)}</span>
+                  <span className="text-[#111827] font-medium">{L(lang, opt.label)}</span>
                   <button 
                     onClick={() => toggleNotif(opt.key)}
                     className={`w-12 h-7 rounded-full transition-all relative ${
@@ -904,7 +903,7 @@ function Input({ label, value, onChange, placeholder, mono }) {
     <div>
       <label className="text-xs text-[#6B7280] font-medium block mb-1.5">{label}</label>
       <input type="text" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className={`w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#111827]/30 placeholder:text-gray-400 dark:text-gray-300 ${mono ? 'font-mono tracking-wider' : ''}`} />
+        className={`w-full bg-[#F3F4F6] rounded-xl px-4 py-3 text-sm border-0 outline-none focus:ring-2 focus:ring-[#111827]/30 placeholder:text-[#9CA3AF] ${mono ? 'font-mono tracking-wider' : ''}`} />
     </div>
   )
 }
@@ -913,7 +912,7 @@ function DocumentAuthGuide({ lang, onBack }) {
   const d = documentAuth
   return (
     <div className="space-y-4 animate-fade-up">
-      <button onClick={onBack} className="text-gray-900 dark:text-white text-sm font-medium">{t[lang].back}</button>
+      <button onClick={onBack} className="text-[#111827] text-sm font-medium">{t[lang].back}</button>
       <div className="bg-[#F8F9FA] rounded-lg p-6 border border-[#E5E7EB]">
         <div className="text-xl font-bold">{L(lang, d.title)}</div>
         <div className="text-sm text-[#6B7280] mt-1">{L(lang, d.subtitle)}</div>
@@ -933,7 +932,7 @@ function DocumentAuthGuide({ lang, onBack }) {
             <div key={i} className="flex gap-3">
               <div className="w-8 h-8 bg-[#111827]/10 rounded-full flex items-center justify-center text-sm shrink-0">{s.icon}</div>
               <div>
-                <div className="font-semibold text-gray-900 dark:text-white text-sm">{s.step}. {L(lang, s.title)}</div>
+                <div className="font-semibold text-[#111827] text-sm">{s.step}. {L(lang, s.title)}</div>
                 <div className="text-xs text-[#6B7280] mt-1">{L(lang, s.desc)}</div>
               </div>
             </div>
@@ -944,9 +943,9 @@ function DocumentAuthGuide({ lang, onBack }) {
         <div className="space-y-3">
           {d.byVisaType.map((item, i) => (
             <div key={i} className="flex gap-2 text-sm">
-              <span className="font-mono text-gray-900 dark:text-white bg-[#111827] px-2 py-0.5 rounded text-xs shrink-0">{item.visa}</span>
+              <span className="font-mono text-[#111827] bg-[#111827] px-2 py-0.5 rounded text-xs shrink-0">{item.visa}</span>
               <div>
-                <div className="font-semibold text-gray-900 dark:text-white text-xs">{L(lang, item.label)}</div>
+                <div className="font-semibold text-[#111827] text-xs">{L(lang, item.label)}</div>
                 <div className="text-xs text-[#6B7280]">{L(lang, item.docs)}</div>
               </div>
             </div>
@@ -1000,23 +999,23 @@ function VisaTab({ profile, lang, view, setView, selCat, setSelCat, selVisa, set
                 <QuickGuideSection region={rgn} onSelectVisa={selVisaFn} lang={lang} />
                 <button onClick={() => setShowDocAuth(true)}
                   className="w-full text-left bg-[#F8F9FA] rounded-lg p-5 card-hover border border-[#E5E7EB] btn-press animate-fade-up">
-                  <div className="text-lg font-bold text-gray-900 dark:text-white">{L(lang, documentAuth.title)}</div>
+                  <div className="text-lg font-bold text-[#111827]">{L(lang, documentAuth.title)}</div>
                   <div className="text-sm text-[#6B7280] mt-1">{L(lang, documentAuth.subtitle)}</div>
-                  <div className="text-xs text-gray-900 dark:text-white mt-2">{lang==='ko'?'공증 · 번역 · 아포스티유 안내 →':lang==='zh'?'公证 · 翻译 · 海牙认证指南 →':'Notarization · Translation · Apostille Guide →'}</div>
+                  <div className="text-xs text-[#111827] mt-2">{lang==='ko'?'공증 · 번역 · 아포스티유 안내 →':lang==='zh'?'公证 · 翻译 · 海牙认证指南 →':'Notarization · Translation · Apostille Guide →'}</div>
                 </button>
                 <ComparisonTable lang={lang} />
 
                 {/* 출입국 심사 가이드 */}
                 {immigrationQuestions?.length > 0 && (
                 <div className="bg-[#F8F9FA] rounded-lg p-5 border border-[#E5E7EB] space-y-3">
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white">{lang === 'ko' ? '출입국 심사 예상 질문' : lang === 'zh' ? '入境审查常见问题' : 'Immigration Q&A'}</h3>
+                  <h3 className="text-base font-bold text-[#111827]">{lang === 'ko' ? '출입국 심사 예상 질문' : lang === 'zh' ? '入境审查常见问题' : 'Immigration Q&A'}</h3>
                   <div className="space-y-2.5">
                     {immigrationQuestions.map((q, i) => (
                       <div key={i} className="bg-white rounded-lg p-3 border border-[#E5E7EB]">
-                        <p className="text-xs font-bold text-gray-900 dark:text-white mb-1">Q. {L(lang, q.question)}</p>
+                        <p className="text-xs font-bold text-[#111827] mb-1">Q. {L(lang, q.question)}</p>
                         <p className="text-xs text-[#374151] mb-1">A. {L(lang, q.answer)}</p>
                         <p className="text-[10px] text-[#6B7280] italic mb-1">EN: &quot;{q.english}&quot;</p>
-                        <p className="text-[10px] text-gray-400 dark:text-gray-300">{L(lang, q.tip)}</p>
+                        <p className="text-[10px] text-[#9CA3AF]">{L(lang, q.tip)}</p>
                       </div>
                     ))}
                   </div>
@@ -1026,10 +1025,10 @@ function VisaTab({ profile, lang, view, setView, selCat, setSelCat, selVisa, set
                 {/* 여권 요건 */}
                 {passportRequirements?.length > 0 && (
                 <div className="bg-[#F8F9FA] rounded-lg p-5 border border-[#E5E7EB] space-y-2">
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white">{lang === 'ko' ? '여권 요건' : lang === 'zh' ? '护照要求' : 'Passport Requirements'}</h3>
+                  <h3 className="text-base font-bold text-[#111827]">{lang === 'ko' ? '여권 요건' : lang === 'zh' ? '护照要求' : 'Passport Requirements'}</h3>
                   {passportRequirements.map((req, i) => (
                     <div key={i} className="flex items-start gap-2">
-                      <span className="text-xs text-gray-900 dark:text-white mt-0.5">•</span>
+                      <span className="text-xs text-[#111827] mt-0.5">•</span>
                       <p className="text-xs text-[#374151]">{L(lang, req)}</p>
                     </div>
                   ))}
@@ -1039,17 +1038,17 @@ function VisaTab({ profile, lang, view, setView, selCat, setSelCat, selVisa, set
                 {/* 비자 승인 팁 */}
                 {approvalTips?.length > 0 && (
                 <div className="bg-[#F8F9FA] rounded-lg p-5 border border-[#E5E7EB] space-y-2">
-                  <h3 className="text-base font-bold text-gray-900 dark:text-white">{lang === 'ko' ? '승인률 높이는 팁' : lang === 'zh' ? '提高通过率的技巧' : 'Approval Tips'}</h3>
+                  <h3 className="text-base font-bold text-[#111827]">{lang === 'ko' ? '승인률 높이는 팁' : lang === 'zh' ? '提高通过率的技巧' : 'Approval Tips'}</h3>
                   {approvalTips.map((tip, i) => (
                     <div key={i} className="flex items-start gap-2">
-                      <span className="text-xs text-gray-900 dark:text-white mt-0.5">{i + 1}.</span>
+                      <span className="text-xs text-[#111827] mt-0.5">{i + 1}.</span>
                       <p className="text-xs text-[#374151]">{L(lang, tip)}</p>
                     </div>
                   ))}
                 </div>
                 )}
 
-                <h2 className="text-base font-bold text-gray-900 dark:text-white">{s.categories}</h2>
+                <h2 className="text-base font-bold text-[#111827]">{s.categories}</h2>
                 <CategoryCards onSelect={selCategory} lang={lang} />
               </>
           }
@@ -1113,8 +1112,8 @@ function AppShortcut({ name, description, deepLink, webUrl, domain }) {
         }}
       />
       <div className="flex-1 min-w-0">
-        <div className="font-bold text-gray-900 dark:text-white text-sm">{name}</div>
-        <div className="text-xs text-gray-400 dark:text-gray-300 truncate">{description}</div>
+        <div className="font-bold text-[#111827] text-sm">{name}</div>
+        <div className="text-xs text-[#9CA3AF] truncate">{description}</div>
       </div>
     </button>
   )
@@ -1136,29 +1135,6 @@ function AppInner() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [showAppMenu, setShowAppMenu] = useState(false)
   const { isDark, toggleDarkMode } = useDarkMode()
-
-  // PWA 업데이트 로직
-  const {
-    needRefresh: [needRefresh, setNeedRefresh],
-    offlineReady: [offlineReady, setOfflineReady],
-    updateServiceWorker,
-  } = useRegisterSW({
-    onRegistered(r) {
-      console.log("SW Registered: " + r)
-    },
-    onRegisterError(error) {
-      console.log("SW registration error", error)
-    },
-  })
-
-  const close = () => {
-    setOfflineReady(false)
-    setNeedRefresh(false)
-  }
-
-  const updateApp = () => {
-    updateServiceWorker(true)
-  }
   const s = t[lang]
 
   useEffect(() => {
@@ -1327,8 +1303,8 @@ function AppInner() {
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'pocket', icon: Grid3x3, label: { ko: '포켓', zh: '口袋', en: 'Pocket' } },
-    { id: 'map', icon: Map, label: { ko: '지도', zh: '地图', en: 'Map' } },
+    { id: 'pocket', icon: Wallet, label: { ko: '포켓', zh: '口袋', en: 'Pocket' } },
+    { id: 'map', icon: MapPin, label: { ko: '지도', zh: '地图', en: 'Map' } },
     { id: 'community', icon: Users, label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]
@@ -1484,58 +1460,22 @@ function AppInner() {
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
-      {/* PWA 업데이트 프롬프트 */}
-      {false && (needRefresh || offlineReady) && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-blue-500 text-white px-4 py-3 rounded-lg shadow-lg max-w-sm mx-4">
-          <div className="flex items-center justify-between space-x-3">
-            <div className="flex items-center space-x-2">
-              <div className="bg-white bg-opacity-20 rounded-full p-1">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="text-sm">
-                {offlineReady 
-                  ? { ko: "오프라인 사용 가능", zh: "可离线使用", en: "Ready for offline" }[lang]
-                  : { ko: "새 버전 사용 가능", zh: "新版本可用", en: "New version available" }[lang]}
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              {needRefresh && (
-                <button
-                  onClick={updateApp}
-                  className="bg-white text-blue-500 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100 transition-colors"
-                >
-                  {{ ko: "업데이트", zh: "更新", en: "Update" }[lang]}
-                </button>
-              )}
-              <button
-                onClick={close}
-                className="text-white hover:text-gray-200 transition-colors"
-              >
-                <X size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Google-style Top Bar */}
       <div className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: 'var(--bg-primary)' }}>
         <div className="px-4 pt-3 pb-2">
           <div className="flex items-center gap-3">
             {subPage ? (
-              <button onClick={() => { setSubPage(null) }} className="text-gray-600 dark:text-gray-200 p-1">
+              <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
                 <ChevronLeft size={24} />
               </button>
             ) : (
               <Logo />
             )}
             <div className="flex-1" />
-            <button onClick={() => setLang(nextLang(lang))} className="text-gray-600 dark:text-gray-200 p-1">
+            <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
               <Globe size={20} />
             </button>
-            <button onClick={() => setShowAppMenu(true)} className="text-gray-600 dark:text-gray-200 p-2 -mr-2">
+            <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -mr-2">
               <Menu size={22} />
             </button>
           </div>
@@ -1554,9 +1494,9 @@ function AppInner() {
             return (
               <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">{lang === 'ko' ? '앱으로 설치하기' : lang === 'zh' ? '安装为App' : 'Install App'}</p>
+                  <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '앱으로 설치하기' : lang === 'zh' ? '安装为App' : 'Install App'}</p>
                   <button onClick={() => { setPushDismissed(true); localStorage.setItem('hp_push_dismissed', 'true') }}
-                    className="text-xs text-gray-400 dark:text-gray-300 px-2 py-1">X</button>
+                    className="text-xs text-[#9CA3AF] px-2 py-1">X</button>
                 </div>
                 <p className="text-xs text-[#6B7280] leading-relaxed">
                   {lang === 'ko' ? '하단 공유 버튼(▫︎↑) → "홈 화면에 추가"를 눌러주세요. 알림 수신, 전체화면 등 앱처럼 사용할 수 있습니다.' 
@@ -1570,12 +1510,12 @@ function AppInner() {
           return (
             <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="text-sm font-semibold text-gray-900 dark:text-white">{lang === 'ko' ? '알림 받기' : lang === 'zh' ? '开启通知' : 'Enable Notifications'}</p>
+                <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '알림 받기' : lang === 'zh' ? '开启通知' : 'Enable Notifications'}</p>
                 <p className="text-xs text-[#6B7280] mt-0.5">{lang === 'ko' ? '비자 만료, 공지사항 등을 놓치지 마세요' : lang === 'zh' ? '不要错过签证到期、公告等信息' : "Don't miss visa expiry alerts & updates"}</p>
               </div>
               <div className="flex gap-2 shrink-0">
                 <button onClick={() => { setPushDismissed(true); localStorage.setItem('hp_push_dismissed', 'true') }}
-                  className="text-xs text-gray-400 dark:text-gray-300 px-2 py-1.5">{lang === 'ko' ? '닫기' : lang === 'zh' ? '关闭' : 'Close'}</button>
+                  className="text-xs text-[#9CA3AF] px-2 py-1.5">{lang === 'ko' ? '닫기' : lang === 'zh' ? '关闭' : 'Close'}</button>
                 <button onClick={handleEnablePush}
                   className="text-xs font-semibold text-white bg-[#111827] px-4 py-1.5 rounded-lg">{lang === 'ko' ? '허용' : lang === 'zh' ? '允许' : 'Allow'}</button>
               </div>
@@ -1593,7 +1533,7 @@ function AppInner() {
                     <button key={p.id} onClick={() => setSubPage(p.id)}
                       className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm hover:shadow-md transition-shadow">
                       <LucideIcon name={p.icon} size={20} style={{ color: '#111827' }} />
-                      <span className="text-xs text-gray-900 dark:text-white font-medium text-center leading-tight">{L(lang, p.name)}</span>
+                      <span className="text-xs text-[#111827] font-medium text-center leading-tight">{L(lang, p.name)}</span>
                     </button>
                   ))}
                 </div>
@@ -1692,7 +1632,7 @@ function AppInner() {
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
-        <div className="mt-12 mb-6 text-center text-[11px] text-gray-400 dark:text-gray-300">
+        <div className="mt-12 mb-6 text-center text-[11px] text-[#9CA3AF]">
           <p>© 2026 HanPocket. All rights reserved.</p>
         </div>
       </div>
@@ -1702,7 +1642,7 @@ function AppInner() {
           {/* 검색 헤더 */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => { setShowSearch(false); setSearchQuery('') }} className="p-1">
-              <ChevronLeft size={24} className="text-gray-900 dark:text-white" />
+              <ChevronLeft size={24} className="text-[#111827]" />
             </button>
             <div className="flex-1 bg-[#F1F3F4] rounded-full px-4 py-2.5 flex items-center gap-2">
               <Search size={18} className="text-[#9AA0A6]" />
@@ -1753,7 +1693,7 @@ function AppInner() {
                       }}
                       className="bg-[#F8F9FA] rounded-xl py-3 px-2 text-center hover:bg-[#E5E7EB] transition-colors"
                     >
-                      <span className="text-sm font-medium text-gray-900 dark:text-white">{L(lang, item.label)}</span>
+                      <span className="text-sm font-medium text-[#111827]">{L(lang, item.label)}</span>
                     </button>
                   ))}
                 </div>
@@ -1814,7 +1754,7 @@ function AppInner() {
                           className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#F8F9FA] transition-colors text-left"
                         >
                           <Search size={16} className="text-[#9AA0A6] shrink-0" />
-                          <span className="text-sm font-medium text-gray-900 dark:text-white">{L(lang, item.label)}</span>
+                          <span className="text-sm font-medium text-[#111827]">{L(lang, item.label)}</span>
                         </button>
                       ))}
                     </div>
@@ -1834,26 +1774,7 @@ function AppInner() {
             return (
               <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
                 className="flex flex-col items-center gap-0.5 py-1">
-                {item.id === 'pocket' ? (
-                  <svg width="22" height="22" viewBox="0 0 40 40" fill="none" className={active ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-300'}>
-                    <path d="M20 4C14 4 8 8 8 8L6 12C6 12 5 16 6 20C7 24 10 28 14 31C17 33 20 36 20 36C20 36 23 33 26 31C30 28 33 24 34 20C35 16 34 12 34 12L32 8C32 8 26 4 20 4Z" fill={active ? '#D94F4F' : 'currentColor'} opacity={active ? 1 : 0.3}/>
-                    <path d="M14 12C14 12 13 14 14 17C15 20 17 22 20 24C23 22 25 20 26 17C27 14 26 12 26 12" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                    <circle cx="16" cy="10" r="1" fill="white" opacity="0.6"/>
-                    <line x1="18" y1="8" x2="18" y2="6" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
-                    <line x1="22" y1="8" x2="22" y2="5" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
-                  </svg>
-                ) : item.id === 'map' ? (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" className={active ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-300'}>
-                    {/* 태극 문양 */}
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" fill="none" opacity={0.3}/>
-                    <path d="M 12 2 A 10 10 0 0 1 12 22 A 5 5 0 0 1 12 12 A 5 5 0 0 0 12 2" fill={active ? '#FF4444' : 'currentColor'} opacity={active ? 0.8 : 0.4}/>
-                    <path d="M 12 2 A 10 10 0 0 0 12 22 A 5 5 0 0 0 12 12 A 5 5 0 0 1 12 2" fill={active ? '#4444FF' : 'currentColor'} opacity={active ? 0.8 : 0.4}/>
-                    <circle cx="12" cy="7" r="1.5" fill="white" opacity={0.9}/>
-                    <circle cx="12" cy="17" r="1.5" fill="white" opacity={0.9}/>
-                  </svg>
-                ) : (
-                  <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />
-                )}
+                <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />
                 <span className="text-[11px] font-light" style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
               </button>
             )
@@ -2017,10 +1938,10 @@ function FloatingChatbot({ lang }) {
         >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">앱 바로가기</h2>
+              <h2 className="text-lg font-bold text-[#111827]">앱 바로가기</h2>
               <button 
                 onClick={() => setShowAppMenu(false)}
-                className="text-gray-600 dark:text-gray-200 p-1"
+                className="text-[#5F6368] p-1"
               >
                 <X size={20} />
               </button>
@@ -2030,7 +1951,7 @@ function FloatingChatbot({ lang }) {
             <div className="flex-1 overflow-y-auto p-4">
               {/* 교통 */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">교통</h3>
+                <h3 className="text-sm font-bold text-[#111827] mb-3">교통</h3>
                 <div className="space-y-2">
                   <AppShortcut 
                     name="카카오T"
@@ -2058,7 +1979,7 @@ function FloatingChatbot({ lang }) {
 
               {/* 배달/쇼핑 */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">배달/쇼핑</h3>
+                <h3 className="text-sm font-bold text-[#111827] mb-3">배달/쇼핑</h3>
                 <div className="space-y-2">
                   <AppShortcut 
                     name="배달의민족"
@@ -2100,7 +2021,7 @@ function FloatingChatbot({ lang }) {
 
               {/* 여행/숙박 */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">여행/숙박</h3>
+                <h3 className="text-sm font-bold text-[#111827] mb-3">여행/숙박</h3>
                 <div className="space-y-2">
                   <AppShortcut 
                     name="야놀자"
@@ -2135,7 +2056,7 @@ function FloatingChatbot({ lang }) {
 
               {/* 생활/정부 */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">생활/정부</h3>
+                <h3 className="text-sm font-bold text-[#111827] mb-3">생활/정부</h3>
                 <div className="space-y-2">
                   <AppShortcut 
                     name="카카오톡"

@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Search, MapPin, Clock, Star, ExternalLink, Percent, CreditCard, ShoppingBag, Gift, Truck, Wallet } from 'lucide-react'
+import { useState, useEffect, lazy, Suspense } from 'react'
+import { Search, MapPin, Clock, Star, ExternalLink, Percent, CreditCard, ShoppingBag, Gift, Truck, Wallet, Navigation, Loader2 } from 'lucide-react'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -408,6 +408,80 @@ export default function ShoppingTab({ lang, setTab }) {
             </div>
           </div>
         </div>
+      )}
+      {/* TourAPI 쇼핑 스팟 */}
+      <TourApiShoppingSection lang={lang} />
+    </div>
+  )
+}
+
+const TourDetailModal = lazy(() => import('./TourDetailModal'))
+
+function TourApiShoppingSection({ lang }) {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [detailItem, setDetailItem] = useState(null)
+  const [gps, setGps] = useState(null)
+
+  useEffect(() => {
+    navigator.geolocation?.getCurrentPosition(
+      p => setGps({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => {
+        import('../api/tourApi').then(({ getAreaBasedList }) => {
+          getAreaBasedList({ contentTypeId: 79, areaCode: 1, numOfRows: 10, arrange: 'R' })
+            .then(r => setItems(r.items || []))
+            .finally(() => setLoading(false))
+        })
+      },
+      { timeout: 5000 }
+    )
+  }, [])
+
+  useEffect(() => {
+    if (!gps) return
+    import('../api/tourApi').then(({ getLocationBasedList }) => {
+      getLocationBasedList({ mapX: gps.lng, mapY: gps.lat, radius: 5000, contentTypeId: 79, numOfRows: 10, arrange: 'E' })
+        .then(r => setItems(r.items || []))
+        .finally(() => setLoading(false))
+    })
+  }, [gps])
+
+  if (!loading && items.length === 0) return null
+
+  return (
+    <div className="mt-6 space-y-3">
+      <h3 className="text-sm font-bold text-[#111827] flex items-center gap-1.5">
+        <ShoppingBag size={14} className="text-blue-500" />
+        {L(lang, { ko: '쇼핑 스팟', zh: '购物地点', en: 'Shopping Spots' })}
+        <span className="text-xs font-normal text-[#9CA3AF] ml-1">
+          {L(lang, { ko: '한국관광공사', zh: '韩国观光公社', en: 'KTO' })}
+        </span>
+      </h3>
+
+      {loading && <div className="flex justify-center py-4"><Loader2 size={20} className="animate-spin text-blue-500" /></div>}
+
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        {items.map((item, i) => (
+          <div key={item.contentid || i} onClick={() => setDetailItem(item)}
+            className="min-w-[180px] max-w-[180px] rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm cursor-pointer">
+            {item.firstimage ? (
+              <img src={item.firstimage} alt={item.title} className="w-full h-28 object-cover" loading="lazy" />
+            ) : (
+              <div className="w-full h-28 bg-gray-100 flex items-center justify-center"><ShoppingBag size={20} className="text-gray-400" /></div>
+            )}
+            <div className="p-2.5">
+              <h4 className="text-xs font-semibold line-clamp-1">{item.title}</h4>
+              {item.addr1 && <p className="text-[10px] text-[#9CA3AF] mt-0.5 line-clamp-1">{item.addr1}</p>}
+              {item.dist && <p className="text-[10px] text-blue-500 mt-0.5">{Number(item.dist) < 1000 ? `${Math.round(item.dist)}m` : `${(item.dist/1000).toFixed(1)}km`}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {detailItem && (
+        <Suspense fallback={null}>
+          <TourDetailModal item={detailItem} lang={lang} darkMode={false} onClose={() => setDetailItem(null)} />
+        </Suspense>
       )}
     </div>
   )

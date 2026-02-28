@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react'
-import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter } from 'lucide-react'
+import { useState, useMemo, useEffect, lazy, Suspense } from 'react'
+import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter, Navigation, Loader2 } from 'lucide-react'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES, LOCATION_FILTERS, LOCATION_HIERARCHY } from '../data/restaurantData'
 import { trackSearch, trackEvent } from '../utils/analytics'
 
@@ -367,6 +367,84 @@ export default function FoodTab({ lang }) {
         <div className="text-center py-8 text-sm text-[#9CA3AF]">
           {lang === 'ko' ? '검색 결과가 없습니다' : lang === 'zh' ? '没有搜索结果' : 'No results found'}
         </div>
+      )}
+
+      {/* TourAPI 맛집 더보기 */}
+      <TourApiFoodSection lang={lang} />
+    </div>
+  )
+}
+
+/** TourAPI 음식점 섹션 */
+const TourDetailModal = lazy(() => import('./TourDetailModal'))
+
+function TourApiFoodSection({ lang }) {
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [detailItem, setDetailItem] = useState(null)
+  const [gps, setGps] = useState(null)
+
+  useEffect(() => {
+    navigator.geolocation?.getCurrentPosition(
+      p => setGps({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => {
+        // No GPS: fetch by area (Seoul)
+        import('../api/tourApi').then(({ getAreaBasedList }) => {
+          getAreaBasedList({ contentTypeId: 82, areaCode: 1, numOfRows: 10, arrange: 'R' })
+            .then(r => setItems(r.items || []))
+            .finally(() => setLoading(false))
+        })
+      },
+      { timeout: 5000 }
+    )
+  }, [])
+
+  useEffect(() => {
+    if (!gps) return
+    import('../api/tourApi').then(({ getLocationBasedList }) => {
+      getLocationBasedList({ mapX: gps.lng, mapY: gps.lat, radius: 3000, contentTypeId: 82, numOfRows: 10, arrange: 'E' })
+        .then(r => setItems(r.items || []))
+        .finally(() => setLoading(false))
+    })
+  }, [gps])
+
+  return (
+    <div className="mt-6 space-y-3">
+      <h3 className="text-sm font-bold text-[#111827] flex items-center gap-1.5">
+        <Navigation size={14} className="text-blue-500" />
+        {L(lang, { ko: '맛집 더보기', zh: '更多美食', en: 'More Restaurants' })}
+        <span className="text-xs font-normal text-[#9CA3AF] ml-1">
+          {L(lang, { ko: '한국관광공사', zh: '韩国观光公社', en: 'KTO' })}
+        </span>
+      </h3>
+
+      {loading && <div className="flex justify-center py-4"><Loader2 size={20} className="animate-spin text-blue-500" /></div>}
+
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        {items.map((item, i) => (
+          <div
+            key={item.contentid || i}
+            onClick={() => setDetailItem(item)}
+            className="min-w-[180px] max-w-[180px] rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm cursor-pointer"
+          >
+            {item.firstimage ? (
+              <img src={item.firstimage} alt={item.title} className="w-full h-28 object-cover" loading="lazy" />
+            ) : (
+              <div className="w-full h-28 bg-gray-100 flex items-center justify-center"><MapPin size={20} className="text-gray-400" /></div>
+            )}
+            <div className="p-2.5">
+              <h4 className="text-xs font-semibold line-clamp-1">{item.title}</h4>
+              {item.addr1 && <p className="text-[10px] text-[#9CA3AF] mt-0.5 line-clamp-1">{item.addr1}</p>}
+              {item.dist && <p className="text-[10px] text-blue-500 mt-0.5">{Number(item.dist) < 1000 ? `${Math.round(item.dist)}m` : `${(item.dist/1000).toFixed(1)}km`}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {detailItem && (
+        <Suspense fallback={null}>
+          <TourDetailModal item={detailItem} lang={lang} darkMode={false} onClose={() => setDetailItem(null)} />
+        </Suspense>
       )}
     </div>
   )

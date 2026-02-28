@@ -1,6 +1,68 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { MapPin, Search, Filter, Navigation, Info, ArrowUpDown, Route, X, ExternalLink, Globe } from 'lucide-react'
 import { translateBrandName, smartTranslate } from '../data/brandMapping.js'
+import { Capacitor } from '@capacitor/core'
+import { Geolocation } from '@capacitor/geolocation'
+
+// 네이티브 or 브라우저 위치 가져오기 통합 함수
+const getPosition = async (options = {}) => {
+  // Capacitor 네이티브 환경이면 네이티브 GPS 사용
+  if (Capacitor.isNativePlatform()) {
+    const perm = await Geolocation.checkPermissions()
+    if (perm.location === 'denied') {
+      const requested = await Geolocation.requestPermissions()
+      if (requested.location === 'denied') {
+        throw { code: 1, message: 'Permission denied' }
+      }
+    }
+    const pos = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: options.timeout || 15000,
+      ...options
+    })
+    return pos
+  }
+  // 웹 브라우저 fallback
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: options.timeout || 15000,
+      maximumAge: 0,
+      ...options
+    })
+  })
+}
+
+// 네이티브 watchPosition 래퍼
+const watchPositionCompat = (successCb, errorCb, options = {}) => {
+  if (Capacitor.isNativePlatform()) {
+    let callbackId = null
+    Geolocation.watchPosition(
+      { enableHighAccuracy: true, timeout: 15000, ...options },
+      (position, err) => {
+        if (err) {
+          errorCb(err)
+        } else if (position) {
+          successCb(position)
+        }
+      }
+    ).then(id => { callbackId = id })
+    // clearWatch 함수 반환
+    return () => {
+      if (callbackId !== null) {
+        Geolocation.clearWatch({ id: callbackId })
+      }
+    }
+  }
+  // 웹 브라우저 fallback
+  const id = navigator.geolocation.watchPosition(successCb, errorCb, {
+    enableHighAccuracy: true,
+    timeout: 15000,
+    maximumAge: 0,
+    ...options
+  })
+  return () => navigator.geolocation.clearWatch(id)
+}
 
 export default function MapTab({ lang }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -9,6 +71,10 @@ export default function MapTab({ lang }) {
   const [selectedMarker, setSelectedMarker] = useState(null)
   const [userLocation, setUserLocation] = useState(null)
   const [mapReady, setMapReady] = useState(false)
+  const [locatingUser, setLocatingUser] = useState(false)
+  const [locationAccuracy, setLocationAccuracy] = useState(null)
+  const userMarkerRef = useRef(null)
+  const watchIdRef = useRef(null)
   const [currentTheme, setCurrentTheme] = useState('hanpocket')
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -19,6 +85,8 @@ export default function MapTab({ lang }) {
   const [showRoutePanel, setShowRoutePanel] = useState(false)
   const [startLocation, setStartLocation] = useState('')
   const [endLocation, setEndLocation] = useState('')
+  const [startCoords, setStartCoords] = useState(null)
+  const [endCoords, setEndCoords] = useState(null)
   const [startResults, setStartResults] = useState([])
   const [endResults, setEndResults] = useState([])
   const [showStartResults, setShowStartResults] = useState(false)
@@ -154,10 +222,6 @@ export default function MapTab({ lang }) {
         setMap(kakaoMap)
         setMapReady(true)
 
-        // 지도 타입 컨트롤 추가
-        const mapTypeControl = new window.kakao.maps.MapTypeControl()
-        kakaoMap.addControl(mapTypeControl, window.kakao.maps.ControlPosition.TOPRIGHT)
-
         // 줌 컨트롤 추가
         const zoomControl = new window.kakao.maps.ZoomControl()
         kakaoMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT)
@@ -174,40 +238,39 @@ export default function MapTab({ lang }) {
         })
         setClusterer(clustererInstance)
 
-        // 사용자 위치 가져오기
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const userPos = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-              }
-              setUserLocation(userPos)
+        // 사용자 위치 가져오기 (네이티브 GPS 우선)
+        getPosition({ timeout: 10000 }).then((position) => {
+          const userPos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          }
+          setUserLocation(userPos)
 
-              // 한국 내 위치인 경우 지도 중심 이동
-              if (userPos.lat > 33 && userPos.lat < 39 && userPos.lng > 125 && userPos.lng < 132) {
-                const moveLatLng = new window.kakao.maps.LatLng(userPos.lat, userPos.lng)
-                kakaoMap.setCenter(moveLatLng)
-                
-                // 사용자 위치 마커
-                const userMarker = new window.kakao.maps.Marker({
-                  position: moveLatLng,
-                  image: new window.kakao.maps.MarkerImage(
-                    'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-                      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                        <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
-                      </svg>
-                    `),
-                    new window.kakao.maps.Size(20, 20)
-                  )
-                })
-                userMarker.setMap(kakaoMap)
-              }
-            },
-            (error) => console.log('위치 정보를 가져올 수 없습니다:', error),
-            { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-          )
-        }
+          // 한국 내 위치인 경우 지도 중심 이동
+          if (userPos.lat > 33 && userPos.lat < 39 && userPos.lng > 125 && userPos.lng < 132) {
+            const moveLatLng = new window.kakao.maps.LatLng(userPos.lat, userPos.lng)
+            kakaoMap.setCenter(moveLatLng)
+
+            // 기존 마커 제거
+            if (userMarkerRef.current) {
+              userMarkerRef.current.setMap(null)
+            }
+            // 사용자 위치 마커
+            const userMarker = new window.kakao.maps.Marker({
+              position: moveLatLng,
+              image: new window.kakao.maps.MarkerImage(
+                'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                    <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+                  </svg>
+                `),
+                new window.kakao.maps.Size(20, 20)
+              )
+            })
+            userMarker.setMap(kakaoMap)
+            userMarkerRef.current = userMarker
+          }
+        }).catch((error) => console.log('위치 정보를 가져올 수 없습니다:', error))
 
       } catch (error) {
         console.error('지도 초기화 실패:', error)
@@ -229,6 +292,11 @@ export default function MapTab({ lang }) {
       }
       if (endSearchTimeoutRef.current) {
         clearTimeout(endSearchTimeoutRef.current)
+      }
+      // watchPosition 정리
+      if (watchIdRef.current) {
+        watchIdRef.current()
+        watchIdRef.current = null
       }
     }
   }, [])
@@ -316,14 +384,7 @@ export default function MapTab({ lang }) {
       })
 
       // 마커 클릭 이벤트
-      window.kakao.maps.event.addListener(marker, "click", () => {
-        console.log("마커 클릭됨:", markerData.name)
-        // 이벤트 전파 중단
-        if (event) {
-          event.stopPropagation()
-        }
-        map.setCenter(position)
-        map.setLevel(3)
+      window.kakao.maps.event.addListener(marker, 'click', () => {
         setSelectedMarker(markerData)
       })
 
@@ -499,35 +560,133 @@ export default function MapTab({ lang }) {
   // 출발지/도착지 선택
   const selectLocation = (result, isStart = true) => {
     const setLocation = isStart ? setStartLocation : setEndLocation
+    const setCoords = isStart ? setStartCoords : setEndCoords
     const setShowResults = isStart ? setShowStartResults : setShowEndResults
 
     setLocation(result.name)
+    setCoords({ x: result.x, y: result.y })
     setShowResults(false)
+
+    // 지도 이동 + 마커 + 장소정보 표시 (메인 검색과 동일)
+    if (map) {
+      const moveLatLng = new window.kakao.maps.LatLng(result.y, result.x)
+      map.setCenter(moveLatLng)
+      map.setLevel(3)
+
+      new window.kakao.maps.Marker({
+        position: moveLatLng,
+        map: map
+      })
+
+      setSelectedMarker({
+        id: result.id,
+        category: 'search',
+        name: { ko: result.name, zh: result.name, en: result.name },
+        description: { ko: result.address || (isStart ? '출발지' : '도착지'), zh: result.address || (isStart ? '出发地' : '目的地'), en: result.address || (isStart ? 'Departure' : 'Destination') },
+        lat: parseFloat(result.y),
+        lng: parseFloat(result.x),
+        phone: result.phone,
+        categoryName: result.category
+      })
+    }
   }
 
   // 출발지/도착지 위치 바꾸기
   const switchLocations = () => {
     const temp = startLocation
+    const tempCoords = startCoords
     setStartLocation(endLocation)
+    setStartCoords(endCoords)
     setEndLocation(temp)
+    setEndCoords(tempCoords)
+  }
+
+  // 좌표로 카카오맵 길찾기 URL 열기
+  const openNavigationUrl = (sName, sCoords, eName, eCoords) => {
+    const startName = encodeURIComponent(sName)
+    const endName = encodeURIComponent(eName)
+
+    // 모바일에서 카카오맵 앱 딥링크 시도
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    if (isMobile) {
+      const appUrl = `kakaomap://route?sp=${sCoords.y},${sCoords.x}&ep=${eCoords.y},${eCoords.x}&by=CAR`
+      window.location.href = appUrl
+      // 앱이 없으면 웹으로 fallback (1.5초 후)
+      setTimeout(() => {
+        const webUrl = `https://map.kakao.com/link/from/${startName},${sCoords.y},${sCoords.x}/to/${endName},${eCoords.y},${eCoords.x}`
+        window.open(webUrl, '_blank')
+      }, 1500)
+      return
+    }
+
+    // PC/웹에서는 카카오맵 웹 링크
+    const navigationUrl = `https://map.kakao.com/link/from/${startName},${sCoords.y},${sCoords.x}/to/${endName},${eCoords.y},${eCoords.x}`
+    window.open(navigationUrl, '_blank')
+  }
+
+  // 장소명으로 좌표 자동 검색 (Promise)
+  const resolveCoords = (query) => {
+    return new Promise((resolve) => {
+      if (!geocoder || !query.trim()) {
+        resolve(null)
+        return
+      }
+
+      const ps = new window.kakao.maps.services.Places()
+      // 키워드 검색 우선 (장소명에 더 적합)
+      ps.keywordSearch(query.trim(), (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+          resolve({ x: result[0].x, y: result[0].y })
+          return
+        }
+        // 키워드 검색 실패 시 주소 검색
+        geocoder.addressSearch(query.trim(), (addrResult, addrStatus) => {
+          if (addrStatus === window.kakao.maps.services.Status.OK && addrResult.length > 0) {
+            resolve({ x: addrResult[0].x, y: addrResult[0].y })
+          } else {
+            resolve(null)
+          }
+        })
+      })
+    })
   }
 
   // 카카오맵 길찾기 실행
-  const startNavigation = () => {
+  const startNavigation = async () => {
     if (!startLocation || !endLocation) {
-      alert(L({ 
-        ko: '출발지와 도착지를 모두 입력해주세요.', 
-        zh: '请输入出发地和目的地。', 
-        en: 'Please enter both start and destination.' 
+      alert(L({
+        ko: '출발지와 도착지를 모두 입력해주세요.',
+        zh: '请输入出发地和目的地。',
+        en: 'Please enter both start and destination.'
       }))
       return
     }
 
-    const startQuery = encodeURIComponent(startLocation)
-    const endQuery = encodeURIComponent(endLocation)
-    const navigationUrl = `https://map.kakao.com/link/from/${startQuery}/to/${endQuery}`
-    
-    window.open(navigationUrl, '_blank')
+    let finalStartCoords = startCoords
+    let finalEndCoords = endCoords
+
+    // 좌표가 없으면 자동으로 검색해서 찾기
+    if (!finalStartCoords) {
+      finalStartCoords = await resolveCoords(startLocation)
+    }
+    if (!finalEndCoords) {
+      finalEndCoords = await resolveCoords(endLocation)
+    }
+
+    if (!finalStartCoords || !finalEndCoords) {
+      alert(L({
+        ko: '출발지 또는 도착지를 찾을 수 없습니다. 다른 검색어를 입력해주세요.',
+        zh: '无法找到出发地或目的地，请输入其他搜索词。',
+        en: 'Could not find start or destination. Please try different search terms.'
+      }))
+      return
+    }
+
+    // 좌표 저장 (다음 번 검색 시 재사용)
+    if (!startCoords) setStartCoords(finalStartCoords)
+    if (!endCoords) setEndCoords(finalEndCoords)
+
+    openNavigationUrl(startLocation, finalStartCoords, endLocation, finalEndCoords)
   }
 
   // 현재 앱 언어 감지 함수
@@ -670,19 +829,20 @@ export default function MapTab({ lang }) {
   // 출발지 검색어 변경 핸들러
   const handleStartLocationChange = (newQuery) => {
     setStartLocation(newQuery)
+    setStartCoords(null) // 텍스트 변경 시 이전 좌표 초기화
     debouncedStartSearch(newQuery)
   }
 
   // 도착지 검색어 변경 핸들러
   const handleEndLocationChange = (newQuery) => {
     setEndLocation(newQuery)
+    setEndCoords(null) // 텍스트 변경 시 이전 좌표 초기화
     debouncedEndSearch(newQuery)
   }
 
   // 카카오 카테고리 검색
   const searchByCategory = (categoryId) => {
     setSelectedCategory(categoryId)
-    setSelectedMarker(null) // 카테고리 변경 시 선택된 마커 초기화
     
     if (categoryId === 'all') {
       // 전체 카테고리는 기존 마커들 표시
@@ -690,7 +850,89 @@ export default function MapTab({ lang }) {
     }
 
     const category = mapCategories.find(cat => cat.id === categoryId)
-    if (!category || !category.kakaoCode) return
+    if (!category) return
+
+    // 화장실 카테고리 처리
+    if (category.isToilet) {
+      if (!map) return
+      markers.forEach(marker => marker.setMap(null))
+      setMarkers([])
+      import('../data/toiletData.js').then(({ SEOUL_TOILETS }) => {
+        const bounds = map.getBounds()
+        const sw = bounds.getSouthWest()
+        const ne = bounds.getNorthEast()
+        const visible = SEOUL_TOILETS.filter(t =>
+          t.lat >= sw.getLat() && t.lat <= ne.getLat() &&
+          t.lng >= sw.getLng() && t.lng <= ne.getLng()
+        ).slice(0, 100) // 성능을 위해 최대 100개
+
+        const newMarkers = []
+        visible.forEach(t => {
+          const position = new window.kakao.maps.LatLng(t.lat, t.lng)
+          const marker = new window.kakao.maps.Marker({ position, map })
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            map.setCenter(position)
+            const features = [
+              t.d === 'Y' ? '♿ ' + L({ ko: '장애인용', zh: '无障碍', en: 'Accessible' }) : '',
+              t.dp === 'Y' ? '👶 ' + L({ ko: '기저귀교환대', zh: '换尿台', en: 'Diaper' }) : '',
+              t.cc === 'Y' ? '📹 CCTV' : '',
+              t.bl === 'Y' ? '🔔 ' + L({ ko: '비상벨', zh: '紧急铃', en: 'Emergency Bell' }) : '',
+            ].filter(Boolean).join(' · ')
+            setSelectedMarker({
+              id: `toilet-${t.lat}-${t.lng}`,
+              name: { ko: t.n, zh: t.n, en: t.n },
+              description: { ko: `${t.a}\n🕐 ${t.h || '정보없음'}\n${features}`, zh: `${t.a}\n🕐 ${t.h || '暂无信息'}\n${features}`, en: `${t.a}\n🕐 ${t.h || 'N/A'}\n${features}` },
+              lat: t.lat, lng: t.lng,
+              category: 'toilet',
+              phone: t.p,
+            })
+          })
+          newMarkers.push(marker)
+        })
+        setMarkers(newMarkers)
+      })
+      return
+    }
+
+    // TourAPI 카테고리 처리
+    if (category.tourApiType) {
+      if (!map) return
+      markers.forEach(marker => marker.setMap(null))
+      setMarkers([])
+      const center = map.getCenter()
+      import('../api/tourApi').then(({ getLocationBasedList }) => {
+        getLocationBasedList({
+          mapX: center.getLng(), mapY: center.getLat(),
+          radius: 10000, contentTypeId: category.tourApiType, numOfRows: 30,
+        }).then(result => {
+          const newMarkers = []
+          ;(result.items || []).forEach(item => {
+            if (!item.mapx || !item.mapy) return
+            const position = new window.kakao.maps.LatLng(parseFloat(item.mapy), parseFloat(item.mapx))
+            const marker = new window.kakao.maps.Marker({ position, map })
+            window.kakao.maps.event.addListener(marker, 'click', () => {
+              map.setCenter(position)
+              setSelectedMarker({
+                id: item.contentid,
+                name: { ko: item.title, zh: item.title, en: item.title },
+                description: { ko: item.addr1 || '', zh: item.addr1 || '', en: item.addr1 || '' },
+                lat: parseFloat(item.mapy),
+                lng: parseFloat(item.mapx),
+                category: categoryId,
+                phone: item.tel,
+                image: item.firstimage,
+                tourApiItem: item,
+              })
+            })
+            newMarkers.push(marker)
+          })
+          setMarkers(newMarkers)
+        })
+      })
+      return
+    }
+
+    if (!category.kakaoCode) return
 
     if (!map) return
 
@@ -713,22 +955,19 @@ export default function MapTab({ lang }) {
           })
 
           // 마커 클릭 이벤트
-          window.kakao.maps.event.addListener(marker, "click", () => {
-        console.log("마커 클릭됨:", markerData.name)
-        // 이벤트 전파 중단
-        if (event) {
-          event.stopPropagation()
-        }
-        map.setCenter(position)
-        map.setLevel(3)
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            // 클릭한 마커 위치로 지도 중심 이동
+            map.setCenter(position)
+
             setSelectedMarker({
               id: place.id,
               name: { ko: place.place_name, zh: place.place_name, en: place.place_name },
               description: { ko: place.address_name, zh: place.address_name, en: place.address_name },
-              lat: place.y,
-              lng: place.x,
+              lat: parseFloat(place.y),
+              lng: parseFloat(place.x),
               category: categoryId,
               phone: place.phone,
+              categoryName: place.category_name,
               url: place.place_url
             })
           })
@@ -824,245 +1063,107 @@ export default function MapTab({ lang }) {
       name: { ko: '마트', zh: '超市', en: 'Mart' },
       color: '#FF7043',
       kakaoCode: 'MT1'
+    },
+    {
+      id: 'toilet',
+      name: { ko: '화장실', zh: '洗手间', en: 'Toilet' },
+      color: '#8D6E63',
+      kakaoCode: null,
+      isToilet: true
+    },
+    {
+      id: 'tour_spot',
+      name: { ko: '관광지', zh: '景点', en: 'Attractions' },
+      color: '#7C4DFF',
+      kakaoCode: null,
+      tourApiType: 76
+    },
+    {
+      id: 'tour_festival',
+      name: { ko: '축제', zh: '庆典', en: 'Festivals' },
+      color: '#FF4081',
+      kakaoCode: null,
+      tourApiType: 85
+    },
+    {
+      id: 'tour_stay',
+      name: { ko: '숙박', zh: '住宿', en: 'Stay' },
+      color: '#00BCD4',
+      kakaoCode: null,
+      tourApiType: 80
     }
   ]
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-800">
-      {/* 헤더 */}
-      {/* 헤더 + 검색창 통합 */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sticky top-0 z-40">
-        <div className="px-4 py-3">
-          <div className="flex items-center space-x-3">
-            {/* 어디가? 제목 */}
-            <h1 className="text-lg font-bold text-gray-900 dark:text-white flex-shrink-0">
-              {L({ ko: "어디가?", zh: "去哪里?", en: "Where to?" })}
-            </h1>
-            
-            {/* 검색창 */}
-            <div className="flex-1 relative search-container">
+    <div className="min-h-screen bg-white">
+      {/* 검색 헤더 */}
+      <div className="bg-white sticky top-0 z-40 shadow-sm">
+        <div className="px-3 py-2.5 flex items-center gap-2">
+          {/* 검색 입력창 */}
+          <div className="flex-1 relative search-container">
+            <div className="flex items-center bg-gray-100 rounded-xl px-3 py-2">
+              <Search size={16} className="text-gray-400 shrink-0" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => handleSearchQueryChange(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    searchPlace(searchQuery)
-                  }
-                }}
-                placeholder={L({ ko: "장소, 주소 검색", zh: "搜索地点、地址", en: "Search places, addresses" })}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+                onKeyPress={(e) => { if (e.key === "Enter") searchPlace(searchQuery) }}
+                placeholder={L({ ko: "장소, 주소 검색", zh: "搜索地点、地址", en: "Search places" })}
+                className="flex-1 bg-transparent outline-none text-sm ml-2 placeholder-gray-400"
               />
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-1">
-                <button 
-                  onClick={() => openKakaoWebView(searchQuery)}
-                  className="p-1 text-blue-500 hover:text-blue-700"
-                  title={L({ ko: "카카오맵에서 검색", zh: "在Kakao地图搜索", en: "Search in Kakao Map" })}
-                >
-                  <Globe size={14} />
+              {searchQuery && (
+                <button onClick={() => { handleSearchQueryChange(''); setShowSearchResults(false) }} className="p-0.5">
+                  <X size={14} className="text-gray-400" />
                 </button>
-                <button 
-                  onClick={() => searchPlace(searchQuery)}
-                  className="p-1 text-gray-500 hover:text-gray-700"
-                  title={L({ ko: "검색", zh: "搜索", en: "Search" })}
-                >
-                  <Search size={14} />
-                </button>
-              </div>
-
-              {/* 검색 결과 드롭다운 */}
-              {(showSearchResults || isSearching) && (
-                isSearching ? (
-                  /* 검색 중 로딩 */
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow-lg">
-                    <div className="px-3 py-4 text-center">
-                      <div className="flex items-center justify-center space-x-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-                        <span className="text-sm text-gray-500">
-                          {L({ ko: "검색 중...", zh: "搜索中...", en: "Searching..." })}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ) : searchResults.length > 0 ? (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-50">
-                  {searchResults.map((result) => (
-                    <button
-                      key={result.id}
-                      onClick={() => selectSearchResult(result)}
-                      className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                    >
-                      <div className="font-medium text-sm">{result.name}</div>
-                      {result.address && (
-                        <div className="text-xs text-gray-500">{result.address}</div>
-                      )}
-                      {result.category && (
-                        <div className="text-xs text-blue-600">{result.category}</div>
-                      )}
-                    </button>
-                  ))}
-                  
-                  {/* 카카오맵에서 더 보기 */}
-                  <button
-                    onClick={() => openKakaoWebView(searchQuery)}
-                    className="w-full px-3 py-2 text-left hover:bg-blue-50 border-t border-gray-200 text-blue-600 font-medium text-sm"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <Globe size={12} />
-                      <span>{L({ ko: "카카오맵에서 더 보기", zh: "在Kakao地图查看更多", en: "More in Kakao Map" })}</span>
-                    </div>
-                  </button>
-                </div>
-                ) : (
-                  /* 검색 결과 없을 때 */
-                  <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow-lg z-50">
-                    <div className="px-3 py-4 text-center">
-                      <div className="text-sm text-gray-500 mb-3">
-                        {L({ 
-                          ko: "검색 결과가 없습니다", 
-                          zh: "没有搜索结果", 
-                          en: "No results found" 
-                        })}
-                      </div>
-                      <button
-                        onClick={() => openKakaoWebView(searchQuery)}
-                        className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
-                      >
-                        <Globe size={14} />
-                        <span>{L({ ko: "카카오맵에서 검색", zh: "在Kakao地图搜索", en: "Search in Kakao Map" })}</span>
-                      </button>
-                    </div>
-                  </div>
-                )
               )}
             </div>
-            
-            {/* 길찾기 버튼 */}
-            <button
-              onClick={() => setShowRoutePanel(!showRoutePanel)}
-              className={`p-2 transition-colors flex-shrink-0 ${showRoutePanel ? "text-blue-600" : "text-gray-500 hover:text-gray-700"}`}
-              title={L({ ko: "길찾기", zh: "导航", en: "Navigation" })}
-            >
-              <Route size={20} />
-            </button>
+
+            {/* 검색 결과 드롭다운 */}
+            {(showSearchResults || isSearching) && (
+              isSearching ? (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-50">
+                  <div className="px-3 py-3 text-center flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent" />
+                    <span className="text-sm text-gray-400">{L({ ko: "검색 중...", zh: "搜索中...", en: "Searching..." })}</span>
+                  </div>
+                </div>
+              ) : searchResults.length > 0 ? (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto z-50">
+                  {searchResults.map((result) => (
+                    <button key={result.id} onClick={() => selectSearchResult(result)}
+                      className="w-full px-3 py-2.5 text-left hover:bg-gray-50 border-b border-gray-50 last:border-0">
+                      <div className="font-medium text-sm text-gray-900">{result.name}</div>
+                      {result.address && <div className="text-xs text-gray-400 mt-0.5">{result.address}</div>}
+                      {result.category && <div className="text-[10px] text-blue-500 mt-0.5">{result.category}</div>}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-50">
+                  <div className="px-3 py-4 text-center text-sm text-gray-400">
+                    {L({ ko: "검색 결과가 없습니다", zh: "没有搜索结果", en: "No results" })}
+                  </div>
+                </div>
+              )
+            )}
           </div>
+
+
         </div>
       </div>
 
-
-      {/* 출발지/도착지 입력 패널 */}
-      {showRoutePanel && (
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sticky top-[70px] z-30">
-          <div className="px-4 py-3">
-            <div className="flex items-start space-x-3">
-              {/* 출발지 + 도착지 입력창들 */}
-              <div className="flex-1 space-y-3">
-                {/* 출발지 입력 */}
-                <div className="relative route-search-start">
-                  <input
-                    type="text"
-                    value={startLocation}
-                    onChange={(e) => handleStartLocationChange(e.target.value)}
-                    placeholder={L({ ko: "출발지", zh: "出发地", en: "Start" })}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                  />
-                  
-                  {/* 출발지 검색 결과 */}
-                  {showStartResults && startResults.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
-                      {startResults.map((result) => (
-                        <button
-                          key={result.id}
-                          onClick={() => selectLocation(result, true)}
-                          className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                        >
-                          <div className="font-medium text-xs">{result.name}</div>
-                          {result.address && (
-                            <div className="text-xs text-gray-500">{result.address}</div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* 도착지 입력 */}
-                <div className="relative route-search-end">
-                  <input
-                    type="text"
-                    value={endLocation}
-                    onChange={(e) => handleEndLocationChange(e.target.value)}
-                    placeholder={L({ ko: "도착지", zh: "目的地", en: "Destination" })}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                  />
-
-                  {/* 도착지 검색 결과 */}
-                  {showEndResults && endResults.length > 0 && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 rounded-lg shadow-lg max-h-40 overflow-y-auto z-50">
-                      {endResults.map((result) => (
-                        <button
-                          key={result.id}
-                          onClick={() => selectLocation(result, false)}
-                          className="w-full px-3 py-2 text-left hover:bg-gray-50 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                        >
-                          <div className="font-medium text-xs">{result.name}</div>
-                          {result.address && (
-                            <div className="text-xs text-gray-500">{result.address}</div>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* 우측 버튼들 (세로 배치: Go 위, 전환 버튼 아래) */}
-              <div className="flex flex-col space-y-2 pt-1">
-                {/* Go 버튼 */}
-                <button
-                  onClick={startNavigation}
-                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  {L({ ko: "Go", zh: "출발", en: "Go" })}
-                </button>
-
-                {/* 전환 버튼 */}
-                <button
-                  onClick={switchLocations}
-                  className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  title={L({ ko: "출발지/도착지 바꾸기", zh: "交换出发地和目的地", en: "Switch locations" })}
-                >
-                  <ArrowUpDown size={16} />
-                </button>
-
-                {/* 닫기 버튼 */}
-                <button
-                  onClick={() => {
-                    setShowRoutePanel(false)
-                    setShowStartResults(false)
-                    setShowEndResults(false)
-                  }}
-                  className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* 카테고리 탭 */}
-      <div className={`bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sticky z-30 ${showRoutePanel ? 'top-[200px]' : 'top-[70px]'}`}>
-        <div className="px-4 py-3">
+      {/* 카테고리 탭 — 지도 밖 고정, 침범 안 함 */}
+      <div className="bg-white border-b border-gray-100 z-30 relative">
+        <div className="px-4 py-2">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => searchByCategory(category.id)}
-                className={`flex-shrink-0 px-3 py-2 rounded-full border transition-all text-sm ${
+                className={`flex-shrink-0 px-3 py-1.5 rounded-full border transition-all text-xs ${
                   selectedCategory === category.id
                     ? 'bg-gray-900 text-white border-gray-900'
-                    : 'bg-white dark:bg-gray-800 text-gray-600 border-gray-200 hover:border-gray-300'
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
                 }`}
               >
                 <span className="font-medium">{L(category.name)}</span>
@@ -1079,24 +1180,149 @@ export default function MapTab({ lang }) {
           ref={mapRef}
           className={`w-full ${
             showRoutePanel 
-              ? 'h-[calc(100vh-340px)] md:h-[calc(100vh-300px)]'
-              : 'h-[calc(100vh-200px)] md:h-[calc(100vh-160px)]'
+              ? 'h-[calc(100vh-380px)] md:h-[calc(100vh-340px)]'
+              : 'h-[calc(100vh-240px)] md:h-[calc(100vh-200px)]'
           }`}
           style={{ 
-            minHeight: '300px',
-            maxHeight: 'calc(100vh - 150px)'
+            minHeight: '250px',
+            maxHeight: 'calc(100vh - 200px)'
           }}
         />
 
 
 
+        {/* 현재위치 버튼 */}
+        <button
+          onClick={() => {
+            if (!map || locatingUser) return
+            if (!navigator.geolocation && !Capacitor.isNativePlatform()) {
+              alert(L({
+                ko: '이 브라우저에서는 위치 서비스를 지원하지 않습니다.',
+                zh: '此浏览器不支持位置服务。',
+                en: 'Geolocation is not supported by this browser.'
+              }))
+              return
+            }
+
+            // 이전 watch 정리
+            if (watchIdRef.current) {
+              watchIdRef.current()
+              watchIdRef.current = null
+            }
+
+            setLocatingUser(true)
+            setLocationAccuracy(null)
+            let settled = false
+
+            const updateLocation = (position) => {
+              const lat = position.coords.latitude
+              const lng = position.coords.longitude
+              const accuracy = position.coords.accuracy // 미터 단위
+              const moveLatLng = new window.kakao.maps.LatLng(lat, lng)
+
+              map.setCenter(moveLatLng)
+              if (!settled) {
+                map.setLevel(3)
+              }
+              setUserLocation({ lat, lng })
+              setLocationAccuracy(Math.round(accuracy))
+
+              // 기존 내 위치 마커 제거 후 새로 추가
+              if (userMarkerRef.current) {
+                userMarkerRef.current.setMap(null)
+              }
+              const marker = new window.kakao.maps.Marker({
+                position: moveLatLng,
+                map: map,
+                image: new window.kakao.maps.MarkerImage(
+                  'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                      <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
+                    </svg>
+                  `),
+                  new window.kakao.maps.Size(24, 24)
+                )
+              })
+              userMarkerRef.current = marker
+
+              // GPS 정확도 50m 이내면 충분히 정확 → watch 중단
+              if (accuracy <= 50) {
+                if (watchIdRef.current) {
+                  watchIdRef.current()
+                  watchIdRef.current = null
+                }
+                setLocatingUser(false)
+              }
+              settled = true
+            }
+
+            const handleError = (error) => {
+              if (watchIdRef.current) {
+                watchIdRef.current()
+                watchIdRef.current = null
+              }
+              setLocatingUser(false)
+              let msg
+              if (error.code === 1) {
+                msg = L({
+                  ko: '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.',
+                  zh: '位置权限被拒绝。请在浏览器设置中允许位置权限。',
+                  en: 'Location permission denied. Please allow location access in browser settings.'
+                })
+              } else if (error.code === 2) {
+                msg = L({
+                  ko: '위치 정보를 사용할 수 없습니다. GPS를 확인해주세요.',
+                  zh: '无法获取位置信息。请检查GPS。',
+                  en: 'Location unavailable. Please check your GPS.'
+                })
+              } else {
+                msg = L({
+                  ko: '위치 요청 시간이 초과되었습니다. 다시 시도해주세요.',
+                  zh: '位置请求超时。请重试。',
+                  en: 'Location request timed out. Please try again.'
+                })
+              }
+              alert(msg)
+            }
+
+            // watchPosition으로 GPS 정확도가 높아질 때까지 위치 업데이트 (네이티브 GPS 우선)
+            watchIdRef.current = watchPositionCompat(
+              updateLocation,
+              handleError,
+              { enableHighAccuracy: true, timeout: 15000 }
+            )
+
+            // 최대 15초 후 자동 중단 (GPS 못 잡아도 마지막 결과 사용)
+            setTimeout(() => {
+              if (watchIdRef.current) {
+                watchIdRef.current()
+                watchIdRef.current = null
+                setLocatingUser(false)
+              }
+            }, 15000)
+          }}
+          className={`absolute top-[130px] right-[6px] z-40 w-9 h-9 bg-white rounded shadow-md flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-300 ${locatingUser ? 'animate-pulse' : ''}`}
+          title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
+        >
+          {locatingUser
+            ? <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            : <Navigation size={18} className="text-blue-500" />
+          }
+        </button>
+        {/* 위치 정확도 표시 */}
+        {locationAccuracy && (
+          <div className="absolute top-16 left-3 z-40 bg-white/90 rounded-full px-2 py-0.5 shadow text-xs text-gray-500 border border-gray-100">
+            ±{locationAccuracy}m
+          </div>
+        )}
+
         {/* 마커 상세 정보 패널 */}
         {selectedMarker && (
-          <div className="absolute bottom-4 left-4 right-4 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 max-h-48 overflow-y-auto z-50">
+          <div className="absolute bottom-20 left-4 right-4 z-50 bg-white rounded-xl shadow-xl p-4 max-h-52 overflow-y-auto">
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center space-x-2 mb-2">
-                  <h3 className="font-bold text-gray-900 dark:text-white">{L(selectedMarker.name)}</h3>
+                  <h3 className="font-bold text-gray-900">{L(selectedMarker.name)}</h3>
                   {selectedMarker.chineseSupport && (
                     <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
                       {L({ ko: '중국어 지원', zh: '中文支持', en: 'Chinese Support' })}
@@ -1132,42 +1358,82 @@ export default function MapTab({ lang }) {
                   )}
                 </div>
 
-                {/* 출발지/도착지 지정 버튼들 */}
-                <div className="flex space-x-2 mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-                  <button
-                    onClick={() => {
-                      setStartLocation(L(selectedMarker.name))
-                      setShowRoutePanel(true)
-                    }}
-                    className="flex-1 px-3 py-2 text-xs font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
-                  >
-                    {L({ ko: '출발지로', zh: '设为起点', en: 'Set Start' })}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setEndLocation(L(selectedMarker.name))
-                      setShowRoutePanel(true)
-                    }}
-                    className="flex-1 px-3 py-2 text-xs font-medium text-red-600 bg-red-50 rounded-lg hover:bg-red-100 transition-colors"
-                  >
-                    {L({ ko: '도착지로', zh: '设为终点', en: 'Set End' })}
-                  </button>
-                </div>
-
-                {/* 카카오맵 연동 버튼들 */}
-                <div className="flex space-x-2 mt-2">
-                  <button
-                    onClick={() => window.open(getKakaoMapUrl(selectedMarker), '_blank')}
-                    className="flex-1 px-3 py-2 text-xs font-medium text-white bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors"
-                  >
-                    {L({ ko: '크게보기', zh: '放大查看', en: 'View Large' })}
-                  </button>
-                  <button
-                    onClick={() => window.open(getKakaoDirectionUrl(selectedMarker), '_blank')}
-                    className="flex-1 px-3 py-2 text-xs font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
-                  </button>
+                {/* 길찾기 버튼 */}
+                <div className="mt-3 pt-3 border-t border-gray-100">
+                  {!showRoutePanel ? (
+                    <button
+                      onClick={() => {
+                        setEndLocation(L(selectedMarker.name))
+                        setEndCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
+                        setShowRoutePanel(true)
+                      }}
+                      className="w-full py-2.5 text-sm font-medium text-white bg-gray-900 rounded-xl"
+                    >
+                      {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
+                    </button>
+                  ) : (
+                    <div className="space-y-2">
+                      {/* 출발지 */}
+                      <div className="relative">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+                          <input
+                            type="text"
+                            value={startLocation}
+                            onChange={(e) => handleStartLocationChange(e.target.value)}
+                            placeholder={L({ ko: "출발지", zh: "出发地", en: "Start" })}
+                            className="flex-1 px-3 py-2 text-sm bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
+                          />
+                        </div>
+                        {showStartResults && startResults.length > 0 && (
+                          <div className="absolute bottom-full left-6 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-32 overflow-y-auto z-50">
+                            {startResults.map(r => (
+                              <button key={r.id} onClick={() => selectLocation(r, true)}
+                                className="w-full px-3 py-1.5 text-left hover:bg-gray-50 text-xs border-b border-gray-50 last:border-0">
+                                <div className="font-medium">{r.name}</div>
+                                {r.address && <div className="text-gray-400">{r.address}</div>}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      {/* 도착지 */}
+                      <div className="relative">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
+                          <input
+                            type="text"
+                            value={endLocation}
+                            onChange={(e) => handleEndLocationChange(e.target.value)}
+                            placeholder={L({ ko: "도착지", zh: "目的地", en: "Destination" })}
+                            className="flex-1 px-3 py-2 text-sm bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
+                          />
+                        </div>
+                        {showEndResults && endResults.length > 0 && (
+                          <div className="absolute bottom-full left-6 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-32 overflow-y-auto z-50">
+                            {endResults.map(r => (
+                              <button key={r.id} onClick={() => selectLocation(r, false)}
+                                className="w-full px-3 py-1.5 text-left hover:bg-gray-50 text-xs border-b border-gray-50 last:border-0">
+                                <div className="font-medium">{r.name}</div>
+                                {r.address && <div className="text-gray-400">{r.address}</div>}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      {/* 출발 + 닫기 */}
+                      <div className="flex gap-2">
+                        <button onClick={startNavigation}
+                          className="flex-1 py-2 text-sm font-medium text-white bg-blue-500 rounded-xl">
+                          Go
+                        </button>
+                        <button onClick={() => { setShowRoutePanel(false); setShowStartResults(false); setShowEndResults(false) }}
+                          className="px-3 py-2 text-sm text-gray-500 bg-gray-100 rounded-xl">
+                          <X size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <button 
@@ -1210,7 +1476,7 @@ export default function MapTab({ lang }) {
       {/* 카카오맵 웹뷰 모달 */}
       {showKakaoWebView && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 w-full h-full max-w-lg max-h-[90vh] rounded-lg flex flex-col">
+          <div className="bg-white w-full h-full max-w-lg max-h-[90vh] rounded-lg flex flex-col">
             {/* 웹뷰 헤더 */}
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <div className="flex items-center space-x-2">

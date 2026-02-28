@@ -5,7 +5,11 @@ const TravelDiary = lazy(() => import('./TravelDiary/TravelDiary'))
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
+const TourSpotSection = lazy(() => import('./TourSpotSection'))
+const TourDetailModal = lazy(() => import('./TourDetailModal'))
+
 const SECTIONS = [
+  { id: 'discover', label: { ko: '발견', zh: '发现', en: 'Discover' } },
   { id: 'arrival', label: { ko: '입국 가이드', zh: '入境指南', en: 'Arrival' } },
   { id: 'cities', label: { ko: '도시 가이드', zh: '城市指南', en: 'Cities' } },
   { id: 'transport', label: { ko: '교통', zh: '交通', en: 'Transport' } },
@@ -181,8 +185,9 @@ function saveUserInterest(category) {
 }
 
 export default function TravelTab({ lang, setTab, profile }) {
-  const [section, setSection] = useState('arrival')
+  const [section, setSection] = useState('discover')
   const [expandedCity, setExpandedCity] = useState(null)
+  const [tourDetailItem, setTourDetailItem] = useState(null)
   const [userInterests, setUserInterests] = useState(getUserInterests)
   const [favorites, setFavorites] = useState(() => {
     try { return JSON.parse(localStorage.getItem('travel_favorites') || '[]') } catch { return [] }
@@ -258,6 +263,30 @@ export default function TravelTab({ lang, setTab, profile }) {
           </button>
         ))}
       </div>
+
+      {/* Discover - TourAPI */}
+      {section === 'discover' && (
+        <Suspense fallback={<div className="flex justify-center py-8"><div className="w-8 h-8 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin" /></div>}>
+          <TourSpotSection
+            lang={lang}
+            darkMode={false}
+            onItemClick={setTourDetailItem}
+            title={L(lang, { ko: '한국 여행지 발견', zh: '发现韩国旅游地', en: 'Discover Korea' })}
+          />
+        </Suspense>
+      )}
+
+      {/* Tour Detail Modal */}
+      {tourDetailItem && (
+        <Suspense fallback={null}>
+          <TourDetailModal
+            item={tourDetailItem}
+            lang={lang}
+            darkMode={false}
+            onClose={() => setTourDetailItem(null)}
+          />
+        </Suspense>
+      )}
 
       {/* Arrival */}
       {section === 'arrival' && (

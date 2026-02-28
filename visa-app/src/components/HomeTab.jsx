@@ -55,8 +55,9 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   const [containerW, setContainerW] = useState(0)
   const containerRef = useRef(null)
   const touchRef = useRef({ startX: 0, startY: 0, swiping: false, locked: false })
+  const dragXRef = useRef(0)
 
-  const SWIPE_THRESHOLD = 25
+  const SWIPE_THRESHOLD = 80
   const FOLD_MAX = 0
 
   // 스와이프 효과음 함수
@@ -90,7 +91,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     if (diff === 0) {
       return {
         transform: `translateX(${dragX}px)`,
-        transition: dragX === 0 ? T : 'none',
+        transition: (dragX === 0 || snapping) ? T : 'none',
         zIndex: 10, opacity: 1, pointerEvents: 'auto'
       }
     }
@@ -99,7 +100,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)
       return {
         transform: `scale(${0.95 + 0.05 * progress})`,
-        transition: dragX === 0 ? T : 'none',
+        transition: (dragX === 0 || snapping) ? T : 'none',
         zIndex: 5, opacity: 0.6 + 0.4 * progress, pointerEvents: 'none'
       }
     }
@@ -129,6 +130,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       playSwipeSound()
     }
     setCurrentIndex(clamped)
+    dragXRef.current = 0
     setDragX(0)
     setShowBookmark(false)
   }
@@ -165,25 +167,38 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     if (!touchRef.current.swiping) return
 
     e.preventDefault()
+    dragXRef.current = dx
     setDragX(dx)
     setShowBookmark(Math.abs(dx) >= SWIPE_THRESHOLD)
   }
 
+  const [snapping, setSnapping] = useState(false)
+
   const onTouchEnd = () => {
+    const dx = dragXRef.current
     if (!touchRef.current.swiping) {
+      dragXRef.current = 0
       setDragX(0)
       setShowBookmark(false)
       return
     }
     const lastIndex = totalSlides - 1
-    if (Math.abs(dragX) >= SWIPE_THRESHOLD) {
-      if (dragX < 0 && currentIndex < lastIndex) goTo(currentIndex + 1, true)
-      else if (dragX > 0 && currentIndex > 0) goTo(currentIndex - 1, true)
-      else { setDragX(0); setShowBookmark(false) }
-    } else {
+    // 스냅백 공통 함수
+    const snapBack = () => {
+      setSnapping(true)
+      dragXRef.current = 0
       setDragX(0)
       setShowBookmark(false)
+      setTimeout(() => setSnapping(false), 400)
     }
+    if (Math.abs(dx) >= SWIPE_THRESHOLD) {
+      if (dx < 0 && currentIndex < lastIndex) goTo(currentIndex + 1, true)
+      else if (dx > 0 && currentIndex > 0) goTo(currentIndex - 1, true)
+      else snapBack()
+    } else {
+      snapBack()
+    }
+    dragXRef.current = 0
   }
 
   const addPocket = (pocketId) => {
@@ -255,21 +270,9 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
             >
               {/* 포켓 디자인 */}
               <div className="relative w-full h-full">
-                {/* 왼쪽 상단 포스트잇 카테고리 탭 */}
-                {(() => {
-                  const cat = pocketCategories.find(c => c.pockets.some(p => p.id === pocketId))
-                  if (!cat) return null
-                  return (
-                    <div className="absolute top-3 left-0 z-20 bg-[#111827] text-white text-[10px] font-medium px-3 py-1 rounded-r-md shadow-sm"
-                      style={{ letterSpacing: '0.05em' }}>
-                      {L(lang, cat.name)}
-                    </div>
-                  )
-                })()}
-                
                 {/* 포켓 본체 */}
-                <div className="bg-white border border-gray-200 px-3 py-2 relative overflow-hidden w-full h-full pt-10 shadow-sm"
-                  style={{ borderRadius: '0' }}>
+                <div className="bg-white border border-gray-200 px-3 py-2 relative overflow-hidden w-full shadow-sm"
+                  style={{ borderRadius: '0', height: 'calc(100% - 4px)' }}>
                   {/* X 삭제 버튼 */}
                   <button
                     onClick={() => {
@@ -280,22 +283,22 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                   >
                     <X className="w-4 h-4 text-gray-400" strokeWidth={1} />
                   </button>
-                  <div className="flex items-center gap-3 mb-4">
-                    {/* 잠금/해제 버튼 */}
-                    <button
-                      onClick={() => toggleLock(pocketId)}
-                      className="w-6 h-6 rounded-full flex items-center justify-center transition-colors flex-shrink-0"
-                      style={{ backgroundColor: lockedPockets[pocketId] ? '#EF4444' : '#3B82F6' }}
-                    >
-                      {lockedPockets[pocketId] 
-                        ? <Lock className="w-3 h-3 text-white" strokeWidth={1.5} />
-                        : <Unlock className="w-3 h-3 text-white" strokeWidth={1.5} />
-                      }
-                    </button>
-                    <LucideIcon name={pocket.icon} size={20} style={{ color: '#111827' }} />
-                    <h2 className="text-lg font-semibold" style={{ color: '#111827' }}>{L(lang, pocket.name)}</h2>
+                  {/* 카테고리 + 포켓 이름 한 줄 */}
+                  <div className="flex items-center gap-2 mb-3 -ml-3 pl-3">
+                    {(() => {
+                      const cat = pocketCategories.find(c => c.pockets.some(p => p.id === pocketId))
+                      if (!cat) return null
+                      return (
+                        <span className="bg-[#111827] text-white text-[10px] font-medium px-2 py-0.5 rounded-r"
+                          style={{ letterSpacing: '0.05em', marginLeft: '-12px' }}>
+                          {L(lang, cat.name)}
+                        </span>
+                      )
+                    })()}
+                    <LucideIcon name={pocket.icon} size={18} style={{ color: '#111827' }} />
+                    <h2 className="text-base font-semibold" style={{ color: '#111827' }}>{L(lang, pocket.name)}</h2>
                   </div>
-                  <div className="overflow-y-auto scroll-smooth" style={{ height: 'calc(100% - 40px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
+                  <div className="overflow-y-auto scroll-smooth" style={{ height: 'calc(100% - 36px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
                     <PocketContent pocketId={pocketId} lang={lang} setTab={setTab} />
                   </div>
                 </div>
@@ -315,8 +318,8 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           {/* 포켓 추가 디자인 */}
           <div className="relative w-full h-full">
             <div
-              className="bg-white border border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full h-full shadow-sm"
-              style={{ borderRadius: '0' }}
+              className="bg-white border border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full shadow-sm"
+              style={{ borderRadius: '0', boxSizing: 'border-box', height: 'calc(100% - 16px)' }}
               onClick={() => setShowAdd(true)}
             >
               <Plus className="w-12 h-12 text-gray-400 mb-4" />

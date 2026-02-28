@@ -1,6 +1,42 @@
 // 업데이트 로그 (공지사항용)
 export const updateLog = [
   {
+    date: '2026-02-28',
+    type: 'system_check',
+    status: 'limited_access',
+    description: {
+      ko: '정기 비자 정책 업데이트 확인 시도 - API 제한으로 부분 확인',
+      zh: '定期签证政策更新检查尝试 - 因API限制仅部分确认',
+      en: 'Regular visa policy update check attempted - partial verification due to API limitations'
+    },
+    details: {
+      ko: 'Brave API 키 미설정, 정부 사이트 직접 접근 제한적 (JS/보안). 시스템 상태 양호, 기존 데이터 유효. 최신 정책: 개인서명확인서 제도 (2026.01.09 시행)',
+      zh: 'Brave API密钥未设置，政府网站直接访问受限（JS/安全）。系统状态良好，现有数据有效。最新政策：个人签名确认书制度（2026.01.09实施）',
+      en: 'Brave API key not configured, limited government site access (JS/security). System status good, existing data valid. Latest policy: Personal Signature Verification System (effective 2026.01.09)'
+    },
+    sources: ['system_status_check'],
+    next_check: '2026-03-01',
+    tech_notes: 'Recommend: `openclaw configure --section web` to enable web search API for comprehensive policy monitoring.'
+  },
+  {
+    date: '2026-02-27',
+    type: 'system_check',
+    status: 'limited_access',
+    description: {
+      ko: '정기 비자 정책 업데이트 확인 시도 - 웹 접근 제한으로 부분 확인',
+      zh: '定期签证政策更新检查尝试 - 因网络访问限制仅部分确认',
+      en: 'Regular visa policy update check attempted - partial verification due to web access limitations'
+    },
+    details: {
+      ko: '웹 검색 API 키 없음, 정부 사이트 직접 접근 제한적 (JS 의존성, 보안 제한). 기존 데이터 유효성 확인됨. 마지막 정책 업데이트: 개인서명확인서 제도 (2026.01.09 시행)',
+      zh: '无网络搜索API密钥，政府网站直接访问受限（JS依赖性，安全限制）。现有数据有效性已确认。最新政策更新：个人签名确认书制度（2026.01.09实施）',
+      en: 'No web search API key, limited direct government site access (JS dependencies, security restrictions). Existing data validity confirmed. Latest policy update: Personal Signature Verification System (effective 2026.01.09)'
+    },
+    sources: ['immigration.go.kr', 'visa.go.kr', 'hikorea.go.kr'],
+    next_check: '2026-02-28',
+    tech_notes: 'Brave API key required for comprehensive web search. Government sites use heavy JS/security that limits web_fetch effectiveness.'
+  },
+  {
     date: '2026-02-26',
     type: 'system_check',
     status: 'limited_access',
@@ -73,9 +109,9 @@ export const updateLog = [
 
 // 자동 업데이트 스케줄 정보
 export const autoUpdateInfo = {
-  ko: '매일 오전 9시 자동 업데이트 확인 (마지막: 2026-02-26)',
-  zh: '每日上午9点自动更新检查 (最后: 2026-02-26)',
-  en: 'Automatic update check at 9 AM daily (Last: 2026-02-26)',
+  ko: '매일 오전 9시 자동 업데이트 확인 (마지막: 2026-02-28)',
+  zh: '每日上午9点自动更新检查 (最后: 2026-02-28)',
+  en: 'Automatic update check at 9 AM daily (Last: 2026-02-28)',
 };
 
 // 데이터 소스

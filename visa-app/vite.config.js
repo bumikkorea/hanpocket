@@ -23,12 +23,12 @@ export default defineConfig({
               request.destination === 'document' ||
               request.destination === 'script' ||
               request.destination === 'style',
-            handler: 'CacheFirst',
+            handler: 'NetworkFirst',
             options: {
               cacheName: 'app-shell-cache',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+                maxAgeSeconds: 7 * 24 * 60 * 60, // 7 days
               },
             },
           },

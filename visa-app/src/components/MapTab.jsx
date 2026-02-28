@@ -1310,130 +1310,102 @@ export default function MapTab({ lang }) {
 
         {/* 마커 상세 정보 패널 */}
         {selectedMarker && (
-          <div className="absolute bottom-20 left-4 right-4 z-50 bg-white rounded-xl shadow-xl p-4 max-h-52 overflow-y-auto">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
-                  <h3 className="font-bold text-gray-900">{L(selectedMarker.name)}</h3>
-                  {selectedMarker.chineseSupport && (
-                    <span className="bg-red-100 text-red-600 text-xs px-2 py-1 rounded-full">
-                      {L({ ko: '중국어 지원', zh: '中文支持', en: 'Chinese Support' })}
-                    </span>
-                  )}
-                </div>
-                <p className="text-gray-600 text-sm mb-2">{L(selectedMarker.description)}</p>
-                
-                {/* 카테고리별 추가 정보 */}
-                <div className="space-y-1 text-sm">
-                  {selectedMarker.priceRange && (
-                    <div className="text-gray-500">💰 {selectedMarker.priceRange}</div>
-                  )}
-                  {selectedMarker.specialty && (
-                    <div className="text-gray-500">🏥 {L(selectedMarker.specialty)}</div>
-                  )}
-                  {selectedMarker.lines && (
-                    <div className="text-gray-500">🚇 {selectedMarker.lines.join(', ')}</div>
-                  )}
-                  {selectedMarker.discount && (
-                    <div className="text-green-600">
-                      🎁 {L({ ko: '할인', zh: '折扣', en: 'Discount' })}: {selectedMarker.discount}
-                    </div>
-                  )}
-                  {selectedMarker.ticketPrice && (
-                    <div className="text-gray-500">🎫 {L(selectedMarker.ticketPrice)}</div>
-                  )}
-                  {selectedMarker.phone && (
-                    <div className="text-gray-500">📞 {selectedMarker.phone}</div>
-                  )}
-                  {selectedMarker.categoryName && (
-                    <div className="text-gray-500">🏷️ {selectedMarker.categoryName}</div>
-                  )}
-                </div>
-
-                {/* 길찾기 버튼 */}
-                <div className="mt-3 pt-3 border-t border-gray-100">
-                  {!showRoutePanel ? (
-                    <button
-                      onClick={() => {
-                        setEndLocation(L(selectedMarker.name))
-                        setEndCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
-                        setShowRoutePanel(true)
-                      }}
-                      className="w-full py-2.5 text-sm font-medium text-white bg-gray-900 rounded-xl"
-                    >
-                      {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
-                    </button>
-                  ) : (
-                    <div className="space-y-2">
-                      {/* 출발지 */}
-                      <div className="relative">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
-                          <input
-                            type="text"
-                            value={startLocation}
-                            onChange={(e) => handleStartLocationChange(e.target.value)}
-                            placeholder={L({ ko: "출발지", zh: "出发地", en: "Start" })}
-                            className="flex-1 px-3 py-2 text-sm bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
-                          />
-                        </div>
-                        {showStartResults && startResults.length > 0 && (
-                          <div className="absolute bottom-full left-6 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-32 overflow-y-auto z-50">
-                            {startResults.map(r => (
-                              <button key={r.id} onClick={() => selectLocation(r, true)}
-                                className="w-full px-3 py-1.5 text-left hover:bg-gray-50 text-xs border-b border-gray-50 last:border-0">
-                                <div className="font-medium">{r.name}</div>
-                                {r.address && <div className="text-gray-400">{r.address}</div>}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      {/* 도착지 */}
-                      <div className="relative">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-red-500 shrink-0" />
-                          <input
-                            type="text"
-                            value={endLocation}
-                            onChange={(e) => handleEndLocationChange(e.target.value)}
-                            placeholder={L({ ko: "도착지", zh: "目的地", en: "Destination" })}
-                            className="flex-1 px-3 py-2 text-sm bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
-                          />
-                        </div>
-                        {showEndResults && endResults.length > 0 && (
-                          <div className="absolute bottom-full left-6 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-32 overflow-y-auto z-50">
-                            {endResults.map(r => (
-                              <button key={r.id} onClick={() => selectLocation(r, false)}
-                                className="w-full px-3 py-1.5 text-left hover:bg-gray-50 text-xs border-b border-gray-50 last:border-0">
-                                <div className="font-medium">{r.name}</div>
-                                {r.address && <div className="text-gray-400">{r.address}</div>}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      {/* 출발 + 닫기 */}
-                      <div className="flex gap-2">
-                        <button onClick={startNavigation}
-                          className="flex-1 py-2 text-sm font-medium text-white bg-blue-500 rounded-xl">
-                          Go
-                        </button>
-                        <button onClick={() => { setShowRoutePanel(false); setShowStartResults(false); setShowEndResults(false) }}
-                          className="px-3 py-2 text-sm text-gray-500 bg-gray-100 rounded-xl">
-                          <X size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+          <div className="absolute bottom-16 left-3 right-3 z-50 bg-white rounded-xl shadow-xl px-3 py-2.5">
+            {/* 헤더: 이름 + 닫기 */}
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-bold text-gray-900 text-[13px] leading-tight">{L(selectedMarker.name)}</h3>
+                <p className="text-gray-500 text-[11px] leading-tight mt-0.5 line-clamp-2">{L(selectedMarker.description)}</p>
               </div>
-              <button 
-                onClick={() => setSelectedMarker(null)}
-                className="ml-2 p-1 hover:bg-gray-100 rounded"
-              >
-                ✕
+              <button onClick={() => setSelectedMarker(null)} className="p-0.5 hover:bg-gray-100 rounded shrink-0 mt-0.5">
+                <X size={14} className="text-gray-400" />
               </button>
+            </div>
+
+            {/* 부가 정보 (한 줄로 압축) */}
+            <div className="flex flex-wrap gap-x-3 gap-y-0 mt-1 text-[11px] text-gray-500">
+              {selectedMarker.chineseSupport && <span className="text-red-500">🇨🇳</span>}
+              {selectedMarker.phone && <span>📞 {selectedMarker.phone}</span>}
+              {selectedMarker.priceRange && <span>💰 {selectedMarker.priceRange}</span>}
+              {selectedMarker.categoryName && <span>🏷️ {selectedMarker.categoryName}</span>}
+            </div>
+
+            {/* 길찾기 영역 */}
+            <div className="mt-2 pt-2 border-t border-gray-100">
+              {!showRoutePanel ? (
+                <button
+                  onClick={() => {
+                    setEndLocation(L(selectedMarker.name))
+                    setEndCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
+                    setShowRoutePanel(true)
+                  }}
+                  className="w-full py-2 text-[13px] font-medium text-white bg-gray-900 rounded-lg"
+                >
+                  {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
+                </button>
+              ) : (
+                <div className="space-y-1.5">
+                  {/* 출발지 */}
+                  <div className="relative">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
+                      <input
+                        type="text"
+                        value={startLocation}
+                        onChange={(e) => handleStartLocationChange(e.target.value)}
+                        placeholder={L({ ko: "출발지", zh: "出发地", en: "Start" })}
+                        className="flex-1 px-2.5 py-1.5 text-[13px] bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
+                      />
+                    </div>
+                    {showStartResults && startResults.length > 0 && (
+                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-28 overflow-y-auto z-50">
+                        {startResults.map(r => (
+                          <button key={r.id} onClick={() => selectLocation(r, true)}
+                            className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 text-[11px] border-b border-gray-50 last:border-0">
+                            <div className="font-medium">{r.name}</div>
+                            {r.address && <div className="text-gray-400">{r.address}</div>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {/* 도착지 */}
+                  <div className="relative">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+                      <input
+                        type="text"
+                        value={endLocation}
+                        onChange={(e) => handleEndLocationChange(e.target.value)}
+                        placeholder={L({ ko: "도착지", zh: "目的地", en: "Destination" })}
+                        className="flex-1 px-2.5 py-1.5 text-[13px] bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
+                      />
+                    </div>
+                    {showEndResults && endResults.length > 0 && (
+                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-28 overflow-y-auto z-50">
+                        {endResults.map(r => (
+                          <button key={r.id} onClick={() => selectLocation(r, false)}
+                            className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 text-[11px] border-b border-gray-50 last:border-0">
+                            <div className="font-medium">{r.name}</div>
+                            {r.address && <div className="text-gray-400">{r.address}</div>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {/* Go + 닫기 */}
+                  <div className="flex gap-2">
+                    <button onClick={startNavigation}
+                      className="flex-1 py-1.5 text-[13px] font-medium text-white bg-blue-500 rounded-lg">
+                      Go
+                    </button>
+                    <button onClick={() => { setShowRoutePanel(false); setShowStartResults(false); setShowEndResults(false) }}
+                      className="px-3 py-1.5 text-gray-500 bg-gray-100 rounded-lg">
+                      <X size={14} />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

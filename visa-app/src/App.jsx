@@ -6,7 +6,7 @@ import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleA
 
 import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints, Map, Heart, Compass, Layers } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints, Map, Heart, Compass, Layers, Wallet } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -1303,7 +1303,7 @@ function AppInner() {
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'pocket', icon: Layers, label: { ko: '포켓', zh: '口袋', en: 'Pocket' } },
+    { id: 'pocket', icon: Wallet, label: { ko: '포켓', zh: '口袋', en: 'Pocket' } },
     { id: 'map', icon: MapPin, label: { ko: '지도', zh: '地图', en: 'Map' } },
     { id: 'community', icon: Users, label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
@@ -1774,24 +1774,7 @@ function AppInner() {
             return (
               <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
                 className="flex flex-col items-center gap-0.5 py-1">
-                {item.id === 'pocket' ? (
-                  <svg width="22" height="22" viewBox="0 0 40 40" fill="none" className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'}>
-                    <path d="M20 4C14 4 8 8 8 8L6 12C6 12 5 16 6 20C7 24 10 28 14 31C17 33 20 36 20 36C20 36 23 33 26 31C30 28 33 24 34 20C35 16 34 12 34 12L32 8C32 8 26 4 20 4Z" fill={active ? '#D94F4F' : 'currentColor'} opacity={active ? 1 : 0.3}/>
-                    <path d="M14 12C14 12 13 14 14 17C15 20 17 22 20 24C23 22 25 20 26 17C27 14 26 12 26 12" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-                    <circle cx="16" cy="10" r="1" fill="white" opacity="0.6"/>
-                    <line x1="18" y1="8" x2="18" y2="6" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
-                    <line x1="22" y1="8" x2="22" y2="5" stroke={active ? '#D94F4F' : 'currentColor'} strokeWidth="1.5" strokeLinecap="round" opacity={active ? 1 : 0.4}/>
-                  </svg>
-                ) : item.id === 'map' ? (
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" className={active ? 'text-[#111827]' : 'text-[#9CA3AF]'}>
-                    {/* 신발 아이콘 */}
-                    <path d="M3 16.5C3 16.5 3 14 5 13C7 12 8 12.5 10 12C12 11.5 13 10 13 8C13 6 14 4 16.5 4C19 4 20 6 20 6L21 10C21 10 21.5 13 21 15C20.5 17 19 18 16 18.5C13 19 8 19 5 18.5C3 18.2 3 16.5 3 16.5Z" stroke="currentColor" strokeWidth={active ? 1.8 : 1.5} fill={active ? 'currentColor' : 'none'} fillOpacity={active ? 0.15 : 0} strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M13 8.5C14.5 8 16 8.5 17 9.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" opacity={0.6}/>
-                    <path d="M3 16.5C5 16 8 15.5 11 15.5C14 15.5 17 15.8 21 15" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity={0.4}/>
-                  </svg>
-                ) : (
-                  <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />
-                )}
+                <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />
                 <span className="text-[11px] font-light" style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
               </button>
             )

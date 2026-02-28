@@ -4,7 +4,7 @@ import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, re
 import { initKakao, loginWithKakao, loginWithKakaoPopup, logoutFromKakao, getKakaoUser, isKakaoLoggedIn, handleKakaoCallback } from './utils/kakaoAuth'
 import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleAppleCallback } from './utils/appleAuth'
 
-import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
+// import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
 import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints, Map, Heart, Compass, Layers, Wallet } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
@@ -1206,9 +1206,9 @@ function AppInner() {
   }, [])
 
   // Service Worker 초기화 및 업데이트 관리
-  useEffect(() => {
-    initServiceWorker()
-  }, [])
+  // useEffect(() => {
+  //   initServiceWorker()
+  // }, [])
 
   // GA4 초기화 및 개인정보보호 설정
   useEffect(() => {
@@ -1250,12 +1250,12 @@ function AppInner() {
   }, [tab])
 
   // 내정보 탭 진입 시 캐시 갱신
-  useEffect(() => {
-    if (tab === 'profile' || view === 'profile' || tab === 'visa-alert') {
-      forceProfileDataRefresh()
-      console.log('Profile data cache refreshed for tab:', tab)
-    }
-  }, [tab, view])
+  // useEffect(() => {
+  //   if (tab === 'profile' || view === 'profile' || tab === 'visa-alert') {
+  //     forceProfileDataRefresh()
+  //     console.log('Profile data cache refreshed for tab:', tab)
+  //   }
+  // }, [tab, view])
 
   const [pushEnabled, setPushEnabled] = useState(() => {
     return typeof Notification !== 'undefined' && Notification.permission === 'granted'

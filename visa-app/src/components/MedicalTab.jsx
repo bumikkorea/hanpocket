@@ -29,7 +29,7 @@ function InsuranceGuide({ lang }) {
             <BookOpen size={20} className="text-slate-600" />
           </div>
           <div>
-            <p className="font-semibold text-[#111827]" style={{ fontFamily: 'Inter, sans-serif' }}>{L(lang, guide.title)}</p>
+            <p className="font-semibold text-[#111827]">{L(lang, guide.title)}</p>
             <p className="text-xs text-slate-500">{t.insuranceGuide}</p>
           </div>
         </div>
@@ -39,7 +39,7 @@ function InsuranceGuide({ lang }) {
         <div className="px-4 pb-4 space-y-4">
           {guide.sections.map((section, i) => (
             <div key={i} className="border-t border-slate-100 pt-4">
-              <h4 className="font-semibold text-sm text-[#111827] mb-2" style={{ fontFamily: 'Inter, sans-serif' }}>{L(lang, section.title)}</h4>
+              <h4 className="font-semibold text-sm text-[#111827] mb-2">{L(lang, section.title)}</h4>
               <p className="text-sm text-slate-600 leading-relaxed">{L(lang, section.content)}</p>
             </div>
           ))}
@@ -61,7 +61,7 @@ function HospitalCard({ hospital, lang }) {
     <div className="card-glow bg-white rounded-xl border border-slate-200 p-4 hover:border-slate-300 transition-all">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-[#111827] text-base truncate" style={{ fontFamily: 'Inter, sans-serif' }}>{L(lang, hospital.name)}</h3>
+          <h3 className="font-semibold text-[#111827] text-base truncate">{L(lang, hospital.name)}</h3>
           <p className="text-xs text-slate-500 mt-0.5">{L(lang, hospital.address)}</p>
         </div>
         <span className="ml-2 shrink-0 px-2 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-slate-700">{hospital.type}</span>
@@ -156,7 +156,7 @@ export default function MedicalTab({ lang = 'ko' }) {
   }, [searchQuery, selectedCity, selectedType])
 
   return (
-    <div className="pb-6" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="pb-6">
       <InsuranceGuide lang={lang} />
 
       {/* Search */}
@@ -168,8 +168,7 @@ export default function MedicalTab({ lang = 'ko' }) {
           onChange={e => setSearchQuery(e.target.value)}
           placeholder={t.search}
           className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm text-[#111827] placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-colors bg-white"
-          style={{ fontFamily: 'Inter, sans-serif' }}
-        />
+                 />
       </div>
 
       {/* Filters */}
@@ -178,16 +177,14 @@ export default function MedicalTab({ lang = 'ko' }) {
           value={selectedCity}
           onChange={e => setSelectedCity(e.target.value)}
           className="px-3 py-2 rounded-lg border border-slate-200 text-xs text-[#111827] bg-white focus:outline-none focus:border-slate-400"
-          style={{ fontFamily: 'Inter, sans-serif' }}
-        >
+                 >
           {HOSPITAL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
         <select
           value={selectedType}
           onChange={e => setSelectedType(e.target.value)}
           className="px-3 py-2 rounded-lg border border-slate-200 text-xs text-[#111827] bg-white focus:outline-none focus:border-slate-400"
-          style={{ fontFamily: 'Inter, sans-serif' }}
-        >
+                 >
           {HOSPITAL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
       </div>

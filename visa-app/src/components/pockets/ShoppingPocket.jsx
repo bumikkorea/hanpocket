@@ -380,7 +380,7 @@ export default function ShoppingPocket({ lang = 'ko' }) {
   ]
 
   return (
-    <div className="space-y-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="space-y-4">
       {/* 토스트 메시지 */}
       {toast && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg text-sm z-50">

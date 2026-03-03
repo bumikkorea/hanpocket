@@ -662,7 +662,7 @@ export default function CourseTab({ lang }) {
   // ─── Detail View ───
   if (view === 'detail' && selectedCourse) {
     return (
-      <div className="bg-[#FCFCFA] h-full" style={{ fontFamily: 'Inter, sans-serif', height: 'calc(100vh - 140px)' }}>
+      <div className="bg-[#FCFCFA] h-full" style={{ height: 'calc(100vh - 140px)' }}>
         <CourseDetail
           course={selectedCourse}
           lang={lang}
@@ -677,7 +677,7 @@ export default function CourseTab({ lang }) {
   // ─── Create View ───
   if (view === 'create') {
     return (
-      <div className="bg-[#FCFCFA] h-full" style={{ fontFamily: 'Inter, sans-serif', height: 'calc(100vh - 140px)' }}>
+      <div className="bg-[#FCFCFA] h-full" style={{ height: 'calc(100vh - 140px)' }}>
         <CreateCourse
           lang={lang}
           onBack={() => setView('list')}
@@ -691,7 +691,7 @@ export default function CourseTab({ lang }) {
   return (
     <div
       className="bg-[#FCFCFA] overflow-y-auto px-4 py-4"
-      style={{ fontFamily: 'Inter, sans-serif', height: 'calc(100vh - 140px)' }}
+      style={{ height: 'calc(100vh - 140px)' }}
     >
       {/* A) 내 코스 섹션 */}
       <section className="mb-6">

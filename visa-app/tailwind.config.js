@@ -7,6 +7,9 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Pretendard Variable', 'Pretendard', 'Noto Sans SC', 'Inter', 'system-ui', 'sans-serif'],
+      },
       colors: {
         // CSS 변수를 통한 다크모드 색상 지원
         'bg-primary': 'var(--bg-primary)',

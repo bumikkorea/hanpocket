@@ -142,7 +142,6 @@ export default function OnboardingFlow({ onComplete, lang, setLang }) {
         {step === 'splash' && (
           <div className="flex flex-col items-center justify-center" style={{ minHeight: '60vh' }}>
             <span style={{
-              fontFamily: 'Inter, sans-serif',
               fontSize: '72px',
               fontWeight: 200,
               color: '#111827',

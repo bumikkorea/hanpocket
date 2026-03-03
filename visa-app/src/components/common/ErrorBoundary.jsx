@@ -17,7 +17,7 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-white" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-white">
           {/* Logo */}
           <div className="mb-6">
             <span className="text-2xl font-black tracking-tighter text-[#111827]">HANPOCKET</span>

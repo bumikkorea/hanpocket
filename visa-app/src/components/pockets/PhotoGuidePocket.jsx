@@ -169,7 +169,7 @@ export default function PhotoGuidePocket({ lang = 'zh' }) {
   ];
 
   return (
-    <div className="space-y-4" style={{ fontFamily: 'Inter, sans-serif' }}>
+    <div className="space-y-4">
       {/* Section tabs */}
       <div className="flex gap-1.5 pb-2">
         {sections.map((sec) => (

@@ -1102,15 +1102,15 @@ function ServiceGrid({ lang, L, setSubPage }) {
   const comingSoonLabel = { ko: '업데이트 중', zh: '更新中', en: 'Coming Soon' }
   const updatingBadge = { ko: '(업데이트중)', zh: '(更新中)', en: '(Updating)' }
 
-  // 래플스 호텔 테마 카테고리별 배경색
+  // 래플스 호텔 테마 — 전체 카테고리 크림 통일
   const categoryBgColors = {
-    'situational-korean': '#E8F5E9',
-    'travel-food': '#FFF8E1',
-    'hallyu-entertainment': '#F3E5F5',
-    'shopping-beauty': '#FCE4EC',
-    'learning': '#E0F2F1',
+    'situational-korean': '#F5F1EB',
+    'travel-food': '#F5F1EB',
+    'hallyu-entertainment': '#F5F1EB',
+    'shopping-beauty': '#F5F1EB',
+    'learning': '#F5F1EB',
     'daily-life': '#F5F1EB',
-    'tools': '#FFF3E0',
+    'tools': '#F5F1EB',
   }
 
 
@@ -1385,7 +1385,7 @@ function AppInner() {
   const hasOAuthCode = new URLSearchParams(window.location.search).get('code')
   if (!profile && hasOAuthCode) {
     return (
-      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: 'var(--bg-secondary)', fontFamily: 'Inter, sans-serif' }}>
+      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-[#111827] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
           <p className="text-sm text-[#6B7280]">{lang === 'ko' ? '로그인 처리 중...' : lang === 'zh' ? '登录处理中...' : 'Logging in...'}</p>
@@ -1555,8 +1555,8 @@ function AppInner() {
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
-      {/* Top Bar */}
-      <div className="sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-primary)', borderBottom: '1px solid var(--border)' }}>
+      {/* Top Bar — scrolls with content (not sticky) */}
+      <div className="relative z-10" style={{ backgroundColor: 'var(--bg-primary)', borderBottom: '1px solid var(--border)' }}>
         <div className="px-4 pt-3 pb-2">
           <div className="flex items-center gap-3">
             {subPage ? (
@@ -1579,8 +1579,8 @@ function AppInner() {
 
       <OfflineNotice lang={lang} />
 
-      {/* Content */}
-      <div className="px-4 pt-4 pb-4">
+      {/* Content — full width, no side padding (tabs handle their own padding) */}
+      <div className="pt-4 pb-4">
         {/* Install / Push notification banner */}
         {!pushDismissed && tab === 'home' && (() => {
           const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone
@@ -1589,7 +1589,7 @@ function AppInner() {
           if (!isStandalone && isIOS) {
             // iOS Safari — 앱 설치 안내
             return (
-              <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4">
+              <div className="mx-4 mb-4 bg-[#F3F4F6] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '앱으로 설치하기' : lang === 'zh' ? '安装为App' : 'Install App'}</p>
                   <button onClick={() => { setPushDismissed(true); localStorage.setItem('hp_push_dismissed', 'true') }}
@@ -1605,7 +1605,7 @@ function AppInner() {
           }
           // 일반 브라우저 — 알림 허용 배너
           return (
-            <div className="mb-4 bg-[#F3F4F6] rounded-xl p-4 flex items-center justify-between">
+            <div className="mx-4 mb-4 bg-[#F3F4F6] rounded-xl p-4 flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-[#111827]">{lang === 'ko' ? '알림 받기' : lang === 'zh' ? '开启通知' : 'Enable Notifications'}</p>
                 <p className="text-xs text-[#6B7280] mt-0.5">{lang === 'ko' ? '비자 만료, 공지사항 등을 놓치지 마세요' : lang === 'zh' ? '不要错过签证到期、公告等信息' : "Don't miss visa expiry alerts & updates"}</p>
@@ -1621,10 +1621,13 @@ function AppInner() {
         })()}
         {/* Service grid - pockets.js 데이터 기반 */}
         {tab==='service' && !subPage && (
-          <ServiceGrid lang={lang} L={L} setSubPage={setSubPage} />
+          <div className="px-4">
+            <ServiceGrid lang={lang} L={L} setSubPage={setSubPage} />
+          </div>
         )}
 
-        {/* Sub-pages from explore/tools */}
+        {/* Sub-pages from explore/tools — wrapped with px-4 since parent has no padding */}
+        <div className="px-4">
         {subPage==='travel' && (
           <Suspense fallback={<LoadingSpinner />}>
             <TravelTab lang={lang} setTab={(t) => setSubPage(t)} />
@@ -1725,6 +1728,7 @@ function AppInner() {
         {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet'].includes(subPage) && (
           <PocketContent pocketId={subPage} lang={lang} setTab={(t) => setSubPage(t)} />
         )}
+        </div>
 
         {tab==='course' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
@@ -1738,19 +1742,19 @@ function AppInner() {
         )}
         {tab==='korean' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <KoreanTab lang={lang} />
+            <div className="px-4"><KoreanTab lang={lang} /></div>
           </Suspense>
         )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
-        {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
+        {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
-        <div className="mt-12 mb-6 text-center text-[11px] text-[#9CA3AF]">
+        <div className="mt-12 mb-6 px-4 text-center text-[11px] text-[#9CA3AF]">
           <p>© 2026 HanPocket. All rights reserved.</p>
         </div>
       </div>
       {/* 검색 모달 */}
       {showSearch && (
-        <div className="fixed inset-0 z-50 bg-white" style={{ fontFamily: 'Inter, sans-serif' }}>
+        <div className="fixed inset-0 z-50 bg-white">
           {/* 검색 헤더 */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => { setShowSearch(false); setSearchQuery('') }} className="p-1">

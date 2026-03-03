@@ -1,0 +1,71 @@
+# Board-023: 글로벌 폰트 변경 — Pretendard + Noto Sans SC + Inter
+
+## 목표
+앱 전체 폰트를 각 언어별 인기 무료 폰트로 변경.
+
+## 폰트 조합
+- **한국어**: Pretendard (토스/카카오 사용 폰트)
+- **중국어**: Noto Sans SC (Google Fonts 최다 사용 중문 폰트)
+- **영어/숫자**: Inter (현재 유지)
+
+## 1. CDN 로드 (index.html)
+
+`index.html`의 `<head>`에 추가:
+```html
+<!-- Pretendard (Korean) -->
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+
+<!-- Noto Sans SC (Chinese) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<!-- Inter (English) — 이미 있으면 유지, 없으면 추가 -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+```
+
+## 2. CSS font-family 설정
+
+전역 CSS (index.css 또는 tailwind config 또는 App.jsx의 전역 스타일):
+
+```css
+body {
+  font-family: 'Pretendard Variable', 'Pretendard', 'Noto Sans SC', 'Inter', 
+               -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+```
+
+이 순서면 브라우저가 자동으로:
+- 한글 → Pretendard 사용
+- 중문 → Noto Sans SC 사용
+- 영문/숫자 → Inter 사용
+
+## 3. Tailwind 설정 (있으면)
+
+tailwind.config.js에 fontFamily 설정:
+```js
+theme: {
+  extend: {
+    fontFamily: {
+      sans: ['Pretendard Variable', 'Pretendard', 'Noto Sans SC', 'Inter', 'system-ui', 'sans-serif'],
+    },
+  },
+}
+```
+
+## 4. 기존 font-family 오버라이드 정리
+
+앱 내에서 `font-family`를 직접 지정한 곳이 있으면 (inline style 등) 제거하거나 위 폰트 스택으로 통일.
+
+## 하지 말 것
+- 폰트 파일을 로컬로 다운로드하지 마 (CDN 사용)
+- 기존 기능에 영향 주지 마
+- font-weight 체계 변경하지 마
+
+## 완료 후
+- `npm run build` 에러 없어야 함
+- 완료: `openclaw system event --text "Done: Board-023 fonts - Pretendard(KR) + Noto Sans SC(ZH) + Inter(EN)" --mode now`
+- 에러: `openclaw system event --text "Error: Board-023 failed - [에러내용]" --mode now`

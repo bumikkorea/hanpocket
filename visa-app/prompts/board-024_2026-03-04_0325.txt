@@ -1,0 +1,67 @@
+Board-024: HomeTab 다이나믹 리디자인 — 심플 + 다이나믹
+
+## 목표
+HomeTab.jsx를 Grab/Toss 스타일로 완전히 리디자인한다.
+핵심: 심플, 다이나믹, 카드 기반, 여백 충분, 시각적 임팩트.
+
+## 현재 파일
+- `src/components/HomeTab.jsx` (367줄) — 이 파일만 수정
+
+## 디자인 원칙
+1. **심플**: 섹션 수 줄이기. 현재 7개 → 5개로.
+2. **다이나믹**: 시간/날씨/상태에 따라 히어로 카드 변화
+3. **여백**: 섹션 간 간격 넉넉히 (mb-8 이상)
+4. **카드**: 둥근 모서리, 그림자, 그라디언트 유지
+5. **래플스 테마**: #2D5A3D, #B8860B, #F5F1EB, #FAFAFA, #1A1A1A
+
+## 구체적 변경사항
+
+### 1. 히어로 영역 (인사말 + 유틸리티 통합)
+- 현재: 인사말(텍스트) + 칩바(날씨/환율/시간) 분리
+- 변경: **풀폭 히어로 카드** 하나로 통합
+  - 배경: 시간대별 그라디언트 (아침: 따뜻한 골드→크림 / 오후: 딥그린→민트 / 저녁: 다크→딥그린 / 밤: 거의 블랙→딥그린)
+  - 좌측: 인사말 (큰 텍스트, 흰색)
+  - 하단: 날씨 · 환율 · 한국시간 (한 줄, 흰색/반투명)
+  - 높이: 140px, mx-4, rounded-2xl
+  - 아침 6-12: `from-[#B8860B]/80 to-[#F5F1EB]` 텍스트 #1A1A1A
+  - 오후 12-18: `from-[#2D5A3D] to-[#4A8A5A]` 텍스트 white
+  - 저녁 18-22: `from-[#1A3A28] to-[#2D5A3D]` 텍스트 white
+  - 밤 22-6: `from-[#111111] to-[#1A3A28]` 텍스트 white
+
+### 2. 오늘의 한국어 (유지, 위치 조정)
+- 히어로 바로 아래
+- 현재와 동일 (딥그린 그라디언트 배너)
+- mb-8
+
+### 3. 추천 코스 (유지, 카드 크기 키우기)
+- 카드 width 156→180, height 130→150
+- 하단 정보 영역 유지
+- mb-8
+
+### 4. 여행 필수 + 긴급 통합
+- "여행 필수" 4개 카드 유지
+- 긴급 배너를 별도 섹션 대신 여행 필수 아래 작은 배너로 통합
+- mb-8
+
+### 5. 상황별 한국어 (유지)
+- 현재와 동일한 가로 스크롤 카드
+- mb-8
+
+### 6. "인기 서비스" 섹션 삭제
+- 탐색 탭과 중복 → 제거
+
+## 수정 규칙
+- HomeTab.jsx 파일만 수정
+- 다른 파일 절대 수정하지 마
+- import 구문 변경 없음 (기존 import 유지)
+- export 구문 변경 없음
+- L() 함수, useWeatherData, useKoreaTime, getTodayExpression, EXPRESSIONS 등 기존 훅/유틸 그대로 사용
+- SCENE_PHRASES, COURSE_GRADIENTS 데이터 유지
+- `npm run build` 에러 없어야 함
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-024: HomeTab dynamic redesign - hero card, simplified layout" && openclaw system event --text "Done: Board-024 HomeTab 다이나믹 리디자인 완료" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

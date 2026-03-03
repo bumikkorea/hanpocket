@@ -136,38 +136,61 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     setTimeout(() => setToast(null), 2000)
   }
 
+  // 시간대 판별 (히어로 그라디언트용)
+  const getTimeOfDay = () => {
+    const hour = new Date().getHours()
+    if (hour >= 6 && hour < 12) return 'morning'
+    if (hour >= 12 && hour < 18) return 'afternoon'
+    if (hour >= 18 && hour < 22) return 'evening'
+    return 'night'
+  }
+
+  const timeOfDay = getTimeOfDay()
+  const heroStyles = {
+    morning: { gradient: 'from-[#B8860B]/80 to-[#F5F1EB]', text: '#1A1A1A', sub: 'rgba(26,26,26,0.6)' },
+    afternoon: { gradient: 'from-[#2D5A3D] to-[#4A8A5A]', text: '#FFFFFF', sub: 'rgba(255,255,255,0.7)' },
+    evening: { gradient: 'from-[#1A3A28] to-[#2D5A3D]', text: '#FFFFFF', sub: 'rgba(255,255,255,0.7)' },
+    night: { gradient: 'from-[#111111] to-[#1A3A28]', text: '#FFFFFF', sub: 'rgba(255,255,255,0.6)' },
+  }
+  const hero = heroStyles[timeOfDay]
+
   return (
     <div
       className="overflow-y-auto pt-4 pb-24"
       style={{ height: 'calc(100vh - 100px)', backgroundColor: '#FAFAFA' }}
     >
-      {/* ─── 0. 시간대별 인사말 ─── */}
-      <p className="px-4 text-2xl font-light mb-4" style={{ color: '#1A1A1A' }}>{getGreeting()}</p>
-
-      {/* ─── 1. 상단 유틸리티 칩 바 ─── */}
-      <div className="px-4 flex gap-2 overflow-x-auto scrollbar-hide mb-6">
-        <div
-          className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium"
-          style={{ backgroundColor: '#F5F1EB', color: '#1A1A1A' }}
-        >
-          {L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}
-        </div>
-        <div
-          className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium"
-          style={{ backgroundColor: '#F5F1EB', color: '#B8860B' }}
-        >
-          ¥1 = ₩{Math.round(cnyRate)}
-        </div>
-        <div
-          className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium"
-          style={{ backgroundColor: '#F5F1EB', color: '#1A1A1A' }}
-        >
-          {L(lang, { ko: '한국', zh: '韩国', en: 'Korea' })} {koreaTime}
+      {/* ─── 1. 히어로 카드 (인사말 + 유틸리티 통합) ─── */}
+      <div
+        className={`mx-4 rounded-2xl bg-gradient-to-br ${hero.gradient} p-5 mb-8 relative overflow-hidden`}
+        style={{ height: 140 }}
+      >
+        <p className="text-2xl font-bold mb-auto" style={{ color: hero.text }}>
+          {getGreeting()}
+        </p>
+        <div className="absolute bottom-4 left-5 right-5 flex items-center gap-3 text-sm" style={{ color: hero.sub }}>
+          <span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}</span>
+          <span>·</span>
+          <span style={{ color: timeOfDay === 'morning' ? '#8B6914' : hero.sub }}>¥1 = ₩{Math.round(cnyRate)}</span>
+          <span>·</span>
+          <span>{koreaTime}</span>
         </div>
       </div>
 
-      {/* ─── 2. 추천 코스 섹션 ─── */}
-      <div className="mb-6">
+      {/* ─── 2. 오늘의 한국어 배너 ─── */}
+      <div
+        className="mx-4 rounded-xl bg-gradient-to-br from-[#2D5A3D] to-[#1A3A28] p-4 mb-8 active:scale-[0.98] transition-transform cursor-pointer"
+        style={{ height: 100 }}
+        onClick={() => setTab('learn')}
+      >
+        <p className="text-white/70 text-[11px] font-medium mb-1">
+          {L(lang, { ko: '오늘의 한국어', zh: '今日韩语', en: "Today's Korean" })}
+        </p>
+        <p className="text-white text-2xl font-bold mb-0.5">{todayExpr.korean}</p>
+        <p className="text-white/80 text-xs">{todayExpr.chinese} · {todayExpr.english}</p>
+      </div>
+
+      {/* ─── 3. 추천 코스 섹션 ─── */}
+      <div className="mb-8">
         <button
           onClick={() => setTab('course')}
           className="flex items-center justify-between w-full mb-3 px-4"
@@ -183,17 +206,17 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
               key={course.id}
               onClick={() => setTab('course')}
               className="snap-start flex-shrink-0 rounded-xl shadow-sm overflow-hidden active:scale-[0.98] transition-transform"
-              style={{ width: 156 }}
+              style={{ width: 180 }}
             >
               <div
                 className={`bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || 'from-[#6A6A5A] to-[#4A4A3A]'} flex items-end p-3`}
-                style={{ height: 130 }}
+                style={{ height: 150 }}
               >
                 <p className="text-white text-sm font-bold leading-tight text-left">
                   {L(lang, course.name)}
                 </p>
               </div>
-              <div className="p-2.5" style={{ backgroundColor: '#FFFFFF', height: 60 }}>
+              <div className="p-2.5" style={{ backgroundColor: '#FFFFFF', height: 64 }}>
                 <p className="text-[11px] line-clamp-2 text-left leading-relaxed" style={{ color: '#666666' }}>
                   {L(lang, course.description)}
                 </p>
@@ -207,7 +230,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           <button
             onClick={() => setTab('course')}
             className="snap-start flex-shrink-0 rounded-xl border-2 border-dashed flex items-center justify-center active:scale-[0.98] transition-transform"
-            style={{ width: 156, height: 190, borderColor: '#B2DFDB' }}
+            style={{ width: 180, height: 214, borderColor: '#B2DFDB' }}
           >
             <div className="text-center">
               <p className="text-lg mb-1" style={{ color: '#666666' }}>&rarr;</p>
@@ -219,21 +242,8 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
         </div>
       </div>
 
-      {/* ─── 3. 오늘의 한국어 배너 ─── */}
-      <div
-        className="mx-4 rounded-xl bg-gradient-to-br from-[#2D5A3D] to-[#1A3A28] p-4 mb-6 active:scale-[0.98] transition-transform cursor-pointer"
-        style={{ height: 100 }}
-        onClick={() => setTab('learn')}
-      >
-        <p className="text-white/70 text-[11px] font-medium mb-1">
-          {L(lang, { ko: '오늘의 한국어', zh: '今日韩语', en: "Today's Korean" })}
-        </p>
-        <p className="text-white text-2xl font-bold mb-0.5">{todayExpr.korean}</p>
-        <p className="text-white/80 text-xs">{todayExpr.chinese} · {todayExpr.english}</p>
-      </div>
-
-      {/* ─── 4. 여행 필수 가이드 ─── */}
-      <div className="mb-6 px-4">
+      {/* ─── 4. 여행 필수 가이드 + 긴급 배너 ─── */}
+      <div className="mb-8 px-4">
         <button
           onClick={() => setTab('travel')}
           className="flex items-center justify-between w-full mb-3"
@@ -262,24 +272,28 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
             </button>
           ))}
         </div>
+        {/* 긴급 배너 (여행 필수 아래 통합) */}
+        <button
+          onClick={() => setTab('sos')}
+          className="w-full rounded-xl px-4 py-2.5 mt-2 active:scale-[0.98] transition-transform text-left"
+          style={{ backgroundColor: '#F5F1EB', border: '1px solid #B2DFDB' }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-xs font-bold" style={{ color: '#8B2500' }}>
+                {L(lang, { ko: '긴급 상황?', zh: '紧急情况？', en: 'Emergency?' })}
+              </span>
+              <span className="text-[11px] ml-2" style={{ color: '#666666' }}>
+                112 · 119 · 1345
+              </span>
+            </div>
+            <span className="text-xs" style={{ color: '#666666' }}>&rarr;</span>
+          </div>
+        </button>
       </div>
 
-      {/* ─── 5. 긴급 연락처 배너 ─── */}
-      <button
-        onClick={() => setTab('sos')}
-        className="mx-4 w-[calc(100%-2rem)] rounded-xl px-4 py-3 mb-6 active:scale-[0.98] transition-transform text-left"
-        style={{ minHeight: 60, backgroundColor: '#F5F1EB', border: '1px solid #B2DFDB' }}
-      >
-        <p className="text-sm font-bold mb-0.5" style={{ color: '#8B2500' }}>
-          {L(lang, { ko: '긴급 상황?', zh: '紧急情况？', en: 'Emergency?' })}
-        </p>
-        <p className="text-xs" style={{ color: '#666666' }}>
-          112({L(lang, { ko: '경찰', zh: '警察', en: 'Police' })}) · 119({L(lang, { ko: '소방/구급', zh: '消防/急救', en: 'Fire/Ambulance' })}) · 1345({L(lang, { ko: '외국인상담', zh: '外国人咨询', en: 'Foreigner Help' })})
-        </p>
-      </button>
-
-      {/* ─── 6. 상황별 한국어 ─── */}
-      <div className="mb-6">
+      {/* ─── 5. 상황별 한국어 ─── */}
+      <div className="mb-8">
         <button
           onClick={() => setTab('learn')}
           className="flex items-center justify-between w-full mb-3 px-4"
@@ -313,32 +327,6 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                 <p className="text-xs font-medium text-left" style={{ color: '#1A1A1A' }}>{item.phrase.ko}</p>
                 <p className="text-[11px] mt-0.5 text-left" style={{ color: '#666666' }}>{item.phrase.zh}</p>
               </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ─── 7. 인기 서비스 ─── */}
-      <div className="mb-6 px-4">
-        <h2 className="text-base font-bold mb-3" style={{ color: '#1A1A1A' }}>
-          {L(lang, { ko: '인기 서비스', zh: '热门服务', en: 'Popular Services' })}
-        </h2>
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            { title: { ko: '맛집', zh: '美食', en: 'Food' }, gradient: 'from-[#8B4513] to-[#5C2D0E]', tab: 'food' },
-            { title: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, gradient: 'from-[#6B4C3B] to-[#4A3228]', tab: 'shopping' },
-            { title: { ko: '한류', zh: '韩流', en: 'Hallyu' }, gradient: 'from-[#B8860B] to-[#8B6914]', tab: 'hallyu' },
-            { title: { ko: '의료', zh: '医疗', en: 'Medical' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', tab: 'medical' },
-          ].map((item, i) => (
-            <button
-              key={i}
-              onClick={() => setTab(item.tab)}
-              className={`rounded-xl bg-gradient-to-br ${item.gradient} p-3 flex items-end active:scale-[0.98] transition-transform`}
-              style={{ height: 72 }}
-            >
-              <p className="text-white text-sm font-bold text-left">
-                {L(lang, item.title)}
-              </p>
             </button>
           ))}
         </div>

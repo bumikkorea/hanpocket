@@ -1,0 +1,93 @@
+# Claude Code: 음성 기능 프로토타입 개발
+
+## 목표
+HanPocket 앱에 음성 기능 프로토타입을 구현하여 사용자 요청 1위인 음성 학습 기능의 기반을 마련
+
+## 구현 범위
+### Phase 1: 기본 음성 출력 (TTS)
+1. **ElevenLabs TTS API 연동**
+   - API 키 설정 및 테스트
+   - 한국어 발음 품질 검증
+   - 사용자 설정에서 음성 on/off 토글
+
+2. **가이드 콘텐츠 음성화**
+   - 홈탭 4개 카드 설명 읽어주기
+   - 챕터1/2 게임 문제 읽어주기  
+   - 가이드 모달 텍스트 읽어주기
+
+### Phase 2: 음성 입력 및 평가 (준비만)
+- Web Speech API 조사 및 테스트
+- 발음 평가 알고리즘 리서치
+- 사용자 음성 녹음/재생 기능 설계
+
+## 기술 스펙
+```javascript
+// src/services/voiceService.js
+export class VoiceService {
+  constructor() {
+    this.enabled = localStorage.getItem('voiceEnabled') === 'true';
+    this.elevenLabsKey = process.env.REACT_APP_ELEVENLABS_KEY;
+  }
+  
+  async speak(text) {
+    if (!this.enabled) return;
+    // ElevenLabs API 호출
+  }
+  
+  toggle() {
+    this.enabled = !this.enabled;
+    localStorage.setItem('voiceEnabled', this.enabled);
+  }
+}
+```
+
+## UI 요구사항
+1. **음성 설정 토글**
+   - 홈 화면 우상단에 스피커 아이콘
+   - 클릭 시 음성 on/off 전환
+   
+2. **음성 재생 표시**
+   - 음성 출력 중 웨이브 애니메이션
+   - 일시정지/재생 컨트롤
+   
+3. **음성 버튼**
+   - 가이드 카드에 소형 스피커 아이콘
+   - 클릭 시 해당 텍스트 읽어주기
+
+## 성능 요구사항
+- 음성 파일 캐싱으로 중복 API 호출 방지
+- 네트워크 상태에 따른 fallback (텍스트만 표시)
+- 로딩 시간 3초 이내
+
+## 테스트 항목
+- [ ] ElevenLabs API 연동 성공
+- [ ] 한국어 발음 품질 확인
+- [ ] 음성 on/off 토글 동작
+- [ ] 홈탭 카드별 음성 출력
+- [ ] 챕터 게임 문제 읽어주기
+- [ ] 모바일/데스크톱 호환성
+- [ ] 에러 처리 (API 실패, 네트워크 끊김)
+
+## 제약 조건
+- ElevenLabs API 요금 최적화 (캐싱 필수)
+- 기존 UI/UX 크게 변경 금지
+- 기존 기능 정상 동작 보장
+- 음성 비활성화 시 성능 영향 없음
+
+## 우선순위
+1. ElevenLabs API 연동 및 테스트
+2. 홈탭 카드 음성화
+3. 설정 UI 구현
+4. 에러 처리 및 fallback
+5. 성능 최적화 및 캐싱
+
+## 완료 기준
+- 사용자가 홈탭에서 음성 기능을 켜고 카드 설명을 들을 수 있음
+- 설정에서 음성 기능 on/off 가능
+- API 에러 시 graceful fallback
+- 코드 품질 및 주석 완료
+
+## 다음 단계 준비
+- Web Speech API 조사 결과 정리
+- 발음 평가 알고리즘 설계서
+- 음성 학습 게임 기획안

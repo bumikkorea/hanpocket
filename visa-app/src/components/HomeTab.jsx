@@ -77,26 +77,26 @@ function getTodayExpression() {
 
 // ── 코스 그라디언트 매핑 ──
 const COURSE_GRADIENTS = {
-  first: 'from-sky-400 to-blue-500',
-  kpop: 'from-violet-400 to-purple-500',
-  food: 'from-orange-400 to-red-500',
-  shopping: 'from-pink-400 to-rose-500',
-  nature: 'from-green-400 to-emerald-500',
-  history: 'from-amber-500 to-yellow-600',
-  busan: 'from-cyan-400 to-teal-500',
-  jeju: 'from-lime-400 to-green-500',
-  other_region: 'from-slate-400 to-slate-600',
+  first: 'from-[#2D5A3D] to-[#1A3A28]',
+  kpop: 'from-[#B8860B] to-[#8B6914]',
+  food: 'from-[#8B4513] to-[#5C2D0E]',
+  shopping: 'from-[#6B4C3B] to-[#4A3228]',
+  nature: 'from-[#3A7D5C] to-[#2D5A3D]',
+  history: 'from-[#A0865A] to-[#7A6840]',
+  busan: 'from-[#4A8A5A] to-[#2D5A3D]',
+  jeju: 'from-[#5A8A6A] to-[#3A6A4A]',
+  other_region: 'from-[#6A6A5A] to-[#4A4A3A]',
 }
 
 // ── 상황별 한국어 데이터 ──
 const SCENE_PHRASES = [
-  { scene: { ko: '식당', zh: '餐厅', en: 'Restaurant' }, phrase: { ko: '이거 주세요', zh: '请给我这个' }, gradient: 'from-orange-300 to-orange-500', pocket: 'restaurant' },
-  { scene: { ko: '카페', zh: '咖啡厅', en: 'Cafe' }, phrase: { ko: '아이스 아메리카노 주세요', zh: '请给我冰美式' }, gradient: 'from-amber-300 to-amber-500', pocket: 'cafe' },
-  { scene: { ko: '교통', zh: '交通', en: 'Transport' }, phrase: { ko: '여기 가 주세요', zh: '请去这里' }, gradient: 'from-blue-300 to-blue-500', pocket: 'transport' },
-  { scene: { ko: '편의점', zh: '便利店', en: 'Store' }, phrase: { ko: '봉투 주세요', zh: '请给我袋子' }, gradient: 'from-green-300 to-green-500', pocket: 'convenience' },
-  { scene: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, phrase: { ko: '좀 깎아 주세요', zh: '请便宜一点' }, gradient: 'from-pink-300 to-pink-500', pocket: 'shopping' },
-  { scene: { ko: '숙소', zh: '住宿', en: 'Hotel' }, phrase: { ko: '체크인 하려고요', zh: '我要办入住' }, gradient: 'from-indigo-300 to-indigo-500', pocket: 'accommodation' },
-  { scene: { ko: '긴급', zh: '紧急', en: 'Emergency' }, phrase: { ko: '도와주세요!', zh: '请帮帮我！' }, gradient: 'from-red-300 to-red-500', pocket: 'emergency' },
+  { scene: { ko: '식당', zh: '餐厅', en: 'Restaurant' }, phrase: { ko: '이거 주세요', zh: '请给我这个' }, gradient: 'from-[#8B4513] to-[#5C2D0E]', pocket: 'restaurant' },
+  { scene: { ko: '카페', zh: '咖啡厅', en: 'Cafe' }, phrase: { ko: '아이스 아메리카노 주세요', zh: '请给我冰美式' }, gradient: 'from-[#B8860B] to-[#8B6914]', pocket: 'cafe' },
+  { scene: { ko: '교통', zh: '交通', en: 'Transport' }, phrase: { ko: '여기 가 주세요', zh: '请去这里' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', pocket: 'transport' },
+  { scene: { ko: '편의점', zh: '便利店', en: 'Store' }, phrase: { ko: '봉투 주세요', zh: '请给我袋子' }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', pocket: 'convenience' },
+  { scene: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, phrase: { ko: '좀 깎아 주세요', zh: '请便宜一点' }, gradient: 'from-[#6B4C3B] to-[#4A3228]', pocket: 'shopping' },
+  { scene: { ko: '숙소', zh: '住宿', en: 'Hotel' }, phrase: { ko: '체크인 하려고요', zh: '我要办入住' }, gradient: 'from-[#A0865A] to-[#7A6840]', pocket: 'accommodation' },
+  { scene: { ko: '긴급', zh: '紧急', en: 'Emergency' }, phrase: { ko: '도와주세요!', zh: '请帮帮我！' }, gradient: 'from-[#8B2500] to-[#5C1A00]', pocket: 'emergency' },
 ]
 
 export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
@@ -138,14 +138,14 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 
   return (
     <div
-      className="bg-[#FCFCFA] overflow-y-auto px-4 pt-4 pb-24"
-      style={{ fontFamily: 'Inter, sans-serif', height: 'calc(100vh - 140px)' }}
+      className="overflow-y-auto px-4 pt-4 pb-24"
+      style={{ fontFamily: 'Inter, sans-serif', height: 'calc(100vh - 140px)', backgroundColor: 'var(--bg-secondary)' }}
     >
       {/* ─── 0. 시간대별 인사말 ─── */}
-      <p className="text-2xl font-light text-gray-800 mb-4">{getGreeting()}</p>
+      <p className="text-2xl font-light mb-4" style={{ color: 'var(--text-primary)' }}>{getGreeting()}</p>
 
       {/* ─── 1. 상단 유틸리티 칩 바 ─── */}
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-8">
+      <div className="-mx-4 px-4 flex gap-2 overflow-x-auto scrollbar-hide mb-8">
         <div
           className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium"
           style={{ backgroundColor: '#E8F4FD', color: '#1E3A5F' }}
@@ -172,12 +172,12 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           onClick={() => setTab('course')}
           className="flex items-center justify-between w-full mb-4"
         >
-          <h2 className="text-lg font-bold text-[#111827]">
+          <h2 className="text-lg font-bold text-[var(--text-primary)]">
             {L(lang, { ko: '추천 코스', zh: '推荐路线', en: 'Recommended Courses' })}
           </h2>
           <span className="text-[#9CA3AF] text-lg">&rarr;</span>
         </button>
-        <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+        <div className="-mx-4 px-4 flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
           {courses.map(course => (
             <button
               key={course.id}
@@ -186,18 +186,18 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
               style={{ width: 220 }}
             >
               <div
-                className={`bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || 'from-gray-400 to-gray-600'} flex items-end p-4`}
+                className={`bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || 'from-[#6A6A5A] to-[#4A4A3A]'} flex items-end p-4`}
                 style={{ height: 196 }}
               >
                 <p className="text-white text-xl font-bold leading-tight text-left">
                   {L(lang, course.name)}
                 </p>
               </div>
-              <div className="bg-white p-3" style={{ height: 84 }}>
-                <p className="text-xs text-[#6B7280] line-clamp-2 text-left">
+              <div className="p-3" style={{ backgroundColor: 'var(--bg-primary)', height: 84 }}>
+                <p className="text-xs line-clamp-2 text-left" style={{ color: 'var(--text-secondary)' }}>
                   {L(lang, course.description)}
                 </p>
-                <p className="text-[10px] text-[#9CA3AF] mt-2 text-left">
+                <p className="text-[10px] mt-2 text-left" style={{ color: 'var(--text-muted)' }}>
                   {course.stops.length}{L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })} · {course.duration}
                 </p>
               </div>
@@ -206,12 +206,12 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           {/* 더보기 카드 */}
           <button
             onClick={() => setTab('course')}
-            className="snap-start flex-shrink-0 rounded-2xl border-2 border-dashed border-[#D1D5DB] flex items-center justify-center active:scale-[0.98] transition-transform"
-            style={{ width: 220, height: 280 }}
+            className="snap-start flex-shrink-0 rounded-2xl border-2 border-dashed flex items-center justify-center active:scale-[0.98] transition-transform"
+            style={{ width: 220, height: 280, borderColor: 'var(--border)' }}
           >
             <div className="text-center">
-              <p className="text-2xl text-[#9CA3AF] mb-2">&rarr;</p>
-              <p className="text-sm font-medium text-[#6B7280]">
+              <p className="text-2xl mb-2" style={{ color: 'var(--text-muted)' }}>&rarr;</p>
+              <p className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                 {L(lang, { ko: '더보기', zh: '查看更多', en: 'View More' })}
               </p>
             </div>
@@ -221,7 +221,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 
       {/* ─── 3. 오늘의 한국어 배너 ─── */}
       <div
-        className="rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-6 mb-8 active:scale-[0.98] transition-transform cursor-pointer"
+        className="rounded-2xl bg-gradient-to-br from-[#2D5A3D] to-[#1A3A28] p-6 mb-8 active:scale-[0.98] transition-transform cursor-pointer"
         style={{ height: 140 }}
         onClick={() => setTab('learn')}
       >
@@ -241,17 +241,17 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           onClick={() => setTab('travel')}
           className="flex items-center justify-between w-full mb-4"
         >
-          <h2 className="text-lg font-bold text-[#111827]">
+          <h2 className="text-lg font-bold text-[var(--text-primary)]">
             {L(lang, { ko: '여행 필수', zh: '旅行必备', en: 'Travel Essentials' })}
           </h2>
           <span className="text-[#9CA3AF] text-lg">&rarr;</span>
         </button>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, gradient: 'from-blue-400 to-blue-600', guide: 'arrival-card' },
-            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, gradient: 'from-green-400 to-emerald-600', guide: 'sim' },
-            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, gradient: 'from-amber-400 to-orange-500', guide: 'tax-refund' },
-            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, gradient: 'from-rose-400 to-pink-600', guide: 'duty-free' },
+            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: 'arrival-card' },
+            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'sim' },
+            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'tax-refund' },
+            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, gradient: 'from-[#A0865A] to-[#7A6840]', guide: 'duty-free' },
           ].map((item, i) => (
             <button
               key={i}
@@ -270,13 +270,13 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
       {/* ─── 5. 긴급 연락처 배너 ─── */}
       <button
         onClick={() => setTab('sos')}
-        className="w-full rounded-2xl bg-red-50 border border-red-200 px-4 py-4 mb-8 active:scale-[0.98] transition-transform text-left"
-        style={{ minHeight: 80 }}
+        className="w-full rounded-2xl px-4 py-4 mb-8 active:scale-[0.98] transition-transform text-left"
+        style={{ minHeight: 80, backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border)' }}
       >
-        <p className="text-red-700 text-sm font-bold mb-1">
+        <p className="text-sm font-bold mb-1" style={{ color: '#8B2500' }}>
           {L(lang, { ko: '긴급 상황?', zh: '紧急情况？', en: 'Emergency?' })}
         </p>
-        <p className="text-red-600 text-xs">
+        <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>
           112({L(lang, { ko: '경찰', zh: '警察', en: 'Police' })}) · 119({L(lang, { ko: '소방/구급', zh: '消防/急救', en: 'Fire/Ambulance' })}) · 1345({L(lang, { ko: '외국인상담', zh: '外国人咨询', en: 'Foreigner Help' })})
         </p>
       </button>
@@ -287,12 +287,12 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           onClick={() => setTab('learn')}
           className="flex items-center justify-between w-full mb-4"
         >
-          <h2 className="text-lg font-bold text-[#111827]">
+          <h2 className="text-lg font-bold text-[var(--text-primary)]">
             {L(lang, { ko: '상황별 한국어', zh: '场景韩语', en: 'Korean by Situation' })}
           </h2>
           <span className="text-[#9CA3AF] text-lg">&rarr;</span>
         </button>
-        <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+        <div className="-mx-4 px-4 flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
@@ -312,9 +312,9 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                   {L(lang, item.scene)}
                 </p>
               </div>
-              <div className="bg-white p-3" style={{ height: 80 }}>
-                <p className="text-sm font-medium text-[#111827] text-left">{item.phrase.ko}</p>
-                <p className="text-xs text-[#6B7280] mt-1 text-left">{item.phrase.zh}</p>
+              <div className="p-3" style={{ backgroundColor: 'var(--bg-primary)', height: 80 }}>
+                <p className="text-sm font-medium text-left" style={{ color: 'var(--text-primary)' }}>{item.phrase.ko}</p>
+                <p className="text-xs mt-1 text-left" style={{ color: 'var(--text-secondary)' }}>{item.phrase.zh}</p>
               </div>
             </button>
           ))}
@@ -323,15 +323,15 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 
       {/* ─── 7. 인기 서비스 ─── */}
       <div className="mb-8">
-        <h2 className="text-lg font-bold text-[#111827] mb-4">
+        <h2 className="text-lg font-bold mb-4" style={{ color: 'var(--text-primary)' }}>
           {L(lang, { ko: '인기 서비스', zh: '热门服务', en: 'Popular Services' })}
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { title: { ko: '맛집', zh: '美食', en: 'Food' }, gradient: 'from-orange-400 to-red-500', tab: 'food' },
-            { title: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, gradient: 'from-pink-400 to-rose-500', tab: 'shopping' },
-            { title: { ko: '한류', zh: '韩流', en: 'Hallyu' }, gradient: 'from-violet-400 to-purple-500', tab: 'hallyu' },
-            { title: { ko: '의료', zh: '医疗', en: 'Medical' }, gradient: 'from-teal-400 to-cyan-600', tab: 'medical' },
+            { title: { ko: '맛집', zh: '美食', en: 'Food' }, gradient: 'from-[#8B4513] to-[#5C2D0E]', tab: 'food' },
+            { title: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, gradient: 'from-[#6B4C3B] to-[#4A3228]', tab: 'shopping' },
+            { title: { ko: '한류', zh: '韩流', en: 'Hallyu' }, gradient: 'from-[#B8860B] to-[#8B6914]', tab: 'hallyu' },
+            { title: { ko: '의료', zh: '医疗', en: 'Medical' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', tab: 'medical' },
           ].map((item, i) => (
             <button
               key={i}
@@ -359,7 +359,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 
       {/* ─── 토스트 ─── */}
       {toast && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#111827] text-white text-sm px-6 py-3 rounded-full shadow-lg z-50 animate-pulse">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 text-white text-sm px-6 py-3 rounded-full shadow-lg z-50 animate-pulse" style={{ backgroundColor: 'var(--text-primary)' }}>
           {toast}
         </div>
       )}

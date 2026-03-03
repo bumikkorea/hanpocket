@@ -1,66 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --google-blue: #4285F4;
-  --google-red: #EA4335;
-  --google-yellow: #FBBC05;
-  --google-green: #34A853;
-  --accent: #4285F4;
-
-  --bg: #FFFFFF;
-  --bg-secondary: #F8F9FA;
-  --bg-primary: #FFFFFF;
-  --border: #DADCE0;
-  --text-primary: #202124;
-  --text-secondary: #5F6368;
-  --text-muted: #9AA0A6;
+  --bg: #FAFAF7;              /* 따뜻한 오프화이트 (래플스 벽면) */
+  --bg-secondary: #F5F1EB;    /* 크림색 배경 */
+  --bg-primary: #FFFFFF;      /* 순백 카드 */
+  --bg-tertiary: #EDE8E0;     /* 베이지 악센트 */
+  --border: #D4CFC7;          /* 따뜻한 회색 보더 */
+  --border-primary: #D4CFC7;
+  --text-primary: #1A1A1A;    /* 차콜 블랙 (래플스 문/가구) */
+  --text-secondary: #4A4A4A;  /* 다크 그레이 */
+  --text-muted: #8A8A7A;      /* 올리브 뮤트 */
+  --text-tertiary: #A0998D;   /* 따뜻한 회색 */
+  --accent-green: #2D5A3D;    /* 딥 그린 (야자수/식물) */
+  --accent-gold: #B8860B;     /* 골드/황동 (조명/손잡이) */
+  --accent-mint: #B2DFDB;     /* 민트/옥색 (분수대) */
+  --accent: #2D5A3D;
 }
 
-/* 다크모드 CSS 변수 - 시인성 최우선 */
-.dark {
-  --bg: #111827;
-  --bg-secondary: #1F2937;
-  --bg-primary: #111827;
-  --border: #4B5563;
-  
-  /* 텍스트 - 높은 대비로 가독성 극대화 */
-  --text-primary: #FFFFFF;     /* 순백색 - 최고 가독성 */
-  --text-secondary: #E5E7EB;   /* 밝은 회색 - 잘 보임 */
-  --text-muted: #D1D5DB;       /* 중간 회색 - 여전히 읽기 쉬움 */
-  
-  /* 브랜드 색상 - 다크모드에서 더 생생하게 */
-  --google-blue: #60A5FA;      /* 더 밝은 파란색 */
-  --accent: #60A5FA;
-  
-  /* 상태별 색상 - 다크모드 최적화 */
-  --success: #10B981;          /* 밝은 초록 */
-  --warning: #F59E0B;          /* 밝은 주황 */
-  --error: #EF4444;            /* 밝은 빨강 */
-  --info: #3B82F6;             /* 밝은 파랑 */
+/* 다크모드 CSS 변수 - 래플스 딥 포레스트 */
+.dark, [data-theme='dark'] {
+  --bg: #0F1A14;              /* 딥 포레스트 블랙 */
+  --bg-secondary: #1A2820;    /* 어두운 그린 톤 */
+  --bg-primary: #0F1A14;
+  --bg-tertiary: #243428;
+  --border: #3A4A3E;
+  --border-primary: #3A4A3E;
+  --text-primary: #F5F1EB;    /* 크림 화이트 */
+  --text-secondary: #D4CFC7;
+  --text-muted: #8A8A7A;
+  --text-tertiary: #6A6A5A;
+  --accent-green: #4A8A5A;
+  --accent-gold: #D4A017;
+  --accent-mint: #7AB8B0;
+  --accent: #4A8A5A;
 }
 
 /* 시스템 다크모드 기본 지원 */
 @media (prefers-color-scheme: dark) {
   :root:not(.light-override) {
-    --bg: #111827;
-    --bg-secondary: #1F2937;
-    --bg-primary: #111827;
-    --border: #4B5563;
-    
-    /* 텍스트 - 높은 대비 */
-    --text-primary: #FFFFFF;
-    --text-secondary: #E5E7EB;
-    --text-muted: #D1D5DB;
-    
-    /* 브랜드 색상 - 다크모드 최적화 */
-    --google-blue: #60A5FA;
-    --accent: #60A5FA;
-    
-    /* 상태 색상 */
-    --success: #10B981;
-    --warning: #F59E0B;
-    --error: #EF4444;
-    --info: #3B82F6;
+    --bg: #0F1A14;
+    --bg-secondary: #1A2820;
+    --bg-primary: #0F1A14;
+    --bg-tertiary: #243428;
+    --border: #3A4A3E;
+    --border-primary: #3A4A3E;
+    --text-primary: #F5F1EB;
+    --text-secondary: #D4CFC7;
+    --text-muted: #8A8A7A;
+    --text-tertiary: #6A6A5A;
+    --accent-green: #4A8A5A;
+    --accent-gold: #D4A017;
+    --accent-mint: #7AB8B0;
+    --accent: #4A8A5A;
   }
 }
 
@@ -92,7 +83,7 @@ h1, h2, h3 {
 }
 
 .glass-dark {
-  background: #FFFFFF;
+  background: var(--bg-primary);
   border: 1px solid var(--border);
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
@@ -137,7 +128,7 @@ h1, h2, h3 {
 
 /* Gold gradient text */
 .text-gold-gradient {
-  background: linear-gradient(135deg, #111827, #374151, #111827);
+  background: linear-gradient(135deg, #2D5A3D, #B8860B, #2D5A3D);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -145,7 +136,7 @@ h1, h2, h3 {
 
 /* Dark gradient — now light */
 .bg-dark-gradient {
-  background: #FFFFFF;
+  background: var(--bg-primary);
   border-bottom: 1px solid var(--border);
 }
 
@@ -167,11 +158,14 @@ h1, h2, h3 {
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(255, 255, 255, 0.97);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 0 20px;
+}
+.dark .apple-top-nav {
+  background: rgba(15, 26, 20, 0.95);
 }
 
 .apple-top-nav .tab-row {
@@ -217,7 +211,7 @@ h1, h2, h3 {
 
 .sub-menu-panel {
   padding: 16px 20px 20px;
-  background: #FFFFFF;
+  background: var(--bg-primary);
   border-bottom: 1px solid var(--border);
 }
 
@@ -252,7 +246,7 @@ h1, h2, h3 {
 
 .hero-section {
   padding: 32px 24px 24px;
-  background: #FFFFFF;
+  background: var(--bg-primary);
 }
 
 .hero-title {
@@ -260,7 +254,7 @@ h1, h2, h3 {
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.2;
-  color: #111827;
+  color: var(--text-primary);
 }
 
 .hero-subtitle {
@@ -274,7 +268,7 @@ h1, h2, h3 {
 /* ─── Apple-style Cards ─── */
 
 .apple-card {
-  background: #FFFFFF;
+  background: var(--bg-primary);
   border-radius: 12px;
   border: 1px solid var(--border);
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);

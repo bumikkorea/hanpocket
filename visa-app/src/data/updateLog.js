@@ -1,6 +1,24 @@
 // 업데이트 로그 (공지사항용)
 export const updateLog = [
   {
+    date: '2026-03-04',
+    type: 'system_check',
+    status: 'limited_access',
+    description: {
+      ko: '정기 비자 정책 업데이트 확인 완료 - 지속적인 API 제한으로 부분 확인',
+      zh: '定期签证政策更新检查完成 - 因持续API限制仅部分确认',
+      en: 'Regular visa policy update check completed - partial verification due to ongoing API limitations'
+    },
+    details: {
+      ko: 'Brave API 키 미설정으로 웹 검색 불가. visa.go.kr은 Visa Navigator 인터페이스만 표시, hikorea.go.kr는 "G4F KOREA" 메인페이지만 접근, immigration.go.kr은 "법무부" 기본 타이틀만 확인. 현재 데이터 상태 양호, 기존 정책 유효: 개인서명확인서 제도 (2026.01.09 시행)',
+      zh: '因Brave API密钥未设置无法进行网络搜索。visa.go.kr仅显示签证导航界面，hikorea.go.kr仅能访问"G4F KOREA"主页，immigration.go.kr仅确认"法务部"基本标题。当前数据状态良好，现有政策有效：个人签名确认书制度（2026.01.09实施）',
+      en: 'Unable to perform web search due to missing Brave API key. visa.go.kr shows only Visa Navigator interface, hikorea.go.kr only "G4F KOREA" main page accessible, immigration.go.kr only shows "Ministry of Justice" basic title. Current data status good, existing policies valid: Personal Signature Verification System (effective 2026.01.09)'
+    },
+    sources: ['visa.go.kr', 'hikorea.go.kr', 'immigration.go.kr'],
+    next_check: '2026-03-05',
+    tech_notes: 'Consistent access limitations persist. Government sites heavily rely on JavaScript and have security restrictions that limit content extraction via web_fetch. Full policy monitoring requires API key setup and potentially browser automation for comprehensive content access.'
+  },
+  {
     date: '2026-03-03',
     type: 'system_check',
     status: 'limited_access',
@@ -145,9 +163,9 @@ export const updateLog = [
 
 // 자동 업데이트 스케줄 정보
 export const autoUpdateInfo = {
-  ko: '매일 오전 9시 자동 업데이트 확인 (마지막: 2026-03-01)',
-  zh: '每日上午9点自动更新检查 (最后: 2026-03-01)',
-  en: 'Automatic update check at 9 AM daily (Last: 2026-03-01)',
+  ko: '매일 오전 9시 자동 업데이트 확인 (마지막: 2026-03-04)',
+  zh: '每日上午9点自动更新检查 (最后: 2026-03-04)',
+  en: 'Automatic update check at 9 AM daily (Last: 2026-03-04)',
 };
 
 // 데이터 소스

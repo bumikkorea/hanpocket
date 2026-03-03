@@ -63,7 +63,7 @@ function Logo({ size = 'md' }) {
   return (
     <svg width={186 * sc} height={28 * sc} viewBox="0 0 186 28" fill="none" style={{ overflow: 'visible' }}>
       {/* HANPOCKET 텍스트 */}
-      <text x="82" y="19" textAnchor="middle" fontFamily="'Inter', sans-serif" fontWeight="300" fontSize="18" letterSpacing="0.25em" fill="#111827">
+      <text x="82" y="19" textAnchor="middle" fontFamily="'Inter', sans-serif" fontWeight="300" fontSize="18" letterSpacing="0.25em" fill="var(--text-primary)">
         HANPOCKET
       </text>
 
@@ -1564,8 +1564,8 @@ function AppInner() {
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
-      {/* Google-style Top Bar */}
-      <div className="sticky top-0 z-50 shadow-sm" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      {/* Top Bar */}
+      <div className="sticky top-0 z-50" style={{ backgroundColor: 'var(--bg-primary)', borderBottom: '1px solid var(--border)' }}>
         <div className="px-4 pt-3 pb-2">
           <div className="flex items-center gap-3">
             {subPage ? (
@@ -1890,11 +1890,11 @@ function AppInner() {
             return (
               <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
                 className="flex flex-col items-center gap-0.5 py-1 relative">
-                <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />
+                <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--accent-green)' : 'var(--text-tertiary)' }} />
                 {item.id === 'profile' && localStorage.getItem('admin_mode') === 'true' && (
                   <span className="absolute top-0 right-1 w-2 h-2 bg-red-500 rounded-full" />
                 )}
-                <span className="text-[11px] font-light" style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
+                <span className="text-[11px] font-light" style={{ color: active ? 'var(--accent-green)' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
               </button>
             )
           })}

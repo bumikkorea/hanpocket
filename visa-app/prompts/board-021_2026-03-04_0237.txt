@@ -1,0 +1,92 @@
+# Board-021: 서비스 탭 포켓 재배치 + 삭제
+
+## 목표
+포켓 카테고리 재정리: 42개 → 31개. 잘못된 위치 이동 + 불필요 삭제.
+
+## 1. 삭제할 포켓 (pocketCategories에서 제거)
+
+### pocketCategories에서 제거:
+- `editorpick` (오늘의 HOT) — 홈 위젯으로 처리
+- `weatherCompare` (날씨 비교) — 홈 위젯으로 처리
+- `sos` (SOS) — 홈 긴급 배너로 이동 (서비스탭에서 찾기엔 너무 깊음)
+- `artranslate` (간판 사전) — 통역에 합침
+- `community` (커뮤니티) — Phase 2 보류
+- `fitness` (운동) — Phase 2 보류
+- `realestate` (부동산) — Phase 2 보류
+- `life` (생활 허브) — 껍데기 삭제
+- `photoguide` (촬영 가이드) — 삭제
+- `news` (K-뉴스) — 삭제
+
+### pocketMockData에서도 해당 키 삭제:
+- weatherCompare, realestate, newsTranslated (이미 삭제된 건 무시)
+
+### IMPLEMENTED_POCKETS에서 해당 ID 제거:
+- photoguide, editorpick, news (있으면)
+
+## 2. 카테고리 이동
+
+### 전통체험: 여행 & 맛집 → 한류 & 엔터
+- `tradition` 포켓을 `travel-food` 카테고리에서 제거
+- `hallyu-entertainment` 카테고리에 추가
+
+### 택스리펀드: 여행 & 맛집 → 쇼핑 & 뷰티
+- `taxrefund` 포켓을 `travel-food`에서 제거
+- `shopping-beauty` 카테고리에 추가
+
+### 놀이공원: 쇼핑 & 뷰티 → 여행 & 맛집
+- `themepark` 포켓을 `shopping-beauty`에서 제거
+- `travel-food` 카테고리에 추가
+
+### 편의점 신상: 쇼핑 & 뷰티 → 생활
+- `cvsnew` 포켓을 `shopping-beauty`에서 제거
+- `daily-life` 카테고리에 추가
+
+## 3. 카테고리 정리
+
+### learning 카테고리
+- learn, koreangame, community 모두 삭제되므로 **카테고리 자체 삭제**
+
+### 최종 구조 (6개 카테고리, 31개 포켓):
+
+```
+1. situational-korean: 상황별 한국어 (6개)
+   restaurant, cafe, transport, convenience, accommodation, emergency
+
+2. travel-food: 여행 (7개) — 카테고리명을 '여행' / '旅行' / 'Travel'로 변경
+   travel, koreanfood, food, trip, festival, holiday, themepark
+
+3. hallyu-entertainment: 한류 & 엔터 (5개)
+   kpop, idol, drama, fanevent, tradition
+
+4. shopping-beauty: 쇼핑 & 뷰티 (4개)
+   shopping, beauty, fashiontrend, taxrefund
+
+5. daily-life: 생활 (5개)
+   medical, delivery, pet, parcel, cvsnew
+
+6. tools: 도구 (4개)
+   translator, finance, wallet, visaalert
+```
+
+### 카테고리명 변경:
+- `travel-food`: name → { ko: '여행', zh: '旅行', en: 'Travel' }, icon → '✈️'
+
+## 4. serviceItems 배열 정리
+삭제된 포켓에 해당하는 serviceItems도 제거.
+
+## 5. subMenuData 정리
+삭제된 포켓 관련 subMenuData 키도 제거 (있으면).
+
+## 6. featureScores 정리
+삭제된 포켓 관련 featureScores 키도 제거 (있으면).
+
+## 하지 말 것
+- 포켓 컴포넌트 파일(.jsx) 자체를 삭제하지 마 (나중에 재활용 가능)
+- App.jsx에서 해당 포켓의 라우팅/렌더링 코드는 유지해도 됨 (dead code지만 안전)
+- HomeTab.jsx 수정하지 마
+- 하단 탭 수정하지 마
+
+## 완료 후
+- `npm run build` 에러 없어야 함
+- 완료: `openclaw system event --text "Done: Board-021 pocket reorganize (42→31), 6 categories, moved tradition/taxrefund/themepark/cvsnew" --mode now`
+- 에러: `openclaw system event --text "Error: Board-021 failed - [에러내용]" --mode now`

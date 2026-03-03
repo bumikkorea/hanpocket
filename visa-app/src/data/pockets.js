@@ -14,7 +14,7 @@ export const pocketCategories = [
   },
   {
     id: 'travel-food',
-    name: { ko: '여행 & 맛집', zh: '旅行 & 美食', en: 'Travel & Food' },
+    name: { ko: '여행', zh: '旅行', en: 'Travel' },
     icon: '✈️',
     pockets: [
       { id: 'travel', name: { ko: '여행', zh: '旅行', en: 'Travel' }, icon: '✈️', description: { ko: '여행 계획부터 현지 정보까지', zh: '从旅行计划到当地信息', en: 'From travel plans to local info' }, size: 'lg' },
@@ -22,10 +22,8 @@ export const pocketCategories = [
       { id: 'food', name: { ko: '맛집', zh: '美食', en: 'Food' }, icon: '🍜', description: { ko: '미슐랭부터 블루리본까지', zh: '从米其林到蓝丝带', en: 'From Michelin to Blue Ribbon' }, size: 'lg' },
       { id: 'trip', name: { ko: '여행 큐레이션', zh: '旅行精选', en: 'Travel Picks' }, icon: '🎫', description: { ko: '인기 체험 & 할인 티켓', zh: '热门体验 & 折扣门票', en: 'Popular experiences & discounted tickets' }, size: 'lg' },
       { id: 'festival', name: { ko: '축제/이벤트', zh: '节日/活动', en: 'Festivals' }, icon: '🎊', description: { ko: '이번 주 축제', zh: '本周节日', en: "This week's festivals" }, size: 'md' },
-      { id: 'tradition', name: { ko: '한국 전통 체험', zh: '韩国传统体验', en: 'Korean Traditional Experience' }, icon: '🏛️', description: { ko: '요리·문화·계절 체험', zh: '料理·文化·季节体验', en: 'Cooking, culture & seasonal activities' }, size: 'lg' },
       { id: 'holiday', name: { ko: '한국 공휴일 캘린더', zh: '韩国公休日日历', en: 'Korean Holiday Calendar' }, icon: '📅', description: { ko: '네이버 달력 스타일', zh: 'Naver日历风格', en: 'Naver Calendar style' }, size: 'lg' },
-      { id: 'taxrefund', name: { ko: '택스리펀드', zh: '退税指南', en: 'Tax Refund' }, icon: '💰', description: { ko: '환급 계산기 & 공항 안내', zh: '退税计算器 & 机场指南', en: 'Refund calculator & airport guide' }, size: 'lg' },
-      { id: 'photoguide', name: { ko: '촬영 가이드', zh: '拍照指南', en: 'Photo Guide' }, icon: '📸', description: { ko: '셀카 구도부터 포토스팟까지', zh: '从自拍构图到拍照景点', en: 'From selfie tips to photo spots' }, size: 'lg' },
+      { id: 'themepark', name: { ko: '놀이공원 할인', zh: '游乐园折扣', en: 'Theme Park Deals' }, icon: '🎡', description: { ko: '롯데월드, 에버랜드 할인 꿀팁', zh: '乐天世界、爱宝乐园折扣攻略', en: 'Lotte World, Everland discount tips' }, size: 'md' },
     ],
   },
   {
@@ -37,6 +35,7 @@ export const pocketCategories = [
       { id: 'idol', name: { ko: '최애 스타', zh: '我的偶像', en: 'My Star' }, icon: '🌟', description: { ko: '아이돌/배우 스케줄', zh: '偶像/演员日程', en: 'Idol/actor schedule' }, size: 'lg' },
       { id: 'drama', name: { ko: '예능/드라마', zh: '综艺/韩剧', en: 'Shows & Dramas' }, icon: '📺', description: { ko: '방영 일정', zh: '播出日程', en: 'Airing schedule' }, size: 'md' },
       { id: 'fanevent', name: { ko: '팬 이벤트', zh: '粉丝活动', en: 'Fan Events' }, icon: '🎤', description: { ko: '콘서트/팬싸', zh: '演唱会/签名会', en: 'Concerts & fan signs' }, size: 'sm' },
+      { id: 'tradition', name: { ko: '한국 전통 체험', zh: '韩国传统体验', en: 'Korean Traditional Experience' }, icon: '🏛️', description: { ko: '요리·문화·계절 체험', zh: '料理·文化·季节体验', en: 'Cooking, culture & seasonal activities' }, size: 'lg' },
     ],
   },
   {
@@ -47,18 +46,7 @@ export const pocketCategories = [
       { id: 'shopping', name: { ko: '쇼핑탭', zh: '购物标签', en: 'Shopping Tab' }, icon: '🛍️', description: { ko: '한국에서 스마트하게 쇼핑하기', zh: '在韩国聪明购物', en: 'Shop smart in Korea' }, size: 'lg' },
       { id: 'beauty', name: { ko: 'K-뷰티', zh: 'K-美妆', en: 'K-Beauty' }, icon: '💄', description: { ko: '올리브영 매장 찾기 & 해외 배송', zh: 'Olive Young门店 & 海外配送', en: 'Olive Young stores & global shipping' }, size: 'lg' },
       { id: 'fashiontrend', name: { ko: 'K-패션', zh: 'K-时尚', en: 'K-Fashion' }, icon: '👕', description: { ko: '무신사/W컨셉/29CM 쇼핑', zh: 'MUSINSA/W Concept/29CM购物', en: 'MUSINSA/W Concept/29CM shopping' }, size: 'lg' },
-      { id: 'cvsnew', name: { ko: '편의점 신상', zh: '便利店新品', en: 'CVS New Items' }, icon: '🛒', description: { ko: 'CU/GS25/세븐일레븐 신상품', zh: 'CU/GS25/7-ELEVEN新品', en: 'New convenience store items' }, size: 'md' },
-      { id: 'themepark', name: { ko: '놀이공원 할인', zh: '游乐园折扣', en: 'Theme Park Deals' }, icon: '🎡', description: { ko: '롯데월드, 에버랜드 할인 꿀팁', zh: '乐天世界、爱宝乐园折扣攻略', en: 'Lotte World, Everland discount tips' }, size: 'md' },
-    ],
-  },
-  {
-    id: 'learning',
-    name: { ko: '학습 & 소통', zh: '学习 & 交流', en: 'Learning & Community' },
-    icon: '📖',
-    pockets: [
-      { id: 'learn', name: { ko: '한국어', zh: '韩语', en: 'Korean' }, icon: '📖', description: { ko: '매일 10분, 한국어가 쉬워집니다', zh: '每天10分钟，韩语变简单', en: '10 minutes a day, Korean made easy' }, size: 'lg' },
-      { id: 'koreangame', name: { ko: '한국어 게임', zh: '韩语游戏', en: 'Korean Game' }, icon: '🎮', description: { ko: '게임으로 배우는 여행 한국어', zh: '玩游戏学旅行韩语', en: 'Learn travel Korean through games' }, size: 'lg' },
-      { id: 'community', name: { ko: '커뮤니티', zh: '社区', en: 'Community' }, icon: '👥', description: { ko: '정보 공유와 중고거래 플랫폼', zh: '信息分享和二手交易平台', en: 'Info sharing and marketplace platform' }, size: 'lg' },
+      { id: 'taxrefund', name: { ko: '택스리펀드', zh: '退税指南', en: 'Tax Refund' }, icon: '💰', description: { ko: '환급 계산기 & 공항 안내', zh: '退税计算器 & 机场指南', en: 'Refund calculator & airport guide' }, size: 'lg' },
     ],
   },
   {
@@ -66,14 +54,11 @@ export const pocketCategories = [
     name: { ko: '생활', zh: '生活', en: 'Daily Life' },
     icon: '🏠',
     pockets: [
-      { id: 'life', name: { ko: '생활', zh: '生活', en: 'Life' }, icon: '🏠', description: { ko: '한국 생활에 유용한 도구 모음', zh: '韩国生活实用工具集', en: 'Useful tools for life in Korea' }, size: 'lg' },
       { id: 'medical', name: { ko: '의료', zh: '医疗', en: 'Medical' }, icon: '🏥', description: { ko: '병원 검색, 건강보험, 응급실', zh: '医院搜索、健康保险、急诊室', en: 'Hospital search, insurance, ER' }, size: 'lg' },
-      { id: 'fitness', name: { ko: '운동', zh: '运动', en: 'Fitness' }, icon: '💪', description: { ko: '공공 체육시설, 헬스장, 수영장', zh: '公共体育设施、健身房、游泳池', en: 'Public facilities, gym, pool' }, size: 'lg' },
       { id: 'delivery', name: { ko: '배달 주문', zh: '点外卖', en: 'Food Delivery' }, icon: '🛵', description: { ko: '배달앱 주문 & 이용 가이드', zh: '外卖App下单 & 使用指南', en: 'Delivery apps & how-to guide' }, size: 'lg' },
       { id: 'pet', name: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, icon: '🐾', description: { ko: '반려동물 한국 입국 절차', zh: '宠物入境韩国流程', en: 'Pet import to Korea process' }, size: 'lg' },
       { id: 'parcel', name: { ko: '택배', zh: '快递', en: 'Parcel' }, icon: '📦', description: { ko: '택배 보내기/조회', zh: '快递寄送/查询', en: 'Send & Track packages' }, size: 'md' },
-      { id: 'realestate', name: { ko: '부동산 시세', zh: '房价行情', en: 'Real Estate' }, icon: '🏢', description: { ko: '원룸/오피스텔', zh: '单间/officetel', en: 'Studios & officetels' }, size: 'sm' },
-      { id: 'news', name: { ko: 'K-뉴스', zh: 'K-新闻', en: 'K-News' }, icon: '📰', description: { ko: '외국인 정책 뉴스', zh: '外国人政策新闻', en: 'Foreigner policy news' }, size: 'lg' },
+      { id: 'cvsnew', name: { ko: '편의점 신상', zh: '便利店新品', en: 'CVS New Items' }, icon: '🛒', description: { ko: 'CU/GS25/세븐일레븐 신상품', zh: 'CU/GS25/7-ELEVEN新品', en: 'New convenience store items' }, size: 'md' },
     ],
   },
   {
@@ -82,30 +67,15 @@ export const pocketCategories = [
     icon: '🔧',
     pockets: [
       { id: 'translator', name: { ko: '통역', zh: '翻译', en: 'Translate' }, icon: '🔄', description: { ko: '실시간 통역과 간판 사전', zh: '实时翻译和招牌词典', en: 'Real-time translation and sign dictionary' }, size: 'lg' },
-      { id: 'artranslate', name: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict' }, icon: '📋', description: { ko: '카메라로 간판을 보면서 아래 사전에서 검색하세요', zh: '对照相机中的招牌，在下方词典中搜索', en: 'View signs with camera and look up in the dictionary below' }, size: 'lg' },
-      { id: 'sos', name: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, icon: '🆘', description: { ko: '위급할 때 도움을 요청하세요', zh: '紧急时刻寻求帮助', en: 'Request help in emergencies' }, size: 'lg' },
       { id: 'finance', name: { ko: '금융', zh: '金融', en: 'Finance' }, icon: '💵', description: { ko: '은행, 송금, 신용, 세금 완벽 가이드', zh: '银行、汇款、信用、税务完整指南', en: 'Complete guide to banking, remittance, credit, tax' }, size: 'lg' },
       { id: 'wallet', name: { ko: '월렛', zh: '钱包', en: 'Wallet' }, icon: '👛', description: { ko: '신분증, 서류, 이름을 한곳에서', zh: '证件、文件、姓名，一处管理', en: 'IDs, docs, and names in one place' }, size: 'lg' },
       { id: 'visaalert', name: { ko: '비자 알림', zh: '签证提醒', en: 'Visa Alert' }, icon: '⏰', description: { ko: '비자 만료일 관리와 스마트 알림', zh: '签证到期日管理和智能提醒', en: 'Visa expiry management and smart alerts' }, size: 'lg' },
-      { id: 'weatherCompare', name: { ko: '모국 날씨 비교', zh: '中韩天气对比', en: 'Weather Compare' }, icon: '🌤️', description: { ko: '한국 vs 중국', zh: '韩国 vs 中国', en: 'Korea vs China' }, size: 'sm' },
-      { id: 'editorpick', name: { ko: '오늘의 HOT', zh: '今日热门', en: "Today's Hot" }, icon: '🔥', description: { ko: '오늘의 핫 키워드', zh: '今日热门关键词', en: "Today's hot keywords" }, size: 'md' },
     ],
   },
 ]
 
 // Mock data for pocket content rendering (기존 데이터 유지)
 export const pocketMockData = {
-  news: {
-    // NOTE: 임시 데이터 — Cloudflare Workers 연동 후 실시간 보도자료로 교체 예정
-    // 모든 URL은 해당 부처 보도자료 게시글 직링크여야 함 (네이버 검색 X)
-    items: [
-      { title: { ko: '외국인 체류 관련 제도 개선 추진', zh: '推进外国人居留相关制度改善', en: 'Improvements to Foreign Resident Stay System' }, url: 'https://www.moj.go.kr/bbs/moj/182/artclList.do', date: '2026-02', source: { ko: '법무부', zh: '法务部', en: 'MOJ' } },
-      { title: { ko: '외국인근로자 권익보호 강화 방안', zh: '加强外国劳工权益保护方案', en: 'Strengthening Foreign Worker Rights Protection' }, url: 'https://www.moel.go.kr/news/enews/report/enewsList.do', date: '2026-02', source: { ko: '고용노동부', zh: '雇佣劳动部', en: 'MOEL' } },
-      { title: { ko: '서울 봄 축제 일정 안내', zh: '首尔春季庆典日程公告', en: 'Seoul Spring Festival Schedule' }, url: 'https://korean.visitseoul.net/festivals', date: '2026-02', source: { ko: '서울관광재단', zh: '首尔观光财团', en: 'STO' } },
-      { title: { ko: '외국인 주민 지원 정책 확대', zh: '扩大外国居民支援政策', en: 'Expanded Support for Foreign Residents' }, url: 'https://www.mois.go.kr/frt/bbs/type010/commonSelectBoardList.do?bbsId=BBSMSTR_000000000008', date: '2026-02', source: { ko: '행정안전부', zh: '行政安全部', en: 'MOIS' } },
-      { title: { ko: '2026 한국 관광 주요 행사 안내', zh: '2026韩国旅游主要活动公告', en: '2026 Korea Major Tourism Events' }, url: 'https://kto.visitkorea.or.kr/kor/notice/news/press/board/view.kto?id=448801&is498=true', date: '2026-02', source: { ko: '한국관광공사', zh: '韩国观光公社', en: 'KTO' } },
-    ],
-  },
   restaurant: {
     weekLabel: { ko: '이번 주 추천', zh: '本周推荐', en: "This Week's Picks" },
     items: [
@@ -356,16 +326,6 @@ export const pocketMockData = {
       { category: 'seasonal', name: { ko: '한강 피크닉 세트', zh: '汉江野餐套装', en: 'Han River Picnic Set' }, location: { ko: '한강공원', zh: '汉江公园', en: 'Han River Park' }, price: '₩30,000~50,000', duration: { ko: '자유', zh: '自由', en: 'Flexible' }, bookUrl: 'https://www.klook.com/ko/search?query=han+river+picnic&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app', searchQuery: '한강피크닉세트' },
     ],
   },
-  weatherCompare: {
-    korea: { city: { ko: '서울', zh: '首尔', en: 'Seoul' }, temp: '12°C', icon: 'Sun' },
-    china: { city: { ko: '베이징', zh: '北京', en: 'Beijing' }, temp: '8°C', icon: 'CloudSun' },
-  },
-  realestate: {
-    items: [
-      { ko: '서울 원룸 평균 월세 55만원', zh: '首尔单间平均月租55万韩元', en: 'Seoul studio avg ₩550K/mo' },
-      { ko: '신촌 오피스텔 보증금 500/월 45', zh: '新村officetel 押金500/月45', en: 'Sinchon officetel 500/45' },
-    ],
-  },
   pet: {
     checklist: [
       { id: 'microchip', label: { ko: '마이크로칩 삽입', zh: '植入芯片', en: 'Microchip implant' }, icon: 'Syringe' },
@@ -426,14 +386,8 @@ export const featureScores = {
   food: 87,       // 완료 (85+)
   shopping: 91,   // 완료 (85+)
   hallyu: 92,     // 완료 (85+)
-  learn: 87,      // 완료 (85+)
-  life: 91,       // 완료 (85+)
   medical: 90,    // 완료 (85+)
-  fitness: 89,    // 완료 (85+)
-  community: 87.5, // 완료 (85+)
   translator: 92.5, // 완료 (85+)
-  artranslate: 93.2, // 완료 (85+)
-  sos: 97,        // 완료 (85+)
   finance: 87,    // 완료 (85+)
   wallet: 95,     // 완료 (85+)
   visaalert: 86,  // 완료 (85+)
@@ -446,16 +400,10 @@ export const serviceItems = [
   { id: 'food', name: { ko: '맛집', zh: '美食', en: 'Food' }, category: 'explore' },
   { id: 'shopping', name: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, category: 'explore' },
   { id: 'hallyu', name: { ko: '한류', zh: '韩流', en: 'Hallyu' }, category: 'explore' },
-  { id: 'learn', name: { ko: '한국어', zh: '韩语', en: 'Korean' }, category: 'explore' },
-  { id: 'life', name: { ko: '생활', zh: '生活', en: 'Life' }, category: 'explore' },
   { id: 'medical', name: { ko: '의료', zh: '医疗', en: 'Medical' }, category: 'explore' },
-  { id: 'fitness', name: { ko: '운동', zh: '运动', en: 'Fitness' }, category: 'explore' },
-  { id: 'community', name: { ko: '커뮤니티', zh: '社区', en: 'Community' }, category: 'explore' },
-  
+
   // Tool items
   { id: 'translator', name: { ko: '통역', zh: '翻译', en: 'Translate' }, category: 'tool' },
-  { id: 'artranslate', name: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict' }, category: 'tool' },
-  { id: 'sos', name: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, category: 'tool' },
   { id: 'finance', name: { ko: '금융', zh: '金融', en: 'Finance' }, category: 'tool' },
   { id: 'wallet', name: { ko: '월렛', zh: '钱包', en: 'Wallet' }, category: 'tool' },
   { id: 'visaalert', name: { ko: '비자 알림', zh: '签证提醒', en: 'Visa Alert' }, category: 'tool' },
@@ -550,15 +498,6 @@ export const subMenuData = {
       { label: { ko: '외국어 진료', zh: '外语诊疗', en: 'Foreign Language' } },
     ],
   },
-  fitness: {
-    title: { ko: '운동', zh: '运动', en: 'Fitness' },
-    items: [
-      { label: { ko: '공공 체육시설', zh: '公共体育设施', en: 'Public Facilities' } },
-      { label: { ko: '헬스장', zh: '健身房', en: 'Gym' } },
-      { label: { ko: '수영장', zh: '游泳池', en: 'Pool' } },
-      { label: { ko: '요가/필라테스', zh: '瑜伽/普拉提', en: 'Yoga/Pilates' } },
-    ],
-  },
   translator: {
     title: { ko: '통역 · 번역', zh: '口译 · 翻译', en: 'Interpreter · Translator' },
     items: [
@@ -575,24 +514,14 @@ export const subMenuData = {
       { label: { ko: '만료 알림', zh: '到期提醒', en: 'Expiry Alert' }, action: 'wallet' },
     ],
   },
-  learn: {
-    title: { ko: '한국어', zh: '韩语', en: 'Korean' },
-    items: [
-      { label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' } },
-      { label: { ko: '대학교 검색', zh: '大学搜索', en: 'University Search' } },
-      { label: { ko: 'TOPIK 가이드', zh: 'TOPIK指南', en: 'TOPIK Guide' } },
-    ],
-  },
 }
 
 // 콘텐츠가 구현된 포켓 ID (이 목록에 없는 포켓은 [更新中] 배지 표시)
 export const IMPLEMENTED_POCKETS = new Set([
   // PocketContent.jsx — 전용 컴포넌트
-  'restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency', 'medical', 'photoguide', 'koreanfood',
-  // KoreanGameMain.jsx — 한국어 게임 학습
-  'koreangame',
+  'restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency', 'medical', 'koreanfood',
   // WidgetContent.jsx — 실제 위젯 컴포넌트
-  'holiday', 'parcel', 'editorpick', 'news',
+  'holiday', 'parcel',
 ])
 
 // Export 별칭 - 기존 코드와의 호환성 유지

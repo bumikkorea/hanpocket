@@ -6,7 +6,7 @@ import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleA
 
 // import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints, Map, Heart, Compass, Layers, Wallet, Utensils, ShoppingBag, AlertTriangle, BookOpen, Coins, Plane } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, MapPin, Menu, Moon, Sun, Footprints, Map, Compass, Layers, Wallet, BookOpen } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -46,6 +46,7 @@ const ResumeTab = lazy(() => import('./components/ResumeTab'))
 const DigitalWalletTab = lazy(() => import('./components/DigitalWalletTab'))
 const CourseTab = lazy(() => import('./components/CourseTab'))
 const SearchTab = lazy(() => import('./components/SearchTab'))
+const KoreanTab = lazy(() => import('./components/KoreanTab'))
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -1112,40 +1113,9 @@ function ServiceGrid({ lang, L, setSubPage }) {
     'tools': '#FFF3E0',
   }
 
-  // Quick-access icon grid (Trip.com style)
-  const quickIcons = [
-    { icon: Shield, label: { ko: '비자', zh: '签证', en: 'Visa' }, action: () => setSubPage('visaalert') },
-    { icon: FileText, label: { ko: '입국카드', zh: '入境卡', en: 'Arrival' }, action: () => setSubPage('arrival-card') },
-    { icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' }, action: () => setSubPage('course') },
-    { icon: Utensils, label: { ko: '맛집', zh: '美食', en: 'Food' }, action: () => setSubPage('food') },
-    { icon: ShoppingBag, label: { ko: '쇼핑', zh: '购物', en: 'Shop' }, action: () => setSubPage('shopping') },
-    { icon: AlertTriangle, label: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, action: () => setSubPage('sos') },
-    { icon: BookOpen, label: { ko: '한국어', zh: '韩语', en: 'Korean' }, action: () => setSubPage('learn') },
-    { icon: Coins, label: { ko: '환급', zh: '退税', en: 'Refund' }, action: () => setSubPage('taxrefund') },
-    { icon: Heart, label: { ko: '병원', zh: '医院', en: 'Hospital' }, action: () => setSubPage('medical') },
-    { icon: Plane, label: { ko: '항공편', zh: '航班', en: 'Flights' }, action: () => setSubPage('travel') },
-  ]
 
   return (
     <div className="space-y-6">
-      {/* Quick-access icon grid */}
-      <div className="bg-white rounded-2xl p-4 shadow-sm">
-        <div className="grid grid-cols-5 gap-3">
-          {quickIcons.map((item, idx) => {
-            const IconComp = item.icon
-            return (
-              <button
-                key={idx}
-                onClick={item.action}
-                className="flex flex-col items-center gap-1 py-2 cursor-pointer active:scale-95 transition-transform"
-              >
-                <IconComp size={32} color="#111827" />
-                <span className="text-xs text-[#374151] text-center">{L(lang, item.label)}</span>
-              </button>
-            )
-          })}
-        </div>
-      </div>
 
       {/* 구현된 포켓 */}
       {implementedCats.map(cat => (
@@ -1428,8 +1398,9 @@ function AppInner() {
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
     { id: 'service', icon: Grid3x3, label: { ko: '서비스', zh: '服务', en: 'Services' } },
-    { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
     { id: 'search', icon: Search, label: { ko: '검색', zh: '搜索', en: 'Search' } },
+    { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
+    { id: 'korean', icon: BookOpen, label: { ko: '한국어', zh: '韩语', en: 'Korean' } },
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]
 
@@ -1763,6 +1734,11 @@ function AppInner() {
         {tab==='search' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
             <SearchTab lang={lang} onNavigate={(target) => { setTab('service'); setSubPage(target) }} />
+          </Suspense>
+        )}
+        {tab==='korean' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <KoreanTab lang={lang} />
           </Suspense>
         )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}

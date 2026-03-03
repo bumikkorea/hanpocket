@@ -1,0 +1,109 @@
+# Board-020: 하단 탭 재구성 + quickIcons 삭제 + 한국어 탭 통합
+
+## 목표
+1. 서비스 탭 상단 quickIcons 그리드 삭제
+2. 하단 탭 6개로 재구성: 홈 | 서비스 | 검색 | 코스 | 한국어 | 나
+3. "한국어" 하단 탭 = KoreanGameMain + EducationTab 병합한 새 탭
+
+## 1. quickIcons 삭제 (App.jsx)
+
+App.jsx에서 quickIcons 배열 정의와 렌더링 부분을 삭제해.
+- `const quickIcons = [...]` 배열 삭제
+- `{/* Quick-access icon grid */}` 관련 JSX 블록 삭제 (grid 렌더링 전체)
+- 관련 lucide import 중 quickIcons에서만 쓰이는 것 정리 (Shield, FileText, Compass 등 — 다른 곳에서 쓰이면 유지)
+
+## 2. 하단 탭 재구성 (App.jsx)
+
+### bottomTabs 배열 변경:
+```js
+const bottomTabs = [
+  { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
+  { id: 'service', icon: Grid3x3, label: { ko: '서비스', zh: '服务', en: 'Services' } },
+  { id: 'search', icon: Search, label: { ko: '검색', zh: '搜索', en: 'Search' } },
+  { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
+  { id: 'korean', icon: BookOpen, label: { ko: '한국어', zh: '韩语', en: 'Korean' } },
+  { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
+]
+```
+순서: 홈 → 서비스 → 검색 → 코스 → 한국어 → 나
+
+## 3. 한국어 탭 생성
+
+새 파일: `src/components/KoreanTab.jsx`
+
+기존 두 컴포넌트를 병합:
+- `KoreanGameMain.jsx` (게임 학습 — 챕터, 퀴즈, XP/스트릭)
+- `EducationTab.jsx` (574줄 — 세션, 미니맵, 레벨, 발음 연습)
+
+### KoreanTab.jsx 구조:
+```jsx
+export default function KoreanTab({ lang }) {
+  const [mode, setMode] = useState('game') // 'game' | 'study'
+  
+  return (
+    <div>
+      {/* 상단 탭 전환 */}
+      <div className="flex gap-2 px-4 pt-4">
+        <button onClick={() => setMode('game')}
+          className={mode === 'game' ? 'active-tab-style' : 'inactive-tab-style'}>
+          {/* 게임으로 배우기 */}
+          {lang === 'ko' ? '🎮 게임' : lang === 'zh' ? '🎮 游戏' : '🎮 Game'}
+        </button>
+        <button onClick={() => setMode('study')}
+          className={mode === 'study' ? 'active-tab-style' : 'inactive-tab-style'}>
+          {/* 체계적 학습 */}
+          {lang === 'ko' ? '📖 학습' : lang === 'zh' ? '📖 学习' : '📖 Study'}
+        </button>
+      </div>
+      
+      {/* 콘텐츠 */}
+      {mode === 'game' && <KoreanGameMain lang={lang} />}
+      {mode === 'study' && <EducationTab lang={lang} />}
+    </div>
+  )
+}
+```
+
+탭 스타일:
+- active: `bg-[#1A1A1A] text-white rounded-full px-4 py-2 text-sm font-medium`
+- inactive: `bg-[#F5F1EB] text-[#666] rounded-full px-4 py-2 text-sm`
+
+### App.jsx에서 한국어 탭 렌더링 추가:
+```jsx
+const KoreanTab = lazy(() => import('./components/KoreanTab'))
+
+// 탭 렌더링 영역에 추가:
+{tab === 'korean' && (
+  <Suspense fallback={<LoadingSpinner />}>
+    <KoreanTab lang={lang} />
+  </Suspense>
+)}
+```
+
+## 4. 서비스 탭의 한국어 관련 포켓 정리
+
+pockets.js의 `learning` 카테고리에서:
+- `learn` 포켓 삭제 (하단 탭으로 이동했으므로)
+- `koreangame` 포켓 삭제 (하단 탭으로 이동했으므로)
+- `community` 포켓은 유지
+
+learning 카테고리에 community만 남으면 카테고리 자체가 빈약해지므로:
+- learning 카테고리의 이름을 `커뮤니티` / `社区` / `Community`로 변경
+- 또는 community를 다른 카테고리(생활)로 이동
+
+## 5. 홈탭에서 상황별 한국어 링크
+
+HomeTab.jsx에서 상황별 한국어를 서비스탭으로 연결하는 간단한 아이콘+텍스트가 이미 있으면 유지.
+없으면 추가하지 않아도 됨 (서비스탭에서 접근 가능하므로).
+
+## 하지 말 것
+- 상황별 한국어 포켓(RestaurantPocket, CafePocket 등)은 건드리지 마 — 서비스 탭에 유지
+- KoreanGameMain.jsx, EducationTab.jsx 원본 파일 삭제하지 마 (KoreanTab에서 import)
+- 기존 코스탭, 검색탭, 홈탭 내용 변경하지 마
+
+## 완료 후
+- `npm run build` 에러 없어야 함
+- 하단 탭이 6개 (홈/서비스/검색/코스/한국어/나) 순서대로 나와야 함
+- 한국어 탭에서 게임/학습 전환이 되어야 함
+- 완료: `openclaw system event --text "Done: Board-020 bottom tabs 6 (홈/서비스/검색/코스/한국어/나) + quickIcons removed + KoreanTab merged" --mode now`
+- 에러: `openclaw system event --text "Error: Board-020 failed - [에러내용]" --mode now`

@@ -1400,7 +1400,6 @@ function AppInner() {
     { id: 'service', icon: Grid3x3, label: { ko: '탐색', zh: '探索', en: 'Explore' } },
     { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
     { id: 'korean', icon: BookOpen, label: { ko: '한국어', zh: '韩语', en: 'Korean' } },
-    { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]
 
   // Check if a service item has been migrated to pocket categories
@@ -1568,6 +1567,9 @@ function AppInner() {
             <div className="flex-1" />
             <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
               <Globe size={20} />
+            </button>
+            <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
+              <User size={20} />
             </button>
             <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -mr-2">
               <Menu size={22} />

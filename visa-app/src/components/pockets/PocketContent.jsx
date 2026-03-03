@@ -7,6 +7,7 @@ import ShoppingPocket from './ShoppingPocket'
 import AccommodationPocket from './AccommodationPocket'
 import MedicalPocket from './MedicalPocket'
 import PhotoGuidePocket from './PhotoGuidePocket'
+import KoreanGameMain from '../korean-game/KoreanGameMain'
 import WidgetContent from '../home/common/WidgetContent'
 import { IMPLEMENTED_POCKETS } from '../../data/pockets'
 
@@ -35,6 +36,7 @@ export default function PocketContent({ pocketId, lang, setTab }) {
     case 'accommodation': return <AccommodationPocket lang={lang} />
     case 'medical': return <MedicalPocket lang={lang} />
     case 'photoguide': return <PhotoGuidePocket lang={lang} />
+    case 'koreangame': return <KoreanGameMain lang={lang} onBack={() => setTab && setTab(null)} />
     default:
       // 구현된 위젯은 WidgetContent로, 미구현은 coming-soon 표시
       if (IMPLEMENTED_POCKETS.has(pocketId)) {

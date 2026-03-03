@@ -1,0 +1,417 @@
+# Board-013: 듀오링고형 한국어 게임 학습 — Phase 1
+
+## 목표
+듀오링고 스타일의 게임형 한국어 학습 시스템을 HanPocket에 내장한다.
+Phase 1: 퀴즈 엔진 + Chapter 1(공항 도착) 3레슨 + XP/스트릭 시스템
+
+## 새 파일 구조
+```
+src/components/korean-game/
+├── KoreanGameMain.jsx       # 메인 진입점 (챕터 선택 화면)
+├── LessonScreen.jsx         # 레슨 진행 화면 (문제 풀기)
+├── QuizCard.jsx             # 개별 문제 컴포넌트 (Type A~D)
+├── ResultScreen.jsx         # 레슨 결과 화면 (XP, 정답률)
+├── StreakBanner.jsx         # 스트릭 표시 배너
+└── gameData.js              # 챕터/레슨/문제 데이터
+```
+
+## 진입 경로
+기존 '한국어(learn)' 포켓 또는 서비스탭에서 "한국어 게임" 버튼 클릭 시 진입.
+App.jsx에서 새 탭/뷰로 라우팅: `activeView === 'korean-game'`
+
+### App.jsx 수정 최소화
+- App.jsx에 `koreanGameView` 상태 추가 (또는 기존 pocket 라우팅 활용)
+- PocketContent.jsx에서 'koreangame' 포켓 ID로 KoreanGameMain 렌더링
+- 또는 learn 포켓 내부에 "게임으로 배우기" 버튼 추가 → KoreanGameMain으로 전환
+
+**가장 간단한 방법 선택**: PocketContent에서 koreangame ID로 라우팅
+
+### pockets.js 수정
+learning 카테고리에 추가:
+```javascript
+{ id: 'koreangame', name: { ko: '한국어 게임', zh: '韩语游戏', en: 'Korean Game' }, icon: 'Gamepad2', description: { ko: '게임으로 배우는 여행 한국어', zh: '玩游戏学旅行韩语', en: 'Learn travel Korean through games' }, size: 'lg' }
+```
+IMPLEMENTED_POCKETS에 'koreangame' 추가.
+
+## 데이터 구조 (gameData.js)
+
+```javascript
+export const CHAPTERS = [
+  {
+    id: 'airport',
+    name: { ko: '공항 도착', zh: '机场到达', en: 'Airport Arrival' },
+    gradient: 'from-sky-400 to-blue-500',
+    lessons: [
+      {
+        id: 'immigration',
+        name: { ko: '입국심사', zh: '入境审查', en: 'Immigration' },
+        questions: [
+          // Type A: 4지선다
+          {
+            type: 'multiple-choice',
+            question: { zh: '"旅游目的是什么？" 用韩语怎么说？', en: 'How do you say "What is the purpose of your visit?" in Korean?' },
+            options: [
+              { text: '여행 목적이 뭐예요?', correct: true },
+              { text: '어디에서 왔어요?', correct: false },
+              { text: '얼마나 있을 거예요?', correct: false },
+              { text: '호텔이 어디예요?', correct: false },
+            ],
+            explanation: { zh: '여행(旅行) + 목적(目的) + 이(是) + 뭐예요(什么)', en: 'Travel + purpose + is + what' },
+            xp: 10,
+          },
+          // Type A
+          {
+            type: 'multiple-choice',
+            question: { zh: '"观光" 的韩语是？', en: 'What is "sightseeing" in Korean?' },
+            options: [
+              { text: '관광', correct: true },
+              { text: '출장', correct: false },
+              { text: '유학', correct: false },
+              { text: '방문', correct: false },
+            ],
+            explanation: { zh: '관광 = 观光/旅游, 출장 = 出差, 유학 = 留学, 방문 = 访问', en: 'Sightseeing, business trip, studying abroad, visit' },
+            xp: 10,
+          },
+          // Type B: 문장 조합
+          {
+            type: 'word-arrange',
+            question: { zh: '请排列正确的韩语语序：', en: 'Arrange the correct Korean word order:' },
+            words: ['관광', '왔어요', '하러'],
+            answer: ['관광', '하러', '왔어요'],
+            translation: { zh: '我来观光的', en: 'I came for sightseeing' },
+            xp: 15,
+          },
+          // Type A
+          {
+            type: 'multiple-choice',
+            question: { zh: '入境审查官问 "몇 일 있을 거예요?" 是什么意思？', en: 'What does the officer mean by "몇 일 있을 거예요?"' },
+            options: [
+              { text: { zh: '你要待几天？', en: 'How many days will you stay?' }, correct: true },
+              { text: { zh: '你住在哪里？', en: 'Where do you live?' }, correct: false },
+              { text: { zh: '你来过韩国吗？', en: 'Have you been to Korea?' }, correct: false },
+              { text: { zh: '你的职业是什么？', en: 'What is your occupation?' }, correct: false },
+            ],
+            xp: 10,
+          },
+          // Type D: 빈칸 채우기
+          {
+            type: 'fill-blank',
+            question: { zh: '"___天" (3天)', en: '"___ days" (3 days)' },
+            sentence: '___ 일',
+            answer: '삼',
+            hint: { zh: '三 = 삼 (sam)', en: 'Three = 삼 (sam)' },
+            xp: 10,
+          },
+          // Type A
+          {
+            type: 'multiple-choice',
+            question: { zh: '如果审查官说 "여권 보여주세요", 你应该？', en: 'If the officer says "여권 보여주세요", what should you do?' },
+            options: [
+              { text: { zh: '出示护照', en: 'Show passport' }, correct: true },
+              { text: { zh: '出示机票', en: 'Show ticket' }, correct: false },
+              { text: { zh: '填写表格', en: 'Fill out form' }, correct: false },
+              { text: { zh: '打开行李', en: 'Open luggage' }, correct: false },
+            ],
+            explanation: { zh: '여권(护照) + 보여주세요(请给我看)', en: 'Passport + please show me' },
+            xp: 10,
+          },
+          // Type B: 문장 조합
+          {
+            type: 'word-arrange',
+            question: { zh: '排列："我要待5天"', en: 'Arrange: "I will stay 5 days"' },
+            words: ['있을', '오', '거예요', '일'],
+            answer: ['오', '일', '있을', '거예요'],
+            translation: { zh: '我要待5天', en: 'I will stay 5 days' },
+            xp: 15,
+          },
+        ],
+      },
+      {
+        id: 'taxi-bus',
+        name: { ko: '택시와 버스', zh: '出租车和巴士', en: 'Taxi & Bus' },
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: { zh: '"明洞多少钱？" 用韩语？', en: '"How much to Myeongdong?" in Korean?' },
+            options: [
+              { text: '명동까지 얼마예요?', correct: true },
+              { text: '명동이 어디예요?', correct: false },
+              { text: '명동에 가주세요', correct: false },
+              { text: '명동은 멀어요?', correct: false },
+            ],
+            explanation: { zh: '명동(明洞) + 까지(到) + 얼마예요(多少钱)', en: 'Myeongdong + to + how much' },
+            xp: 10,
+          },
+          {
+            type: 'multiple-choice',
+            question: { zh: '上出租车后第一句话通常说？', en: 'First thing to say after getting in a taxi?' },
+            options: [
+              { text: '○○까지 가주세요', correct: true },
+              { text: '안녕하세요', correct: false },
+              { text: '감사합니다', correct: false },
+              { text: '얼마예요?', correct: false },
+            ],
+            explanation: { zh: '○○까지(到○○) + 가주세요(请去)', en: '○○ + please go to' },
+            xp: 10,
+          },
+          {
+            type: 'word-arrange',
+            question: { zh: '排列："请到这个地址"', en: 'Arrange: "Please go to this address"' },
+            words: ['가주세요', '이', '주소로'],
+            answer: ['이', '주소로', '가주세요'],
+            translation: { zh: '请到这个地址', en: 'Please go to this address' },
+            xp: 15,
+          },
+          {
+            type: 'fill-blank',
+            question: { zh: '"请在这里停车" = "여기서 ___"', en: '"Please stop here" = "여기서 ___"' },
+            sentence: '여기서 ___',
+            answer: '세워주세요',
+            hint: { zh: '세워주세요 = 请停', en: 'Please stop' },
+            xp: 10,
+          },
+          {
+            type: 'multiple-choice',
+            question: { zh: '"카드 돼요?" 是什么意思？', en: 'What does "카드 돼요?" mean?' },
+            options: [
+              { text: { zh: '可以刷卡吗？', en: 'Can I pay by card?' }, correct: true },
+              { text: { zh: '有折扣吗？', en: 'Is there a discount?' }, correct: false },
+              { text: { zh: '到了吗？', en: 'Are we there?' }, correct: false },
+              { text: { zh: '收据呢？', en: 'Receipt?' }, correct: false },
+            ],
+            xp: 10,
+          },
+          {
+            type: 'multiple-choice',
+            question: { zh: '在地铁站问路："이 역에서 내려요?" 意思是？', en: 'At subway station: "이 역에서 내려요?" means?' },
+            options: [
+              { text: { zh: '在这站下车吗？', en: 'Do I get off at this station?' }, correct: true },
+              { text: { zh: '这站叫什么？', en: 'What is this station called?' }, correct: false },
+              { text: { zh: '还有几站？', en: 'How many stops left?' }, correct: false },
+              { text: { zh: '往哪个方向？', en: 'Which direction?' }, correct: false },
+            ],
+            xp: 10,
+          },
+          {
+            type: 'word-arrange',
+            question: { zh: '排列："到弘大要多长时间？"', en: 'Arrange: "How long to Hongdae?"' },
+            words: ['홍대까지', '걸려요?', '얼마나'],
+            answer: ['홍대까지', '얼마나', '걸려요?'],
+            translation: { zh: '到弘大要多长时间？', en: 'How long to Hongdae?' },
+            xp: 15,
+          },
+        ],
+      },
+      {
+        id: 'hotel-checkin',
+        name: { ko: '호텔 체크인', zh: '酒店入住', en: 'Hotel Check-in' },
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: { zh: '"我有预约" 用韩语？', en: '"I have a reservation" in Korean?' },
+            options: [
+              { text: '예약했어요', correct: true },
+              { text: '방 있어요?', correct: false },
+              { text: '체크인이요', correct: false },
+              { text: '여기 처음이에요', correct: false },
+            ],
+            explanation: { zh: '예약(预约) + 했어요(做了)', en: 'Reservation + did' },
+            xp: 10,
+          },
+          {
+            type: 'multiple-choice',
+            question: { zh: '前台说 "신분증 보여주세요", 意思是？', en: 'Front desk says "신분증 보여주세요", meaning?' },
+            options: [
+              { text: { zh: '请出示身份证/护照', en: 'Please show your ID/passport' }, correct: true },
+              { text: { zh: '请签名', en: 'Please sign' }, correct: false },
+              { text: { zh: '请付款', en: 'Please pay' }, correct: false },
+              { text: { zh: '请填表', en: 'Please fill out form' }, correct: false },
+            ],
+            xp: 10,
+          },
+          {
+            type: 'fill-blank',
+            question: { zh: '"请给我Wi-Fi密码" = "와이파이 ___ 알려주세요"', en: '"Please tell me Wi-Fi password" = "와이파이 ___ 알려주세요"' },
+            sentence: '와이파이 ___ 알려주세요',
+            answer: '비밀번호',
+            hint: { zh: '비밀번호 = 密码', en: 'Password' },
+            xp: 10,
+          },
+          {
+            type: 'word-arrange',
+            question: { zh: '排列："请帮我叫出租车"', en: 'Arrange: "Please call a taxi for me"' },
+            words: ['불러주세요', '택시', '좀'],
+            answer: ['택시', '좀', '불러주세요'],
+            translation: { zh: '请帮我叫出租车', en: 'Please call a taxi for me' },
+            xp: 15,
+          },
+          {
+            type: 'multiple-choice',
+            question: { zh: '"체크아웃이 몇 시예요?" 是在问？', en: '"체크아웃이 몇 시예요?" is asking?' },
+            options: [
+              { text: { zh: '退房时间是几点？', en: 'What time is checkout?' }, correct: true },
+              { text: { zh: '入住时间是几点？', en: 'What time is check-in?' }, correct: false },
+              { text: { zh: '早餐几点开始？', en: 'What time does breakfast start?' }, correct: false },
+              { text: { zh: '房间在几楼？', en: 'What floor is the room?' }, correct: false },
+            ],
+            xp: 10,
+          },
+          {
+            type: 'multiple-choice',
+            question: { zh: '想延迟退房说什么？', en: 'What to say for late checkout?' },
+            options: [
+              { text: '레이트 체크아웃 가능해요?', correct: true },
+              { text: '방 바꿔주세요', correct: false },
+              { text: '청소해주세요', correct: false },
+              { text: '짐 맡아주세요', correct: false },
+            ],
+            explanation: { zh: '레이트 체크아웃(延迟退房) + 가능해요?(可以吗)', en: 'Late checkout + is it possible?' },
+            xp: 10,
+          },
+          {
+            type: 'fill-blank',
+            question: { zh: '"请帮我保管行李" = "___ 맡아주세요"', en: '"Please keep my luggage" = "___ 맡아주세요"' },
+            sentence: '___ 맡아주세요',
+            answer: '짐',
+            hint: { zh: '짐 = 行李', en: 'Luggage/baggage' },
+            xp: 10,
+          },
+        ],
+      },
+    ],
+  },
+  // Chapter 2~5는 Phase 2에서 추가 (잠금 상태로 표시)
+  {
+    id: 'food',
+    name: { ko: '맛집 탐방', zh: '美食探索', en: 'Food Adventure' },
+    gradient: 'from-orange-400 to-red-500',
+    locked: true,
+    lessons: [],
+  },
+  {
+    id: 'shopping',
+    name: { ko: '쇼핑', zh: '购物', en: 'Shopping' },
+    gradient: 'from-pink-400 to-rose-500',
+    locked: true,
+    lessons: [],
+  },
+  {
+    id: 'transport',
+    name: { ko: '교통', zh: '交通', en: 'Transport' },
+    gradient: 'from-green-400 to-emerald-500',
+    locked: true,
+    lessons: [],
+  },
+  {
+    id: 'emergency',
+    name: { ko: '긴급 상황', zh: '紧急情况', en: 'Emergency' },
+    gradient: 'from-red-400 to-red-600',
+    locked: true,
+    lessons: [],
+  },
+]
+
+// 게임 상태 저장/로드 (localStorage)
+const STORAGE_KEY = 'hanpocket_korean_game'
+
+export function loadGameState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return defaultState()
+    return JSON.parse(raw)
+  } catch { return defaultState() }
+}
+
+export function saveGameState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+}
+
+function defaultState() {
+  return {
+    xp: 0,
+    level: 1,
+    streak: 0,
+    lastPlayDate: null,
+    hearts: 5,
+    completedLessons: [],
+    lessonScores: {},
+  }
+}
+
+// XP → 레벨 계산
+export function xpToLevel(xp) {
+  if (xp < 100) return 1
+  if (xp < 250) return 2
+  if (xp < 500) return 3
+  if (xp < 800) return 4
+  if (xp < 1200) return 5
+  return Math.floor(xp / 250) + 1
+}
+```
+
+## KoreanGameMain.jsx 설계
+
+### 화면 구성
+1. **상단 바**: 뒤로가기 + "韩语游戏" 타이틀 + XP 표시
+2. **스트릭 배너**: "🔥 연속 3일!" (오늘 안 했으면 "오늘의 학습을 시작하세요!")
+3. **프로필 카드**: 레벨, XP 프로그레스 바, 하트 수
+4. **챕터 리스트**: 세로 스크롤
+   - 각 챕터: 둥근 카드 (그라디언트 배경 + 챕터명 + 레슨 수 + 완료율)
+   - 잠긴 챕터: opacity-50 + 자물쇠 아이콘 + "即将开放"
+5. **챕터 클릭 → 레슨 리스트 펼침** (아코디언 또는 새 화면)
+6. **레슨 클릭 → LessonScreen으로 전환**
+
+### 스타일
+- Grab/Toss 스타일 카드 (rounded-2xl, 여유 있는 간격 gap-4)
+- 그라디언트 배경 (챕터별 고유 색상)
+- 터치 피드백: active:scale-[0.98]
+- 잠긴 챕터는 회색 그라디언트 + 반투명
+
+## LessonScreen.jsx 설계
+
+### 화면 구성
+1. **상단**: 진행률 바 (1/7, 2/7...) + 하트 표시 + X (나가기)
+2. **문제 영역** (QuizCard):
+   - 문제 텍스트 (중국어 또는 영어)
+   - 선택지/입력 영역
+3. **하단**: 확인 버튼 → 정답/오답 피드백
+4. **정답 시**: 초록 배경 플래시 + "正确! +10XP" → 다음 문제
+5. **오답 시**: 빨간 배경 플래시 + 정답 표시 + explanation + 하트 -1
+6. **하트 0개 시**: "하트가 없습니다. 1시간 후 다시 도전!" → 메인으로 복귀
+7. **모든 문제 완료 → ResultScreen**
+
+### QuizCard 문제 유형별 UI
+
+**multiple-choice**: 4개 버튼 (세로 배열, 각 rounded-xl, 선택 시 border-2 border-blue-500)
+**word-arrange**: 하단에 단어 블록들 (탭하면 상단 문장 슬롯에 추가, 다시 탭하면 제거)
+**fill-blank**: 문장 표시 + 빈칸에 텍스트 input (키보드 올라옴)
+
+### 애니메이션
+- 정답: 카드 전체 `bg-green-50` 플래시 (0.3s) + 상단에 "+10 XP" 팝업
+- 오답: 카드 전체 `bg-red-50` 플래시 + 카드 좌우 흔들림 (shake)
+- 레슨 완료: confetti 효과 (CSS animation, 라이브러리 불필요)
+- 하트 감소: 하트 아이콘 스케일 바운스
+
+## ResultScreen.jsx 설계
+1. 원형 프로그레스 (정답률 %)
+2. 획득 XP 표시 (카운트업 애니메이션)
+3. 연속 정답 보너스 표시
+4. "다음 레슨" 또는 "챕터로 돌아가기" 버튼
+5. 레벨업 시: 큰 축하 화면
+
+## 기술 지침
+- 모든 컴포넌트: TailwindCSS, lucide-react
+- 다국어: lang prop (ko/zh/en), 중국어 우선
+- 상태 관리: React useState + localStorage
+- 애니메이션: CSS transition/animation (framer-motion 없이)
+- 효과음: 없음 (Phase 2)
+- 하트 복구: localStorage에 lastHeartLoss 시간 저장, 1시간마다 +1, 최대 5개
+- 스트릭: 날짜 비교 (오늘 vs lastPlayDate), 연속이면 streak++, 건너뛰면 0
+- 문제 순서: 배열 그대로 (Phase 2에서 셔플)
+
+## 하지 말 것
+- 외부 라이브러리 추가 금지 (confetti 등은 CSS로)
+- 실제 이미지 사용 금지
+- 음성/TTS 구현 금지 (Phase 2)
+- 기존 포켓/컴포넌트 삭제 금지
+- 서버 API 호출 금지 (전부 localStorage)

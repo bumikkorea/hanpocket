@@ -58,6 +58,7 @@ export const pocketCategories = [
     icon: 'BookOpen',
     pockets: [
       { id: 'learn', name: { ko: '한국어', zh: '韩语', en: 'Korean' }, icon: 'BookOpen', description: { ko: '매일 10분, 한국어가 쉬워집니다', zh: '每天10分钟，韩语变简单', en: '10 minutes a day, Korean made easy' }, size: 'lg' },
+      { id: 'koreangame', name: { ko: '한국어 게임', zh: '韩语游戏', en: 'Korean Game' }, icon: 'Gamepad2', description: { ko: '게임으로 배우는 여행 한국어', zh: '玩游戏学旅行韩语', en: 'Learn travel Korean through games' }, size: 'lg' },
       { id: 'korean', name: { ko: '오늘의 한국어', zh: '今日韩语', en: 'Korean Today' }, icon: 'MessageCircle', description: { ko: '매일 새로운 표현', zh: '每天新表达', en: 'Daily new expression' }, size: 'md' },
       { id: 'streak', name: { ko: '학습 스트릭', zh: '学习连续天数', en: 'Learning Streak' }, icon: 'Flame', description: { ko: '연속 학습일', zh: '连续学习天数', en: 'Consecutive days' }, size: 'sm' },
       { id: 'community', name: { ko: '커뮤니티', zh: '社区', en: 'Community' }, icon: 'Users', description: { ko: '정보 공유와 중고거래 플랫폼', zh: '信息分享和二手交易平台', en: 'Info sharing and marketplace platform' }, size: 'lg' },
@@ -639,6 +640,8 @@ export const subMenuData = {
 export const IMPLEMENTED_POCKETS = new Set([
   // PocketContent.jsx — 전용 컴포넌트
   'restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency', 'medical', 'photoguide',
+  // KoreanGameMain.jsx — 한국어 게임 학습
+  'koreangame',
   // WidgetContent.jsx — 실제 위젯 컴포넌트
   'holiday', 'parcel', 'editorpick', 'news',
 ])

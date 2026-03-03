@@ -1,0 +1,157 @@
+## 3시간 연속 작업 큐 (순서대로 실행)
+
+아래 작업을 순서대로 전부 실행해. 각 작업 완료 후 다음 작업으로 넘어가. 빌드 에러 나면 즉시 수정하고 계속 진행.
+
+---
+
+### 작업 1: 한국 세관신고서 폼 추가 (30분)
+
+입국카드와 함께 세관신고서도 작성할 수 있게 추가.
+src/components/guides/CustomsGuide.jsx 생성.
+
+세관신고서 필드 (실제 양식 기준 10칸):
+1. Name / 성명
+2. Birth date (Year/Month/Day)
+3. Passport number (외국인만)
+4. Length of stay (일수)
+5. Number of family members traveling (본인 포함/기타)
+6. Country of embarkation / 출발 국가
+7. Phone number
+8. Airline/Flight No. / 항공기 편명
+9. Address in Korea / 국내 주소
+10. (없음 - 하단은 질문)
+
+Customs Declaration 질문 6개 (각각 Yes/No 체크):
+1. 면세 범위 초과 물품 소지 여부 (주류/담배/향수/기타)
+2. FTA 원산지 물품 반입 여부
+3. USD 10,000 초과 통화/유가증권 소지 여부 (총액 입력)
+4. 반입 금지/제한 물품 소지 여부 (총기, 위조화폐, 마약 등)
+5. 검역 대상 동식물 소지 여부
+6. 세관 확인 필요 물품 소지 여부
+
+디자인: 입국카드와 동일한 스타일 (파란색이 아닌 베이지/갈색 톤)
+캡처 저장 기능도 동일하게 적용.
+ArrivalCardGuide에서 탭으로 전환: [입국카드] [세관신고서]
+
+---
+
+### 작업 2: 상황별 한국어 전면 리뉴얼 (40분)
+
+prompts/board-008_2026-03-03_1249.txt 파일을 읽고 그 내용대로 실행.
+
+핵심:
+- 모든 상황별 한국어 포켓 UI를 단일 Form으로 통일
+- KoreanPhraseCard.jsx 공통 컴포넌트 생성
+- 사진 제거, CSS SVG 일러스트로 교체
+- 인원수 선택 제거
+- 쇼핑은 ShoppingTab으로 이동
+- 복사/음성재생/북마크 기능
+
+---
+
+### 작업 3: 서비스탭 아이콘 그리드 상단 추가 (20분)
+
+Trip.com처럼 서비스탭 최상단에 핵심 서비스 아이콘 그리드 2줄 배치.
+현재 포켓 카드 리스트 위에 추가.
+
+아이콘 그리드 (2줄 x 5개 = 10개):
+행1: 비자 | 입국카드 | 코스 | 맛집 | 쇼핑
+행2: SOS | 한국어 | 환급 | 병원 | 항공편
+
+각 아이콘:
+- lucide 아이콘 (32px) + 1줄 라벨 (text-xs)
+- 세로 정렬 (flex-col items-center)
+- 터치 시 해당 포켓/가이드로 이동
+- active:scale-95 피드백
+
+라벨 3개국어 대응 (lang prop 사용)
+
+---
+
+### 작업 4: 오프라인 폴백 화면 (15분)
+
+인터넷 끊겼을 때 대응.
+
+src/components/common/OfflineNotice.jsx:
+- navigator.onLine 감지
+- 오프라인 시: 상단에 슬라이드다운 배너
+  "인터넷 연결이 없습니다. 일부 기능이 제한됩니다."
+  "网络未连接，部分功能受限"
+- bg-amber-50 border-amber-200 text-amber-800
+- 온라인 복구 시 자동 사라짐
+
+App.jsx 최상단에 OfflineNotice 추가.
+
+---
+
+### 작업 5: 에러 바운더리 (15분)
+
+앱 크래시 시 흰 화면 대신 안내 화면.
+
+src/components/common/ErrorBoundary.jsx:
+- React Error Boundary (class component)
+- 에러 발생 시:
+  - HANPOCKET 로고
+  - "문제가 발생했습니다" / "出现了问题"
+  - "새로고침" 버튼 (location.reload)
+  - 에러 상세 (접기/펼치기, 개발용)
+
+App.jsx에서 전체 앱을 ErrorBoundary로 감싸기.
+
+---
+
+### 작업 6: 홈탭 개인화 인사 (10분)
+
+홈탭 상단에 시간대별 인사말 + 프로필 기반 메시지.
+
+- 06~12시: "좋은 아침이에요" / "早上好"
+- 12~18시: "좋은 오후예요" / "下午好"
+- 18~22시: "좋은 저녁이에요" / "晚上好"
+- 22~06시: "좋은 밤이에요" / "晚安"
+
+프로필에 이름 있으면: "OO님, 좋은 아침이에요"
+없으면: "좋은 아침이에요"
+
+디자인: text-2xl font-light text-gray-800, 홈탭 최상단, mb-4
+
+---
+
+### 작업 7: 코스탭 바이럴 공유 카드 (20분)
+
+추천 코스를 샤오홍슈/위챗에 공유할 수 있는 카드 이미지 생성.
+
+코스 상세 하단에 "공유 카드 만들기" 버튼 추가.
+터치 시 공유용 카드 뷰 생성:
+
+카드 구성:
+- 상단: HANPOCKET 로고 작게
+- 코스명 (큰 글씨)
+- 경유지 아이콘 연결 (1 -> 2 -> 3 -> 4)
+- 총 소요시간 + 예상 비용
+- 하단: "한국 여행은 HanPocket" + QR코드 영역 (텍스트로 대체: hanpocket.pages.dev)
+- 배경: 그라데이션 (bg-gradient-to-br from-gray-50 to-gray-100)
+
+html2canvas로 이미지 저장 또는 스크린샷 안내.
+입국카드 캡처와 동일한 방식 사용.
+
+---
+
+### 작업 8: 전체 빌드 + 코드 정리 (10분)
+
+1. npm run build로 전체 빌드 확인
+2. 사용하지 않는 import 정리
+3. console.log 제거 (개발용)
+4. 빌드 에러 있으면 모두 수정
+5. git add -A && git commit -m "Board 005-010: mega patches + guides + UX improvements"
+
+---
+
+### 작업 9: 프로덕션 배포 (5분)
+
+npm run build && npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+
+---
+
+총 예상: 약 2시간 45분
+각 작업 사이에 빌드 체크하면서 진행.
+에러 나면 즉시 수정하고 다음으로.

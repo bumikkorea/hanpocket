@@ -1,0 +1,49 @@
+## 입국카드 필드 수정 (실제 카드 기준 팩트체크 완료)
+
+board-009에서 만든 입국카드 폼의 필드를 실제 카드 기준으로 수정해줘.
+
+### 실제 한국 입국카드 필드 (정확히 9칸)
+
+1. Family Name / 성 - text input
+2. Given Name / 명 - text input  
+3. Gender - Male / Female 체크박스
+4. Nationality / 국적 - text input (기본값: CHINESE)
+5. Date of Birth / 생년월일 - YY/MM/DD 3칸 (주의: 2자리 연도)
+6. Occupation / 직업 - text input
+7. Address in Korea / 한국 내 주소 - text input + 전화번호 input (같은 줄)
+8. Purpose of Visit / 입국 목적 - 체크박스 (택1):
+   - Tour 관광: Individual Travel 개별 / Group Tour 단체
+   - Business 비즈니스
+   - Diplomatic/Official 외교/공무
+   - Medical Treatment 질병치료/의료
+   - Visit family/relatives/friends 가족/친지/지인 방문
+   - Conference/Event 회의/행사
+   - Employment 취업
+   - Study 학업
+   - Sports Event 스포츠 경기
+   - Others 기타
+9. 우측 하단 3칸:
+   - Departure Date / 출항일자 - date input
+   - Departure Flight / 출항 편명 (선택) - text input
+   - Signature / 서명 - 터치 서명 패드
+
+### 삭제할 필드 (실제 카드에 없음)
+- Passport No (여권번호) - 삭제
+- Port of Boarding (탑승지) - 삭제
+- Duration of Stay (체류기간) - 삭제
+- Home Address (본국주소) - 삭제
+- Flight No (항공편명, 도착편) - 삭제
+
+### 카드 타이틀 정확히
+상단: "ARRIVAL CARD" + "입국신고서(외국인용)"
+안내: "Please fill out in Korean or English" + "한글 또는 영어로 작성해 주시기 바랍니다"
+
+### 레이아웃
+실제 카드와 동일한 배치:
+- 1행: Family Name | Given Name | Gender (3칸)
+- 2행: Nationality | Date of Birth | Occupation (3칸)
+- 3행: Address in Korea + Phone (full width)
+- 4행좌: Purpose of Visit (체크박스 2열)
+- 4행우: Departure Date + Departure Flight + Signature (세로 3칸)
+
+나머지 기능(캡처, localStorage 등)은 board-009 그대로 유지.

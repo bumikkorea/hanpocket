@@ -1,3 +1,4 @@
+import KoreanFoodPocket from './KoreanFoodPocket'
 import RestaurantPocket from './RestaurantPocket'
 import TransportPocket from './TransportPocket'
 import ConveniencePocket from './ConveniencePocket'
@@ -27,6 +28,7 @@ function ComingSoonPlaceholder({ lang }) {
 
 export default function PocketContent({ pocketId, lang, setTab }) {
   switch (pocketId) {
+    case 'koreanfood': return <KoreanFoodPocket lang={lang} />
     case 'restaurant': return <RestaurantPocket lang={lang} />
     case 'transport': return <TransportPocket lang={lang} />
     case 'convenience': return <ConveniencePocket lang={lang} />

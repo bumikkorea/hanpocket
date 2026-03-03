@@ -18,6 +18,7 @@ export const pocketCategories = [
     icon: 'Plane',
     pockets: [
       { id: 'travel', name: { ko: '여행', zh: '旅行', en: 'Travel' }, icon: 'Plane', description: { ko: '여행 계획부터 현지 정보까지', zh: '从旅行计划到当地信息', en: 'From travel plans to local info' }, size: 'lg' },
+      { id: 'koreanfood', name: { ko: '한식백과', zh: '韩食百科', en: 'Korean Food Guide' }, icon: 'UtensilsCrossed', description: { ko: '126가지 한식 메뉴 가이드', zh: '126种韩餐菜单指南', en: 'Guide to 126 Korean dishes' }, size: 'lg' },
       { id: 'food', name: { ko: '맛집', zh: '美食', en: 'Food' }, icon: 'Utensils', description: { ko: '미슐랭부터 블루리본까지', zh: '从米其林到蓝丝带', en: 'From Michelin to Blue Ribbon' }, size: 'lg' },
       { id: 'trip', name: { ko: '여행 큐레이션', zh: '旅行精选', en: 'Travel Picks' }, icon: 'Briefcase', description: { ko: '인기 체험 & 할인 티켓', zh: '热门体验 & 折扣门票', en: 'Popular experiences & discounted tickets' }, size: 'lg' },
       { id: 'festival', name: { ko: '축제/이벤트', zh: '节日/活动', en: 'Festivals' }, icon: 'PartyPopper', description: { ko: '이번 주 축제', zh: '本周节日', en: "This week's festivals" }, size: 'md' },
@@ -639,7 +640,7 @@ export const subMenuData = {
 // 콘텐츠가 구현된 포켓 ID (이 목록에 없는 포켓은 [更新中] 배지 표시)
 export const IMPLEMENTED_POCKETS = new Set([
   // PocketContent.jsx — 전용 컴포넌트
-  'restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency', 'medical', 'photoguide',
+  'restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency', 'medical', 'photoguide', 'koreanfood',
   // KoreanGameMain.jsx — 한국어 게임 학습
   'koreangame',
   // WidgetContent.jsx — 실제 위젯 컴포넌트

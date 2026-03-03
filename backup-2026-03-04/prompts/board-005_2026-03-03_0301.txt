@@ -1,0 +1,111 @@
+## 메가 패치 A: 기반 정리 일괄 처리
+
+이 프롬프트는 3개 안건을 한번에 처리한다.
+
+---
+
+### 안건 004: 관리자 포켓 토글 시스템
+
+프로필탭(나)에 관리자 모드 추가.
+
+1) 진입: 프로필 탭 상단 HANPOCKET 로고를 5번 연속 터치 -> 관리자 모드 토글
+2) 관리자 모드 활성 시: 프로필탭 하단에 "포켓 표시 관리" 섹션 나타남
+3) 포켓 관리 UI:
+   - pocketCategories의 모든 카테고리 > 모든 포켓을 리스트로 표시
+   - 각 포켓: 아이콘 + 이름 + 토글 스위치 (on/off)
+   - on = 서비스탭에서 유저에게 보임, off = 숨김
+   - 기본값: IMPLEMENTED_POCKETS에 있는 것만 on
+   - 상단에 "전체 켜기" / "전체 끄기" 버튼
+   - 카테고리별 구분선
+4) 저장: localStorage pocket_visibility (JSON object { pocketId: boolean })
+5) 서비스탭(PocketsPage) 연동:
+   - pocket_visibility에서 true인 포켓만 상단 활성 영역
+   - false인 포켓은 "업데이트 중" 그룹 (하단, 접힌 상태)
+6) 토글 스위치 디자인: Toss 스타일 둥근 슬라이더, on=검정 off=회색
+7) 관리자 모드 표시: 하단 탭 "나" 아이콘 옆에 빨간 점
+8) admin_mode 상태도 localStorage 저장
+
+---
+
+### 안건 005: 구글맵 인코딩 수정 + 지도 버튼 4개
+
+CourseTab.jsx 코스 상세 화면의 지도 연동 수정.
+
+1) 구글맵 딥링크 수정:
+   - origin, waypoints, destination에 encodeURIComponent 사용하지 말 것
+   - 브라우저가 자동 인코딩함
+   - 장소명은 name.ko 사용 (한국어가 구글맵 정확도 높음)
+   - travelmode=driving (대중교통은 경유지 미지원)
+   - 경유지 9개 초과 시 앞에서 9개만
+
+2) 지도 버튼 4개로 확장 (2x2 그리드):
+   1행: 바이두 | 네이버
+   2행: 구글 | 카카오
+
+   바이두맵 (기존 유지):
+   baidumap://map/direction?destination=lat,lng&coord_type=wgs84&mode=transit
+   목적지만 전달, name.zh 사용
+   라벨: "百度地图"
+
+   네이버맵 (추가):
+   https://map.naver.com/v5/directions/출발lng,출발lat,출발이름/경유lng,경유lat,경유이름/도착lng,도착lat,도착이름/transit
+   주의: lng,lat 순서 (경도 먼저!)
+   name.ko 사용, 전체 경유지 전달
+   라벨: "Naver地图"
+
+   구글맵 (수정):
+   https://www.google.com/maps/dir/?api=1&origin=장소명ko&waypoints=장소명1ko|장소명2ko&destination=장소명ko&travelmode=driving
+   name.ko 사용, encodeURIComponent 금지
+   라벨: "谷歌地图"
+
+   카카오맵 (추가):
+   https://map.kakao.com/?sName=출발이름ko&eName=도착이름ko
+   출발-도착만 (경유지 미지원)
+   name.ko 사용
+   라벨: "Kakao地图"
+
+3) 버튼 디자인:
+   - 2x2 그리드 (grid grid-cols-2 gap-2)
+   - 각 버튼: bg-white rounded-xl border border-[#E5E7EB] p-3 text-center
+   - 아이콘: Navigation (lucide) + 텍스트로 구분
+   - active:scale-95 터치 피드백
+
+---
+
+### 안건 006: 홈탭 위젯 그리드 검수 + 보완
+
+HomeTab.jsx의 위젯 그리드가 이미 구현되었으면 아래 사항 확인 및 보완.
+아직 구현 안 되었으면 아래대로 구현.
+
+1) 위젯 그리드 레이아웃 (grid grid-cols-2 gap-3):
+   행1: 날씨 (1x1) | 환율 CNY-KRW (1x1)
+   행2: 오늘의 한국어 (2x1 full width)
+   행3: 실시간 항공편 미니 (2x1 full width)
+   행4: 시간대 중국-한국 (1x1) | 비자 D-day (1x1)
+
+2) 각 위젯 카드: bg-white rounded-2xl p-4 border border-[#E5E7EB] min-h-[80px]
+3) 1x1은 col-span-1, 2x1은 col-span-2
+
+4) "오늘의 한국어" 위젯 (없으면 새로 만들기):
+   - src/components/widgets/DailyKoreanWidget.jsx
+   - 하드코딩 30개 표현 배열, 날짜 기반 rotate (dayOfYear % 30)
+   - 좌측: 한국어 큰 글씨 (text-xl font-bold)
+   - 우측: 중국어 번역 + 로마자 발음
+   - 예: "감사합니다" | 谢谢 | gam-sa-ham-ni-da
+   - 하단: 사용 예문 1줄 (text-sm text-gray-500)
+
+5) 항공편 미니 위젯 (없으면 새로 만들기):
+   - src/components/widgets/FlightMiniWidget.jsx
+   - 편명 입력 + 조회 버튼 1줄
+   - 터치 시 서비스탭 travel 포켓으로 이동 (setTab 호출)
+
+6) 기존 스와이프 카드(퀵슬롯) 코드가 남아있으면 완전히 주석 처리 확인
+
+---
+
+### 테스트 (3개 안건 통합)
+- 프로필 로고 5번 터치 -> 관리자 모드 -> 포켓 토글 작동
+- 코스 상세에서 지도 버튼 4개 (2x2) 정상 표시 + 각 딥링크 URL 정확
+- 홈탭 위젯 6개 그리드 표시
+- 오늘의 한국어 매일 다른 표현
+- 전체 빌드 에러 없음

@@ -1594,7 +1594,7 @@ export const koreanFoodDB = [
       tips_en: 'Best summer cooler dessert!'
     },
     image: null
-  }
+  },
 
   // === MORE VERIFIED QUALITY RECIPES (Top 50) ===
 
@@ -2416,7 +2416,7 @@ export const koreanFoodDB = [
       tips_en: 'Soy sauce base is characteristic. Uses sugar and soy sauce instead of gochujang.'
     },
     image: null
-  }
+  },
 
   // === MORE BANCHAN (SIDE DISHES) - HIGH PRIORITY ===
 

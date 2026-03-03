@@ -1,0 +1,64 @@
+## 상황별 한국어 포켓 전면 리뉴얼
+
+### 1. "쇼핑" 카테고리 이동
+현재 상황별 한국어 안에 "쇼핑" 관련 표현이 있는데, 이건 상황별 한국어가 아니라 쇼핑 가이드에 가까움.
+쇼핑 관련 콘텐츠는 ShoppingTab 또는 shopping 포켓으로 이동시켜.
+
+### 2. 모든 상황별 한국어 카드 UI 통일
+
+현재 식당/카페/교통/편의점/숙소/긴급 등 각 포켓마다 UI가 제각각임.
+아래 단일 Form으로 전부 통일:
+
+카드 구조 (위에서 아래):
+A) 상단: CSS 일러스트/애니메이션 (사진 대신, 아래 3번 참고)
+B) 한국어 표현 (text-xl font-bold, 검정)
+C) [로마자 발음] + 중국어 번역 (같은 줄, text-sm text-gray-500)
+D) 예문: "한국어 문장" (text-base, 따옴표 포함)
+E) 예문 중국어: "中文翻译" (text-sm text-gray-400)
+F) 예문 로마자: romanization (text-xs text-gray-300, 이탤릭)
+G) 하단 버튼 2개 나란히:
+   - [탭하면 복사] (flex-1, bg-gray-100 rounded-xl p-3)
+   - [음성 재생] (w-auto, bg-blue-50 rounded-xl p-3, 스피커 아이콘)
+H) 북마크 아이콘 (카드 우측 상단, 터치 시 저장)
+
+복사 기능: 한국어 표현 + 예문을 클립보드에 복사
+음성 재생: Web Speech API (SpeechSynthesis, lang: 'ko-KR')
+북마크: localStorage에 저장, 별도 "저장한 표현" 탭에서 모아보기
+
+### 3. 사진 제거 -> CSS 일러스트/애니메이션으로 교체
+
+모든 상황별 한국어 포켓에서 사진(이미지) 전부 제거.
+대신 각 상황을 표현하는 CSS 일러스트를 SVG 또는 CSS로 직접 그려:
+
+- 식당: 젓가락 + 밥그릇 SVG (간단한 라인 드로잉, stroke: #111827)
+- 카페: 커피컵 + 김 올라오는 애니메이션 (CSS animation)
+- 교통: 지하철 아이콘 + 이동하는 점선 (CSS animation)
+- 편의점: 삼각김밥 + 음료 SVG
+- 숙소: 침대 + 열쇠 SVG
+- 긴급: 빨간 십자가 + 깜빡임 (CSS animation, 빨간색)
+- 쇼핑: 쇼핑백 SVG (ShoppingTab으로 이동하되 여기선 제거)
+
+스타일: 29CM 미니멀 라인 드로잉, stroke-width: 1.5, 흑백 기본
+크기: 높이 120px, 카드 상단 전체폭
+배경: bg-gray-50 rounded-t-2xl
+
+### 4. 인원수 선택 제거
+식당 포켓에 입장 시 인원수 선택하는 UI가 있는데 완전히 제거.
+불필요한 인터랙션임.
+
+### 5. 각 포켓의 표현 리스트
+기존 데이터는 유지하되, 카드 렌더링만 통일 Form으로 교체.
+PocketContent.jsx에서 restaurant, cafe, transport, convenience, accommodation, emergency 전부 동일한 카드 컴포넌트 사용.
+
+공통 카드 컴포넌트: src/components/pockets/KoreanPhraseCard.jsx
+props: { korean, romanization, chinese, exampleKo, exampleZh, exampleRoman, illustration, onCopy, onSpeak, onBookmark, bookmarked }
+
+### 테스트
+- 모든 상황별 한국어 포켓이 동일한 카드 Form으로 표시
+- 사진 없음, CSS 일러스트만
+- 복사 버튼 작동
+- 음성 재생 작동
+- 북마크 저장/해제 작동
+- 인원수 선택 UI 없음
+- 쇼핑 표현이 상황별 한국어에서 제거됨
+- 빌드 에러 없음

@@ -1,0 +1,89 @@
+## 입국카드 작성법 고도화: 실제 카드 재현 + 캡처 저장
+
+### 배경
+한국 입국카드(파란색 ARRIVAL CARD)의 실제 양식을 CSS로 그대로 재현한다.
+사용자가 직접 정보를 입력하면, 완성된 카드를 캡처용 이미지 1장으로 저장할 수 있게 한다.
+핵심: 비행기 안(인터넷 없는 환경)에서 캡처한 사진만 보고 실제 입국카드를 따라 쓸 수 있어야 함.
+
+### 요구사항
+
+#### 1. 입국카드 CSS 재현 (ArrivalCardGuide.jsx 수정)
+
+실제 한국 입국카드 디자인 재현:
+- 배경: bg-blue-600 (파란색 카드)
+- 상단: "ARRIVAL CARD" + "입국신고서" 타이틀 (흰색)
+- 우측 상단: 대한민국 국장 이미지 (CSS로 간단히 또는 생략)
+- 폼 영역: 흰색 배경 rounded 카드
+
+폼 필드 (실제 입국카드 순서대로):
+1. Family Name (성) - text input
+2. Given Name (이름) - text input
+3. Male / Female (성별) - 라디오 버튼
+4. Nationality (국적) - 기본값 "CHINESE" prefill
+5. Date of Birth (생년월일) - YYYY / MM / DD 3칸
+6. Passport No. (여권번호) - text input
+7. Home Address (본국주소) - text input
+8. Purpose of Visit (방문목적) - 체크박스: Tourism / Business / Visit / Study / Employment / Other
+9. Flight No. (항공편명) - text input
+10. Port of Boarding (탑승지) - text input
+11. Duration of Stay (체류기간) - number input + "days"
+12. Address in Korea (한국 내 주소) - text input (호텔명)
+13. Phone No. (연락처) - text input
+14. Signature (서명) - 서명 패드 (터치로 서명 그리기) 또는 text input
+
+각 필드 라벨: 영어 + 한국어 + 중국어 3줄
+예: "Family Name / 성(姓) / 姓"
+
+입력된 값은 localStorage에 자동 저장 (다시 열면 유지)
+
+#### 2. 캡처용 이미지 생성 ("저장하기" 버튼)
+
+"카드 저장하기" 버튼 터치 시:
+- html2canvas 라이브러리로 입국카드 폼 영역을 이미지로 캡처
+- 또는 html2canvas 없이 구현하려면: 캡처 최적화 뷰 생성
+
+캡처 최적화 뷰:
+- 모든 input을 제거하고 입력값을 텍스트로 렌더링
+- 실제 입국카드처럼 보이는 정적 이미지 형태
+- 파란색 배경 + 흰색 폼 + 입력값이 채워진 상태
+- 하단에 작은 글씨로 "HanPocket에서 생성 | 실제 입국카드에 이 내용을 옮겨 적으세요"
+- 이 뷰를 화면에 풀스크린으로 띄우고 안내: "이 화면을 스크린샷 찍어 저장하세요"
+
+더 좋은 방법 (html2canvas 사용 가능하면):
+- npm install html2canvas
+- 캡처 버튼 -> canvas로 변환 -> PNG blob -> 다운로드 또는 공유
+- 파일명: arrival-card-{날짜}.png
+
+#### 3. 캡처 이미지에 포함될 내용 (1장에 전부)
+
+상단: ARRIVAL CARD / 입국신고서 (파란 배경)
+중단: 모든 필드 라벨 + 입력값 (표 형태)
+하단:
+- "위 내용을 실제 입국카드에 그대로 옮겨 적으세요"
+- "请将以上内容原样填写到实际入境卡上"
+- "Copy the above information onto the actual arrival card"
+- HanPocket 로고 작게
+
+#### 4. UX 플로우
+
+가이드 모드 (기본): 기존 설명형 가이드 (각 칸 설명)
+작성 모드: "직접 작성하기" 버튼 -> 실제 카드 폼 표시
+저장 모드: "카드 저장하기" -> 캡처용 뷰 or 이미지 다운로드
+
+상단 탭 또는 토글: [가이드] [직접 작성]
+
+#### 5. 의존성
+html2canvas가 번들 사이즈 부담이면:
+- 대안 1: 캡처용 정적 뷰 + "스크린샷 찍으세요" 안내 (의존성 0)
+- 대안 2: html2canvas 사용 (npm install html2canvas, ~40KB gzipped)
+판단은 Claude Code에게 맡김. 번들 영향 최소화 우선.
+
+### 테스트
+- 입국카드 폼이 실제 파란색 카드처럼 보이는지
+- 모든 필드 입력 가능
+- 국적 기본값 "CHINESE" prefill
+- localStorage 저장/복원
+- "카드 저장하기" -> 캡처 가능한 화면 또는 이미지 다운로드
+- 캡처 이미지 1장에 모든 정보 포함
+- 오프라인에서 캡처 이미지만 보고 실제 카드 작성 가능
+- 빌드 에러 없음

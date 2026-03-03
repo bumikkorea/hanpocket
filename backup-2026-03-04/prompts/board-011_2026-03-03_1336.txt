@@ -1,0 +1,137 @@
+# Board-011: 홈탭 카드 기반 리디자인 (Grab 스타일)
+
+## 목표
+HomeTab.jsx를 Grab 앱 스타일로 전면 리디자인한다.
+현재: 위젯 그리드 (2열, 기능 카드 나열)
+목표: **콘텐츠 카드 피드** — 여유 있는 세로 스크롤, 카드 간 넉넉한 간격, 이모지/아이콘 최소화
+
+## 디자인 원칙 (Grab 벤치마크)
+
+1. **카드 간 세로 여백**: `gap-6` (24px) 이상. 섹션 간은 `mb-8` (32px)
+2. **둥근 모서리**: `rounded-2xl` (16px)
+3. **이모지/아이콘 최소화**: 탭바와 상단바 외에는 Lucide 아이콘, 이모지 사용 금지. 텍스트와 CSS 그라디언트 배경으로 시각 표현
+4. **섹션 제목**: 볼드 큰 글씨 (`text-lg font-bold`) + 오른쪽에 `→` 화살표 (클릭 시 해당 탭 이동)
+5. **카드 스타일**: 2가지 교차 사용
+   - **풀폭 배너 카드**: 높이 160-180px, CSS 그라디언트 배경 + 큰 텍스트
+   - **가로 스크롤 카드**: 폭 200px, 높이 240px, 2.5개 보이게
+6. **실제 사진 없음** → CSS 그라디언트 + 큰 타이포그래피로 대체 (색감: 부드러운 파스텔 ~ 비비드)
+
+## 홈탭 구성 (위에서 아래 순서)
+
+### 1. 상단 유틸리티 바 (기존 위젯 축소)
+- 한 줄 가로 스크롤, 높이 60px 칩 스타일
+- 날씨 칩: "서울 12°C ☁️" (텍스트만, 배경색 #E8F4FD)
+- 환율 칩: "¥1 = ₩189.5" (배경색 #FFF3E0)
+- 시간 칩: "한국 13:36" (배경색 #F3E5F5)
+- 칩 간격: `gap-2`, 패딩 `px-4 py-2`, `rounded-full`
+- **이 칩들은 기존 WeatherWidget, ExchangeRateWidget, TimezoneWidget 데이터를 가져와서 표시만 간소화**
+
+### 2. 추천 코스 섹션 (핵심!)
+- 제목: "推荐路线" / "추천 코스" + → (코스탭 이동)
+- **가로 스크롤 카드**, 각 카드:
+  - 폭 220px, 높이 280px
+  - 상단 70%: CSS 그라디언트 배경 (코스별 고유 색상)
+  - 그라디언트 위에 큰 흰색 텍스트: 코스 이름
+  - 하단 30%: 흰 배경, 코스 설명 1줄 + "X개 장소 · Y시간"
+  - `rounded-2xl`, `shadow-sm`
+- recommendedCourses.js에서 첫 6개만 표시
+- 마지막에 "더보기" 카드 (코스탭으로 이동)
+- 클릭 시: setTab('course') + 해당 코스 상세 열기
+
+### 3. 오늘의 한국어 (풀폭 배너)
+- 높이 140px, `rounded-2xl`
+- 배경: 그라디언트 `from-indigo-500 to-purple-600`
+- 흰색 큰 텍스트: 오늘의 표현 (DailyKoreanWidget 데이터 활용)
+- 예: 큰 글씨 "안녕하세요" / 작은 글씨 "你好 · Hello"
+- 하단에 "매일 새로운 표현 →"
+
+### 4. 여행 필수 가이드 섹션
+- 제목: "旅行必备" / "여행 필수" + →
+- **2열 그리드 (2x2)**, 각 카드:
+  - 높이 120px, `rounded-2xl`
+  - CSS 그라디언트 배경 (각각 다른 색)
+  - 큰 흰색 텍스트 제목만 표시
+  - 카드 4개:
+    1. "入境卡填写" / "입국카드" — `from-blue-400 to-blue-600` → 클릭시 해당 포켓
+    2. "SIM/eSIM" — `from-green-400 to-emerald-600` → 클릭시 해당 포켓  
+    3. "退税指南" / "세금환급" — `from-amber-400 to-orange-500` → 클릭시 해당 포켓
+    4. "免税限额" / "면세한도" — `from-rose-400 to-pink-600` → 클릭시 해당 포켓
+  - **이 4개는 아직 미구현 포켓일 수 있음 — 클릭 시 "即将上线 / 곧 출시" 토스트 표시**
+
+### 5. 긴급 연락처 배너 (풀폭)
+- 높이 80px, 배경 `bg-red-50`, 테두리 `border border-red-200`
+- 텍스트: "긴급 상황? 112(경찰) · 119(소방/구급) · 1345(외국인상담)"
+- 중국어: "紧急情况？112(警察) · 119(消防/急救) · 1345(外国人咨询)"
+- 클릭 시 긴급 포켓 열기
+
+### 6. 상황별 한국어 섹션
+- 제목: "场景韩语" / "상황별 한국어" + →
+- **가로 스크롤 카드**, 각 카드:
+  - 폭 160px, 높이 200px
+  - 상단: 파스텔 그라디언트 배경 + 큰 텍스트 (상황 이름)
+  - 하단: 예시 문장 1개
+  - 카드: 식당, 카페, 교통, 편의점, 쇼핑, 숙소, 긴급
+- 클릭 시 해당 포켓 열기
+
+### 7. 인기 서비스 섹션  
+- 제목: "热门服务" / "인기 서비스" + → (서비스탭 이동)
+- **2열 그리드**, 각 카드 높이 100px
+- 카드 4개: 맛집, 쇼핑, 한류, 의료
+- 각각 고유 그라디언트 + 흰색 텍스트
+
+### 8. 하단 여백
+- `pb-24` (하단탭에 가려지지 않게)
+
+## 기술 지침
+
+### 색상 팔레트 (CSS 그라디언트용)
+```
+코스-서울: from-sky-400 to-blue-500
+코스-맛집: from-orange-400 to-red-500
+코스-쇼핑: from-pink-400 to-rose-500
+코스-KPOP: from-violet-400 to-purple-500
+코스-자연: from-green-400 to-emerald-500
+코스-역사: from-amber-500 to-yellow-600
+코스-부산: from-cyan-400 to-teal-500
+코스-제주: from-lime-400 to-green-500
+```
+
+### 기존 코드 활용
+- WeatherWidget, ExchangeRateWidget, TimezoneWidget → 데이터만 가져오고 UI는 칩으로 축소
+- DailyKoreanWidget → 데이터만 가져오고 배너 카드로 재구성
+- recommendedCourses.js → 첫 6개 import
+- VisaWidget, FlightMiniWidget → 이번에는 홈에서 제거 (서비스탭에서 접근)
+
+### 파일 변경
+- `src/components/HomeTab.jsx` — 전면 재작성
+- 새 파일 필요 없음 (HomeTab 안에서 인라인 구현)
+- 기존 위젯 컴포넌트 파일은 삭제하지 말 것 (다른 곳에서 사용 가능)
+
+### 스크롤 동작
+- 전체: 세로 스크롤 (`overflow-y-auto`)
+- 가로 스크롤 섹션: `overflow-x-auto scrollbar-hide flex gap-4`, `snap-x snap-mandatory`
+- 각 카드: `snap-start flex-shrink-0`
+
+### 터치 피드백
+- 모든 카드: `active:scale-[0.98] transition-transform`
+
+### 다국어
+- lang 파라미터 사용 (ko/zh/en)
+- 중국어 우선 표시
+
+### props (기존과 동일)
+```jsx
+export default function HomeTab({ profile, lang, exchangeRate, setTab })
+```
+
+### export (기존과 동일 유지)
+```jsx
+export { TreeSection, LucideIcon, WidgetContent, getEnabledPocketsForSection, trackActivity }
+```
+이 export들은 반드시 유지. 제거하면 App.jsx에서 import 에러 발생.
+
+## 하지 말 것
+- 실제 이미지 URL 사용 금지 (CSS 그라디언트만)
+- 이모지 사용 금지 (긴급 섹션 제외)
+- 기존 위젯 파일 삭제 금지
+- FlightMiniWidget, VisaWidget을 홈에 넣지 말 것 (서비스탭용)

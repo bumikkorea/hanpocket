@@ -1,0 +1,30 @@
+싱가포르 테스트 코스의 코스 상세 화면에서 지도 앱 버튼을 4개로 만들어줘.
+
+현재: 구글맵, 바이두맵 2개
+변경: 구글맵, 바이두맵, 네이버맵, 카카오맵 4개
+
+각 딥링크 형식:
+
+1. 구글맵 (기존 유지):
+https://www.google.com/maps/dir/?api=1&origin=장소명&waypoints=장소명1|장소명2|장소명3&destination=장소명&travelmode=driving
+
+2. 바이두맵 (기존 유지, 목적지만):
+baidumap://map/direction?destination=lat,lng&coord_type=wgs84&mode=transit
+
+3. 네이버맵 (추가):
+https://map.naver.com/v5/directions/startLng,startLat,출발이름/waypoint1Lng,waypoint1Lat,경유이름1/waypoint2Lng,waypoint2Lat,경유이름2/waypoint3Lng,waypoint3Lat,경유이름3/endLng,endLat,도착이름/transit
+주의: 네이버맵은 lng,lat 순서 (경도 먼저!)
+장소명은 name.ko 사용
+
+4. 카카오맵 (추가):
+https://map.kakao.com/?sName=출발이름&eName=도착이름
+카카오맵은 경유지 미지원, 출발-도착만.
+장소명은 name.ko 사용
+
+버튼 레이아웃: 2x2 그리드
+1행: 구글맵 | 바이두맵
+2행: 네이버맵 | 카카오맵
+
+각 버튼 스타일 동일: bg-white rounded-xl border border-[#E5E7EB] p-3 text-center
+아이콘: 모두 lucide에서 Navigation 사용, 텍스트로 구분
+라벨: 구글, 바이두, 네이버, 카카오 (간결하게)

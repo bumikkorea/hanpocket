@@ -1,0 +1,91 @@
+# Board-014: 배포 전 정리 + 홈탭 가이드 연결 + Cloudflare 배포
+
+## 작업 1: 싱가포르 테스트 코스 삭제
+`src/data/recommendedCourses.js`에서:
+- `id: 'singapore-test'` 코스 객체 전체 삭제
+- 카테고리 필터에서 `{ id: 'test', ... }` 항목 삭제
+
+## 작업 2: 홈탭 여행필수 카드 → 가이드 연결
+`src/components/HomeTab.jsx`에서 여행필수 가이드 2x2 그리드 (입국카드/SIM/세금환급/면세한도) 카드 클릭 시:
+- 현재: "即将上线" 토스트 또는 미연결 상태일 수 있음
+- 수정: 각 카드 클릭 시 해당 가이드로 이동
+  - 입국카드 → `setTab('travel')` 후 arrival-card 가이드 열기, 또는 직접 가이드 모달 표시
+  - SIM/eSIM → sim 가이드
+  - 세금환급 → tax-refund 가이드
+  - 면세한도 → duty-free 가이드
+
+**구현 방법** (가장 간단한 방식):
+- HomeTab에서 각 가이드 컴포넌트를 lazy import
+- 카드 클릭 시 `activeGuide` state로 가이드 모달/오버레이 표시
+- 가이드 닫기 시 홈으로 복귀
+
+```jsx
+import { lazy, Suspense, useState } from 'react'
+const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
+const SimGuide = lazy(() => import('./guides/SimGuide'))
+const TaxRefundGuide = lazy(() => import('./guides/TaxRefundGuide'))
+const DutyFreeGuide = lazy(() => import('./guides/DutyFreeGuide'))
+
+// activeGuide state 추가
+// 카드 onClick에 setActiveGuide('arrival-card') 등
+// 하단에 activeGuide && <Suspense><Guide onClose={()=>setActiveGuide(null)}/></Suspense>
+```
+
+## 작업 3: 한국어 게임 Chapter 2 추가 (맛집)
+`src/components/korean-game/gameData.js`에서 Chapter 2 (food) 잠금 해제 + 레슨 3개 추가:
+
+### Lesson 4: 식당 입장 (进餐厅)
+```
+questions: [
+  { type: 'multiple-choice', question: { zh: '服务员问 "몇 명이세요?" 意思是？' }, options: [{ text: { zh: '几位？' }, correct: true }, { text: { zh: '预约了吗？' } }, { text: { zh: '坐哪里？' } }, { text: { zh: '点什么？' } }], xp: 10 },
+  { type: 'multiple-choice', question: { zh: '"两个人" 韩语怎么说？' }, options: [{ text: '두 명이요', correct: true }, { text: '두 개요' }, { text: '이 명이요' }, { text: '둘이서요' }], explanation: { zh: '두(两) + 명(位/人) + 이요(是)' }, xp: 10 },
+  { type: 'word-arrange', question: { zh: '排列："请给我菜单"' }, words: ['주세요', '메뉴', '좀'], answer: ['메뉴', '좀', '주세요'], translation: { zh: '请给我菜单' }, xp: 15 },
+  { type: 'fill-blank', question: { zh: '"请等一下" = "잠깐 ___"' }, sentence: '잠깐 ___', answer: '기다려주세요', hint: { zh: '기다려주세요 = 请等' }, xp: 10 },
+  { type: 'multiple-choice', question: { zh: '"자리 있어요?" 是在问？' }, options: [{ text: { zh: '有座位吗？' }, correct: true }, { text: { zh: '可以坐这里吗？' } }, { text: { zh: '几点关门？' } }, { text: { zh: '要排队吗？' } }], xp: 10 },
+  { type: 'multiple-choice', question: { zh: '想坐窗边说？' }, options: [{ text: '창가 자리로 주세요', correct: true }, { text: '화장실 어디예요?' }, { text: '메뉴 주세요' }, { text: '예약했어요' }], explanation: { zh: '창가(窗边) + 자리(座位) + 로(往) + 주세요(请给)' }, xp: 10 },
+  { type: 'word-arrange', question: { zh: '排列："要排多久？"' }, words: ['얼마나', '기다려야', '돼요?'], answer: ['얼마나', '기다려야', '돼요?'], translation: { zh: '要等多久？' }, xp: 15 },
+]
+```
+
+### Lesson 5: 주문하기 (点餐)
+```
+questions: [
+  { type: 'multiple-choice', question: { zh: '"이거 하나 주세요" 意思是？' }, options: [{ text: { zh: '请给我一个这个' }, correct: true }, { text: { zh: '这个多少钱？' } }, { text: { zh: '这个好吃吗？' } }, { text: { zh: '这个是什么？' } }], xp: 10 },
+  { type: 'fill-blank', question: { zh: '"请给我两份" = "이거 ___ 주세요"' }, sentence: '이거 ___ 주세요', answer: '두 개', hint: { zh: '두 개 = 两个' }, xp: 10 },
+  { type: 'multiple-choice', question: { zh: '不吃辣想说？' }, options: [{ text: '안 매운 걸로 주세요', correct: true }, { text: '많이 주세요' }, { text: '빨리 주세요' }, { text: '따뜻한 걸로 주세요' }], explanation: { zh: '안 매운(不辣的) + 걸로(选那个) + 주세요(请给)' }, xp: 10 },
+  { type: 'word-arrange', question: { zh: '排列："推荐什么？"' }, words: ['뭐가', '맛있어요?', '여기서'], answer: ['여기서', '뭐가', '맛있어요?'], translation: { zh: '这里什么好吃？' }, xp: 15 },
+  { type: 'multiple-choice', question: { zh: '"소주 한 병 주세요" 是点？' }, options: [{ text: { zh: '一瓶烧酒' }, correct: true }, { text: { zh: '一杯啤酒' } }, { text: { zh: '一瓶水' } }, { text: { zh: '一杯可乐' } }], xp: 10 },
+  { type: 'multiple-choice', question: { zh: '服务员说 "드시고 가세요? 포장이요?" 在问？' }, options: [{ text: { zh: '堂食还是打包？' }, correct: true }, { text: { zh: '要加什么？' } }, { text: { zh: '大份还是小份？' } }, { text: { zh: '要不要饮料？' } }], xp: 10 },
+  { type: 'fill-blank', question: { zh: '"请再给一份" = "하나 ___ 주세요"' }, sentence: '하나 ___ 주세요', answer: '더', hint: { zh: '더 = 更多/再' }, xp: 10 },
+]
+```
+
+### Lesson 6: 계산하기 (结账)
+```
+questions: [
+  { type: 'multiple-choice', question: { zh: '"계산이요" 意思是？' }, options: [{ text: { zh: '买单' }, correct: true }, { text: { zh: '打包' } }, { text: { zh: '再来一份' } }, { text: { zh: '好吃' } }], xp: 10 },
+  { type: 'multiple-choice', question: { zh: '想分开付款说？' }, options: [{ text: '따로따로 계산해주세요', correct: true }, { text: '같이 계산해주세요' }, { text: '현금으로 할게요' }, { text: '영수증 주세요' }], explanation: { zh: '따로따로(各自) + 계산(结算) + 해주세요(请做)' }, xp: 10 },
+  { type: 'word-arrange', question: { zh: '排列："可以刷卡吗？"' }, words: ['돼요?', '카드'], answer: ['카드', '돼요?'], translation: { zh: '可以刷卡吗？' }, xp: 15 },
+  { type: 'fill-blank', question: { zh: '"请给我收据" = "___ 주세요"' }, sentence: '___ 주세요', answer: '영수증', hint: { zh: '영수증 = 收据' }, xp: 10 },
+  { type: 'multiple-choice', question: { zh: '"맛있었어요!" 表达？' }, options: [{ text: { zh: '很好吃！（过去式）' }, correct: true }, { text: { zh: '很好吃！（现在）' } }, { text: { zh: '一般般' } }, { text: { zh: '不好吃' } }], explanation: { zh: '맛있었어요 = 过去式，表示"吃过了，很好吃"' }, xp: 10 },
+  { type: 'multiple-choice', question: { zh: '结账时店员说 "감사합니다, 또 오세요" 意思？' }, options: [{ text: { zh: '谢谢，欢迎再来' }, correct: true }, { text: { zh: '请慢走' } }, { text: { zh: '收您XX元' } }, { text: { zh: '需要打包吗' } }], xp: 10 },
+  { type: 'word-arrange', question: { zh: '排列："吃得很好，谢谢"' }, words: ['감사합니다', '잘', '먹었습니다'], answer: ['잘', '먹었습니다', '감사합니다'], translation: { zh: '吃得很好，谢谢' }, xp: 15 },
+]
+```
+
+## 작업 4: Cloudflare Pages 배포
+모든 작업 완료 후:
+```bash
+npm run build && npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+```
+
+## 기술 지침
+- 기존 코드 구조 유지
+- Chapter 2의 locked: true를 false로 변경하고 lessons 배열에 위 3개 레슨 추가
+- 모든 question의 option text가 string이면 한국어 텍스트, object면 {zh, en} 형태
+- explanation은 {zh, en} object
+
+## 하지 말 것
+- 기존 Chapter 1 문제 수정 금지
+- 다른 챕터 잠금 해제 금지 (Chapter 3~5는 locked: true 유지)
+- 기존 컴포넌트 삭제 금지

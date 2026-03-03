@@ -1,5 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
+
+const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
+const SimGuide = lazy(() => import('./guides/SimGuide'))
+const TaxRefundGuide = lazy(() => import('./guides/TaxRefundGuide'))
+const DutyFreeGuide = lazy(() => import('./guides/DutyFreeGuide'))
 
 // Re-export 의존성 (App.jsx 등에서 사용)
 import LucideIcon from './home/common/LucideIcon'
@@ -121,6 +126,9 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     return greet
   }
 
+  // 가이드 오버레이 상태
+  const [activeGuide, setActiveGuide] = useState(null)
+
   // 토스트 상태
   const [toast, setToast] = useState(null)
   const showToast = (msg) => {
@@ -240,14 +248,14 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
         </button>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, gradient: 'from-blue-400 to-blue-600' },
-            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, gradient: 'from-green-400 to-emerald-600' },
-            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, gradient: 'from-amber-400 to-orange-500' },
-            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, gradient: 'from-rose-400 to-pink-600' },
+            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, gradient: 'from-blue-400 to-blue-600', guide: 'arrival-card' },
+            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, gradient: 'from-green-400 to-emerald-600', guide: 'sim' },
+            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, gradient: 'from-amber-400 to-orange-500', guide: 'tax-refund' },
+            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, gradient: 'from-rose-400 to-pink-600', guide: 'duty-free' },
           ].map((item, i) => (
             <button
               key={i}
-              onClick={() => showToast(L(lang, { ko: '곧 출시', zh: '即将上线', en: 'Coming soon' }))}
+              onClick={() => setActiveGuide(item.guide)}
               className={`rounded-2xl bg-gradient-to-br ${item.gradient} p-4 flex items-end active:scale-[0.98] transition-transform`}
               style={{ height: 120 }}
             >
@@ -338,6 +346,16 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
           ))}
         </div>
       </div>
+
+      {/* ─── 가이드 오버레이 ─── */}
+      {activeGuide && (
+        <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
+          {activeGuide === 'arrival-card' && <ArrivalCardGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+          {activeGuide === 'sim' && <SimGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+          {activeGuide === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+          {activeGuide === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+        </Suspense>
+      )}
 
       {/* ─── 토스트 ─── */}
       {toast && (

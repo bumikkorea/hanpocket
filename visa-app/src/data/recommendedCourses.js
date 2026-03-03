@@ -14,7 +14,6 @@ export const COURSE_CATEGORIES = [
   { id: 'busan', name: { ko: '부산', zh: '釜山', en: 'Busan' } },
   { id: 'jeju', name: { ko: '제주', zh: '济州', en: 'Jeju' } },
   { id: 'other_region', name: { ko: '기타지역', zh: '其他地区', en: 'Other Regions' } },
-  { id: 'test', name: { ko: '🧪 테스트', zh: '🧪 测试', en: '🧪 Test' } },
 ]
 
 export const RECOMMENDED_COURSES = [
@@ -431,30 +430,6 @@ export const RECOMMENDED_COURSES = [
     ],
     tags: ['명동', '가로수길', '코엑스', '한류'],
     estimatedCost: { ko: '약 10만원+', zh: '约10万韩元+', en: 'About ₩100,000+' },
-  },
-  {
-    id: 'singapore-test',
-    category: 'test',
-    name: { ko: '[TEST] 싱가포르 테스트', zh: '[TEST] 新加坡测试', en: '[TEST] Singapore Test' },
-    description: { ko: '딥링크 테스트용 (배포 전 삭제)', zh: '深度链接测试用', en: 'Deep link test' },
-    duration: '4시간',
-    difficulty: 'easy',
-    coverEmoji: 'SG',
-    stops: [
-      { name: { ko: '마리나베이샌즈', zh: '滨海湾金沙', en: 'Marina Bay Sands' }, duration: '1시간', type: 'landmark', tip: { ko: '루프탑 뷰', zh: '屋顶景观', en: 'Rooftop view' }, lat: 1.2834, lng: 103.8607 },
-      { name: { ko: '가든스바이더베이', zh: '滨海湾花园', en: 'Gardens by the Bay' }, duration: '1시간', type: 'nature', tip: { ko: '슈퍼트리 필수', zh: '超级树必看', en: 'Supertree Grove' }, lat: 1.2816, lng: 103.8636 },
-      { name: { ko: '차이나타운', zh: '牛车水', en: 'Chinatown' }, duration: '45분', type: 'culture', tip: { ko: '호커센터 맛집', zh: '小贩中心美食', en: 'Hawker centre food' }, lat: 1.2833, lng: 103.8443 },
-      { name: { ko: '오차드로드', zh: '乌节路', en: 'Orchard Road' }, duration: '1시간', type: 'shopping', tip: { ko: '쇼핑 거리', zh: '购物街', en: 'Shopping street' }, lat: 1.3048, lng: 103.8318 },
-      { name: { ko: '클락키', zh: '克拉码头', en: 'Clarke Quay' }, duration: '1시간', type: 'food', tip: { ko: '야경 & 바', zh: '夜景和酒吧', en: 'Night view & bars' }, lat: 1.2884, lng: 103.8465 },
-    ],
-    transport: [
-      { from: 0, to: 1, method: 'walk', duration: '10분', detail: { ko: '도보', zh: '步行', en: 'Walk' } },
-      { from: 1, to: 2, method: 'subway', duration: '15분', detail: { ko: '지하철', zh: '地铁', en: 'MRT' } },
-      { from: 2, to: 3, method: 'subway', duration: '10분', detail: { ko: '지하철', zh: '地铁', en: 'MRT' } },
-      { from: 3, to: 4, method: 'subway', duration: '8분', detail: { ko: '지하철', zh: '地铁', en: 'MRT' } },
-    ],
-    tags: ['test', 'Singapore'],
-    estimatedCost: { ko: '테스트용', zh: '测试用', en: 'Test only' },
   },
   {
     id: 'seongsu-cafe',

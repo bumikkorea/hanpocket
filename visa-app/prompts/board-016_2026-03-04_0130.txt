@@ -1,0 +1,59 @@
+# Board-016: 포켓 구조조정 + 아이콘 컬러 배경
+
+## 목표
+1. 중복/불필요 포켓 삭제 및 합치기
+2. 서비스 탭 아이콘에 카테고리별 컬러 원형 배경 적용 (카카오톡 더보기/토스 서비스 탭 스타일)
+
+## 1. 포켓 삭제/합치기 (pockets.js 수정)
+
+### 삭제할 포켓 (pocketCategories에서 제거):
+- `streak` (학습 스트릭) — 한국어게임에 이미 포함, 중복
+- `korean` (오늘의 한국어) — 홈탭 위젯으로 이미 존재, 중복
+- `expat` (외국인 커뮤니티) — 커뮤니티와 중복
+- `visaqa` (비자 Q&A) — 커뮤니티와 중복  
+- `oliveyoung` (올리브영 세일) — K-뷰티에 합침
+- `newsTranslated` (뉴스 번역) — K-뉴스에 합침
+- `trending` (실시간 인기) — 오늘의 HOT에 합침
+- `hallyu` (한류 허브) — 껍데기. K-POP/아이돌/드라마를 직접 노출하므로 불필요
+
+### pocketMockData에서도 해당 키 삭제:
+- `streak`, `korean`, `expat`, `visaqa`, `newsTranslated`, `trending`
+
+### IMPLEMENTED_POCKETS에서도 해당 ID 제거 (있다면)
+
+### pocketCategories 수정 후 구조:
+- 상황별 한국어: restaurant, cafe, transport, convenience, accommodation, emergency (6개, 변경 없음)
+- 여행 & 맛집: travel, koreanfood, food, trip, festival, tradition, holiday, taxrefund, photoguide (9개, 변경 없음)
+- 한류 & 엔터: kpop, idol, drama, fanevent (4개, hallyu 삭제)
+- 쇼핑 & 뷰티: shopping, beauty, fashiontrend, cvsnew, themepark (5개, oliveyoung 삭제)
+- 학습 & 소통: learn, koreangame, community (3개, korean/streak/expat/visaqa 삭제)
+- 생활: life, medical, fitness, delivery, pet, parcel, realestate, news (8개, newsTranslated 삭제)
+- 도구: translator, artranslate, sos, finance, wallet, visaalert, weatherCompare, editorpick (8개, trending 삭제)
+
+## 2. 아이콘 컬러 원형 배경
+
+서비스 탭에서 포켓 아이콘을 렌더링하는 컴포넌트를 찾아서 (ServiceTab.jsx 또는 해당 컴포넌트), 아이콘에 **카테고리별 컬러 원형 배경**을 추가해.
+
+### 카테고리별 컬러:
+- 상황별 한국어: `bg-blue-100 text-blue-600`
+- 여행 & 맛집: `bg-orange-100 text-orange-600`
+- 한류 & 엔터: `bg-purple-100 text-purple-600`
+- 쇼핑 & 뷰티: `bg-pink-100 text-pink-600`
+- 학습 & 소통: `bg-green-100 text-green-600`
+- 생활: `bg-slate-100 text-slate-600`
+- 도구: `bg-amber-100 text-amber-600`
+
+### 스타일:
+- 아이콘 래퍼: `w-12 h-12 rounded-2xl flex items-center justify-center` + 카테고리 컬러
+- 아이콘 사이즈: `w-6 h-6`
+- 전체적으로 카카오톡 더보기 탭 또는 토스 전체 서비스 탭 느낌
+
+## 하지 말 것
+- 포켓 컴포넌트(RestaurantPocket 등) 수정하지 마
+- FoodTab.jsx 수정하지 마
+- 기존 기능이 깨지면 안 됨
+
+## 완료 후
+- `npm run build` 에러 없어야 함
+- 완료: `openclaw system event --text "Done: Board-016 pocket restructure (52→44) + icon color backgrounds" --mode now`
+- 에러: `openclaw system event --text "Error: Board-016 failed - [에러내용]" --mode now`

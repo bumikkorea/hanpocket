@@ -1,0 +1,118 @@
+# Board-016b: 포켓 구조조정 + 이모지 아이콘 + 래플스 호텔 테마
+
+## 목표
+1. 중복/불필요 포켓 삭제
+2. lucide 아이콘 → 네이티브 이모지로 교체
+3. 래플스 호텔 테마 컬러 적용 (서비스 탭 아이콘 배경)
+
+## 1. 포켓 삭제 (pockets.js 수정)
+
+### pocketCategories에서 아래 포켓 제거:
+- `streak` (학습 스트릭) — 한국어게임에 중복
+- `korean` (오늘의 한국어) — 홈탭 위젯에 중복
+- `expat` (외국인 커뮤니티) — 커뮤니티와 중복
+- `visaqa` (비자 Q&A) — 커뮤니티와 중복
+- `oliveyoung` (올리브영 세일) — K-뷰티에 합침
+- `newsTranslated` (뉴스 번역) — K-뉴스에 합침
+- `trending` (실시간 인기) — 오늘의 HOT에 합침
+- `hallyu` (한류 허브) — 껍데기, K-POP/아이돌/드라마 직접 노출
+
+### pocketMockData에서도 해당 키들의 데이터 삭제:
+- streak, korean (word/pronunciation/meaning/example/expression), expat, visaqa, newsTranslated, trending 키 삭제
+
+### IMPLEMENTED_POCKETS Set에서도 해당 ID 제거 (있으면)
+
+## 2. lucide 아이콘 → 이모지 교체
+
+pocketCategories의 모든 `icon` 필드를 lucide 아이콘 이름에서 **이모지 문자열**로 변경.
+
+### 카테고리 아이콘:
+- 상황별 한국어: icon → '💬'
+- 여행 & 맛집: icon → '✈️'
+- 한류 & 엔터: icon → '⭐'
+- 쇼핑 & 뷰티: icon → '🛍️'
+- 학습 & 소통: icon → '📖'
+- 생활: icon → '🏠'
+- 도구: icon → '🔧'
+
+### 개별 포켓 아이콘:
+상황별 한국어:
+- restaurant → '🍽️', cafe → '☕', transport → '🚇', convenience → '🏪', accommodation → '🏨', emergency → '🚨'
+
+여행 & 맛집:
+- travel → '✈️', koreanfood → '🍲', food → '🍜', trip → '🎫', festival → '🎊', tradition → '🏛️', holiday → '📅', taxrefund → '💰', photoguide → '📸'
+
+한류 & 엔터 (hallyu 삭제 후):
+- kpop → '🎵', idol → '🌟', drama → '📺', fanevent → '🎤'
+
+쇼핑 & 뷰티 (oliveyoung 삭제 후):
+- shopping → '🛍️', beauty → '💄', fashiontrend → '👕', cvsnew → '🛒', themepark → '🎡'
+
+학습 & 소통 (korean/streak/expat/visaqa 삭제 후):
+- learn → '📖', koreangame → '🎮', community → '👥'
+
+생활 (newsTranslated 삭제 후):
+- life → '🏠', medical → '🏥', fitness → '💪', delivery → '🛵', pet → '🐾', parcel → '📦', realestate → '🏢', news → '📰'
+
+도구 (trending 삭제 후):
+- translator → '🔄', artranslate → '📋', sos → '🆘', finance → '💵', wallet → '👛', visaalert → '⏰', weatherCompare → '🌤️', editorpick → '🔥'
+
+## 3. 서비스 탭 아이콘 렌더링 변경
+
+서비스 탭에서 포켓 아이콘을 렌더링하는 컴포넌트를 찾아서 수정:
+
+### Before (lucide):
+```jsx
+import { Star, Utensils, ... } from 'lucide-react'
+const IconComponent = iconMap[pocket.icon]
+return <IconComponent className="w-5 h-5" />
+```
+
+### After (이모지 + 래플스 테마 배경):
+```jsx
+// 이모지는 그냥 텍스트로 렌더
+<div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+     style={{ backgroundColor: categoryColor }}>
+  <span className="text-2xl">{pocket.icon}</span>
+</div>
+```
+
+### 래플스 호텔 테마 카테고리별 배경색:
+```js
+const categoryColors = {
+  'situational-korean': '#E8F5E9',  // 라이트 그린 (딥그린 계열 밝은 톤)
+  'travel-food': '#FFF8E1',         // 라이트 골드 (골드 계열 밝은 톤)
+  'hallyu-entertainment': '#F3E5F5', // 라이트 퍼플 (한류 특색)
+  'shopping-beauty': '#FCE4EC',      // 라이트 핑크
+  'learning': '#E0F2F1',            // 민트/옥색 밝은 톤
+  'daily-life': '#F5F1EB',          // 크림 (래플스 카드 배경)
+  'tools': '#FFF3E0',               // 라이트 앰버
+}
+```
+
+카드와 텍스트의 주 색상:
+- 텍스트: #1A1A1A (차콜/블랙)
+- 서브텍스트/설명: #666666
+- 카드 배경: #FFFFFF
+- 전체 배경: #FAFAFA
+
+## 4. 더新中 배지 스타일
+미구현 포켓의 "更新中" 배지도 래플스 테마로:
+- 배경: #F5F1EB (크림)
+- 텍스트: #B8860B (골드)
+- border: 1px solid #B8860B
+
+## 하지 말 것
+- 포켓 컴포넌트(RestaurantPocket, CafePocket 등) 내부 수정하지 마
+- FoodTab.jsx 수정하지 마
+- HomeTab.jsx 수정하지 마
+- 기존 라우팅/네비게이션 깨뜨리지 마
+
+## 주의
+- lucide import가 서비스 탭 이외 곳(HomeTab 등)에서도 쓰이면 거기는 건드리지 마. 서비스 탭(포켓 목록)에서만 이모지로 변경.
+- pockets.js의 icon 필드만 이모지로 바꾸되, 다른 곳에서 icon 필드를 lucide 컴포넌트로 사용하고 있으면 해당 렌더링 로직도 이모지 문자열 대응하도록 수정
+
+## 완료 후
+- `npm run build` 에러 없어야 함
+- 완료: `openclaw system event --text "Done: Board-016b pocket restructure (52→44) + emoji icons + Raffles theme colors" --mode now`
+- 에러: `openclaw system event --text "Error: Board-016b failed - [에러내용]" --mode now`

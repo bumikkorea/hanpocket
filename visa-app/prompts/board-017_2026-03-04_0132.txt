@@ -1,0 +1,94 @@
+# Board-017: API 실데이터 연동 + 기존 데이터 연결 + 음성재생
+
+## 목표
+Mock 데이터를 실 API 데이터로 교체하고, 이미 있는 데이터 파일을 포켓에 연결하고, 회화 포켓에 음성재생 추가.
+
+## 1. TourAPI 연동
+
+### API 기본 설정
+- Base URL: `https://apis.data.go.kr/B551011`
+- 서비스키: `40490c648d17e72faabd00bfc8be9994ee2cc64946edb68f4beb374eae1d482b`
+- 중국어: `ChsService2`, 한국어 폴백: `KorService2`
+- 공통 파라미터: `MobileOS=ETC&MobileApp=HanPocket&_type=json&numOfRows=20`
+
+### 1a. 축제/이벤트 실시간 연동
+파일: `src/data/pockets.js`의 `festival` mock을 API 호출로 교체
+
+API: `GET /ChsService2/searchFestival2?serviceKey=...&eventStartDate=YYYYMMDD&eventEndDate=YYYYMMDD&arrange=A`
+
+새 파일 `src/api/festivalApi.js` 생성:
+```js
+export async function getFestivals(startDate, endDate) {
+  // ChsService2/searchFestival2 호출
+  // 결과를 현재 pocketMockData.festival.items 형식으로 변환
+  // 에러 시 하드코딩 폴백 유지
+}
+```
+
+### 1b. 관광지 데이터 연동 (여행 포켓용)
+API: `GET /ChsService2/areaBasedList2?serviceKey=...&areaCode=1&contentTypeId=12`
+- areaCode: 1=서울, 6=부산, 39=제주
+- contentTypeId: 12=관광지, 14=문화시설, 15=축제, 25=여행코스
+
+새 파일 `src/api/tourApi.js`에 추가 (이미 있으면 확장):
+```js
+export async function getAreaBasedList(areaCode, contentTypeId) { ... }
+```
+
+## 2. 기존 데이터 파일 → 포켓 연결
+
+### 2a. 의료 포켓 강화
+- `src/data/hospitalData.js`와 `src/data/seoulHospitals.js`가 이미 있음
+- `MedicalPocket.jsx` (현재 124줄)에서 이 데이터를 import해서:
+  - 병원 리스트 표시 (이름, 주소, 외국어 진료 여부)
+  - 검색 기능
+  - 카카오맵 딥링크
+  - 긴급 연락처 (119, 1339)
+
+### 2b. 택스리펀드 포켓 연결
+- `src/components/guides/TaxRefundGuide.jsx` (224줄)가 이미 존재
+- PocketContent.jsx에 case 추가:
+  ```jsx
+  case 'taxrefund': return <TaxRefundGuide lang={lang} />
+  ```
+- IMPLEMENTED_POCKETS에 'taxrefund' 추가
+
+### 2c. 최애 스타 포켓 연결
+- `src/data/idolData.js`에 114개 아이돌 데이터 있음
+- 새 파일 `src/components/pockets/IdolPocket.jsx` 생성:
+  - 아이돌 검색
+  - 그룹별 필터 (보이그룹/걸그룹/솔로)
+  - 카드 터치 → 기본 정보 (멤버, 데뷔일, 소속사)
+- PocketContent.jsx에 case 'idol' 추가
+- IMPLEMENTED_POCKETS에 'idol' 추가
+
+## 3. 날씨 비교 실시간화
+- `weatherCompare` 포켓의 mock 데이터를 wttr.in API로 교체
+- API: `https://wttr.in/Seoul?format=j1` (무료, 키 불필요)
+- `https://wttr.in/Beijing?format=j1`
+- 새 파일 또는 인라인: fetch → 온도/날씨 아이콘 추출 → 렌더링
+- 에러 시 mock 데이터 폴백
+
+## 4. 회화 포켓 음성재생 추가
+- `KoreanPhraseCard.jsx` (공통 컴포넌트, 300줄)에 이미 `speak` 함수가 있는지 확인
+- 있으면: 각 회화 카드의 한국어 텍스트 옆에 🔊 버튼 추가 → Web Speech API `speechSynthesis.speak()` 호출
+- 없으면: `window.speechSynthesis`를 사용하는 speak 함수 추가
+  ```js
+  function speakKorean(text) {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR';
+    u.rate = 0.8;
+    speechSynthesis.speak(u);
+  }
+  ```
+- 대상: RestaurantPocket, CafePocket, TransportPocket, ConveniencePocket, AccommodationPocket, EmergencyPocket
+
+## 하지 말 것
+- pockets.js의 카테고리 구조 변경하지 마 (Board-016에서 처리)
+- 기존 작동하는 기능 깨뜨리지 마
+- API 호출 실패 시 반드시 폴백 데이터 유지
+
+## 완료 후
+- `npm run build` 에러 없어야 함
+- 완료: `openclaw system event --text "Done: Board-017 API integration (festival, tour, hospital, taxrefund, idol, weather, voice)" --mode now`
+- 에러: `openclaw system event --text "Error: Board-017 failed - [에러내용]" --mode now`

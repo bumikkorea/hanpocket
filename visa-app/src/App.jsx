@@ -12,7 +12,7 @@ import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTra
 import { t } from './data/i18n'
 import { generateChatResponse } from './data/chatResponses'
 import { updateLog, autoUpdateInfo, dataSources } from './data/updateLog'
-import HomeTab, { trackActivity, LucideIcon } from './components/HomeTab'
+import HomeTab, { trackActivity } from './components/HomeTab'
 import { pocketCategories, featureScores, serviceItems, subMenuData, IMPLEMENTED_POCKETS } from './data/pockets'
 import AffiliateTracker from './components/AffiliateTracker'
 import LoadingSpinner from './components/LoadingSpinner'
@@ -763,7 +763,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                         return (
                           <div key={p.id} className="flex items-center justify-between py-2">
                             <div className="flex items-center gap-2.5">
-                              <LucideIcon name={p.icon} size={16} style={{ color: isOn ? '#111827' : '#D1D5DB' }} />
+                              <span className={`text-base ${isOn ? '' : 'opacity-30'}`}>{p.icon}</span>
                               <span className={`text-sm ${isOn ? 'text-[#111827] font-medium' : 'text-[#9CA3AF]'}`}>{L(lang, p.name)}</span>
                             </div>
                             <button
@@ -1095,11 +1095,22 @@ function ServiceGrid({ lang, L, setSubPage }) {
     if (impl.length > 0) {
       implementedCats.push({ ...cat, pockets: impl })
     }
-    unimpl.forEach(p => unimplementedPockets.push({ ...p, catName: cat.name }))
+    unimpl.forEach(p => unimplementedPockets.push({ ...p, catName: cat.name, catId: cat.id }))
   })
 
   const comingSoonLabel = { ko: '업데이트 중', zh: '更新中', en: 'Coming Soon' }
   const updatingBadge = { ko: '(업데이트중)', zh: '(更新中)', en: '(Updating)' }
+
+  // 래플스 호텔 테마 카테고리별 배경색
+  const categoryBgColors = {
+    'situational-korean': '#E8F5E9',
+    'travel-food': '#FFF8E1',
+    'hallyu-entertainment': '#F3E5F5',
+    'shopping-beauty': '#FCE4EC',
+    'learning': '#E0F2F1',
+    'daily-life': '#F5F1EB',
+    'tools': '#FFF3E0',
+  }
 
   // Quick-access icon grid (Trip.com style)
   const quickIcons = [
@@ -1144,8 +1155,11 @@ function ServiceGrid({ lang, L, setSubPage }) {
             {cat.pockets.map(p => (
               <button key={p.id} onClick={() => setSubPage(p.id)}
                 className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98]">
-                <LucideIcon name={p.icon} size={20} style={{ color: '#111827' }} />
-                <span className="text-xs text-[#111827] font-medium text-center leading-tight">{L(lang, p.name)}</span>
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                  style={{ backgroundColor: categoryBgColors[cat.id] || '#F3F4F6' }}>
+                  <span className="text-2xl">{p.icon}</span>
+                </div>
+                <span className="text-xs text-[#1A1A1A] font-medium text-center leading-tight">{L(lang, p.name)}</span>
               </button>
             ))}
           </div>
@@ -1167,10 +1181,16 @@ function ServiceGrid({ lang, L, setSubPage }) {
             <div className="grid grid-cols-3 gap-2 mt-2">
               {unimplementedPockets.map(p => (
                 <div key={p.id}
-                  className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm opacity-50 cursor-default">
-                  <LucideIcon name={p.icon} size={20} style={{ color: '#9CA3AF' }} />
+                  className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm opacity-60 cursor-default">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center opacity-50"
+                    style={{ backgroundColor: categoryBgColors[p.catId] || '#F3F4F6' }}>
+                    <span className="text-2xl">{p.icon}</span>
+                  </div>
                   <span className="text-xs text-[#9CA3AF] font-medium text-center leading-tight">{L(lang, p.name)}</span>
-                  <span className="text-[10px] text-red-500 font-medium">{L(lang, updatingBadge)}</span>
+                  <span className="text-[10px] font-medium px-1.5 py-0.5 rounded"
+                    style={{ backgroundColor: '#F5F1EB', color: '#B8860B', border: '1px solid #B8860B' }}>
+                    {L(lang, updatingBadge)}
+                  </span>
                 </div>
               ))}
             </div>

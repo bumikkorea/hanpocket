@@ -27,6 +27,11 @@
 - **Claude Max 구독 사용량 절약**
 - **필요할 때만 정확히 작동**
 
+### 🧹 세션 정리 (매 하트비트):
+- 시월(main) + 팔월(palwol) 크론 세션 정리
+- main 세션만 남기고 오래된 크론/서브에이전트 세션 삭제
+- 방법: `agents/main/sessions/` + `agents/palwol/sessions/`에서 메인 jsonl 외 삭제 + sessions.json 정리
+
 ### 재시작 방법:
 - **TASKQUEUE.md에 새 `[ ]` 작업 추가** → 자동 감지 후 하트비트 재시작
 - **"작업 확인해줘"** 수동 명령어로 즉시 체크 가능

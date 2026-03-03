@@ -1,458 +1,352 @@
-import { useState, useEffect, useRef } from 'react'
-import { X, Plus, Lock, Unlock } from 'lucide-react'
-import PocketContent from './pockets/PocketContent'
-import { pocketCategories } from '../data/pockets'
-import AppleWidgetCard from './cards/AppleWidgetCard'
-import PersonalSection from './cards/PersonalSection'
-import TodaySection from './cards/TodaySection'
-import WeatherWidget from './widgets/WeatherWidget'
-import ExchangeRateWidget from './widgets/ExchangeRateWidget'
-import CalendarWidget from './widgets/CalendarWidget'
-import MemoWidget from './widgets/MemoWidget'
-import TimezoneWidget from './widgets/TimezoneWidget'
-import ParcelWidget from './widgets/ParcelWidget'
+import { useState, useEffect } from 'react'
+import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
+
+// Re-export 의존성 (App.jsx 등에서 사용)
 import LucideIcon from './home/common/LucideIcon'
 import TreeSection from './home/common/TreeSection'
 import WidgetContent from './home/common/WidgetContent'
-import { L, trackActivity } from './home/utils/helpers'
-import { SECTION_TODAY, SECTION_SHOPPING, SECTION_CULTURE, SECTION_TOOLS } from './home/utils/constants'
+import { trackActivity, L } from './home/utils/helpers'
 
-// 섹션별 주머니 가져오기 함수
-function getEnabledPocketsForSection(sectionIds, config) {
-  const allPockets = []
-  pocketCategories.forEach(cat => {
-    cat.pockets.forEach(p => {
-      if (sectionIds.includes(p.id) && config.enabled[p.id]) {
-        allPockets.push(p)
-      }
-    })
-  })
-  return allPockets
+function getEnabledPocketsForSection() { return [] }
+
+// ── 날씨 데이터 훅 ──
+function useWeatherData() {
+  const [weather, setWeather] = useState(null)
+  useEffect(() => {
+    const city = localStorage.getItem('weather_city') || 'Seoul'
+    fetch(`https://wttr.in/${city}?format=j1`)
+      .then(r => r.json())
+      .then(data => {
+        const cc = data.current_condition?.[0]
+        if (cc) setWeather({ temp: cc.temp_C, desc: cc.weatherDesc?.[0]?.value || '' })
+      })
+      .catch(() => {})
+  }, [])
+  return weather
 }
 
-const DEFAULT_POCKETS = ['restaurant', 'transport', 'convenience', 'emergency', 'cafe', 'shopping', 'accommodation']
+// ── 한국 시간 훅 ──
+function useKoreaTime() {
+  const [time, setTime] = useState(() => {
+    const now = new Date()
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000
+    const kr = new Date(utc + 9 * 3600000)
+    return kr.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+  })
+  useEffect(() => {
+    const t = setInterval(() => {
+      const now = new Date()
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000
+      const kr = new Date(utc + 9 * 3600000)
+      setTime(kr.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }))
+    }, 30000)
+    return () => clearInterval(t)
+  }, [])
+  return time
+}
+
+// ── 오늘의 한국어 데이터 ──
+const EXPRESSIONS = [
+  { korean: '안녕하세요', chinese: '你好', english: 'Hello', roman: 'an-nyeong-ha-se-yo' },
+  { korean: '감사합니다', chinese: '谢谢', english: 'Thank you', roman: 'gam-sa-ham-ni-da' },
+  { korean: '죄송합니다', chinese: '对不起', english: 'I\'m sorry', roman: 'joe-song-ham-ni-da' },
+  { korean: '이거 주세요', chinese: '请给我这个', english: 'This please', roman: 'i-geo ju-se-yo' },
+  { korean: '얼마예요?', chinese: '多少钱？', english: 'How much?', roman: 'eol-ma-ye-yo' },
+  { korean: '화장실 어디예요?', chinese: '洗手间在哪里？', english: 'Where is the restroom?', roman: 'hwa-jang-sil eo-di-ye-yo' },
+  { korean: '계산해 주세요', chinese: '请结账', english: 'Check please', roman: 'gye-san-hae ju-se-yo' },
+  { korean: '여기 가 주세요', chinese: '请去这里', english: 'Please go here', roman: 'yeo-gi ga ju-se-yo' },
+  { korean: '맵지 않게 해주세요', chinese: '请做不辣的', english: 'Not spicy please', roman: 'maep-ji an-ke hae-ju-se-yo' },
+  { korean: '카드 돼요?', chinese: '可以刷卡吗？', english: 'Card OK?', roman: 'ka-deu dwae-yo' },
+  { korean: '도와주세요', chinese: '请帮帮我', english: 'Please help me', roman: 'do-wa-ju-se-yo' },
+  { korean: '맛있어요!', chinese: '好吃！', english: 'Delicious!', roman: 'ma-si-sseo-yo' },
+  { korean: '추천해 주세요', chinese: '请推荐', english: 'Recommend please', roman: 'chu-cheon-hae ju-se-yo' },
+  { korean: '여기요!', chinese: '服务员！', english: 'Excuse me!', roman: 'yeo-gi-yo' },
+  { korean: '포장해 주세요', chinese: '请打包', english: 'Takeaway please', roman: 'po-jang-hae ju-se-yo' },
+  { korean: '네 / 아니요', chinese: '是 / 不是', english: 'Yes / No', roman: 'ne / a-ni-yo' },
+]
+
+function getTodayExpression() {
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000)
+  return EXPRESSIONS[dayOfYear % EXPRESSIONS.length]
+}
+
+// ── 코스 그라디언트 매핑 ──
+const COURSE_GRADIENTS = {
+  first: 'from-sky-400 to-blue-500',
+  kpop: 'from-violet-400 to-purple-500',
+  food: 'from-orange-400 to-red-500',
+  shopping: 'from-pink-400 to-rose-500',
+  nature: 'from-green-400 to-emerald-500',
+  history: 'from-amber-500 to-yellow-600',
+  busan: 'from-cyan-400 to-teal-500',
+  jeju: 'from-lime-400 to-green-500',
+  other_region: 'from-slate-400 to-slate-600',
+}
+
+// ── 상황별 한국어 데이터 ──
+const SCENE_PHRASES = [
+  { scene: { ko: '식당', zh: '餐厅', en: 'Restaurant' }, phrase: { ko: '이거 주세요', zh: '请给我这个' }, gradient: 'from-orange-300 to-orange-500', pocket: 'restaurant' },
+  { scene: { ko: '카페', zh: '咖啡厅', en: 'Cafe' }, phrase: { ko: '아이스 아메리카노 주세요', zh: '请给我冰美式' }, gradient: 'from-amber-300 to-amber-500', pocket: 'cafe' },
+  { scene: { ko: '교통', zh: '交通', en: 'Transport' }, phrase: { ko: '여기 가 주세요', zh: '请去这里' }, gradient: 'from-blue-300 to-blue-500', pocket: 'transport' },
+  { scene: { ko: '편의점', zh: '便利店', en: 'Store' }, phrase: { ko: '봉투 주세요', zh: '请给我袋子' }, gradient: 'from-green-300 to-green-500', pocket: 'convenience' },
+  { scene: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, phrase: { ko: '좀 깎아 주세요', zh: '请便宜一点' }, gradient: 'from-pink-300 to-pink-500', pocket: 'shopping' },
+  { scene: { ko: '숙소', zh: '住宿', en: 'Hotel' }, phrase: { ko: '체크인 하려고요', zh: '我要办入住' }, gradient: 'from-indigo-300 to-indigo-500', pocket: 'accommodation' },
+  { scene: { ko: '긴급', zh: '紧急', en: 'Emergency' }, phrase: { ko: '도와주세요!', zh: '请帮帮我！' }, gradient: 'from-red-300 to-red-500', pocket: 'emergency' },
+]
 
 export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
-  const [pockets, setPockets] = useState(() => {
-    try { 
-      const saved = JSON.parse(localStorage.getItem('home_pockets'))
-      return saved !== null ? saved : DEFAULT_POCKETS
-    } catch { 
-      return DEFAULT_POCKETS 
-    }
-  })
-  const [showAdd, setShowAdd] = useState(false)
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [dragX, setDragX] = useState(0)
-  const [showBookmark, setShowBookmark] = useState(false)
-  const [confirmDelete, setConfirmDelete] = useState(null) // pocketId to confirm
-  const [lockedPockets, setLockedPockets] = useState(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem('locked_pockets'))
-      return saved || {}
-    } catch { return {} }
-  })
-  const [containerW, setContainerW] = useState(0)
-  const containerRef = useRef(null)
-  const touchRef = useRef({ startX: 0, startY: 0, swiping: false, locked: false })
-  const dragXRef = useRef(0)
+  const weather = useWeatherData()
+  const koreaTime = useKoreaTime()
+  const todayExpr = getTodayExpression()
 
-  const SWIPE_THRESHOLD = 80
-  const FOLD_MAX = 0
+  // 환율: prop에서 CNY 환율 추출
+  const cnyRate = exchangeRate?.CNY || 191
 
-  // 스와이프 효과음 함수
-  const playSwipeSound = () => {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)()
-      const osc = ctx.createOscillator()
-      const gain = ctx.createGain()
-      osc.connect(gain)
-      gain.connect(ctx.destination)
-      osc.frequency.setValueAtTime(800, ctx.currentTime)
-      osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.1)
-      gain.gain.setValueAtTime(0.15, ctx.currentTime)
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1)
-      osc.start(ctx.currentTime)
-      osc.stop(ctx.currentTime + 0.1)
-    } catch (e) {
-      // AudioContext not available, fail silently
+  // 코스 데이터 (test 카테고리 제외, 첫 6개)
+  const courses = RECOMMENDED_COURSES.filter(c => c.category !== 'test').slice(0, 6)
+
+  // 시간대별 인사말
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    const name = profile?.name
+    let greet
+    if (hour >= 6 && hour < 12) greet = L(lang, { ko: '좋은 아침이에요', zh: '早上好', en: 'Good morning' })
+    else if (hour >= 12 && hour < 18) greet = L(lang, { ko: '좋은 오후예요', zh: '下午好', en: 'Good afternoon' })
+    else if (hour >= 18 && hour < 22) greet = L(lang, { ko: '좋은 저녁이에요', zh: '晚上好', en: 'Good evening' })
+    else greet = L(lang, { ko: '좋은 밤이에요', zh: '晚安', en: 'Good night' })
+
+    if (name) {
+      return lang === 'ko' ? `${name}님, ${greet}` : lang === 'zh' ? `${name}，${greet}` : `${greet}, ${name}`
     }
+    return greet
   }
 
-  // 각 카드의 스타일 계산
-  const getCardStyle = (cardIndex) => {
-    const diff = cardIndex - currentIndex
-    const T = 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-    
-    if (diff < 0) {
-      return { opacity: 0, transform: 'translateX(-100%) scale(0.95)', zIndex: 1, pointerEvents: 'none', transition: T }
-    }
-    
-    if (diff === 0) {
-      return {
-        transform: `translateX(${dragX}px)`,
-        transition: (dragX === 0 || snapping) ? T : 'none',
-        zIndex: 10, opacity: 1, pointerEvents: 'auto'
-      }
-    }
-    
-    if (diff === 1) {
-      const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1)
-      return {
-        transform: `scale(${0.95 + 0.05 * progress})`,
-        transition: (dragX === 0 || snapping) ? T : 'none',
-        zIndex: 5, opacity: 0.6 + 0.4 * progress, pointerEvents: 'none'
-      }
-    }
-    
-    return { opacity: 0, zIndex: 1, pointerEvents: 'none', transform: 'scale(0.9)' }
-  }
-
-  useEffect(() => { localStorage.setItem('home_pockets', JSON.stringify(pockets)) }, [pockets])
-  useEffect(() => { localStorage.setItem('locked_pockets', JSON.stringify(lockedPockets)) }, [lockedPockets])
-
-  const toggleLock = (pocketId) => {
-    setLockedPockets(prev => ({ ...prev, [pocketId]: !prev[pocketId] }))
-  }
-
-  useEffect(() => {
-    const measure = () => { if (containerRef.current) setContainerW(containerRef.current.offsetWidth) }
-    measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [])
-
-  const totalSlides = pockets.length + 1
-
-  const goTo = (idx, playSound = false) => {
-    const clamped = Math.max(0, Math.min(idx, totalSlides - 1))
-    if (clamped !== currentIndex && playSound) {
-      playSwipeSound()
-    }
-    setCurrentIndex(clamped)
-    dragXRef.current = 0
-    setDragX(0)
-    setShowBookmark(false)
-  }
-
-  const onTouchStart = (e) => {
-    const t = e.touches[0]
-    touchRef.current = { startX: t.clientX, startY: t.clientY, swiping: false, locked: false }
-    setShowBookmark(false)
-  }
-
-  const onTouchMove = (e) => {
-    const t = e.touches[0]
-    const dx = t.clientX - touchRef.current.startX
-    const dy = t.clientY - touchRef.current.startY
-
-    const lastIndex = totalSlides - 1
-    // 첫 카드에서 오른쪽(뒤로) 스와이프 막기
-    if (currentIndex === 0 && dx > 0) { setDragX(0); return }
-    // 마지막 카드("+")에서 왼쪽(앞으로) 스와이프 막기
-    if (currentIndex >= lastIndex && dx < 0) { setDragX(0); return }
-
-    if (!touchRef.current.locked) {
-      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 10) {
-        touchRef.current.locked = true
-        touchRef.current.swiping = false
-        return
-      }
-      if (Math.abs(dx) > 10) {
-        touchRef.current.locked = true
-        touchRef.current.swiping = true
-      }
-    }
-
-    if (!touchRef.current.swiping) return
-
-    e.preventDefault()
-    dragXRef.current = dx
-    setDragX(dx)
-    setShowBookmark(Math.abs(dx) >= SWIPE_THRESHOLD)
-  }
-
-  const [snapping, setSnapping] = useState(false)
-
-  const onTouchEnd = () => {
-    const dx = dragXRef.current
-    if (!touchRef.current.swiping) {
-      dragXRef.current = 0
-      setDragX(0)
-      setShowBookmark(false)
-      return
-    }
-    const lastIndex = totalSlides - 1
-    // 스냅백 공통 함수
-    const snapBack = () => {
-      setSnapping(true)
-      dragXRef.current = 0
-      setDragX(0)
-      setShowBookmark(false)
-      setTimeout(() => setSnapping(false), 400)
-    }
-    if (Math.abs(dx) >= SWIPE_THRESHOLD) {
-      if (dx < 0 && currentIndex < lastIndex) goTo(currentIndex + 1, true)
-      else if (dx > 0 && currentIndex > 0) goTo(currentIndex - 1, true)
-      else snapBack()
-    } else {
-      snapBack()
-    }
-    dragXRef.current = 0
-  }
-
-  const addPocket = (pocketId) => {
-    if (!pockets.includes(pocketId)) {
-      const newPockets = [...pockets, pocketId]
-      setPockets(newPockets)
-      setShowAdd(false)
-      // 새로 추가된 주머니로 이동 (효과음 포함)
-      setTimeout(() => goTo(newPockets.length - 1, true), 100)
-    }
-  }
-
-  const removePocket = (pocketId) => {
-    const idx = pockets.indexOf(pocketId)
-    const newPockets = pockets.filter(p => p !== pocketId)
-    setPockets(newPockets)
-    
-    // 삭제된 주머니가 현재 주머니라면 자연스럽게 다음/이전 주머니로 이동
-    if (idx === currentIndex) {
-      if (newPockets.length === 0) {
-        // 모든 주머니가 삭제되면 Add 주머니로
-        setCurrentIndex(0)
-      } else if (currentIndex >= newPockets.length) {
-        // 마지막 주머니였다면 이전 주머니로
-        goTo(newPockets.length - 1)
-      } else {
-        // 같은 위치에 있는 다음 주머니로 (인덱스는 유지)
-        setCurrentIndex(currentIndex)
-      }
-    } else if (idx < currentIndex) {
-      // 이전 주머니가 삭제되면 현재 인덱스 조정
-      setCurrentIndex(currentIndex - 1)
-    }
-  }
-
-  const getPocketById = (id) => {
-    for (const cat of pocketCategories) {
-      const p = cat.pockets.find(p => p.id === id)
-      if (p) return p
-    }
-    return null
+  // 토스트 상태
+  const [toast, setToast] = useState(null)
+  const showToast = (msg) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 2000)
   }
 
   return (
-    <div className="bg-[#FCFCFA] overflow-hidden" style={{ fontFamily: 'Inter, sans-serif', touchAction: 'pan-y', height: 'calc(100vh - 140px)' }}>
-      {/* Pockets stack */}
-      <div
-        ref={containerRef}
-        className="relative overflow-hidden mx-0.5"
-        style={{ height: 'calc(100vh - 140px)', marginTop: '4px' }}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-      >
-        {/* All pockets stacked */}
-        {pockets.map((pocketId, index) => {
-          const pocket = getPocketById(pocketId)
-          if (!pocket) return null
-          const pocketStyle = getCardStyle(index)
-          
-          return (
-            <div 
-              key={pocketId}
-              className="absolute inset-0"
-              style={{
-                ...pocketStyle,
-                willChange: 'transform, opacity'
-              }}
-            >
-              {/* 포켓 디자인 */}
-              <div className="relative w-full h-full">
-                {/* 포켓 본체 */}
-                <div className="bg-white border border-gray-200 px-3 py-2 relative overflow-hidden w-full shadow-sm"
-                  style={{ borderRadius: '0', height: 'calc(100% - 4px)' }}>
-                  {/* X 삭제 버튼 */}
-                  <button
-                    onClick={() => {
-                      if (lockedPockets[pocketId]) return
-                      setConfirmDelete(pocketId)
-                    }}
-                    className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center transition-colors"
-                  >
-                    <X className="w-4 h-4 text-gray-400" strokeWidth={1} />
-                  </button>
-                  {/* 카테고리 + 포켓 이름 한 줄 */}
-                  <div className="flex items-center gap-2 mb-3 -ml-3 pl-3">
-                    {(() => {
-                      const cat = pocketCategories.find(c => c.pockets.some(p => p.id === pocketId))
-                      if (!cat) return null
-                      return (
-                        <span className="bg-[#111827] text-white text-[10px] font-medium px-2 py-0.5 rounded-r"
-                          style={{ letterSpacing: '0.05em', marginLeft: '-12px' }}>
-                          {L(lang, cat.name)}
-                        </span>
-                      )
-                    })()}
-                    <LucideIcon name={pocket.icon} size={18} style={{ color: '#111827' }} />
-                    <h2 className="text-base font-semibold" style={{ color: '#111827' }}>{L(lang, pocket.name)}</h2>
-                  </div>
-                  <div className="overflow-y-auto scroll-smooth" style={{ height: 'calc(100% - 36px)', overflowX: 'hidden', touchAction: 'pan-y' }}>
-                    <PocketContent pocketId={pocketId} lang={lang} setTab={setTab} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )
-        })}
+    <div
+      className="bg-[#FCFCFA] overflow-y-auto px-4 pt-4 pb-24"
+      style={{ fontFamily: 'Inter, sans-serif', height: 'calc(100vh - 140px)' }}
+    >
+      {/* ─── 0. 시간대별 인사말 ─── */}
+      <p className="text-2xl font-light text-gray-800 mb-4">{getGreeting()}</p>
 
-        {/* Add pocket - also in the stack */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            ...getCardStyle(pockets.length),
-            willChange: 'transform, opacity'
-          }}
+      {/* ─── 1. 상단 유틸리티 칩 바 ─── */}
+      <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-8">
+        <div
+          className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium"
+          style={{ backgroundColor: '#E8F4FD', color: '#1E3A5F' }}
         >
-          {/* 포켓 추가 디자인 */}
-          <div className="relative w-full h-full">
-            <div
-              className="bg-white border border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-gray-400 transition-colors w-full shadow-sm"
-              style={{ borderRadius: '0', boxSizing: 'border-box', height: 'calc(100% - 16px)' }}
-              onClick={() => setShowAdd(true)}
-            >
-              <Plus className="w-12 h-12 text-gray-400 mb-4" />
-              <p className="text-lg font-medium text-gray-600">
-                {L(lang, { ko: '포켓 추가', zh: '添加口袋', en: 'Add Pocket' })}
-              </p>
-            </div>
-          </div>
+          {L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}
+        </div>
+        <div
+          className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium"
+          style={{ backgroundColor: '#FFF3E0', color: '#7C4700' }}
+        >
+          ¥1 = ₩{Math.round(cnyRate)}
+        </div>
+        <div
+          className="flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium"
+          style={{ backgroundColor: '#F3E5F5', color: '#4A148C' }}
+        >
+          {L(lang, { ko: '한국', zh: '韩国', en: 'Korea' })} {koreaTime}
         </div>
       </div>
 
-      {/* Pocket indicators with icons and names */}
-      {(pockets.length > 0 || totalSlides > 1) && (
-        <div className="flex justify-center items-center py-3 gap-1 px-4 overflow-x-auto">
-          {pockets.map((pocketId, index) => {
-            const pocket = getPocketById(pocketId)
-            if (!pocket) return null
-            const isActive = index === currentIndex
-            return (
-              <button
-                key={pocketId}
-                onClick={() => goTo(index)}
-                className={`flex flex-col items-center p-2 rounded-lg transition-all min-w-0 ${
-                  isActive ? 'bg-gray-100 scale-105' : 'hover:bg-gray-50'
-                }`}
-                style={{ minWidth: '60px' }}
-              >
-                <LucideIcon 
-                  name={pocket.icon} 
-                  size={isActive ? 20 : 16} 
-                  style={{ color: isActive ? '#111827' : '#6B7280' }} 
-                />
-                <span 
-                  className={`text-xs mt-1 truncate max-w-full ${
-                    isActive ? 'font-semibold text-gray-900' : 'text-gray-500'
-                  }`}
-                >
-                  {L(lang, pocket.name)}
-                </span>
-              </button>
-            )
-          })}
-          {/* Add pocket indicator - 항상 표시 */}
-          <button
-            onClick={() => goTo(pockets.length)}
-            className={`flex flex-col items-center p-2 rounded-lg transition-all min-w-0 ${
-              currentIndex === pockets.length ? 'bg-gray-100 scale-105' : 'hover:bg-gray-50'
-            }`}
-            style={{ minWidth: '60px' }}
-          >
-            <Plus 
-              size={currentIndex === pockets.length ? 20 : 16} 
-              style={{ color: currentIndex === pockets.length ? '#111827' : '#6B7280' }} 
-            />
-            <span 
-              className={`text-xs mt-1 truncate max-w-full ${
-                currentIndex === pockets.length ? 'font-semibold text-gray-900' : 'text-gray-500'
-              }`}
+      {/* ─── 2. 추천 코스 섹션 ─── */}
+      <div className="mb-8">
+        <button
+          onClick={() => setTab('course')}
+          className="flex items-center justify-between w-full mb-4"
+        >
+          <h2 className="text-lg font-bold text-[#111827]">
+            {L(lang, { ko: '추천 코스', zh: '推荐路线', en: 'Recommended Courses' })}
+          </h2>
+          <span className="text-[#9CA3AF] text-lg">&rarr;</span>
+        </button>
+        <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+          {courses.map(course => (
+            <button
+              key={course.id}
+              onClick={() => setTab('course')}
+              className="snap-start flex-shrink-0 rounded-2xl shadow-sm overflow-hidden active:scale-[0.98] transition-transform"
+              style={{ width: 220 }}
             >
-              {L(lang, { ko: '추가', zh: '添加', en: 'Add' })}
-            </span>
+              <div
+                className={`bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || 'from-gray-400 to-gray-600'} flex items-end p-4`}
+                style={{ height: 196 }}
+              >
+                <p className="text-white text-xl font-bold leading-tight text-left">
+                  {L(lang, course.name)}
+                </p>
+              </div>
+              <div className="bg-white p-3" style={{ height: 84 }}>
+                <p className="text-xs text-[#6B7280] line-clamp-2 text-left">
+                  {L(lang, course.description)}
+                </p>
+                <p className="text-[10px] text-[#9CA3AF] mt-2 text-left">
+                  {course.stops.length}{L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })} · {course.duration}
+                </p>
+              </div>
+            </button>
+          ))}
+          {/* 더보기 카드 */}
+          <button
+            onClick={() => setTab('course')}
+            className="snap-start flex-shrink-0 rounded-2xl border-2 border-dashed border-[#D1D5DB] flex items-center justify-center active:scale-[0.98] transition-transform"
+            style={{ width: 220, height: 280 }}
+          >
+            <div className="text-center">
+              <p className="text-2xl text-[#9CA3AF] mb-2">&rarr;</p>
+              <p className="text-sm font-medium text-[#6B7280]">
+                {L(lang, { ko: '더보기', zh: '查看更多', en: 'View More' })}
+              </p>
+            </div>
           </button>
         </div>
-      )}
+      </div>
 
-      {/* 삭제 확인 모달 */}
-      {confirmDelete && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50" onClick={() => setConfirmDelete(null)}>
-          <div className="bg-white rounded-xl p-6 mx-8 shadow-lg max-w-xs w-full" onClick={e => e.stopPropagation()}>
-            <p className="text-center text-sm font-medium text-gray-800 mb-5">
-              {L(lang, { ko: '이 포켓을 지우겠습니까?', zh: '要删除这个口袋吗？', en: 'Delete this pocket?' })}
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setConfirmDelete(null)}
-                className="flex-1 py-2.5 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:bg-gray-50"
-              >
-                {L(lang, { ko: '아니요', zh: '不', en: 'No' })}
-              </button>
-              <button
-                onClick={() => { removePocket(confirmDelete); setConfirmDelete(null) }}
-                className="flex-1 py-2.5 rounded-lg bg-[#111827] text-white text-sm font-medium hover:bg-gray-800"
-              >
-                {L(lang, { ko: '네', zh: '是', en: 'Yes' })}
-              </button>
-            </div>
-          </div>
+      {/* ─── 3. 오늘의 한국어 배너 ─── */}
+      <div
+        className="rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 p-6 mb-8 active:scale-[0.98] transition-transform cursor-pointer"
+        style={{ height: 140 }}
+        onClick={() => setTab('learn')}
+      >
+        <p className="text-white/70 text-xs font-medium mb-2">
+          {L(lang, { ko: '오늘의 한국어', zh: '今日韩语', en: "Today's Korean" })}
+        </p>
+        <p className="text-white text-3xl font-bold mb-1">{todayExpr.korean}</p>
+        <p className="text-white/80 text-sm">{todayExpr.chinese} · {todayExpr.english}</p>
+        <p className="text-white/60 text-xs mt-2">
+          {L(lang, { ko: '매일 새로운 표현', zh: '每天新表达', en: 'New expression daily' })} &rarr;
+        </p>
+      </div>
+
+      {/* ─── 4. 여행 필수 가이드 ─── */}
+      <div className="mb-8">
+        <button
+          onClick={() => setTab('travel')}
+          className="flex items-center justify-between w-full mb-4"
+        >
+          <h2 className="text-lg font-bold text-[#111827]">
+            {L(lang, { ko: '여행 필수', zh: '旅行必备', en: 'Travel Essentials' })}
+          </h2>
+          <span className="text-[#9CA3AF] text-lg">&rarr;</span>
+        </button>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, gradient: 'from-blue-400 to-blue-600' },
+            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, gradient: 'from-green-400 to-emerald-600' },
+            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, gradient: 'from-amber-400 to-orange-500' },
+            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, gradient: 'from-rose-400 to-pink-600' },
+          ].map((item, i) => (
+            <button
+              key={i}
+              onClick={() => showToast(L(lang, { ko: '곧 출시', zh: '即将上线', en: 'Coming soon' }))}
+              className={`rounded-2xl bg-gradient-to-br ${item.gradient} p-4 flex items-end active:scale-[0.98] transition-transform`}
+              style={{ height: 120 }}
+            >
+              <p className="text-white text-base font-bold leading-tight text-left">
+                {L(lang, item.title)}
+              </p>
+            </button>
+          ))}
         </div>
-      )}
+      </div>
 
-      {/* Add Pocket Modal */}
-      {showAdd && (
-        <div className="fixed inset-0 bg-black/50 flex items-end z-50" onClick={() => setShowAdd(false)}>
-          <div className="bg-white rounded-t-2xl w-full max-h-[70vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-semibold" style={{ color: '#111827' }}>
-                  {L(lang, { ko: '주머니 선택', zh: '选择口袋', en: 'Choose Pocket' })}
-                </h3>
-                <button onClick={() => setShowAdd(false)} className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center">
-                  <X className="w-4 h-4 text-gray-600" />
-                </button>
+      {/* ─── 5. 긴급 연락처 배너 ─── */}
+      <button
+        onClick={() => setTab('sos')}
+        className="w-full rounded-2xl bg-red-50 border border-red-200 px-4 py-4 mb-8 active:scale-[0.98] transition-transform text-left"
+        style={{ minHeight: 80 }}
+      >
+        <p className="text-red-700 text-sm font-bold mb-1">
+          {L(lang, { ko: '긴급 상황?', zh: '紧急情况？', en: 'Emergency?' })}
+        </p>
+        <p className="text-red-600 text-xs">
+          112({L(lang, { ko: '경찰', zh: '警察', en: 'Police' })}) · 119({L(lang, { ko: '소방/구급', zh: '消防/急救', en: 'Fire/Ambulance' })}) · 1345({L(lang, { ko: '외국인상담', zh: '外国人咨询', en: 'Foreigner Help' })})
+        </p>
+      </button>
+
+      {/* ─── 6. 상황별 한국어 ─── */}
+      <div className="mb-8">
+        <button
+          onClick={() => setTab('learn')}
+          className="flex items-center justify-between w-full mb-4"
+        >
+          <h2 className="text-lg font-bold text-[#111827]">
+            {L(lang, { ko: '상황별 한국어', zh: '场景韩语', en: 'Korean by Situation' })}
+          </h2>
+          <span className="text-[#9CA3AF] text-lg">&rarr;</span>
+        </button>
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+          {SCENE_PHRASES.map((item, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                if (item.pocket === 'shopping') setTab('shopping')
+                else if (item.pocket === 'emergency') setTab('sos')
+                else setTab('learn')
+              }}
+              className="snap-start flex-shrink-0 rounded-2xl overflow-hidden shadow-sm active:scale-[0.98] transition-transform"
+              style={{ width: 160 }}
+            >
+              <div
+                className={`bg-gradient-to-br ${item.gradient} flex items-end p-3`}
+                style={{ height: 120 }}
+              >
+                <p className="text-white text-base font-bold text-left">
+                  {L(lang, item.scene)}
+                </p>
               </div>
-              {pocketCategories.map((cat) => (
-                <div key={cat.id} className="mb-6">
-                  <h4 className="text-sm font-semibold uppercase tracking-wider text-gray-500 mb-3">{L(lang, cat.name)}</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {cat.pockets.map((p) => (
-                      <button
-                        key={p.id}
-                        onClick={() => addPocket(p.id)}
-                        disabled={pockets.includes(p.id)}
-                        className={`p-3 rounded-xl border text-left transition-colors ${
-                          pockets.includes(p.id) ? 'bg-gray-50 border-gray-200 opacity-40' : 'bg-white border-gray-200 hover:bg-gray-50'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <LucideIcon name={p.icon} size={16} style={{ color: '#111827' }} />
-                          <span className="font-medium text-sm" style={{ color: '#111827' }}>{L(lang, p.name)}</span>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-1 line-clamp-1">{L(lang, p.description)}</p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+              <div className="bg-white p-3" style={{ height: 80 }}>
+                <p className="text-sm font-medium text-[#111827] text-left">{item.phrase.ko}</p>
+                <p className="text-xs text-[#6B7280] mt-1 text-left">{item.phrase.zh}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ─── 7. 인기 서비스 ─── */}
+      <div className="mb-8">
+        <h2 className="text-lg font-bold text-[#111827] mb-4">
+          {L(lang, { ko: '인기 서비스', zh: '热门服务', en: 'Popular Services' })}
+        </h2>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { title: { ko: '맛집', zh: '美食', en: 'Food' }, gradient: 'from-orange-400 to-red-500', tab: 'food' },
+            { title: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, gradient: 'from-pink-400 to-rose-500', tab: 'shopping' },
+            { title: { ko: '한류', zh: '韩流', en: 'Hallyu' }, gradient: 'from-violet-400 to-purple-500', tab: 'hallyu' },
+            { title: { ko: '의료', zh: '医疗', en: 'Medical' }, gradient: 'from-teal-400 to-cyan-600', tab: 'medical' },
+          ].map((item, i) => (
+            <button
+              key={i}
+              onClick={() => setTab(item.tab)}
+              className={`rounded-2xl bg-gradient-to-br ${item.gradient} p-4 flex items-end active:scale-[0.98] transition-transform`}
+              style={{ height: 100 }}
+            >
+              <p className="text-white text-base font-bold text-left">
+                {L(lang, item.title)}
+              </p>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ─── 토스트 ─── */}
+      {toast && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#111827] text-white text-sm px-6 py-3 rounded-full shadow-lg z-50 animate-pulse">
+          {toast}
         </div>
       )}
     </div>
   )
 }
 
-// Export additional components and utilities for backward compatibility
 export { TreeSection, LucideIcon, WidgetContent, getEnabledPocketsForSection, trackActivity }

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Component, lazy, Suspense } from 'react'
+import { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import useDarkMode from './hooks/useDarkMode'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
 import { initKakao, loginWithKakao, loginWithKakaoPopup, logoutFromKakao, getKakaoUser, isKakaoLoggedIn, handleKakaoCallback } from './utils/kakaoAuth'
@@ -6,17 +6,21 @@ import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleA
 
 // import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints, Map, Heart, Compass, Layers, Wallet } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, FileText, MapPin, Menu, Moon, Sun, Footprints, Map, Heart, Compass, Layers, Wallet, Utensils, ShoppingBag, AlertTriangle, BookOpen, Coins, Plane } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
 import { generateChatResponse } from './data/chatResponses'
 import { updateLog, autoUpdateInfo, dataSources } from './data/updateLog'
 import HomeTab, { trackActivity, LucideIcon } from './components/HomeTab'
-import { pocketCategories, featureScores, serviceItems, subMenuData } from './data/pockets'
+import { pocketCategories, featureScores, serviceItems, subMenuData, IMPLEMENTED_POCKETS } from './data/pockets'
 import AffiliateTracker from './components/AffiliateTracker'
 import LoadingSpinner from './components/LoadingSpinner'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
+import OnboardingSimple from './components/OnboardingSimple'
+import PocketContent from './components/pockets/PocketContent'
+import OfflineNotice from './components/common/OfflineNotice'
+import ErrorBoundary from './components/common/ErrorBoundary'
 
 // Lazy-loaded tab components for better code splitting
 const EducationTab = lazy(() => import('./components/EducationTab'))
@@ -40,7 +44,8 @@ const VisaAlertTab = lazy(() => import('./components/VisaAlertTab'))
 const FinanceTab = lazy(() => import('./components/FinanceTab'))
 const ResumeTab = lazy(() => import('./components/ResumeTab'))
 const DigitalWalletTab = lazy(() => import('./components/DigitalWalletTab'))
-const MapTab = lazy(() => import('./components/MapTab'))
+const CourseTab = lazy(() => import('./components/CourseTab'))
+const SearchTab = lazy(() => import('./components/SearchTab'))
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -78,124 +83,7 @@ function Logo({ size = 'md' }) {
   )
 }
 
-function Onboarding({ onComplete, lang, setLang }) {
-  const [step, setStep] = useState('splash')
-  const [nationality, setNationality] = useState(null)
-  const [currentVisa, setCurrentVisa] = useState(null)
-  const [exchangeRates, setExchangeRates] = useState(null)
-  const s = t[lang]
-
-  // 환율 로드 (CNY, HKD, TWD, MOP)
-  useEffect(() => {
-    Promise.all([
-      fetch('https://api.exchangerate-api.com/v4/latest/CNY').then(r => r.json()),
-      fetch('https://api.exchangerate-api.com/v4/latest/HKD').then(r => r.json()),
-      fetch('https://api.exchangerate-api.com/v4/latest/TWD').then(r => r.json()),
-      fetch('https://api.exchangerate-api.com/v4/latest/MOP').then(r => r.json()),
-    ]).then(([cny, hkd, twd, mop]) => {
-      setExchangeRates({
-        CNY: cny.rates?.KRW ? Math.round(cny.rates.KRW * 100) / 100 : null,
-        HKD: hkd.rates?.KRW ? Math.round(hkd.rates.KRW * 100) / 100 : null,
-        TWD: twd.rates?.KRW ? Math.round(twd.rates.KRW * 100) / 100 : null,
-        MOP: mop.rates?.KRW ? Math.round(mop.rates.KRW * 100) / 100 : null,
-        _date: cny.date || null,
-      })
-    }).catch(() => {})
-  }, [])
-
-  // 스플래시 → 로그인 화면으로 전환
-  useEffect(() => {
-    if (step === 'splash') {
-      const timer = setTimeout(() => setStep('login'), 1800)
-      return () => clearTimeout(timer)
-    }
-  }, [step])
-
-  return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: 'var(--bg-secondary)' }}>
-      <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
-        {/* 언어 토글 */}
-        <button onClick={() => setLang(nextLang(lang))}
-          className="absolute top-6 right-6 text-[#6B7280] text-sm px-3 py-1.5 rounded-full border border-[#E5E7EB] hover:border-[#111827] transition-all z-10">
-          {langLabel(lang)}
-        </button>
-
-        {/*  스플래시 (첫 화면) — iPhone Hello 스타일  */}
-        {step === 'splash' && (
-          <div className="flex flex-col items-center justify-center" style={{ minHeight: '60vh' }}>
-            <span style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '72px',
-              fontWeight: 200,
-              color: '#111827',
-              letterSpacing: '0.02em',
-              opacity: 0,
-              animation: 'fadeIn 1s ease forwards',
-            }}>
-              你好!
-            </span>
-          </div>
-        )}
-
-        {/*  통합 로그인 화면 — 5개 로그인 + 둘러보기  */}
-        {step === 'login' && (
-          <div className="w-full max-w-sm animate-fade-up">
-            <div className="text-center mb-8">
-              <Logo />
-            </div>
-            <p className="text-[#6B7280] text-sm mb-6 text-center">
-              {L(lang, { ko: '간편 로그인으로 시작하세요', zh: '快速登录开始使用', en: 'Get started with quick login' })}
-            </p>
-            <div className="space-y-3">
-              <button
-                onClick={() => { initKakao(); loginWithKakao(); }}
-                className="w-full flex items-center justify-center gap-3 bg-[#FEE500] text-[#3C1E1E] rounded-xl p-4 font-medium hover:bg-[#FDD835] transition-all btn-press shadow-sm">
-                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#3C1E1E" d="M12 3C6.48 3 2 6.36 2 10.44c0 2.62 1.75 4.93 4.38 6.24l-1.12 4.16c-.1.36.32.64.62.42l4.97-3.26c.37.04.75.06 1.15.06 5.52 0 10-3.36 10-7.62S17.52 3 12 3z"/></svg>
-                {L(lang, { ko: '카카오로 로그인', zh: 'Kakao登录', en: 'Login with Kakao' })}
-              </button>
-
-              <button
-                onClick={async () => { 
-                  try {
-                    const userInfo = await loginWithApple()
-                    if (userInfo) {
-                      trackLogin('apple', 'visitor')
-                      onComplete({ lang, socialLogin: { provider: 'apple', user: userInfo } })
-                    }
-                  } catch (error) {
-                    console.error('Apple 로그인 실패:', error)
-                    alert(lang === 'ko' ? 'Apple 로그인에 실패했습니다. 나중에 다시 시도해주세요.' : 
-                          lang === 'zh' ? 'Apple登录失败，请稍后重试' : 'Apple login failed. Please try again later.')
-                    onComplete({ lang })
-                  }
-                }}
-                className="w-full flex items-center justify-center gap-3 bg-[#000000] text-white rounded-xl p-4 font-medium hover:bg-[#1a1a1a] transition-all btn-press shadow-sm">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                {L(lang, { ko: 'Apple로 로그인', zh: 'Apple登录', en: 'Sign in with Apple' })}
-              </button>
-
-              <div className="relative my-3">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-                <div className="relative flex justify-center"><span className="bg-white px-3 text-xs text-gray-400">or</span></div>
-              </div>
-
-              <button
-                onClick={() => {
-                  onComplete({ lang, socialLogin: { provider: 'guest', user: { nickname: lang === 'ko' ? '게스트' : lang === 'zh' ? '访客' : 'Guest' } } })
-                }}
-                className="w-full text-center text-[#6B7280] text-sm py-3 rounded-xl border border-gray-200 hover:bg-gray-50 transition-all font-medium">
-                {L(lang, { ko: '게스트로 둘러보기', zh: '以访客身份浏览', en: 'Continue as Guest' })}
-              </button>
-
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
+// 기존 온보딩은 OnboardingSimple.jsx로 교체됨 (Onboarding_Legacy 삭제)
 
 function NoticePopup({ lang, onClose }) {
   const s = t[lang]
@@ -515,6 +403,68 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   const [showNotifModal, setShowNotifModal] = useState(false)
   const [showTimingModal, setShowTimingModal] = useState(false)
   const [showToast, setShowToast] = useState(false)
+  const [toastMsg, setToastMsg] = useState('')
+
+  // 관리자 모드
+  const [adminMode, setAdminMode] = useState(() => {
+    try { return localStorage.getItem('admin_mode') === 'true' } catch { return false }
+  })
+  const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [tapCount, setTapCount] = useState(0)
+  const tapTimer = useRef(null)
+  const [pocketVisibility, setPocketVisibility] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('pocket_visibility')) || {} } catch { return {} }
+  })
+
+  const handleAvatarTap = () => {
+    const newCount = tapCount + 1
+    setTapCount(newCount)
+    clearTimeout(tapTimer.current)
+    if (newCount >= 5) {
+      const newMode = !adminMode
+      setAdminMode(newMode)
+      localStorage.setItem('admin_mode', String(newMode))
+      setTapCount(0)
+      showToastMessage(newMode
+        ? (lang === 'ko' ? '관리자 모드 활성화' : lang === 'zh' ? '管理员模式已激活' : 'Admin mode activated')
+        : (lang === 'ko' ? '관리자 모드 비활성화' : lang === 'zh' ? '管理员模式已关闭' : 'Admin mode deactivated'))
+    } else {
+      tapTimer.current = setTimeout(() => setTapCount(0), 1500)
+    }
+  }
+
+  const showToastMessage = (msg) => {
+    setToastMsg(msg)
+    setShowToast(true)
+    setTimeout(() => setShowToast(false), 1500)
+  }
+
+  const togglePocketVisibility = (pocketId) => {
+    const current = getPocketVisible(pocketId)
+    const updated = { ...pocketVisibility, [pocketId]: !current }
+    setPocketVisibility(updated)
+    localStorage.setItem('pocket_visibility', JSON.stringify(updated))
+    const pocket = pocketCategories.flatMap(c => c.pockets).find(p => p.id === pocketId)
+    const name = pocket ? L(lang, pocket.name) : pocketId
+    showToastMessage(!current
+      ? (lang === 'ko' ? `${name} 활성화됨` : lang === 'zh' ? `${name} 已激活` : `${name} activated`)
+      : (lang === 'ko' ? `${name} 비활성화됨` : lang === 'zh' ? `${name} 已关闭` : `${name} deactivated`))
+  }
+
+  const getPocketVisible = (pocketId) => {
+    if (pocketId in pocketVisibility) return pocketVisibility[pocketId]
+    return IMPLEMENTED_POCKETS.has(pocketId)
+  }
+
+  const setAllPockets = (value) => {
+    const updated = {}
+    pocketCategories.forEach(cat => cat.pockets.forEach(p => { updated[p.id] = value }))
+    setPocketVisibility(updated)
+    localStorage.setItem('pocket_visibility', JSON.stringify(updated))
+    showToastMessage(value
+      ? (lang === 'ko' ? '전체 켜기 완료' : lang === 'zh' ? '全部开启' : 'All enabled')
+      : (lang === 'ko' ? '전체 끄기 완료' : lang === 'zh' ? '全部关闭' : 'All disabled'))
+  }
   
   // 비자 만료일 임시 저장
   const [tempDate, setTempDate] = useState('')
@@ -612,8 +562,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   const handleSaveTiming = () => {
     localStorage.setItem('visa_notif_prefs', JSON.stringify(notifPrefs))
     setShowTimingModal(false)
-    setShowToast(true)
-    setTimeout(() => setShowToast(false), 1000)
+    showToastMessage(lang === 'ko' ? '비자 만료 알림이 설정되었습니다' : lang === 'zh' ? '已设置签证到期提醒' : 'Visa expiry alerts set')
   }
 
   // 알림 토글
@@ -638,6 +587,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
       <div className="rounded-lg p-6 shadow-sm" style={{ backgroundColor: 'var(--bg-primary)' }}>
         {/* 프로필 헤더 */}
         <div className="text-center mb-6">
+          <p onClick={handleAvatarTap} className="text-xs font-bold tracking-[0.2em] text-[#9CA3AF] uppercase mb-3 py-2 px-4 cursor-pointer select-none active:opacity-50 transition-opacity">HANPOCKET</p>
           <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
             {loginInfo ? (
               <span className="text-2xl">{loginInfo.icon}</span>
@@ -771,6 +721,69 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         </button>
       </div>
 
+      {/* 관리자 설정 */}
+      {adminMode && (
+        <div className="rounded-lg p-4 shadow-sm mt-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+          <button
+            onClick={() => setShowAdminPanel(!showAdminPanel)}
+            className="w-full flex items-center justify-between py-2 transition-all active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-2">
+              <Settings className="w-4 h-4 text-[#111827]" />
+              <span className="text-sm font-bold text-[#111827]">
+                {lang === 'ko' ? '관리자 설정' : lang === 'zh' ? '管理员设置' : 'Admin Settings'}
+              </span>
+            </div>
+            <ChevronRight className={`w-4 h-4 text-[#9CA3AF] transition-transform duration-200 ${showAdminPanel ? 'rotate-90' : ''}`} />
+          </button>
+
+          {showAdminPanel && (
+            <div className="mt-3 pt-3 border-t border-[#E5E7EB]">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
+                  {lang === 'ko' ? '포켓 표시 관리' : lang === 'zh' ? '口袋显示管理' : 'Pocket Visibility'}
+                </span>
+                <div className="flex gap-2">
+                  <button onClick={() => setAllPockets(true)} className="text-[10px] bg-[#111827] text-white px-2.5 py-1 rounded-full">
+                    {lang === 'ko' ? '전체 켜기' : lang === 'zh' ? '全部开启' : 'All On'}
+                  </button>
+                  <button onClick={() => setAllPockets(false)} className="text-[10px] bg-[#E5E7EB] text-[#374151] px-2.5 py-1 rounded-full">
+                    {lang === 'ko' ? '전체 끄기' : lang === 'zh' ? '全部关闭' : 'All Off'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {pocketCategories.map(cat => (
+                  <div key={cat.id}>
+                    <p className="text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-2">{L(lang, cat.name)}</p>
+                    <div className="space-y-1">
+                      {cat.pockets.map(p => {
+                        const isOn = getPocketVisible(p.id)
+                        return (
+                          <div key={p.id} className="flex items-center justify-between py-2">
+                            <div className="flex items-center gap-2.5">
+                              <LucideIcon name={p.icon} size={16} style={{ color: isOn ? '#111827' : '#D1D5DB' }} />
+                              <span className={`text-sm ${isOn ? 'text-[#111827] font-medium' : 'text-[#9CA3AF]'}`}>{L(lang, p.name)}</span>
+                            </div>
+                            <button
+                              onClick={() => togglePocketVisibility(p.id)}
+                              className={`w-11 h-6 rounded-full transition-all relative ${isOn ? 'bg-[#111827]' : 'bg-[#D1D5DB]'}`}
+                            >
+                              <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all ${isOn ? 'left-[22px]' : 'left-0.5'}`} />
+                            </button>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* 모달 1: 비자 만료일 입력 */}
       {showDateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -881,11 +894,11 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
 
       {/* 토스트 메시지 */}
       {showToast && (
-        <div 
-          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#111827] text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg z-50 animate-fade-in"
-          style={{ animation: 'fadeInOut 1s ease-in-out' }}
+        <div
+          className="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-[#111827] text-white px-6 py-3 rounded-full text-sm font-medium shadow-lg z-50"
+          style={{ animation: 'fadeInOut 1.5s ease-in-out' }}
         >
-          {lang === 'ko' ? '비자 만료 알림이 설정되었습니다' : lang === 'zh' ? '已设置签证到期提醒' : 'Visa expiry alerts set'}
+          {toastMsg || (lang === 'ko' ? '비자 만료 알림이 설정되었습니다' : lang === 'zh' ? '已设置签证到期提醒' : 'Visa expiry alerts set')}
         </div>
       )}
 
@@ -1058,23 +1071,114 @@ function VisaTab({ profile, lang, view, setView, selCat, setSelCat, selVisa, set
   )
 }
 
-class ErrorBoundary extends Component {
-  constructor(props) { super(props); this.state = { error: null } }
-  static getDerivedStateFromError(error) { return { error } }
-  render() {
-    if (this.state.error) return (
-      <div style={{ padding: 40, fontFamily: 'monospace', fontSize: 14, color: 'red', whiteSpace: 'pre-wrap' }}>
-        <h2>Runtime Error</h2>
-        <p>{this.state.error.message}</p>
-        <p>{this.state.error.stack}</p>
-        <button onClick={() => { localStorage.clear(); window.location.reload() }}
-          style={{ marginTop: 20, padding: '10px 20px', background: '#111', color: '#fff', border: 0, borderRadius: 8 }}>
-          Reset & Reload
-        </button>
-      </div>
-    )
-    return this.props.children
+// ErrorBoundary moved to ./components/common/ErrorBoundary.jsx
+
+// Service Grid Component — 구현/미구현 포켓 분리 표시
+function ServiceGrid({ lang, L, setSubPage }) {
+  const [showComingSoon, setShowComingSoon] = useState(false)
+  const [visibility] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('pocket_visibility')) || {} } catch { return {} }
+  })
+
+  const isVisible = (pocketId) => {
+    if (pocketId in visibility) return visibility[pocketId]
+    return IMPLEMENTED_POCKETS.has(pocketId)
   }
+
+  // 카테고리별로 활성/비활성 포켓 분리 (pocket_visibility 기반)
+  const implementedCats = []
+  const unimplementedPockets = []
+
+  pocketCategories.forEach(cat => {
+    const impl = cat.pockets.filter(p => isVisible(p.id))
+    const unimpl = cat.pockets.filter(p => !isVisible(p.id))
+    if (impl.length > 0) {
+      implementedCats.push({ ...cat, pockets: impl })
+    }
+    unimpl.forEach(p => unimplementedPockets.push({ ...p, catName: cat.name }))
+  })
+
+  const comingSoonLabel = { ko: '업데이트 중', zh: '更新中', en: 'Coming Soon' }
+  const updatingBadge = { ko: '(업데이트중)', zh: '(更新中)', en: '(Updating)' }
+
+  // Quick-access icon grid (Trip.com style)
+  const quickIcons = [
+    { icon: Shield, label: { ko: '비자', zh: '签证', en: 'Visa' }, action: () => setSubPage('visaalert') },
+    { icon: FileText, label: { ko: '입국카드', zh: '入境卡', en: 'Arrival' }, action: () => setSubPage('arrival-card') },
+    { icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' }, action: () => setSubPage('course') },
+    { icon: Utensils, label: { ko: '맛집', zh: '美食', en: 'Food' }, action: () => setSubPage('food') },
+    { icon: ShoppingBag, label: { ko: '쇼핑', zh: '购物', en: 'Shop' }, action: () => setSubPage('shopping') },
+    { icon: AlertTriangle, label: { ko: 'SOS', zh: 'SOS', en: 'SOS' }, action: () => setSubPage('sos') },
+    { icon: BookOpen, label: { ko: '한국어', zh: '韩语', en: 'Korean' }, action: () => setSubPage('learn') },
+    { icon: Coins, label: { ko: '환급', zh: '退税', en: 'Refund' }, action: () => setSubPage('taxrefund') },
+    { icon: Heart, label: { ko: '병원', zh: '医院', en: 'Hospital' }, action: () => setSubPage('medical') },
+    { icon: Plane, label: { ko: '항공편', zh: '航班', en: 'Flights' }, action: () => setSubPage('travel') },
+  ]
+
+  return (
+    <div className="space-y-6">
+      {/* Quick-access icon grid */}
+      <div className="bg-white rounded-2xl p-4 shadow-sm">
+        <div className="grid grid-cols-5 gap-3">
+          {quickIcons.map((item, idx) => {
+            const IconComp = item.icon
+            return (
+              <button
+                key={idx}
+                onClick={item.action}
+                className="flex flex-col items-center gap-1 py-2 cursor-pointer active:scale-95 transition-transform"
+              >
+                <IconComp size={32} color="#111827" />
+                <span className="text-xs text-[#374151] text-center">{L(lang, item.label)}</span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 구현된 포켓 */}
+      {implementedCats.map(cat => (
+        <div key={cat.id}>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{L(lang, cat.name)}</h3>
+          <div className="grid grid-cols-3 gap-2">
+            {cat.pockets.map(p => (
+              <button key={p.id} onClick={() => setSubPage(p.id)}
+                className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98]">
+                <LucideIcon name={p.icon} size={20} style={{ color: '#111827' }} />
+                <span className="text-xs text-[#111827] font-medium text-center leading-tight">{L(lang, p.name)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      {/* 미구현 포켓 — 업데이트 중 그룹 */}
+      {unimplementedPockets.length > 0 && (
+        <div className="mt-4">
+          <button
+            onClick={() => setShowComingSoon(!showComingSoon)}
+            className="flex items-center gap-2 w-full py-2 transition-all duration-200 active:scale-[0.98]"
+          >
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">{L(lang, comingSoonLabel)}</h3>
+            <span className="text-xs text-gray-400">({unimplementedPockets.length})</span>
+            <ChevronRight size={14} className={`text-gray-400 transition-transform duration-200 ${showComingSoon ? 'rotate-90' : ''}`} />
+          </button>
+          {showComingSoon && (
+            <div className="grid grid-cols-3 gap-2 mt-2">
+              {unimplementedPockets.map(p => (
+                <div key={p.id}
+                  className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm opacity-50 cursor-default">
+                  <LucideIcon name={p.icon} size={20} style={{ color: '#9CA3AF' }} />
+                  <span className="text-xs text-[#9CA3AF] font-medium text-center leading-tight">{L(lang, p.name)}</span>
+                  <span className="text-[10px] text-red-500 font-medium">{L(lang, updatingBadge)}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // App Shortcut Component
@@ -1299,13 +1403,13 @@ function AppInner() {
       </div>
     )
   }
-  if (!profile) return <Onboarding lang={lang} setLang={setLang} onComplete={p => { setProfile(p); saveProfile(p); setLang(p.lang||'ko'); }} />
+  if (!profile) return <OnboardingSimple lang={lang} setLang={setLang} onComplete={p => { setProfile(p); saveProfile(p); setLang(p.lang||'ko'); }} />
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'pocket', icon: Wallet, label: { ko: '포켓', zh: '口袋', en: 'Pocket' } },
-    { id: 'map', icon: MapPin, label: { ko: '지도', zh: '地图', en: 'Map' } },
-    { id: 'community', icon: Users, label: { ko: '커뮤니티', zh: '社区', en: 'Community' } },
+    { id: 'service', icon: Grid3x3, label: { ko: '서비스', zh: '服务', en: 'Services' } },
+    { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
+    { id: 'search', icon: Search, label: { ko: '검색', zh: '搜索', en: 'Search' } },
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
   ]
 
@@ -1482,6 +1586,8 @@ function AppInner() {
         </div>
       </div>
 
+      <OfflineNotice lang={lang} />
+
       {/* Content */}
       <div className="px-4 pt-4 pb-4">
         {/* Install / Push notification banner */}
@@ -1522,24 +1628,9 @@ function AppInner() {
             </div>
           )
         })()}
-        {/* Pocket grid - pockets.js 데이터 기반 */}
-        {tab==='pocket' && !subPage && (
-          <div className="space-y-6">
-            {pocketCategories.map(cat => (
-              <div key={cat.id}>
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{L(lang, cat.name)}</h3>
-                <div className="grid grid-cols-3 gap-2">
-                  {cat.pockets.map(p => (
-                    <button key={p.id} onClick={() => setSubPage(p.id)}
-                      className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm hover:shadow-md transition-shadow">
-                      <LucideIcon name={p.icon} size={20} style={{ color: '#111827' }} />
-                      <span className="text-xs text-[#111827] font-medium text-center leading-tight">{L(lang, p.name)}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+        {/* Service grid - pockets.js 데이터 기반 */}
+        {tab==='service' && !subPage && (
+          <ServiceGrid lang={lang} L={L} setSubPage={setSubPage} />
         )}
 
         {/* Sub-pages from explore/tools */}
@@ -1618,18 +1709,43 @@ function AppInner() {
             <VisaAlertTab lang={lang} profile={profile} />
           </Suspense>
         )}
+        {subPage==='jobs' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <JobsTab lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='housing' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <HousingTab lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='resume' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ResumeTab lang={lang} profile={profile} />
+          </Suspense>
+        )}
+        {subPage==='pet' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <PetTab lang={lang} />
+          </Suspense>
+        )}
 
-        {tab==='community' && !subPage && (
+        {/* Pocket catch-all — 전용 탭이 없는 pocket ID는 PocketContent로 렌더링 */}
+        {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet'].includes(subPage) && (
+          <PocketContent pocketId={subPage} lang={lang} setTab={(t) => setSubPage(t)} />
+        )}
+
+        {tab==='course' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <CommunityTab lang={lang} profile={profile} />
+            <CourseTab lang={lang} />
           </Suspense>
         )}
-        {tab==='map' && !subPage && (
+        {tab==='search' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <MapTab lang={lang} />
+            <SearchTab lang={lang} onNavigate={(target) => { setTab('service'); setSubPage(target) }} />
           </Suspense>
         )}
-        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community'].includes(t)) { setTab('explore'); setSubPage(t) } else { setTab(t) }}} />}
+        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} />}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
         <div className="mt-12 mb-6 text-center text-[11px] text-[#9CA3AF]">
@@ -1773,8 +1889,11 @@ function AppInner() {
             const active = tab === item.id
             return (
               <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
-                className="flex flex-col items-center gap-0.5 py-1">
+                className="flex flex-col items-center gap-0.5 py-1 relative">
                 <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }} />
+                {item.id === 'profile' && localStorage.getItem('admin_mode') === 'true' && (
+                  <span className="absolute top-0 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                )}
                 <span className="text-[11px] font-light" style={{ color: active ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
               </button>
             )

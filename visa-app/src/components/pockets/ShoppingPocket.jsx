@@ -310,8 +310,67 @@ export default function ShoppingPocket({ lang = 'ko' }) {
   );
 
   // 소주제 탭 데이터
+  // 올리브영/K-뷰티 쇼핑 표현
+  const oliveyoungPhrases = [
+    {
+      korean: '이거 1+1인가요?',
+      romanization: 'i-geo won-peul-leo-won-i-ga-yo?',
+      chinese: '这个是买一送一吗？',
+      examples: [
+        { korean: '1+1 상품 어디 있어요?', chinese: '买一送一的商品在哪？' },
+      ],
+      audio: true
+    },
+    {
+      korean: '외국인 할인 되나요?',
+      romanization: 'oe-gug-in hal-in doe-na-yo?',
+      chinese: '有外国人折扣吗？',
+      examples: [
+        { korean: '여권 보여드릴게요', chinese: '我出示一下护照' },
+      ],
+      audio: true
+    },
+    {
+      korean: '세금 환급 가능한가요?',
+      romanization: 'se-geum hwan-geub ga-neung-han-ga-yo?',
+      chinese: '可以退税吗？',
+      examples: [
+        { korean: '택스프리 서류 주세요', chinese: '请给我退税单' },
+      ],
+      audio: true
+    },
+    {
+      korean: '이거 면세가로 해주세요',
+      romanization: 'i-geo myeon-se-ga-ro hae-ju-se-yo',
+      chinese: '请给我免税价',
+      examples: [
+        { korean: '면세 적용 됐나요?', chinese: '免税已经适用了吗？' },
+      ],
+      audio: true
+    },
+    {
+      korean: '추천 상품이 뭐예요?',
+      romanization: 'chu-cheon sang-pum-i mwo-ye-yo?',
+      chinese: '推荐商品是什么？',
+      examples: [
+        { korean: '인기 상품 보여주세요', chinese: '请给我看热门商品' },
+      ],
+      audio: true
+    },
+    {
+      korean: '성분표 보여주세요',
+      romanization: 'seong-bun-pyo bo-yeo-ju-se-yo',
+      chinese: '请给我看成分表',
+      examples: [
+        { korean: '알레르기 성분 있어요?', chinese: '有过敏成分吗？' },
+      ],
+      audio: true
+    },
+  ];
+
   const tabs = [
     { id: 'basic', name: { ko: '기본', zh: '基本', en: 'Basic' }, icon: ShoppingBag },
+    { id: 'oliveyoung', name: { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }, icon: Gift },
     { id: 'refund', name: { ko: '환불/교환', zh: '退款/换货', en: 'Refund' }, icon: RefreshCw },
     { id: 'payment', name: { ko: '결제', zh: '支付', en: 'Payment' }, icon: CreditCard },
     { id: 'bargain', name: { ko: '흥정', zh: '讨价还价', en: 'Bargain' }, icon: Percent },
@@ -372,6 +431,23 @@ export default function ShoppingPocket({ lang = 'ko' }) {
           </h3>
           <div className="space-y-3">
             {basicPhrases.map((phrase, index) => 
+              renderPhraseItem(phrase, index, copyToClipboard)
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 올리브영/K-뷰티 표현 */}
+      {activeTab === 'oliveyoung' && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Gift className="w-5 h-5" style={{ color: '#111827' }} />
+            <h3 className="text-lg font-semibold" style={{ color: '#111827' }}>
+              {L(lang, { ko: '올리브영 / K-뷰티 표현', zh: 'Olive Young / K-Beauty用语', en: 'Olive Young / K-Beauty Phrases' })}
+            </h3>
+          </div>
+          <div className="space-y-3">
+            {oliveyoungPhrases.map((phrase, index) =>
               renderPhraseItem(phrase, index, copyToClipboard)
             )}
           </div>

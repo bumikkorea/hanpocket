@@ -8,7 +8,6 @@ export const pocketCategories = [
       { id: 'cafe', name: { ko: '카페', zh: '咖啡厅', en: 'Cafe' }, icon: 'Coffee', description: { ko: '주문/커스텀/포장 표현', zh: '点单/自定义/打包表达', en: 'Order/custom/takeout phrases' }, size: 'md' },
       { id: 'transport', name: { ko: '교통', zh: '交通', en: 'Transport' }, icon: 'Train', description: { ko: '택시/지하철/버스 표현', zh: '出租车/地铁/公交表达', en: 'Taxi/subway/bus phrases' }, size: 'md' },
       { id: 'convenience', name: { ko: '편의점', zh: '便利店', en: 'Convenience Store' }, icon: 'Store', description: { ko: '편의점 표현 + 꿀조합', zh: '便利店表达 + 推荐组合', en: 'CVS phrases + combos' }, size: 'md' },
-      { id: 'shopping', name: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, icon: 'ShoppingBag', description: { ko: '사이즈/교환/환불 표현', zh: '尺码/换货/退款表达', en: 'Size/exchange/refund phrases' }, size: 'md' },
       { id: 'accommodation', name: { ko: '숙소', zh: '住宿', en: 'Accommodation' }, icon: 'Building2', description: { ko: '체크인/요청/체크아웃 표현', zh: '入住/请求/退房表达', en: 'Check-in/request/checkout phrases' }, size: 'md' },
       { id: 'emergency', name: { ko: '긴급', zh: '紧急', en: 'Emergency' }, icon: 'Siren', description: { ko: 'SOS + 긴급연락처 + 증상 표현', zh: 'SOS + 紧急联系 + 症状表达', en: 'SOS + emergency contacts + symptoms' }, size: 'md' },
     ],
@@ -25,6 +24,7 @@ export const pocketCategories = [
       { id: 'tradition', name: { ko: '한국 전통 체험', zh: '韩国传统体验', en: 'Korean Traditional Experience' }, icon: 'Landmark', description: { ko: '요리·문화·계절 체험', zh: '料理·文化·季节体验', en: 'Cooking, culture & seasonal activities' }, size: 'lg' },
       { id: 'holiday', name: { ko: '한국 공휴일 캘린더', zh: '韩国公休日日历', en: 'Korean Holiday Calendar' }, icon: 'Calendar', description: { ko: '네이버 달력 스타일', zh: 'Naver日历风格', en: 'Naver Calendar style' }, size: 'lg' },
       { id: 'taxrefund', name: { ko: '택스리펀드', zh: '退税指南', en: 'Tax Refund' }, icon: 'Coins', description: { ko: '환급 계산기 & 공항 안내', zh: '退税计算器 & 机场指南', en: 'Refund calculator & airport guide' }, size: 'lg' },
+      { id: 'photoguide', name: { ko: '촬영 가이드', zh: '拍照指南', en: 'Photo Guide' }, icon: 'Camera', description: { ko: '셀카 구도부터 포토스팟까지', zh: '从自拍构图到拍照景点', en: 'From selfie tips to photo spots' }, size: 'lg' },
     ],
   },
   {
@@ -634,6 +634,14 @@ export const subMenuData = {
     ],
   },
 }
+
+// 콘텐츠가 구현된 포켓 ID (이 목록에 없는 포켓은 [更新中] 배지 표시)
+export const IMPLEMENTED_POCKETS = new Set([
+  // PocketContent.jsx — 전용 컴포넌트
+  'restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency', 'medical', 'photoguide',
+  // WidgetContent.jsx — 실제 위젯 컴포넌트
+  'holiday', 'parcel', 'editorpick', 'news',
+])
 
 // Export 별칭 - 기존 코드와의 호환성 유지
 export const widgetCategories = pocketCategories

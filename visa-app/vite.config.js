@@ -46,6 +46,11 @@ export default defineConfig({
           if (id.includes('toiletData')) {
             return 'data-toilet';
           }
+
+          // 제로페이 데이터 별도 청크 (560KB, lazy load)
+          if (id.includes('zeropay')) {
+            return 'data-zeropay';
+          }
           
           // 큰 데이터 파일들을 별도 청크로 분리
           if (id.includes('/src/data/')) {

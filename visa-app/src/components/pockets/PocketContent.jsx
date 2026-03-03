@@ -5,7 +5,24 @@ import EmergencyPocket from './EmergencyPocket'
 import CafePocket from './CafePocket'
 import ShoppingPocket from './ShoppingPocket'
 import AccommodationPocket from './AccommodationPocket'
+import MedicalPocket from './MedicalPocket'
+import PhotoGuidePocket from './PhotoGuidePocket'
 import WidgetContent from '../home/common/WidgetContent'
+import { IMPLEMENTED_POCKETS } from '../../data/pockets'
+
+function ComingSoonPlaceholder({ lang }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+      <div className="text-4xl mb-4">🚧</div>
+      <p className="text-base font-semibold text-gray-700 mb-2">
+        {lang === 'ko' ? '곧 업데이트됩니다' : lang === 'en' ? 'Coming soon' : '即将更新，敬请期待'}
+      </p>
+      <p className="text-sm text-gray-400">
+        {lang === 'ko' ? '더 나은 서비스를 준비하고 있어요' : lang === 'en' ? 'We\'re preparing a better experience' : '我们正在准备更好的服务'}
+      </p>
+    </div>
+  )
+}
 
 export default function PocketContent({ pocketId, lang, setTab }) {
   switch (pocketId) {
@@ -16,8 +33,13 @@ export default function PocketContent({ pocketId, lang, setTab }) {
     case 'cafe': return <CafePocket lang={lang} />
     case 'shopping': return <ShoppingPocket lang={lang} />
     case 'accommodation': return <AccommodationPocket lang={lang} />
+    case 'medical': return <MedicalPocket lang={lang} />
+    case 'photoguide': return <PhotoGuidePocket lang={lang} />
     default:
-      // 기존 위젯 콘텐츠 폴백
-      return <WidgetContent widgetId={pocketId} lang={lang} setTab={setTab} />
+      // 구현된 위젯은 WidgetContent로, 미구현은 coming-soon 표시
+      if (IMPLEMENTED_POCKETS.has(pocketId)) {
+        return <WidgetContent widgetId={pocketId} lang={lang} setTab={setTab} />
+      }
+      return <ComingSoonPlaceholder lang={lang} />
   }
 }

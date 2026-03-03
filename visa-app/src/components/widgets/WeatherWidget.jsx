@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { L } from '../home/utils/helpers'
+import Skeleton from '../common/Skeleton'
 
 // ─── Weather Card ───
 
@@ -43,8 +44,23 @@ export default function WeatherWidget({ lang }) {
   const temp = weather?.temp ?? '—'
   const desc = weather?.desc || (loading ? (lang === 'ko' ? '로딩중...' : lang === 'zh' ? '加载中...' : 'Loading...') : (lang === 'ko' ? '날씨 정보를 불러올 수 없습니다' : lang === 'zh' ? '无法加载天气信息' : 'Weather unavailable'))
 
+  if (loading) {
+    return (
+      <div className="w-full flex flex-col justify-between">
+        <div>
+          <Skeleton width="40%" height="10px" />
+          <Skeleton width="50%" height="9px" className="mt-1.5" />
+        </div>
+        <div className="mt-3">
+          <Skeleton width="70%" height="32px" />
+          <Skeleton width="90%" height="12px" className="mt-2" />
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="w-[200px] h-[180px] shrink-0 bg-white border border-[#E5E7EB] rounded-lg p-4 flex flex-col justify-between shadow-sm" style={{ scrollSnapAlign: 'start' }}>
+    <div className="w-full flex flex-col justify-between">
       <div>
         <p className="text-[10px] text-[#6B7280] font-medium">{lang === 'ko' ? '날씨' : lang === 'zh' ? '天气' : 'Weather'}</p>
         <select value={city} onChange={handleCity}
@@ -53,8 +69,8 @@ export default function WeatherWidget({ lang }) {
         </select>
       </div>
       <div>
-        <p className="text-4xl font-black text-[#111827] tracking-tighter">{loading ? '...' : `${temp}°`}</p>
-        <p className="text-xs text-[#6B7280] mt-2">{loading ? '' : desc}</p>
+        <p className="text-4xl font-black text-[#111827] tracking-tighter">{`${temp}°`}</p>
+        <p className="text-xs text-[#6B7280] mt-2">{desc}</p>
       </div>
     </div>
   )

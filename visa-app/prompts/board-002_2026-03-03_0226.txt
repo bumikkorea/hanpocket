@@ -1,0 +1,66 @@
+## 하단 탭 구조 변경 + 서비스탭 개편 + 검색탭 신설
+
+### 1. 하단 탭 5개 변경 (App.jsx bottomTabs)
+
+변경 전: 홈(home) | 포켓(pocket) | 코스(course) | 커뮤니티(community) | 나(profile)
+변경 후: 홈(home) | 서비스(service) | 코스(course) | 검색(search) | 나(profile)
+
+구체적으로:
+- pocket -> service, 아이콘: Grid3x3, 라벨: { ko: '서비스', zh: '服务', en: 'Services' }
+- community 제거
+- search 추가, 아이콘: Search, 라벨: { ko: '검색', zh: '搜索', en: 'Search' }
+- course, home, profile은 기존 유지
+
+### 2. 서비스탭 (기존 PocketsPage 개편)
+
+구현된 포켓 (IMPLEMENTED_POCKETS에 있는 것들)은 상단에 정상 표시.
+
+미구현 포켓 (IMPLEMENTED_POCKETS에 없는 것들)은:
+- 별도 섹션 "업데이트 중" 그룹으로 묶기
+- 이 그룹은 페이지 맨 하단에 배치
+- 그룹 헤더: { ko: '업데이트 중', zh: '更新中', en: 'Coming Soon' }
+- 각 미구현 포켓 카드에 빨간색 텍스트로 "(업데이트중)" / "(更新中)" / "(Updating)" 표시
+- 미구현 포켓은 터치해도 반응 없음 (disabled 상태, opacity-50)
+- 접기/펼치기 토글 추가 (기본값: 접힌 상태)
+
+### 3. 검색탭 신설
+
+새 파일: src/components/SearchTab.jsx
+
+Toss 앱 검색 스타일:
+- 상단: 큰 검색 입력창 (autofocus, 진입 시 키보드 올라옴)
+- placeholder: { ko: '맛집, 비자, SOS 검색', zh: '搜索美食、签证、SOS', en: 'Search food, visa, SOS' }
+- 검색 전 화면: 인기 검색어 + 최근 검색어
+- 인기 검색어 (하드코딩 10개): 명동맛집, 비자연장, 택스리펀드, 인천공항, SOS, 한국어, 쇼핑, 환율, 병원, 코스추천
+- 최근 검색어: localStorage 저장 (최대 10개, 삭제 가능)
+
+검색 실행 시:
+- 키워드와 매칭되는 서비스/포켓/코스를 필터링해서 결과 카드로 표시
+- pocketCategories에서 name/description 텍스트 매칭
+- recommendedCourses에서 name/tags 텍스트 매칭
+- 결과 카드 터치 시 해당 탭/포켓으로 이동
+
+디자인:
+- bg-white, 깔끔한 Toss 스타일
+- 검색 결과 카드: rounded-2xl border border-[#E5E7EB] p-4
+- 검색어 칩: bg-[#F3F4F6] rounded-full px-4 py-2 text-sm
+- 빈 결과: "검색 결과가 없습니다" 안내
+
+### 4. 기존 커뮤니티 처리
+- CommunityTab.jsx 파일 삭제하지 말고 import만 제거
+- App.jsx에서 community 관련 렌더링 코드 주석 처리
+- bottomTabs에서 community 항목 제거
+
+### 5. 디자인 원칙 (Toss 벤치마크)
+- 화면당 1개 명확한 액션
+- 여백 넉넉하게 (p-5 이상)
+- 부드러운 전환 (transition-all duration-200)
+- 터치 피드백 (active:scale-[0.98])
+- 29CM 기본 스타일 유지 (Inter, 검정 단색, 흰 배경)
+
+### 테스트
+- 하단 탭 5개 정상 표시: 홈, 서비스, 코스, 검색, 나
+- 서비스탭: 구현된 포켓 상단, "업데이트 중" 그룹 하단 접힌 상태
+- 검색탭: 입력창 + 인기검색어 표시, 검색 시 결과 필터링
+- 커뮤니티 탭 완전히 사라짐
+- 다른 탭 정상 작동

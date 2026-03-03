@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import Skeleton from '../common/Skeleton'
 
 // ─── Multi-Currency Exchange Rate Card ───
 
@@ -209,6 +210,37 @@ export default function ExchangeRateWidget({ exchangeRate: propExchangeRate, lan
   // 새로고침 핸들러
   const handleRefresh = () => {
     updateExchangeRates(true) // 강제 업데이트
+  }
+
+  if (compact) {
+    if (isLoading && !exchangeRate) {
+      return (
+        <div>
+          <Skeleton width="40%" height="10px" />
+          <Skeleton width="50%" height="10px" className="mt-1.5" />
+          <Skeleton width="70%" height="28px" className="mt-2" />
+          <Skeleton width="60%" height="8px" className="mt-2" />
+        </div>
+      )
+    }
+    const cnyRate = exchangeRate?.CNY || CURRENCIES[0].rate
+    return (
+      <div>
+        <p className="text-[10px] font-semibold text-[#6B7280] mb-1">
+          {lang === 'ko' ? '환율' : lang === 'zh' ? '汇率' : 'Rate'}
+        </p>
+        <p className="text-[10px] text-[#6B7280]">1 CNY =</p>
+        <p className="text-3xl font-black text-[#111827] tracking-tighter leading-tight">
+          {Math.round(cnyRate).toLocaleString()}
+          <span className="text-xs font-normal text-[#6B7280] ml-1">KRW</span>
+        </p>
+        <div className="flex items-center justify-between mt-2">
+          <p className="text-[8px] text-[#9CA3AF]">{exchangeRate?._date || '-'}</p>
+          {hasError && <span className="text-[8px] text-orange-500">⚠️</span>}
+          {lastUpdated && !hasError && <span className="text-[8px] text-green-500">●</span>}
+        </div>
+      </div>
+    )
   }
 
   return (

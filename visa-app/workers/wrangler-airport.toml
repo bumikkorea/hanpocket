@@ -1,0 +1,6 @@
+name = "hanpocket-airport-proxy"
+main = "airport-api-proxy.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+AIRPORT_API_KEY = "2496d2b4a0583b554b287697f93fdb135d8a3def4d9b3358cb5d1a49c96aa3df"

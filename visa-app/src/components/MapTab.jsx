@@ -99,10 +99,188 @@ export default function MapTab({ lang }) {
   const startSearchTimeoutRef = useRef(null)
   const endSearchTimeoutRef = useRef(null)
 
+  // 🗺️ 여행계획 관련 상태
+  const [showTripPlanner, setShowTripPlanner] = useState(false)
+  const [tripPlans, setTripPlans] = useState([])
+  const [currentTripPlan, setCurrentTripPlan] = useState(null)
+  const [editingTripIndex, setEditingTripIndex] = useState(-1)
+  const [newDestinationQuery, setNewDestinationQuery] = useState('')
+  const [destinationSearchResults, setDestinationSearchResults] = useState([])
+  const [showDestinationResults, setShowDestinationResults] = useState(false)
+
   const L = (data) => {
     if (typeof data === 'string') return data
     return data?.[lang] || data?.ko || ''
   }
+
+  // 🗺️ 여행계획 관련 함수들
+  const loadTripPlans = useCallback(() => {
+    try {
+      const stored = localStorage.getItem('hanpocket_trip_plans')
+      if (stored) {
+        const plans = JSON.parse(stored)
+        setTripPlans(Array.isArray(plans) ? plans : [])
+      }
+    } catch (error) {
+      console.error('여행계획 로드 실패:', error)
+      setTripPlans([])
+    }
+  }, [])
+
+  const saveTripPlans = useCallback((plans) => {
+    try {
+      localStorage.setItem('hanpocket_trip_plans', JSON.stringify(plans))
+      setTripPlans(plans)
+    } catch (error) {
+      console.error('여행계획 저장 실패:', error)
+    }
+  }, [])
+
+  const createNewTripPlan = () => {
+    const newPlan = {
+      id: Date.now(),
+      name: L({ ko: '새 여행계획', zh: '新旅行计划', en: 'New Trip Plan' }),
+      destinations: [],
+      createdAt: new Date().toISOString()
+    }
+    setCurrentTripPlan(newPlan)
+    setEditingTripIndex(-1) // -1은 새 계획
+  }
+
+  const saveTripPlan = () => {
+    if (!currentTripPlan) return
+    
+    let updatedPlans = [...tripPlans]
+    
+    if (editingTripIndex === -1) {
+      // 새 계획 추가 (최대 10개)
+      if (updatedPlans.length >= 10) {
+        alert(L({ ko: '최대 10개의 여행계획만 저장할 수 있습니다', zh: '最多只能保存10个旅行计划', en: 'Maximum 10 trip plans allowed' }))
+        return
+      }
+      updatedPlans.unshift(currentTripPlan)
+    } else {
+      // 기존 계획 수정
+      updatedPlans[editingTripIndex] = currentTripPlan
+    }
+    
+    saveTripPlans(updatedPlans)
+    setCurrentTripPlan(null)
+    setEditingTripIndex(-1)
+  }
+
+  const deleteTripPlan = (index) => {
+    const updatedPlans = tripPlans.filter((_, i) => i !== index)
+    saveTripPlans(updatedPlans)
+  }
+
+  const addDestination = (place) => {
+    if (!currentTripPlan) return
+    
+    if (currentTripPlan.destinations.length >= 10) {
+      alert(L({ ko: '한 계획당 최대 10개의 목적지만 추가할 수 있습니다', zh: '每个计划最多只能添加10个目的地', en: 'Maximum 10 destinations per plan' }))
+      return
+    }
+    
+    const destination = {
+      id: Date.now(),
+      name: place.name || place.place_name,
+      address: place.address || place.address_name,
+      lat: parseFloat(place.y || place.lat),
+      lng: parseFloat(place.x || place.lng),
+      phone: place.phone,
+      category: place.category
+    }
+    
+    setCurrentTripPlan(prev => ({
+      ...prev,
+      destinations: [...prev.destinations, destination]
+    }))
+    
+    setNewDestinationQuery('')
+    setShowDestinationResults(false)
+  }
+
+  const removeDestination = (destinationId) => {
+    if (!currentTripPlan) return
+    
+    setCurrentTripPlan(prev => ({
+      ...prev,
+      destinations: prev.destinations.filter(d => d.id !== destinationId)
+    }))
+  }
+
+  const searchDestinations = (query) => {
+    if (!query || query.length < 2 || !geocoder) return
+    
+    geocoder.addressSearch(query, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const places = result.slice(0, 5).map(place => ({
+          id: place.address_name,
+          name: place.address_name,
+          address: place.address_name,
+          x: place.x,
+          y: place.y,
+          type: 'address'
+        }))
+        setDestinationSearchResults(places)
+        setShowDestinationResults(true)
+      }
+    })
+
+    const ps = new window.kakao.maps.services.Places()
+    ps.keywordSearch(query, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const places = result.slice(0, 5).map(place => ({
+          id: place.id,
+          name: place.place_name,
+          address: place.address_name,
+          x: place.x,
+          y: place.y,
+          phone: place.phone,
+          category: place.category_name,
+          type: 'place'
+        }))
+        setDestinationSearchResults(prev => [...prev, ...places])
+        setShowDestinationResults(true)
+      }
+    })
+  }
+
+  const startNavigation = (plan) => {
+    if (!plan.destinations || plan.destinations.length === 0) {
+      alert(L({ ko: '목적지가 없습니다', zh: '没有目的地', en: 'No destinations' }))
+      return
+    }
+
+    // 카카오맵 길찾기 URL 생성 (경유지 포함)
+    const destinations = plan.destinations.slice(0, 10) // 최대 10개
+    const firstDest = destinations[0]
+    
+    if (destinations.length === 1) {
+      // 목적지가 1개인 경우
+      const url = `https://map.kakao.com/link/to/${encodeURIComponent(firstDest.name)},${firstDest.lat},${firstDest.lng}`
+      window.open(url, '_blank')
+    } else {
+      // 다중 경유지가 있는 경우 - 카카오맵 길찾기로 연결
+      const params = new URLSearchParams()
+      params.set('destination', `${firstDest.name},${firstDest.lat},${firstDest.lng}`)
+      
+      // 경유지 추가 (2번째부터)
+      if (destinations.length > 1) {
+        const waypoints = destinations.slice(1, 6).map(dest => `${dest.name},${dest.lat},${dest.lng}`).join('|')
+        params.set('waypoints', waypoints)
+      }
+      
+      const url = `https://map.kakao.com/link/route?${params.toString()}`
+      window.open(url, '_blank')
+    }
+  }
+
+  // 여행계획 로드 (컴포넌트 마운트 시)
+  useEffect(() => {
+    loadTripPlans()
+  }, [loadTripPlans])
 
   // 샘플 마커 데이터
   const sampleMarkers = [
@@ -399,14 +577,31 @@ export default function MapTab({ lang }) {
     setMarkers(newMarkers)
   }, [map, selectedCategory, mapReady, clusterer])
 
+  // 지도 이동 시 제로페이/화장실 마커 자동 갱신
+  useEffect(() => {
+    if (!map || !mapReady || !window.kakao) return
+
+    const handleIdle = () => {
+      if (selectedCategory === 'zeropay' || selectedCategory === 'toilet') {
+        searchByCategory(selectedCategory)
+      }
+    }
+
+    window.kakao.maps.event.addListener(map, 'idle', handleIdle)
+    return () => {
+      window.kakao.maps.event.removeListener(map, 'idle', handleIdle)
+    }
+  }, [map, mapReady, selectedCategory])
+
   // 카테고리별 마커 이미지 생성
   const getCategoryMarkerImage = (category) => {
     const iconMap = {
       restaurant: { emoji: '🍜', color: '#FF6B6B' },
-      medical: { emoji: '🏥', color: '#4ECDC4' }, 
+      medical: { emoji: '🏥', color: '#4ECDC4' },
       transport: { emoji: '🚇', color: '#45B7D1' },
       shopping: { emoji: '🛍️', color: '#96CEB4' },
-      tourism: { emoji: '🏛️', color: '#FECA57' }
+      tourism: { emoji: '🏛️', color: '#FECA57' },
+      zeropay: { emoji: '💳', color: '#7C3AED' }
     }
     
     const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#111827' }
@@ -652,7 +847,7 @@ export default function MapTab({ lang }) {
   }
 
   // 카카오맵 길찾기 실행
-  const startNavigation = async () => {
+  const startRouteNavigation = async () => {
     if (!startLocation || !endLocation) {
       alert(L({
         ko: '출발지와 도착지를 모두 입력해주세요.',
@@ -851,6 +1046,56 @@ export default function MapTab({ lang }) {
 
     const category = mapCategories.find(cat => cat.id === categoryId)
     if (!category) return
+
+    // 제로페이 카테고리 처리
+    if (category.isZeropay) {
+      if (!map) return
+      markers.forEach(marker => marker.setMap(null))
+      if (clusterer) clusterer.clear()
+      setMarkers([])
+      import('../data/zeropay/zeropayData.js').then(({ zeropayStores }) => {
+        if (!zeropayStores || zeropayStores.length === 0) return
+        const bounds = map.getBounds()
+        const sw = bounds.getSouthWest()
+        const ne = bounds.getNorthEast()
+        const visible = zeropayStores.filter(s =>
+          s.lat && s.lng &&
+          s.lat >= sw.getLat() && s.lat <= ne.getLat() &&
+          s.lng >= sw.getLng() && s.lng <= ne.getLng()
+        ).slice(0, 100)
+
+        const markerImg = new window.kakao.maps.MarkerImage(
+          'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+            <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" width="30" height="30">
+              <circle cx="15" cy="15" r="15" fill="#7C3AED" stroke="white" stroke-width="2"/>
+              <text x="15" y="20" text-anchor="middle" font-size="14">💳</text>
+            </svg>
+          `),
+          new window.kakao.maps.Size(30, 30)
+        )
+
+        const newMarkers = []
+        visible.forEach(s => {
+          const position = new window.kakao.maps.LatLng(s.lat, s.lng)
+          const marker = new window.kakao.maps.Marker({ position, map, image: markerImg })
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            map.setCenter(position)
+            setSelectedMarker({
+              id: `zeropay-${s.lat}-${s.lng}`,
+              name: { ko: s.name, zh: s.name, en: s.name },
+              description: { ko: s.address, zh: s.address, en: s.address },
+              lat: s.lat, lng: s.lng,
+              category: 'zeropay',
+              phone: s.phone || null,
+              categoryName: s.biz_type || L({ ko: '제로페이 가맹점', zh: 'ZeroPay商户', en: 'ZeroPay Store' })
+            })
+          })
+          newMarkers.push(marker)
+        })
+        setMarkers(newMarkers)
+      })
+      return
+    }
 
     // 화장실 카테고리 처리
     if (category.isToilet) {
@@ -1091,6 +1336,13 @@ export default function MapTab({ lang }) {
       color: '#00BCD4',
       kakaoCode: null,
       tourApiType: 80
+    },
+    {
+      id: 'zeropay',
+      name: { ko: '제로페이', zh: 'ZeroPay', en: 'ZeroPay' },
+      color: '#7C3AED',
+      kakaoCode: null,
+      isZeropay: true
     }
   ]
 
@@ -1169,6 +1421,14 @@ export default function MapTab({ lang }) {
                 <span className="font-medium">{L(category.name)}</span>
               </button>
             ))}
+            
+            {/* 내 여행계획 버튼 */}
+            <button
+              onClick={() => setShowTripPlanner(true)}
+              className="flex-shrink-0 px-3 py-1.5 rounded-full border transition-all text-xs bg-blue-500 text-white border-blue-500 hover:bg-blue-600"
+            >
+              <span className="font-medium">🗺️ {L({ ko: '내 여행계획', zh: '我的旅行计划', en: 'My Trip Plans' })}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -1395,7 +1655,7 @@ export default function MapTab({ lang }) {
                   </div>
                   {/* Go + 닫기 */}
                   <div className="flex gap-2">
-                    <button onClick={startNavigation}
+                    <button onClick={startRouteNavigation}
                       className="flex-1 py-1.5 text-[13px] font-medium text-white bg-blue-500 rounded-lg">
                       Go
                     </button>
@@ -1496,6 +1756,241 @@ export default function MapTab({ lang }) {
                   <span>{L({ ko: '새 창', zh: '新窗口', en: 'New Tab' })}</span>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 🗺️ 여행계획 모달 */}
+      {showTripPlanner && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-lg max-h-[90vh] rounded-lg flex flex-col overflow-hidden">
+            {/* 헤더 */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold">
+                🗺️ {L({ ko: '내 여행계획', zh: '我的旅行计划', en: 'My Trip Plans' })}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowTripPlanner(false)
+                  setCurrentTripPlan(null)
+                  setEditingTripIndex(-1)
+                }}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* 콘텐츠 */}
+            <div className="flex-1 overflow-y-auto">
+              {currentTripPlan ? (
+                // 여행계획 편집 모드
+                <div className="p-4 space-y-4">
+                  {/* 계획명 입력 */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      {L({ ko: '계획명', zh: '计划名称', en: 'Plan Name' })}
+                    </label>
+                    <input
+                      type="text"
+                      value={currentTripPlan.name}
+                      onChange={(e) => setCurrentTripPlan(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder={L({ ko: '여행계획 이름을 입력하세요', zh: '请输入旅行计划名称', en: 'Enter plan name' })}
+                    />
+                  </div>
+
+                  {/* 목적지 목록 */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      {L({ ko: '목적지', zh: '目的地', en: 'Destinations' })} ({currentTripPlan.destinations.length}/10)
+                    </label>
+                    
+                    {currentTripPlan.destinations.length > 0 ? (
+                      <div className="space-y-2 mb-3">
+                        {currentTripPlan.destinations.map((dest, index) => (
+                          <div key={dest.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-medium">
+                              {index + 1}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-sm truncate">{dest.name}</div>
+                              <div className="text-xs text-gray-500 truncate">{dest.address}</div>
+                            </div>
+                            <button
+                              onClick={() => removeDestination(dest.id)}
+                              className="p-1 text-red-500 hover:bg-red-50 rounded-full"
+                            >
+                              <X size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <MapPin size={32} className="mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">{L({ ko: '목적지를 추가해보세요', zh: '请添加目的地', en: 'Add destinations' })}</p>
+                      </div>
+                    )}
+
+                    {/* 목적지 추가 */}
+                    {currentTripPlan.destinations.length < 10 && (
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={newDestinationQuery}
+                          onChange={(e) => {
+                            setNewDestinationQuery(e.target.value)
+                            if (e.target.value.length > 1) {
+                              searchDestinations(e.target.value)
+                            } else {
+                              setShowDestinationResults(false)
+                            }
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder={L({ ko: '목적지를 검색하세요', zh: '搜索目的地', en: 'Search destinations' })}
+                        />
+                        
+                        {showDestinationResults && destinationSearchResults.length > 0 && (
+                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
+                            {destinationSearchResults.map((result) => (
+                              <button
+                                key={result.id}
+                                onClick={() => addDestination(result)}
+                                className="w-full px-3 py-2.5 text-left hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                              >
+                                <div className="font-medium text-sm">{result.name}</div>
+                                <div className="text-xs text-gray-500">{result.address}</div>
+                                {result.category && <div className="text-xs text-blue-500">{result.category}</div>}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 저장/취소 버튼 */}
+                  <div className="flex gap-3 pt-4 border-t">
+                    <button
+                      onClick={() => {
+                        setCurrentTripPlan(null)
+                        setEditingTripIndex(-1)
+                      }}
+                      className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                    >
+                      {L({ ko: '취소', zh: '取消', en: 'Cancel' })}
+                    </button>
+                    <button
+                      onClick={saveTripPlan}
+                      disabled={!currentTripPlan.name.trim() || currentTripPlan.destinations.length === 0}
+                      className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {L({ ko: '저장', zh: '保存', en: 'Save' })}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // 여행계획 목록 모드
+                <div className="p-4">
+                  {tripPlans.length > 0 ? (
+                    <div className="space-y-3">
+                      {tripPlans.map((plan, index) => (
+                        <div key={plan.id} className="border border-gray-200 rounded-lg p-4">
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex-1">
+                              <h3 className="font-medium text-sm">{plan.name}</h3>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {L({ ko: '목적지', zh: '目的地', en: 'Destinations' })}: {plan.destinations.length}개
+                              </p>
+                              <p className="text-xs text-gray-400">
+                                {new Date(plan.createdAt).toLocaleDateString()}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  setCurrentTripPlan(plan)
+                                  setEditingTripIndex(index)
+                                }}
+                                className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-full"
+                                title={L({ ko: '편집', zh: '编辑', en: 'Edit' })}
+                              >
+                                <Route size={16} />
+                              </button>
+                              <button
+                                onClick={() => {
+                                  if (confirm(L({ ko: '이 여행계획을 삭제하시겠습니까?', zh: '确定要删除此旅行计划吗？', en: 'Delete this trip plan?' }))) {
+                                    deleteTripPlan(index)
+                                  }
+                                }}
+                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-full"
+                                title={L({ ko: '삭제', zh: '删除', en: 'Delete' })}
+                              >
+                                <X size={16} />
+                              </button>
+                            </div>
+                          </div>
+                          
+                          {plan.destinations.length > 0 && (
+                            <div className="mb-3">
+                              <div className="flex flex-wrap gap-1">
+                                {plan.destinations.slice(0, 3).map((dest, i) => (
+                                  <span key={dest.id} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                                    {i + 1}. {dest.name.length > 10 ? dest.name.substring(0, 10) + '...' : dest.name}
+                                  </span>
+                                ))}
+                                {plan.destinations.length > 3 && (
+                                  <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                                    +{plan.destinations.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
+                          <button
+                            onClick={() => startNavigation(plan)}
+                            disabled={plan.destinations.length === 0}
+                            className="w-full px-3 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          >
+                            <Navigation size={16} />
+                            {L({ ko: '카카오맵으로 길찾기', zh: 'Kakao地图导航', en: 'Navigate with KakaoMap' })}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Route size={48} className="mx-auto mb-4 text-gray-300" />
+                      <h3 className="text-lg font-medium text-gray-700 mb-2">
+                        {L({ ko: '저장된 여행계획이 없습니다', zh: '没有保存的旅行计划', en: 'No saved trip plans' })}
+                      </h3>
+                      <p className="text-sm text-gray-500 mb-6">
+                        {L({ ko: '새 여행계획을 만들어보세요', zh: '创建新的旅行计划', en: 'Create a new trip plan' })}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* 새 계획 만들기 버튼 */}
+                  {tripPlans.length < 10 && (
+                    <button
+                      onClick={createNewTripPlan}
+                      className="w-full mt-4 px-4 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2"
+                    >
+                      <Route size={18} />
+                      {L({ ko: '새 여행계획 만들기', zh: '创建新旅行计划', en: 'Create New Trip Plan' })}
+                    </button>
+                  )}
+                  
+                  {tripPlans.length >= 10 && (
+                    <p className="text-center text-xs text-gray-500 mt-4">
+                      {L({ ko: '최대 10개의 여행계획을 저장할 수 있습니다', zh: '最多可保存10个旅行计划', en: 'Maximum 10 trip plans allowed' })}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

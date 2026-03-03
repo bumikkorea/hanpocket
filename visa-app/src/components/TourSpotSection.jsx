@@ -4,6 +4,7 @@
  */
 import { useState, useEffect } from 'react'
 import { MapPin, ChevronRight, Loader2, Search, Navigation, Filter, Star } from 'lucide-react'
+import { CardSkeleton } from './common/Skeleton'
 import { getAreaBasedList, getLocationBasedList, searchKeyword, searchFestival, searchStay } from '../api/tourApi'
 import { CONTENT_TYPES, AREA_CODES, POPULAR_AREAS } from '../data/tourApiCodes'
 
@@ -217,10 +218,12 @@ export default function TourSpotSection({ lang = 'zh', darkMode, onItemClick, de
         </div>
       )}
 
-      {/* Loading */}
+      {/* Loading — skeleton cards */}
       {loading && (
-        <div className="flex justify-center py-8">
-          <Loader2 size={24} className="animate-spin text-blue-500" />
+        <div className="grid grid-cols-2 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <CardSkeleton key={i} />
+          ))}
         </div>
       )}
 

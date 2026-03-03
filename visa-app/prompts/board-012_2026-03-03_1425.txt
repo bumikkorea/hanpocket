@@ -1,0 +1,221 @@
+# Board-012: 20~30대 중국 여성 트렌드 반영 — 즉시 적용 항목
+
+## 목표
+트렌드 분석 결과 즉시 반영 가능한 4가지를 구현한다.
+
+## 1. 추천 코스 3개 추가 (recommendedCourses.js)
+
+기존 코스 배열에 아래 3개를 추가한다. 형식은 기존 코스와 동일하게.
+
+### 코스 A: 성수 카페 투어 (성수洞咖啡之旅)
+```
+id: 'seongsu-cafe'
+category: 'food'
+name: { ko: '성수 카페 투어', zh: '圣水洞咖啡之旅', en: 'Seongsu Cafe Tour' }
+description: { ko: '서울에서 가장 핫한 카페 거리', zh: '首尔最火的咖啡街区', en: 'Seoul\'s hottest cafe district' }
+duration: '4~5시간'
+stops: [
+  { name: { ko: '대림창고', zh: '大林仓库', en: 'Daelim Warehouse' }, lat: 37.5446, lng: 127.0566, duration: '40분', description: { ko: '성수의 시작점, 산업 감성 카페', zh: '圣水起点，工业风咖啡厅', en: 'Industrial vibe cafe, Seongsu landmark' } },
+  { name: { ko: '어니언 성수', zh: 'Onion圣水', en: 'Onion Seongsu' }, lat: 37.5448, lng: 127.0558, duration: '40분', description: { ko: '폐공장 개조 베이커리 카페', zh: '旧工厂改造面包咖啡厅', en: 'Renovated factory bakery cafe' } },
+  { name: { ko: '센터커피', zh: 'Center Coffee', en: 'Center Coffee' }, lat: 37.5440, lng: 127.0575, duration: '30분', description: { ko: '스페셜티 커피 명소', zh: '精品咖啡名店', en: 'Specialty coffee spot' } },
+  { name: { ko: '아르보 성수', zh: 'Arvo圣水', en: 'Arvo Seongsu' }, lat: 37.5435, lng: 127.0560, duration: '30분', description: { ko: '호주 스타일 브런치 카페', zh: '澳洲风格早午餐咖啡厅', en: 'Aussie-style brunch cafe' } },
+  { name: { ko: '뚝섬 한강공원', zh: '纛岛汉江公园', en: 'Ttukseom Hangang Park' }, lat: 37.5313, lng: 127.0665, duration: '자유', description: { ko: '한강 뷰 피크닉으로 마무리', zh: '汉江美景野餐收尾', en: 'Finish with Hangang view picnic' } }
+]
+```
+
+### 코스 B: 인생사진 투어 (人生照片之旅)
+```
+id: 'photo-tour'
+category: 'shopping'
+name: { ko: '인생사진 투어', zh: '人生照片之旅', en: 'Photo Spot Tour' }
+description: { ko: '한국에서 인생사진 찍기', zh: '在韩国拍出最美照片', en: 'Take your best photos in Korea' }
+duration: '6~7시간'
+stops: [
+  { name: { ko: '경복궁 한복체험', zh: '景福宫韩服体验', en: 'Gyeongbokgung Hanbok' }, lat: 37.5796, lng: 126.9770, duration: '2시간', description: { ko: '한복 대여 + 경복궁 촬영', zh: '韩服租赁 + 景福宫拍照', en: 'Hanbok rental + palace photos' } },
+  { name: { ko: '삼청동 포토스팟', zh: '三清洞拍照点', en: 'Samcheong-dong Photo Spots' }, lat: 37.5827, lng: 126.9820, duration: '1시간', description: { ko: '한옥마을 감성 거리', zh: '韩屋村感性街道', en: 'Hanok village aesthetic streets' } },
+  { name: { ko: '인생네컷 명동점', zh: '人生四格 明洞店', en: 'Life4Cuts Myeongdong' }, lat: 37.5636, lng: 126.9850, duration: '30분', description: { ko: '한국식 포토부스 체험', zh: '韩式自拍亭体验', en: 'Korean photo booth experience' } },
+  { name: { ko: 'DDP (동대문디자인플라자)', zh: 'DDP (东大门设计广场)', en: 'DDP (Dongdaemun Design Plaza)' }, lat: 37.5671, lng: 127.0094, duration: '1시간', description: { ko: '야경 포토스팟 1위', zh: '夜景拍照第一名', en: '#1 night view photo spot' } },
+  { name: { ko: 'N서울타워', zh: 'N首尔塔', en: 'N Seoul Tower' }, lat: 37.5512, lng: 126.9882, duration: '1.5시간', description: { ko: '서울 전경 + 일몰 촬영', zh: '首尔全景 + 日落拍摄', en: 'Seoul panorama + sunset' } }
+]
+```
+
+### 코스 C: 올리브영 & K-뷰티 쇼핑 (Olive Young & K-Beauty购物)
+```
+id: 'kbeauty-shopping'
+category: 'shopping'
+name: { ko: 'K-뷰티 쇼핑 투어', zh: 'K-Beauty购物之旅', en: 'K-Beauty Shopping Tour' }
+description: { ko: '올리브영부터 면세점까지', zh: '从Olive Young到免税店', en: 'From Olive Young to duty free' }
+duration: '5~6시간'
+stops: [
+  { name: { ko: '올리브영 명동 플래그십', zh: 'Olive Young明洞旗舰店', en: 'Olive Young Myeongdong Flagship' }, lat: 37.5636, lng: 126.9850, duration: '1.5시간', description: { ko: '3층 규모, 외국인 할인+세금환급', zh: '3层规模，外国人折扣+退税', en: '3 floors, foreigner discount + tax refund' } },
+  { name: { ko: '치카이치코 홍대', zh: 'CHICAYCHICO弘大', en: 'CHICAYCHICO Hongdae' }, lat: 37.5563, lng: 126.9237, duration: '40분', description: { ko: '한국 인디 뷰티 브랜드 편집숍', zh: '韩国独立美妆品牌集合店', en: 'Korean indie beauty select shop' } },
+  { name: { ko: '가로수길 뷰티 스트리트', zh: '林荫路美妆街', en: 'Garosu-gil Beauty Street' }, lat: 37.5200, lng: 127.0230, duration: '1시간', description: { ko: '이니스프리, 라네즈 플래그십', zh: 'innisfree、LANEIGE旗舰店', en: 'innisfree, LANEIGE flagship' } },
+  { name: { ko: '신라면세점 서울', zh: '新罗免税店首尔', en: 'Shilla Duty Free Seoul' }, lat: 37.5570, lng: 127.0050, duration: '1.5시간', description: { ko: '면세 쇼핑 + 사전 적립', zh: '免税购物 + 提前积分', en: 'Duty free + advance points' } },
+  { name: { ko: '성수 뷰티 팝업', zh: '圣水美妆快闪', en: 'Seongsu Beauty Pop-ups' }, lat: 37.5446, lng: 127.0566, duration: '1시간', description: { ko: '시즌 팝업스토어 (수시 변동)', zh: '季节性快闪店（随时变动）', en: 'Seasonal pop-up stores (varies)' } }
+]
+```
+
+## 2. 상황별 한국어에 '올리브영' 상황 추가
+
+`src/components/pockets/PocketContent.jsx` 또는 해당 한국어 데이터에 아래 추가:
+
+**올리브영/쇼핑 상황별 표현 (기존 shopping 포켓에 추가)**:
+shopping 포켓의 phrases에 아래 표현들을 추가해:
+```
+{ ko: '이거 1+1인가요?', zh: '这个是买一送一吗？', en: 'Is this buy one get one free?', roman: 'i-geo won-peul-leo-won-i-ga-yo?' }
+{ ko: '외국인 할인 되나요?', zh: '有外国人折扣吗？', en: 'Is there a foreigner discount?', roman: 'oe-gug-in hal-in doe-na-yo?' }
+{ ko: '세금 환급 가능한가요?', zh: '可以退税吗？', en: 'Can I get a tax refund?', roman: 'se-geum hwan-geub ga-neung-han-ga-yo?' }
+{ ko: '이거 면세가로 해주세요', zh: '请给我免税价', en: 'Tax-free price please', roman: 'i-geo myeon-se-ga-ro hae-ju-se-yo' }
+{ ko: '추천 상품이 뭐예요?', zh: '推荐商品是什么？', en: 'What do you recommend?', roman: 'chu-cheon sang-pum-i mwo-ye-yo?' }
+{ ko: '성분표 보여주세요', zh: '请给我看成分表', en: 'Can I see the ingredients?', roman: 'seong-bun-pyo bo-yeo-ju-se-yo' }
+```
+
+## 3. 셀카/사진 촬영 가이드 포켓 추가
+
+### 새 포켓 정의 추가 (src/data/pockets.js)
+`travel-food` 카테고리에 아래 포켓을 추가:
+```javascript
+{ id: 'photoguide', name: { ko: '촬영 가이드', zh: '拍照指南', en: 'Photo Guide' }, icon: 'Camera', description: { ko: '셀카 구도부터 포토스팟까지', zh: '从自拍构图到拍照景点', en: 'From selfie tips to photo spots' }, size: 'lg' }
+```
+
+### IMPLEMENTED_POCKETS에 추가
+`'photoguide'`를 IMPLEMENTED_POCKETS Set에 추가
+
+### 새 포켓 컴포넌트 (src/components/pockets/PhotoGuidePocket.jsx)
+```jsx
+// 셀카/사진 촬영 가이드 포켓
+// 구성:
+// 1. 셀카 구도 가이드 (6종)
+// 2. 인생네컷/포토이즘 이용법
+// 3. 서울 포토스팟 TOP 10
+// 4. 촬영 팁 (빛, 시간대, 앵글)
+
+const SELFIE_COMPOSITIONS = [
+  {
+    id: 'thirds',
+    name: { ko: '3분할 구도', zh: '三分法构图', en: 'Rule of Thirds' },
+    tip: { ko: '얼굴을 화면 1/3 지점에 배치', zh: '将脸部放在画面1/3处', en: 'Place face at 1/3 point' },
+    visual: 'grid', // CSS로 3x3 그리드 오버레이 시각화
+  },
+  {
+    id: 'center',
+    name: { ko: '중앙 구도', zh: '居中构图', en: 'Center Composition' },
+    tip: { ko: '정면 셀카의 기본, 배경과 균형', zh: '正面自拍基础，与背景平衡', en: 'Classic selfie, balance with background' },
+    visual: 'center-circle',
+  },
+  {
+    id: 'diagonal',
+    name: { ko: '대각선 구도', zh: '对角线构图', en: 'Diagonal Composition' },
+    tip: { ko: '고개를 살짝 기울여 자연스러운 느낌', zh: '稍微侧头，营造自然感', en: 'Slight head tilt for natural feel' },
+    visual: 'diagonal-line',
+  },
+  {
+    id: 'lowangle',
+    name: { ko: '로우앵글', zh: '低角度', en: 'Low Angle' },
+    tip: { ko: '아래에서 위로, 턱선 + 하늘 배경', zh: '从下往上，下颌线 + 天空背景', en: 'From below, jawline + sky background' },
+    visual: 'arrow-up',
+  },
+  {
+    id: 'mirror',
+    name: { ko: '거울 셀카', zh: '镜子自拍', en: 'Mirror Selfie' },
+    tip: { ko: '전신 촬영의 정석, 카페/화장실 거울 활용', zh: '全身拍摄经典，利用咖啡厅/卫生间镜子', en: 'Full body classic, use cafe/bathroom mirrors' },
+    visual: 'mirror-frame',
+  },
+  {
+    id: 'foodangle',
+    name: { ko: '음식 촬영 45°', zh: '美食拍摄45°', en: 'Food Shot 45°' },
+    tip: { ko: '45도 각도에서 자연광으로 촬영', zh: '45度角度用自然光拍摄', en: '45° angle with natural light' },
+    visual: 'food-angle',
+  },
+]
+
+const PHOTO_BOOTH_GUIDE = {
+  name: { ko: '인생네컷 & 포토이즘 이용법', zh: '人生四格 & Photoism使用方法', en: 'Life4Cuts & Photoism Guide' },
+  steps: [
+    { ko: '매장 입장 → 부스 선택', zh: '进店 → 选择拍照间', en: 'Enter → Choose booth' },
+    { ko: '프레임 선택 (4컷/6컷/8컷)', zh: '选择相框（4格/6格/8格）', en: 'Select frame (4/6/8 cuts)' },
+    { ko: '결제 (카드/현금, 4,000~6,000원)', zh: '付款（刷卡/现金，4,000~6,000韩元）', en: 'Pay (card/cash, ₩4,000~6,000)' },
+    { ko: '촬영 (10초 카운트다운 × 횟수)', zh: '拍摄（10秒倒计时 × 次数）', en: 'Shoot (10s countdown × times)' },
+    { ko: '사진 선택 → 꾸미기 → 인쇄', zh: '选照片 → 装饰 → 打印', en: 'Select → Decorate → Print' },
+    { ko: 'QR코드로 원본 다운로드', zh: '扫二维码下载原图', en: 'Download originals via QR' },
+  ],
+  price: { ko: '4,000~6,000원', zh: '4,000~6,000韩元', en: '₩4,000~6,000' },
+  brands: [
+    { name: '인생네컷', zh: '人生四格', locations: '전국 800+ 매장' },
+    { name: '포토이즘', zh: 'Photoism', locations: '전국 500+ 매장' },
+    { name: '하루필름', zh: 'Haru Film', locations: '주요 상권' },
+    { name: '포토그레이', zh: 'Photogray', locations: '신규 브랜드' },
+  ]
+}
+
+const PHOTO_SPOTS_SEOUL = [
+  { rank: 1, name: { ko: '경복궁', zh: '景福宫', en: 'Gyeongbokgung' }, bestTime: { ko: '오전 9~11시', zh: '上午9~11点', en: '9-11 AM' }, tip: { ko: '한복 입으면 무료입장', zh: '穿韩服免费入场', en: 'Free entry with Hanbok' } },
+  { rank: 2, name: { ko: 'DDP 야경', zh: 'DDP夜景', en: 'DDP Night View' }, bestTime: { ko: '일몰 후 30분', zh: '日落后30分钟', en: '30min after sunset' }, tip: { ko: 'LED 장미가 점등되는 시간', zh: 'LED玫瑰亮灯时间', en: 'When LED roses light up' } },
+  { rank: 3, name: { ko: 'N서울타워', zh: 'N首尔塔', en: 'N Seoul Tower' }, bestTime: { ko: '일몰 1시간 전', zh: '日落前1小时', en: '1h before sunset' }, tip: { ko: '남산케이블카 타고 올라가기', zh: '坐南山缆车上去', en: 'Take Namsan Cable Car' } },
+  { rank: 4, name: { ko: '성수동 카페거리', zh: '圣水洞咖啡街', en: 'Seongsu Cafe Street' }, bestTime: { ko: '오후 2~4시', zh: '下午2~4点', en: '2-4 PM' }, tip: { ko: '벽화 + 카페 조합', zh: '壁画 + 咖啡组合', en: 'Murals + cafe combo' } },
+  { rank: 5, name: { ko: '한강 야경', zh: '汉江夜景', en: 'Hangang Night' }, bestTime: { ko: '일몰~밤 9시', zh: '日落~晚9点', en: 'Sunset~9 PM' }, tip: { ko: '여의도 or 반포대교 무지개분수', zh: '汝矣岛或盘浦大桥彩虹喷泉', en: 'Yeouido or Banpo Rainbow Fountain' } },
+  { rank: 6, name: { ko: '북촌한옥마을', zh: '北村韩屋村', en: 'Bukchon Hanok Village' }, bestTime: { ko: '오전 10시 이전', zh: '上午10点前', en: 'Before 10 AM' }, tip: { ko: '관광객 적은 이른 아침이 베스트', zh: '游客少的清晨最佳', en: 'Early morning = fewer tourists' } },
+  { rank: 7, name: { ko: '이태원 경리단길', zh: '梨泰院经理团路', en: 'Gyeongnidan-gil' }, bestTime: { ko: '오후 3~5시', zh: '下午3~5点', en: '3-5 PM' }, tip: { ko: '이국적 카페 + 빈티지숍', zh: '异国情调咖啡厅 + 复古店', en: 'Exotic cafes + vintage shops' } },
+  { rank: 8, name: { ko: '연남동 연트럴파크', zh: '延南洞延Central Park', en: 'Yeonnam-dong Yeontral Park' }, bestTime: { ko: '일몰 전후', zh: '日落前后', en: 'Around sunset' }, tip: { ko: '산책로 + 카페 테라스', zh: '散步路 + 咖啡露台', en: 'Walking path + cafe terrace' } },
+  { rank: 9, name: { ko: '잠실 석촌호수', zh: '蚕室石村湖', en: 'Seokchon Lake' }, bestTime: { ko: '벚꽃: 4월 초', zh: '樱花：4月初', en: 'Cherry blossoms: early April' }, tip: { ko: '롯데타워 배경 벚꽃 = 인생샷', zh: '乐天塔背景樱花 = 人生照', en: 'Lotte Tower + cherry blossoms' } },
+  { rank: 10, name: { ko: '을지로 레트로 골목', zh: '乙支路复古巷', en: 'Euljiro Retro Alley' }, bestTime: { ko: '저녁 6~8시', zh: '傍晚6~8点', en: '6-8 PM' }, tip: { ko: '네온사인 + 빈티지 감성', zh: '霓虹灯 + 复古感性', en: 'Neon signs + vintage vibes' } },
+]
+
+const PHOTO_TIPS = [
+  { category: { ko: '빛', zh: '光线', en: 'Lighting' }, tips: [
+    { ko: '골든아워(일출/일몰 전후 1시간)가 최고', zh: '黄金时段（日出/日落前后1小时）最佳', en: 'Golden hour is best' },
+    { ko: '정오 직사광선 피하기 (그림자 강함)', zh: '避免正午直射光（阴影太重）', en: 'Avoid harsh noon light' },
+    { ko: '카페 창가석 = 자연광 인물사진 최적', zh: '咖啡厅窗边座 = 自然光人像最佳', en: 'Cafe window seat = best natural portrait light' },
+  ]},
+  { category: { ko: '구도', zh: '构图', en: 'Composition' }, tips: [
+    { ko: '머리 위 공간 남기기 (답답하지 않게)', zh: '头顶留空间（不要拍得太满）', en: 'Leave headroom' },
+    { ko: '배경 정리: 쓰레기통, 사람 피하기', zh: '整理背景：避开垃圾桶、行人', en: 'Clean background: avoid trash, crowds' },
+    { ko: '건물은 세로, 풍경은 가로', zh: '建筑竖拍，风景横拍', en: 'Portrait for buildings, landscape for scenery' },
+  ]},
+  { category: { ko: '앱 추천', zh: '推荐APP', en: 'Recommended Apps' }, tips: [
+    { ko: 'SODA (셀카 보정), SNOW (필터), 미투데이 (중국용)', zh: 'SODA（自拍美颜），SNOW（滤镜），美图秀秀（中国用）', en: 'SODA (selfie), SNOW (filters), Meitu (Chinese)' },
+    { ko: 'Lightroom (전문 색감 보정)', zh: 'Lightroom（专业调色）', en: 'Lightroom (pro color grading)' },
+  ]},
+]
+
+// 컴포넌트 구현:
+// - 상단: "셀카 구도 가이드" 섹션 — 6개 카드, 각 카드에 CSS로 구도 시각화 (3x3 그리드 선, 대각선 등)
+// - 중단: "인생네컷 이용법" — 스텝 바이 스텝 (1~6단계), 브랜드 리스트
+// - 하단: "서울 포토스팟 TOP 10" — 리스트 뷰, 각 항목에 최적 시간 + 팁
+// - 맨 하단: "촬영 팁" — 카테고리별 아코디언
+// 
+// 셀카 구도 시각화는 CSS만으로 구현:
+// - 'grid': 3x3 점선 그리드 (가로2 세로2 선)
+// - 'center-circle': 중앙 원형 가이드
+// - 'diagonal-line': 대각선 가이드라인
+// - 'arrow-up': 아래→위 화살표
+// - 'mirror-frame': 거울 프레임
+// - 'food-angle': 45도 각도 표시
+//
+// 카드 크기: 정사각형 (1:1 비율), 배경색 파스텔, CSS 구도선은 흰색 반투명
+// 전체 스타일: Grab 스타일 카드 (rounded-2xl, 여유 있는 간격)
+
+export default function PhotoGuidePocket({ lang = 'zh' }) {
+  // ... 위 데이터를 활용하여 구현
+}
+```
+
+## 4. PocketContent.jsx 라우팅 추가
+`src/components/pockets/PocketContent.jsx`에서 `photoguide` 포켓 ID를 인식하고 `PhotoGuidePocket` 컴포넌트를 렌더링하도록 추가.
+
+## 5. 홈탭 코스 카드에 새 코스 자동 반영
+HomeTab.jsx는 recommendedCourses.js에서 import하므로 코스 추가만 하면 홈에 자동 표시됨. 추가 작업 불필요.
+
+## 기술 지침
+- TailwindCSS 클래스만 사용
+- lucide-react Camera 아이콘
+- 다국어: lang 파라미터 (ko/zh/en), 중국어 우선
+- 셀카 구도 CSS 시각화: 실제 이미지 사용 금지, CSS border/line/circle만으로 표현
+- 카드 터치 피드백: active:scale-[0.98] transition-transform
+- 파일 생성: src/components/pockets/PhotoGuidePocket.jsx (신규)
+- 파일 수정: src/data/recommendedCourses.js, src/data/pockets.js, src/components/pockets/PocketContent.jsx, src/components/pockets/ShoppingPocket.jsx (또는 해당 한국어 표현 파일)
+
+## 하지 말 것
+- 기존 코스/포켓 삭제 금지
+- 실제 이미지 URL 사용 금지
+- export 구조 변경 금지

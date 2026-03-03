@@ -1397,8 +1397,7 @@ function AppInner() {
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'service', icon: Grid3x3, label: { ko: '서비스', zh: '服务', en: 'Services' } },
-    { id: 'search', icon: Search, label: { ko: '검색', zh: '搜索', en: 'Search' } },
+    { id: 'service', icon: Grid3x3, label: { ko: '탐색', zh: '探索', en: 'Explore' } },
     { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
     { id: 'korean', icon: BookOpen, label: { ko: '한국어', zh: '韩语', en: 'Korean' } },
     { id: 'profile', icon: User, label: { ko: '나', zh: '我', en: 'Me' } },
@@ -1621,8 +1620,22 @@ function AppInner() {
         })()}
         {/* Service grid - pockets.js 데이터 기반 */}
         {tab==='service' && !subPage && (
-          <div className="px-4">
-            <ServiceGrid lang={lang} L={L} setSubPage={setSubPage} />
+          <div>
+            <div className="px-4 pt-2 pb-3">
+              <div className="relative">
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999]" />
+                <input
+                  type="text"
+                  placeholder={lang === 'ko' ? '포켓, 코스, 가이드 검색...' : lang === 'zh' ? '搜索口袋、路线、指南...' : 'Search pockets, courses, guides...'}
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F5F1EB] rounded-xl text-sm text-[#1A1A1A] placeholder-[#999] outline-none focus:ring-1 focus:ring-[#2D5A3D]"
+                  onFocus={() => { setTab('search') }}
+                  readOnly
+                />
+              </div>
+            </div>
+            <div className="px-4">
+              <ServiceGrid lang={lang} L={L} setSubPage={setSubPage} />
+            </div>
           </div>
         )}
 

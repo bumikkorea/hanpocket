@@ -42,11 +42,11 @@ function PronunciationQuiz({ word, pronunciation, meaning, lang, onComplete }) {
   }
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+    <div className="bg-[#F5F1EB] rounded-xl p-6 border border-[#B2DFDB]">
       <div className="text-center mb-4">
-        <h3 className="text-2xl font-bold text-gray-800 mb-2">{word}</h3>
-        <p className="text-sm text-gray-600 italic">[{pronunciation}]</p>
-        <p className="text-xs text-gray-500 mt-1">{L(lang, meaning)}</p>
+        <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">{word}</h3>
+        <p className="text-sm text-[#666666] italic">[{pronunciation}]</p>
+        <p className="text-xs text-[#999999] mt-1">{L(lang, meaning)}</p>
       </div>
       
       <div className="flex justify-center gap-3 mb-4">
@@ -58,7 +58,7 @@ function PronunciationQuiz({ word, pronunciation, meaning, lang, onComplete }) {
         
         <button onClick={handleListen} disabled={isListening}
           className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-colors ${
-            isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-blue-500 text-white hover:bg-blue-600'
+            isListening ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-[#2D5A3D] text-white hover:bg-[#1A3A28]'
           }`}>
           <Mic size={18} />
           {isListening 
@@ -108,19 +108,19 @@ function XpBar({ xp, lang }) {
   const title = levelTitles[lang]?.[level] || levelTitles.en[level]
 
   return (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+    <div className="bg-white rounded-xl p-4 border border-[#E5E7EB]">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-lg">⭐</span>
-          <span className="font-bold text-slate-800">Lv.{level + 1} {title}</span>
+          <span className="font-bold text-[#1A1A1A]">Lv.{level + 1} {title}</span>
         </div>
-        <span className="text-sm text-slate-500">{xp} XP</span>
+        <span className="text-sm text-[#666666]">{xp} XP</span>
       </div>
-      <div className="w-full bg-slate-100 rounded-full h-2.5">
-        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2.5 rounded-full transition-all duration-500"
+      <div className="w-full bg-[#F5F5F5] rounded-full h-2.5">
+        <div className="bg-gradient-to-r from-[#B8860B] to-[#DAA520] h-2.5 rounded-full transition-all duration-500"
           style={{ width: `${progress}%` }} />
       </div>
-      <div className="flex justify-between mt-1 text-xs text-slate-400">
+      <div className="flex justify-between mt-1 text-xs text-[#999999]">
         <span>{prevXp}</span>
         <span>{nextXp}</span>
       </div>
@@ -151,31 +151,31 @@ function SessionCard({ session, isActive, isCurrent, isLocked, completedCount, t
     <button
       onClick={isLocked ? undefined : onClick}
       className={`w-full text-left rounded-xl p-4 transition-all border ${
-        isCurrent ? 'bg-white shadow-md border-blue-300 ring-2 ring-blue-100' :
-        isLocked ? 'bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed' :
-        'bg-white shadow-sm border-slate-100 hover:border-blue-200 hover:shadow-md'
+        isCurrent ? 'bg-white border-[#2D5A3D] ring-2 ring-[#B2DFDB]' :
+        isLocked ? 'bg-[#F5F5F5] border-[#E5E7EB] opacity-50 cursor-not-allowed' :
+        'bg-white border-[#E5E7EB] hover:border-[#B2DFDB]'
       }`}
     >
       <div className="flex items-center gap-3">
-        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${session.color} flex items-center justify-center text-2xl shadow-sm`}>
+        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${session.color} flex items-center justify-center text-2xl`}>
           {isLocked ? '🔒' : session.icon}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800 text-sm">{L(lang, session.title)}</span>
-            {isCurrent && <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
+            <span className="font-bold text-[#1A1A1A] text-sm">{L(lang, session.title)}</span>
+            {isCurrent && <span className="text-xs bg-[#E8F5E9] text-[#2D5A3D] px-2 py-0.5 rounded-full">
               {lang === 'ko' ? '진행중' : lang === 'zh' ? '进行中' : 'Current'}
             </span>}
-            <span className="text-xs text-slate-400 ml-auto">TOPIK {session.topikLevel}</span>
+            <span className="text-xs text-[#999999] ml-auto">TOPIK {session.topikLevel}</span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">{L(lang, session.subtitle)}</p>
+          <p className="text-xs text-[#666666] mt-0.5">{L(lang, session.subtitle)}</p>
           {!isLocked && (
             <div className="mt-2">
-              <div className="w-full bg-slate-100 rounded-full h-1.5">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-1.5 rounded-full transition-all"
+              <div className="w-full bg-[#F5F5F5] rounded-full h-1.5">
+                <div className="bg-gradient-to-r from-[#2D5A3D] to-[#4A8A5A] h-1.5 rounded-full transition-all"
                   style={{ width: `${(completedCount / totalCount) * 100}%` }} />
               </div>
-              <span className="text-xs text-slate-400 mt-0.5">{completedCount}/{totalCount}</span>
+              <span className="text-xs text-[#999999] mt-0.5">{completedCount}/{totalCount}</span>
             </div>
           )}
         </div>
@@ -188,7 +188,7 @@ function SessionCard({ session, isActive, isCurrent, isLocked, completedCount, t
 function LessonList({ session, eduState, onComplete, onOpenMinimap, onOpenUnit, onBack, lang }) {
   return (
     <div className="space-y-3">
-      <button onClick={onBack} className="text-blue-600 text-sm font-medium">
+      <button onClick={onBack} className="text-[#2D5A3D] text-sm font-medium">
         {lang === 'ko' ? '← 뒤로' : lang === 'zh' ? '← 返回' : '← Back'}
       </button>
       <div className={`bg-gradient-to-r ${session.color} rounded-xl p-5 text-white`}>
@@ -213,23 +213,23 @@ function LessonList({ session, eduState, onComplete, onOpenMinimap, onOpenUnit, 
                 else if (isNext || done) { onComplete(unitKey) }
               }}
               className={`w-full text-left rounded-xl p-3 flex items-center gap-3 transition-all border ${
-                done ? 'bg-green-50 border-green-200' :
-                isNext ? 'bg-white border-blue-300 shadow-sm' :
-                'bg-slate-50 border-slate-100 opacity-50'
+                done ? 'bg-[#E8F5E9] border-[#B2DFDB]' :
+                isNext ? 'bg-white border-[#2D5A3D]' :
+                'bg-[#F5F5F5] border-[#E5E7EB] opacity-50'
               }`}
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                done ? 'bg-green-500 text-white' :
-                isNext ? 'bg-blue-500 text-white' :
-                'bg-slate-200 text-slate-400'
+                done ? 'bg-[#2D5A3D] text-white' :
+                isNext ? 'bg-[#2D5A3D] text-white' :
+                'bg-[#E5E7EB] text-[#999999]'
               }`}>
                 {done ? '✓' : unit.day}
               </div>
-              <span className={`text-sm flex-1 ${done ? 'text-green-700' : isNext ? 'text-slate-800 font-semibold' : 'text-slate-400'}`}>
+              <span className={`text-sm flex-1 ${done ? 'text-[#2D5A3D]' : isNext ? 'text-[#1A1A1A] font-semibold' : 'text-[#999999]'}`}>
                 {L(lang, unit.title)}
               </span>
-              {unit.minimap && <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">🗺️</span>}
-              {done && <span className="text-green-500 text-xs">+{xpRules.lessonComplete} XP</span>}
+              {unit.minimap && <span className="text-xs bg-[#F5F1EB] text-[#B8860B] px-2 py-0.5 rounded-full">🗺️</span>}
+              {done && <span className="text-[#2D5A3D] text-xs">+{xpRules.lessonComplete} XP</span>}
             </button>
           )
         })}
@@ -251,12 +251,12 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
   if (scene && showQuiz) {
     return (
       <div className="space-y-4">
-        <button onClick={() => { setShowQuiz(false); setQuizResult(null) }} className="text-blue-600 text-sm font-medium">
+        <button onClick={() => { setShowQuiz(false); setQuizResult(null) }} className="text-[#2D5A3D] text-sm font-medium">
           {lang === 'ko' ? '← 대화로 돌아가기' : lang === 'zh' ? '← 返回对话' : '← Back to dialogue'}
         </button>
-        <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
-          <h3 className="font-bold text-slate-800 mb-4">📝 Quiz</h3>
-          <p className="text-sm text-slate-700 mb-4">{L(lang, scene.quiz.question)}</p>
+        <div className="bg-white rounded-xl p-5 border border-[#E5E7EB]">
+          <h3 className="font-bold text-[#1A1A1A] mb-4">📝 Quiz</h3>
+          <p className="text-sm text-[#1A1A1A] mb-4">{L(lang, scene.quiz.question)}</p>
           <div className="space-y-2">
             {scene.quiz.options[lang]?.map((opt, i) => (
               <button
@@ -271,7 +271,7 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
                   quizResult?.index === i
                     ? quizResult.correct ? 'bg-green-50 border-green-400 text-green-700' : 'bg-red-50 border-red-400 text-red-700'
                     : quizResult !== null && i === scene.quiz.answer ? 'bg-green-50 border-green-400 text-green-700'
-                    : 'bg-slate-50 border-slate-200 hover:border-blue-300'
+                    : 'bg-[#F5F5F5] border-[#E5E7EB] hover:border-[#B2DFDB]'
                 }`}
               >
                 {opt}
@@ -293,10 +293,10 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
   if (scene) {
     return (
       <div className="space-y-4">
-        <button onClick={() => setSelectedScene(null)} className="text-blue-600 text-sm font-medium">
+        <button onClick={() => setSelectedScene(null)} className="text-[#2D5A3D] text-sm font-medium">
           {lang === 'ko' ? '← 미니맵으로' : lang === 'zh' ? '← 回到迷你地图' : '← Back to minimap'}
         </button>
-        <h2 className="text-lg font-bold text-slate-800">{L(lang, scene.title)}</h2>
+        <h2 className="text-lg font-bold text-[#1A1A1A]">{L(lang, scene.title)}</h2>
 
         {/* 대화문 */}
         <div className="space-y-3">
@@ -304,10 +304,10 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
             <div key={i} className={`flex ${line.speaker === 'you' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
                 line.speaker === 'you'
-                  ? 'bg-blue-600 text-white rounded-br-md'
-                  : 'bg-slate-100 text-slate-700 rounded-bl-md'
+                  ? 'bg-[#2D5A3D] text-white rounded-br-md'
+                  : 'bg-[#F5F5F5] text-[#1A1A1A] rounded-bl-md'
               }`}>
-                {line.speaker !== 'you' && <div className="text-xs text-slate-400 mb-1">🧑‍💼 Staff</div>}
+                {line.speaker !== 'you' && <div className="text-xs text-[#999999] mb-1">🧑‍💼 Staff</div>}
                 {line.text}
               </div>
             </div>
@@ -317,7 +317,7 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
         {/* 퀴즈 버튼 */}
         <button
           onClick={() => setShowQuiz(true)}
-          className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-all"
+          className="w-full bg-gradient-to-r from-[#2D5A3D] to-[#1A3A28] text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-all"
         >
           📝 {lang === 'ko' ? '퀴즈 풀기' : lang === 'zh' ? '做题' : 'Take Quiz'}
         </button>
@@ -327,10 +327,10 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
 
   return (
     <div className="space-y-4">
-      <button onClick={onBack} className="text-blue-600 text-sm font-medium">
+      <button onClick={onBack} className="text-[#2D5A3D] text-sm font-medium">
         {lang === 'ko' ? '← 뒤로' : lang === 'zh' ? '← 返回' : '← Back'}
       </button>
-      <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl p-5 text-white">
+      <div className="bg-gradient-to-r from-[#2D5A3D] to-[#1A3A28] rounded-xl p-5 text-white">
         <div className="text-2xl mb-2">🗺️</div>
         <div className="text-xl font-bold">{L(lang, map.name)}</div>
         <div className="text-sm opacity-80 mt-1">
@@ -343,15 +343,15 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
           <button
             key={scene.id}
             onClick={() => setSelectedScene(i)}
-            className="w-full text-left bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:border-purple-300 hover:shadow-md transition-all"
+            className="w-full text-left bg-white rounded-xl p-4 border border-[#E5E7EB] hover:border-[#B2DFDB] transition-all"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-lg font-bold text-purple-600">
+              <div className="w-10 h-10 bg-[#F5F1EB] rounded-xl flex items-center justify-center text-lg font-bold text-[#B8860B]">
                 {i + 1}
               </div>
               <div>
-                <div className="font-semibold text-slate-800 text-sm">{L(lang, scene.title)}</div>
-                <div className="text-xs text-slate-400">
+                <div className="font-semibold text-[#1A1A1A] text-sm">{L(lang, scene.title)}</div>
+                <div className="text-xs text-[#999999]">
                   {lang === 'ko' ? '대화 + 퀴즈' : lang === 'zh' ? '对话 + 练习' : 'Dialogue + Quiz'}
                 </div>
               </div>
@@ -390,21 +390,21 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
 
   return (
     <div className="space-y-4 animate-fade-up">
-      <button onClick={onBack} className="text-blue-600 text-sm font-medium flex items-center gap-2">
+      <button onClick={onBack} className="text-[#2D5A3D] text-sm font-medium flex items-center gap-2">
         <ChevronLeft size={16} />
         {lang === 'ko' ? '세션으로 돌아가기' : lang === 'zh' ? '返回课程' : 'Back to Session'}
       </button>
       
-      <div className="bg-white rounded-xl p-6">
+      <div className="bg-white rounded-xl p-6 border border-[#E5E7EB]">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-bold text-gray-800">Day {unit.day}</h2>
-            <p className="text-gray-600">{L(lang, unit.title)}</p>
+            <h2 className="text-xl font-bold text-[#1A1A1A]">Day {unit.day}</h2>
+            <p className="text-[#666666]">{L(lang, unit.title)}</p>
           </div>
           <div className="text-right">
-            <div className="text-sm text-gray-500">{currentStep + 1} / {totalSteps}</div>
-            <div className="w-16 bg-gray-200 rounded-full h-2 mt-1">
-              <div className="bg-blue-500 h-2 rounded-full transition-all" 
+            <div className="text-sm text-[#666666]">{currentStep + 1} / {totalSteps}</div>
+            <div className="w-16 bg-[#F5F5F5] rounded-full h-2 mt-1">
+              <div className="bg-[#2D5A3D] h-2 rounded-full transition-all" 
                 style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }} />
             </div>
           </div>
@@ -421,14 +421,14 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
         ) : (
           <div className="text-center py-8">
             <div className="text-6xl mb-4">🎉</div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">
+            <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">
               {lang === 'ko' ? '완료!' : lang === 'zh' ? '完成！' : 'Complete!'}
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-[#666666] mb-6">
               {lang === 'ko' ? '이 학습을 완료했습니다.' : lang === 'zh' ? '您已完成本课学习。' : 'You have completed this lesson.'}
             </p>
             <button onClick={handleUnitComplete}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+              className="bg-gradient-to-r from-[#2D5A3D] to-[#B8860B] text-white px-8 py-3 rounded-xl font-semibold transition-all">
               <Award className="inline mr-2" size={20} />
               {lang === 'ko' ? '완료하고 XP 받기' : lang === 'zh' ? '完成并获得XP' : 'Complete & Get XP'}
             </button>
@@ -529,7 +529,7 @@ export default function EducationTab({ lang }) {
       <StreakBadge streak={eduState.streak} lang={lang} />
 
       {/* 세션 목록 */}
-      <h2 className="text-lg font-bold text-slate-800">
+      <h2 className="text-lg font-bold text-[#1A1A1A]">
         📚 {lang === 'ko' ? '학습 세션' : lang === 'zh' ? '学习课程' : 'Study Sessions'}
       </h2>
       <div className="space-y-3">

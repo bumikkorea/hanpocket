@@ -79,19 +79,19 @@ export default function KoreanGameMain({ lang, onBack }) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
+    <div className="flex flex-col h-full bg-white">
       {/* 상단 바 */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-white border-b border-[#E5E7EB]">
         <div className="flex items-center justify-between px-4 py-3">
           <button onClick={onBack} className="p-1 active:scale-90 transition-transform">
-            <ArrowLeft className="w-6 h-6 text-gray-700" />
+            <ArrowLeft className="w-6 h-6 text-[#1A1A1A]" />
           </button>
-          <h1 className="text-base font-bold text-gray-900">
+          <h1 className="text-base font-bold text-[#1A1A1A]">
             {lang === 'ko' ? '한국어 게임' : lang === 'en' ? 'Korean Game' : '韩语游戏'}
           </h1>
-          <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-full">
-            <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-            <span className="text-sm font-bold text-amber-600">{gameState.xp}</span>
+          <div className="flex items-center gap-1 bg-[#F5F1EB] px-2.5 py-1 rounded-full">
+            <Star className="w-4 h-4 text-[#B8860B] fill-[#B8860B]" />
+            <span className="text-sm font-bold text-[#B8860B]">{gameState.xp}</span>
           </div>
         </div>
       </div>
@@ -103,15 +103,15 @@ export default function KoreanGameMain({ lang, onBack }) {
         </div>
 
         {/* 프로필 카드 */}
-        <div className="mx-5 mb-5 p-4 bg-white rounded-2xl border border-gray-100">
+        <div className="mx-5 mb-5 p-4 bg-white rounded-2xl border border-[#E5E7EB]">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#2D5A3D] to-[#1A3A28] rounded-2xl flex items-center justify-center">
                 <Gamepad2 className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="text-lg font-black text-gray-900">Lv.{level}</p>
-                <p className="text-xs text-gray-500">{gameState.xp} / {levelMax} XP</p>
+                <p className="text-lg font-black text-[#1A1A1A]">Lv.{level}</p>
+                <p className="text-xs text-[#666666]">{gameState.xp} / {levelMax} XP</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -121,16 +121,16 @@ export default function KoreanGameMain({ lang, onBack }) {
                   className={`w-5 h-5 transition-transform ${
                     i < gameState.hearts
                       ? 'text-red-500 fill-red-500'
-                      : 'text-gray-200'
+                      : 'text-[#E5E7EB]'
                   }`}
                 />
               ))}
             </div>
           </div>
           {/* XP 프로그레스 */}
-          <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-[#F5F5F5] rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-[#2D5A3D] to-[#4A8A5A] rounded-full transition-all duration-500"
               style={{ width: `${Math.min(100, levelProgress)}%` }}
             />
           </div>
@@ -156,7 +156,7 @@ export default function KoreanGameMain({ lang, onBack }) {
                     ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}
                   `}
                 >
-                  <div className={`bg-gradient-to-r ${isLocked ? 'from-gray-400 to-gray-500' : chapter.gradient} p-5`}>
+                  <div className={`bg-gradient-to-r ${isLocked ? 'from-[#9CA3AF] to-[#6B7280]' : chapter.gradient} p-5`}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white text-lg font-bold">{L(lang, chapter.name)}</p>
@@ -193,7 +193,7 @@ export default function KoreanGameMain({ lang, onBack }) {
 
                 {/* 레슨 리스트 (아코디언) */}
                 {isExpanded && !isLocked && (
-                  <div className="bg-white rounded-b-2xl border border-t-0 border-gray-100 divide-y divide-gray-50">
+                  <div className="bg-white rounded-b-2xl border border-t-0 border-[#E5E7EB] divide-y divide-[#F5F5F5]">
                     {chapter.lessons.map((lesson, i) => {
                       const lessonKey = `${chapter.id}/${lesson.id}`
                       const isCompleted = gameState.completedLessons.includes(lessonKey)
@@ -205,31 +205,31 @@ export default function KoreanGameMain({ lang, onBack }) {
                           key={lesson.id}
                           onClick={() => startLesson(chapter, lesson)}
                           disabled={noHearts}
-                          className={`w-full flex items-center gap-4 px-5 py-4 text-left transition-all active:bg-gray-50
+                          className={`w-full flex items-center gap-4 px-5 py-4 text-left transition-all active:bg-[#F5F5F5]
                             ${noHearts ? 'opacity-50 cursor-not-allowed' : ''}
                           `}
                         >
                           {/* 아이콘 */}
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                            isCompleted ? 'bg-green-100' : 'bg-gray-100'
+                            isCompleted ? 'bg-[#E8F5E9]' : 'bg-[#F5F5F5]'
                           }`}>
                             {isCompleted
-                              ? <CheckCircle2 className="w-5 h-5 text-green-500" />
-                              : <Circle className="w-5 h-5 text-gray-300" />
+                              ? <CheckCircle2 className="w-5 h-5 text-[#2D5A3D]" />
+                              : <Circle className="w-5 h-5 text-[#D1D5DB]" />
                             }
                           </div>
                           {/* 레슨 정보 */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-900 truncate">
+                            <p className="text-sm font-semibold text-[#1A1A1A] truncate">
                               {L(lang, lesson.name)}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-[#666666]">
                               {lesson.questions.length} {lang === 'ko' ? '문제' : lang === 'en' ? 'questions' : '题'}
                             </p>
                           </div>
                           {/* 점수 */}
                           {score !== undefined && (
-                            <span className={`text-sm font-bold ${score >= 70 ? 'text-green-500' : 'text-amber-500'}`}>
+                            <span className={`text-sm font-bold ${score >= 70 ? 'text-[#2D5A3D]' : 'text-[#B8860B]'}`}>
                               {score}%
                             </span>
                           )}

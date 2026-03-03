@@ -108,7 +108,7 @@ function CourseMap({ stops }) {
     <div className="relative rounded-2xl overflow-hidden border border-[#E5E7EB]" style={{ height: 200 }}>
       <div ref={mapRef} className="w-full h-full" />
       {!mapReady && (
-        <div className="absolute inset-0 bg-[#F3F4F6] flex items-center justify-center">
+        <div className="absolute inset-0 bg-[#F5F5F5] flex items-center justify-center">
           <span className="text-xs text-[#9CA3AF]">Loading map...</span>
         </div>
       )}
@@ -191,7 +191,7 @@ function ShareCard({ course, lang, onClose }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className="w-full max-w-sm">
-        <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 shadow-lg">
+        <div className="bg-white rounded-2xl p-6 border border-[#E5E7EB]">
           <p className="text-xs font-bold tracking-widest text-gray-400 mb-4">HANPOCKET</p>
           <h2 className="text-xl font-bold text-[#111827] mb-4">
             {isRecommended ? L(lang, course.name) : course.name}
@@ -314,7 +314,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
             <select
               value={startHour}
               onChange={e => setStartHour(Number(e.target.value))}
-              className="text-sm font-bold text-[#111827] bg-[#F3F4F6] rounded-lg px-2 py-1 outline-none"
+              className="text-sm font-bold text-[#111827] bg-[#F5F5F5] rounded-lg px-2 py-1 outline-none"
             >
               {Array.from({ length: 17 }, (_, i) => i + 6).map(h => (
                 <option key={h} value={h}>{String(h).padStart(2, '0')}:00</option>
@@ -347,7 +347,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                     </div>
                     {/* 블록 */}
                     <div
-                      className="flex-1 border-l-4 border-[#111827] bg-[#F9FAFB] rounded-r-xl p-3"
+                      className="flex-1 border-l-4 border-[#111827] bg-white rounded-r-xl p-3"
                       style={{ minHeight: `${blockHeight}px` }}
                     >
                       <div className="flex items-start justify-between">
@@ -397,7 +397,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
         {course.tags && (
           <div className="flex flex-wrap gap-1.5">
             {course.tags.map((tag, i) => (
-              <span key={i} className="text-[10px] text-[#6B7280] bg-[#F3F4F6] px-2 py-0.5 rounded-full">#{tag}</span>
+              <span key={i} className="text-[10px] text-[#6B7280] bg-[#F5F5F5] px-2 py-0.5 rounded-full">#{tag}</span>
             ))}
           </div>
         )}
@@ -411,7 +411,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
             disabled={isSaved}
             className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-colors ${
               isSaved
-                ? 'bg-[#F3F4F6] text-[#9CA3AF]'
+                ? 'bg-[#F5F5F5] text-[#9CA3AF]'
                 : 'bg-[#111827] text-white active:bg-gray-800'
             }`}
           >
@@ -452,7 +452,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
         </div>
         <button
           onClick={() => setShowShareCard(true)}
-          className="w-full py-2.5 rounded-xl text-sm font-semibold bg-white border border-[#E5E7EB] text-[#111827] flex items-center justify-center gap-2 active:bg-[#F3F4F6] transition-colors"
+          className="w-full py-2.5 rounded-xl text-sm font-semibold bg-white border border-[#E5E7EB] text-[#111827] flex items-center justify-center gap-2 active:bg-[#F5F5F5] transition-colors"
         >
           <Share2 size={14} />
           {L(lang, { ko: '공유 카드 만들기', zh: '生成分享卡片', en: 'Create Share Card' })}
@@ -534,7 +534,7 @@ function CreateCourse({ lang, onBack, onSave }) {
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder={L(lang, { ko: '예: 강남 맛집 투어', zh: '例：江南美食之旅', en: 'e.g. Gangnam Food Tour' })}
-            className="w-full bg-[#F3F4F6] rounded-xl px-3 py-2.5 text-sm text-[#111827] outline-none placeholder:text-[#9CA3AF]"
+            className="w-full bg-[#F5F5F5] rounded-xl px-3 py-2.5 text-sm text-[#111827] outline-none placeholder:text-[#9CA3AF]"
             maxLength={50}
           />
         </div>
@@ -546,7 +546,7 @@ function CreateCourse({ lang, onBack, onSave }) {
           </label>
           <div className="space-y-2">
             {stops.map((stop, i) => (
-              <div key={i} className="bg-[#F9FAFB] rounded-xl p-3 border border-[#E5E7EB]">
+              <div key={i} className="bg-white rounded-xl p-3 border border-[#E5E7EB]">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="w-5 h-5 rounded-full bg-[#111827] text-white text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                   <input
@@ -585,7 +585,7 @@ function CreateCourse({ lang, onBack, onSave }) {
             ))}
           </div>
           {stops.length < 10 && (
-            <button onClick={addStop} className="mt-2 w-full py-2 rounded-xl border border-dashed border-[#D1D5DB] text-xs text-[#6B7280] font-medium flex items-center justify-center gap-1 active:bg-[#F3F4F6]">
+            <button onClick={addStop} className="mt-2 w-full py-2 rounded-xl border border-dashed border-[#D1D5DB] text-xs text-[#6B7280] font-medium flex items-center justify-center gap-1 active:bg-[#F5F5F5]">
               <Plus size={14} /> {L(lang, { ko: '경유지 추가', zh: '添加经停点', en: 'Add Stop' })}
             </button>
           )}
@@ -662,7 +662,7 @@ export default function CourseTab({ lang }) {
   // ─── Detail View ───
   if (view === 'detail' && selectedCourse) {
     return (
-      <div className="bg-[#FCFCFA] h-full" style={{ height: 'calc(100vh - 140px)' }}>
+      <div className="bg-white h-full" style={{ height: 'calc(100vh - 140px)' }}>
         <CourseDetail
           course={selectedCourse}
           lang={lang}
@@ -677,7 +677,7 @@ export default function CourseTab({ lang }) {
   // ─── Create View ───
   if (view === 'create') {
     return (
-      <div className="bg-[#FCFCFA] h-full" style={{ height: 'calc(100vh - 140px)' }}>
+      <div className="bg-white h-full" style={{ height: 'calc(100vh - 140px)' }}>
         <CreateCourse
           lang={lang}
           onBack={() => setView('list')}
@@ -690,7 +690,7 @@ export default function CourseTab({ lang }) {
   // ─── List View ───
   return (
     <div
-      className="bg-[#FCFCFA] overflow-y-auto px-4 py-4"
+      className="bg-white overflow-y-auto px-4 py-4"
       style={{ height: 'calc(100vh - 140px)' }}
     >
       {/* A) 내 코스 섹션 */}
@@ -701,7 +701,7 @@ export default function CourseTab({ lang }) {
           </h2>
           <button
             onClick={() => setView('create')}
-            className="flex items-center gap-1 text-xs font-semibold text-[#111827] bg-[#F3F4F6] px-3 py-1.5 rounded-full active:bg-[#E5E7EB] transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-[#111827] bg-[#F5F5F5] px-3 py-1.5 rounded-full active:bg-[#E5E7EB] transition-colors"
           >
             <Plus size={14} />
             {L(lang, { ko: '만들기', zh: '创建', en: 'Create' })}
@@ -745,7 +745,7 @@ export default function CourseTab({ lang }) {
               className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                 filter === cat.id
                   ? 'bg-[#111827] text-white'
-                  : 'bg-[#F3F4F6] text-[#6B7280] active:bg-[#E5E7EB]'
+                  : 'bg-[#F5F5F5] text-[#6B7280] active:bg-[#E5E7EB]'
               }`}
             >
               {L(lang, cat.name)}

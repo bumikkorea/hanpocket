@@ -157,7 +157,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
   return (
     <div
       className="pt-4 pb-24"
-      style={{ backgroundColor: '#FAFAFA' }}
+      style={{ backgroundColor: '#FFFFFF' }}
     >
       {/* ─── 1. 히어로 카드 (인사말 + 유틸리티 통합) ─── */}
       <div
@@ -205,7 +205,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
             <button
               key={course.id}
               onClick={() => setTab('course')}
-              className="snap-start flex-shrink-0 rounded-xl shadow-sm overflow-hidden active:scale-[0.98] transition-transform"
+              className="snap-start flex-shrink-0 rounded-xl overflow-hidden active:scale-[0.98] transition-transform border border-[#E5E7EB]"
               style={{ width: 180 }}
             >
               <div
@@ -276,7 +276,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
         <button
           onClick={() => setTab('sos')}
           className="w-full rounded-xl px-4 py-2.5 mt-2 active:scale-[0.98] transition-transform text-left"
-          style={{ backgroundColor: '#F5F1EB', border: '1px solid #B2DFDB' }}
+          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}
         >
           <div className="flex items-center justify-between">
             <div>
@@ -312,7 +312,7 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
                 else if (item.pocket === 'emergency') setTab('sos')
                 else setTab('learn')
               }}
-              className="snap-start flex-shrink-0 rounded-xl overflow-hidden shadow-sm active:scale-[0.98] transition-transform"
+              className="snap-start flex-shrink-0 rounded-xl overflow-hidden active:scale-[0.98] transition-transform border border-[#E5E7EB]"
               style={{ width: 130 }}
             >
               <div

@@ -1,0 +1,82 @@
+Board-027: 앱 전체 테마 통일 — 순백 배경 + 통일 카드 + 래플스 컬러
+
+## 목표
+모든 탭의 배경색, 카드 스타일, 액센트 색상을 통일한다.
+
+## 통일 기준
+
+### 배경색
+- 앱 전체 배경: `#FFFFFF` (순백)
+- 카드 배경: `#FFFFFF`
+- 섹션 배경: `#FFFFFF` (회색/크림 배경 전부 제거)
+
+### 카드 스타일 (앱 전체 통일)
+- `bg-white rounded-2xl border border-[#E5E7EB]` (그림자 없음!)
+- 그라디언트 카드(코스 등): `rounded-2xl overflow-hidden` (border 없이)
+- **shadow-sm, shadow-md, shadow-lg 전부 제거** (카드에서만. 모달/오버레이 shadow는 유지)
+
+### 래플스 테마 색상 (blue/indigo/purple → 래플스)
+- 메인 액센트: `#2D5A3D` (딥그린)
+- 서브 액센트: `#B8860B` (골드)
+- 서브2: `#B2DFDB` (민트)
+- 크림: `#F5F1EB`
+- 텍스트: `#1A1A1A` (메인), `#666666` (보조)
+
+## 수정 파일 목록
+
+### 1. `src/App.jsx`
+- `min-h-screen` div: backgroundColor → `#FFFFFF`
+- ServiceGrid (line ~1127): `shadow-sm hover:shadow-md` 제거, `border border-[#E5E7EB] rounded-2xl`로 변경
+- 기존 `var(--bg-secondary)` 참조 → `#FFFFFF`로
+
+### 2. `src/components/HomeTab.jsx`
+- line ~160: `backgroundColor: '#FAFAFA'` → `'#FFFFFF'`
+- line ~208, ~315: `shadow-sm` 제거
+- line ~279: `backgroundColor: '#F5F1EB'` → `backgroundColor: '#FFFFFF'`, `border: '1px solid #E5E7EB'`
+
+### 3. `src/components/CourseTab.jsx`
+- 이미 `border border-[#E5E7EB]` 스타일 → OK, 유지
+- line ~194: `shadow-lg` 제거
+- `bg-[#F3F4F6]`, `bg-[#F9FAFB]`, `from-gray-50 to-gray-100` → `bg-[#F5F5F5]` 또는 `bg-white`로 통일
+
+### 4. `src/components/korean-game/KoreanGameMain.jsx`
+전면 래플스 테마 적용:
+- line ~82: `bg-gray-50` → 제거 (배경 흰색)
+- `from-blue-500 to-indigo-600` → `from-[#2D5A3D] to-[#1A3A28]` (딥그린)
+- `from-blue-500 to-indigo-500` (프로그레스바) → `from-[#2D5A3D] to-[#4A8A5A]`
+- `bg-green-100` → `bg-[#E8F5E9]`
+- `bg-gray-100` → `bg-[#F5F5F5]`
+- 카드: `shadow` 제거, `border border-[#E5E7EB] rounded-2xl` 추가
+- 모든 blue/indigo 참조 → 래플스 딥그린 계열로
+
+### 5. `src/components/EducationTab.jsx`
+전면 래플스 테마 적용:
+- `from-blue-50 to-indigo-50` → `bg-[#F5F1EB]` (크림)
+- `border-blue-200` → `border-[#B2DFDB]` (민트)
+- `bg-blue-500` → `bg-[#2D5A3D]`
+- `bg-blue-600` → `bg-[#1A3A28]`
+- `bg-blue-100 text-blue-600` → `bg-[#E8F5E9] text-[#2D5A3D]`
+- `from-purple-600 to-indigo-600` → `from-[#2D5A3D] to-[#1A3A28]`
+- `bg-purple-100 text-purple-600` → `bg-[#F5F1EB] text-[#B8860B]`
+- `bg-red-500` (녹음 버튼) → `bg-[#DC2626]` (빨간색 유지, 기능상 필요)
+- `bg-slate-50`, `bg-slate-100`, `bg-slate-200` → `bg-[#F5F5F5]`
+- `border-slate-100`, `border-slate-200` → `border-[#E5E7EB]`
+- `text-slate-400`, `text-slate-700` → `text-[#999999]`, `text-[#1A1A1A]`
+- `from-blue-500 to-blue-600` (프로그레스) → `from-[#2D5A3D] to-[#4A8A5A]`
+- `from-blue-500 to-purple-600` → `from-[#2D5A3D] to-[#B8860B]`
+
+### 6. `src/components/KoreanTab.jsx`
+- 토글 버튼 스타일도 래플스 적용 확인 (이미 되어있으면 OK)
+
+## 수정하지 말 것
+- 모달/다이얼로그의 shadow (shadow-xl, shadow-2xl) → 유지
+- 하단 탭바 스타일 → 변경 금지
+- 가이드 컴포넌트 (ArrivalCardGuide 등) → 변경 금지
+- 데이터 파일 → 변경 금지
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-027: Unified theme - pure white bg, border cards, Raffles colors across all tabs" && openclaw system event --text "Done: Board-027 앱 전체 테마 통일 완료" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

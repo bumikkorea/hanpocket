@@ -583,9 +583,9 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   const loginInfo = getLoginProvider()
 
   return (
-    <div className="min-h-screen p-4 pb-20 font-['Inter']" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+    <div className="min-h-screen p-4 pb-20 font-['Inter']" style={{ backgroundColor: '#FFFFFF' }}>
       {/* 메인 프로필 카드 */}
-      <div className="rounded-lg p-6 shadow-sm" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div className="rounded-2xl p-6 border border-[#E5E7EB]" style={{ backgroundColor: '#FFFFFF' }}>
         {/* 프로필 헤더 */}
         <div className="text-center mb-6">
           <p onClick={handleAvatarTap} className="text-xs font-bold tracking-[0.2em] text-[#9CA3AF] uppercase mb-3 py-2 px-4 cursor-pointer select-none active:opacity-50 transition-opacity">HANPOCKET</p>
@@ -724,7 +724,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
 
       {/* 관리자 설정 */}
       {adminMode && (
-        <div className="rounded-lg p-4 shadow-sm mt-4" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <div className="rounded-2xl p-4 border border-[#E5E7EB] mt-4" style={{ backgroundColor: '#FFFFFF' }}>
           <button
             onClick={() => setShowAdminPanel(!showAdminPanel)}
             className="w-full flex items-center justify-between py-2 transition-all active:scale-[0.98]"
@@ -1124,7 +1124,7 @@ function ServiceGrid({ lang, L, setSubPage }) {
           <div className="grid grid-cols-3 gap-2">
             {cat.pockets.map(p => (
               <button key={p.id} onClick={() => setSubPage(p.id)}
-                className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.98]">
+                className="bg-white rounded-2xl p-3 flex flex-col items-center gap-1.5 border border-[#E5E7EB] transition-all duration-200 active:scale-[0.98]">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
                   style={{ backgroundColor: categoryBgColors[cat.id] || '#F3F4F6' }}>
                   <span className="text-2xl">{p.icon}</span>
@@ -1151,7 +1151,7 @@ function ServiceGrid({ lang, L, setSubPage }) {
             <div className="grid grid-cols-3 gap-2 mt-2">
               {unimplementedPockets.map(p => (
                 <div key={p.id}
-                  className="bg-white rounded-lg p-3 flex flex-col items-center gap-1.5 shadow-sm opacity-60 cursor-default">
+                  className="bg-white rounded-2xl p-3 flex flex-col items-center gap-1.5 border border-[#E5E7EB] opacity-60 cursor-default">
                   <div className="w-12 h-12 rounded-2xl flex items-center justify-center opacity-50"
                     style={{ backgroundColor: categoryBgColors[p.catId] || '#F3F4F6' }}>
                     <span className="text-2xl">{p.icon}</span>
@@ -1387,7 +1387,7 @@ function AppInner() {
   const hasOAuthCode = new URLSearchParams(window.location.search).get('code')
   if (!profile && hasOAuthCode) {
     return (
-      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="text-center">
           <div className="w-8 h-8 border-2 border-[#111827] border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
           <p className="text-sm text-[#6B7280]">{lang === 'ko' ? '로그인 처리 중...' : lang === 'zh' ? '登录处理中...' : 'Logging in...'}</p>
@@ -1564,12 +1564,12 @@ function AppInner() {
   const currentHero = heroData[tab] || heroData.home
 
   return (
-    <div className="min-h-screen pb-20" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+    <div className="min-h-screen pb-20" style={{ backgroundColor: '#FFFFFF' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
       {/* Top Bar — scrolls with content (not sticky) */}
-      <div className="relative z-10" style={{ backgroundColor: 'var(--bg-primary)', borderBottom: '1px solid var(--border)' }}>
+      <div className="relative z-10" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
         <div className="px-4 pt-3 pb-2">
           <div className="flex items-center gap-3">
             {subPage ? (

@@ -1381,6 +1381,7 @@ function AppInner() {
   }
 
   const [subPage, setSubPage] = useState(null)
+  const scrollPositions = useRef({}) // { tabId: { y: number, timestamp: number } }
 
   // OAuth 리다이렉트 중이면 온보딩 대신 로딩 표시 (콜백 처리 대기)
   const hasOAuthCode = new URLSearchParams(window.location.search).get('code')
@@ -1395,6 +1396,19 @@ function AppInner() {
     )
   }
   if (!profile) return <OnboardingSimple lang={lang} setLang={setLang} onComplete={p => { setProfile(p); saveProfile(p); setLang(p.lang||'ko'); }} />
+
+  const handleTabChange = (newTab) => {
+    scrollPositions.current[tab] = { y: window.scrollY, timestamp: Date.now() }
+    setTab(newTab)
+    setSubPage(null)
+    if (newTab === 'home') { setView('home'); setSelCat(null); setSelVisa(null); setSq('') }
+    const saved = scrollPositions.current[newTab]
+    if (saved && (Date.now() - saved.timestamp) < 300000) {
+      requestAnimationFrame(() => { requestAnimationFrame(() => { window.scrollTo(0, saved.y) }) })
+    } else {
+      window.scrollTo(0, 0)
+    }
+  }
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
@@ -1566,11 +1580,11 @@ function AppInner() {
               <Logo />
             )}
             <div className="flex-1" />
-            <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
-              <Globe size={20} />
-            </button>
             <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
               <User size={20} />
+            </button>
+            <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+              <Globe size={20} />
             </button>
             <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -mr-2">
               <Menu size={22} />
@@ -1582,7 +1596,7 @@ function AppInner() {
       <OfflineNotice lang={lang} />
 
       {/* Content — full width, no side padding (tabs handle their own padding) */}
-      <div className="pt-4 pb-4">
+      <div className="pt-1 pb-4">
         {/* Install / Push notification banner */}
         {!pushDismissed && tab === 'home' && (() => {
           const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone
@@ -2021,7 +2035,7 @@ function AppInner() {
           {bottomTabs.map(item => {
             const active = tab === item.id
             return (
-              <button key={item.id} onClick={() => { setTab(item.id); setSubPage(null); if(item.id==='home'){setView('home');setSelCat(null);setSelVisa(null);setSq('')} }}
+              <button key={item.id} onClick={() => handleTabChange(item.id)}
                 className="flex flex-col items-center gap-0.5 py-1 relative">
                 <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--accent-green)' : 'var(--text-tertiary)' }} />
                 {item.id === 'profile' && localStorage.getItem('admin_mode') === 'true' && (

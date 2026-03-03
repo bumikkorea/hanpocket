@@ -156,15 +156,15 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 
   return (
     <div
-      className="overflow-y-auto pt-4 pb-24"
-      style={{ height: 'calc(100vh - 100px)', backgroundColor: '#FAFAFA' }}
+      className="pt-4 pb-24"
+      style={{ backgroundColor: '#FAFAFA' }}
     >
       {/* ─── 1. 히어로 카드 (인사말 + 유틸리티 통합) ─── */}
       <div
         className={`mx-4 rounded-2xl bg-gradient-to-br ${hero.gradient} p-5 mb-8 relative overflow-hidden`}
         style={{ height: 140 }}
       >
-        <p className="text-2xl font-bold mb-auto" style={{ color: hero.text }}>
+        <p className="text-base font-bold mb-auto" style={{ color: hero.text }}>
           {getGreeting()}
         </p>
         <div className="absolute bottom-4 left-5 right-5 flex items-center gap-3 text-sm" style={{ color: hero.sub }}>

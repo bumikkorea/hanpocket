@@ -1,0 +1,64 @@
+Board-025: 사이드바 버그 수정 + 전체화면 커스터마이징 패널
+
+## 버그 원인
+사이드바 JSX (line ~2062)가 FloatingChatbot 컴포넌트 안에 있음.
+showAppMenu state는 AppInner에서 선언 → FloatingChatbot에서 접근 불가 → 항상 닫혀있음.
+
+## 수정 1: 사이드바를 AppInner return 안으로 이동
+
+### 단계
+1. `src/App.jsx`에서 `{/* App Shortcuts Sidebar */}`부터 그에 대응하는 닫는 `</>` 까지 전체 블록을 **잘라내기**
+2. AppInner의 return 안, 하단 탭바(`<div className="fixed bottom-0...`) 바로 위에 **붙여넣기**
+3. FloatingChatbot 안에서 해당 코드 제거 확인
+
+### 구체적으로:
+- AppInner return문 안 (line ~1551 시작)에서, 하단 탭바 div (className에 "fixed bottom-0"이 포함된 div) 바로 위에 사이드바 코드를 삽입
+- 하단 탭바는 대략 `<div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom"`로 시작함
+
+## 수정 2: 사이드바를 전체화면 슬라이드 패널로 업그레이드
+
+현재: `w-80` (320px) 우측 사이드바
+변경: **전체화면 (w-full) 우측에서 슬라이드** 패널
+
+### 디자인:
+- `w-full h-full` (전체화면)
+- 배경: `#FAFAFA`
+- 상단 헤더: "내 설정" + X 닫기 버튼 (우측)
+- 전체 화면 transition: `translateX(100%)` → `translateX(0)`
+- z-index: z-[200] (모든 것 위에)
+
+### 내용 구성:
+1. **앱 바로가기** (기존 내용 유지 — 카카오T, 카카오맵, 네이버지도, 배달의민족 등)
+2. **내 위젯 설정** (새로 추가)
+   - "홈 화면 위젯 순서를 변경할 수 있습니다" 안내 문구
+   - 토글 스위치 리스트:
+     - ☀️ 날씨 (기본 ON)
+     - 💱 환율 (기본 ON)  
+     - 🕐 한국 시간 (기본 ON)
+     - 📚 오늘의 한국어 (기본 ON)
+     - 🗺️ 추천 코스 (기본 ON)
+     - 🚨 긴급 연락처 (기본 ON)
+     - 🗣️ 상황별 한국어 (기본 ON)
+   - 토글 ON/OFF 시 localStorage에 저장 (`hanpocket_widgets` key)
+   - 이 보드에서는 **토글 UI만 만들고**, 실제 HomeTab 위젯 show/hide 연동은 다음 보드에서
+
+### 래플스 테마 적용:
+- 배경: #FAFAFA
+- 텍스트: #1A1A1A
+- 섹션 헤더: text-sm font-bold, color #1A1A1A
+- 토글 활성: bg-[#2D5A3D] (딥그린)
+- 토글 비활성: bg-gray-300
+- 앱 바로가기 카드: bg-white rounded-xl, border 1px #E5E7EB
+
+## 수정 규칙
+- `src/App.jsx`만 수정
+- 다른 파일 절대 수정 금지
+- 기존 AppShortcut 컴포넌트 유지
+- `npm run build` 에러 없어야 함
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-025: Fix sidebar bug (move to AppInner) + fullscreen customize panel" && openclaw system event --text "Done: Board-025 사이드바 버그 수정 + 전체화면 패널" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

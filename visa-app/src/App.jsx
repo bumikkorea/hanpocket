@@ -1228,6 +1228,7 @@ function AppInner() {
   const [hoveredTab, setHoveredTab] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [showAppMenu, setShowAppMenu] = useState(false)
+  const [widgetSettings, setWidgetSettings] = useState(() => { try { return JSON.parse(localStorage.getItem('hanpocket_widgets') || '{}') } catch { return {} } })
   const { isDark, toggleDarkMode } = useDarkMode()
   const s = t[lang]
 
@@ -1897,6 +1898,123 @@ function AppInner() {
         </div>
       )}
 
+      {/* Fullscreen Settings Panel */}
+      <>
+        <div
+          className="fixed inset-0 bg-black z-[199] transition-opacity duration-300"
+          style={{ opacity: showAppMenu ? 0.5 : 0, pointerEvents: showAppMenu ? 'auto' : 'none' }}
+          onClick={() => setShowAppMenu(false)}
+        />
+        <div
+          className="fixed inset-0 z-[200] transition-transform duration-300 ease-out flex flex-col"
+          style={{
+            transform: showAppMenu ? 'translateX(0)' : 'translateX(100%)',
+            backgroundColor: '#FAFAFA'
+          }}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid #E5E7EB' }}>
+            <h2 className="text-lg font-bold" style={{ color: '#1A1A1A' }}>내 설정</h2>
+            <button
+              onClick={() => setShowAppMenu(false)}
+              className="p-1"
+              style={{ color: '#1A1A1A' }}
+            >
+              <X size={22} />
+            </button>
+          </div>
+
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto px-5 py-5">
+            {/* Widget Settings Section */}
+            <div className="mb-8">
+              <h3 className="text-sm font-bold mb-1" style={{ color: '#1A1A1A' }}>내 위젯 설정</h3>
+              <p className="text-xs mb-4" style={{ color: '#9CA3AF' }}>홈 화면 위젯 순서를 변경할 수 있습니다</p>
+              <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
+                {[
+                  { key: 'weather', emoji: '☀️', label: '날씨' },
+                  { key: 'exchange', emoji: '💱', label: '환율' },
+                  { key: 'clock', emoji: '🕐', label: '한국 시간' },
+                  { key: 'korean', emoji: '📚', label: '오늘의 한국어' },
+                  { key: 'course', emoji: '🗺️', label: '추천 코스' },
+                  { key: 'emergency', emoji: '🚨', label: '긴급 연락처' },
+                  { key: 'situation', emoji: '🗣️', label: '상황별 한국어' },
+                ].map((w, i, arr) => {
+                  const isOn = widgetSettings[w.key] !== false
+                  return (
+                    <div key={w.key} className="flex items-center justify-between px-4 py-3.5" style={i < arr.length - 1 ? { borderBottom: '1px solid #F3F4F6' } : {}}>
+                      <span className="text-sm" style={{ color: '#1A1A1A' }}>{w.emoji} {w.label}</span>
+                      <button
+                        onClick={() => {
+                          const next = { ...widgetSettings, [w.key]: !isOn }
+                          setWidgetSettings(next)
+                          localStorage.setItem('hanpocket_widgets', JSON.stringify(next))
+                        }}
+                        className="relative w-11 h-6 rounded-full transition-colors duration-200"
+                        style={{ backgroundColor: isOn ? '#2D5A3D' : '#D1D5DB' }}
+                      >
+                        <span
+                          className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
+                          style={{ transform: isOn ? 'translateX(20px)' : 'translateX(0)' }}
+                        />
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* App Shortcuts Section */}
+            <div>
+              <h3 className="text-sm font-bold mb-4" style={{ color: '#1A1A1A' }}>앱 바로가기</h3>
+
+              {/* 교통 */}
+              <div className="mb-5">
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>교통</p>
+                <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
+                  <AppShortcut name="카카오T" description="택시, 대중교통, 주차" deepLink="kakaot://" webUrl="https://t.kakao.com" domain="t.kakao.com" />
+                  <AppShortcut name="카카오맵" description="지도, 길찾기, 장소검색" deepLink="kakaomap://" webUrl="https://map.kakao.com" domain="map.kakao.com" />
+                  <AppShortcut name="네이버지도" description="지도, 내비게이션" deepLink="nmap://" webUrl="https://map.naver.com" domain="map.naver.com" />
+                </div>
+              </div>
+
+              {/* 배달/쇼핑 */}
+              <div className="mb-5">
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>배달/쇼핑</p>
+                <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
+                  <AppShortcut name="배달의민족" description="음식 배달 주문" deepLink="baemin://" webUrl="https://www.baemin.com" domain="baemin.com" />
+                  <AppShortcut name="당근" description="중고거래, 동네생활" deepLink="daangn://" webUrl="https://www.daangn.com" domain="daangn.com" />
+                  <AppShortcut name="쿠팡" description="온라인 쇼핑몰" deepLink="coupang://" webUrl="https://www.coupang.com" domain="coupang.com" />
+                  <AppShortcut name="무신사" description="패션 쇼핑몰" deepLink="musinsa://" webUrl="https://www.musinsa.com" domain="musinsa.com" />
+                  <AppShortcut name="올리브영" description="화장품, 생활용품" deepLink="oliveyoung://" webUrl="https://global.oliveyoung.com" domain="global.oliveyoung.com" />
+                </div>
+              </div>
+
+              {/* 여행/숙박 */}
+              <div className="mb-5">
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>여행/숙박</p>
+                <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
+                  <AppShortcut name="야놀자" description="숙박, 레저 예약" deepLink="yanolja://" webUrl="https://www.yanolja.com" domain="yanolja.com" />
+                  <AppShortcut name="여기어때" description="국내 숙박 예약" deepLink="gchoice://" webUrl="https://www.goodchoice.kr" domain="goodchoice.kr" />
+                  <AppShortcut name="Klook" description="해외 액티비티, 투어" deepLink="klook://" webUrl="https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket" domain="klook.com" />
+                  <AppShortcut name="Trip.com" description="항공권, 호텔 예약" deepLink="ctrip://" webUrl="https://www.trip.com/?promo=aff_1892_hp&locale=ko-KR" domain="trip.com" />
+                </div>
+              </div>
+
+              {/* 생활/정부 */}
+              <div className="mb-5">
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>생활/정부</p>
+                <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
+                  <AppShortcut name="카카오톡" description="메신저, 소셜" deepLink="kakaotalk://" webUrl="https://www.kakaocorp.com/page/service/service/KakaoTalk" domain="kakaocorp.com" />
+                  <AppShortcut name="정부24" description="정부 민원 서비스" deepLink="" webUrl="https://www.gov.kr" domain="gov.kr" />
+                  <AppShortcut name="하이코리아" description="출입국 외국인 정책" deepLink="" webUrl="https://www.hikorea.go.kr" domain="hikorea.go.kr" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+
       {/* Google-style Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom" style={{ backgroundColor: 'var(--bg-primary)', borderTop: '1px solid var(--border-primary)' }}>
         <div className="flex items-center justify-around py-1.5">
@@ -2058,166 +2176,6 @@ function FloatingChatbot({ lang }) {
         </div>
       )}
       <AffiliateTracker />
-
-      {/* App Shortcuts Sidebar */}
-      <>
-        <div 
-          className="fixed inset-0 bg-black z-[100] transition-opacity duration-300"
-          style={{ opacity: showAppMenu ? 0.5 : 0, pointerEvents: showAppMenu ? 'auto' : 'none' }}
-          onClick={() => setShowAppMenu(false)}
-        />
-        <div 
-          className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg z-[101] transition-transform duration-300 ease-out"
-          style={{ transform: showAppMenu ? 'translateX(0)' : 'translateX(100%)' }}
-        >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-bold text-[#111827]">앱 바로가기</h2>
-              <button 
-                onClick={() => setShowAppMenu(false)}
-                className="text-[#5F6368] p-1"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* App Categories */}
-            <div className="flex-1 overflow-y-auto p-4">
-              {/* 교통 */}
-              <div className="mb-6">
-                <h3 className="text-sm font-bold text-[#111827] mb-3">교통</h3>
-                <div className="space-y-2">
-                  <AppShortcut 
-                    name="카카오T"
-                    description="택시, 대중교통, 주차"
-                    deepLink="kakaot://"
-                    webUrl="https://t.kakao.com"
-                    domain="t.kakao.com"
-                  />
-                  <AppShortcut 
-                    name="카카오맵"
-                    description="지도, 길찾기, 장소검색"
-                    deepLink="kakaomap://"
-                    webUrl="https://map.kakao.com"
-                    domain="map.kakao.com"
-                  />
-                  <AppShortcut 
-                    name="네이버지도"
-                    description="지도, 내비게이션"
-                    deepLink="nmap://"
-                    webUrl="https://map.naver.com"
-                    domain="map.naver.com"
-                  />
-                </div>
-              </div>
-
-              {/* 배달/쇼핑 */}
-              <div className="mb-6">
-                <h3 className="text-sm font-bold text-[#111827] mb-3">배달/쇼핑</h3>
-                <div className="space-y-2">
-                  <AppShortcut 
-                    name="배달의민족"
-                    description="음식 배달 주문"
-                    deepLink="baemin://"
-                    webUrl="https://www.baemin.com"
-                    domain="baemin.com"
-                  />
-                  <AppShortcut 
-                    name="당근"
-                    description="중고거래, 동네생활"
-                    deepLink="daangn://"
-                    webUrl="https://www.daangn.com"
-                    domain="daangn.com"
-                  />
-                  <AppShortcut 
-                    name="쿠팡"
-                    description="온라인 쇼핑몰"
-                    deepLink="coupang://"
-                    webUrl="https://www.coupang.com"
-                    domain="coupang.com"
-                  />
-                  <AppShortcut 
-                    name="무신사"
-                    description="패션 쇼핑몰"
-                    deepLink="musinsa://"
-                    webUrl="https://www.musinsa.com"
-                    domain="musinsa.com"
-                  />
-                  <AppShortcut 
-                    name="올리브영"
-                    description="화장품, 생활용품"
-                    deepLink="oliveyoung://"
-                    webUrl="https://global.oliveyoung.com"
-                    domain="global.oliveyoung.com"
-                  />
-                </div>
-              </div>
-
-              {/* 여행/숙박 */}
-              <div className="mb-6">
-                <h3 className="text-sm font-bold text-[#111827] mb-3">여행/숙박</h3>
-                <div className="space-y-2">
-                  <AppShortcut 
-                    name="야놀자"
-                    description="숙박, 레저 예약"
-                    deepLink="yanolja://"
-                    webUrl="https://www.yanolja.com"
-                    domain="yanolja.com"
-                  />
-                  <AppShortcut 
-                    name="여기어때"
-                    description="국내 숙박 예약"
-                    deepLink="gchoice://"
-                    webUrl="https://www.goodchoice.kr"
-                    domain="goodchoice.kr"
-                  />
-                  <AppShortcut 
-                    name="Klook"
-                    description="해외 액티비티, 투어"
-                    deepLink="klook://"
-                    webUrl="https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket"
-                    domain="klook.com"
-                  />
-                  <AppShortcut 
-                    name="Trip.com"
-                    description="항공권, 호텔 예약"
-                    deepLink="ctrip://"
-                    webUrl="https://www.trip.com/?promo=aff_1892_hp&locale=ko-KR"
-                    domain="trip.com"
-                  />
-                </div>
-              </div>
-
-              {/* 생활/정부 */}
-              <div className="mb-6">
-                <h3 className="text-sm font-bold text-[#111827] mb-3">생활/정부</h3>
-                <div className="space-y-2">
-                  <AppShortcut 
-                    name="카카오톡"
-                    description="메신저, 소셜"
-                    deepLink="kakaotalk://"
-                    webUrl="https://www.kakaocorp.com/page/service/service/KakaoTalk"
-                    domain="kakaocorp.com"
-                  />
-                  <AppShortcut 
-                    name="정부24"
-                    description="정부 민원 서비스"
-                    deepLink=""
-                    webUrl="https://www.gov.kr"
-                    domain="gov.kr"
-                  />
-                  <AppShortcut 
-                    name="하이코리아"
-                    description="출입국 외국인 정책"
-                    deepLink=""
-                    webUrl="https://www.hikorea.go.kr"
-                    domain="hikorea.go.kr"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-      </>
     </>
   )
 }

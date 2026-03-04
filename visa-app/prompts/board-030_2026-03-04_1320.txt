@@ -1,0 +1,63 @@
+Board-030: 오늘의 한국어 — 배너→작은 아이콘으로 변경
+
+## 수정 파일: `src/components/HomeTab.jsx`만
+
+## 변경 내용
+
+### 삭제:
+섹션 2 전체 (`{/* ─── 2. 오늘의 한국어 배너 ─── */}` 부터 닫는 `</div>` + mb-8 까지) — 큰 딥그린 배너 제거
+
+### 추가:
+정보바(서울 온도 · 환율 · KST 시간) 줄의 맨 오른쪽에 작은 아이콘 버튼 추가.
+
+현재 정보바:
+```jsx
+<div className="px-4 mb-4 flex items-center gap-2 text-xs" style={{ color: '#999999' }}>
+  <span>서울 --°C</span>
+  <span>·</span>
+  <span>¥1 = ₩208</span>
+  <span>·</span>
+  <span>KST 14:30</span>
+</div>
+```
+
+변경 후:
+```jsx
+<div className="px-4 mb-4 flex items-center gap-2 text-xs" style={{ color: '#999999' }}>
+  <span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}</span>
+  <span>·</span>
+  <span>¥1 = ₩{Math.round(cnyRate)}</span>
+  <span>·</span>
+  <span>KST {koreaTime}</span>
+  <div className="flex-1" />
+  <button
+    onClick={() => setTab('korean')}
+    className="flex items-center gap-1 px-2.5 py-1 rounded-full active:scale-95 transition-transform"
+    style={{ backgroundColor: '#2D5A3D', color: '#FFFFFF' }}
+  >
+    <span className="text-[11px]">🇰🇷</span>
+    <span className="text-[10px] font-medium">{L(lang, { ko: '오늘의 한국어', zh: '今日韩语', en: "Today's Korean" })}</span>
+  </button>
+</div>
+```
+
+- 작은 pill 형태 (딥그린 배경, 흰색 텍스트)
+- 🇰🇷 국기 이모지 + "오늘의 한국어" 텍스트
+- 클릭하면 한국어 탭으로 이동
+- 구체적 내용(한국어 문장, 중국어 번역 등)은 표시하지 않음
+
+### todayExpr 관련 코드 정리:
+- `getTodayExpression()` 함수와 `EXPRESSIONS` 배열은 **유지** (나중에 다른 곳에서 쓸 수 있음)
+- `todayExpr` 변수도 유지해도 되고, 사용처 없으면 제거해도 됨
+
+## 수정 규칙
+- `src/components/HomeTab.jsx`만 수정
+- 다른 파일 절대 수정 금지
+- `npm run build` 에러 없어야 함
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-030: Today's Korean banner → small pill icon in info bar" && openclaw system event --text "Done: Board-030 오늘의 한국어 아이콘화" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

@@ -146,19 +146,15 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
         <span>¥1 = ₩{Math.round(cnyRate)}</span>
         <span>·</span>
         <span>KST {koreaTime}</span>
-      </div>
-
-      {/* ─── 2. 오늘의 한국어 배너 ─── */}
-      <div
-        className="mx-4 rounded-xl bg-gradient-to-br from-[#2D5A3D] to-[#1A3A28] p-4 mb-8 active:scale-[0.98] transition-transform cursor-pointer"
-        style={{ height: 100 }}
-        onClick={() => setTab('learn')}
-      >
-        <p className="text-white/70 text-[11px] font-medium mb-1">
-          {L(lang, { ko: '오늘의 한국어', zh: '今日韩语', en: "Today's Korean" })}
-        </p>
-        <p className="text-white text-2xl font-bold mb-0.5">{todayExpr.korean}</p>
-        <p className="text-white/80 text-xs">{todayExpr.chinese} · {todayExpr.english}</p>
+        <div className="flex-1" />
+        <button
+          onClick={() => setTab('korean')}
+          className="flex items-center gap-1 px-2.5 py-1 rounded-full active:scale-95 transition-transform"
+          style={{ backgroundColor: '#2D5A3D', color: '#FFFFFF' }}
+        >
+          <span className="text-[11px]">🇰🇷</span>
+          <span className="text-[10px] font-medium">{L(lang, { ko: '오늘의 한국어', zh: '今日韩语', en: "Today's Korean" })}</span>
+        </button>
       </div>
 
       {/* ─── 3. 추천 코스 섹션 ─── */}

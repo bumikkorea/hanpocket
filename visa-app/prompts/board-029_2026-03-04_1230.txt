@@ -1,0 +1,121 @@
+Board-029: 히어로 카드 제거 + 정보 헤더 이동 + 로고 중앙 정렬
+
+## 수정 파일: `src/App.jsx` + `src/components/HomeTab.jsx`
+
+## 1. HomeTab.jsx — 히어로 카드 삭제 + 정보를 상단 텍스트로
+
+### 삭제할 것:
+- 섹션 1 전체 (`{/* ─── 1. 히어로 카드 (인사말 + 유틸리티 통합) ─── */}` 부터 닫는 `</div>` + `mb-8` 까지)
+- `getGreeting` 함수 (사용처 없어짐)
+- `heroStyles` 객체, `timeOfDay` 변수, `hero` 변수 (사용처 없어짐)
+- 단, `useWeatherData`, `useKoreaTime`, `cnyRate` (환율)은 유지! 아래에서 사용함
+
+### 추가할 것:
+히어로 카드가 있던 자리에 (pt-4 바로 아래, 오늘의 한국어 배너 위) 간단한 텍스트 한 줄:
+
+```jsx
+{/* ─── 상단 정보 바 ─── */}
+<div className="px-4 mb-4 flex items-center gap-2 text-xs" style={{ color: '#999999' }}>
+  <span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}</span>
+  <span>·</span>
+  <span>¥1 = ₩{Math.round(cnyRate)}</span>
+  <span>·</span>
+  <span>KST {koreaTime}</span>
+</div>
+```
+
+- 폰트: `text-xs` (12px) — 기존 인사말 text-base(16px)보다 약 4px 작음
+- 색상: `#999999` (연한 회색)
+- 여백: `mb-4` (히어로 카드의 mb-8보다 훨씬 작음)
+
+## 2. App.jsx — HANPOCKET 로고 상단 중앙 정렬
+
+현재 헤더 구조:
+```
+[Logo]           [flex-1 공간]  [User] [Globe] [Menu]
+```
+
+변경:
+```
+[User]  [Globe]    [Logo 중앙]         [Menu]
+```
+
+### 구체적 변경:
+현재 (line ~1573-1591):
+```jsx
+<div className="flex items-center gap-3">
+  {subPage ? (
+    <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
+      <ChevronLeft size={24} />
+    </button>
+  ) : (
+    <Logo />
+  )}
+  <div className="flex-1" />
+  <button ... User>
+  <button ... Globe>
+  <button ... Menu>
+</div>
+```
+
+변경:
+```jsx
+<div className="flex items-center">
+  {/* 좌측 아이콘 */}
+  <div className="flex items-center gap-1">
+    {subPage ? (
+      <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
+        <ChevronLeft size={24} />
+      </button>
+    ) : (
+      <>
+        <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
+          <User size={20} />
+        </button>
+        <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+          <Globe size={20} />
+        </button>
+      </>
+    )}
+  </div>
+  
+  {/* 중앙 로고 */}
+  <div className="flex-1 flex justify-center">
+    <Logo />
+  </div>
+  
+  {/* 우측 메뉴 */}
+  <div className="flex items-center gap-1">
+    {subPage && (
+      <>
+        <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
+          <User size={20} />
+        </button>
+        <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+          <Globe size={20} />
+        </button>
+      </>
+    )}
+    <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -mr-2">
+      <Menu size={22} />
+    </button>
+  </div>
+</div>
+```
+
+핵심: 
+- subPage가 아닐 때: [User Globe] [HANPOCKET] [Menu]
+- subPage일 때: [← 뒤로] [HANPOCKET] [User Globe Menu]
+- 로고는 항상 중앙
+
+## 수정 규칙
+- `src/App.jsx`와 `src/components/HomeTab.jsx`만 수정
+- 다른 파일 절대 수정 금지
+- `npm run build` 에러 없어야 함
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-029: Remove hero card, info to header, center logo" && openclaw system event --text "Done: Board-029 히어로 제거 + 로고 중앙 + 정보바" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

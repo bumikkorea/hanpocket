@@ -113,7 +113,7 @@ const SCENE_PHRASES = [
   { scene: { ko: '긴급', zh: '紧急', en: 'Emergency' }, phrase: { ko: '도와주세요!', zh: '请帮帮我！' }, gradient: 'from-[#8B2500] to-[#5C1A00]', pocket: 'emergency', img: 'https://images.unsplash.com/photo-1587745416684-47953f16f02f?w=300&h=200&fit=crop' },
 ]
 
-export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
+export default function HomeTab({ lang, exchangeRate, setTab }) {
   const weather = useWeatherData()
   const koreaTime = useKoreaTime()
   const todayExpr = getTodayExpression()
@@ -123,22 +123,6 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
 
   // 코스 데이터 (test 카테고리 제외, 첫 6개)
   const courses = RECOMMENDED_COURSES.filter(c => c.category !== 'test').slice(0, 6)
-
-  // 시간대별 인사말
-  const getGreeting = () => {
-    const hour = new Date().getHours()
-    const name = profile?.name
-    let greet
-    if (hour >= 6 && hour < 12) greet = L(lang, { ko: '좋은 아침이에요', zh: '早上好', en: 'Good morning' })
-    else if (hour >= 12 && hour < 18) greet = L(lang, { ko: '좋은 오후예요', zh: '下午好', en: 'Good afternoon' })
-    else if (hour >= 18 && hour < 22) greet = L(lang, { ko: '좋은 저녁이에요', zh: '晚上好', en: 'Good evening' })
-    else greet = L(lang, { ko: '좋은 밤이에요', zh: '晚安', en: 'Good night' })
-
-    if (name) {
-      return lang === 'ko' ? `${name}님, ${greet}` : lang === 'zh' ? `${name}，${greet}` : `${greet}, ${name}`
-    }
-    return greet
-  }
 
   // 가이드 오버레이 상태
   const [activeGuide, setActiveGuide] = useState(null)
@@ -150,44 +134,18 @@ export default function HomeTab({ profile, lang, exchangeRate, setTab }) {
     setTimeout(() => setToast(null), 2000)
   }
 
-  // 시간대 판별 (히어로 그라디언트용)
-  const getTimeOfDay = () => {
-    const hour = new Date().getHours()
-    if (hour >= 6 && hour < 12) return 'morning'
-    if (hour >= 12 && hour < 18) return 'afternoon'
-    if (hour >= 18 && hour < 22) return 'evening'
-    return 'night'
-  }
-
-  const timeOfDay = getTimeOfDay()
-  const heroStyles = {
-    morning: { gradient: 'from-[#B8860B]/80 to-[#F5F1EB]', text: '#1A1A1A', sub: 'rgba(26,26,26,0.6)' },
-    afternoon: { gradient: 'from-[#2D5A3D] to-[#4A8A5A]', text: '#FFFFFF', sub: 'rgba(255,255,255,0.7)' },
-    evening: { gradient: 'from-[#1A3A28] to-[#2D5A3D]', text: '#FFFFFF', sub: 'rgba(255,255,255,0.7)' },
-    night: { gradient: 'from-[#111111] to-[#1A3A28]', text: '#FFFFFF', sub: 'rgba(255,255,255,0.6)' },
-  }
-  const hero = heroStyles[timeOfDay]
-
   return (
     <div
       className="pt-4 pb-24"
       style={{ backgroundColor: '#FFFFFF' }}
     >
-      {/* ─── 1. 히어로 카드 (인사말 + 유틸리티 통합) ─── */}
-      <div
-        className={`mx-4 rounded-2xl bg-gradient-to-br ${hero.gradient} p-5 mb-8 relative overflow-hidden`}
-        style={{ height: 140 }}
-      >
-        <p className="text-base font-bold mb-auto" style={{ color: hero.text }}>
-          {getGreeting()}
-        </p>
-        <div className="absolute bottom-4 left-5 right-5 flex items-center gap-3 text-sm" style={{ color: hero.sub }}>
-          <span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}</span>
-          <span>·</span>
-          <span style={{ color: timeOfDay === 'morning' ? '#8B6914' : hero.sub }}>¥1 = ₩{Math.round(cnyRate)}</span>
-          <span>·</span>
-          <span>{koreaTime}</span>
-        </div>
+      {/* ─── 상단 정보 바 ─── */}
+      <div className="px-4 mb-4 flex items-center gap-2 text-xs" style={{ color: '#999999' }}>
+        <span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}</span>
+        <span>·</span>
+        <span>¥1 = ₩{Math.round(cnyRate)}</span>
+        <span>·</span>
+        <span>KST {koreaTime}</span>
       </div>
 
       {/* ─── 2. 오늘의 한국어 배너 ─── */}

@@ -1571,24 +1571,46 @@ function AppInner() {
       {/* Top Bar — scrolls with content (not sticky) */}
       <div className="relative z-10" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
         <div className="px-4 pt-3 pb-2">
-          <div className="flex items-center gap-3">
-            {subPage ? (
-              <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
-                <ChevronLeft size={24} />
-              </button>
-            ) : (
+          <div className="flex items-center">
+            {/* 좌측 아이콘 */}
+            <div className="flex items-center gap-1">
+              {subPage ? (
+                <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
+                  <ChevronLeft size={24} />
+                </button>
+              ) : (
+                <>
+                  <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
+                    <User size={20} />
+                  </button>
+                  <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+                    <Globe size={20} />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* 중앙 로고 */}
+            <div className="flex-1 flex justify-center">
               <Logo />
-            )}
-            <div className="flex-1" />
-            <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
-              <User size={20} />
-            </button>
-            <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
-              <Globe size={20} />
-            </button>
-            <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -mr-2">
-              <Menu size={22} />
-            </button>
+            </div>
+
+            {/* 우측 메뉴 */}
+            <div className="flex items-center gap-1">
+              {subPage && (
+                <>
+                  <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
+                    <User size={20} />
+                  </button>
+                  <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+                    <Globe size={20} />
+                  </button>
+                </>
+              )}
+              <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -mr-2">
+                <Menu size={22} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

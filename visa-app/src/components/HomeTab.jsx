@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { ChevronLeft, Plus, Pencil } from 'lucide-react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
+import { SCENE_PHRASE_DETAILS } from '../data/scenePhrases'
 
 const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
 const SimGuide = lazy(() => import('./guides/SimGuide'))
@@ -170,6 +171,9 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
 
   // 가이드 오버레이 상태
   const [activeGuide, setActiveGuide] = useState(null)
+
+  // 상황별 한국어 오버레이 상태
+  const [activeScene, setActiveScene] = useState(null)
 
   // 시간대 선택 팝업
   const [showTzPicker, setShowTzPicker] = useState(false)
@@ -349,24 +353,16 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
 
       {/* ─── 5. 상황별 한국어 ─── */}
       <div className="mb-8">
-        <button
-          onClick={() => setTab('learn')}
-          className="flex items-center justify-between w-full mb-3 px-4"
-        >
+        <div className="flex items-center justify-between w-full mb-3 px-4">
           <h2 className="text-base font-bold" style={{ color: '#1A1A1A' }}>
             {L(lang, { ko: '상황별 한국어', zh: '场景韩语', en: 'Korean by Situation' })}
           </h2>
-          <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
-        </button>
+        </div>
         <div className="pl-4 pr-0 flex gap-2 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
-              onClick={() => {
-                if (item.pocket === 'shopping') setTab('shopping')
-                else if (item.pocket === 'emergency') setTab('sos')
-                else setTab('learn')
-              }}
+              onClick={() => setActiveScene(item.pocket)}
               className="snap-start flex-shrink-0 rounded-xl overflow-hidden active:scale-[0.98] transition-transform border border-[#E5E7EB]"
               style={{ width: 130 }}
             >
@@ -439,6 +435,71 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
             </Suspense>
           )}
         </>
+      )}
+
+      {/* ─── 상황별 한국어 오버레이 ─── */}
+      {activeScene && SCENE_PHRASE_DETAILS[activeScene] && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="px-4 pt-4 pb-20">
+            <div className="flex items-center gap-3 mb-6">
+              <button onClick={() => setActiveScene(null)} className="p-1">
+                <ChevronLeft size={24} />
+              </button>
+              <span className="text-2xl">{SCENE_PHRASE_DETAILS[activeScene].icon}</span>
+              <h1 className="text-lg font-bold" style={{ color: '#1A1A1A' }}>
+                {L(lang, SCENE_PHRASE_DETAILS[activeScene].title)}
+              </h1>
+            </div>
+
+            <p className="text-xs mb-4" style={{ color: '#999999' }}>
+              {L(lang, {
+                ko: '한국인에게 이 화면을 보여주세요 📱',
+                zh: '请把这个画面给韩国人看 📱',
+                en: 'Show this screen to a Korean person 📱'
+              })}
+            </p>
+
+            <div className="space-y-3">
+              {SCENE_PHRASE_DETAILS[activeScene].phrases.map((phrase, i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-2xl p-4"
+                  style={{ border: '1px solid #E5E7EB' }}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-lg font-bold mb-1" style={{ color: '#1A1A1A' }}>{phrase.ko}</p>
+                      <p className="text-xs italic mb-2" style={{ color: '#999999' }}>[{phrase.roman}]</p>
+                      <p className="text-sm" style={{ color: '#666666' }}>{lang === 'zh' ? phrase.zh : lang === 'en' ? phrase.en : phrase.zh}</p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        if ('speechSynthesis' in window) {
+                          const u = new SpeechSynthesisUtterance(phrase.ko)
+                          u.lang = 'ko-KR'
+                          u.rate = 0.7
+                          speechSynthesis.speak(u)
+                        }
+                      }}
+                      className="ml-3 mt-1 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: '#F5F1EB' }}
+                    >
+                      🔊
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-center mt-6" style={{ color: '#999999' }}>
+              {L(lang, {
+                ko: '💡 한국어를 몰라도 괜찮아요. 이 화면을 보여주면 됩니다!',
+                zh: '💡 不会韩语也没关系，给韩国人看这个画面就好！',
+                en: "💡 Don't speak Korean? Just show this screen!"
+              })}
+            </p>
+          </div>
+        </div>
       )}
 
       {/* ─── 시간대 선택 팝업 ─── */}

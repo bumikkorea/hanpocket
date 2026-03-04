@@ -150,6 +150,42 @@ export default function DutyFreeGuide({ lang, onClose }) {
           </div>
         </div>
 
+        {/* 국가별 면세한도 */}
+        <div className={card}>
+          <h3 className="text-sm font-bold text-[#111827] mb-3">
+            🌍 {L(lang, { ko: '국가별 면세한도 (귀국 시)', zh: '各国免税额度（回国时）', en: 'Duty-Free Limits by Country (Return)' })}
+          </h3>
+          <p className="text-xs text-[#F59E0B] mb-4 leading-relaxed">
+            {L(lang, { ko: '⚠️ 면세한도는 각 국가 세관 정책에 따라 변경될 수 있습니다. 출국 전 반드시 최신 정보를 확인하세요.', zh: '⚠️ 免税额度可能因各国海关政策而变化，出境前请务必确认最新信息。', en: '⚠️ Duty-free limits may change. Please verify latest info before departure.' })}
+          </p>
+          <div className="space-y-2">
+            {[
+              { country: '🇨🇳', name: { ko: '중국', zh: '中国', en: 'China' }, limit: '¥5,000 (약 ₩100만)', note: { ko: '초과 시 세관 신고 필수', zh: '超额必须申报', en: 'Must declare if exceeded' }, updated: '2024.07' },
+              { country: '🇯🇵', name: { ko: '일본', zh: '日本', en: 'Japan' }, limit: '¥200,000 (약 ₩180만)', note: { ko: '주류 3병, 담배 400개비', zh: '酒3瓶，烟400支', en: '3 bottles alcohol, 400 cigarettes' }, updated: '2024.04' },
+              { country: '🇺🇸', name: { ko: '미국', zh: '美国', en: 'USA' }, limit: '$800 (약 ₩110만)', note: { ko: '주류 1L, 담배 200개비', zh: '酒1L，烟200支', en: '1L alcohol, 200 cigarettes' }, updated: '2024.01' },
+              { country: '🇹🇭', name: { ko: '태국', zh: '泰国', en: 'Thailand' }, limit: '฿20,000 (약 ₩80만)', note: { ko: '주류 1L, 담배 200개비', zh: '酒1L，烟200支', en: '1L alcohol, 200 cigarettes' }, updated: '2024.01' },
+              { country: '🇻🇳', name: { ko: '베트남', zh: '越南', en: 'Vietnam' }, limit: '₫10,000,000 (약 ₩55만)', note: { ko: '주류 1.5L, 담배 200개비', zh: '酒1.5L，烟200支', en: '1.5L alcohol, 200 cigarettes' }, updated: '2024.01' },
+              { country: '🇸🇬', name: { ko: '싱가포르', zh: '新加坡', en: 'Singapore' }, limit: 'S$600 (약 ₩60만)', note: { ko: '주류 1L, 면세 주류 별도', zh: '酒1L，免税酒另算', en: '1L alcohol, duty-free separate' }, updated: '2024.01' },
+              { country: '🇹🇼', name: { ko: '대만', zh: '台湾', en: 'Taiwan' }, limit: 'NT$20,000 (약 ₩85만)', note: { ko: '주류 1L, 담배 200개비', zh: '酒1L，烟200支', en: '1L alcohol, 200 cigarettes' }, updated: '2024.01' },
+              { country: '🇵🇭', name: { ko: '필리핀', zh: '菲律宾', en: 'Philippines' }, limit: '₱10,000 (약 ₩24만)', note: { ko: '주류 2병, 담배 400개비', zh: '酒2瓶，烟400支', en: '2 bottles alcohol, 400 cigarettes' }, updated: '2024.01' },
+              { country: '🇲🇾', name: { ko: '말레이시아', zh: '马来西亚', en: 'Malaysia' }, limit: 'RM500 (약 ₩15만)', note: { ko: '주류 1L, 담배 200개비', zh: '酒1L，烟200支', en: '1L alcohol, 200 cigarettes' }, updated: '2024.01' },
+              { country: '🇦🇺', name: { ko: '호주', zh: '澳大利亚', en: 'Australia' }, limit: 'A$900 (약 ₩80만)', note: { ko: '주류 2.25L, 담배 25개비', zh: '酒2.25L，烟25支', en: '2.25L alcohol, 25 cigarettes' }, updated: '2024.01' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 bg-[#F9FAFB] rounded-xl px-4 py-3">
+                <span className="text-xl">{item.country}</span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-sm font-bold text-[#111827]">{L(lang, item.name)}</span>
+                    <span className="text-xs font-semibold text-blue-600">{item.limit}</span>
+                  </div>
+                  <p className="text-[10px] text-[#6B7280] mt-0.5">{L(lang, item.note)}</p>
+                </div>
+                <span className="text-[9px] text-[#9CA3AF] shrink-0">{item.updated}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* 출처 + 푸터 */}
         <p className="text-[10px] text-gray-400 text-center">
           {L(lang, { ko: '출처: 인천국제공항공사, 중국 해관총서', zh: '来源：仁川国际机场公社、中国海关总署', en: 'Source: Incheon Airport Corp., China Customs' })}

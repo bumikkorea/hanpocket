@@ -24,7 +24,7 @@ export const SCENE_PHRASE_DETAILS = {
       { ko: '사이즈 큰 걸로요', zh: '大杯的', en: 'Large size please', roman: 'sa-i-jeu keun geol-lo-yo' },
       { ko: '여기서 먹을게요', zh: '在这里吃', en: 'For here', roman: 'yeo-gi-seo meo-geul-ge-yo' },
       { ko: '가져갈게요', zh: '带走', en: 'To go', roman: 'ga-jyeo-gal-ge-yo' },
-      { ko: '와이파이 비밀번호 뭐예요?', zh: 'WiFi密码是什么？', en: 'WiFi password?', roman: 'wa-i-pa-i bi-mil-beon-ho mwo-ye-yo' },
+      { ko: '와이파이 있어요?', zh: '有WiFi吗？', en: 'Do you have WiFi?', roman: 'wa-i-pa-i i-sseo-yo' },
       { ko: '콘센트 있어요?', zh: '有插座吗？', en: 'Any outlets?', roman: 'kon-sen-teu i-sseo-yo' },
       { ko: '디카페인 있어요?', zh: '有无咖啡因的吗？', en: 'Decaf available?', roman: 'di-ka-pe-in i-sseo-yo' },
       { ko: '케이크 뭐가 있어요?', zh: '有什么蛋糕？', en: 'What cakes do you have?', roman: 'ke-i-keu mwo-ga i-sseo-yo' },

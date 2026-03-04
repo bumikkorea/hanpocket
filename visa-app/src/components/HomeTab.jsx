@@ -297,19 +297,20 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
         </button>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: 'arrival-card', img: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=400&h=200&fit=crop' },
-            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'sim', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=200&fit=crop' },
-            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'tax-refund', img: 'https://images.unsplash.com/photo-1554672408-730436b60dde?w=400&h=200&fit=crop' },
-            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, gradient: 'from-[#A0865A] to-[#7A6840]', guide: 'duty-free', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=200&fit=crop' },
-            { title: { ko: '택시 잡기', zh: '叫出租车', en: 'Get a Taxi' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: null, action: 'taxi', img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=200&fit=crop' },
-            { title: { ko: '교통카드', zh: '交通卡/车票', en: 'Transit Card' }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'transit', img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=200&fit=crop' },
-            { title: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: null, action: 'map', img: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69c07a?w=400&h=200&fit=crop' },
-            { title: { ko: '긴급 SOS', zh: '紧急SOS', en: 'Emergency' }, gradient: 'from-[#8B2500] to-[#5C1A00]', guide: null, action: 'sos', img: null },
+            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, sub: { ko: '한국 여행 외국인 누구나 작성', zh: '所有来韩外国人必填', en: 'Required for all foreign visitors' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: 'arrival-card', img: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=400&h=200&fit=crop' },
+            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, sub: { ko: '미리 로밍 못했다면?', zh: '没提前开通漫游？', en: "Didn't set up roaming?" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'sim', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=200&fit=crop' },
+            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '어디서/어떻게 돌려받죠?', zh: '在哪里/怎么退税？', en: 'Where/how to get refund?' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'tax-refund', img: 'https://images.unsplash.com/photo-1554672408-730436b60dde?w=400&h=200&fit=crop' },
+            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, sub: { ko: '쇼핑 후 출국 시 반드시 체크', zh: '购物后出境必查', en: 'Must check before departure' }, gradient: 'from-[#A0865A] to-[#7A6840]', guide: 'duty-free', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=200&fit=crop' },
+            { title: { ko: '택시 잡기', zh: '叫出租车', en: 'Get a Taxi' }, sub: { ko: '한국 번호 없어도 돼요', zh: '不需要韩国手机号', en: 'No Korean number needed' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: null, action: 'taxi', img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=200&fit=crop' },
+            { title: { ko: '교통카드', zh: '交通卡/车票', en: 'Transit Card' }, sub: { ko: '현금 안 받는 버스 많아요!', zh: '很多公交不收现金！', en: "Many buses don't accept cash!" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'transit', img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=200&fit=crop' },
+            { title: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'map-guide', action: 'map', img: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69c07a?w=400&h=200&fit=crop' },
+            { title: { ko: '긴급 SOS', zh: '紧急SOS', en: 'Emergency' }, sub: { ko: '빨리 도와줘!', zh: '快帮帮我！', en: 'Help me quick!' }, gradient: 'from-[#8B2500] to-[#5C1A00]', guide: null, action: 'sos', img: null },
           ].map((item, i) => (
             <button
               key={i}
               onClick={() => {
-                if (item.guide) setActiveGuide(item.guide)
+                if (item.action === 'map') setActiveGuide('map-guide')
+                else if (item.guide) setActiveGuide(item.guide)
                 else if (item.action === 'taxi') {
                   const iframe = document.createElement('iframe')
                   iframe.style.display = 'none'
@@ -320,31 +321,19 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
                     window.open('https://t.kakao.com', '_blank')
                   }, 1500)
                 }
-                else if (item.action === 'map') {
-                  const iframe = document.createElement('iframe')
-                  iframe.style.display = 'none'
-                  iframe.src = 'baidumap://'
-                  document.body.appendChild(iframe)
-                  setTimeout(() => {
-                    document.body.removeChild(iframe)
-                    window.open('https://map.baidu.com', '_blank')
-                  }, 1500)
-                }
                 else if (item.action === 'sos') setTab('sos')
               }}
               className="rounded-xl overflow-hidden relative flex items-end active:scale-[0.98] transition-transform"
-              style={{ height: 84 }}
+              style={{ height: 96 }}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
               {item.img && <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none' }} />}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               <div className="relative p-3 z-10">
                 <p className="text-white text-sm font-bold leading-tight text-left">
                   {L(lang, item.title)}
                 </p>
-                {item.action === 'map' && (
-                  <p className="text-white/70 text-[9px] mt-0.5 text-left">{L(lang, { ko: '바이두 지도로 길찾기', zh: '百度地图找路OK', en: 'Baidu Maps navigation' })}</p>
-                )}
+                <p className="text-white/70 text-[10px] mt-0.5 text-left leading-tight">{L(lang, item.sub)}</p>
               </div>
             </button>
           ))}
@@ -387,7 +376,41 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
       {/* ─── 가이드 오버레이 ─── */}
       {activeGuide && (
         <>
-          {activeGuide === 'transit' ? (
+          {activeGuide === 'map-guide' ? (
+            <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+              <div className="px-4 pt-4 pb-20">
+                <div className="flex items-center gap-3 mb-6">
+                  <button onClick={() => setActiveGuide(null)} className="p-1"><ChevronLeft size={24} /></button>
+                  <h1 className="text-lg font-bold text-[#1A1A1A]">{L(lang, { ko: '한국 지도 앱', zh: '韩国地图APP', en: 'Korea Map Apps' })}</h1>
+                </div>
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">📍 KakaoMap ({L(lang, { ko: '카카오맵', zh: '카카오地图', en: 'KakaoMap' })})</h3>
+                    <p className="text-sm text-[#666666] leading-relaxed mb-3">
+                      {L(lang, { ko: '한국에서 가장 많이 쓰는 지도 앱. 길찾기, 대중교통, 맛집, 카페 검색까지 모두 가능합니다. 반드시 설치하세요!', zh: '韩国使用最多的地图APP。找路、公交、美食、咖啡厅搜索全都可以。必须安装！', en: 'The most used map app in Korea. Navigation, transit, restaurants, cafes — all in one. Must install!' })}
+                    </p>
+                    <div className="flex gap-2">
+                      <a href="https://apps.apple.com/app/id304608425" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-xl bg-[#FEE500] text-[#1A1A1A] text-sm font-bold active:scale-95 transition-transform">
+                        App Store
+                      </a>
+                      <a href="https://play.google.com/store/apps/details?id=net.daum.android.map" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-xl bg-[#FEE500] text-[#1A1A1A] text-sm font-bold active:scale-95 transition-transform">
+                        Google Play
+                      </a>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB]">
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">🗺️ {L(lang, { ko: '바이두 지도도 사용 가능!', zh: '百度地图也可以用！', en: 'Baidu Maps also works!' })}</h3>
+                    <p className="text-sm text-[#666666] leading-relaxed mb-3">
+                      {L(lang, { ko: '바이두 지도(百度地图)도 한국에서 사용 가능합니다. 중국어로 검색할 수 있어 편리합니다.', zh: '百度地图也可以在韩国使用。可以用中文搜索，很方便。', en: 'Baidu Maps also works in Korea. Convenient for searching in Chinese.' })}
+                    </p>
+                    <a href="https://map.baidu.com" target="_blank" rel="noopener noreferrer" className="block text-center py-2.5 rounded-xl bg-[#3385FF] text-white text-sm font-bold active:scale-95 transition-transform">
+                      {L(lang, { ko: '바이두 지도 열기', zh: '打开百度地图', en: 'Open Baidu Maps' })}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : activeGuide === 'transit' ? (
             <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
               <div className="px-4 pt-4 pb-20">
                 <div className="flex items-center gap-3 mb-6">
@@ -395,6 +418,12 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
                   <h1 className="text-lg font-bold text-[#1A1A1A]">{L(lang, { ko: '교통카드 & 표 구매', zh: '交通卡 & 购票指南', en: 'Transit Card & Tickets' })}</h1>
                 </div>
                 <div className="space-y-4">
+                  {/* 현금 경고 */}
+                  <div className="p-4 rounded-2xl bg-red-50 border border-red-200">
+                    <p className="text-sm font-bold text-red-700 leading-relaxed">
+                      {L(lang, { ko: '⚠️ 한국 버스 대부분은 현금을 받지 않습니다. 교통카드 없이는 버스를 탈 수 없어요! 반드시 교통카드를 먼저 구매하세요.', zh: '⚠️ 韩国大部分公交不收现金！没有交通卡无法乘坐公交！请务必先购买交通卡。', en: "⚠️ Most Korean buses don't accept cash. You can't ride without a transit card! Buy one first." })}
+                    </p>
+                  </div>
                   <div className="p-4 rounded-2xl border border-[#E5E7EB]">
                     <h3 className="font-bold text-[#1A1A1A] mb-2">🎫 T-money / Cash Bee</h3>
                     <p className="text-sm text-[#666666] leading-relaxed">
@@ -410,17 +439,23 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
                   <div className="p-4 rounded-2xl border border-[#E5E7EB]">
                     <h3 className="font-bold text-[#1A1A1A] mb-2">🚌 {L(lang, { ko: '버스 이용법', zh: '乘公交方法', en: 'How to Ride Buses' })}</h3>
                     <p className="text-sm text-[#666666] leading-relaxed">
-                      {L(lang, { ko: '앞문 탑승 → T-money 태그 → 하차 시 뒷문에서 태그. 현금(1,450원)도 가능하지만 거스름돈 없음.', zh: '前门上车→刷T-money→下车时后门再刷。可以付现金(1450韩元)但不找零。', en: 'Board at front door → tap T-money → tap again at rear door when exiting. Cash (₩1,450) accepted but no change given.' })}
+                      {L(lang, { ko: '앞문 탑승 → T-money 태그 → 하차 시 뒷문에서 태그.', zh: '前门上车→刷T-money→下车时后门再刷。', en: 'Board at front door → tap T-money → tap again at rear door when exiting.' })}
                     </p>
                   </div>
                   <div className="p-4 rounded-2xl border border-[#E5E7EB]">
-                    <h3 className="font-bold text-[#1A1A1A] mb-2">💡 {L(lang, { ko: '꿀팁', zh: '实用小贴士', en: 'Tips' })}</h3>
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">🔄 {L(lang, { ko: '환승 꿀팁', zh: '换乘小贴士', en: 'Transfer Tips' })}</h3>
                     <p className="text-sm text-[#666666] leading-relaxed">
                       {L(lang, {
-                        ko: '• 환승: 30분 내 버스↔지하철 환승 시 무료\n• 외국인 전용: WOWPASS, NAMANE 카드도 교통카드 기능 있음\n• 충전: 편의점 또는 지하철역 충전기에서 가능',
-                        zh: '• 换乘：30分钟内公交↔地铁换乘免费\n• 外国人专用：WOWPASS、NAMANE卡也有交通卡功能\n• 充值：在便利店或地铁站充值机充值',
-                        en: '• Transfer: Free transfers between bus↔subway within 30 min\n• Foreigners: WOWPASS, NAMANE cards also work as transit cards\n• Top-up: Available at convenience stores or subway station machines'
+                        ko: '버스/지하철 하차 후 30분 이내에 다른 노선 이용 시 환승 적용!\n→ 두 번째 교통수단의 기본요금이 무료\n→ 단, 거리 추가금은 발생할 수 있음',
+                        zh: '下车后30分钟内换乘其他线路，换乘免费！\n→ 第二次乘车的基本费用免费\n→ 但可能产生距离附加费',
+                        en: 'Transfer within 30 min after getting off for free transfer!\n→ Base fare of second ride is free\n→ Distance surcharge may still apply'
                       }).split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">💳 {L(lang, { ko: '교통카드 충전', zh: '交通卡充值', en: 'Transit Card Top-up' })}</h3>
+                    <p className="text-sm text-[#666666] leading-relaxed">
+                      {L(lang, { ko: '편의점 또는 지하철역 충전기에서 가능. 1,000원 단위로 충전할 수 있습니다.', zh: '在便利店或地铁站充值机充值。可以按1000韩元为单位充值。', en: 'Available at convenience stores or subway station machines. Can top up in ₩1,000 increments.' })}
                     </p>
                   </div>
                 </div>

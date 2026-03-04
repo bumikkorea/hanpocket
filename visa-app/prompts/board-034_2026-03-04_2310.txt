@@ -1,0 +1,124 @@
+Board-034: 스크롤바 스타일링 + 햄버거 메뉴 정리 + 시간대 추가 기능
+
+## 작업 1: 가로 스크롤바 스타일링 (HomeTab.jsx + index.css)
+
+HomeTab의 "추천 코스"와 "상황별 한국어" 가로 스크롤 영역에 보이는 스크롤바 수정:
+
+### 1-1. index.css에 커스텀 스크롤바 클래스 추가
+```css
+/* Horizontal scroll indicator - thin, rounded, aligned */
+.scroll-indicator::-webkit-scrollbar {
+  height: 3px; /* 현재 대비 반 사이즈 */
+}
+.scroll-indicator::-webkit-scrollbar-track {
+  background: transparent;
+  margin-left: 16px; /* px-4 = 16px, 왼쪽 컨텐츠 여백과 정렬 */
+  margin-right: 16px;
+}
+.scroll-indicator::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 9999px; /* 카드 모서리처럼 완전히 둥글게 */
+}
+.scroll-indicator {
+  scrollbar-width: thin;
+  scrollbar-color: #D1D5DB transparent;
+}
+```
+
+### 1-2. HomeTab.jsx 스크롤 컨테이너 수정
+두 곳 모두:
+- `scrollbar-hide` → 제거 (삭제)
+- `scrollbar-thin` → 제거 (삭제)  
+- 대신 클래스명에 `scroll-indicator` 추가
+
+추천 코스 (line ~163 근처):
+```
+className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2"
+```
+
+상황별 한국어 (line ~295 근처):
+```
+className="pl-4 pr-0 flex gap-2 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2"
+```
+
+## 작업 2: 햄버거 메뉴 위젯 목록 정리 (App.jsx)
+
+App.jsx의 "내 위젯 설정" 리스트에서 불필요한 항목 제거:
+
+현재 7개:
+```js
+{ key: 'weather', emoji: '☀️', label: '날씨' },
+{ key: 'exchange', emoji: '💱', label: '환율' },
+{ key: 'clock', emoji: '🕐', label: '한국 시간' },
+{ key: 'korean', emoji: '📚', label: '오늘의 한국어' },  // ← 삭제
+{ key: 'course', emoji: '🗺️', label: '추천 코스' },
+{ key: 'emergency', emoji: '🚨', label: '긴급 연락처' },
+{ key: 'situation', emoji: '🗣️', label: '상황별 한국어' },  // ← 삭제
+```
+
+→ 5개로 축소:
+```js
+{ key: 'weather', emoji: '☀️', label: '날씨' },
+{ key: 'exchange', emoji: '💱', label: '환율' },
+{ key: 'clock', emoji: '🕐', label: '한국 시간' },
+{ key: 'course', emoji: '🗺️', label: '추천 코스' },
+{ key: 'emergency', emoji: '🚨', label: '긴급 연락처' },
+```
+
+## 작업 3: 시간대 추가 기능 (HomeTab.jsx)
+
+### 현재 info bar:
+```
+서울 25°C · ¥1 = ₩208 · KST 14:30
+```
+
+### 변경 후:
+```
+서울 25°C · ¥1 = ₩208 · KST 14:30 · [+] ← 파란 버튼
+```
+
+사용자가 + 버튼 클릭 시:
+1. 팝업/모달이 뜸 (간결한 선택 UI)
+2. 시간대 목록 제공:
+   - 🇨🇳 中国 (CST, UTC+8)
+   - 🇯🇵 日本 (JST, UTC+9) 
+   - 🇺🇸 美国东部 (EST, UTC-5)
+   - 🇺🇸 美国西部 (PST, UTC-8)
+   - 🇬🇧 英国 (GMT, UTC+0)
+   - 🇸🇬 新加坡 (SGT, UTC+8)
+   - 🇦🇺 悉尼 (AEST, UTC+11)
+   - 🇹🇭 泰国 (ICT, UTC+7)
+   - 🇻🇳 越南 (ICT, UTC+7)
+   - 🇵🇭 菲律宾 (PHT, UTC+8)
+3. 체크박스로 다중 선택 가능
+4. 확인 버튼 누르면 localStorage에 저장 (key: `hanpocket_extra_timezones`)
+5. info bar에 선택된 시간대 표시:
+   ```
+   서울 25°C · ¥1 = ₩208 · KST 14:30 · CST 13:30 · SGT 13:30
+   ```
+   - 추가된 시간대 텍스트 색상: **파란색 (#3B82F6)**
+   - KST는 기본 #999999 유지
+6. + 버튼은 항상 마지막에 표시 (추가 시간대 뒤에)
+7. 이미 선택된 시간대가 있으면 + 대신 연필 아이콘(✎)으로 변경
+
+### 시간 계산 로직:
+기존 `useKoreaTime` 훅을 확장하거나 새 훅 `useMultiTimezone`을 만들어서:
+- KST (UTC+9) 기본
+- 선택된 시간대들의 현재 시간도 30초마다 업데이트
+
+### 팝업 디자인:
+- 배경: white, rounded-2xl, border border-[#E5E7EB]
+- 제목: "시간대 추가" (text-sm font-bold)
+- 각 항목: 국기 + 이름 + 현재시간 미리보기 + 체크박스
+- 확인 버튼: bg-[#3B82F6] text-white rounded-xl py-2 text-sm
+- 전체 해제 링크: text-xs text-[#999999]
+
+## 빌드 & 커밋
+1. `npm run build` 실행하여 에러 없는지 확인
+2. `git add -A && git commit -m "Board-034: Scrollbar styling, menu cleanup, timezone picker"`
+
+## 완료 알림
+반드시 마지막에 실행:
+```bash
+openclaw system event --text 'Done: Board-034 스크롤바+메뉴+시간대' --mode now
+```

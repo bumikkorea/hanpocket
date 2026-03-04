@@ -2091,25 +2091,26 @@ function AppInner() {
             <div>
               <h3 className="text-sm font-bold mb-4" style={{ color: '#1A1A1A' }}>앱 바로가기</h3>
 
-              {/* 교통 */}
+              {/* 지도 */}
               <div className="mb-5">
-                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>교통</p>
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>지도</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="카카오T" description="택시, 대중교통, 주차" deepLink="kakaot://" webUrl="https://t.kakao.com" domain="t.kakao.com" />
-                  <AppShortcut name="카카오맵" description="지도, 길찾기, 장소검색" deepLink="kakaomap://" webUrl="https://map.kakao.com" domain="map.kakao.com" />
-                  <AppShortcut name="네이버지도" description="지도, 내비게이션" deepLink="nmap://" webUrl="https://map.naver.com" domain="map.naver.com" />
+                  <AppShortcut name="카카오맵 (추천)" description="지도, 길찾기, 장소검색" deepLink="kakaomap://" webUrl="https://map.kakao.com" domain="map.kakao.com" />
+                  <AppShortcut name="바이두 지도" description="百度地图 — 중국어 지도" deepLink="baidumap://" webUrl="https://map.baidu.com" domain="map.baidu.com" />
+                  <AppShortcut name="구글맵" description="Google Maps" deepLink="comgooglemaps://" webUrl="https://maps.google.com" domain="maps.google.com" />
+                  <AppShortcut name="네이버 지도" description="지도, 내비게이션" deepLink="nmap://" webUrl="https://map.naver.com" domain="map.naver.com" />
                 </div>
               </div>
 
-              {/* 배달/쇼핑 */}
+              {/* 쇼핑/배달 */}
               <div className="mb-5">
-                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>배달/쇼핑</p>
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>쇼핑/배달</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="배달의민족" description="음식 배달 주문" deepLink="baemin://" webUrl="https://www.baemin.com" domain="baemin.com" />
-                  <AppShortcut name="당근" description="중고거래, 동네생활" deepLink="daangn://" webUrl="https://www.daangn.com" domain="daangn.com" />
-                  <AppShortcut name="쿠팡" description="온라인 쇼핑몰" deepLink="coupang://" webUrl="https://www.coupang.com" domain="coupang.com" />
-                  <AppShortcut name="무신사" description="패션 쇼핑몰" deepLink="musinsa://" webUrl="https://www.musinsa.com" domain="musinsa.com" />
-                  <AppShortcut name="올리브영" description="화장품, 생활용품" deepLink="oliveyoung://" webUrl="https://global.oliveyoung.com" domain="global.oliveyoung.com" />
+                  <AppShortcut name="배달의민족" description="음식 배달 주문" deepLink="baemin://" webUrl="https://apps.apple.com/app/id378084485" domain="baemin.com" />
+                  <AppShortcut name="무신사" description="패션 쇼핑몰" deepLink="musinsa://" webUrl="https://apps.apple.com/app/id1095563498" domain="musinsa.com" />
+                  <AppShortcut name="올리브영" description="화장품, 생활용품" deepLink="oliveyoung://" webUrl="https://apps.apple.com/app/id1040498076" domain="global.oliveyoung.com" />
+                  <AppShortcut name="쿠팡" description="온라인 쇼핑몰" deepLink="coupang://" webUrl="https://apps.apple.com/app/id454434967" domain="coupang.com" />
+                  <AppShortcut name="인터파크" description="공연 티켓 구매 전문" deepLink="interpark://" webUrl="https://apps.apple.com/app/id380598498" domain="tickets.interpark.com" />
                 </div>
               </div>
 
@@ -2117,10 +2118,8 @@ function AppInner() {
               <div className="mb-5">
                 <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>여행/숙박</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="야놀자" description="숙박, 레저 예약" deepLink="yanolja://" webUrl="https://www.yanolja.com" domain="yanolja.com" />
-                  <AppShortcut name="여기어때" description="국내 숙박 예약" deepLink="gchoice://" webUrl="https://www.goodchoice.kr" domain="goodchoice.kr" />
-                  <AppShortcut name="Klook" description="해외 액티비티, 투어" deepLink="klook://" webUrl="https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket" domain="klook.com" />
                   <AppShortcut name="Trip.com" description="항공권, 호텔 예약" deepLink="ctrip://" webUrl="https://www.trip.com/?promo=aff_1892_hp&locale=ko-KR" domain="trip.com" />
+                  <AppShortcut name="Klook" description="액티비티, 투어, 입장권" deepLink="klook://" webUrl="https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket" domain="klook.com" />
                 </div>
               </div>
 
@@ -2128,8 +2127,9 @@ function AppInner() {
               <div className="mb-5">
                 <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>생활/정부</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="카카오톡" description="메신저, 소셜" deepLink="kakaotalk://" webUrl="https://www.kakaocorp.com/page/service/service/KakaoTalk" domain="kakaocorp.com" />
-                  <AppShortcut name="정부24" description="정부 민원 서비스" deepLink="" webUrl="https://www.gov.kr" domain="gov.kr" />
+                  <AppShortcut name="카카오톡" description="메신저, 소셜" deepLink="kakaotalk://" webUrl="https://apps.apple.com/app/id362057947" domain="kakaocorp.com" />
+                  <AppShortcut name="당근" description="중고거래, 동네생활" deepLink="daangn://" webUrl="https://apps.apple.com/app/id1018769995" domain="daangn.com" />
+                  <AppShortcut name="정부24" description="정부 민원 서비스" deepLink="" webUrl="https://apps.apple.com/app/id1327365498" domain="gov.kr" />
                   <AppShortcut name="하이코리아" description="출입국 외국인 정책" deepLink="" webUrl="https://www.hikorea.go.kr" domain="hikorea.go.kr" />
                 </div>
               </div>

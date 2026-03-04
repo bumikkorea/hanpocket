@@ -168,7 +168,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
         </button>
-        <div className="px-4 flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
           {courses.map(course => (
             <button
               key={course.id}
@@ -218,6 +218,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
               </p>
             </div>
           </button>
+          <div className="flex-shrink-0 w-4" />
         </div>
       </div>
 
@@ -285,7 +286,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
         </button>
-        <div className="px-4 flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+        <div className="pl-4 pr-0 flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
@@ -311,6 +312,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
               </div>
             </button>
           ))}
+          <div className="flex-shrink-0 w-4" />
         </div>
       </div>
 

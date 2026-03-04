@@ -100,10 +100,10 @@ h1, h2, h3 {
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Horizontal scroll indicator - thin, rounded, aligned */
-.scroll-indicator::-webkit-scrollbar { height: 3px; }
+.scroll-indicator::-webkit-scrollbar { height: 2px; }
 .scroll-indicator::-webkit-scrollbar-track { background: transparent; margin-left: 16px; margin-right: 16px; }
 .scroll-indicator::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 9999px; }
-.scroll-indicator { scrollbar-width: thin; scrollbar-color: #D1D5DB transparent; }
+.scroll-indicator { scrollbar-width: none; scrollbar-color: #D1D5DB transparent; }
 
 /* Card hover */
 .card-hover {

@@ -1,0 +1,141 @@
+Board-028: 홈탭 카드에 배경 이미지 추가
+
+## 목표
+HomeTab.jsx의 그라디언트 카드들에 Unsplash 배경 이미지를 추가한다.
+이미지 위에 반투명 그라디언트 오버레이를 깔아서 텍스트 가독성 유지.
+
+## 수정 파일: `src/components/HomeTab.jsx`만
+
+## 1. 추천 코스 카드 (섹션 3)에 이미지 추가
+
+현재 코스 카드: 단색 그라디언트 배경
+변경: 배경 이미지 + 반투명 어두운 오버레이
+
+### 이미지 URL 매핑
+`COURSE_IMAGES` 상수를 COURSE_GRADIENTS 아래에 추가:
+```js
+const COURSE_IMAGES = {
+  'first-day-seoul': 'https://images.unsplash.com/photo-1583167625297-fe5e39ebb0f5?w=400&h=300&fit=crop',
+  'kpop-pilgrimage': 'https://images.unsplash.com/photo-1598394820342-3f06e4c84e04?w=400&h=300&fit=crop',
+  'hongdae-yeonnam': 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&h=300&fit=crop',
+  'traditional-culture': 'https://images.unsplash.com/photo-1578037571214-25e07a2bfb89?w=400&h=300&fit=crop',
+  'hangang-healing': 'https://images.unsplash.com/photo-1601312644655-433b9e0e0c48?w=400&h=300&fit=crop',
+  'euljiro-retro': 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400&h=300&fit=crop',
+  'jeju-east': 'https://images.unsplash.com/photo-1596944924616-7b38e7cfac36?w=400&h=300&fit=crop',
+  'busan-haeundae': 'https://images.unsplash.com/photo-1590228947235-d4770e03fb26?w=400&h=300&fit=crop',
+  'mukbang-tour': 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
+  'gangnam-cafe': 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
+}
+```
+
+### 코스 카드 JSX 변경
+현재:
+```jsx
+<div
+  className={`bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || ...} flex items-end p-3`}
+  style={{ height: 150 }}
+>
+  <p className="text-white text-sm font-bold leading-tight text-left">
+    {L(lang, course.name)}
+  </p>
+</div>
+```
+
+변경:
+```jsx
+<div
+  className="relative flex items-end p-3"
+  style={{ height: 150 }}
+>
+  {/* 배경 이미지 */}
+  {COURSE_IMAGES[course.id] ? (
+    <img
+      src={COURSE_IMAGES[course.id]}
+      alt=""
+      className="absolute inset-0 w-full h-full object-cover"
+      loading="lazy"
+    />
+  ) : (
+    <div className={`absolute inset-0 bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || 'from-[#6A6A5A] to-[#4A4A3A]'}`} />
+  )}
+  {/* 어두운 그라디언트 오버레이 */}
+  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+  <p className="relative text-white text-sm font-bold leading-tight text-left z-10">
+    {L(lang, course.name)}
+  </p>
+</div>
+```
+
+## 2. 여행 필수 카드 (섹션 4)에 이미지 추가
+
+여행 필수 4개 카드 데이터에 `img` 필드 추가:
+```js
+{ title: ..., gradient: ..., guide: 'arrival-card', img: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=400&h=200&fit=crop' },
+{ title: ..., gradient: ..., guide: 'sim', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=200&fit=crop' },
+{ title: ..., gradient: ..., guide: 'tax-refund', img: 'https://images.unsplash.com/photo-1554672408-730436b60dde?w=400&h=200&fit=crop' },
+{ title: ..., gradient: ..., guide: 'duty-free', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=200&fit=crop' },
+```
+
+카드 JSX 변경 (코스 카드와 동일 패턴):
+```jsx
+<button
+  key={i}
+  onClick={() => setActiveGuide(item.guide)}
+  className="rounded-xl overflow-hidden relative flex items-end active:scale-[0.98] transition-transform"
+  style={{ height: 84 }}
+>
+  <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+  <p className="relative text-white text-sm font-bold leading-tight text-left p-3 z-10">
+    {L(lang, item.title)}
+  </p>
+</button>
+```
+
+## 3. 상황별 한국어 카드 (섹션 5)에 이미지 추가
+
+SCENE_PHRASES 배열에 `img` 필드 추가:
+```js
+{ scene: ..., phrase: ..., gradient: ..., pocket: 'restaurant', img: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=300&h=200&fit=crop' },
+{ scene: ..., phrase: ..., gradient: ..., pocket: 'cafe', img: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=200&fit=crop' },
+{ scene: ..., phrase: ..., gradient: ..., pocket: 'transport', img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=300&h=200&fit=crop' },
+{ scene: ..., phrase: ..., gradient: ..., pocket: 'convenience', img: 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=300&h=200&fit=crop' },
+{ scene: ..., phrase: ..., gradient: ..., pocket: 'shopping', img: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop' },
+{ scene: ..., phrase: ..., gradient: ..., pocket: 'accommodation', img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300&h=200&fit=crop' },
+{ scene: ..., phrase: ..., gradient: ..., pocket: 'emergency', img: 'https://images.unsplash.com/photo-1587745416684-47953f16f02f?w=300&h=200&fit=crop' },
+```
+
+상황별 카드 상단(그라디언트 영역) JSX 변경:
+```jsx
+<div className="relative" style={{ height: 84 }}>
+  <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+  <p className="absolute bottom-2.5 left-2.5 text-white text-sm font-bold text-left z-10">
+    {L(lang, item.scene)}
+  </p>
+</div>
+```
+
+## 이미지 로드 실패 시
+이미지 로드 실패하면 기존 그라디언트로 fallback. img 태그에 `onError` 추가:
+```jsx
+onError={(e) => { e.target.style.display = 'none' }}
+```
+그리고 이미지 아래에 fallback 그라디언트 div를 항상 깔아두기:
+```jsx
+<div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
+<img ... onError={(e) => { e.target.style.display = 'none' }} />
+<div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+```
+
+## 수정 규칙
+- `src/components/HomeTab.jsx`만 수정
+- 기존 data, import, export 유지
+- `npm run build` 에러 없어야 함
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-028: Add Unsplash background images to HomeTab cards" && openclaw system event --text "Done: Board-028 홈탭 카드 배경 이미지 추가" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

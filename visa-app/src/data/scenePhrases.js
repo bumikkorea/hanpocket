@@ -76,7 +76,7 @@ export const SCENE_PHRASE_DETAILS = {
       { ko: '면세 가격이에요?', zh: '是免税价吗？', en: 'Is this duty-free price?', roman: 'myeon-se ga-gyeo-gi-e-yo' },
       { ko: '알리페이 돼요?', zh: '可以用支付宝吗？', en: 'Alipay accepted?', roman: 'al-li-pe-i dwae-yo' },
       { ko: '교환/환불 가능해요?', zh: '可以换货/退款吗？', en: 'Exchange/refund?', roman: 'gyo-hwan/hwan-bul ga-neung-hae-yo' },
-      { ko: '인기 상품 뭐예요?', zh: '热门商品是什么？', en: "What's popular?", roman: 'in-gi sang-pum mwo-ye-yo' },
+      { ko: '인기 상품 뭐예요?', zh: '热门商品是什么？', en: 'What\'s popular?', roman: 'in-gi sang-pum mwo-ye-yo' },
     ]
   },
   accommodation: {
@@ -107,8 +107,8 @@ export const SCENE_PHRASE_DETAILS = {
       { ko: '알레르기가 있어요', zh: '我有过敏症', en: 'I have allergies', roman: 'al-le-reu-gi-ga i-sseo-yo' },
       { ko: '대사관에 연락해 주세요', zh: '请联系大使馆', en: 'Contact the embassy', roman: 'dae-sa-gwan-e yeol-lak-hae ju-se-yo' },
       { ko: '지갑을 도둑맞았어요', zh: '钱包被偷了', en: 'My wallet was stolen', roman: 'ji-gap-eul do-duk-ma-ja-sseo-yo' },
-      { ko: '길을 잃었어요', zh: '我迷路了', en: "I'm lost", roman: 'gi-reul il-eo-sseo-yo' },
-      { ko: '한국어 못해요', zh: '我不会韩语', en: "I can't speak Korean", roman: 'han-gu-geo mo-tae-yo' },
+      { ko: '길을 잃었어요', zh: '我迷路了', en: 'I\'m lost', roman: 'gi-reul il-eo-sseo-yo' },
+      { ko: '한국어 못해요', zh: '我不会韩语', en: 'I can\'t speak Korean', roman: 'han-gu-geo mo-tae-yo' },
     ]
   },
 }

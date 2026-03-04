@@ -62,24 +62,13 @@ function Logo({ size = 'md' }) {
   const scales = { sm: 0.7, md: 0.9, lg: 1.15 }
   const sc = scales[size] || scales.md
   return (
-    <svg width={186 * sc} height={28 * sc} viewBox="0 0 186 28" fill="none" style={{ overflow: 'visible' }}>
+    <svg width={160 * sc} height={28 * sc} viewBox="0 0 160 28" fill="none">
       {/* HANPOCKET 텍스트 */}
-      <text x="82" y="19" textAnchor="middle" fontFamily="'Inter', sans-serif" fontWeight="300" fontSize="18" letterSpacing="0.25em" fill="var(--text-primary)">
+      <text x="80" y="19" textAnchor="middle" fontFamily="'Inter', sans-serif" fontWeight="300" fontSize="18" letterSpacing="0.25em" fill="var(--text-primary)">
         HANPOCKET
       </text>
 
-      {/* 복주머니 — 마침표 위치 (T 오른쪽 바로 뒤) */}
-      <g transform="translate(162, 8) scale(0.5)">
-        <path d="M6,7 Q10,2 14,7" fill="none" stroke="#111827" strokeWidth="1.4" strokeLinecap="round"/>
-        <circle cx="10" cy="7.5" r="1.3" fill="#111827"/>
-        <line x1="8.5" y1="8.5" x2="7" y2="12" stroke="#111827" strokeWidth="0.8" strokeLinecap="round"/>
-        <line x1="11.5" y1="8.5" x2="13" y2="12" stroke="#111827" strokeWidth="0.8" strokeLinecap="round"/>
-        <path d="M3,9 Q1,14 3,19 Q5,23 10,24 Q15,23 17,19 Q19,14 17,9 Z" fill="#D42B40"/>
-        <path d="M4,9 Q6,10.5 10,10.5 Q14,10.5 16,9" fill="none" stroke="#B02535" strokeWidth="0.5"/>
-        <rect x="8" y="14" width="4" height="4" rx="0.5" fill="none" stroke="#111827" strokeWidth="0.6"/>
-        <line x1="10" y1="14" x2="10" y2="18" stroke="#111827" strokeWidth="0.4"/>
-        <line x1="8" y1="16" x2="12" y2="16" stroke="#111827" strokeWidth="0.4"/>
-      </g>
+
     </svg>
   )
 }
@@ -1662,7 +1651,7 @@ function AppInner() {
         <div className="px-4 pt-3 pb-2">
           <div className="flex items-center">
             {/* 좌측: 햄버거 메뉴 (메인) 또는 뒤로가기 (서브) */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 w-16">
               {subPage ? (
                 <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
                   <ChevronLeft size={24} />
@@ -1680,7 +1669,7 @@ function AppInner() {
             </div>
 
             {/* 우측: 프로필 + 언어설정 */}
-            <div className="flex items-center gap-1">
+            <div className="flex items-center justify-end gap-1 w-16">
               <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
                 <User size={20} />
               </button>

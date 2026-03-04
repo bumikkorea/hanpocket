@@ -1661,21 +1661,16 @@ function AppInner() {
       <div className="relative z-10" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
         <div className="px-4 pt-3 pb-2">
           <div className="flex items-center">
-            {/* 좌측 아이콘 */}
+            {/* 좌측: 햄버거 메뉴 (메인) 또는 뒤로가기 (서브) */}
             <div className="flex items-center gap-1">
               {subPage ? (
                 <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
                   <ChevronLeft size={24} />
                 </button>
               ) : (
-                <>
-                  <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
-                    <User size={20} />
-                  </button>
-                  <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
-                    <Globe size={20} />
-                  </button>
-                </>
+                <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -ml-2">
+                  <Menu size={22} />
+                </button>
               )}
             </div>
 
@@ -1684,20 +1679,13 @@ function AppInner() {
               <Logo />
             </div>
 
-            {/* 우측 메뉴 */}
+            {/* 우측: 프로필 + 언어설정 */}
             <div className="flex items-center gap-1">
-              {subPage && (
-                <>
-                  <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
-                    <User size={20} />
-                  </button>
-                  <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
-                    <Globe size={20} />
-                  </button>
-                </>
-              )}
-              <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -mr-2">
-                <Menu size={22} />
+              <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
+                <User size={20} />
+              </button>
+              <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+                <Globe size={20} />
               </button>
             </div>
           </div>

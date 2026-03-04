@@ -1871,7 +1871,7 @@ function AppInner() {
         )}
         {tab==='korean' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <div className="px-4"><KoreanTab lang={lang} /></div>
+            <KoreanTab lang={lang} />
           </Suspense>
         )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}

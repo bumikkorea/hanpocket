@@ -17,7 +17,7 @@ import { pocketCategories, featureScores, serviceItems, subMenuData, IMPLEMENTED
 import AffiliateTracker from './components/AffiliateTracker'
 import LoadingSpinner from './components/LoadingSpinner'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
-import OnboardingSimple from './components/OnboardingSimple'
+// OnboardingSimple import removed — replaced by auth popup
 import PocketContent from './components/pockets/PocketContent'
 import OfflineNotice from './components/common/OfflineNotice'
 import ErrorBoundary from './components/common/ErrorBoundary'
@@ -1232,6 +1232,26 @@ function AppInner() {
   const { isDark, toggleDarkMode } = useDarkMode()
   const s = t[lang]
 
+  // Auth popup state (replaces onboarding)
+  const [showAuthPopup, setShowAuthPopup] = useState(() => {
+    return !loadProfile() && !localStorage.getItem('hanpocket_dismissed_auth')
+  })
+  const dismissAuth = () => {
+    setShowAuthPopup(false)
+    localStorage.setItem('hanpocket_dismissed_auth', '1')
+  }
+  const handleAuth = (provider) => {
+    const p = {
+      name: '',
+      nationality: 'china_mainland',
+      authProvider: provider,
+      lang: 'zh'
+    }
+    setProfile(p)
+    saveProfile(p)
+    setShowAuthPopup(false)
+  }
+
   useEffect(() => {
     fetch('https://api.exchangerate-api.com/v4/latest/KRW').then(r => r.json()).then(data => {
       const r = data.rates || {}
@@ -1395,7 +1415,8 @@ function AppInner() {
       </div>
     )
   }
-  if (!profile) return <OnboardingSimple lang={lang} setLang={setLang} onComplete={p => { setProfile(p); saveProfile(p); setLang(p.lang||'ko'); }} />
+  // Onboarding removed — auth popup shows instead (profile no longer required to render app)
+  const safeProfile = profile || { name: '', nationality: 'china_mainland', lang: 'zh' }
 
   const handleTabChange = (newTab) => {
     scrollPositions.current[tab] = { y: window.scrollY, timestamp: Date.now() }
@@ -1568,6 +1589,74 @@ function AppInner() {
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
+      {/* Auth Popup (replaces onboarding) */}
+      {showAuthPopup && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden" style={{ maxHeight: '85vh' }}>
+            <div className="px-5 pt-5 pb-3">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-bold text-[#1A1A1A]">HANPOCKET</h2>
+                <button onClick={dismissAuth} className="p-1 text-[#999]"><X size={20} /></button>
+              </div>
+              <p className="text-sm text-[#666666]">
+                {L(lang, { ko: '한국 여행의 모든 것을 한 곳에서.\n간편 인증으로 시작하세요.', zh: '韩国旅行一站式服务。\n简单认证即可开始。', en: 'Everything for Korea travel in one place.\nStart with easy sign-in.' }).split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}
+              </p>
+            </div>
+            <div className="px-5 py-4">
+              <div className="flex justify-center gap-4">
+                <button onClick={() => handleAuth('naver')} className="flex flex-col items-center gap-1.5">
+                  <div className="w-12 h-12 rounded-full bg-[#03C75A] flex items-center justify-center">
+                    <span className="text-white font-bold text-lg">N</span>
+                  </div>
+                  <span className="text-[10px] text-[#666]">{L(lang, { ko: '네이버', zh: 'Naver', en: 'Naver' })}</span>
+                </button>
+                <button onClick={() => handleAuth('kakao')} className="flex flex-col items-center gap-1.5">
+                  <div className="w-12 h-12 rounded-full bg-[#FEE500] flex items-center justify-center">
+                    <span className="text-[#1C1C1E] font-bold text-lg">K</span>
+                  </div>
+                  <span className="text-[10px] text-[#666]">{L(lang, { ko: '카카오', zh: 'Kakao', en: 'Kakao' })}</span>
+                </button>
+                <button onClick={() => handleAuth('apple')} className="flex flex-col items-center gap-1.5">
+                  <div className="w-12 h-12 rounded-full bg-[#1C1C1E] flex items-center justify-center">
+                    <span className="text-white font-bold text-lg"></span>
+                  </div>
+                  <span className="text-[10px] text-[#666]">Apple</span>
+                </button>
+                <button onClick={() => handleAuth('wechat')} className="flex flex-col items-center gap-1.5">
+                  <div className="w-12 h-12 rounded-full bg-[#07C160] flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">微信</span>
+                  </div>
+                  <span className="text-[10px] text-[#666]">WeChat</span>
+                </button>
+                <button onClick={() => handleAuth('alipay')} className="flex flex-col items-center gap-1.5">
+                  <div className="w-12 h-12 rounded-full bg-[#1677FF] flex items-center justify-center">
+                    <span className="text-white font-bold text-sm">支</span>
+                  </div>
+                  <span className="text-[10px] text-[#666]">Alipay</span>
+                </button>
+              </div>
+            </div>
+            <div className="px-5 pb-5">
+              <div className="border border-[#E5E7EB] rounded-xl p-3 max-h-40 overflow-y-auto">
+                <p className="text-[10px] text-[#999999] leading-relaxed">
+                  <strong>HanPocket 이용약관</strong><br/><br/>
+                  제1조 (목적) 본 약관은 HanPocket(이하 "서비스")이 제공하는 모든 서비스의 이용조건 및 절차, 이용자와 서비스의 권리·의무·책임사항을 규정합니다.<br/><br/>
+                  제2조 (용어의 정의) 1. 가입: SNS 채널인증과 본 약관에 동의하여 서비스 이용계약을 완료하는 행위. 2. 이용자: 본 약관에 동의하고 SNS 채널인증을 통해 이용권한을 부여받은 개인. 3. SNS 채널인증: 서비스 이용을 위해 이용자가 SNS 채널을 선택하고 인증하는 행위.<br/><br/>
+                  제3조 (법령 준수) 서비스는 약관의 규제에 관한 법률, 정보통신망 이용촉진 및 정보보호법, 개인정보 보호법 등 관련법령을 준수합니다.<br/><br/>
+                  제4조 (약관의 효력) 1. 본 약관은 서비스에 게시되고 가입 완료 시 효력이 발생합니다. 2. 약관 변경 시 적용일 7일 전 공지합니다.<br/><br/>
+                  제5조 (개인정보 보호) 1. 서비스는 필요 최소한의 정보를 수집합니다. 2. 이용자 동의 없이 정보를 제3자에게 제공하지 않습니다. 3. 통계작성 등 법령에 의한 경우는 예외입니다.<br/><br/>
+                  제6조 (이용자의 의무) 1. 타인의 인증정보를 도용하지 않습니다. 2. 서비스를 통해 전송된 내용의 출처를 위장하지 않습니다. 3. 다른 사용자의 개인정보를 수집·저장하지 않습니다.<br/><br/>
+                  인증을 진행하면 위 약관에 동의하는 것으로 간주됩니다.
+                </p>
+              </div>
+              <p className="text-[9px] text-[#999999] mt-2 text-center">
+                {L(lang, { ko: '인증 시 위 이용약관 및 개인정보처리방침에 동의합니다.', zh: '认证即表示同意上述使用条款和隐私政策。', en: 'By signing in, you agree to our Terms of Service and Privacy Policy.' })}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Top Bar — scrolls with content (not sticky) */}
       <div className="relative z-10" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
         <div className="px-4 pt-3 pb-2">
@@ -1722,7 +1811,7 @@ function AppInner() {
         )}
         {subPage==='community' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <CommunityTab lang={lang} profile={profile} />
+            <CommunityTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='translator' && (
@@ -1737,22 +1826,22 @@ function AppInner() {
         )}
         {subPage==='sos' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <SOSTab lang={lang} profile={profile} />
+            <SOSTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='finance' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <FinanceTab lang={lang} profile={profile} />
+            <FinanceTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='wallet' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <DigitalWalletTab lang={lang} profile={profile} />
+            <DigitalWalletTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='visaalert' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <VisaAlertTab lang={lang} profile={profile} />
+            <VisaAlertTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='jobs' && (
@@ -1767,7 +1856,7 @@ function AppInner() {
         )}
         {subPage==='resume' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <ResumeTab lang={lang} profile={profile} />
+            <ResumeTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='pet' && (

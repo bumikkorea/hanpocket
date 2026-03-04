@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
+import { ChevronLeft } from 'lucide-react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
 
 const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
@@ -146,15 +147,6 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
         <span>¥1 = ₩{Math.round(cnyRate)}</span>
         <span>·</span>
         <span>KST {koreaTime}</span>
-        <div className="flex-1" />
-        <button
-          onClick={() => setTab('korean')}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-full active:scale-95 transition-transform"
-          style={{ backgroundColor: '#2D5A3D', color: '#FFFFFF' }}
-        >
-          <span className="text-[11px]">🇰🇷</span>
-          <span className="text-[10px] font-medium">{L(lang, { ko: 'Easy Korean', zh: 'Easy Korean', en: 'Easy Korean' })}</span>
-        </button>
       </div>
 
       {/* ─── 3. 추천 코스 섹션 ─── */}
@@ -168,7 +160,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
         </button>
-        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-pl-4 pb-2">
           {courses.map(course => (
             <button
               key={course.id}
@@ -222,7 +214,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
         </div>
       </div>
 
-      {/* ─── 4. 여행 필수 가이드 + 긴급 배너 ─── */}
+      {/* ─── 4. 여행 필수 가이드 (4x2 그리드) ─── */}
       <div className="mb-8 px-4">
         <button
           onClick={() => setTab('travel')}
@@ -239,40 +231,54 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
             { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'sim', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=200&fit=crop' },
             { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'tax-refund', img: 'https://images.unsplash.com/photo-1554672408-730436b60dde?w=400&h=200&fit=crop' },
             { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, gradient: 'from-[#A0865A] to-[#7A6840]', guide: 'duty-free', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=200&fit=crop' },
+            { title: { ko: '택시 잡기', zh: '叫出租车', en: 'Get a Taxi' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: null, action: 'taxi', img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=200&fit=crop' },
+            { title: { ko: '교통카드', zh: '交通卡/车票', en: 'Transit Card' }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'transit', img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=200&fit=crop' },
+            { title: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: null, action: 'map', img: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69c07a?w=400&h=200&fit=crop' },
+            { title: { ko: '긴급 SOS', zh: '紧急SOS', en: 'Emergency' }, gradient: 'from-[#8B2500] to-[#5C1A00]', guide: null, action: 'sos', img: null },
           ].map((item, i) => (
             <button
               key={i}
-              onClick={() => setActiveGuide(item.guide)}
+              onClick={() => {
+                if (item.guide) setActiveGuide(item.guide)
+                else if (item.action === 'taxi') {
+                  const iframe = document.createElement('iframe')
+                  iframe.style.display = 'none'
+                  iframe.src = 'kakaot://'
+                  document.body.appendChild(iframe)
+                  setTimeout(() => {
+                    document.body.removeChild(iframe)
+                    window.open('https://t.kakao.com', '_blank')
+                  }, 1500)
+                }
+                else if (item.action === 'map') {
+                  const iframe = document.createElement('iframe')
+                  iframe.style.display = 'none'
+                  iframe.src = 'baidumap://'
+                  document.body.appendChild(iframe)
+                  setTimeout(() => {
+                    document.body.removeChild(iframe)
+                    window.open('https://map.baidu.com', '_blank')
+                  }, 1500)
+                }
+                else if (item.action === 'sos') setTab('sos')
+              }}
               className="rounded-xl overflow-hidden relative flex items-end active:scale-[0.98] transition-transform"
               style={{ height: 84 }}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
-              <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none' }} />
+              {item.img && <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none' }} />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              <p className="relative text-white text-sm font-bold leading-tight text-left p-3 z-10">
-                {L(lang, item.title)}
-              </p>
+              <div className="relative p-3 z-10">
+                <p className="text-white text-sm font-bold leading-tight text-left">
+                  {L(lang, item.title)}
+                </p>
+                {item.action === 'map' && (
+                  <p className="text-white/70 text-[9px] mt-0.5 text-left">{L(lang, { ko: '바이두 지도로 길찾기', zh: '百度地图找路OK', en: 'Baidu Maps navigation' })}</p>
+                )}
+              </div>
             </button>
           ))}
         </div>
-        {/* 긴급 배너 (여행 필수 아래 통합) */}
-        <button
-          onClick={() => setTab('sos')}
-          className="w-full rounded-xl px-4 py-2.5 mt-2 active:scale-[0.98] transition-transform text-left"
-          style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-bold" style={{ color: '#8B2500' }}>
-                {L(lang, { ko: '긴급 상황?', zh: '紧急情况？', en: 'Emergency?' })}
-              </span>
-              <span className="text-[11px] ml-2" style={{ color: '#666666' }}>
-                112 · 119 · 1345
-              </span>
-            </div>
-            <span className="text-xs" style={{ color: '#666666' }}>&rarr;</span>
-          </div>
-        </button>
       </div>
 
       {/* ─── 5. 상황별 한국어 ─── */}
@@ -286,7 +292,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
         </button>
-        <div className="pl-4 pr-0 flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2">
+        <div className="pl-4 pr-0 flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-pl-4 pb-2">
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
@@ -318,12 +324,55 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
 
       {/* ─── 가이드 오버레이 ─── */}
       {activeGuide && (
-        <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
-          {activeGuide === 'arrival-card' && <ArrivalCardGuide lang={lang} onClose={() => setActiveGuide(null)} />}
-          {activeGuide === 'sim' && <SimGuide lang={lang} onClose={() => setActiveGuide(null)} />}
-          {activeGuide === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => setActiveGuide(null)} />}
-          {activeGuide === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => setActiveGuide(null)} />}
-        </Suspense>
+        <>
+          {activeGuide === 'transit' ? (
+            <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+              <div className="px-4 pt-4 pb-20">
+                <div className="flex items-center gap-3 mb-6">
+                  <button onClick={() => setActiveGuide(null)} className="p-1"><ChevronLeft size={24} /></button>
+                  <h1 className="text-lg font-bold text-[#1A1A1A]">{L(lang, { ko: '교통카드 & 표 구매', zh: '交通卡 & 购票指南', en: 'Transit Card & Tickets' })}</h1>
+                </div>
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">🎫 T-money / Cash Bee</h3>
+                    <p className="text-sm text-[#666666] leading-relaxed">
+                      {L(lang, { ko: '편의점(CU, GS25, 세븐일레븐)에서 2,500원에 구매. 충전 후 버스·지하철·택시 모두 사용 가능.', zh: '在便利店(CU、GS25、7-11)花2500韩元购买T-money卡，充值后公交、地铁、出租车都能用。', en: 'Buy at convenience stores (CU, GS25, 7-Eleven) for ₩2,500. After charging, use on buses, subway, and taxis.' })}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">🚇 {L(lang, { ko: '지하철 1회권', zh: '地铁单程票', en: 'Single Journey Ticket' })}</h3>
+                    <p className="text-sm text-[#666666] leading-relaxed">
+                      {L(lang, { ko: '지하철역 자동발매기에서 구매. 보증금 500원 포함. 하차 후 보증금 환불기에서 500원 돌려받기.', zh: '在地铁站自动售票机购买一次性交通卡。含500韩元押金，下车后在退款机取回。', en: 'Buy at subway station ticket machines. Includes ₩500 deposit. Get the deposit back at refund machines after exiting.' })}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">🚌 {L(lang, { ko: '버스 이용법', zh: '乘公交方法', en: 'How to Ride Buses' })}</h3>
+                    <p className="text-sm text-[#666666] leading-relaxed">
+                      {L(lang, { ko: '앞문 탑승 → T-money 태그 → 하차 시 뒷문에서 태그. 현금(1,450원)도 가능하지만 거스름돈 없음.', zh: '前门上车→刷T-money→下车时后门再刷。可以付现金(1450韩元)但不找零。', en: 'Board at front door → tap T-money → tap again at rear door when exiting. Cash (₩1,450) accepted but no change given.' })}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+                    <h3 className="font-bold text-[#1A1A1A] mb-2">💡 {L(lang, { ko: '꿀팁', zh: '实用小贴士', en: 'Tips' })}</h3>
+                    <p className="text-sm text-[#666666] leading-relaxed">
+                      {L(lang, {
+                        ko: '• 환승: 30분 내 버스↔지하철 환승 시 무료\n• 외국인 전용: WOWPASS, NAMANE 카드도 교통카드 기능 있음\n• 충전: 편의점 또는 지하철역 충전기에서 가능',
+                        zh: '• 换乘：30分钟内公交↔地铁换乘免费\n• 外国人专用：WOWPASS、NAMANE卡也有交通卡功能\n• 充值：在便利店或地铁站充值机充值',
+                        en: '• Transfer: Free transfers between bus↔subway within 30 min\n• Foreigners: WOWPASS, NAMANE cards also work as transit cards\n• Top-up: Available at convenience stores or subway station machines'
+                      }).split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
+              {activeGuide === 'arrival-card' && <ArrivalCardGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+              {activeGuide === 'sim' && <SimGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+              {activeGuide === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+              {activeGuide === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+            </Suspense>
+          )}
+        </>
       )}
 
       {/* ─── 토스트 ─── */}

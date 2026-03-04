@@ -1,0 +1,94 @@
+Board-031: 한국어탭 테마/너비를 코스탭과 일치화
+
+## 수정 파일: `src/components/korean-game/KoreanGameMain.jsx`
+
+## 문제점 (스크린샷 기준)
+1. 한국어 게임: px-5, mx-5 → 코스탭은 px-4. 너비가 다름
+2. 한국어 게임: 자체 상단바(뒤로가기 + "한국어 게임" + ⭐ XP)가 있음 → KoreanTab.jsx에서 이미 게임/학습 토글이 있으므로 중복. 제거하거나 간소화
+3. 챕터 카드: 풀폭 그라디언트 (파란→보라, 주황→빨강) → 코스탭 스타일(border 카드)과 다름
+4. 스트릭 배너(오늘의 학습을 시작하세요!): 연한 보라 배경 → 래플스 테마로
+
+## 구체적 변경
+
+### 1. 패딩 통일: px-5, mx-5 → px-4, mx-4
+- line ~110 `mx-5 mb-5` → `mx-4 mb-4`
+- line ~140 `px-5 pb-8` → `px-4 pb-8`
+- 기타 모든 px-5, mx-5 → px-4, mx-4
+
+### 2. 자체 상단바 제거
+KoreanTab.jsx에서 이미 게임/학습 토글이 있으므로, KoreanGameMain의 자체 상단바(뒤로가기 + "한국어 게임" + XP 배지)를 제거.
+- `{/* 상단 바 */}` 전체 블록 삭제 (bg-white border-b ... 부분)
+- onBack prop 사용처 없어지면 prop 자체도 제거
+- XP 배지는 프로필 카드 영역에 이미 표시되므로 중복
+
+### 3. 챕터 카드를 코스탭 스타일로 변경
+현재: `bg-gradient-to-r ${chapter.gradient} p-5` (풀폭 그라디언트)
+변경: `bg-white border border-[#E5E7EB] rounded-2xl p-4` + 왼쪽에 작은 그라디언트 액센트 바
+
+구체적으로:
+```jsx
+<button ... className="w-full text-left rounded-2xl overflow-hidden transition-all active:scale-[0.98] ...">
+  <div className="bg-white border border-[#E5E7EB] rounded-2xl p-4">
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${isLocked ? 'from-[#9CA3AF] to-[#6B7280]' : chapter.gradient} flex items-center justify-center`}>
+          {isLocked ? (
+            <Lock className="w-5 h-5 text-white/60" />
+          ) : (
+            <span className="text-white text-sm font-bold">{chapter.lessons?.[0]?.emoji || '📚'}</span>
+          )}
+        </div>
+        <div>
+          <p className="text-base font-bold text-[#1A1A1A]">{L(lang, chapter.name)}</p>
+          {!isLocked && totalLessons > 0 && (
+            <p className="text-xs text-[#666666] mt-0.5">
+              {completedCount}/{totalLessons} {lang === 'ko' ? '레슨' : lang === 'en' ? 'lessons' : '课'}
+            </p>
+          )}
+          {isLocked && (
+            <p className="text-xs text-[#999999] mt-0.5">
+              {lang === 'ko' ? '곧 공개' : lang === 'en' ? 'Coming soon' : '即将开放'}
+            </p>
+          )}
+        </div>
+      </div>
+      {!isLocked && (
+        isExpanded
+          ? <ChevronUp className="w-5 h-5 text-[#999999]" />
+          : <ChevronDown className="w-5 h-5 text-[#999999]" />
+      )}
+    </div>
+    {/* 완료율 바 */}
+    {!isLocked && totalLessons > 0 && (
+      <div className="mt-3 w-full h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden">
+        <div
+          className="h-full bg-gradient-to-r from-[#2D5A3D] to-[#4A8A5A] rounded-full transition-all duration-500"
+          style={{ width: `${(completedCount / totalLessons) * 100}%` }}
+        />
+      </div>
+    )}
+  </div>
+</button>
+```
+
+### 4. 스트릭 배너 테마
+`StreakBanner` 컴포넌트가 있으면 그 배경색도 래플스로:
+- 배경: `bg-[#F5F1EB]` (크림)
+- 텍스트: `text-[#1A1A1A]`
+- 아이콘 색: `text-[#B8860B]` (골드)
+
+### 5. 레슨 리스트(아코디언) 스타일도 코스탭과 일치
+- border, divide 유지
+- 패딩 px-4로 통일
+
+## 수정하지 말 것
+- KoreanTab.jsx (게임/학습 토글) → 변경 금지
+- EducationTab.jsx → 변경 금지
+- 게임 로직 (CHAPTERS, gameState 등) → 변경 금지
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-031: Korean game tab theme/width unified with CourseTab" && openclaw system event --text "Done: Board-031 한국어탭 테마 코스탭 일치화" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

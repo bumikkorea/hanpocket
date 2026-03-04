@@ -555,6 +555,15 @@ export default function EducationTab({ lang, onSessionComplete }) {
         })}
       </div>
 
+      {/* TOPIK 안내 문구 */}
+      <p className="text-xs text-[#999999] text-center mt-6 px-2 leading-relaxed">
+        {lang === 'zh'
+          ? '本学习内容参考韩国语能力考试（TOPIK）真题，题型与实际考试高度相似。'
+          : lang === 'ko'
+          ? '본 학습은 한국어능력시험(TOPIK) 기출문제를 참고하여 구성되었으며, 실제 시험과 매우 유사한 유형의 문제들로 이루어져 있습니다.'
+          : 'This study content is based on TOPIK (Test of Proficiency in Korean) past exams, with question types closely resembling the actual test.'}
+      </p>
+
     </div>
   )
 }

@@ -1,0 +1,201 @@
+Board-032: 한국어탭 대규모 구조 변경 — 학습+퀴즈 통합, TOPIK 게이지바
+
+## 목표
+게임/학습 분리 탭 → 학습만 남기고, 매 세션 끝에 퀴즈 내장. TOPIK 레벨 게이지바 추가.
+
+## 수정 파일
+1. `src/components/KoreanTab.jsx` — 완전 재작성
+2. `src/components/korean-game/KoreanGameMain.jsx` — 삭제 또는 미사용 (import 제거)
+
+## KoreanTab.jsx 전체 재작성
+
+### 구조:
+```
+[TOPIK 게이지바 (상단)]
+[현재 단계 / 200]
+[학습 세션 리스트 (아코디언)]
+  - 각 세션 클릭 → 학습 콘텐츠 → 세션 끝에 퀴즈
+```
+
+### 1. TOPIK 게이지바 (최상단)
+
+200단계 기반 프로그레스바. localStorage 'hanpocket_korean_level' 키에 현재 단계(0~200) 저장.
+
+```jsx
+// TOPIK 마일스톤
+const TOPIK_MILESTONES = [
+  { level: 60, topik: '2급', label: { ko: 'TOPIK 2급', zh: 'TOPIK 2级', en: 'TOPIK Level 2' },
+    desc: { 
+      ko: '기본 생활 한국어 가능! 식당 주문, 길 묻기, 쇼핑이 편해져요 🎉',
+      zh: '基础生活韩语OK！点餐、问路、购物变轻松 🎉',
+      en: 'Basic daily Korean! Ordering, directions, shopping made easy 🎉'
+    }
+  },
+  { level: 100, topik: '3급', label: { ko: 'TOPIK 3급', zh: 'TOPIK 3级', en: 'TOPIK Level 3' },
+    desc: {
+      ko: '한국 친구와 일상 대화 가능! 드라마 자막 없이 반은 알아들어요 📺',
+      zh: '能和韩国朋友日常对话！韩剧不看字幕能懂一半 📺',
+      en: 'Daily conversations with Koreans! Understand half of K-dramas without subs 📺'
+    }
+  },
+  { level: 200, topik: '4급', label: { ko: 'TOPIK 4급', zh: 'TOPIK 4级', en: 'TOPIK Level 4' },
+    desc: {
+      ko: '한국 생활 불편 없음! 뉴스, 업무, 깊은 대화까지. 한국에서 살 수 있어요 🏠',
+      zh: '在韩国生活无障碍！新闻、工作、深度对话都OK。可以在韩国生活了 🏠',
+      en: 'No barriers in Korea! News, work, deep conversations. Ready to live in Korea 🏠'
+    }
+  },
+]
+```
+
+게이지바 UI:
+```jsx
+<div className="mx-4 mb-6">
+  {/* 현재 레벨 */}
+  <div className="flex items-center justify-between mb-2">
+    <p className="text-sm font-bold text-[#1A1A1A]">
+      {L(lang, { ko: '나의 한국어', zh: '我的韩语', en: 'My Korean' })}
+    </p>
+    <p className="text-xs text-[#666666]">
+      {currentLevel} / 200 {L(lang, { ko: '단계', zh: '阶段', en: 'levels' })}
+    </p>
+  </div>
+  
+  {/* 프로그레스바 (200단계) */}
+  <div className="relative w-full h-3 bg-[#F5F5F5] rounded-full overflow-hidden mb-3">
+    <div
+      className="h-full bg-gradient-to-r from-[#2D5A3D] to-[#4A8A5A] rounded-full transition-all duration-500"
+      style={{ width: `${(currentLevel / 200) * 100}%` }}
+    />
+    {/* 마일스톤 마커 */}
+    <div className="absolute top-0 h-full w-px bg-[#B8860B]" style={{ left: '30%' }} /> {/* 60/200 */}
+    <div className="absolute top-0 h-full w-px bg-[#B8860B]" style={{ left: '50%' }} /> {/* 100/200 */}
+    <div className="absolute top-0 h-full w-px bg-[#B8860B]" style={{ left: '100%' }} /> {/* 200/200 */}
+  </div>
+  
+  {/* 마일스톤 라벨 */}
+  <div className="flex justify-between text-[10px] text-[#999999] mb-3">
+    <span>0</span>
+    <span style={{ position: 'absolute', left: '30%', transform: 'translateX(-50%)' }}>2급</span>
+    <span style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>3급</span>
+    <span>4급</span>
+  </div>
+  
+  {/* 다음 마일스톤 설명 카드 */}
+  {/* 현재 레벨에 따라 다음 목표 표시 */}
+  <div className="p-3 rounded-xl border border-[#E5E7EB] bg-white">
+    <p className="text-xs font-medium text-[#2D5A3D]">{nextMilestone.label}</p>
+    <p className="text-[11px] text-[#666666] mt-1">{nextMilestone.desc}</p>
+  </div>
+</div>
+```
+
+### 2. 학습 세션 리스트
+
+기존 education.js의 `sessions` 데이터를 사용. EducationTab의 UI를 가져오되 간소화.
+
+각 세션 = 1 단계. 세션 완료 시 currentLevel + 1.
+
+세션 카드 스타일은 코스탭과 동일: `bg-white border border-[#E5E7EB] rounded-2xl p-4`
+
+### 3. 학습 → 퀴즈 흐름
+
+세션 클릭 시:
+1. 학습 콘텐츠 표시 (기존 EducationTab의 세션 상세)
+2. 학습 완료 후 "퀴즈 시작" 버튼 표시
+3. 퀴즈 = gameData.js의 CHAPTERS에서 관련 문제 출제 (또는 세션 자체에 퀴즈 포함)
+4. 퀴즈 70% 이상 → 세션 완료 → currentLevel + 1 → localStorage 저장
+5. 퀴즈 70% 미만 → 재시도 가능
+
+### 4. 삭제할 것
+- KoreanTab.jsx의 게임/학습 토글 버튼 전체
+- KoreanGameMain import/렌더링
+- StreakBanner (연속 출석) — 필요 없음
+
+### 5. 유지할 것
+- `src/components/korean-game/gameData.js` — 퀴즈 문제 데이터로 사용
+- `src/data/education.js` — 학습 세션 데이터
+- `src/components/korean-game/LessonScreen.jsx` — 퀴즈 UI 재사용
+- `src/components/EducationTab.jsx` — 파일은 유지하되 KoreanTab에서 직접 import하지 않아도 됨 (KoreanTab이 자체적으로 세션 렌더링)
+
+### 구현 방법 (실용적):
+KoreanTab.jsx를 200줄 이내로 재작성. 복잡한 학습 세션 상세보기는 EducationTab 컴포넌트를 그대로 import해서 사용하되, 상단에 게이지바만 추가.
+
+실제로 가장 간단한 구현:
+```jsx
+import { useState, useEffect, lazy, Suspense } from 'react'
+import { sessions } from '../data/education'
+import { CHAPTERS } from './korean-game/gameData'
+
+const EducationTab = lazy(() => import('./EducationTab'))
+const LessonScreen = lazy(() => import('./korean-game/LessonScreen'))
+
+export default function KoreanTab({ lang }) {
+  const [currentLevel, setCurrentLevel] = useState(() => {
+    return parseInt(localStorage.getItem('hanpocket_korean_level') || '0')
+  })
+  const [activeQuiz, setActiveQuiz] = useState(null)
+  
+  // 레벨 저장
+  useEffect(() => {
+    localStorage.setItem('hanpocket_korean_level', String(currentLevel))
+  }, [currentLevel])
+  
+  // 퀴즈 완료 핸들러
+  const handleQuizComplete = (passRate) => {
+    if (passRate >= 0.7) {
+      setCurrentLevel(prev => Math.min(200, prev + 1))
+    }
+    setActiveQuiz(null)
+  }
+  
+  // 퀴즈 모드
+  if (activeQuiz) {
+    return <LessonScreen lesson={activeQuiz} onComplete={handleQuizComplete} onExit={() => setActiveQuiz(null)} lang={lang} />
+  }
+  
+  return (
+    <div className="px-4 pt-4 pb-24">
+      {/* TOPIK 게이지바 */}
+      {/* ... 위 디자인 참고 ... */}
+      
+      {/* 학습 콘텐츠 — EducationTab 재사용 */}
+      <EducationTab lang={lang} onSessionComplete={() => {
+        // 세션 끝나면 관련 퀴즈 출제
+        const chapter = CHAPTERS.find(c => !c.locked)
+        if (chapter && chapter.lessons.length > 0) {
+          setActiveQuiz(chapter.lessons[0])
+        } else {
+          setCurrentLevel(prev => Math.min(200, prev + 1))
+        }
+      }} />
+    </div>
+  )
+}
+```
+
+**핵심**: EducationTab에 `onSessionComplete` prop을 추가해야 함. EducationTab 내부에서 세션 학습이 끝나면 이 콜백을 호출.
+
+### EducationTab 수정 (최소한)
+- `onSessionComplete` prop 추가
+- 세션 완료 시 (마지막 유닛 완료 or "다음" 버튼) `onSessionComplete()` 호출
+- 기존 기능 유지
+
+### 래플스 테마
+- 게이지바: bg-[#F5F5F5], 바 색상 from-[#2D5A3D] to-[#4A8A5A]
+- 마일스톤: #B8860B (골드)
+- 카드: bg-white border border-[#E5E7EB] rounded-2xl
+- 텍스트: #1A1A1A, #666666, #999999
+
+## 수정하지 말 것
+- gameData.js (퀴즈 데이터)
+- LessonScreen.jsx (퀴즈 UI)
+- education.js (학습 데이터)
+- CourseTab, HomeTab, App.jsx 등 다른 컴포넌트
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-032: Korean tab restructure - unified study+quiz, TOPIK gauge bar" && openclaw system event --text "Done: Board-032 한국어탭 구조 변경 — 학습+퀴즈 통합, TOPIK 게이지바" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

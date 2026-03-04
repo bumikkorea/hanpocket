@@ -1,0 +1,327 @@
+Board-033: 홈탭 개선 + 로그인 팝업 + 온보딩 제거
+
+## 수정 파일
+1. `src/components/HomeTab.jsx` — Easy Korean 제거, 여행필수 카드 추가, 긴급 카드 축소
+2. `src/App.jsx` — 온보딩(국적 선택) 제거 → 로그인 팝업으로 교체
+
+---
+
+## 1. HomeTab.jsx 변경
+
+### 1-1. Easy Korean pill 버튼 삭제
+정보바에서 Easy Korean 버튼 전체 삭제 (🇰🇷 pill). 정보바는 온도/환율/시간만 남김:
+```jsx
+<div className="px-4 mb-4 flex items-center gap-2 text-xs" style={{ color: '#999999' }}>
+  <span>서울 {temp}°C</span>
+  <span>·</span>
+  <span>¥1 = ₩{rate}</span>
+  <span>·</span>
+  <span>KST {time}</span>
+</div>
+```
+`<div className="flex-1" />` 이하 Easy Korean 버튼 전부 삭제.
+
+### 1-2. 여행 필수에 3개 카드 추가
+기존 4개(입국카드, SIM, 세금환급, 면세한도) + 새 3개 + 긴급상황(축소) = 8개 (4x2 그리드)
+
+추가할 카드 3개:
+
+**택시 잡기:**
+```js
+{
+  title: { ko: '택시 잡기', zh: '叫出租车', en: 'Get a Taxi' },
+  gradient: 'from-[#2D5A3D] to-[#1A3A28]',
+  guide: null,
+  action: 'taxi',
+  img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=200&fit=crop'
+}
+```
+클릭 시: `window.open('https://kakaot.com', '_blank')` (카카오 K.ride 앱 → 웹 fallback)
+또는 deep link: `kakaot://` → fallback `https://t.kakao.com`
+
+**버스/지하철 표:**
+```js
+{
+  title: { ko: '교통카드', zh: '交通卡/车票', en: 'Transit Card' },
+  gradient: 'from-[#4A8A5A] to-[#2D5A3D]',
+  guide: 'transit',
+  img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=200&fit=crop'
+}
+```
+클릭 시: `setActiveGuide('transit')` → 새 TransitGuide 오버레이 (아래 참조)
+
+**한국지도:**
+```js
+{
+  title: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' },
+  gradient: 'from-[#B8860B] to-[#8B6914]',
+  guide: null,
+  action: 'map',
+  img: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69c07a?w=400&h=200&fit=crop'
+}
+```
+클릭 시: 바이두맵 앱 열기 `baidumap://` → fallback `https://map.baidu.com`
+카드 하단에 작은 텍스트: "바이두 지도로 길찾기 OK" 또는 중국어 "百度地图找路OK"
+
+### 1-3. 긴급상황 카드를 그리드 안으로
+기존: 풀폭 배너 (별도)
+변경: 2x4 그리드의 8번째 칸 (반폭 카드)
+
+```js
+{
+  title: { ko: '긴급 SOS', zh: '紧急SOS', en: 'Emergency' },
+  gradient: 'from-[#8B2500] to-[#5C1A00]',
+  guide: null,
+  action: 'sos',
+  img: null
+}
+```
+클릭 시: `setTab('sos')`
+기존 긴급 배너(`<button onClick={() => setTab('sos')} ...>`) 삭제.
+
+### 최종 여행 필수 카드 순서 (8개, grid-cols-2):
+1. 입국카드 | 2. SIM/eSIM
+3. 세금환급 | 4. 면세한도
+5. 택시 잡기 | 6. 교통카드
+7. 한국지도 | 8. 긴급 SOS
+
+### 카드 onClick 로직 수정:
+```jsx
+{items.map((item, i) => (
+  <button
+    key={i}
+    onClick={() => {
+      if (item.guide) setActiveGuide(item.guide)
+      else if (item.action === 'taxi') {
+        // Deep link to K.ride
+        const iframe = document.createElement('iframe')
+        iframe.style.display = 'none'
+        iframe.src = 'kakaot://'
+        document.body.appendChild(iframe)
+        setTimeout(() => {
+          document.body.removeChild(iframe)
+          window.open('https://t.kakao.com', '_blank')
+        }, 1500)
+      }
+      else if (item.action === 'map') {
+        const iframe = document.createElement('iframe')
+        iframe.style.display = 'none'
+        iframe.src = 'baidumap://'
+        document.body.appendChild(iframe)
+        setTimeout(() => {
+          document.body.removeChild(iframe)
+          window.open('https://map.baidu.com', '_blank')
+        }, 1500)
+      }
+      else if (item.action === 'sos') setTab('sos')
+    }}
+    ...
+  >
+```
+
+### TransitGuide 오버레이 (새로 추가)
+HomeTab 파일 내에 간단한 인라인 컴포넌트 또는 `activeGuide === 'transit'` 케이스 추가.
+
+내용:
+```jsx
+{activeGuide === 'transit' && (
+  <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+    <div className="px-4 pt-4 pb-20">
+      <div className="flex items-center gap-3 mb-6">
+        <button onClick={() => setActiveGuide(null)} className="p-1"><ChevronLeft size={24} /></button>
+        <h1 className="text-lg font-bold text-[#1A1A1A]">교통카드 & 표 구매</h1>
+      </div>
+      
+      <div className="space-y-4">
+        <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+          <h3 className="font-bold text-[#1A1A1A] mb-2">🎫 T-money / Cash Bee 카드</h3>
+          <p className="text-sm text-[#666666] leading-relaxed">
+            편의점(CU, GS25, 세븐일레븐)에서 2,500원에 구매. 충전 후 버스·지하철·택시 모두 사용 가능.
+          </p>
+          <p className="text-xs text-[#999999] mt-2">中文: 在便利店(CU、GS25、7-11)花2500韩元购买T-money卡，充值后公交、地铁、出租车都能用。</p>
+        </div>
+        
+        <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+          <h3 className="font-bold text-[#1A1A1A] mb-2">🚇 지하철 1회권</h3>
+          <p className="text-sm text-[#666666] leading-relaxed">
+            지하철역 자동발매기에서 구매. 보증금 500원 포함. 하차 후 보증금 환불기에서 500원 돌려받기.
+          </p>
+          <p className="text-xs text-[#999999] mt-2">中文: 在地铁站自动售票机购买一次性交通卡。含500韩元押金，下车后在退款机取回。</p>
+        </div>
+        
+        <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+          <h3 className="font-bold text-[#1A1A1A] mb-2">🚌 버스 이용법</h3>
+          <p className="text-sm text-[#666666] leading-relaxed">
+            앞문 탑승 → T-money 태그 → 하차 시 뒷문에서 태그. 현금(1,450원)도 가능하지만 거스름돈 없음.
+          </p>
+          <p className="text-xs text-[#999999] mt-2">中文: 前门上车→刷T-money→下车时后门再刷。可以付现金(1450韩元)但不找零。</p>
+        </div>
+        
+        <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+          <h3 className="font-bold text-[#1A1A1A] mb-2">💡 꿀팁</h3>
+          <p className="text-sm text-[#666666] leading-relaxed">
+            • 환승: 30분 내 버스↔지하철 환승 시 무료<br/>
+            • 외국인 전용: WOWPASS, NAMANE 카드도 교통카드 기능 있음<br/>
+            • 충전: 편의점 또는 지하철역 충전기에서 가능
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+```
+
+ChevronLeft import 필요 → HomeTab 상단에 추가.
+
+---
+
+## 2. App.jsx 변경 — 온보딩 제거 + 로그인 팝업
+
+### 2-1. OnboardingSimple 제거
+현재 (line ~1398):
+```jsx
+if (!profile) return <OnboardingSimple ... />
+```
+이 조건 삭제. 대신 profile이 없어도 앱을 보여주되, **로그인 팝업**을 표시.
+
+### 2-2. 로그인/이용약관 팝업 추가
+조건: `!profile && !localStorage.getItem('hanpocket_dismissed_auth')` 일 때 팝업 표시.
+X 버튼으로 닫을 수 있고, 닫으면 `localStorage.setItem('hanpocket_dismissed_auth', '1')`.
+
+팝업 디자인:
+```jsx
+{showAuthPopup && (
+  <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden" style={{ maxHeight: '85vh' }}>
+      {/* 헤더 */}
+      <div className="px-5 pt-5 pb-3">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-bold text-[#1A1A1A]">HANPOCKET</h2>
+          <button onClick={dismissAuth} className="p-1 text-[#999]"><X size={20} /></button>
+        </div>
+        <p className="text-sm text-[#666666]">
+          한국 여행의 모든 것을 한 곳에서.<br/>
+          간편 인증으로 시작하세요.
+        </p>
+      </div>
+      
+      {/* 인증 버튼 5개 (원형 아이콘, 가로 정렬) */}
+      <div className="px-5 py-4">
+        <div className="flex justify-center gap-4">
+          {/* 네이버 */}
+          <button onClick={() => handleAuth('naver')} className="flex flex-col items-center gap-1.5">
+            <div className="w-12 h-12 rounded-full bg-[#03C75A] flex items-center justify-center">
+              <span className="text-white font-bold text-lg">N</span>
+            </div>
+            <span className="text-[10px] text-[#666]">네이버</span>
+          </button>
+          
+          {/* 카카오 */}
+          <button onClick={() => handleAuth('kakao')} className="flex flex-col items-center gap-1.5">
+            <div className="w-12 h-12 rounded-full bg-[#FEE500] flex items-center justify-center">
+              <span className="text-[#1C1C1E] font-bold text-lg">K</span>
+            </div>
+            <span className="text-[10px] text-[#666]">카카오</span>
+          </button>
+          
+          {/* Apple */}
+          <button onClick={() => handleAuth('apple')} className="flex flex-col items-center gap-1.5">
+            <div className="w-12 h-12 rounded-full bg-[#1C1C1E] flex items-center justify-center">
+              <span className="text-white font-bold text-lg"></span>
+            </div>
+            <span className="text-[10px] text-[#666]">Apple</span>
+          </button>
+          
+          {/* WeChat */}
+          <button onClick={() => handleAuth('wechat')} className="flex flex-col items-center gap-1.5">
+            <div className="w-12 h-12 rounded-full bg-[#07C160] flex items-center justify-center">
+              <span className="text-white font-bold text-sm">微信</span>
+            </div>
+            <span className="text-[10px] text-[#666]">WeChat</span>
+          </button>
+          
+          {/* Alipay */}
+          <button onClick={() => handleAuth('alipay')} className="flex flex-col items-center gap-1.5">
+            <div className="w-12 h-12 rounded-full bg-[#1677FF] flex items-center justify-center">
+              <span className="text-white font-bold text-sm">支</span>
+            </div>
+            <span className="text-[10px] text-[#666]">Alipay</span>
+          </button>
+        </div>
+      </div>
+      
+      {/* 이용약관 (스크롤) */}
+      <div className="px-5 pb-5">
+        <div className="border border-[#E5E7EB] rounded-xl p-3 max-h-40 overflow-y-auto">
+          <p className="text-[10px] text-[#999999] leading-relaxed">
+            <strong>HanPocket 이용약관</strong><br/><br/>
+            제1조 (목적) 본 약관은 HanPocket(이하 "서비스")이 제공하는 모든 서비스의 이용조건 및 절차, 이용자와 서비스의 권리·의무·책임사항을 규정합니다.<br/><br/>
+            제2조 (용어의 정의) 1. 가입: SNS 채널인증과 본 약관에 동의하여 서비스 이용계약을 완료하는 행위. 2. 이용자: 본 약관에 동의하고 SNS 채널인증을 통해 이용권한을 부여받은 개인. 3. SNS 채널인증: 서비스 이용을 위해 이용자가 SNS 채널을 선택하고 인증하는 행위.<br/><br/>
+            제3조 (법령 준수) 서비스는 약관의 규제에 관한 법률, 정보통신망 이용촉진 및 정보보호법, 개인정보 보호법 등 관련법령을 준수합니다.<br/><br/>
+            제4조 (약관의 효력) 1. 본 약관은 서비스에 게시되고 가입 완료 시 효력이 발생합니다. 2. 약관 변경 시 적용일 7일 전 공지합니다.<br/><br/>
+            제5조 (개인정보 보호) 1. 서비스는 필요 최소한의 정보를 수집합니다. 2. 이용자 동의 없이 정보를 제3자에게 제공하지 않습니다. 3. 통계작성 등 법령에 의한 경우는 예외입니다.<br/><br/>
+            제6조 (이용자의 의무) 1. 타인의 인증정보를 도용하지 않습니다. 2. 서비스를 통해 전송된 내용의 출처를 위장하지 않습니다. 3. 다른 사용자의 개인정보를 수집·저장하지 않습니다.<br/><br/>
+            인증을 진행하면 위 약관에 동의하는 것으로 간주됩니다.
+          </p>
+        </div>
+        <p className="text-[9px] text-[#999999] mt-2 text-center">
+          인증 시 위 이용약관 및 개인정보처리방침에 동의합니다.
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+```
+
+### 2-3. handleAuth 함수
+현재는 실제 OAuth가 없으므로, 인증 버튼 클릭 시 임시로 profile을 생성하고 저장:
+```js
+const handleAuth = (provider) => {
+  const p = { 
+    name: '', 
+    nationality: 'china_mainland',
+    authProvider: provider,
+    lang: 'zh'
+  }
+  setProfile(p)
+  saveProfile(p)
+  setShowAuthPopup(false)
+}
+```
+
+### 2-4. showAuthPopup 상태 추가
+```js
+const [showAuthPopup, setShowAuthPopup] = useState(() => {
+  return !loadProfile() && !localStorage.getItem('hanpocket_dismissed_auth')
+})
+
+const dismissAuth = () => {
+  setShowAuthPopup(false)
+  localStorage.setItem('hanpocket_dismissed_auth', '1')
+}
+```
+
+### 2-5. 온보딩 조건 제거
+현재:
+```jsx
+if (!profile) return <OnboardingSimple ... />
+```
+삭제. profile 없이도 앱 렌더링. 대신 팝업이 뜸.
+
+기본 profile 없을 때의 fallback:
+- `lang` 기본값 'zh' 유지
+- nationality는 인증 시 자동 설정
+
+---
+
+## 수정하지 말 것
+- OnboardingSimple.jsx 파일 자체 (삭제하지 마, import만 제거)
+- CourseTab, EducationTab, gameData 등
+- 하단 탭바, 설정 패널
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app && npm run build && git add -A && git commit -m "Board-033: Remove onboarding, add auth popup, travel cards expansion, remove Easy Korean" && openclaw system event --text "Done: Board-033 온보딩 제거 + 로그인 팝업 + 여행필수 카드 확장" --mode now
+```
+
+결과물은 파일로 저장하거나 이 세션에서 텍스트로 반환만 해. 절대로 telegram bot API를 직접 호출하거나 외부 봇 토큰으로 메시지를 보내지 마.

@@ -72,7 +72,7 @@ function TopikGaugeBar({ currentLevel, lang }) {
   const next = getNextMilestone(currentLevel)
 
   return (
-    <div className="mx-4 mb-6">
+    <div className="mb-6">
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm font-bold text-[#1A1A1A]">
           {L(lang, { ko: '나의 한국어', zh: '我的韩语', en: 'My Korean' })}
@@ -187,7 +187,7 @@ export default function KoreanTab({ lang }) {
   }
 
   return (
-    <div className="pt-4 pb-24">
+    <div className="pt-4 pb-24 px-4">
       {/* TOPIK 게이지바 */}
       <TopikGaugeBar currentLevel={currentLevel} lang={lang} />
 

@@ -2060,10 +2060,8 @@ function AppInner() {
                   { key: 'weather', emoji: '☀️', label: '날씨' },
                   { key: 'exchange', emoji: '💱', label: '환율' },
                   { key: 'clock', emoji: '🕐', label: '한국 시간' },
-                  { key: 'korean', emoji: '📚', label: '오늘의 한국어' },
                   { key: 'course', emoji: '🗺️', label: '추천 코스' },
                   { key: 'emergency', emoji: '🚨', label: '긴급 연락처' },
-                  { key: 'situation', emoji: '🗣️', label: '상황별 한국어' },
                 ].map((w, i, arr) => {
                   const isOn = widgetSettings[w.key] !== false
                   return (

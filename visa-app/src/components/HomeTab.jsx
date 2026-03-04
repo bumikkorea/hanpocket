@@ -1,5 +1,5 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
-import { ChevronLeft } from 'lucide-react'
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
+import { ChevronLeft, Plus, Pencil } from 'lucide-react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
 
 const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
@@ -31,24 +31,67 @@ function useWeatherData() {
   return weather
 }
 
-// ── 한국 시간 훅 ──
-function useKoreaTime() {
-  const [time, setTime] = useState(() => {
-    const now = new Date()
-    const utc = now.getTime() + now.getTimezoneOffset() * 60000
-    const kr = new Date(utc + 9 * 3600000)
-    return kr.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+// ── 시간대 데이터 ──
+const TIMEZONE_OPTIONS = [
+  { id: 'CST', flag: '\u{1F1E8}\u{1F1F3}', name: '中国', abbr: 'CST', offset: 8 },
+  { id: 'JST', flag: '\u{1F1EF}\u{1F1F5}', name: '日本', abbr: 'JST', offset: 9 },
+  { id: 'EST', flag: '\u{1F1FA}\u{1F1F8}', name: '美国东部', abbr: 'EST', offset: -5 },
+  { id: 'PST', flag: '\u{1F1FA}\u{1F1F8}', name: '美国西部', abbr: 'PST', offset: -8 },
+  { id: 'GMT', flag: '\u{1F1EC}\u{1F1E7}', name: '英国', abbr: 'GMT', offset: 0 },
+  { id: 'SGT', flag: '\u{1F1F8}\u{1F1EC}', name: '新加坡', abbr: 'SGT', offset: 8 },
+  { id: 'AEST', flag: '\u{1F1E6}\u{1F1FA}', name: '悉尼', abbr: 'AEST', offset: 11 },
+  { id: 'ICT_TH', flag: '\u{1F1F9}\u{1F1ED}', name: '泰国', abbr: 'ICT', offset: 7 },
+  { id: 'ICT_VN', flag: '\u{1F1FB}\u{1F1F3}', name: '越南', abbr: 'ICT', offset: 7 },
+  { id: 'PHT', flag: '\u{1F1F5}\u{1F1ED}', name: '菲律宾', abbr: 'PHT', offset: 8 },
+]
+
+function getTimeForOffset(offset) {
+  const now = new Date()
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000
+  const t = new Date(utc + offset * 3600000)
+  return t.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+}
+
+// ── 멀티 시간대 훅 ──
+function useMultiTimezone() {
+  const [times, setTimes] = useState(() => {
+    const saved = localStorage.getItem('hanpocket_extra_timezones')
+    const extras = saved ? JSON.parse(saved) : []
+    const kst = getTimeForOffset(9)
+    const extraTimes = extras.map(id => {
+      const tz = TIMEZONE_OPTIONS.find(t => t.id === id)
+      return tz ? { ...tz, time: getTimeForOffset(tz.offset) } : null
+    }).filter(Boolean)
+    return { kst, extras: extraTimes }
   })
+
   useEffect(() => {
-    const t = setInterval(() => {
-      const now = new Date()
-      const utc = now.getTime() + now.getTimezoneOffset() * 60000
-      const kr = new Date(utc + 9 * 3600000)
-      setTime(kr.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }))
-    }, 30000)
+    const update = () => {
+      const saved = localStorage.getItem('hanpocket_extra_timezones')
+      const extras = saved ? JSON.parse(saved) : []
+      const kst = getTimeForOffset(9)
+      const extraTimes = extras.map(id => {
+        const tz = TIMEZONE_OPTIONS.find(t => t.id === id)
+        return tz ? { ...tz, time: getTimeForOffset(tz.offset) } : null
+      }).filter(Boolean)
+      setTimes({ kst, extras: extraTimes })
+    }
+    const t = setInterval(update, 30000)
     return () => clearInterval(t)
   }, [])
-  return time
+
+  const refresh = useCallback(() => {
+    const saved = localStorage.getItem('hanpocket_extra_timezones')
+    const extras = saved ? JSON.parse(saved) : []
+    const kst = getTimeForOffset(9)
+    const extraTimes = extras.map(id => {
+      const tz = TIMEZONE_OPTIONS.find(t => t.id === id)
+      return tz ? { ...tz, time: getTimeForOffset(tz.offset) } : null
+    }).filter(Boolean)
+    setTimes({ kst, extras: extraTimes })
+  }, [])
+
+  return { ...times, refresh }
 }
 
 // ── 오늘의 한국어 데이터 ──
@@ -116,7 +159,7 @@ const SCENE_PHRASES = [
 
 export default function HomeTab({ lang, exchangeRate, setTab }) {
   const weather = useWeatherData()
-  const koreaTime = useKoreaTime()
+  const { kst: koreaTime, extras: extraTimezones, refresh: refreshTimezones } = useMultiTimezone()
   const todayExpr = getTodayExpression()
 
   // 환율: prop에서 CNY 환율 추출
@@ -127,6 +170,13 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
 
   // 가이드 오버레이 상태
   const [activeGuide, setActiveGuide] = useState(null)
+
+  // 시간대 선택 팝업
+  const [showTzPicker, setShowTzPicker] = useState(false)
+  const [tzSelection, setTzSelection] = useState(() => {
+    const saved = localStorage.getItem('hanpocket_extra_timezones')
+    return saved ? JSON.parse(saved) : []
+  })
 
   // 토스트 상태
   const [toast, setToast] = useState(null)
@@ -141,12 +191,28 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
       style={{ backgroundColor: '#FFFFFF' }}
     >
       {/* ─── 상단 정보 바 ─── */}
-      <div className="px-4 mb-4 flex items-center gap-2 text-xs" style={{ color: '#999999' }}>
+      <div className="px-4 mb-4 flex items-center gap-2 text-xs flex-wrap" style={{ color: '#999999' }}>
         <span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}</span>
         <span>·</span>
         <span>¥1 = ₩{Math.round(cnyRate)}</span>
         <span>·</span>
         <span>KST {koreaTime}</span>
+        {extraTimezones.map(tz => (
+          <span key={tz.id}>
+            <span>·</span>
+            {' '}<span style={{ color: '#3B82F6' }}>{tz.abbr} {tz.time}</span>
+          </span>
+        ))}
+        <button
+          onClick={() => setShowTzPicker(true)}
+          className="ml-0.5 inline-flex items-center justify-center rounded-full active:scale-95 transition-transform"
+          style={{ color: '#3B82F6', width: 18, height: 18 }}
+        >
+          {extraTimezones.length > 0
+            ? <Pencil size={11} />
+            : <Plus size={13} />
+          }
+        </button>
       </div>
 
       {/* ─── 3. 추천 코스 섹션 ─── */}
@@ -160,7 +226,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
         </button>
-        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-pl-4 pb-2">
+        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
           {courses.map(course => (
             <button
               key={course.id}
@@ -292,7 +358,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
         </button>
-        <div className="pl-4 pr-0 flex gap-2 overflow-x-auto scrollbar-hide snap-x snap-mandatory scroll-pl-4 pb-2">
+        <div className="pl-4 pr-0 flex gap-2 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
@@ -373,6 +439,77 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
             </Suspense>
           )}
         </>
+      )}
+
+      {/* ─── 시간대 선택 팝업 ─── */}
+      {showTzPicker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.3)' }} onClick={() => setShowTzPicker(false)}>
+          <div
+            className="rounded-2xl mx-6 w-full max-w-sm overflow-hidden"
+            style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="px-5 pt-4 pb-2 flex items-center justify-between">
+              <h3 className="text-sm font-bold" style={{ color: '#1A1A1A' }}>
+                {L(lang, { ko: '시간대 추가', zh: '添加时区', en: 'Add Timezone' })}
+              </h3>
+              <button
+                onClick={() => { setTzSelection([]); }}
+                className="text-xs"
+                style={{ color: '#999999' }}
+              >
+                {L(lang, { ko: '전체 해제', zh: '全部取消', en: 'Clear all' })}
+              </button>
+            </div>
+            <div className="px-3 pb-2 max-h-80 overflow-y-auto">
+              {TIMEZONE_OPTIONS.map(tz => {
+                const checked = tzSelection.includes(tz.id)
+                const currentTime = getTimeForOffset(tz.offset)
+                return (
+                  <button
+                    key={tz.id}
+                    onClick={() => {
+                      setTzSelection(prev =>
+                        prev.includes(tz.id)
+                          ? prev.filter(id => id !== tz.id)
+                          : [...prev, tz.id]
+                      )
+                    }}
+                    className="w-full flex items-center justify-between px-3 py-3 rounded-xl active:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-base">{tz.flag}</span>
+                      <span className="text-sm" style={{ color: '#1A1A1A' }}>{tz.name}</span>
+                      <span className="text-xs" style={{ color: '#999999' }}>{tz.abbr} {currentTime}</span>
+                    </div>
+                    <div
+                      className="w-5 h-5 rounded-md flex items-center justify-center"
+                      style={{
+                        border: checked ? 'none' : '1.5px solid #D1D5DB',
+                        backgroundColor: checked ? '#3B82F6' : 'transparent',
+                      }}
+                    >
+                      {checked && <span className="text-white text-xs font-bold">✓</span>}
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+            <div className="px-5 pb-4 pt-2">
+              <button
+                onClick={() => {
+                  localStorage.setItem('hanpocket_extra_timezones', JSON.stringify(tzSelection))
+                  refreshTimezones()
+                  setShowTzPicker(false)
+                }}
+                className="w-full py-2.5 rounded-xl text-sm font-medium text-white active:scale-[0.98] transition-transform"
+                style={{ backgroundColor: '#3B82F6' }}
+              >
+                {L(lang, { ko: '확인', zh: '确认', en: 'Confirm' })}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* ─── 토스트 ─── */}

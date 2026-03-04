@@ -384,43 +384,79 @@ function ChatTab({ profile, lang }) {
 }
 
 function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, toggleDarkMode }) {
-  // 로그인 방식 확인을 위한 소셜 로그인 사용자 정보
-  const kakaoUser = getKakaoUser()
-  const appleUser = getAppleUser()
-  
   // 모달 관리
   const [showDateModal, setShowDateModal] = useState(false)
   const [showNotifModal, setShowNotifModal] = useState(false)
   const [showTimingModal, setShowTimingModal] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [toastMsg, setToastMsg] = useState('')
+  const [showVisaModal, setShowVisaModal] = useState(false)
+
+  // 아바타
+  const avatarInputRef = useRef(null)
+  const [avatar, setAvatar] = useState(() => {
+    try { return localStorage.getItem('hanpocket_avatar') || '' } catch { return '' }
+  })
+
+  // 닉네임
+  const [nickname, setNickname] = useState(() => localStorage.getItem('hanpocket_nickname') || '')
+  const [editingNickname, setEditingNickname] = useState(false)
 
   // 관리자 모드
   const [adminMode, setAdminMode] = useState(() => {
     try { return localStorage.getItem('admin_mode') === 'true' } catch { return false }
   })
   const [showAdminPanel, setShowAdminPanel] = useState(false)
-  const [tapCount, setTapCount] = useState(0)
-  const tapTimer = useRef(null)
+  const [showAdminPwModal, setShowAdminPwModal] = useState(false)
+  const [adminPw, setAdminPw] = useState('')
+  const [adminPwError, setAdminPwError] = useState(false)
   const [pocketVisibility, setPocketVisibility] = useState(() => {
     try { return JSON.parse(localStorage.getItem('pocket_visibility')) || {} } catch { return {} }
   })
 
-  const handleAvatarTap = () => {
-    const newCount = tapCount + 1
-    setTapCount(newCount)
-    clearTimeout(tapTimer.current)
-    if (newCount >= 5) {
-      const newMode = !adminMode
-      setAdminMode(newMode)
-      localStorage.setItem('admin_mode', String(newMode))
-      setTapCount(0)
-      showToastMessage(newMode
-        ? (lang === 'ko' ? '관리자 모드 활성화' : lang === 'zh' ? '管理员模式已激活' : 'Admin mode activated')
-        : (lang === 'ko' ? '관리자 모드 비활성화' : lang === 'zh' ? '管理员模式已关闭' : 'Admin mode deactivated'))
+  const handleAdminLogin = () => {
+    if (adminPw === '1005') {
+      setAdminMode(true)
+      localStorage.setItem('admin_mode', 'true')
+      setShowAdminPwModal(false)
+      setShowAdminPanel(true)
+      setAdminPw('')
+      setAdminPwError(false)
     } else {
-      tapTimer.current = setTimeout(() => setTapCount(0), 1500)
+      setAdminPwError(true)
     }
+  }
+
+  const handleAdminLogout = () => {
+    setAdminMode(false)
+    localStorage.setItem('admin_mode', 'false')
+    setShowAdminPanel(false)
+  }
+
+  // 아바타 업로드 (max 200x200, JPEG 0.7)
+  const handleAvatarUpload = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const MAX = 200
+        let w = img.width, h = img.height
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX }
+          else { w = Math.round(w * MAX / h); h = MAX }
+        }
+        canvas.width = w; canvas.height = h
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7)
+        setAvatar(dataUrl)
+        localStorage.setItem('hanpocket_avatar', dataUrl)
+      }
+      img.src = ev.target.result
+    }
+    reader.readAsDataURL(file)
   }
 
   const showToastMessage = (msg) => {
@@ -455,61 +491,69 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
       ? (lang === 'ko' ? '전체 켜기 완료' : lang === 'zh' ? '全部开启' : 'All enabled')
       : (lang === 'ko' ? '전체 끄기 완료' : lang === 'zh' ? '全部关闭' : 'All disabled'))
   }
-  
+
   // 비자 만료일 임시 저장
   const [tempDate, setTempDate] = useState('')
-  
+
   // 알림 설정
   const [notifPrefs, setNotifPrefs] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('visa_notif_prefs')) || { d90: true, d60: true, d30: true, d7: true } }
-    catch { return { d90: true, d60: true, d30: true, d7: true } }
+    try { return JSON.parse(localStorage.getItem('visa_notif_prefs')) || { d60: true, d30: true, d7: true } }
+    catch { return { d60: true, d30: true, d7: true } }
   })
 
-  // 로그인 방식 표시
-  const getLoginProvider = () => {
-    if (kakaoUser) return { provider: 'kakao', nickname: kakaoUser.nickname, icon: '💬' }
-    if (appleUser) return { provider: 'apple', nickname: appleUser.nickname || appleUser.name, icon: '🍎' }
-    // profile에 저장된 loginMethod도 체크
-    if (profile?.loginMethod) {
-      const icons = { kakao: '💬', apple: '🍎' }
-      return { provider: profile.loginMethod, nickname: profile.nickname || '사용자', icon: icons[profile.loginMethod] || '👤' }
-    }
-    return null
-  }
+  // 비자 선택 임시 저장
+  const [tempVisaType, setTempVisaType] = useState('')
 
-  // 국적 표시
-  const getNationalityLabel = () => {
-    const nationalityLabels = {
-      china_mainland: { ko: '중국(본토)', zh: '中国大陆', en: 'Mainland China' },
-      china_hk: { ko: '홍콩', zh: '香港', en: 'Hong Kong' },
-      china_macau: { ko: '마카오', zh: '澳门', en: 'Macau' },
-      china_taiwan: { ko: '대만', zh: '台湾', en: 'Taiwan' },
-      other: { ko: '기타', zh: '其他', en: 'Other' }
-    }
-    return nationalityLabels[profile?.nationality]?.[lang] || profile?.nationality || '-'
-  }
+  // 비자 전체 목록
+  const VISA_TYPES = [
+    { code: 'B-1', label: { ko: 'B-1 (사증면제)', zh: 'B-1 (免签)', en: 'B-1 (Visa Exemption)' } },
+    { code: 'B-2', label: { ko: 'B-2 (관광통과)', zh: 'B-2 (旅游过境)', en: 'B-2 (Tourist Transit)' } },
+    { code: 'C-3', label: { ko: 'C-3 (단기방문)', zh: 'C-3 (短期访问)', en: 'C-3 (Short-term Visit)' } },
+    { code: 'C-4', label: { ko: 'C-4 (단기취업)', zh: 'C-4 (短期就业)', en: 'C-4 (Short-term Employment)' } },
+    { code: 'D-1', label: { ko: 'D-1 (문화예술)', zh: 'D-1 (文化艺术)', en: 'D-1 (Culture/Art)' } },
+    { code: 'D-2', label: { ko: 'D-2 (유학)', zh: 'D-2 (留学)', en: 'D-2 (Study Abroad)' } },
+    { code: 'D-4', label: { ko: 'D-4 (일반연수)', zh: 'D-4 (一般研修)', en: 'D-4 (General Training)' } },
+    { code: 'D-5', label: { ko: 'D-5 (취재)', zh: 'D-5 (采访)', en: 'D-5 (Journalism)' } },
+    { code: 'D-6', label: { ko: 'D-6 (종교)', zh: 'D-6 (宗教)', en: 'D-6 (Religion)' } },
+    { code: 'D-7', label: { ko: 'D-7 (주재)', zh: 'D-7 (驻在)', en: 'D-7 (Intra-company Transfer)' } },
+    { code: 'D-8', label: { ko: 'D-8 (기업투자)', zh: 'D-8 (企业投资)', en: 'D-8 (Corporate Investment)' } },
+    { code: 'D-9', label: { ko: 'D-9 (무역경영)', zh: 'D-9 (贸易经营)', en: 'D-9 (Trade Management)' } },
+    { code: 'D-10', label: { ko: 'D-10 (구직)', zh: 'D-10 (求职)', en: 'D-10 (Job Seeking)' } },
+    { code: 'E-1', label: { ko: 'E-1 (교수)', zh: 'E-1 (教授)', en: 'E-1 (Professor)' } },
+    { code: 'E-2', label: { ko: 'E-2 (회화지도)', zh: 'E-2 (会话指导)', en: 'E-2 (Foreign Language Instructor)' } },
+    { code: 'E-3', label: { ko: 'E-3 (연구)', zh: 'E-3 (研究)', en: 'E-3 (Research)' } },
+    { code: 'E-4', label: { ko: 'E-4 (기술지도)', zh: 'E-4 (技术指导)', en: 'E-4 (Technology Transfer)' } },
+    { code: 'E-5', label: { ko: 'E-5 (전문직업)', zh: 'E-5 (专门职业)', en: 'E-5 (Professional)' } },
+    { code: 'E-6', label: { ko: 'E-6 (예술흥행)', zh: 'E-6 (艺术演出)', en: 'E-6 (Arts/Performance)' } },
+    { code: 'E-7', label: { ko: 'E-7 (특정활동)', zh: 'E-7 (特정活动)', en: 'E-7 (Specially Designated)' } },
+    { code: 'E-9', label: { ko: 'E-9 (비전문취업)', zh: 'E-9 (非专业就业)', en: 'E-9 (Non-professional Employment)' } },
+    { code: 'E-10', label: { ko: 'E-10 (선원취업)', zh: 'E-10 (船员就业)', en: 'E-10 (Crew Employment)' } },
+    { code: 'F-1', label: { ko: 'F-1 (방문동거)', zh: 'F-1 (访问同居)', en: 'F-1 (Family Visit)' } },
+    { code: 'F-2', label: { ko: 'F-2 (거주)', zh: 'F-2 (居住)', en: 'F-2 (Residence)' } },
+    { code: 'F-3', label: { ko: 'F-3 (동반)', zh: 'F-3 (随行)', en: 'F-3 (Dependent Family)' } },
+    { code: 'F-4', label: { ko: 'F-4 (재외동포)', zh: 'F-4 (海外同胞)', en: 'F-4 (Overseas Korean)' } },
+    { code: 'F-5', label: { ko: 'F-5 (영주)', zh: 'F-5 (永住)', en: 'F-5 (Permanent Residence)' } },
+    { code: 'F-6', label: { ko: 'F-6 (결혼이민)', zh: 'F-6 (结婚移民)', en: 'F-6 (Marriage Immigration)' } },
+    { code: 'G-1', label: { ko: 'G-1 (기타)', zh: 'G-1 (其他)', en: 'G-1 (Miscellaneous)' } },
+    { code: 'H-1', label: { ko: 'H-1 (관광취업)', zh: 'H-1 (观光就业)', en: 'H-1 (Working Holiday)' } },
+    { code: 'H-2', label: { ko: 'H-2 (방문취업)', zh: 'H-2 (访问就业)', en: 'H-2 (Visit Employment)' } },
+  ]
 
   // 비자 타입 표시
   const getVisaTypeLabel = () => {
-    const visaLabels = {
-      'd2_4': { ko: 'D-2 (유학)', zh: 'D-2 (留学)', en: 'D-2 (Study)' },
-      'd10': { ko: 'D-10 (구직)', zh: 'D-10 (求职)', en: 'D-10 (Job Seeking)' },
-      'h1': { ko: 'H-1 (관광취업)', zh: 'H-1 (观光就业)', en: 'H-1 (Working Holiday)' },
-      'f4': { ko: 'F-4 (재외동포)', zh: 'F-4 (海外同胞)', en: 'F-4 (Overseas Korean)' },
-      'f5': { ko: 'F-5 (영주)', zh: 'F-5 (永住)', en: 'F-5 (Permanent)' },
-      'f6': { ko: 'F-6 (결혼이민)', zh: 'F-6 (结婚移民)', en: 'F-6 (Marriage)' }
-    }
-    return visaLabels[profile?.visaType]?.[lang] || profile?.visaType || '-'
+    const vt = profile?.visaType
+    if (!vt) return '-'
+    const found = VISA_TYPES.find(v => v.code === vt)
+    if (found) return L(lang, found.label)
+    return vt
   }
 
-  // 레벨 표시
-  const getUserLevel = () => {
-    return { ko: 'Lv.1 새내기', zh: 'Lv.1 新手', en: 'Lv.1 Newbie' }[lang]
-  }
-
-  // 구독 표시
-  const getSubscription = () => {
-    return { ko: 'Free', zh: 'Free', en: 'Free' }[lang]
+  // 한국어 레벨 표시
+  const getKoreanLevel = () => {
+    try {
+      const lv = localStorage.getItem('hanpocket_korean_level') || '1'
+      return `Lv.${lv} / 200`
+    } catch { return 'Lv.1 / 200' }
   }
 
   // 비자 만료일 및 D-day 계산
@@ -531,11 +575,22 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
     setShowNotifModal(true)
   }
 
+  // 비자 선택 저장
+  const handleSaveVisa = () => {
+    if (!tempVisaType) return
+    const updatedProfile = { ...profile, visaType: tempVisaType }
+    setProfile(updatedProfile)
+    saveProfile(updatedProfile)
+    setShowVisaModal(false)
+    // 비자 선택 후 만료일 설정으로 이어짐
+    setTempDate(expiryDate || '')
+    setShowDateModal(true)
+  }
+
   // 알림 설정 Yes
   const handleNotifYes = async () => {
     setShowNotifModal(false)
-    
-    // 푸시 알림 권한 요청 (가능한 경우)
+
     if (typeof Notification !== 'undefined') {
       try {
         await Notification.requestPermission()
@@ -543,8 +598,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         console.log('Notification permission request failed:', e)
       }
     }
-    
-    // 권한 결과에 상관없이 타이밍 선택 모달 표시
+
     setShowTimingModal(true)
   }
 
@@ -562,14 +616,16 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
 
   // 로그아웃
   const handleLogout = () => {
-    if (kakaoUser) logoutFromKakao()
-    if (appleUser) logoutFromApple()
     localStorage.removeItem('visa_profile')
     localStorage.removeItem('visa_notif_prefs')
+    localStorage.removeItem('hanpocket_avatar')
+    localStorage.removeItem('hanpocket_nickname')
+    localStorage.removeItem('hanpocket_korean_level')
+    localStorage.removeItem('hanpocket_extra_timezones')
+    localStorage.removeItem('hanpocket_widgets')
     setProfile(null)
+    showToastMessage(lang === 'ko' ? '로그아웃 되었습니다' : lang === 'zh' ? '已注销' : 'Logged out')
   }
-
-  const loginInfo = getLoginProvider()
 
   return (
     <div className="min-h-screen p-4 pb-20 font-['Inter']" style={{ backgroundColor: '#FFFFFF' }}>
@@ -577,32 +633,42 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
       <div className="rounded-2xl p-6 border border-[#E5E7EB]" style={{ backgroundColor: '#FFFFFF' }}>
         {/* 프로필 헤더 */}
         <div className="text-center mb-6">
-          <p onClick={handleAvatarTap} className="text-xs font-bold tracking-[0.2em] text-[#9CA3AF] uppercase mb-3 py-2 px-4 cursor-pointer select-none active:opacity-50 transition-opacity">HANPOCKET</p>
-          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: 'var(--bg-tertiary)' }}>
-            {loginInfo ? (
-              <span className="text-2xl">{loginInfo.icon}</span>
-            ) : (
-              <User className="w-8 h-8" style={{ color: 'var(--text-secondary)' }} />
-            )}
+          {/* 아바타 */}
+          <div className="relative w-20 h-20 mx-auto mb-3">
+            <div
+              onClick={() => avatarInputRef.current?.click()}
+              className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center cursor-pointer border-2 border-[#E5E7EB]"
+              style={{ backgroundColor: '#F3F4F6' }}
+            >
+              {avatar ? (
+                <img src={avatar} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <User className="w-10 h-10 text-[#9CA3AF]" />
+              )}
+            </div>
+            <div className="absolute bottom-0 right-0 w-7 h-7 bg-[#2D5A3D] rounded-full flex items-center justify-center border-2 border-white">
+              <span className="text-white text-xs">📷</span>
+            </div>
+            <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
           </div>
-          
-          <div className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
-            {loginInfo?.nickname || (lang === 'ko' ? '사용자' : lang === 'zh' ? '用户' : 'User')}
-          </div>
-          
-          <div className="text-sm flex items-center justify-center gap-1" style={{ color: 'var(--text-secondary)' }}>
-            {loginInfo ? (
-              <>
-                <span className="text-xs">{loginInfo.icon}</span>
-                {loginInfo.provider === 'kakao' && (lang === 'ko' ? '카카오로 로그인' : lang === 'zh' ? 'Kakao登录' : 'Login with Kakao')}
-                {loginInfo.provider === 'apple' && (lang === 'ko' ? 'Apple로 로그인' : lang === 'zh' ? 'Apple登录' : 'Sign in with Apple')}
-              </>
-            ) : (
-              <span style={{ color: '#EF4444' }}>
-                {lang === 'ko' ? '⚠️ 소셜 로그인 안 됨' : lang === 'zh' ? '⚠️ 未登录社交账号' : '⚠️ No social login'}
-              </span>
-            )}
-          </div>
+
+          {/* 닉네임 */}
+          {editingNickname ? (
+            <input
+              autoFocus
+              value={nickname}
+              onChange={e => setNickname(e.target.value)}
+              onBlur={() => { setEditingNickname(false); localStorage.setItem('hanpocket_nickname', nickname) }}
+              onKeyDown={e => { if (e.key === 'Enter') { setEditingNickname(false); localStorage.setItem('hanpocket_nickname', nickname) }}}
+              className="text-xl font-bold text-center bg-transparent border-b-2 border-[#2D5A3D] outline-none w-40"
+              placeholder={lang === 'ko' ? '닉네임 입력' : lang === 'zh' ? '输入昵称' : 'Enter nickname'}
+            />
+          ) : (
+            <div onClick={() => setEditingNickname(true)} className="text-xl font-bold cursor-pointer flex items-center justify-center gap-1" style={{ color: '#1A1A1A' }}>
+              {nickname || (lang === 'ko' ? '사용자' : lang === 'zh' ? '用户' : 'User')}
+              <Pencil className="w-3.5 h-3.5 text-[#9CA3AF]" />
+            </div>
+          )}
         </div>
 
         {/* 구분선 */}
@@ -610,52 +676,30 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
 
         {/* 프로필 정보 */}
         <div className="space-y-3">
-          <div className="flex justify-between items-center py-2">
-            <span className="text-[#6B7280] text-sm">
-              {lang === 'ko' ? '국적' : lang === 'zh' ? '国籍' : 'Nationality'}
-            </span>
-            <span className="font-medium text-[#111827] text-sm">{getNationalityLabel()}</span>
-          </div>
-          
-          <div className="flex justify-between items-center py-2">
+          {/* 비자 (클릭→비자 선택 모달) */}
+          <div
+            className="flex justify-between items-center py-2 cursor-pointer active:bg-[#F9FAFB] rounded-lg -mx-2 px-2 transition-colors"
+            onClick={() => { setTempVisaType(profile?.visaType || ''); setShowVisaModal(true) }}
+          >
             <span className="text-[#6B7280] text-sm">
               {lang === 'ko' ? '비자' : lang === 'zh' ? '签证' : 'Visa'}
             </span>
-            <span className="font-medium text-[#111827] text-sm">{getVisaTypeLabel()}</span>
-          </div>
-          
-          <div className="flex justify-between items-center py-2">
-            <span className="text-[#6B7280] text-sm">
-              {lang === 'ko' ? '레벨' : lang === 'zh' ? '等级' : 'Level'}
-            </span>
-            <span className="font-medium text-[#111827] text-sm">{getUserLevel()}</span>
-          </div>
-          
-          <div className="flex justify-between items-center py-2">
-            <span className="text-[#6B7280] text-sm">
-              {lang === 'ko' ? '구독' : lang === 'zh' ? '订阅' : 'Subscription'}
-            </span>
             <span className="font-medium text-[#111827] text-sm flex items-center gap-1">
-              <Shield className="w-4 h-4 text-[#6B7280]" />
-              {getSubscription()}
+              {getVisaTypeLabel()}
+              <ChevronRight className="w-3.5 h-3.5 text-[#9CA3AF]" />
             </span>
           </div>
-        </div>
 
-        {/* 구분선 */}
-        <div className="border-t border-[#E5E7EB] my-4"></div>
-
-        {/* 비자 만료일 */}
-        <div className="flex justify-between items-center py-2">
-          <div>
-            {expiryDate && days !== null ? (
-              <>
-                <span className="text-[#6B7280] text-sm">
-                  {lang === 'ko' ? '비자 만료' : lang === 'zh' ? '签证到期' : 'Visa Expiry'}
-                </span>
-                <div className="mt-1">
+          {/* 비자 만료일 (D-day) */}
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '비자 만료' : lang === 'zh' ? '签证到期' : 'Visa Expiry'}
+            </span>
+            <div className="flex items-center gap-2">
+              {expiryDate && days !== null ? (
+                <>
                   <span className="font-medium text-[#111827] text-sm">{expiryDate}</span>
-                  <span className={`ml-2 text-xs px-2 py-1 rounded-full ${
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
                     days <= 0 ? 'bg-red-100 text-red-600' :
                     days <= 30 ? 'bg-red-100 text-red-600' :
                     days <= 90 ? 'bg-amber-100 text-amber-700' :
@@ -663,43 +707,40 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                   }`}>
                     {days <= 0 ? (lang === 'ko' ? '만료됨' : lang === 'zh' ? '已过期' : 'Expired') : `D-${days}`}
                   </span>
-                </div>
-              </>
-            ) : (
-              <span className="text-[#6B7280] text-sm">
-                {lang === 'ko' ? '비자 만료일을 설정하세요' : lang === 'zh' ? '请设置签证到期日期' : 'Set visa expiry date'}
-              </span>
-            )}
+                </>
+              ) : (
+                <span className="text-[#9CA3AF] text-sm">-</span>
+              )}
+              <button
+                onClick={handleEditExpiry}
+                className="w-6 h-6 bg-[#F3F4F6] rounded-full flex items-center justify-center hover:bg-[#E5E7EB] transition-colors"
+              >
+                <Pencil className="w-3 h-3 text-[#6B7280]" />
+              </button>
+            </div>
           </div>
-          
-          <button
-            onClick={handleEditExpiry}
-            className="w-7 h-7 bg-[#F3F4F6] rounded-full flex items-center justify-center hover:bg-[#E5E7EB] transition-colors"
-          >
-            <Pencil className="w-3.5 h-3.5 text-[#6B7280]" />
-          </button>
+
+          {/* 한국어 레벨 */}
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '한국어 레벨' : lang === 'zh' ? '韩语等级' : 'Korean Level'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm">{getKoreanLevel()}</span>
+          </div>
+
+          {/* 구독 */}
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[#6B7280] text-sm">
+              {lang === 'ko' ? '구독' : lang === 'zh' ? '订阅' : 'Subscription'}
+            </span>
+            <span className="font-medium text-[#111827] text-sm flex items-center gap-1">
+              🟢 Free
+            </span>
+          </div>
         </div>
 
         {/* 구분선 */}
-        <div className="border-t border-[#E5E7EB] my-6"></div>
-
-        {/* 다크모드 토글 */}
-        <div className="flex justify-between items-center py-3">
-          <div className="flex items-center gap-2">
-            {isDark ? <Moon className="w-4 h-4 text-[#6B7280]" /> : <Sun className="w-4 h-4 text-[#6B7280]" />}
-            <span className="text-[#6B7280] text-sm">
-              {lang === 'ko' ? '다크모드' : lang === 'zh' ? '深色模式' : 'Dark Mode'}
-            </span>
-          </div>
-          <label className="toggle-switch">
-            <input
-              type="checkbox"
-              checked={isDark}
-              onChange={toggleDarkMode}
-            />
-            <span className="toggle-slider"></span>
-          </label>
-        </div>
+        <div className="border-t border-[#E5E7EB] my-4"></div>
 
         {/* 로그아웃 버튼 */}
         <button
@@ -711,66 +752,117 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         </button>
       </div>
 
-      {/* 관리자 설정 */}
-      {adminMode && (
-        <div className="rounded-2xl p-4 border border-[#E5E7EB] mt-4" style={{ backgroundColor: '#FFFFFF' }}>
-          <button
-            onClick={() => setShowAdminPanel(!showAdminPanel)}
-            className="w-full flex items-center justify-between py-2 transition-all active:scale-[0.98]"
-          >
-            <div className="flex items-center gap-2">
-              <Settings className="w-4 h-4 text-[#111827]" />
-              <span className="text-sm font-bold text-[#111827]">
-                {lang === 'ko' ? '관리자 설정' : lang === 'zh' ? '管理员设置' : 'Admin Settings'}
+      {/* 관리자 설정 (항상 표시) */}
+      <div className="rounded-2xl p-4 border border-[#E5E7EB] mt-4 bg-white">
+        <button
+          onClick={() => {
+            if (adminMode) setShowAdminPanel(!showAdminPanel)
+            else setShowAdminPwModal(true)
+          }}
+          className="w-full flex items-center justify-between py-2"
+        >
+          <div className="flex items-center gap-2">
+            <Settings className="w-4 h-4 text-[#6B7280]" />
+            <span className="text-sm text-[#6B7280]">
+              {lang === 'ko' ? '관리자 설정' : lang === 'zh' ? '管理员设置' : 'Admin Settings'}
+            </span>
+          </div>
+          <ChevronRight className={`w-4 h-4 text-[#9CA3AF] transition-transform duration-200 ${showAdminPanel && adminMode ? 'rotate-90' : ''}`} />
+        </button>
+
+        {adminMode && showAdminPanel && (
+          <div className="mt-3 pt-3 border-t border-[#E5E7EB]">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
+                {lang === 'ko' ? '포켓 표시 관리' : lang === 'zh' ? '口袋显示管理' : 'Pocket Visibility'}
               </span>
-            </div>
-            <ChevronRight className={`w-4 h-4 text-[#9CA3AF] transition-transform duration-200 ${showAdminPanel ? 'rotate-90' : ''}`} />
-          </button>
-
-          {showAdminPanel && (
-            <div className="mt-3 pt-3 border-t border-[#E5E7EB]">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
-                  {lang === 'ko' ? '포켓 표시 관리' : lang === 'zh' ? '口袋显示管理' : 'Pocket Visibility'}
-                </span>
-                <div className="flex gap-2">
-                  <button onClick={() => setAllPockets(true)} className="text-[10px] bg-[#111827] text-white px-2.5 py-1 rounded-full">
-                    {lang === 'ko' ? '전체 켜기' : lang === 'zh' ? '全部开启' : 'All On'}
-                  </button>
-                  <button onClick={() => setAllPockets(false)} className="text-[10px] bg-[#E5E7EB] text-[#374151] px-2.5 py-1 rounded-full">
-                    {lang === 'ko' ? '전체 끄기' : lang === 'zh' ? '全部关闭' : 'All Off'}
-                  </button>
-                </div>
+              <div className="flex gap-2">
+                <button onClick={() => setAllPockets(true)} className="text-[10px] bg-[#111827] text-white px-2.5 py-1 rounded-full">
+                  {lang === 'ko' ? '전체 켜기' : lang === 'zh' ? '全部开启' : 'All On'}
+                </button>
+                <button onClick={() => setAllPockets(false)} className="text-[10px] bg-[#E5E7EB] text-[#374151] px-2.5 py-1 rounded-full">
+                  {lang === 'ko' ? '전체 끄기' : lang === 'zh' ? '全部关闭' : 'All Off'}
+                </button>
               </div>
+            </div>
 
-              <div className="space-y-4">
-                {pocketCategories.map(cat => (
-                  <div key={cat.id}>
-                    <p className="text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-2">{L(lang, cat.name)}</p>
-                    <div className="space-y-1">
-                      {cat.pockets.map(p => {
-                        const isOn = getPocketVisible(p.id)
-                        return (
-                          <div key={p.id} className="flex items-center justify-between py-2">
-                            <div className="flex items-center gap-2.5">
-                              <span className={`text-base ${isOn ? '' : 'opacity-30'}`}>{p.icon}</span>
-                              <span className={`text-sm ${isOn ? 'text-[#111827] font-medium' : 'text-[#9CA3AF]'}`}>{L(lang, p.name)}</span>
-                            </div>
-                            <button
-                              onClick={() => togglePocketVisibility(p.id)}
-                              className={`w-11 h-6 rounded-full transition-all relative ${isOn ? 'bg-[#111827]' : 'bg-[#D1D5DB]'}`}
-                            >
-                              <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all ${isOn ? 'left-[22px]' : 'left-0.5'}`} />
-                            </button>
+            <div className="space-y-4">
+              {pocketCategories.map(cat => (
+                <div key={cat.id}>
+                  <p className="text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-2">{L(lang, cat.name)}</p>
+                  <div className="space-y-1">
+                    {cat.pockets.map(p => {
+                      const isOn = getPocketVisible(p.id)
+                      return (
+                        <div key={p.id} className="flex items-center justify-between py-2">
+                          <div className="flex items-center gap-2.5">
+                            <span className={`text-base ${isOn ? '' : 'opacity-30'}`}>{p.icon}</span>
+                            <span className={`text-sm ${isOn ? 'text-[#111827] font-medium' : 'text-[#9CA3AF]'}`}>{L(lang, p.name)}</span>
                           </div>
-                        )
-                      })}
-                    </div>
+                          <button
+                            onClick={() => togglePocketVisibility(p.id)}
+                            className={`w-11 h-6 rounded-full transition-all relative ${isOn ? 'bg-[#111827]' : 'bg-[#D1D5DB]'}`}
+                          >
+                            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all ${isOn ? 'left-[22px]' : 'left-0.5'}`} />
+                          </button>
+                        </div>
+                      )
+                    })}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+
+            {/* 관리자 모드 해제 */}
+            <button onClick={handleAdminLogout} className="w-full text-center text-xs text-red-500 mt-4 py-2">
+              {lang === 'ko' ? '관리자 모드 해제' : lang === 'zh' ? '退出管理员模式' : 'Exit Admin Mode'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* 비자 선택 모달 */}
+      {showVisaModal && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50">
+          <div className="bg-white rounded-t-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+            <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#1A1A1A]">
+                {lang === 'ko' ? '비자 타입 선택' : lang === 'zh' ? '选择签证类型' : 'Select Visa Type'}
+              </h3>
+              <button onClick={() => setShowVisaModal(false)} className="w-8 h-8 flex items-center justify-center">
+                <X className="w-5 h-5 text-[#6B7280]" />
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1 p-2">
+              {VISA_TYPES.map(v => (
+                <button
+                  key={v.code}
+                  onClick={() => setTempVisaType(v.code)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${
+                    tempVisaType === v.code ? 'bg-[#2D5A3D]/10' : 'hover:bg-[#F9FAFB]'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                    tempVisaType === v.code ? 'border-[#2D5A3D]' : 'border-[#D1D5DB]'
+                  }`}>
+                    {tempVisaType === v.code && <div className="w-2.5 h-2.5 rounded-full bg-[#2D5A3D]" />}
+                  </div>
+                  <span className={`text-sm ${tempVisaType === v.code ? 'font-medium text-[#1A1A1A]' : 'text-[#374151]'}`}>
+                    {L(lang, v.label)}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <div className="p-4 border-t border-[#E5E7EB]">
+              <button
+                onClick={handleSaveVisa}
+                disabled={!tempVisaType}
+                className="w-full py-3 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium disabled:opacity-50 transition-colors"
+              >
+                {lang === 'ko' ? '선택 완료' : lang === 'zh' ? '确认选择' : 'Confirm'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -781,7 +873,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
             <h3 className="text-lg font-bold text-[#111827] mb-4 text-center">
               {lang === 'ko' ? '비자 만료일 설정' : lang === 'zh' ? '设置签证到期日期' : 'Set Visa Expiry Date'}
             </h3>
-            
+
             <input
               type="date"
               value={tempDate}
@@ -789,7 +881,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
               className="w-full bg-[#F8F9FA] rounded-xl px-4 py-3 text-[#111827] border border-[#E5E7EB] focus:border-[#111827] outline-none mb-6 box-border max-w-full text-base"
               style={{ WebkitAppearance: 'none', minWidth: 0 }}
             />
-            
+
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDateModal(false)}
@@ -819,22 +911,22 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                 {lang === 'ko' ? '비자 만료일 알림' : lang === 'zh' ? '签证到期提醒' : 'Visa Expiry Alert'}
               </h3>
               <p className="text-[#6B7280] text-sm">
-                {lang === 'ko' ? '비자 만료일 알림을 받으시겠습니까?' : lang === 'zh' ? '您希望收到签证到期提醒吗？' : 'Would you like to receive visa expiry reminders?'}
+                📱 {lang === 'ko' ? '비자 만료 60일/30일/7일 전 푸시 알림을 설정하시겠습니까?' : lang === 'zh' ? '您希望在签证到期60天/30天/7天前收到推送提醒吗？' : 'Set push reminders 60/30/7 days before visa expiry?'}
               </p>
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={() => setShowNotifModal(false)}
                 className="flex-1 py-3 text-[#6B7280] font-medium rounded-xl hover:bg-[#F3F4F6] transition-colors"
               >
-                {lang === 'ko' ? 'No' : 'No'}
+                {lang === 'ko' ? '아니요' : lang === 'zh' ? '不用' : 'No'}
               </button>
               <button
                 onClick={handleNotifYes}
                 className="flex-1 py-3 bg-[#111827] text-white font-medium rounded-xl hover:bg-[#1F2937] transition-colors"
               >
-                {lang === 'ko' ? 'Yes' : 'Yes'}
+                {lang === 'ko' ? '예' : lang === 'zh' ? '是' : 'Yes'}
               </button>
             </div>
           </div>
@@ -848,17 +940,16 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
             <h3 className="text-lg font-bold text-[#111827] mb-4 text-center">
               {lang === 'ko' ? '알림 시점 선택' : lang === 'zh' ? '选择提醒时间' : 'Choose Reminder Times'}
             </h3>
-            
+
             <div className="space-y-4 mb-6">
               {[
-                { key: 'd90', label: { ko: '90일 전', zh: '90天前', en: '90 days before' } },
                 { key: 'd60', label: { ko: '60일 전', zh: '60天前', en: '60 days before' } },
                 { key: 'd30', label: { ko: '30일 전', zh: '30天前', en: '30 days before' } },
                 { key: 'd7', label: { ko: '7일 전', zh: '7天前', en: '7 days before' } }
               ].map(opt => (
                 <label key={opt.key} className="flex items-center justify-between cursor-pointer">
                   <span className="text-[#111827] font-medium">{L(lang, opt.label)}</span>
-                  <button 
+                  <button
                     onClick={() => toggleNotif(opt.key)}
                     className={`w-12 h-7 rounded-full transition-all relative ${
                       notifPrefs[opt.key] ? 'bg-[#111827]' : 'bg-[#D1D1D6]'
@@ -871,13 +962,48 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                 </label>
               ))}
             </div>
-            
+
             <button
               onClick={handleSaveTiming}
               className="w-full py-3 bg-[#111827] text-white font-medium rounded-xl hover:bg-[#1F2937] transition-colors"
             >
               {lang === 'ko' ? '확인' : lang === 'zh' ? '确认' : 'Confirm'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 관리자 비밀번호 모달 */}
+      {showAdminPwModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-2xl p-6 mx-8 w-full max-w-sm border border-[#E5E7EB]">
+            <h3 className="text-base font-bold text-[#1A1A1A] mb-4">
+              {lang === 'ko' ? '관리자 비밀번호' : lang === 'zh' ? '管理员密码' : 'Admin Password'}
+            </h3>
+            <input
+              type="password"
+              value={adminPw}
+              onChange={e => { setAdminPw(e.target.value); setAdminPwError(false) }}
+              onKeyDown={e => { if (e.key === 'Enter') handleAdminLogin() }}
+              placeholder="****"
+              className="w-full border border-[#E5E7EB] rounded-xl px-4 py-3 text-center text-lg tracking-widest outline-none focus:border-[#2D5A3D]"
+              autoFocus
+            />
+            {adminPwError && (
+              <p className="text-xs text-red-500 mt-2 text-center">
+                {lang === 'ko' ? '비밀번호가 틀렸습니다' : lang === 'zh' ? '密码错误' : 'Incorrect password'}
+              </p>
+            )}
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => { setShowAdminPwModal(false); setAdminPw(''); setAdminPwError(false) }}
+                className="flex-1 py-2.5 rounded-xl border border-[#E5E7EB] text-sm text-[#6B7280]">
+                {lang === 'ko' ? '취소' : lang === 'zh' ? '取消' : 'Cancel'}
+              </button>
+              <button onClick={handleAdminLogin}
+                className="flex-1 py-2.5 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium">
+                {lang === 'ko' ? '확인' : lang === 'zh' ? '确认' : 'Confirm'}
+              </button>
+            </div>
           </div>
         </div>
       )}

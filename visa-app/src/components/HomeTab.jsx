@@ -153,7 +153,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
           style={{ backgroundColor: '#2D5A3D', color: '#FFFFFF' }}
         >
           <span className="text-[11px]">🇰🇷</span>
-          <span className="text-[10px] font-medium">{L(lang, { ko: '오늘의 한국어', zh: '今日韩语', en: "Today's Korean" })}</span>
+          <span className="text-[10px] font-medium">{L(lang, { ko: 'Easy Korean', zh: 'Easy Korean', en: 'Easy Korean' })}</span>
         </button>
       </div>
 

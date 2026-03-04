@@ -439,7 +439,7 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
   )
 }
 
-export default function EducationTab({ lang }) {
+export default function EducationTab({ lang, onSessionComplete }) {
   const [eduState, setEduState] = useState(loadEduState)
   const [view, setView] = useState('main') // main | session | minimap | unit
   const [activeSession, setActiveSession] = useState(null)
@@ -473,6 +473,7 @@ export default function EducationTab({ lang }) {
     }
     setEduState(updated)
     saveEduState(updated)
+    if (onSessionComplete) onSessionComplete()
   }
 
   const handleQuizAnswer = (correct) => {
@@ -524,9 +525,8 @@ export default function EducationTab({ lang }) {
 
   return (
     <div className="space-y-4">
-      {/* XP + 스트릭 */}
+      {/* XP */}
       <XpBar xp={eduState.xp} lang={lang} />
-      <StreakBadge streak={eduState.streak} lang={lang} />
 
       {/* 세션 목록 */}
       <h2 className="text-lg font-bold text-[#1A1A1A]">
@@ -555,20 +555,6 @@ export default function EducationTab({ lang }) {
         })}
       </div>
 
-      {/* TOPIK 진행도 */}
-      <div className="bg-gradient-to-r from-red-500 to-rose-600 rounded-xl p-4 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="font-bold">🎯 TOPIK {lang === 'ko' ? '목표' : lang === 'zh' ? '目标' : 'Goal'}: 3{lang === 'ko' ? '급' : lang === 'zh' ? '级' : ''}</div>
-            <div className="text-xs opacity-80 mt-1">
-              {eduState.completedUnits.length} / 120 {lang === 'ko' ? '레슨 완료' : lang === 'zh' ? '课程完成' : 'lessons done'}
-            </div>
-          </div>
-          <div className="text-3xl font-bold">
-            {Math.round((eduState.completedUnits.length / 120) * 100)}%
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

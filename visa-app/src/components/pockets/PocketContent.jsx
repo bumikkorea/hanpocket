@@ -38,7 +38,7 @@ export default function PocketContent({ pocketId, lang, setTab }) {
     case 'accommodation': return <AccommodationPocket lang={lang} />
     case 'medical': return <MedicalPocket lang={lang} />
     case 'photoguide': return <PhotoGuidePocket lang={lang} />
-    case 'koreangame': return <KoreanGameMain lang={lang} onBack={() => setTab && setTab(null)} />
+    case 'koreangame': return <KoreanGameMain lang={lang} />
     default:
       // 구현된 위젯은 WidgetContent로, 미구현은 coming-soon 표시
       if (IMPLEMENTED_POCKETS.has(pocketId)) {

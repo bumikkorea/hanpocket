@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { ArrowLeft, Star, Heart, Lock, ChevronDown, ChevronUp, CheckCircle2, Circle, Gamepad2 } from 'lucide-react'
+import { Heart, Lock, ChevronDown, ChevronUp, CheckCircle2, Circle, Gamepad2 } from 'lucide-react'
 import { CHAPTERS, loadGameState, saveGameState, xpToLevel, levelXpRange, recoverHearts, updateStreak } from './gameData'
 import LessonScreen from './LessonScreen'
 import StreakBanner from './StreakBanner'
@@ -10,7 +10,7 @@ function L(lang, obj) {
   return obj[lang] || obj.zh || obj.en || obj.ko || ''
 }
 
-export default function KoreanGameMain({ lang, onBack }) {
+export default function KoreanGameMain({ lang }) {
   const [gameState, setGameState] = useState(() => {
     const state = loadGameState()
     return recoverHearts(state)
@@ -80,21 +80,6 @@ export default function KoreanGameMain({ lang, onBack }) {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* 상단 바 */}
-      <div className="bg-white border-b border-[#E5E7EB]">
-        <div className="flex items-center justify-between px-4 py-3">
-          <button onClick={onBack} className="p-1 active:scale-90 transition-transform">
-            <ArrowLeft className="w-6 h-6 text-[#1A1A1A]" />
-          </button>
-          <h1 className="text-base font-bold text-[#1A1A1A]">
-            {lang === 'ko' ? '한국어 게임' : lang === 'en' ? 'Korean Game' : '韩语游戏'}
-          </h1>
-          <div className="flex items-center gap-1 bg-[#F5F1EB] px-2.5 py-1 rounded-full">
-            <Star className="w-4 h-4 text-[#B8860B] fill-[#B8860B]" />
-            <span className="text-sm font-bold text-[#B8860B]">{gameState.xp}</span>
-          </div>
-        </div>
-      </div>
 
       <div className="flex-1 overflow-y-auto">
         {/* 스트릭 배너 */}
@@ -103,7 +88,7 @@ export default function KoreanGameMain({ lang, onBack }) {
         </div>
 
         {/* 프로필 카드 */}
-        <div className="mx-5 mb-5 p-4 bg-white rounded-2xl border border-[#E5E7EB]">
+        <div className="mx-4 mb-4 p-4 bg-white rounded-2xl border border-[#E5E7EB]">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gradient-to-br from-[#2D5A3D] to-[#1A3A28] rounded-2xl flex items-center justify-center">
@@ -137,7 +122,7 @@ export default function KoreanGameMain({ lang, onBack }) {
         </div>
 
         {/* 챕터 리스트 */}
-        <div className="px-5 pb-8 flex flex-col gap-4">
+        <div className="px-4 pb-8 flex flex-col gap-4">
           {CHAPTERS.map(chapter => {
             const isExpanded = expandedChapter === chapter.id
             const isLocked = chapter.locked
@@ -152,38 +137,45 @@ export default function KoreanGameMain({ lang, onBack }) {
                 <button
                   onClick={() => !isLocked && setExpandedChapter(isExpanded ? null : chapter.id)}
                   disabled={isLocked}
-                  className={`w-full text-left rounded-2xl overflow-hidden transition-all active:scale-[0.98]
+                  className={`w-full text-left transition-all active:scale-[0.98]
                     ${isLocked ? 'opacity-50 cursor-not-allowed' : ''}
                   `}
                 >
-                  <div className={`bg-gradient-to-r ${isLocked ? 'from-[#9CA3AF] to-[#6B7280]' : chapter.gradient} p-5`}>
+                  <div className={`bg-white border border-[#E5E7EB] ${isExpanded && !isLocked ? 'rounded-t-2xl border-b-0' : 'rounded-2xl'} p-4`}>
                     <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-white text-lg font-bold">{L(lang, chapter.name)}</p>
-                        {!isLocked && totalLessons > 0 && (
-                          <p className="text-white/80 text-sm mt-1">
-                            {completedCount}/{totalLessons} {lang === 'ko' ? '레슨' : lang === 'en' ? 'lessons' : '课'}
-                          </p>
-                        )}
-                        {isLocked && (
-                          <p className="text-white/70 text-sm mt-1">
-                            {lang === 'ko' ? '곧 공개' : lang === 'en' ? 'Coming soon' : '即将开放'}
-                          </p>
-                        )}
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${isLocked ? 'from-[#9CA3AF] to-[#6B7280]' : chapter.gradient} flex items-center justify-center shrink-0`}>
+                          {isLocked ? (
+                            <Lock className="w-5 h-5 text-white/60" />
+                          ) : (
+                            <span className="text-white text-sm font-bold">{chapter.lessons?.[0]?.emoji || '📚'}</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-base font-bold text-[#1A1A1A]">{L(lang, chapter.name)}</p>
+                          {!isLocked && totalLessons > 0 && (
+                            <p className="text-xs text-[#666666] mt-0.5">
+                              {completedCount}/{totalLessons} {lang === 'ko' ? '레슨' : lang === 'en' ? 'lessons' : '课'}
+                            </p>
+                          )}
+                          {isLocked && (
+                            <p className="text-xs text-[#999999] mt-0.5">
+                              {lang === 'ko' ? '곧 공개' : lang === 'en' ? 'Coming soon' : '即将开放'}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                      {isLocked ? (
-                        <Lock className="w-6 h-6 text-white/60" />
-                      ) : (
+                      {!isLocked && (
                         isExpanded
-                          ? <ChevronUp className="w-6 h-6 text-white/80" />
-                          : <ChevronDown className="w-6 h-6 text-white/80" />
+                          ? <ChevronUp className="w-5 h-5 text-[#999999]" />
+                          : <ChevronDown className="w-5 h-5 text-[#999999]" />
                       )}
                     </div>
                     {/* 완료율 바 */}
                     {!isLocked && totalLessons > 0 && (
-                      <div className="mt-3 w-full h-1.5 bg-white/30 rounded-full overflow-hidden">
+                      <div className="mt-3 w-full h-1.5 bg-[#F5F5F5] rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-white rounded-full transition-all duration-500"
+                          className="h-full bg-gradient-to-r from-[#2D5A3D] to-[#4A8A5A] rounded-full transition-all duration-500"
                           style={{ width: `${(completedCount / totalLessons) * 100}%` }}
                         />
                       </div>
@@ -205,7 +197,7 @@ export default function KoreanGameMain({ lang, onBack }) {
                           key={lesson.id}
                           onClick={() => startLesson(chapter, lesson)}
                           disabled={noHearts}
-                          className={`w-full flex items-center gap-4 px-5 py-4 text-left transition-all active:bg-[#F5F5F5]
+                          className={`w-full flex items-center gap-4 px-4 py-4 text-left transition-all active:bg-[#F5F5F5]
                             ${noHearts ? 'opacity-50 cursor-not-allowed' : ''}
                           `}
                         >

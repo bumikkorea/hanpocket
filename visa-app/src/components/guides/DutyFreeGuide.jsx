@@ -1,4 +1,5 @@
-import { X, AlertTriangle, Wine, Cigarette, Droplets, Banknote, Package, ShieldAlert } from 'lucide-react'
+import { AlertTriangle, Wine, Cigarette, Droplets, Banknote, Package, ShieldAlert } from 'lucide-react'
+import GuideLayout from './GuideLayout'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -28,18 +29,11 @@ const CONFISCATED_TOP5 = [
 
 export default function DutyFreeGuide({ lang, onClose }) {
   return (
-    <div className="fixed inset-0 z-[999] bg-white overflow-y-auto">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB] px-5 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-[#111827]">
-          {L(lang, { ko: '면세 한도 & 액체류', zh: '免税限额 & 液体规定', en: 'Duty-Free & Liquids' })}
-        </h1>
-        <button onClick={onClose} className="p-1 rounded-full hover:bg-[#F3F4F6] transition-colors">
-          <X size={22} className="text-[#111827]" />
-        </button>
-      </div>
-
-      <div className="px-5 py-4 space-y-4 pb-20">
+    <GuideLayout
+      title={{ ko: '면세 한도 & 액체류', zh: '免税限额 & 液体规定', en: 'Duty-Free & Liquids' }}
+      lang={lang}
+      onClose={onClose}
+    >
         {/* 기준일자 */}
         <p className="text-xs text-gray-400 text-center">
           {L(lang, { ko: '정보 기준: 2026년 3월', zh: '信息基准: 2026年3月', en: 'As of March 2026' })}
@@ -191,9 +185,8 @@ export default function DutyFreeGuide({ lang, onClose }) {
           {L(lang, { ko: '출처: 인천국제공항공사, 중국 해관총서', zh: '来源：仁川国际机场公社、中国海关总署', en: 'Source: Incheon Airport Corp., China Customs' })}
         </p>
         <p className="text-xs text-gray-400 text-center mt-8">
-          {L(lang, { ko: '정보 기준: 2026년 3월 | 문의: hanpocket@email.com', zh: '信息基准: 2026年3月 | 联系: hanpocket@email.com', en: 'As of March 2026 | Contact: hanpocket@email.com' })}
+          {L(lang, { ko: '정보 기준: 2026년 3월 | 문의: hanpocket@email.com', zh: '信息基준: 2026年3月 | 联系: hanpocket@email.com', en: 'As of March 2026 | Contact: hanpocket@email.com' })}
         </p>
-      </div>
-    </div>
+    </GuideLayout>
   )
 }

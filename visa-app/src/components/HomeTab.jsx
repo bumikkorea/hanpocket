@@ -197,7 +197,8 @@ const INTENT_CARDS = [
   },
 ]
 
-export default function HomeTab({ lang, exchangeRate, setTab }) {
+export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {} }) {
+  const isVisible = (key) => widgetSettings[key] !== false
   const weather = useWeatherData()
   const { kst: koreaTime, extras: extraTimezones, refresh: refreshTimezones } = useMultiTimezone()
   const todayExpr = getTodayExpression()
@@ -235,11 +236,9 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
     >
       {/* ─── 상단 정보 바 ─── */}
       <div className="px-4 mb-4 flex items-center gap-2 text-xs flex-wrap" style={{ color: '#999999' }}>
-        <span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}</span>
-        <span>·</span>
-        <span>¥1 = ₩{Math.round(cnyRate)}</span>
-        <span>·</span>
-        <span>KST {koreaTime}</span>
+        {isVisible('weather') && <><span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : '—°C'}</span><span>·</span></>}
+        {isVisible('exchange') && <><span>¥1 = ₩{Math.round(cnyRate)}</span><span>·</span></>}
+        {isVisible('clock') && <span>KST {koreaTime}</span>}
         {extraTimezones.map(tz => (
           <span key={tz.id}>
             <span>·</span>
@@ -290,72 +289,7 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
         </div>
       </div>
 
-      {/* ─── 3. 추천 코스 섹션 ─── */}
-      <div className="mb-8">
-        <button
-          onClick={() => setTab('course')}
-          className="flex items-center justify-between w-full mb-3 px-4"
-        >
-          <h2 className="text-base font-bold" style={{ color: '#1A1A1A' }}>
-            {L(lang, { ko: '추천 코스', zh: '推荐路线', en: 'Recommended Courses' })}
-          </h2>
-          <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
-        </button>
-        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
-          {courses.map(course => (
-            <button
-              key={course.id}
-              onClick={() => setTab('course')}
-              className="snap-start flex-shrink-0 rounded-xl overflow-hidden active:scale-[0.98] transition-transform border border-[#E5E7EB]"
-              style={{ width: 180 }}
-            >
-              <div
-                className="relative flex items-end p-3"
-                style={{ height: 150 }}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || 'from-[#6A6A5A] to-[#4A4A3A]'}`} />
-                {COURSE_IMAGES[course.id] && (
-                  <img
-                    src={COURSE_IMAGES[course.id]}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
-                    onError={(e) => { e.target.style.display = 'none' }}
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                <p className="relative text-white text-sm font-bold leading-tight text-left z-10">
-                  {L(lang, course.name)}
-                </p>
-              </div>
-              <div className="p-2.5" style={{ backgroundColor: '#FFFFFF', height: 64 }}>
-                <p className="text-[11px] line-clamp-2 text-left leading-relaxed" style={{ color: '#666666' }}>
-                  {L(lang, course.description)}
-                </p>
-                <p className="text-[10px] mt-1 text-left" style={{ color: '#666666' }}>
-                  {course.stops.length}{L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })} · {course.duration}
-                </p>
-              </div>
-            </button>
-          ))}
-          {/* 더보기 카드 */}
-          <button
-            onClick={() => setTab('course')}
-            className="snap-start flex-shrink-0 rounded-xl border-2 border-dashed flex items-center justify-center active:scale-[0.98] transition-transform"
-            style={{ width: 180, height: 214, borderColor: '#B2DFDB' }}
-          >
-            <div className="text-center">
-              <p className="text-lg mb-1" style={{ color: '#666666' }}>&rarr;</p>
-              <p className="text-xs font-medium" style={{ color: '#666666' }}>
-                {L(lang, { ko: '더보기', zh: '查看更多', en: 'View More' })}
-              </p>
-            </div>
-          </button>
-          <div className="flex-shrink-0 w-4" />
-        </div>
-      </div>
-
-      {/* ─── 4. 여행 필수 가이드 (4x2 그리드) ─── */}
+      {/* ─── 3. 여행 필수 가이드 (4x2 그리드) ─── */}
       <div className="mb-8 px-4">
         <button
           onClick={() => setTab('travel')}
@@ -375,7 +309,6 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
             { title: { ko: '택시 잡기', zh: '叫出租车', en: 'Get a Taxi' }, sub: { ko: '한국 번호 없어도 돼요', zh: '不需要韩国手机号', en: 'No Korean number needed' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: null, action: 'taxi', img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=200&fit=crop' },
             { title: { ko: '교통카드', zh: '交通卡/车票', en: 'Transit Card' }, sub: { ko: '현금 안 받는 버스 많아요!', zh: '很多公交不收现金！', en: "Many buses don't accept cash!" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'transit', img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=200&fit=crop' },
             { title: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'map-guide', action: 'map', img: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69c07a?w=400&h=200&fit=crop' },
-            { title: { ko: '긴급 SOS', zh: '紧急SOS', en: 'Emergency' }, sub: { ko: '빨리 도와줘!', zh: '快帮帮我！', en: 'Help me quick!' }, gradient: 'from-[#8B2500] to-[#5C1A00]', guide: null, action: 'sos', img: null },
           ].map((item, i) => (
             <button
               key={i}
@@ -443,6 +376,71 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
           <div className="flex-shrink-0 w-4" />
         </div>
       </div>
+
+      {/* ─── 5. 추천 코스 섹션 ─── */}
+      {isVisible('course') && <div className="mb-8">
+        <button
+          onClick={() => setTab('course')}
+          className="flex items-center justify-between w-full mb-3 px-4"
+        >
+          <h2 className="text-base font-bold" style={{ color: '#1A1A1A' }}>
+            {L(lang, { ko: '추천 코스', zh: '推荐路线', en: 'Recommended Courses' })}
+          </h2>
+          <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
+        </button>
+        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
+          {courses.map(course => (
+            <button
+              key={course.id}
+              onClick={() => setTab('course')}
+              className="snap-start flex-shrink-0 rounded-xl overflow-hidden active:scale-[0.98] transition-transform border border-[#E5E7EB]"
+              style={{ width: 180 }}
+            >
+              <div
+                className="relative flex items-end p-3"
+                style={{ height: 150 }}
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || 'from-[#6A6A5A] to-[#4A4A3A]'}`} />
+                {COURSE_IMAGES[course.id] && (
+                  <img
+                    src={COURSE_IMAGES[course.id]}
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover"
+                    loading="lazy"
+                    onError={(e) => { e.target.style.display = 'none' }}
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <p className="relative text-white text-sm font-bold leading-tight text-left z-10">
+                  {L(lang, course.name)}
+                </p>
+              </div>
+              <div className="p-2.5" style={{ backgroundColor: '#FFFFFF', height: 64 }}>
+                <p className="text-[11px] line-clamp-2 text-left leading-relaxed" style={{ color: '#666666' }}>
+                  {L(lang, course.description)}
+                </p>
+                <p className="text-[10px] mt-1 text-left" style={{ color: '#666666' }}>
+                  {course.stops.length}{L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })} · {course.duration}
+                </p>
+              </div>
+            </button>
+          ))}
+          {/* 더보기 카드 */}
+          <button
+            onClick={() => setTab('course')}
+            className="snap-start flex-shrink-0 rounded-xl border-2 border-dashed flex items-center justify-center active:scale-[0.98] transition-transform"
+            style={{ width: 180, height: 214, borderColor: '#B2DFDB' }}
+          >
+            <div className="text-center">
+              <p className="text-lg mb-1" style={{ color: '#666666' }}>&rarr;</p>
+              <p className="text-xs font-medium" style={{ color: '#666666' }}>
+                {L(lang, { ko: '더보기', zh: '查看更多', en: 'View More' })}
+              </p>
+            </div>
+          </button>
+          <div className="flex-shrink-0 w-4" />
+        </div>
+      </div>}
 
       {/* ─── 가이드 오버레이 ─── */}
       {activeGuide && (
@@ -677,6 +675,17 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ─── 플로팅 SOS 버튼 ─── */}
+      {isVisible('emergency') && (
+        <button
+          onClick={() => setActiveScene('emergency')}
+          className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-[#DC2626] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+          style={{ boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)' }}
+        >
+          <span className="text-lg font-bold">SOS</span>
+        </button>
       )}
 
       {/* ─── 토스트 ─── */}

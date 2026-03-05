@@ -614,15 +614,17 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
     setNotifPrefs(prev => ({ ...prev, [key]: !prev[key] }))
   }
 
-  // 로그아웃
+  // 로그아웃 (학습 진행 데이터는 보존)
   const handleLogout = () => {
     localStorage.removeItem('visa_profile')
     localStorage.removeItem('visa_notif_prefs')
     localStorage.removeItem('hanpocket_avatar')
     localStorage.removeItem('hanpocket_nickname')
-    localStorage.removeItem('hanpocket_korean_level')
     localStorage.removeItem('hanpocket_extra_timezones')
     localStorage.removeItem('hanpocket_widgets')
+    localStorage.removeItem('admin_mode')
+    localStorage.removeItem('pocket_visibility')
+    // 보존: hanpocket_korean_level, hanpocket_korean_quiz_done, edu_state, weather_city
     setProfile(null)
     showToastMessage(lang === 'ko' ? '로그아웃 되었습니다' : lang === 'zh' ? '已注销' : 'Logged out')
   }
@@ -1989,7 +1991,7 @@ function AppInner() {
             <KoreanTab lang={lang} />
           </Suspense>
         )}
-        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
+        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} widgetSettings={widgetSettings} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
         <div className="mt-12 mb-6 px-4 text-center text-[11px] text-[#9CA3AF]">

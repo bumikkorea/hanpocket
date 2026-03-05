@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { X, Wifi, QrCode, CreditCard, Radio, AlertTriangle, ExternalLink, Smartphone, MapPin, ChevronDown, ChevronUp } from 'lucide-react'
+import { Wifi, QrCode, CreditCard, AlertTriangle, ExternalLink, Smartphone, MapPin, ChevronDown, ChevronUp } from 'lucide-react'
+import GuideLayout from './GuideLayout'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -71,18 +72,11 @@ export default function SimGuide({ lang, onClose }) {
   const [esimDevice, setEsimDevice] = useState('iphone')
 
   return (
-    <div className="fixed inset-0 z-[999] bg-white overflow-y-auto">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB] px-5 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-[#111827]">
-          {L(lang, { ko: 'SIM/eSIM 구매 가이드', zh: 'SIM/eSIM购买指南', en: 'SIM/eSIM Guide' })}
-        </h1>
-        <button onClick={onClose} className="p-1 rounded-full hover:bg-[#F3F4F6] transition-colors">
-          <X size={22} className="text-[#111827]" />
-        </button>
-      </div>
-
-      <div className="px-5 py-4 space-y-4 pb-20">
+    <GuideLayout
+      title={{ ko: 'SIM/eSIM 구매 가이드', zh: 'SIM/eSIM购买指南', en: 'SIM/eSIM Guide' }}
+      lang={lang}
+      onClose={onClose}
+    >
         {/* 기준일자 */}
         <p className="text-xs text-gray-400 text-center">
           {L(lang, { ko: '정보 기준: 2026년 3월', zh: '信息基准: 2026年3月', en: 'As of March 2026' })}
@@ -232,7 +226,6 @@ export default function SimGuide({ lang, onClose }) {
         <p className="text-xs text-gray-400 text-center mt-8">
           {L(lang, { ko: '정보 기준: 2026년 3월 | 문의: hanpocket@email.com', zh: '信息基准: 2026年3月 | 联系: hanpocket@email.com', en: 'As of March 2026 | Contact: hanpocket@email.com' })}
         </p>
-      </div>
-    </div>
+    </GuideLayout>
   )
 }

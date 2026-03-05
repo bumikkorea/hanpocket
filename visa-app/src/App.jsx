@@ -1822,9 +1822,9 @@ function AppInner() {
               className="w-full text-center text-xs text-[#999] tracking-wider py-2"
             >
               {L(lang, {
-                ko: '아뇨, 한국인이라 필요없어요',
-                zh: '不了，我是韩国人不需要',
-                en: "No thanks, I'm Korean"
+                ko: '아니요, 괜찮습니다',
+                zh: '不了，谢谢',
+                en: 'No, thanks'
               })}
             </button>
           </div>

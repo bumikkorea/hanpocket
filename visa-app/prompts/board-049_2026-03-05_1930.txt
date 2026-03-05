@@ -1,0 +1,133 @@
+# Board-049: 첫 실행 웰컴 랜딩 + 알림 설정 유도
+
+## 목표
+앱 첫 실행 시 반투명 오버레이로 환영 메시지 표시 → 알림 동의 유도.
+Lawtalk 앱 레퍼런스와 동일한 플로우.
+
+## 구현 위치
+`src/App.jsx`의 `AppInner` 컴포넌트 내부, 최상단 렌더링.
+
+## 상태 관리
+```js
+const [showWelcome, setShowWelcome] = useState(() => {
+  return !localStorage.getItem('hp_welcome_done')
+})
+const [welcomeStep, setWelcomeStep] = useState('greeting') // 'greeting' | 'done'
+const [welcomeFading, setWelcomeFading] = useState(false)
+```
+
+## UI 구조
+
+### Step 1: greeting (첫 화면)
+
+뒤에 홈 화면이 보이는 반투명 오버레이:
+
+```jsx
+{showWelcome && (
+  <div className={`fixed inset-0 z-[300] flex items-end justify-center transition-opacity duration-500 ${welcomeFading ? 'opacity-0' : 'opacity-100'}`}
+    style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+    <div className={`w-full max-w-md bg-white rounded-t-3xl px-6 pt-10 pb-8 transition-transform duration-500 ${welcomeFading ? 'translate-y-full' : 'translate-y-0'}`}>
+      
+      {/* 손인사 이모지 */}
+      <div className="text-center mb-6">
+        <span className="text-6xl">👋</span>
+      </div>
+
+      {/* 메시지 */}
+      <div className="text-center mb-8">
+        <h1 className="text-lg font-semibold tracking-wide text-[#1A1A1A] mb-3">
+          {L(lang, { 
+            ko: '안녕하세요',
+            zh: '你好',
+            en: 'Hello'
+          })}
+        </h1>
+        <p className="text-sm text-[#666] leading-relaxed tracking-wider">
+          {L(lang, {
+            ko: '한포켓은 당신과 가장 가까운\n한국 친구예요.\n한국 좀 알려드릴까요?',
+            zh: '韩口袋是离你最近的\n韩国朋友。\n让我告诉你关于韩国的事吧？',
+            en: 'HanPocket is your closest\nKorean friend.\nShall I tell you about Korea?'
+          })}
+        </p>
+      </div>
+
+      {/* 녹색 버튼 */}
+      <button
+        onClick={() => {
+          // Notification API 권한 요청
+          if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().then(perm => {
+              localStorage.setItem('hp_notification_perm', perm)
+            })
+          }
+          // Capacitor PushNotifications가 있으면 등록
+          try {
+            if (window.Capacitor?.Plugins?.PushNotifications) {
+              window.Capacitor.Plugins.PushNotifications.requestPermissions()
+            }
+          } catch {}
+          dismissWelcome()
+        }}
+        className="w-full py-3.5 rounded-2xl bg-[#2D5A3D] text-white font-semibold text-sm tracking-wider active:scale-[0.98] transition-transform mb-4"
+      >
+        {L(lang, { ko: '네, 좋아요!', zh: '好的！', en: 'Yes, please!' })}
+      </button>
+
+      {/* 회색 거절 텍스트 */}
+      <button
+        onClick={() => dismissWelcome()}
+        className="w-full text-center text-xs text-[#999] tracking-wider py-2"
+      >
+        {L(lang, { 
+          ko: '아뇨, 한국인이라 필요없어요',
+          zh: '不了，我是韩国人不需要',
+          en: "No thanks, I'm Korean"
+        })}
+      </button>
+    </div>
+  </div>
+)}
+```
+
+## dismissWelcome 함수
+```js
+const dismissWelcome = () => {
+  setWelcomeFading(true)
+  setTimeout(() => {
+    setShowWelcome(false)
+    localStorage.setItem('hp_welcome_done', 'true')
+  }, 500)
+}
+```
+
+## 텍스트 줄바꿈
+`\n`을 실제 줄바꿈으로 표시하려면 `whitespace-pre-line` 클래스를 `<p>` 태그에 추가.
+
+## 기존 코드 관계
+- 기존 `pushDismissed` 알림 배너(HomeTab 상단)는 그대로 유지.
+- 웰컴 랜딩은 별개의 첫 실행 전용 오버레이.
+- `hp_welcome_done` localStorage 키로 1회만 표시.
+
+## 진입 애니메이션
+페이지 로드 시 bottom sheet가 아래에서 올라오는 효과:
+```css
+/* index.css에 추가 */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+```
+
+white box에 `animate-slide-up` 클래스 추가.
+
+## 빌드 & 배포
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+npm run build
+git add -A && git commit -m "board-049: welcome landing with notification permission"
+npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+openclaw system event --text 'Done: Board-049 첫 실행 웰컴 랜딩 + 알림 설정' --mode now
+```

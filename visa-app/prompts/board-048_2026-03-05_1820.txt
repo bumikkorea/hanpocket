@@ -1,0 +1,126 @@
+# Board-048: 프라다 럭셔리 감성 — 타이포그래피 + 입체 하단탭 + 카드 깊이감
+
+## 디자인 철학
+프라다 브랜드 페이지 벤치마크: **절제된 럭셔리**
+- 넓은 자간(letter-spacing), 여유로운 행간(line-height)
+- 불필요한 장식 없이 분명한 존재감
+- 입체감 있는 컴포넌트 (flat이 아닌 subtle depth)
+
+## 작업 1: 타이포그래피 업그레이드
+
+### 1-1. 섹션 제목 스타일 변경
+`src/components/HomeTab.jsx`의 모든 `<h2>` 섹션 제목:
+- 기존: `text-base font-bold` 
+- 변경: `text-[15px] font-semibold tracking-wide` (자간 넓히기)
+
+구체적으로 HomeTab.jsx에서 다음 패턴을 모두 찾아 변경:
+```
+text-base font-bold → text-[15px] font-semibold tracking-wide
+```
+
+### 1-2. 부제목/설명 행간
+RecommendSection 컴포넌트의 subtitle:
+- 기존: `text-xs text-[#999] mb-3`
+- 변경: `text-xs text-[#999] mb-3 tracking-wider`
+
+### 1-3. 카드 내 텍스트
+RecommendSection의 카드 내 가게명:
+- 기존: `text-sm font-bold`
+- 변경: `text-sm font-semibold tracking-wide`
+
+### 1-4. 정보 바 자간
+상단 정보 바 (날씨/환율/시간):
+- 기존 `text-xs`에 `tracking-wider` 추가
+
+## 작업 2: 하단 탭바 입체감
+
+`src/App.jsx`의 하단 탭바를 럭셔리하게 리디자인:
+
+기존:
+```jsx
+<div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom" style={{ backgroundColor: 'var(--bg-primary)', borderTop: '1px solid var(--border-primary)' }}>
+  <div className="flex items-center justify-around py-1.5">
+```
+
+변경:
+```jsx
+<div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom"
+  style={{
+    backgroundColor: 'rgba(255,255,255,0.85)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    boxShadow: '0 -1px 20px rgba(0,0,0,0.06)',
+    borderTop: 'none',
+  }}>
+  <div className="flex items-center justify-around py-2">
+```
+
+각 탭 버튼의 active 상태:
+- 기존: 아이콘 색상 + 하단 dot
+- 변경: active 탭에 `bg-[#2D5A3D]/10` 원형 배경 + 아이콘 살짝 위로 이동 (`-translate-y-0.5`) + 약간 큰 아이콘
+
+```jsx
+{bottomTabs.map(item => {
+  const active = tab === item.id
+  return (
+    <button key={item.id} onClick={() => handleTabChange(item.id)}
+      className={`flex flex-col items-center gap-0.5 py-1 relative transition-all duration-200 ${active ? '-translate-y-0.5' : ''}`}>
+      <div className={`p-1.5 rounded-xl transition-all duration-200 ${active ? 'bg-[#2D5A3D]/10' : ''}`}>
+        <item.icon size={active ? 24 : 22} strokeWidth={active ? 2.2 : 1.5} style={{ color: active ? '#2D5A3D' : '#9CA3AF' }} />
+      </div>
+      <span className={`text-[10px] tracking-wider transition-all duration-200 ${active ? 'font-semibold text-[#2D5A3D]' : 'font-light text-[#9CA3AF]'}`}>
+        {L(lang, item.label)}
+      </span>
+    </button>
+  )
+})}
+```
+
+기존 active dot `{active && <div className="w-1 h-1 rounded-full bg-[#2D5A3D] mt-0.5" />}` 제거.
+기존 admin mode red dot은 유지.
+
+## 작업 3: 카드 입체감 (soft shadow + hover depth)
+
+### 3-1. 여행 필수 카드
+HomeTab의 여행 필수 그리드 카드:
+- 기존: `border border-[#E5E7EB]`
+- 변경: `border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]`
+- hover/active 시: `active:shadow-[0_1px_4px_rgba(0,0,0,0.04)]` (눌리는 느낌)
+
+### 3-2. 추천 코스 카드
+- 동일한 soft shadow 추가: `shadow-[0_2px_12px_rgba(0,0,0,0.06)]`
+
+### 3-3. Intent 카드 ("지금 뭐 하고 싶어요?")
+- 동일한 soft shadow 추가
+
+### 3-4. 프로모 배너
+PromoBanner의 각 배너:
+- `shadow-[0_4px_20px_rgba(0,0,0,0.08)]` 추가 (더 깊은 그림자로 입체감)
+
+### 3-5. RecommendSection 카드 이미지
+추천 피드 카드 이미지에 미묘한 그림자:
+- 이미지 `<div>` wrapper에 `shadow-[0_2px_8px_rgba(0,0,0,0.08)]` 추가
+
+### 3-6. 브랜드 스크롤 아이콘
+BrandScrollSection의 원형 아이콘:
+- `shadow-[0_2px_10px_rgba(0,0,0,0.1)]` 추가 (입체 느낌)
+
+## 작업 4: 상황별 한국어 원형 아이콘에도 입체감
+방금 변경한 원형 사진 아이콘에도:
+- `shadow-[0_2px_8px_rgba(0,0,0,0.1)]` 추가
+
+## 주의사항
+- Raffles 테마 색상(#2D5A3D, #B8860B 등)은 유지
+- 배경은 여전히 #FFFFFF
+- 기존 border 카드 스타일에 shadow를 **추가**하는 것 (border 제거 아님)
+- shadow는 모두 subtle (rgba 0.04~0.1 범위)
+- 과하지 않게. 프라다처럼 절제.
+
+## 빌드 & 배포
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+npm run build
+git add -A && git commit -m "board-048: Prada luxury aesthetic — typography, 3D tabs, card depth"
+npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+openclaw system event --text 'Done: Board-048 프라다 럭셔리 감성 적용' --mode now
+```

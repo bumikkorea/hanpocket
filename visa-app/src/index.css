@@ -15,6 +15,15 @@
   --accent-gold: #B8860B;     /* 골드/황동 (조명/손잡이) */
   --accent-mint: #B2DFDB;     /* 민트/옥색 (분수대) */
   --accent: #2D5A3D;
+
+  /* 소나무 브랜드 컬러 시스템 */
+  --pine-dark: #1A3A28;
+  --pine-main: #2D5A3D;
+  --pine-light: #4A8A5A;
+  --pine-mist: #F7FAF8;
+  --pine-gradient: linear-gradient(to bottom, #2D5A3D, #1A3A28);
+  --pine-gradient-light: linear-gradient(to bottom, #4A8A5A, #2D5A3D);
+  --gold-accent: #B8860B;
 }
 
 /* 다크모드 CSS 변수 - 래플스 딥 포레스트 */
@@ -102,8 +111,8 @@ h1, h2, h3 {
 /* Horizontal scroll indicator - thin, rounded, aligned */
 .scroll-indicator::-webkit-scrollbar { height: 2px; }
 .scroll-indicator::-webkit-scrollbar-track { background: transparent; margin-left: 16px; margin-right: 16px; }
-.scroll-indicator::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 9999px; }
-.scroll-indicator { scrollbar-width: none; scrollbar-color: #D1D5DB transparent; }
+.scroll-indicator::-webkit-scrollbar-thumb { background: linear-gradient(to right, #2D5A3D, #4A8A5A); border-radius: 9999px; }
+.scroll-indicator { scrollbar-width: none; scrollbar-color: #2D5A3D transparent; }
 
 /* Card hover */
 .card-hover {
@@ -136,6 +145,15 @@ h1, h2, h3 {
 }
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Tab transition animation */
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tab-enter {
+  animation: tabFadeIn 0.25s ease-out;
 }
 
 /* Gold gradient text */

@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { CHAPTERS } from './korean-game/gameData'
+import Onigiri from './Onigiri'
 
 const EducationTab = lazy(() => import('./EducationTab'))
 const LessonScreen = lazy(() => import('./korean-game/LessonScreen'))
@@ -11,8 +12,11 @@ function L(lang, data) {
 
 function LoadingSpinner() {
   return (
-    <div className="flex items-center justify-center py-20">
-      <div className="w-8 h-8 border-2 border-[#111827] border-t-transparent rounded-full animate-spin"></div>
+    <div className="flex flex-col items-center justify-center py-20">
+      <div className="animate-bounce">
+        <Onigiri mood="loading" size={60} />
+      </div>
+      <p className="text-xs text-[#999999] mt-3 animate-pulse">Loading...</p>
     </div>
   )
 }
@@ -88,6 +92,9 @@ function TopikGaugeBar({ currentLevel, lang }) {
           className="h-full bg-gradient-to-r from-[#2D5A3D] to-[#4A8A5A] rounded-full transition-all duration-500"
           style={{ width: `${(currentLevel / 200) * 100}%` }}
         />
+        <div className="absolute" style={{ left: `${(currentLevel / 200) * 100}%`, top: '-20px', transform: 'translateX(-50%)' }}>
+          <Onigiri mood="happy" size={28} />
+        </div>
       </div>
 
       {/* 마일스톤 라벨 */}

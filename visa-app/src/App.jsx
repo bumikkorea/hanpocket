@@ -16,6 +16,7 @@ import HomeTab, { trackActivity } from './components/HomeTab'
 import { pocketCategories, featureScores, serviceItems, subMenuData, IMPLEMENTED_POCKETS } from './data/pockets'
 import AffiliateTracker from './components/AffiliateTracker'
 import LoadingSpinner from './components/LoadingSpinner'
+import Onigiri from './components/Onigiri'
 import PWAInstallPrompt from './components/PWAInstallPrompt'
 // OnboardingSimple import removed — replaced by auth popup
 import PocketContent from './components/pockets/PocketContent'
@@ -64,7 +65,7 @@ function Logo({ size = 'md' }) {
   return (
     <svg width={160 * sc} height={28 * sc} viewBox="0 0 160 28" fill="none">
       {/* HANPOCKET 텍스트 */}
-      <text x="80" y="19" textAnchor="middle" fontFamily="'Inter', sans-serif" fontWeight="300" fontSize="18" letterSpacing="0.25em" fill="var(--text-primary)">
+      <text x="80" y="19" textAnchor="middle" fontFamily="'Inter', sans-serif" fontWeight="300" fontSize="18" letterSpacing="0.25em" fill="#2D5A3D">
         HANPOCKET
       </text>
 
@@ -457,7 +458,7 @@ function VisaAccordionModal({ lang, visaTypes, tempVisaType, setTempVisaType, on
           <button
             onClick={onSave}
             disabled={!tempVisaType}
-            className="w-full py-3 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium disabled:opacity-50 transition-colors"
+            className="w-full py-3 rounded-xl bg-gradient-to-b from-[#2D5A3D] to-[#1A3A28] text-white text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {lang === 'ko' ? '선택 완료' : lang === 'zh' ? '确认选择' : 'Confirm'}
           </button>
@@ -743,7 +744,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                 <User className="w-10 h-10 text-[#9CA3AF]" />
               )}
             </div>
-            <div className="absolute bottom-0 right-0 w-7 h-7 bg-[#2D5A3D] rounded-full flex items-center justify-center border-2 border-white">
+            <div className="absolute bottom-0 right-0 w-7 h-7 bg-gradient-to-b from-[#2D5A3D] to-[#1A3A28] rounded-full flex items-center justify-center border-2 border-white">
               <span className="text-white text-xs">📷</span>
             </div>
             <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
@@ -1064,7 +1065,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                 {lang === 'ko' ? '취소' : lang === 'zh' ? '取消' : 'Cancel'}
               </button>
               <button onClick={handleAdminLogin}
-                className="flex-1 py-2.5 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium">
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-b from-[#2D5A3D] to-[#1A3A28] text-white text-sm font-medium">
                 {lang === 'ko' ? '확인' : lang === 'zh' ? '确认' : 'Confirm'}
               </button>
             </div>
@@ -1837,7 +1838,7 @@ function AppInner() {
       )}
 
       {/* Top Bar — scrolls with content (not sticky) */}
-      <div className="relative z-10" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
+      <div className="relative z-10" style={{ backgroundColor: '#F7FAF8', borderBottom: '1px solid #E5E7EB' }}>
         <div className="px-4 pt-3 pb-2">
           <div className="flex items-center">
             {/* 좌측: 햄버거 메뉴 (메인) 또는 뒤로가기 (서브) */}
@@ -1874,7 +1875,7 @@ function AppInner() {
       <OfflineNotice lang={lang} />
 
       {/* Content — full width, no side padding (tabs handle their own padding) */}
-      <div className="pt-1 pb-4">
+      <div className="pt-1 pb-4 tab-enter" key={`${tab}-${subPage || ''}`}>
         {/* Install / Push notification banner */}
         {!pushDismissed && tab === 'home' && (() => {
           const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone
@@ -2305,7 +2306,7 @@ function AppInner() {
         </div>
       </>
 
-      {/* Google-style Bottom Navigation */}
+      {/* Pine-style Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom" style={{ backgroundColor: 'var(--bg-primary)', borderTop: '1px solid var(--border-primary)' }}>
         <div className="flex items-center justify-around py-1.5">
           {bottomTabs.map(item => {
@@ -2313,11 +2314,12 @@ function AppInner() {
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
                 className="flex flex-col items-center gap-0.5 py-1 relative">
-                <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? 'var(--accent-green)' : 'var(--text-tertiary)' }} />
+                <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? '#2D5A3D' : 'var(--text-tertiary)' }} />
                 {item.id === 'profile' && localStorage.getItem('admin_mode') === 'true' && (
                   <span className="absolute top-0 right-1 w-2 h-2 bg-red-500 rounded-full" />
                 )}
-                <span className="text-[11px] font-light" style={{ color: active ? 'var(--accent-green)' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
+                <span className="text-[11px] font-light" style={{ color: active ? '#2D5A3D' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
+                {active && <div className="w-1 h-1 rounded-full bg-[#2D5A3D] mt-0.5" />}
               </button>
             )
           })}

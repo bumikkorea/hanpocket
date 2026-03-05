@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import Onigiri from './Onigiri'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -68,8 +69,8 @@ export default function OnboardingSimple({ onComplete, lang, setLang }) {
           className="flex-1 flex flex-col items-center justify-center cursor-pointer"
           style={{ animation: 'fadeIn 0.8s ease forwards' }}
         >
-          <p className="text-6xl mb-6">🧧</p>
-          <h1 className="text-3xl font-black text-[#111827] tracking-tight mb-3">HANPOCKET</h1>
+          <div className="mb-6 animate-bounce"><Onigiri mood="happy" size={80} /></div>
+          <h1 className="text-3xl font-black text-[#2D5A3D] tracking-tight mb-3">HANPOCKET</h1>
           <p className="text-sm text-[#6B7280]">
             {L(lang, { ko: '한국 여행의 모든 것', zh: '韩国旅行的一切', en: 'Everything for Korea Travel' })}
           </p>

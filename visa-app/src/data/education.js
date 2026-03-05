@@ -14,7 +14,7 @@ export const sessions = [
     subtitle: { ko: '읽기·쓰기·발음의 첫걸음', zh: '读写发音第一步', en: 'First steps in reading, writing & pronunciation' },
     weeks: 2,
     days: 10,
-    icon: '🔤',
+    icon: '🍙',
     color: 'from-violet-500 to-purple-600',
     topikLevel: '0',
     units: [
@@ -36,7 +36,7 @@ export const sessions = [
     subtitle: { ko: '숫자, 시간, 교통, 기본 표현', zh: '数字、时间、交通、基本表达', en: 'Numbers, time, transport, basic expressions' },
     weeks: 4,
     days: 20,
-    icon: '🌱',
+    icon: '🍜',
     color: 'from-green-500 to-emerald-600',
     topikLevel: '1',
     units: [
@@ -74,7 +74,7 @@ export const sessions = [
     subtitle: { ko: '쇼핑, 식당, 카페에서 자유롭게', zh: '在商店、餐厅、咖啡馆自由交流', en: 'Shopping, restaurants, cafes' },
     weeks: 4,
     days: 20,
-    icon: '☕',
+    icon: '🍗',
     color: 'from-amber-500 to-orange-600',
     topikLevel: '1-2',
     units: [
@@ -106,7 +106,7 @@ export const sessions = [
     subtitle: { ko: '동사무소, 은행, 병원 정복하기', zh: '征服行政中心、银行、医院', en: 'Government office, bank, hospital' },
     weeks: 4,
     days: 20,
-    icon: '🏢',
+    icon: '🌶️',
     color: 'from-blue-500 to-cyan-600',
     topikLevel: '2',
     units: [
@@ -138,7 +138,7 @@ export const sessions = [
     subtitle: { ko: '비즈니스 한국어와 학교생활', zh: '商务韩语和学校生活', en: 'Business Korean & campus life' },
     weeks: 4,
     days: 20,
-    icon: '💼',
+    icon: '🍶',
     color: 'from-slate-600 to-gray-700',
     topikLevel: '2-3',
     units: [
@@ -170,7 +170,7 @@ export const sessions = [
     subtitle: { ko: '뉴스, 문화, 사회 이해하기', zh: '理解新闻、文化、社会', en: 'News, culture, society' },
     weeks: 4,
     days: 20,
-    icon: '📰',
+    icon: '🍦',
     color: 'from-rose-500 to-pink-600',
     topikLevel: '3',
     units: [
@@ -202,7 +202,7 @@ export const sessions = [
     subtitle: { ko: '모의시험으로 3급 달성!', zh: '模拟考试达成3级！', en: 'Achieve Level 3 with mock tests!' },
     weeks: 2,
     days: 10,
-    icon: '🎯',
+    icon: '🍙',
     color: 'from-red-500 to-rose-600',
     topikLevel: '3',
     units: [

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Play, Volume2, Mic, Award, Target, CheckCircle, XCircle, ChevronLeft } from 'lucide-react'
 import { sessions, minimaps, xpRules, levelTitles, getLevelFromXp, getNextLevelXp, levels } from '../data/education'
+import Onigiri from './Onigiri'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -58,7 +59,7 @@ function PronunciationQuiz({ word, pronunciation, meaning, lang, onComplete }) {
         
         <button onClick={handleListen} disabled={isListening}
           className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-colors ${
-            isListening ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-[#2D5A3D] text-white hover:bg-[#1A3A28]'
+            isListening ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-gradient-to-b from-[#2D5A3D] to-[#1A3A28] text-white'
           }`}>
           <Mic size={18} />
           {isListening 
@@ -419,8 +420,12 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
             onComplete={() => handlePronunciationComplete(currentStep)}
           />
         ) : (
-          <div className="text-center py-8">
-            <div className="text-6xl mb-4">🎉</div>
+          <div className="text-center py-8 relative">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="text-4xl animate-bounce" style={{ animationDelay: '0s' }}>🍗</span>
+              <Onigiri mood="celebrate" size={64} />
+              <span className="text-4xl animate-bounce" style={{ animationDelay: '0.2s' }}>🍜</span>
+            </div>
             <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">
               {lang === 'ko' ? '완료!' : lang === 'zh' ? '完成！' : 'Complete!'}
             </h3>

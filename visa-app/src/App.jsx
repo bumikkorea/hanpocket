@@ -1304,11 +1304,11 @@ function ServiceGrid({ lang, L, setSubPage }) {
             {cat.pockets.map(p => (
               <button key={p.id} onClick={() => setSubPage(p.id)}
                 className="rounded-xl p-2 flex flex-col items-center gap-1 transition-all duration-200 active:scale-[0.95]">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center"
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center"
                   style={{ backgroundColor: categoryBgColors[cat.id] || '#F9FAFB' }}>
-                  <span className="text-xl">{p.icon}</span>
+                  <span className="text-2xl">{p.icon}</span>
                 </div>
-                <span className="text-[10px] text-[#1A1A1A] font-medium text-center leading-tight">{L(lang, p.name)}</span>
+                <span className="text-[11px] text-[#1A1A1A] font-medium text-center leading-tight">{L(lang, p.name)}</span>
               </button>
             ))}
           </div>
@@ -1331,11 +1331,11 @@ function ServiceGrid({ lang, L, setSubPage }) {
               {unimplementedPockets.map(p => (
                 <div key={p.id}
                   className="rounded-xl p-2 flex flex-col items-center gap-1 opacity-60 cursor-default">
-                  <div className="w-11 h-11 rounded-xl flex items-center justify-center opacity-50"
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center opacity-50"
                     style={{ backgroundColor: categoryBgColors[p.catId] || '#F9FAFB' }}>
-                    <span className="text-xl">{p.icon}</span>
+                    <span className="text-2xl">{p.icon}</span>
                   </div>
-                  <span className="text-[10px] text-[#9CA3AF] font-medium text-center leading-tight">{L(lang, p.name)}</span>
+                  <span className="text-[11px] text-[#9CA3AF] font-medium text-center leading-tight">{L(lang, p.name)}</span>
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: '#F5F1EB', color: '#B8860B', border: '1px solid #B8860B' }}>
                     {L(lang, updatingBadge)}

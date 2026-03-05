@@ -419,10 +419,10 @@ function VisaAccordionModal({ lang, visaTypes, tempVisaType, setTempVisaType, on
             <div key={cat.code}>
               <button
                 onClick={() => toggleCat(cat.code)}
-                className="w-full flex items-center justify-between px-4 py-3 text-left"
+                className="w-full py-3 px-4 bg-[#F5F5F5] rounded-xl mb-1 flex justify-between items-center"
               >
                 <span className="text-sm font-bold text-[#1A1A1A]">{L(lang, cat.label)}</span>
-                <ChevronDown className={`w-4 h-4 text-[#6B7280] transition-transform ${openCats[cat.code] ? 'rotate-180' : ''}`} />
+                <ChevronRight className={`w-4 h-4 text-[#6B7280] transition-transform ${openCats[cat.code] ? 'rotate-90' : ''}`} />
               </button>
               {openCats[cat.code] && (
                 <div className="pb-1">

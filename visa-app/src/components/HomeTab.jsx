@@ -359,7 +359,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={i}
               onClick={() => setActiveScene(item.pocket)}
-              className={`snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.98] transition-transform border ${item.pocket === 'emergency' ? 'border-red-400' : 'border-[#E5E7EB]'}`}
+              className={`snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.98] transition-transform border ${item.pocket === 'emergency' ? 'border-red-400 border-2' : 'border-[#E5E7EB]'}`}
               style={{ width: 130 }}
             >
               <div className="relative" style={{ height: 84 }}>

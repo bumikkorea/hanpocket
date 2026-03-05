@@ -77,42 +77,42 @@ export const pocketCategories = [
 // Mock data for pocket content rendering (기존 데이터 유지)
 export const pocketMockData = {
   restaurant: {
-    weekLabel: { ko: '이번 주 추천', zh: '本周推荐', en: "This Week's Picks" },
+    weekLabel: { ko: '큐레이션 준비 중', zh: '精选准备中', en: 'Curation in progress' },
     items: [
       {
         name: { ko: '을지로 노가리 골목', zh: '乙支路小鱼干街', en: 'Euljiro Nogari Alley' },
         area: { ko: '을지로', zh: '乙支路', en: 'Euljiro' },
         category: { ko: '포장마차/안주', zh: '路边摊/下酒菜', en: 'Street Food/Bar Snacks' },
         naverLink: 'https://map.naver.com/v5/search/을지로노가리골목',
-        xhsLink: '// TODO: xiaohongshu link',
+        xhsLink: '',
       },
       {
         name: { ko: '광장시장 빈대떡', zh: '广藏市场绿豆饼', en: 'Gwangjang Market Bindaetteok' },
         area: { ko: '종로', zh: '钟路', en: 'Jongno' },
         category: { ko: '전통시장', zh: '传统市场', en: 'Traditional Market' },
         naverLink: 'https://map.naver.com/v5/search/광장시장빈대떡',
-        xhsLink: '// TODO: xiaohongshu link',
+        xhsLink: '',
       },
       {
         name: { ko: '이태원 경리단길 브런치', zh: '梨泰院经理团路早午餐', en: 'Itaewon Gyeongridan Brunch' },
         area: { ko: '이태원', zh: '梨泰院', en: 'Itaewon' },
         category: { ko: '브런치/카페', zh: '早午餐/咖啡', en: 'Brunch/Café' },
         naverLink: 'https://map.naver.com/v5/search/경리단길브런치',
-        xhsLink: '// TODO: xiaohongshu link',
+        xhsLink: '',
       },
       {
         name: { ko: '명동 칼국수 골목', zh: '明洞刀削面胡同', en: 'Myeongdong Kalguksu Alley' },
         area: { ko: '명동', zh: '明洞', en: 'Myeongdong' },
         category: { ko: '한식', zh: '韩餐', en: 'Korean' },
         naverLink: 'https://map.naver.com/v5/search/명동칼국수골목',
-        xhsLink: '// TODO: xiaohongshu link',
+        xhsLink: '',
       },
       {
         name: { ko: '홍대 연남동 파스타', zh: '弘大延南洞意面', en: 'Hongdae Yeonnam Pasta' },
         area: { ko: '연남동', zh: '延南洞', en: 'Yeonnam-dong' },
         category: { ko: '양식', zh: '西餐', en: 'Western' },
         naverLink: 'https://map.naver.com/v5/search/연남동파스타맛집',
-        xhsLink: '// TODO: xiaohongshu link',
+        xhsLink: '',
       },
     ],
   },
@@ -149,14 +149,6 @@ export const pocketMockData = {
       },
     ]
   },
-  delivery: {
-    items: [
-      { name: { ko: '떡볶이', zh: '炒年糕', en: 'Tteokbokki' }, icon: 'Flame', rank: 1, orders: '12.3만' },
-      { name: { ko: '치킨', zh: '炸鸡', en: 'Fried Chicken' }, icon: 'Drumstick', rank: 2, orders: '9.8만' },
-      { name: { ko: '마라탕', zh: '麻辣烫', en: 'Malatang' }, icon: 'Soup', rank: 3, orders: '7.2만' },
-    ],
-  },
-  transport: { line: '2호선', status: { ko: '정상 운행', zh: '正常运行', en: 'Normal operation' }, nextTrain: '2분' },
   currency: {
     cnyToKrw: 191.52,
     usdToKrw: 1384.50,
@@ -176,55 +168,6 @@ export const pocketMockData = {
     upcoming: [
       { name: { ko: '삼일절', zh: '三一节', en: 'Independence Day' }, date: '3/1' },
       { name: { ko: '어린이날', zh: '儿童节', en: "Children's Day" }, date: '5/5' },
-    ],
-  },
-  idol: {
-    name: 'BTS',
-    schedule: [
-      { ko: '3/15 팬미팅 서울', zh: '3/15 粉丝见面会 首尔', en: '3/15 Fan Meeting Seoul' },
-      { ko: '3/22 음악방송 출연', zh: '3/22 音乐节目出演', en: '3/22 Music Show Appearance' },
-    ],
-  },
-  faneventFull: { /* see idolData.js */ },
-  drama: {
-    items: [
-      { name: { ko: '눈물의 여왕 시즌2', zh: '泪之女王 第二季', en: 'Queen of Tears S2' }, time: 'tvN 토일 21:00', rating: '16.2%' },
-      { name: { ko: '무한도전 리부트', zh: '无限挑战 重启', en: 'Infinite Challenge Reboot' }, time: 'MBC 토 18:00', rating: '12.8%' },
-    ],
-  },
-  kpop: {
-    source: 'Melon Chart',
-    updated: '2026-02-19',
-    items: [
-      { rank: 1, title: 'APT.', artist: 'ROSÉ & Bruno Mars', change: 0 },
-      { rank: 2, title: 'Whiplash', artist: 'aespa', change: 2 },
-      { rank: 3, title: 'DRIP', artist: 'BABYMONSTER', change: 1 },
-      { rank: 4, title: 'Supernova', artist: 'aespa', change: -1 },
-      { rank: 5, title: '소나기', artist: '이클립스', change: 0 },
-      { rank: 6, title: 'Magnetic', artist: 'ILLIT', change: -2 },
-      { rank: 7, title: 'How Sweet', artist: 'NewJeans', change: 1 },
-      { rank: 8, title: 'SPOT!', artist: 'ZICO (feat. JENNIE)', change: -1 },
-      { rank: 9, title: 'Love wins all', artist: 'IU', change: 0 },
-      { rank: 10, title: 'Ditto', artist: 'NewJeans', change: -2 },
-    ],
-  },
-  fanevent: {
-    items: [
-      { ko: 'SEVENTEEN 콘서트 3/20 잠실', zh: 'SEVENTEEN演唱会 3/20 蚕室', en: 'SEVENTEEN Concert 3/20 Jamsil' },
-      { ko: 'IVE 팬싸인회 3/25', zh: 'IVE粉丝签名会 3/25', en: 'IVE Fan Sign 3/25' },
-    ],
-  },
-  beauty: {
-    items: [
-      { rank: 1, name: { ko: '토리든 다이브인 세럼', zh: 'Torriden Dive-in精华', en: 'Torriden Dive-in Serum' } },
-      { rank: 2, name: { ko: '라운드랩 자작나무 수분크림', zh: 'Round Lab桦树水分霜', en: 'Round Lab Birch Cream' } },
-      { rank: 3, name: { ko: '넘버즈인 3번 세럼', zh: 'Numbuzin 3号精华', en: 'Numbuzin No.3 Serum' } },
-    ],
-  },
-  fashiontrend: {
-    items: [
-      { ko: '오버사이즈 트렌치코트', zh: '超大号风衣', en: 'Oversized Trench Coat' },
-      { ko: '미니멀 뉴트럴 톤', zh: '极简中性色调', en: 'Minimal Neutral Tones' },
     ],
   },
   trip: {
@@ -248,57 +191,57 @@ export const pocketMockData = {
     items: [
       {
         name: { ko: '서울빛초롱축제', zh: '首尔灯笼节', en: 'Seoul Lantern Festival' },
-        dateStart: '2026-03-01', dateEnd: '2026-03-15',
         location: { ko: '서울 청계천', zh: '首尔清溪川', en: 'Cheonggyecheon, Seoul' },
         category: { ko: '축제', zh: '节日', en: 'Festival' },
         categoryColor: 'bg-amber-100 text-amber-700',
         emoji: 'Lantern',
-        ticketLink: 'https://www.klook.com/ko/search?query=seoul+lantern&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app'
+        ticketLink: 'https://www.klook.com/ko/search?query=seoul+lantern&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app',
+        updating: true,
       },
       {
         name: { ko: '진해군항제 (벚꽃)', zh: '镇海军港节（樱花）', en: 'Jinhae Cherry Blossom Festival' },
-        dateStart: '2026-04-01', dateEnd: '2026-04-10',
         location: { ko: '경남 창원시 진해구', zh: '庆南昌原市镇海区', en: 'Jinhae, Changwon' },
         category: { ko: '축제', zh: '节日', en: 'Festival' },
         categoryColor: 'bg-pink-100 text-pink-700',
         emoji: 'Flower2',
-        ticketLink: 'https://www.kkday.com/ko/product/searchresult?keyword=jinhae+cherry+blossom&cid=aff_4327_hp&utm_source=hanpocket'
+        ticketLink: 'https://www.kkday.com/ko/product/searchresult?keyword=jinhae+cherry+blossom&cid=aff_4327_hp&utm_source=hanpocket',
+        updating: true,
       },
       {
         name: { ko: '서울재즈페스티벌', zh: '首尔爵士音乐节', en: 'Seoul Jazz Festival' },
-        dateStart: '2026-05-22', dateEnd: '2026-05-24',
         location: { ko: '서울 올림픽공원', zh: '首尔奥林匹克公园', en: 'Olympic Park, Seoul' },
         category: { ko: '공연', zh: '演出', en: 'Performance' },
         categoryColor: 'bg-purple-100 text-purple-700',
         emoji: 'Music',
-        ticketLink: 'https://www.klook.com/ko/search?query=seoul+jazz+festival&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app'
+        ticketLink: 'https://www.klook.com/ko/search?query=seoul+jazz+festival&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app',
+        updating: true,
       },
       {
         name: { ko: '보령머드축제', zh: '保宁泥浆节', en: 'Boryeong Mud Festival' },
-        dateStart: '2026-07-17', dateEnd: '2026-07-26',
         location: { ko: '충남 보령시 대천해수욕장', zh: '忠南保宁市大川海水浴场', en: 'Daecheon Beach, Boryeong' },
         category: { ko: '체험', zh: '体验', en: 'Experience' },
         categoryColor: 'bg-orange-100 text-orange-700',
         emoji: 'Umbrella',
-        ticketLink: 'https://www.klook.com/ko/search?query=boryeong+mud+festival&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app'
+        ticketLink: 'https://www.klook.com/ko/search?query=boryeong+mud+festival&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app',
+        updating: true,
       },
       {
         name: { ko: '부산국제영화제', zh: '釜山国际电影节', en: 'Busan Intl Film Festival' },
-        dateStart: '2026-10-07', dateEnd: '2026-10-16',
         location: { ko: '부산 해운대 영화의전당', zh: '釜山海云台电影殿堂', en: 'Busan Cinema Center' },
         category: { ko: '전시', zh: '展览', en: 'Exhibition' },
         categoryColor: 'bg-blue-100 text-blue-700',
         emoji: 'Clapperboard',
-        ticketLink: 'https://www.kkday.com/ko/product/searchresult?keyword=busan+film+festival&cid=aff_4327_hp&utm_source=hanpocket'
+        ticketLink: 'https://www.kkday.com/ko/product/searchresult?keyword=busan+film+festival&cid=aff_4327_hp&utm_source=hanpocket',
+        updating: true,
       },
       {
         name: { ko: '수원화성문화제', zh: '水原华城文化节', en: 'Suwon Hwaseong Cultural Festival' },
-        dateStart: '2026-10-09', dateEnd: '2026-10-11',
         location: { ko: '경기 수원시 화성행궁', zh: '京畿水原市华城行宫', en: 'Hwaseong Haenggung, Suwon' },
         category: { ko: '축제', zh: '节日', en: 'Festival' },
         categoryColor: 'bg-emerald-100 text-emerald-700',
         emoji: 'Landmark',
-        ticketLink: 'https://www.klook.com/ko/search?query=suwon+hwaseong&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app'
+        ticketLink: 'https://www.klook.com/ko/search?query=suwon+hwaseong&aid=aff_3219_hp&utm_source=hanpocket&utm_medium=app',
+        updating: true,
       },
     ],
   },

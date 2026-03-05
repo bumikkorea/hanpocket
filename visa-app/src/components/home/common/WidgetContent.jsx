@@ -5,7 +5,6 @@ import HolidayCalendarWidget from '../widgets/HolidayCalendarWidget'
 import ParcelWidget from '../widgets/ParcelWidget'
 import EditorPickWidget from '../widgets/EditorPickWidget'
 import NewsWidget from '../widgets/NewsWidget'
-import { widgetMockData } from '../../../data/widgets'
 import { trackActivity } from '../utils/helpers'
 
 export default function WidgetContent({ widgetId, lang, setTab }) {
@@ -31,7 +30,7 @@ export default function WidgetContent({ widgetId, lang, setTab }) {
       return <EditorPickWidget lang={lang} />
 
     case 'news':
-      return <NewsWidget data={widgetMockData.news} lang={lang} />
+      return <NewsWidget data={null} lang={lang} />
 
     case 'weather':
       return <div className="p-4 text-center text-sm text-gray-500">날씨 위젯 (분리 예정)</div>

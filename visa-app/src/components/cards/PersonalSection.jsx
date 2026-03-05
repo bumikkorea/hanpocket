@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Mic, Volume2, Check, X, Plus, ChevronRight, ChevronDown } from 'lucide-react'
-import { widgetMockData } from '../../data/widgets'
 import { L, getDaysUntil, getTimeInOffset } from '../home/utils/helpers'
 import { TIMEZONE_COUNTRIES } from '../home/utils/constants'
 import VisaWidget from '../widgets/VisaWidget'
@@ -557,7 +556,7 @@ function MyStatusCard({ profile, lang, setTab }) {
         {/* Korean progress */}
         <div className="flex items-center justify-between">
           <span className="text-[9px] text-[#6B7280]">{lang === 'ko' ? '한국어' : lang === 'zh' ? '韩语' : 'Korean'}</span>
-          <span className="text-[9px] font-bold text-[#111827]">Day {widgetMockData.korean?.day || 1}</span>
+          <span className="text-[9px] font-bold text-[#111827]">Day 1</span>
         </div>
         {/* Login method */}
         <div className="flex items-center justify-between">
@@ -620,7 +619,7 @@ function TaxRefundMiniCard({ lang }) {
 // ─── Personal Cards Section ───
 
 function PersonalSection({ profile, lang, setTab, exchangeRate }) {
-  const koreanData = widgetMockData.korean
+  const koreanData = null
   const card = "w-[220px] min-h-[220px] shrink-0 bg-white border border-[#E5E7EB] rounded-lg p-4 flex flex-col card-glow"
   const snapStyle = { scrollSnapAlign: 'start' }
 

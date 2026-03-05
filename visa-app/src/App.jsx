@@ -1419,6 +1419,17 @@ function AppInner() {
     setShowAuthPopup(false)
     localStorage.setItem('hanpocket_dismissed_auth', '1')
   }
+
+  // Welcome landing overlay (first-run only)
+  const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem('hp_welcome_done'))
+  const [welcomeFading, setWelcomeFading] = useState(false)
+  const dismissWelcome = () => {
+    setWelcomeFading(true)
+    setTimeout(() => {
+      setShowWelcome(false)
+      localStorage.setItem('hp_welcome_done', 'true')
+    }, 500)
+  }
   const handleAuth = (provider) => {
     const p = {
       name: '',
@@ -1767,6 +1778,58 @@ function AppInner() {
     <div className="min-h-screen pb-20" style={{ backgroundColor: '#FFFFFF' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
+
+      {/* Welcome Landing Overlay (first-run) */}
+      {showWelcome && (
+        <div className={`fixed inset-0 z-[300] flex items-end justify-center transition-opacity duration-500 ${welcomeFading ? 'opacity-0' : 'opacity-100'}`}
+          style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
+          <div className={`w-full max-w-md bg-white rounded-t-3xl px-6 pt-10 pb-8 animate-slide-up transition-transform duration-500 ${welcomeFading ? 'translate-y-full' : 'translate-y-0'}`}>
+            <div className="text-center mb-6">
+              <span className="text-6xl">👋</span>
+            </div>
+            <div className="text-center mb-8">
+              <h1 className="text-lg font-semibold tracking-wide text-[#1A1A1A] mb-3">
+                {L(lang, { ko: '안녕하세요', zh: '你好', en: 'Hello' })}
+              </h1>
+              <p className="text-sm text-[#666] leading-relaxed tracking-wider whitespace-pre-line">
+                {L(lang, {
+                  ko: '한포켓은 당신과 가장 가까운\n한국 친구예요.\n한국 좀 알려드릴까요?',
+                  zh: '韩口袋是离你最近的\n韩国朋友。\n让我告诉你关于韩国的事吧？',
+                  en: 'HanPocket is your closest\nKorean friend.\nShall I tell you about Korea?'
+                })}
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                if ('Notification' in window && Notification.permission === 'default') {
+                  Notification.requestPermission().then(perm => {
+                    localStorage.setItem('hp_notification_perm', perm)
+                  })
+                }
+                try {
+                  if (window.Capacitor?.Plugins?.PushNotifications) {
+                    window.Capacitor.Plugins.PushNotifications.requestPermissions()
+                  }
+                } catch {}
+                dismissWelcome()
+              }}
+              className="w-full py-3.5 rounded-2xl bg-[#2D5A3D] text-white font-semibold text-sm tracking-wider active:scale-[0.98] transition-transform mb-4"
+            >
+              {L(lang, { ko: '네, 좋아요!', zh: '好的！', en: 'Yes, please!' })}
+            </button>
+            <button
+              onClick={() => dismissWelcome()}
+              className="w-full text-center text-xs text-[#999] tracking-wider py-2"
+            >
+              {L(lang, {
+                ko: '아뇨, 한국인이라 필요없어요',
+                zh: '不了，我是韩国人不需要',
+                en: "No thanks, I'm Korean"
+              })}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Auth Popup (replaces onboarding) */}
       {showAuthPopup && (

@@ -461,3 +461,12 @@ h1, h2, h3 {
 .dark .text-green-500 {
   color: #10B981 !important;
 }
+
+/* Welcome landing slide-up */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}

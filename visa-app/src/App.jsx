@@ -2269,7 +2269,7 @@ function AppInner() {
         >
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid #E5E7EB' }}>
-            <h2 className="text-lg font-bold" style={{ color: '#1A1A1A' }}>내 설정</h2>
+            <h2 className="text-lg font-bold" style={{ color: '#1A1A1A' }}>{L(lang, { ko: '내 설정', zh: '我的设置', en: 'My Settings' })}</h2>
             <button
               onClick={() => setShowAppMenu(false)}
               className="p-1"
@@ -2283,20 +2283,19 @@ function AppInner() {
           <div className="flex-1 overflow-y-auto px-5 py-5">
             {/* Widget Settings Section */}
             <div className="mb-8">
-              <h3 className="text-sm font-bold mb-1" style={{ color: '#1A1A1A' }}>내 위젯 설정</h3>
-              <p className="text-xs mb-4" style={{ color: '#9CA3AF' }}>홈 화면 위젯 순서를 변경할 수 있습니다</p>
+              <h3 className="text-sm font-bold mb-1" style={{ color: '#1A1A1A' }}>{L(lang, { ko: '내 위젯 설정', zh: '我的小组件设置', en: 'My Widget Settings' })}</h3>
+              <p className="text-xs font-semibold mb-4" style={{ color: '#6B7280' }}>{L(lang, { ko: '홈 화면의 위젯을 설정할 수 있습니다.', zh: '可以设置首页的小组件。', en: 'Configure widgets on the home screen.' })}</p>
               <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                 {[
-                  { key: 'weather', emoji: '☀️', label: '날씨' },
-                  { key: 'exchange', emoji: '💱', label: '환율' },
-                  { key: 'clock', emoji: '🕐', label: '한국 시간' },
-                  { key: 'course', emoji: '🗺️', label: '추천 코스' },
-                  { key: 'emergency', emoji: '🚨', label: '긴급 연락처' },
+                  { key: 'weather', label: { ko: '날씨', zh: '天气', en: 'Weather' } },
+                  { key: 'exchange', label: { ko: '환율', zh: '汇率', en: 'Exchange' } },
+                  { key: 'clock', label: { ko: '한국 시간', zh: '韩国时间', en: 'Korea Time' } },
+                  { key: 'emergency', label: { ko: '긴급 연락처', zh: '紧急联系', en: 'Emergency' } },
                 ].map((w, i, arr) => {
                   const isOn = widgetSettings[w.key] !== false
                   return (
-                    <div key={w.key} className="flex items-center justify-between px-4 py-3.5" style={i < arr.length - 1 ? { borderBottom: '1px solid #F3F4F6' } : {}}>
-                      <span className="text-sm" style={{ color: '#1A1A1A' }}>{w.emoji} {w.label}</span>
+                    <div key={w.key} className="flex items-center justify-between px-4 py-3.5">
+                      <span className="text-sm font-bold" style={{ color: '#1A1A1A' }}>{L(lang, w.label)}</span>
                       <button
                         onClick={() => {
                           const next = { ...widgetSettings, [w.key]: !isOn }
@@ -2319,11 +2318,11 @@ function AppInner() {
 
             {/* App Shortcuts Section */}
             <div>
-              <h3 className="text-sm font-bold mb-4" style={{ color: '#1A1A1A' }}>앱 바로가기</h3>
+              <h3 className="text-sm font-bold mb-4" style={{ color: '#1A1A1A' }}>{L(lang, { ko: '앱 바로가기', zh: 'APP快捷方式', en: 'App Shortcuts' })}</h3>
 
               {/* 지도 */}
               <div className="mb-5">
-                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>지도</p>
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '지도', zh: '地图', en: 'Maps' })}</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                   <AppShortcut name="카카오맵 (추천)" description="지도, 길찾기, 장소검색" deepLink="kakaomap://" webUrl="https://map.kakao.com" domain="map.kakao.com" />
                   <AppShortcut name="바이두 지도" description="百度地图 — 중국어 지도" deepLink="baidumap://" webUrl="https://map.baidu.com" domain="map.baidu.com" />
@@ -2334,7 +2333,7 @@ function AppInner() {
 
               {/* 쇼핑/배달 */}
               <div className="mb-5">
-                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>쇼핑/배달</p>
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '쇼핑/배달', zh: '购物/外卖', en: 'Shopping/Delivery' })}</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                   <AppShortcut name="배달의민족" description="음식 배달 주문" deepLink="baemin://" webUrl="https://apps.apple.com/app/id378084485" domain="baemin.com" />
                   <AppShortcut name="무신사" description="패션 쇼핑몰" deepLink="musinsa://" webUrl="https://apps.apple.com/app/id1095563498" domain="musinsa.com" />
@@ -2346,7 +2345,7 @@ function AppInner() {
 
               {/* 여행/숙박 */}
               <div className="mb-5">
-                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>여행/숙박</p>
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '여행/숙박', zh: '旅行/住宿', en: 'Travel/Stay' })}</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                   <AppShortcut name="Trip.com" description="항공권, 호텔 예약" deepLink="ctrip://" webUrl="https://www.trip.com/?promo=aff_1892_hp&locale=ko-KR" domain="trip.com" />
                   <AppShortcut name="Klook" description="액티비티, 투어, 입장권" deepLink="klook://" webUrl="https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket" domain="klook.com" />
@@ -2355,7 +2354,7 @@ function AppInner() {
 
               {/* 생활/정부 */}
               <div className="mb-5">
-                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>생활/정부</p>
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '생활/정부', zh: '生活/政府', en: 'Life/Gov' })}</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                   <AppShortcut name="카카오톡" description="메신저, 소셜" deepLink="kakaotalk://" webUrl="https://apps.apple.com/app/id362057947" domain="kakaocorp.com" />
                   <AppShortcut name="당근" description="중고거래, 동네생활" deepLink="daangn://" webUrl="https://apps.apple.com/app/id1018769995" domain="daangn.com" />

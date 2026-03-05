@@ -1,0 +1,145 @@
+# Board-044: 탐색탭 회색 배경 + 여행필수 아이콘 제거 + "방금 도착했어요" 웰컴 플로우
+
+## 작업 1: 탐색탭 (ServiceGrid) 아이콘 배경색 크림→회색
+
+`src/App.jsx`의 `ServiceGrid` 컴포넌트에서 `categoryBgColors` 값을 전부 `#F3F4F6` (밝은 회색)으로 변경:
+
+```js
+const categoryBgColors = {
+  'situational-korean': '#F3F4F6',
+  'travel-food': '#F3F4F6',
+  'hallyu-entertainment': '#F3F4F6',
+  'shopping-beauty': '#F3F4F6',
+  'learning': '#F3F4F6',
+  'daily-life': '#F3F4F6',
+  'tools': '#F3F4F6',
+}
+```
+
+또한 탐색탭 상단 검색창의 배경색도 동일하게:
+`bg-[#F5F1EB]` → `bg-[#F3F4F6]` (약 line 1928 근처)
+
+## 작업 2: HomeTab 여행 필수 카드 왼쪽 상단 카테고리 아이콘 제거
+
+`src/components/HomeTab.jsx`에서 여행 필수 그리드 아이템의 이 줄을 삭제:
+```jsx
+<span className="absolute top-2 left-2 text-[9px] bg-black/40 text-white px-1.5 py-0.5 rounded-full">{item.category}</span>
+```
+
+각 아이템 데이터의 `category: '🛬'`, `category: '🛍️'`, `category: '🚌'` 속성도 삭제 (더 이상 안 쓰이므로).
+
+## 작업 3: "방금 도착했어요" 클릭 시 웰컴 플로우 (가장 큰 작업)
+
+### 3-1. 환영 스플래시 (1.5초)
+
+HomeTab에서 INTENT_CARDS의 `just-arrived` 클릭 시:
+- 기존: `setActiveGuide('arrival-card')` → 변경: `setShowArrivalFlow(true)`
+- 새 state: `const [showArrivalFlow, setShowArrivalFlow] = useState(false)`
+- 새 state: `const [arrivalStep, setArrivalStep] = useState('splash')` // 'splash' | 'menu' | 항목별
+
+스플래시 화면:
+```jsx
+{showArrivalFlow && arrivalStep === 'splash' && (
+  <div className="fixed inset-0 z-50 bg-white flex items-center justify-center animate-fade-in-out">
+    <div className="text-center">
+      <p className="text-4xl mb-4">👋</p>
+      <h1 className="text-xl font-bold text-[#1A1A1A]">
+        {L(lang, { ko: '한국에 오신 걸 환영해요!', zh: '欢迎来到韩国！', en: 'Welcome to Korea!' })}
+      </h1>
+    </div>
+  </div>
+)}
+```
+
+CSS 애니메이션 (`src/index.css`에 추가):
+```css
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  16.7% { opacity: 1; }  /* 0.25s fade in */
+  83.3% { opacity: 1; }  /* hold until 1.25s */
+  100% { opacity: 0; }   /* 0.25s fade out = 1.5s total */
+}
+.animate-fade-in-out {
+  animation: fadeInOut 1.5s ease-in-out forwards;
+}
+```
+
+useEffect로 1.5초 후 자동 전환:
+```js
+useEffect(() => {
+  if (showArrivalFlow && arrivalStep === 'splash') {
+    const timer = setTimeout(() => setArrivalStep('menu'), 1500)
+    return () => clearTimeout(timer)
+  }
+}, [showArrivalFlow, arrivalStep])
+```
+
+### 3-2. 카테고리 선택 화면 (arrivalStep === 'menu')
+
+전체화면 오버레이 (z-50, bg-white). 상단에 ← 닫기 버튼.
+
+3개 카테고리 카드:
+```
+1) 🛬 입국신고할게요
+2) 🚕 택시/대중교통 이용할래요  
+3) 💱 SIM카드 구매 & 환전할래요
+```
+
+각 카드 클릭 시 `setArrivalStep('immigration')` / `setArrivalStep('transport')` / `setArrivalStep('sim-exchange')`.
+
+### 3-3. 각 카테고리 상세 화면
+
+#### arrivalStep === 'immigration' (입국신고)
+- 상단 ← 뒤로 (→ 'menu')
+- 3개 항목 카드 (세로 나열):
+  1. **전자 입국신고서 작성** — "Q-CODE 앱이나 사이트에서 미리 작성 가능. 비행기 안에서도 Wi-Fi로 가능!" → 클릭 시 `setActiveGuide('arrival-card')` (기존 가이드 재사용) + `setShowArrivalFlow(false)`
+  2. **실물 입국신고서 작성** — "기내에서 나눠주는 종이 입국신고서. 영문 이름, 여권번호, 체류주소 등 기재." → 클릭 시 `setActiveGuide('arrival-card')` + `setShowArrivalFlow(false)`
+  3. **세관신고서 작성 (필요 시)** — "$10,000 이상 현금, 면세 초과 물품 등이 있을 때만 작성. 없으면 패스!" → 클릭 시 `setActiveGuide('duty-free')` + `setShowArrivalFlow(false)`
+
+#### arrivalStep === 'transport' (택시/대중교통)
+- 상단 ← 뒤로 (→ 'menu')
+- 2개 대분류:
+
+**🚕 택시 탈래요**
+  - **공항에서 택시 바로 잡기** — 인천공항: 1층 도착 후 8번/4번 게이트 → 택시 승강장. 일반택시 ₩65,000~80,000 (서울 기준). 김포공항: 1층 출구 → 택시 승강장. 일반택시 ₩20,000~35,000 (서울 기준). 카드 결제 가능, 기본요금 ₩4,800.
+  - **RIDE 앱 사용하기** — "한국 번호 없어도 돼요! I·RIDE 앱으로 외국인도 택시 호출 가능." → 앱 다운로드 링크: iOS `https://apps.apple.com/app/id1596453498` / Android `https://play.google.com/store/apps/details?id=com.iride.passenger`
+
+**🚇 대중교통 이용할래요 (버스, 지하철, AREX)**
+  - **AREX (공항철도)** — 인천공항 → 서울역 직통 43분 ₩11,000 / 일반열차 66분 ₩4,750. 지하 교통센터(B1)에서 탑승.
+  - **일회용 교통카드 구매** — 지하철역 자동발매기에서 구매. 보증금 ₩500 포함, 하차 후 환불기에서 돌려받기.
+  - **T-money 카드 구매** — 편의점(CU, GS25, 세븐일레븐)에서 ₩2,500에 구매. 충전 후 버스·지하철·택시 모두 사용.
+
+#### arrivalStep === 'sim-exchange' (SIM & 환전)
+- 상단 ← 뒤로 (→ 'menu')
+- 2개 대분류:
+
+**📱 한국 SIM카드 구매**
+  - 기존 SimGuide 연결: "자세히 보기" 버튼 → `setActiveGuide('sim')` + `setShowArrivalFlow(false)`
+  - 간단 요약: "인천공항 1층에 KT, SKT, LG U+ 로밍센터. eSIM이면 온라인으로도 구매 가능 (Airalo, eSIM Korea 등)"
+
+**💱 환전할래요**
+  - **공항 환전소** — 인천공항 도착층(1층) 곳곳에 환전소 (우리은행, 하나은행, KB국민은행). 소액만 환전 추천 (수수료 높음).
+  - **도심 환전소 (더 저렴!)** — 명동 사설환전소(대사관 앞), MONEYBOX(명동/홍대) 추천. 공항 대비 1~3% 유리. 위치: MONEYBOX 명동점 — 서울특별시 중구 명동2가 (카카오맵에서 "MONEYBOX 명동" 검색)
+
+### 3-4. UI 스타일 (모든 상세 화면 공통)
+
+- 전체화면 `fixed inset-0 z-50 bg-white overflow-y-auto`
+- 상단 바: `← 뒤로` 버튼 (왼쪽) + 제목 (가운데)
+- 카드: `rounded-2xl border border-[#E5E7EB] p-4` 세로 나열, gap-3
+- 카드 내 제목: `text-sm font-bold text-[#1A1A1A]`
+- 카드 내 설명: `text-xs text-[#666666] leading-relaxed mt-1`
+- 외부 링크 버튼: `rounded-xl bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4`
+- 전체 텍스트 3개 국어 (ko/zh/en) — L(lang, {...}) 사용
+
+## 빌드 & 배포
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+npm run build
+```
+
+빌드 성공 확인 후:
+```bash
+git add -A && git commit -m "board-044: gray icons, remove travel badges, arrival welcome flow"
+npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+openclaw system event --text 'Done: Board-044 탐색탭 회색, 여행필수 아이콘 제거, 방금도착 웰컴플로우' --mode now
+```

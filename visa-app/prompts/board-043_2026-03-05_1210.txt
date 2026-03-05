@@ -1,0 +1,73 @@
+# Board-043: Mock 데이터 제거 + 실데이터만 유지
+
+## 목표
+pocketMockData에서 가짜/허위 데이터를 제거하고, 실데이터만 남기거나 "更新中" 처리.
+미사용 파일은 삭제하지 않음 (보관).
+
+## 1. pocketMockData에서 삭제할 키 (가짜 데이터)
+`src/data/pockets.js`의 `pocketMockData` 객체에서 아래 키를 **완전 삭제**:
+
+- `delivery` — 가짜 주문수 (12.3만 등)
+- `transport` — 가짜 실시간 현황 (2호선 정상운행)
+- `idol` — 가짜 BTS 스케줄
+- `drama` — 가짜 방영 일정 (눈물의여왕S2, 무한도전 리부트)
+- `kpop` — 가짜 멜론 차트
+- `fanevent` — 가짜 이벤트 일정
+- `beauty` — 가짜 뷰티 순위
+- `fashiontrend` — 가짜 패션 트렌드
+
+## 2. festival 날짜 제거 + "更新中" 표시
+`pocketMockData.festival.items`에서:
+- `dateStart`, `dateEnd` 필드를 **삭제** (날짜가 정확하지 않을 수 있으므로)
+- 각 축제 item에 `updating: true` 추가
+- 축제 이름/장소/카테고리는 유지 (실제 축제임)
+
+## 3. restaurant 이번주 추천 → "更新中" 처리
+`pocketMockData.restaurant`에서:
+- `weekLabel`을 `{ ko: '큐레이션 준비 중', zh: '精选准备中', en: 'Curation in progress' }`로 변경
+- `items`는 유지하되, 각 item의 `xhsLink`에서 `// TODO:` 문자열을 빈 문자열 `''`로 변경
+
+## 4. PersonalSection.jsx의 widgetMockData.korean 참조 처리
+`src/components/cards/PersonalSection.jsx`에서:
+- line 560: `widgetMockData.korean?.day || 1` → 하드코딩 `1`로 변경
+- line 623: `const koreanData = widgetMockData.korean` → `const koreanData = null`로 변경
+- 해당 부분에서 koreanData가 null일 때 안전하게 fallback 처리
+
+## 5. WidgetContent.jsx의 widgetMockData.news 참조 처리
+`src/components/home/common/WidgetContent.jsx` line 34:
+- `<NewsWidget data={widgetMockData.news} lang={lang} />` → `<NewsWidget data={null} lang={lang} />`
+- `widgetMockData` import 제거 (더 이상 사용 안 함)
+
+## 6. pockets.js에서 widgetMockData export 정리
+- `export const widgetMockData = pocketMockData` 는 유지 (다른 곳에서 import할 수 있으므로)
+- 대신 pocketMockData에서 삭제된 키를 참조하는 곳이 있으면 안전하게 `?.` optional chaining 처리
+
+## 7. IMPLEMENTED_POCKETS 업데이트 없음
+- 현재 IMPLEMENTED_POCKETS는 실제 구현된 포켓만 포함하고 있으므로 변경 불필요
+
+## 유지할 것 (건드리지 마)
+- `coupon` — 실제 URL 링크
+- `trip` — 실제 Klook/KKday 가격+링크
+- `tradition` — 실제 체험 정보+Klook 링크
+- `pet` — 팩트 체크리스트
+- `emergency` — 실제 전화번호
+- `accommodation` — 실제 플랫폼 URL
+- `holiday` — 팩트 공휴일
+- `currency` / `timezone` — 실데이터 or 계산
+- `parcel` — 입력형 위젯
+
+## 빌드 & 테스트
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+npm run build
+```
+
+빌드 에러 없어야 함. import 에러, undefined 참조 모두 체크.
+
+## 완료 후
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+git add -A && git commit -m "board-043: remove mock data, keep real data only"
+npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+openclaw system event --text 'Done: Board-043 mock 데이터 제거 완료' --mode now
+```

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
-import { ChevronLeft, Plus, Pencil } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, Pencil } from 'lucide-react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
 
 const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
@@ -212,6 +212,16 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   // 가이드 오버레이 상태
   const [activeGuide, setActiveGuide] = useState(null)
 
+  // 방금 도착했어요 웰컴 플로우
+  const [showArrivalFlow, setShowArrivalFlow] = useState(false)
+  const [arrivalStep, setArrivalStep] = useState('splash') // 'splash' | 'menu' | 'immigration' | 'transport' | 'sim-exchange'
+
+  useEffect(() => {
+    if (showArrivalFlow && arrivalStep === 'splash') {
+      const timer = setTimeout(() => setArrivalStep('menu'), 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [showArrivalFlow, arrivalStep])
 
   // 시간대 선택 팝업
   const [showTzPicker, setShowTzPicker] = useState(false)
@@ -301,7 +311,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={card.id}
               onClick={() => {
-                if (card.id === 'just-arrived') setActiveGuide('arrival-card')
+                if (card.id === 'just-arrived') { setArrivalStep('splash'); setShowArrivalFlow(true) }
                 else if (card.id === 'hungry') setTab('food')
                 else if (card.id === 'move') setTab('transport')
                 else if (card.id === 'sick') setTab('sos')
@@ -336,13 +346,13 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </button>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, sub: { ko: '한국 여행 외국인 누구나 작성', zh: '所有来韩外国人必填', en: 'Required for all foreign visitors' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: 'arrival-card', img: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=400&h=200&fit=crop', category: '🛬' },
-            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, sub: { ko: '미리 로밍 못했다면?', zh: '没提前开通漫游？', en: "Didn't set up roaming?" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'sim', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=200&fit=crop', category: '🛬' },
-            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '어디서/어떻게 돌려받죠?', zh: '在哪里/怎么退税？', en: 'Where/how to get refund?' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'tax-refund', img: 'https://images.unsplash.com/photo-1554672408-730436b60dde?w=400&h=200&fit=crop', category: '🛍️' },
-            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, sub: { ko: '쇼핑 후 출국 시 반드시 체크', zh: '购物后出境必查', en: 'Must check before departure' }, gradient: 'from-[#A0865A] to-[#7A6840]', guide: 'duty-free', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=200&fit=crop', category: '🛍️' },
-            { title: { ko: '택시 잡기', zh: '叫出租车', en: 'Get a Taxi' }, sub: { ko: '한국 번호 없어도 돼요', zh: '不需要韩国手机号', en: 'No Korean number needed' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: null, action: 'taxi', img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=200&fit=crop', category: '🚌' },
-            { title: { ko: '교통카드', zh: '交通卡/车票', en: 'Transit Card' }, sub: { ko: '현금 안 받는 버스 많아요!', zh: '很多公交不收现金！', en: "Many buses don't accept cash!" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'transit', img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=200&fit=crop', category: '🚌' },
-            { title: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'map-guide', action: 'map', img: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69c07a?w=400&h=200&fit=crop', category: '🚌' },
+            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, sub: { ko: '한국 여행 외국인 누구나 작성', zh: '所有来韩外国人必填', en: 'Required for all foreign visitors' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: 'arrival-card', img: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=400&h=200&fit=crop' },
+            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, sub: { ko: '미리 로밍 못했다면?', zh: '没提前开通漫游？', en: "Didn't set up roaming?" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'sim', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=200&fit=crop' },
+            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '어디서/어떻게 돌려받죠?', zh: '在哪里/怎么退税？', en: 'Where/how to get refund?' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'tax-refund', img: 'https://images.unsplash.com/photo-1554672408-730436b60dde?w=400&h=200&fit=crop' },
+            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, sub: { ko: '쇼핑 후 출국 시 반드시 체크', zh: '购물后出境必查', en: 'Must check before departure' }, gradient: 'from-[#A0865A] to-[#7A6840]', guide: 'duty-free', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=200&fit=crop' },
+            { title: { ko: '택시 잡기', zh: '叫出租车', en: 'Get a Taxi' }, sub: { ko: '한국 번호 없어도 돼요', zh: '不需要韩国手机号', en: 'No Korean number needed' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: null, action: 'taxi', img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=200&fit=crop' },
+            { title: { ko: '교통카드', zh: '交通卡/车票', en: 'Transit Card' }, sub: { ko: '현금 안 받는 버스 많아요!', zh: '很多公交不收现金！', en: "Many buses don't accept cash!" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'transit', img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=200&fit=crop' },
+            { title: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'map-guide', action: 'map', img: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69c07a?w=400&h=200&fit=crop' },
           ].map((item, i) => (
             <button
               key={i}
@@ -367,7 +377,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
                 {item.img && <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none' }} />}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                <span className="absolute top-2 left-2 text-[9px] bg-black/40 text-white px-1.5 py-0.5 rounded-full">{item.category}</span>
               </div>
               <div className="p-2.5 bg-white text-left">
                 <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
@@ -630,6 +639,229 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               >
                 {L(lang, { ko: '확인', zh: '确认', en: 'Confirm' })}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── 방금 도착했어요 웰컴 플로우 ─── */}
+      {showArrivalFlow && arrivalStep === 'splash' && (
+        <div className="fixed inset-0 z-50 bg-white flex items-center justify-center animate-fade-in-out">
+          <div className="text-center">
+            <p className="text-4xl mb-4">👋</p>
+            <h1 className="text-xl font-bold text-[#1A1A1A]">
+              {L(lang, { ko: '한국에 오신 걸 환영해요!', zh: '欢迎来到韩国！', en: 'Welcome to Korea!' })}
+            </h1>
+          </div>
+        </div>
+      )}
+
+      {showArrivalFlow && arrivalStep === 'menu' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
+            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+              {L(lang, { ko: '무엇을 도와드릴까요?', zh: '需要什么帮助？', en: 'How can we help?' })}
+            </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-3">
+            {[
+              { id: 'immigration', emoji: '🛬', label: { ko: '입국신고할게요', zh: '入境申报', en: 'Immigration forms' }, sub: { ko: '전자/실물 입국신고서, 세관신고', zh: '电子/纸质入境卡、海关申报', en: 'E-form, paper form, customs' } },
+              { id: 'transport', emoji: '🚕', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX, 교통카드', zh: '机场出租车、RIDE APP、AREX、交通卡', en: 'Airport taxi, RIDE app, AREX, transit card' } },
+              { id: 'sim-exchange', emoji: '💱', label: { ko: 'SIM카드 구매 & 환전할래요', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange money' }, sub: { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport exchange, Myeongdong' } },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => setArrivalStep(item.id)}
+                className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              >
+                <span className="text-3xl">{item.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                  <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                </div>
+                <ChevronRight size={18} color="#999" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 입국신고 상세 */}
+      {showArrivalFlow && arrivalStep === 'immigration' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
+            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+              {L(lang, { ko: '🛬 입국신고', zh: '🛬 入境申报', en: '🛬 Immigration' })}
+            </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-3">
+            <button
+              onClick={() => { setActiveGuide('arrival-card'); setShowArrivalFlow(false) }}
+              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
+            >
+              <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '전자 입국신고서 작성', zh: '电子入境卡填写', en: 'Electronic Arrival Card' })}</p>
+              <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                {L(lang, { ko: 'Q-CODE 앱이나 사이트에서 미리 작성 가능. 비행기 안에서도 Wi-Fi로 가능!', zh: '可在Q-CODE APP或网站提前填写。飞机上也可用Wi-Fi填写！', en: 'Fill in advance via Q-CODE app or website. Also possible on the plane via Wi-Fi!' })}
+              </p>
+            </button>
+            <button
+              onClick={() => { setActiveGuide('arrival-card'); setShowArrivalFlow(false) }}
+              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
+            >
+              <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '실물 입국신고서 작성', zh: '纸质入境卡填写', en: 'Paper Arrival Card' })}</p>
+              <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                {L(lang, { ko: '기내에서 나눠주는 종이 입국신고서. 영문 이름, 여권번호, 체류주소 등 기재.', zh: '飞机上发的纸质入境卡。填写英文姓名、护照号、住宿地址等。', en: 'Paper form distributed on the plane. Fill in English name, passport number, accommodation address, etc.' })}
+              </p>
+            </button>
+            <button
+              onClick={() => { setActiveGuide('duty-free'); setShowArrivalFlow(false) }}
+              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
+            >
+              <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '세관신고서 작성 (필요 시)', zh: '海关申报单（如需）', en: 'Customs Declaration (if needed)' })}</p>
+              <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                {L(lang, { ko: '$10,000 이상 현금, 면세 초과 물품 등이 있을 때만 작성. 없으면 패스!', zh: '仅携带超过$10,000现金或超额免税品时需填写。没有就不用！', en: 'Only needed if carrying over $10,000 cash or excess duty-free goods. Skip if not!' })}
+              </p>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 택시/대중교통 상세 */}
+      {showArrivalFlow && arrivalStep === 'transport' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
+            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+              {L(lang, { ko: '🚕 택시 / 대중교통', zh: '🚕 出租车 / 公共交通', en: '🚕 Taxi / Transit' })}
+            </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-4">
+            {/* 택시 섹션 */}
+            <div>
+              <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '🚕 택시 탈래요', zh: '🚕 坐出租车', en: '🚕 Take a Taxi' })}</h3>
+              <div className="flex flex-col gap-3">
+                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '공항에서 택시 바로 잡기', zh: '机场直接打车', en: 'Get a taxi at the airport' })}</p>
+                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                    {L(lang, {
+                      ko: '인천공항: 1층 도착 후 8번/4번 게이트 → 택시 승강장. 일반택시 ₩65,000~80,000 (서울 기준).\n김포공항: 1층 출구 → 택시 승강장. 일반택시 ₩20,000~35,000 (서울 기준).\n카드 결제 가능, 기본요금 ₩4,800.',
+                      zh: '仁川机场：1层到达后8号/4号门 → 出租车站。普通出租车 ₩65,000~80,000（首尔方向）。\n金浦机场：1层出口 → 出租车站。普通出租车 ₩20,000~35,000（首尔方向）。\n可刷卡，起步价 ₩4,800。',
+                      en: 'Incheon Airport: After arrival at 1F, Gate 8/4 → taxi stand. Regular taxi ₩65,000~80,000 (to Seoul).\nGimpo Airport: 1F exit → taxi stand. Regular taxi ₩20,000~35,000 (to Seoul).\nCard payment accepted, base fare ₩4,800.'
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'RIDE 앱 사용하기', zh: '使用RIDE APP', en: 'Use RIDE App' })}</p>
+                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                    {L(lang, { ko: '한국 번호 없어도 돼요! I·RIDE 앱으로 외국인도 택시 호출 가능.', zh: '不需要韩国手机号！用I·RIDE APP外国人也能叫车。', en: 'No Korean number needed! Foreigners can call taxis with the I·RIDE app.' })}
+                  </p>
+                  <div className="flex gap-2 mt-3">
+                    <a href="https://apps.apple.com/app/id1596453498" target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">iOS</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.iride.passenger" target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">Android</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 대중교통 섹션 */}
+            <div>
+              <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '🚇 대중교통 이용할래요', zh: '🚇 坐公共交通', en: '🚇 Public Transit' })}</h3>
+              <div className="flex flex-col gap-3">
+                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'AREX (공항철도)', zh: 'AREX（机场铁路）', en: 'AREX (Airport Railroad)' })}</p>
+                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                    {L(lang, {
+                      ko: '인천공항 → 서울역 직통 43분 ₩11,000 / 일반열차 66분 ₩4,750.\n지하 교통센터(B1)에서 탑승.',
+                      zh: '仁川机场 → 首尔站 直达43分钟 ₩11,000 / 普通列车66分钟 ₩4,750。\n地下交通中心(B1)乘车。',
+                      en: 'Incheon Airport → Seoul Station: Express 43min ₩11,000 / Regular 66min ₩4,750.\nBoard at underground Transit Center (B1).'
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '일회용 교통카드 구매', zh: '购买一次性交通卡', en: 'Single-use Transit Card' })}</p>
+                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                    {L(lang, {
+                      ko: '지하철역 자동발매기에서 구매. 보증금 ₩500 포함, 하차 후 환불기에서 돌려받기.',
+                      zh: '地铁站自动售票机购买。含₩500押金，下车后在退款机退还。',
+                      en: 'Buy at subway station vending machines. Includes ₩500 deposit, refundable at return machines after use.'
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'T-money 카드 구매', zh: '购买T-money卡', en: 'Buy T-money Card' })}</p>
+                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                    {L(lang, {
+                      ko: '편의점(CU, GS25, 세븐일레븐)에서 ₩2,500에 구매. 충전 후 버스·지하철·택시 모두 사용.',
+                      zh: '便利店（CU、GS25、7-11）₩2,500购买。充值后公交·地铁·出租车都能用。',
+                      en: 'Buy at convenience stores (CU, GS25, 7-Eleven) for ₩2,500. After charging, use on buses, subway, and taxis.'
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SIM & 환전 상세 */}
+      {showArrivalFlow && arrivalStep === 'sim-exchange' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
+            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+              {L(lang, { ko: '💱 SIM카드 & 환전', zh: '💱 SIM卡 & 换钱', en: '💱 SIM & Exchange' })}
+            </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-4">
+            {/* SIM 섹션 */}
+            <div>
+              <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '📱 한국 SIM카드 구매', zh: '📱 购买韩国SIM卡', en: '📱 Buy a Korean SIM' })}</h3>
+              <div className="flex flex-col gap-3">
+                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                  <p className="text-xs text-[#666666] leading-relaxed">
+                    {L(lang, {
+                      ko: '인천공항 1층에 KT, SKT, LG U+ 로밍센터. eSIM이면 온라인으로도 구매 가능 (Airalo, eSIM Korea 등)',
+                      zh: '仁川机场1层有KT、SKT、LG U+漫游中心。eSIM可在线购买（Airalo、eSIM Korea等）',
+                      en: 'KT, SKT, LG U+ roaming centers at Incheon Airport 1F. eSIM available online (Airalo, eSIM Korea, etc.)'
+                    })}
+                  </p>
+                  <button
+                    onClick={() => { setActiveGuide('sim'); setShowArrivalFlow(false) }}
+                    className="mt-3 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 w-full text-center active:scale-[0.98] transition-transform"
+                  >
+                    {L(lang, { ko: '자세히 보기', zh: '查看详情', en: 'View Details' })}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 환전 섹션 */}
+            <div>
+              <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '💱 환전할래요', zh: '💱 换钱', en: '💱 Exchange Money' })}</h3>
+              <div className="flex flex-col gap-3">
+                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '공항 환전소', zh: '机场换钱所', en: 'Airport Exchange' })}</p>
+                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                    {L(lang, {
+                      ko: '인천공항 도착층(1층) 곳곳에 환전소 (우리은행, 하나은행, KB국민은행). 소액만 환전 추천 (수수료 높음).',
+                      zh: '仁川机场到达层（1层）各处有换钱所（友利银行、韩亚银行、KB国民银行）。建议少量兑换（手续费高）。',
+                      en: 'Exchange counters throughout Incheon Airport arrivals (1F) — Woori, Hana, KB Bank. Exchange small amounts only (high fees).'
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '도심 환전소 (더 저렴!)', zh: '市区换钱所（更划算！）', en: 'Downtown Exchange (Cheaper!)' })}</p>
+                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                    {L(lang, {
+                      ko: '명동 사설환전소(대사관 앞), MONEYBOX(명동/홍대) 추천. 공항 대비 1~3% 유리.\n위치: MONEYBOX 명동점 — 서울특별시 중구 명동2가 (카카오맵에서 "MONEYBOX 명동" 검색)',
+                      zh: '推荐明洞私人换钱所（大使馆前）、MONEYBOX（明洞/弘大）。比机场优惠1~3%。\n位置：MONEYBOX明洞店 — 首尔市中区明洞2街（在KakaoMap搜索"MONEYBOX 명동"）',
+                      en: 'Myeongdong private exchanges (near embassy), MONEYBOX (Myeongdong/Hongdae) recommended. 1~3% better than airport.\nLocation: MONEYBOX Myeongdong — Jung-gu, Myeongdong 2-ga (Search "MONEYBOX 명동" on KakaoMap)'
+                    })}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

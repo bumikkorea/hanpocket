@@ -1282,15 +1282,14 @@ function ServiceGrid({ lang, L, setSubPage }) {
   const comingSoonLabel = { ko: '업데이트 중', zh: '更新中', en: 'Coming Soon' }
   const updatingBadge = { ko: '(업데이트중)', zh: '(更新中)', en: '(Updating)' }
 
-  // 래플스 호텔 테마 — 전체 카테고리 크림 통일
   const categoryBgColors = {
-    'situational-korean': '#F5F1EB',
-    'travel-food': '#F5F1EB',
-    'hallyu-entertainment': '#F5F1EB',
-    'shopping-beauty': '#F5F1EB',
-    'learning': '#F5F1EB',
-    'daily-life': '#F5F1EB',
-    'tools': '#F5F1EB',
+    'situational-korean': '#F3F4F6',
+    'travel-food': '#F3F4F6',
+    'hallyu-entertainment': '#F3F4F6',
+    'shopping-beauty': '#F3F4F6',
+    'learning': '#F3F4F6',
+    'daily-life': '#F3F4F6',
+    'tools': '#F3F4F6',
   }
 
 
@@ -1923,7 +1922,7 @@ function AppInner() {
                 <input
                   type="text"
                   placeholder={lang === 'ko' ? '포켓, 코스, 가이드 검색...' : lang === 'zh' ? '搜索口袋、路线、指南...' : 'Search pockets, courses, guides...'}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F5F1EB] rounded-xl text-sm text-[#1A1A1A] placeholder-[#999] outline-none focus:ring-1 focus:ring-[#2D5A3D]"
+                  className="w-full pl-10 pr-4 py-2.5 bg-[#F3F4F6] rounded-xl text-sm text-[#1A1A1A] placeholder-[#999] outline-none focus:ring-1 focus:ring-[#2D5A3D]"
                   onFocus={() => { setTab('search') }}
                   readOnly
                 />

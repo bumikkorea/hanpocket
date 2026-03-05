@@ -1,0 +1,102 @@
+Board-040b: UI 개선 2차 — 후반부 6개 + 벤치마크 인사이트
+
+## 작업 1: rounded-2xl 통일 (HomeTab.jsx)
+HomeTab 내 모든 카드 컴포넌트에서 `rounded-xl` → `rounded-2xl` 변경.
+대상: 여행필수 카드, Intent 카드, 코스 카드, 상황별 한국어 카드.
+작은 요소(pill 배지, 버튼)는 제외.
+
+## 작업 2: 스켈레톤 UI (HomeTab.jsx)
+정보바에서 로딩 중:
+```jsx
+// 날씨
+{weather ? `${weather.temp}°C` : <span className="inline-block w-10 h-3 bg-[#E5E7EB] rounded animate-pulse" />}
+
+// 환율
+{exchangeRate?.CNY ? `¥1 = ₩${Math.round(cnyRate)}` : <span className="inline-block w-16 h-3 bg-[#E5E7EB] rounded animate-pulse" />}
+```
+
+## 작업 3: 닉네임 미설정 토스트 (App.jsx ProfileTab)
+ProfileTab 마운트 시 닉네임 없으면 토스트:
+```js
+useEffect(() => {
+  const nick = localStorage.getItem('hanpocket_nickname')
+  if (!nick) {
+    setTimeout(() => showToastMessage(
+      lang === 'ko' ? '✏️ 닉네임을 설정해보세요!' : 
+      lang === 'zh' ? '✏️ 设置你的昵称吧！' : '✏️ Set your nickname!'
+    ), 500)
+  }
+}, [])
+```
+
+## 작업 4: 여행필수 카테고리 배지 (HomeTab.jsx)
+여행필수 7개 카드(SOS 제거됨) 이미지 좌상단에 카테고리 pill 배지:
+- 입국카드, SIM/eSIM → "입국"
+- 세금환급, 면세한도 → "쇼핑"
+- 택시잡기, 교통카드, 한국지도 → "이동"
+
+배지 스타일: `absolute top-2 left-2 text-[9px] bg-black/40 text-white px-1.5 py-0.5 rounded-full backdrop-blur-sm`
+
+카드 데이터에 `category` 필드 추가해서 매핑.
+
+## 작업 5: 마이크로 인터랙션 — 토스 스타일 (HomeTab.jsx)
+
+### 5-1. 카드 터치 피드백 강화
+모든 카드 버튼에 `active:scale-[0.97] transition-transform duration-150` 추가 (기존 0.98보다 살짝 더).
+
+### 5-2. 정보바 숫자 페이드인
+정보바의 날씨/환율이 로딩 완료되면 `opacity-0 → opacity-100` 전환:
+```jsx
+<span className={`transition-opacity duration-500 ${weather ? 'opacity-100' : 'opacity-0'}`}>
+  {weather?.temp}°C
+</span>
+```
+
+### 5-3. Intent 카드 이모지 바운스
+Intent 카드의 이모지에 `hover:scale-110 transition-transform` 추가 (모바일에서는 active).
+
+## 작업 6: Grab 스타일 — 예상 결과 미리보기
+
+HomeTab 정보바의 환율 부분을 약간 인터랙티브하게:
+환율 클릭 시 작은 팝오버 표시 — "₩10,000 = ¥52" "₩50,000 = ¥261" "₩100,000 = ¥523"
+3~4줄 간단한 환산표.
+
+```jsx
+const [showExchangePopover, setShowExchangePopover] = useState(false)
+
+// 환율 부분
+<span 
+  onClick={() => setShowExchangePopover(!showExchangePopover)}
+  className="cursor-pointer underline decoration-dotted"
+>
+  ¥1 = ₩{Math.round(cnyRate)}
+</span>
+
+{showExchangePopover && (
+  <div className="absolute top-8 left-4 bg-white rounded-2xl border border-[#E5E7EB] p-3 shadow-lg z-20 min-w-[160px]">
+    <p className="text-[10px] text-[#999999] mb-2">빠른 환산</p>
+    {[10000, 50000, 100000].map(won => (
+      <div key={won} className="flex justify-between text-xs text-[#1A1A1A] py-1">
+        <span>₩{won.toLocaleString()}</span>
+        <span className="text-[#2D5A3D] font-medium">≈ ¥{Math.round(won / cnyRate)}</span>
+      </div>
+    ))}
+    <div className="flex justify-between text-xs text-[#1A1A1A] py-1 border-t border-[#E5E7EB] mt-1 pt-1">
+      <span>¥1,000</span>
+      <span className="text-[#2D5A3D] font-medium">≈ ₩{Math.round(1000 * cnyRate).toLocaleString()}</span>
+    </div>
+  </div>
+)}
+```
+팝오버 외부 클릭 시 닫기.
+
+## 빌드 & 커밋
+```bash
+npm run build
+git add -A && git commit -m "Board-040b: rounded-2xl, skeleton, nickname toast, category badges, micro-interactions, exchange popover"
+```
+
+## 완료 알림
+```bash
+openclaw system event --text 'Done: Board-040b UI 개선 + 벤치마크 인사이트 적용' --mode now
+```

@@ -1,0 +1,131 @@
+Board-038: 홈탭 Intent 카드 섹션 추가 + 막힘 점수 시스템
+
+## 배경
+HanPocket의 핵심 가치: "한국 폰번호 없어도 한국 디지털 생활 가능하게"
+현재 홈탭은 정보 나열형 → 상황(Intent) 기반 진입점 추가로 전환율 개선
+
+## 작업 1: 홈탭에 Intent 카드 섹션 추가
+
+`src/components/HomeTab.jsx` 수정
+
+### 위치: 정보 바 아래, 추천 코스 위 (첫 번째 섹션)
+
+### 데이터:
+```js
+const INTENT_CARDS = [
+  { 
+    id: 'just-arrived',
+    emoji: '🛬',
+    label: { ko: '방금 도착했어요', zh: '刚到韩国', en: 'Just arrived' },
+    sub: { ko: 'SIM, 교통카드, 환전', zh: 'SIM卡、交通卡、换钱', en: 'SIM, transit card, exchange' },
+    color: '#2D5A3D',
+    actions: ['sim', 'transit', 'arrival-card']  // 가이드 연결용
+  },
+  {
+    id: 'hungry',
+    emoji: '🍜',
+    label: { ko: '밥 먹고 싶어요', zh: '想吃饭', en: 'Want to eat' },
+    sub: { ko: '식당 추천, 주문법, 배달', zh: '餐厅推荐、点餐、外卖', en: 'Restaurants, ordering, delivery' },
+    color: '#B8860B',
+    actions: ['food']
+  },
+  {
+    id: 'move',
+    emoji: '🚕', 
+    label: { ko: '이동하고 싶어요', zh: '想去某个地方', en: 'Want to move' },
+    sub: { ko: '택시, 지하철, 버스', zh: '出租车、地铁、公交', en: 'Taxi, subway, bus' },
+    color: '#1A3A28',
+    actions: ['transport']
+  },
+  {
+    id: 'sick',
+    emoji: '🏥',
+    label: { ko: '아파요 / 긴급', zh: '生病了/紧急', en: 'Sick / Emergency' },
+    sub: { ko: '병원, 약국, 경찰, 대사관', zh: '医院、药店、警察、大使馆', en: 'Hospital, pharmacy, police' },
+    color: '#DC2626',
+    actions: ['emergency', 'medical']
+  },
+  {
+    id: 'shopping',
+    emoji: '🛍️',
+    label: { ko: '쇼핑하고 싶어요', zh: '想购物', en: 'Want to shop' },
+    sub: { ko: '면세, 환급, 올리브영', zh: '免税、退税、Olive Young', en: 'Duty-free, tax refund' },
+    color: '#6B4C3B',
+    actions: ['shopping']
+  },
+]
+```
+
+### UI 디자인:
+- 가로 스크롤 (추천 코스와 동일한 scroll-indicator 스타일)
+- 각 카드: `w-[140px]` 높이 `h-[100px]`
+- 배경: 각 카드 color를 배경으로 (opacity 0.1 정도의 연한 버전)
+- 상단에 큰 이모지, 아래에 라벨 텍스트(bold), sub 텍스트(text-[10px])
+- 카드 스타일: `bg-white rounded-2xl border border-[#E5E7EB] p-3`
+- 이모지는 `text-2xl`, 라벨은 `text-xs font-bold text-[#1A1A1A]`, sub는 `text-[10px] text-[#999999]`
+
+### 섹션 헤더:
+```jsx
+<h2 className="text-base font-bold px-4 mb-3" style={{ color: '#1A1A1A' }}>
+  {L(lang, { ko: '지금 뭐 하고 싶어요?', zh: '现在想做什么？', en: 'What do you need?' })}
+</h2>
+```
+
+### 카드 클릭 동작:
+- 'just-arrived' → `setActiveGuide('arrival-card')` (기존 가이드 오버레이)
+- 'hungry' → `setTab('food')` (food 탭으로 이동)
+- 'move' → `setTab('transport')` (transport 서브페이지)
+- 'sick' → `setActiveScene('emergency')` (상황별 한국어 긴급 오버레이) 
+- 'shopping' → `setTab('shopping')` (shopping 서브페이지)
+
+단, setTab으로 서브페이지 이동하는 것들은 HomeTab의 props setTab 함수를 통해:
+```js
+onClick={() => {
+  if (card.id === 'just-arrived') setActiveGuide('arrival-card')
+  else if (card.id === 'hungry') setTab('food')
+  else if (card.id === 'move') setTab('transport') 
+  else if (card.id === 'sick') setActiveScene('emergency')
+  else if (card.id === 'shopping') setTab('shopping')
+}}
+```
+
+## 작업 2: 막힘 점수 데이터 파일 생성
+
+`src/data/frictionScores.js` — 향후 사용할 데이터 (UI 연동은 Phase 2)
+
+```js
+// 외국인 막힘 점수: 한국 폰번호 없는 외국인이 해당 서비스를 이용할 때 겪는 어려움 (1-10)
+// 10 = 완전히 불가능, 1 = 전혀 문제 없음
+export const FRICTION_SCORES = [
+  { service: '배달의민족', score: 10, reason: '한국 폰번호 필수, 한국 카드 필수', hanpocket: '주문 대행 가이드 제공' },
+  { service: '카카오택시', score: 9, reason: '한국 폰번호 필수', hanpocket: '길에서 택시 잡는 법 + 기사에게 보여줄 한국어 카드' },
+  { service: '네이버 예약', score: 9, reason: '한국 폰번호 필수', hanpocket: '직접 전화 예약용 한국어 스크립트' },
+  { service: '카카오톡', score: 8, reason: '폰번호 인증 필요 (해외번호 가능하나 불안정)', hanpocket: '위챗으로 대체 가능 안내' },
+  { service: '무인 키오스크', score: 8, reason: '한국어만 지원, UI 복잡', hanpocket: '키오스크 사용법 사진 가이드' },
+  { service: '대중교통 (버스)', score: 7, reason: '현금 불가, 교통카드 필수', hanpocket: '교통카드 구매처 + 충전법 가이드' },
+  { service: '병원 예약', score: 7, reason: '한국어 전화 예약, 보험 문제', hanpocket: '외국인 진료 가능 병원 목록 + 통역 서비스' },
+  { service: '택배 보내기', score: 7, reason: '한국어 주소 작성, 폰번호', hanpocket: '편의점 택배 보내기 가이드' },
+  { service: '은행 환전', score: 6, reason: '영어 소통 제한적', hanpocket: '환전소 위치 + 환율 비교' },
+  { service: '편의점 택배', score: 6, reason: '한국어 양식 작성', hanpocket: '작성 예시 이미지 제공' },
+  { service: '지하철', score: 5, reason: '영어 안내 있으나 환승 복잡', hanpocket: '노선 가이드 + 환승 꿀팁' },
+  { service: '관광지 입장', score: 4, reason: '대부분 현장 구매 가능', hanpocket: '사전 예약 시 할인 정보' },
+  { service: '카페', score: 3, reason: '키오스크 한국어지만 손가락으로 가능', hanpocket: '주문 한국어 카드' },
+  { service: '편의점 구매', score: 2, reason: '셀프 결제 쉬움', hanpocket: '꿀팁 (1+1 등)' },
+  { service: '호텔 체크인', score: 2, reason: '영어 가능', hanpocket: '짐 보관/택시 요청 한국어' },
+  { service: '면세점', score: 1, reason: '중국어 직원 많음', hanpocket: '면세한도 안내' },
+  { service: '인천공항', score: 1, reason: '다국어 완벽 지원', hanpocket: '공항 내 서비스 위치 안내' },
+]
+```
+
+이 파일은 생성만 해두고 UI 연동은 하지 않음 (Phase 2 예정).
+
+## 빌드 & 커밋
+```bash
+npm run build
+git add -A && git commit -m "Board-038: Intent cards on HomeTab + friction scores data"
+```
+
+## 완료 알림
+```bash
+openclaw system event --text 'Done: Board-038 Intent 카드 + 막힘 점수 데이터' --mode now
+```

@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
 import { ChevronLeft, Plus, Pencil } from 'lucide-react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
-import { SCENE_PHRASE_DETAILS } from '../data/scenePhrases'
 
 const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
 const SimGuide = lazy(() => import('./guides/SimGuide'))
@@ -213,8 +212,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   // 가이드 오버레이 상태
   const [activeGuide, setActiveGuide] = useState(null)
 
-  // 상황별 한국어 오버레이 상태
-  const [activeScene, setActiveScene] = useState(null)
 
   // 시간대 선택 팝업
   const [showTzPicker, setShowTzPicker] = useState(false)
@@ -307,7 +304,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 if (card.id === 'just-arrived') setActiveGuide('arrival-card')
                 else if (card.id === 'hungry') setTab('food')
                 else if (card.id === 'move') setTab('transport')
-                else if (card.id === 'sick') setActiveScene('emergency')
+                else if (card.id === 'sick') setTab('sos')
                 else if (card.id === 'shopping') setTab('shopping')
               }}
               className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] p-3 active:scale-[0.97] transition-transform duration-150 text-left"
@@ -394,7 +391,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
-              onClick={() => setActiveScene(item.pocket)}
+              onClick={() => setTab(item.pocket)}
               className={`snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.97] transition-transform duration-150 border ${item.pocket === 'emergency' ? 'border-red-400 border-2' : 'border-[#E5E7EB]'}`}
               style={{ width: 130 }}
             >
@@ -566,70 +563,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </Suspense>
       )}
 
-      {/* ─── 상황별 한국어 오버레이 ─── */}
-      {activeScene && SCENE_PHRASE_DETAILS[activeScene] && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
-          <div className="px-4 pt-4 pb-20">
-            <div className="flex items-center gap-3 mb-6">
-              <button onClick={() => setActiveScene(null)} className="p-1">
-                <ChevronLeft size={24} />
-              </button>
-              <span className="text-2xl">{SCENE_PHRASE_DETAILS[activeScene].icon}</span>
-              <h1 className="text-lg font-bold" style={{ color: '#1A1A1A' }}>
-                {L(lang, SCENE_PHRASE_DETAILS[activeScene].title)}
-              </h1>
-            </div>
-
-            <p className="text-xs mb-4" style={{ color: '#999999' }}>
-              {L(lang, {
-                ko: '한국인에게 이 화면을 보여주세요 📱',
-                zh: '请把这个画面给韩国人看 📱',
-                en: 'Show this screen to a Korean person 📱'
-              })}
-            </p>
-
-            <div className="space-y-3">
-              {SCENE_PHRASE_DETAILS[activeScene].phrases.map((phrase, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-2xl p-4"
-                  style={{ border: '1px solid #E5E7EB' }}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-lg font-bold mb-1" style={{ color: '#1A1A1A' }}>{phrase.ko}</p>
-                      <p className="text-sm italic mb-2" style={{ color: '#666666' }}>[{phrase.roman}]</p>
-                      <p className="text-sm" style={{ color: '#666666' }}>{lang === 'zh' ? phrase.zh : lang === 'en' ? phrase.en : phrase.zh}</p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        if ('speechSynthesis' in window) {
-                          const u = new SpeechSynthesisUtterance(phrase.ko)
-                          u.lang = 'ko-KR'
-                          u.rate = 0.7
-                          speechSynthesis.speak(u)
-                        }
-                      }}
-                      className="ml-3 mt-1 w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: '#F5F1EB' }}
-                    >
-                      🔊
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-xs text-center mt-6" style={{ color: '#999999' }}>
-              {L(lang, {
-                ko: '💡 한국어를 몰라도 괜찮아요. 이 화면을 보여주면 됩니다!',
-                zh: '💡 不会韩语也没关系，给韩国人看这个画面就好！',
-                en: "💡 Don't speak Korean? Just show this screen!"
-              })}
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* ─── 시간대 선택 팝업 ─── */}
       {showTzPicker && (
@@ -705,7 +638,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 플로팅 SOS 버튼 ─── */}
       {isVisible('emergency') && (
         <button
-          onClick={() => setActiveScene('emergency')}
+          onClick={() => setTab('sos')}
           className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-[#DC2626] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
           style={{ boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)' }}
         >

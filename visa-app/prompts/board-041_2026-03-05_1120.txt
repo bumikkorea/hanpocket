@@ -1,0 +1,267 @@
+Board-041: 대규모 리브랜딩 — 소나무 그라디언트 + 삼각김밥 캐릭터 + 전환 애니메이션
+
+## 1. 소나무 브랜드 컬러 시스템 적용
+
+### 1-1. CSS 변수 추가 (index.css)
+```css
+:root {
+  --pine-dark: #1A3A28;
+  --pine-main: #2D5A3D;
+  --pine-light: #4A8A5A;
+  --pine-mist: #F7FAF8;
+  --pine-gradient: linear-gradient(to bottom, #2D5A3D, #1A3A28);
+  --pine-gradient-light: linear-gradient(to bottom, #4A8A5A, #2D5A3D);
+  --gold-accent: #B8860B;
+}
+```
+
+### 1-2. 하단 탭 바 (App.jsx)
+- 탭 바 배경: `#FFFFFF` → 약간의 소나무 틴트 `#F7FAF8` 또는 유지
+- **선택된 탭 아이콘+텍스트**: 현재 `var(--accent-green)` → `#2D5A3D` 유지하되, 아이콘 아래에 작은 dot indicator 추가 (2px 원형, `bg-[#2D5A3D]`)
+- 비선택 탭: `#9CA3AF` (현재 유지)
+
+### 1-3. 상단 헤더 (App.jsx)
+- 헤더 배경: `#FFFFFF` → `#F7FAF8` (아주 미세한 소나무 안개)
+- HANPOCKET 로고 텍스트: 현재 `var(--text-primary)` → `#2D5A3D` (소나무색 로고)
+
+### 1-4. 모든 액션 버튼 그라디언트화
+앱 전체에서 `bg-[#2D5A3D]` 단색 버튼 → `bg-gradient-to-b from-[#2D5A3D] to-[#1A3A28]` 변경.
+검색 대상: `bg-[#2D5A3D]` 가 있는 버튼들.
+
+### 1-5. 스크롤바 색상 (index.css)
+```css
+.scroll-indicator::-webkit-scrollbar-thumb {
+  background: linear-gradient(to right, #2D5A3D, #4A8A5A);
+  border-radius: 9999px;
+}
+```
+
+### 1-6. 전체 배경색
+현재 `#FFFFFF` → 유지 (카드와의 대비)
+단, 홈탭 전체 배경을 아주 미세하게 `#FAFCFB` (거의 흰색인데 0.5%만 초록 틴트)
+
+### 1-7. 정보바 배경
+정보바 영역: 연한 소나무 안개 `bg-[#F7FAF8]` + `rounded-xl` 카드 형태로 감싸기.
+
+## 2. 삼각김밥 캐릭터 (SVG 컴포넌트)
+
+`src/components/Onigiri.jsx` 생성:
+
+```jsx
+// 삼각김밥 캐릭터 — 다양한 표정
+// mood: 'happy' | 'loading' | 'error' | 'celebrate' | 'sos' | 'sleep'
+export default function Onigiri({ mood = 'happy', size = 80 }) {
+  const s = size
+  
+  // 표정별 눈/입 변형
+  const faces = {
+    happy: { eyes: 'dots', mouth: 'smile' },
+    loading: { eyes: 'dots', mouth: 'open' },  // 걸어가는
+    error: { eyes: 'sweat', mouth: 'sad' },
+    celebrate: { eyes: 'sparkle', mouth: 'big-smile' },
+    sos: { eyes: 'cry', mouth: 'worry' },
+    sleep: { eyes: 'closed', mouth: 'zzz' },
+  }
+  const face = faces[mood] || faces.happy
+
+  return (
+    <svg width={s} height={s} viewBox="0 0 100 100" fill="none">
+      {/* 밥 몸체 (삼각형, 둥근 모서리) */}
+      <path d="M50 12 L88 78 Q88 88 78 88 L22 88 Q12 88 12 78 Z" fill="white" stroke="#E5E7EB" strokeWidth="1.5"/>
+      
+      {/* 김 (하단 반) */}
+      <path d="M22 55 L78 55 L88 78 Q88 88 78 88 L22 88 Q12 88 12 78 Z" fill="#1A1A1A"/>
+      
+      {/* 눈 */}
+      {face.eyes === 'dots' && (
+        <>
+          <circle cx="38" cy="48" r="3" fill="#1A1A1A"/>
+          <circle cx="62" cy="48" r="3" fill="#1A1A1A"/>
+        </>
+      )}
+      {face.eyes === 'sparkle' && (
+        <>
+          <text x="34" y="52" fontSize="12" textAnchor="middle">✨</text>
+          <text x="66" y="52" fontSize="12" textAnchor="middle">✨</text>
+        </>
+      )}
+      {face.eyes === 'cry' && (
+        <>
+          <circle cx="38" cy="46" r="3" fill="#1A1A1A"/>
+          <circle cx="62" cy="46" r="3" fill="#1A1A1A"/>
+          <path d="M35 50 Q33 56 36 58" stroke="#60A5FA" strokeWidth="1.5" fill="none"/>
+          <path d="M65 50 Q67 56 64 58" stroke="#60A5FA" strokeWidth="1.5" fill="none"/>
+        </>
+      )}
+      {face.eyes === 'closed' && (
+        <>
+          <path d="M34 48 Q38 44 42 48" stroke="#1A1A1A" strokeWidth="2" fill="none" strokeLinecap="round"/>
+          <path d="M58 48 Q62 44 66 48" stroke="#1A1A1A" strokeWidth="2" fill="none" strokeLinecap="round"/>
+        </>
+      )}
+      {face.eyes === 'sweat' && (
+        <>
+          <circle cx="38" cy="46" r="3" fill="#1A1A1A"/>
+          <circle cx="62" cy="46" r="3" fill="#1A1A1A"/>
+          <circle cx="75" cy="38" r="4" fill="#60A5FA" opacity="0.6"/>
+        </>
+      )}
+      
+      {/* 입 */}
+      {face.mouth === 'smile' && (
+        <path d="M44 58 Q50 64 56 58" stroke="#1A1A1A" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      )}
+      {face.mouth === 'big-smile' && (
+        <path d="M40 56 Q50 68 60 56" stroke="#1A1A1A" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      )}
+      {face.mouth === 'sad' && (
+        <path d="M44 62 Q50 56 56 62" stroke="#1A1A1A" strokeWidth="2" fill="none" strokeLinecap="round"/>
+      )}
+      {face.mouth === 'open' && (
+        <ellipse cx="50" cy="60" rx="4" ry="5" fill="#1A1A1A"/>
+      )}
+      {face.mouth === 'worry' && (
+        <path d="M44 60 L56 60" stroke="#1A1A1A" strokeWidth="2" strokeLinecap="round"/>
+      )}
+      {face.mouth === 'zzz' && (
+        <text x="68" y="36" fontSize="10" fill="#9CA3AF" fontWeight="bold">z</text>
+      )}
+      
+      {/* 볼터치 */}
+      {(mood === 'happy' || mood === 'celebrate') && (
+        <>
+          <circle cx="30" cy="54" r="5" fill="#FFB7B7" opacity="0.4"/>
+          <circle cx="70" cy="54" r="5" fill="#FFB7B7" opacity="0.4"/>
+        </>
+      )}
+    </svg>
+  )
+}
+```
+
+## 3. 로딩 화면 (앱 초기 + 탭 전환)
+
+### 3-1. 앱 스플래시/로딩 (App.jsx)
+현재 로딩 시 `<div>` 빈 화면이면, 소나무 안개 배경 + 삼각김밥 걸어가는 애니메이션:
+
+```jsx
+function AppLoading({ lang }) {
+  return (
+    <div className="fixed inset-0 z-[300] flex flex-col items-center justify-center" style={{ backgroundColor: '#F7FAF8' }}>
+      <div className="animate-bounce">
+        <Onigiri mood="loading" size={80} />
+      </div>
+      <p className="text-sm text-[#2D5A3D] mt-4 animate-pulse">
+        {lang === 'zh' ? '努力加载中...' : lang === 'ko' ? '불러오는 중...' : 'Loading...'}
+      </p>
+    </div>
+  )
+}
+```
+
+기존 빨간 우편봉투 이모지 등이 있으면 완전히 제거.
+
+### 3-2. Suspense fallback 통일
+모든 `<Suspense fallback={...}>` 에서 사용하는 로딩 스피너를:
+```jsx
+<div className="flex flex-col items-center justify-center py-20">
+  <div className="animate-bounce">
+    <Onigiri mood="loading" size={60} />
+  </div>
+  <p className="text-xs text-[#999999] mt-3 animate-pulse">Loading...</p>
+</div>
+```
+로 교체. 검색: `LoadingSpinner`, `animate-spin`, `border-2.*border-t-transparent` 등.
+
+## 4. 전환 애니메이션 — 한국 음식 인터랙션
+
+### 4-1. 탭 전환 애니메이션 (App.jsx)
+탭 변경 시 콘텐츠에 fade-in + slide-up:
+```css
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tab-enter {
+  animation: tabFadeIn 0.25s ease-out;
+}
+```
+각 탭 콘텐츠를 `<div className="tab-enter" key={tab}>` 으로 감싸기.
+
+### 4-2. 한국 음식 토스트/트랜지션
+특정 액션 완료 시 음식 이모지가 통통 튀어오르는 축하 토스트:
+
+```jsx
+function FoodCelebration({ food }) {
+  // food: 'ramen' | 'tteokbokki' | 'chicken' | 'kimbap'
+  const emojis = {
+    ramen: '🍜',
+    tteokbokki: '🌶️',
+    chicken: '🍗', 
+    kimbap: '🍙',
+    soju: '🍶',
+    icecream: '🍦',
+  }
+  const emoji = emojis[food] || '🍙'
+  
+  return (
+    <div className="fixed inset-0 z-[250] flex items-center justify-center pointer-events-none">
+      <div className="animate-bounce text-6xl">
+        {emoji}
+      </div>
+    </div>
+  )
+}
+```
+
+### 4-3. Pull-to-refresh 느낌
+홈탭 상단에서 아래로 당기면 삼각김밥이 늘어나는 듯한 효과 (CSS만으로):
+이건 복잡하니 스킵. 대신 탭 전환 애니메이션만 확실히.
+
+## 5. 한국어 학습탭 생기 추가 (KoreanTab.jsx + EducationTab.jsx)
+
+### 5-1. TOPIK 게이지바에 삼각김밥
+게이지바 옆에 작은 삼각김밥이 게이지 위에 서 있는 느낌:
+```jsx
+<div className="absolute" style={{ left: `${(currentLevel / 200) * 100}%`, top: '-20px', transform: 'translateX(-50%)' }}>
+  <Onigiri mood="happy" size={28} />
+</div>
+```
+
+### 5-2. 세션 카드에 음식 아이콘
+각 학습 세션 아이콘을 한국 음식으로:
+- 한글 기초 → 🍙 (김밥/삼각김밥)
+- 생존 기본 → 🍜 (라면)  
+- 일상생활 → 🍗 (치킨)
+- 여행 회화 → 🌶️ (떡볶이)
+- 문화 → 🍶 (소주)
+
+기존 abc/lock 아이콘 대신 음식 이모지 사용.
+
+### 5-3. 퀴즈 정답 시 음식 축하
+정답 맞추면 랜덤 한국 음식 이모지가 팡 터지는 효과:
+```jsx
+// 간단한 confetti 대체
+{showCelebration && (
+  <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
+    <div className="text-5xl animate-ping">🍗</div>
+  </div>
+)}
+```
+
+## 6. 빨간 우편봉투 제거
+
+App.jsx에서 초기 화면/로딩에 빨간 우편봉투(🧧) 또는 빨간 이모지가 있으면 제거.
+검색: `🧧`, `envelope`, `red.*packet`, `봉투` 등.
+로고 SVG에서도 빨간 요소(이전 복주머니)는 이미 제거됨 (Board-039에서).
+
+## 빌드 & 커밋
+```bash
+npm run build
+git add -A && git commit -m "Board-041: Pine gradient rebrand + Onigiri character + food animations + Korean tab refresh"
+```
+
+## 완료 알림
+```bash
+openclaw system event --text 'Done: Board-041 소나무 리브랜딩 + 삼각김밥 캐릭터 + 음식 애니메이션' --mode now
+```

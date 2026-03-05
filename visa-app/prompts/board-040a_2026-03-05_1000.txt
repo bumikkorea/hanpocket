@@ -1,0 +1,77 @@
+Board-040a: UI 개선 2차 — 전반부 7개
+
+## 작업 1: 여행필수 카드 높이 통일 (HomeTab.jsx)
+여행필수 카드 이미지 영역: `h-[80px]` 고정 + `object-cover`.
+sub 텍스트: `text-[10px] text-[#999999] line-clamp-1`.
+모든 카드가 동일 높이를 갖도록.
+
+## 작업 2: 비자 선택 카테고리 분류 (App.jsx ProfileTab)
+현재 비자 선택 모달에서 30개가 flat list로 나열됨.
+카테고리별 accordion으로 변경:
+
+```js
+const VISA_CATEGORIES = [
+  { code: 'B', label: 'B — 사증면제/관광', open: false },
+  { code: 'C', label: 'C — 단기방문', open: true },  // 기본 펼침
+  { code: 'D', label: 'D — 유학/연수/투자', open: true },  // 기본 펼침
+  { code: 'E', label: 'E — 취업', open: false },
+  { code: 'F', label: 'F — 거주/동포/결혼', open: false },
+  { code: 'G', label: 'G — 기타', open: false },
+  { code: 'H', label: 'H — 관광취업', open: false },
+]
+```
+
+각 카테고리 헤더 클릭 → 펼침/접힘 토글. VISA_TYPES 배열에서 code.startsWith(cat.code)로 필터.
+카테고리 헤더: `py-3 px-4 bg-[#F5F5F5] rounded-xl mb-1 flex justify-between items-center`
+헤더 텍스트: `text-sm font-bold text-[#1A1A1A]`
+ChevronRight 아이콘 회전으로 열림/닫힘 표시.
+
+## 작업 3: "탐색" → "가이드" 명칭 변경 (App.jsx)
+bottomTabs에서 service 탭의 label만 변경:
+- ko: '탐색' → '가이드'
+- zh: '探索' → '指南'  
+- en: 'Explore' → 'Guide'
+아이콘은 기존 Grid3x3 유지.
+
+## 작업 4: 상황별 한국어 발음 텍스트 확대
+HomeTab.jsx의 상황별 한국어 오버레이 (activeScene 관련 부분):
+발음 `[roman]` 부분:
+현재: `text-xs text-[#999999] italic`
+변경: `text-sm text-[#666666] italic`
+
+## 작업 5: 첫 접속 보너스 XP (KoreanTab.jsx)
+컴포넌트 마운트 시:
+```js
+useEffect(() => {
+  const welcomed = localStorage.getItem('hanpocket_welcomed')
+  if (!welcomed) {
+    setCurrentLevel(prev => Math.min(200, prev + 1))
+    localStorage.setItem('hanpocket_welcomed', 'true')
+  }
+}, [])
+```
+
+## 작업 6: 학습 세션 첫 2개 기본 해금 (EducationTab.jsx)
+```js
+// 변경 전
+const isLocked = idx > 0 && !prevCompleted
+// 변경 후
+const isLocked = idx > 1 && !prevCompleted
+```
+
+## 작업 7: 긴급 카드 빨간 테두리 (HomeTab.jsx)
+상황별 한국어 카드에서 emergency 카드:
+```jsx
+className={`... border ${item.pocket === 'emergency' ? 'border-red-400 border-2' : 'border-[#E5E7EB]'}`}
+```
+
+## 빌드 & 커밋
+```bash
+npm run build
+git add -A && git commit -m "Board-040a: Card height, visa accordion, guide tab, pronunciation, XP bonus, unlock, emergency border"
+```
+
+## 완료 알림
+```bash
+openclaw system event --text 'Done: Board-040a UI 개선 7개' --mode now
+```

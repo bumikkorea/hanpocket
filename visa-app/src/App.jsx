@@ -6,17 +6,17 @@ import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleA
 
 // import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, ChevronDown, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, MapPin, Menu, Moon, Sun, Footprints, Map, Compass, Layers, Wallet, BookOpen } from 'lucide-react'
+import { MessageCircle, X, Home, Shield /* UNUSED */, Grid3x3, Wrench /* UNUSED */, User, Users, Search, ChevronLeft, ChevronDown, Globe, Calendar /* UNUSED */, Bell, Save /* UNUSED */, Trash2 /* UNUSED */, Pencil, LogOut, Settings, ChevronRight, HelpCircle /* UNUSED */, MapPin /* UNUSED */, Menu, Moon /* UNUSED */, Sun /* UNUSED */, Footprints /* UNUSED */, Map /* UNUSED */, Compass, Layers /* UNUSED */, Wallet, BookOpen } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
 import { generateChatResponse } from './data/chatResponses'
-import { updateLog, autoUpdateInfo, dataSources } from './data/updateLog'
-import HomeTab, { trackActivity } from './components/HomeTab'
-import { pocketCategories, featureScores, serviceItems, subMenuData, IMPLEMENTED_POCKETS } from './data/pockets'
+import { updateLog, autoUpdateInfo /* UNUSED */, dataSources } from './data/updateLog'
+import HomeTab, { trackActivity /* UNUSED */ } from './components/HomeTab'
+import { pocketCategories, featureScores /* UNUSED */, serviceItems, subMenuData, IMPLEMENTED_POCKETS } from './data/pockets'
 import AffiliateTracker from './components/AffiliateTracker'
 import LoadingSpinner from './components/LoadingSpinner'
-import Onigiri from './components/Onigiri'
+import Onigiri from './components/Onigiri' // UNUSED: imported but not rendered
 import PWAInstallPrompt from './components/PWAInstallPrompt'
 // OnboardingSimple import removed — replaced by auth popup
 import PocketContent from './components/pockets/PocketContent'
@@ -30,7 +30,7 @@ const PetTab = lazy(() => import('./components/PetTab'))
 const MedicalTab = lazy(() => import('./components/MedicalTab'))
 const FitnessTab = lazy(() => import('./components/FitnessTab'))
 const ShoppingTab = lazy(() => import('./components/ShoppingTab'))
-const CultureTab = lazy(() => import('./components/CultureTab'))
+const CultureTab = lazy(() => import('./components/CultureTab')) // UNUSED: not referenced in tab routing
 const LifeToolsTab = lazy(() => import('./components/LifeToolsTab'))
 const JobsTab = lazy(() => import('./components/JobsTab'))
 const HousingTab = lazy(() => import('./components/HousingTab'))

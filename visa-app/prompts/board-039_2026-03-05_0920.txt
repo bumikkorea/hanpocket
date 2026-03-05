@@ -1,0 +1,174 @@
+Board-039: UI 개선 스프린트 — 높은 우선순위 5개
+
+## 작업 1: 홈탭 섹션 순서 변경 (HomeTab.jsx)
+
+현재 순서: 정보바 → Intent 카드 → 추천 코스 → 여행필수 → 상황별 한국어
+변경 순서: 정보바 → Intent 카드 → 여행필수 → 상황별 한국어 → 추천 코스
+
+JSX 블록 순서만 바꾸면 됨. 각 섹션은 `{/* ─── N. 섹션명 ─── */}` 주석으로 구분되어 있음.
+
+## 작업 2: 긴급 SOS 분리 — 플로팅 버튼
+
+여행필수 8개 카드에서 "긴급 SOS"를 제거하고 (7개로 축소, 2x4 → 마지막 자리 비움 or 2x3+1),
+대신 홈탭 우하단에 플로팅 SOS 버튼 추가.
+
+플로팅 버튼 스타일:
+```jsx
+<button
+  onClick={() => setActiveScene('emergency')}
+  className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-[#DC2626] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
+  style={{ boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)' }}
+>
+  <span className="text-lg font-bold">SOS</span>
+</button>
+```
+
+위치: `bottom-20` (하단 탭 바 위), `right-4`, `z-40`
+클릭 시: `setActiveScene('emergency')` (상황별 한국어 긴급 오버레이)
+
+## 작업 3: 로그아웃 시 학습 진행 유지 (App.jsx - ProfileTab)
+
+현재 handleLogout이 모든 localStorage를 날리는데, 학습 관련 키는 보존:
+
+```js
+const handleLogout = () => {
+  // 초기화할 것 (계정 데이터)
+  localStorage.removeItem('visa_profile')
+  localStorage.removeItem('visa_notif_prefs')
+  localStorage.removeItem('hanpocket_avatar')
+  localStorage.removeItem('hanpocket_nickname')
+  localStorage.removeItem('hanpocket_extra_timezones')
+  localStorage.removeItem('hanpocket_widgets')
+  localStorage.removeItem('admin_mode')
+  localStorage.removeItem('pocket_visibility')
+  
+  // 보존할 것 (학습 진행):
+  // - hanpocket_korean_level
+  // - hanpocket_korean_quiz_done  
+  // - edu_state
+  // - weather_city
+  
+  setProfile(null)
+  showToastMessage(lang === 'ko' ? '로그아웃 되었습니다' : lang === 'zh' ? '已注销' : 'Logged out')
+}
+```
+
+기존 코드에서 학습 관련 localStorage 키 제거 라인이 있으면 삭제.
+
+## 작업 4: 위젯 토글 → 홈탭 실제 연동
+
+App.jsx의 `widgetSettings` state가 있고, HomeTab에는 아직 전달되지 않음.
+
+1. App.jsx에서 HomeTab에 `widgetSettings` prop 전달:
+```jsx
+<HomeTab ... widgetSettings={widgetSettings} />
+```
+
+2. HomeTab.jsx에서 props 받아서 각 섹션 조건부 렌더링:
+```jsx
+export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {} }) {
+  // ...
+  const isVisible = (key) => widgetSettings[key] !== false
+```
+
+3. 각 섹션을 감싸기:
+- 날씨 부분: `isVisible('weather')` — 정보바의 날씨 표시
+- 환율 부분: `isVisible('exchange')` — 정보바의 환율 표시  
+- 시계 부분: `isVisible('clock')` — 정보바의 KST 시간 표시
+- 추천 코스: `isVisible('course')` — 추천 코스 섹션 전체
+- 긴급 연락처: `isVisible('emergency')` — SOS 플로팅 버튼
+
+정보바 내부에서 개별 항목 숨기기:
+```jsx
+<div className="px-4 mb-4 flex items-center gap-2 text-xs" style={{ color: '#999999' }}>
+  {isVisible('weather') && <><span>서울 {weather ? `${weather.temp}°C` : '—°C'}</span><span>·</span></>}
+  {isVisible('exchange') && <><span>¥1 = ₩{Math.round(cnyRate)}</span><span>·</span></>}
+  {isVisible('clock') && <span>KST {koreaTime}</span>}
+  {/* 추가 시간대 등 */}
+</div>
+```
+
+## 작업 5: 가이드 오버레이 공통 레이아웃 컴포넌트
+
+`src/components/guides/GuideLayout.jsx` 생성:
+
+```jsx
+import { ChevronLeft } from 'lucide-react'
+
+function L(lang, data) {
+  if (typeof data === 'string') return data
+  return data?.[lang] || data?.en || data?.zh || data?.ko || ''
+}
+
+export default function GuideLayout({ title, lang, onClose, children, tip }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+      <div className="px-4 pt-4 pb-20">
+        {/* 헤더 */}
+        <div className="flex items-center gap-3 mb-6">
+          <button onClick={onClose} className="p-1">
+            <ChevronLeft size={24} />
+          </button>
+          <h1 className="text-lg font-bold text-[#1A1A1A]">
+            {typeof title === 'string' ? title : L(lang, title)}
+          </h1>
+        </div>
+
+        {/* 본문 */}
+        <div className="space-y-4">
+          {children}
+        </div>
+
+        {/* 하단 팁 (선택적) */}
+        {tip && (
+          <div className="mt-8 p-4 rounded-2xl border border-[#E5E7EB] bg-[#F5F1EB]">
+            <p className="text-xs text-[#666666] leading-relaxed">
+              {typeof tip === 'string' ? tip : L(lang, tip)}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+기존 가이드 파일들(ArrivalCardGuide, SimGuide, TaxRefundGuide, DutyFreeGuide, CustomsGuide)을 이 공통 레이아웃으로 감싸도록 리팩터링:
+
+각 가이드에서:
+```jsx
+// Before
+return (
+  <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+    <div className="px-4 pt-4 pb-20">
+      <div className="flex items-center gap-3 mb-6">
+        <button onClick={onClose}><ChevronLeft /></button>
+        <h1>제목</h1>
+      </div>
+      {/* 본문 */}
+    </div>
+  </div>
+)
+
+// After
+import GuideLayout from './GuideLayout'
+
+return (
+  <GuideLayout title={{ko:'제목', zh:'标题', en:'Title'}} lang={lang} onClose={onClose}>
+    {/* 본문만 */}
+  </GuideLayout>
+)
+```
+
+5개 가이드 파일 모두 리팩터링 (ArrivalCardGuide, SimGuide, TaxRefundGuide, DutyFreeGuide, CustomsGuide).
+
+## 빌드 & 커밋
+```bash
+npm run build
+git add -A && git commit -m "Board-039: Section reorder, SOS floating, logout fix, widget toggle, GuideLayout"
+```
+
+## 완료 알림
+```bash
+openclaw system event --text 'Done: Board-039 UI 개선 스프린트 5개' --mode now
+```

@@ -1,5 +1,6 @@
-import { useState, useEffect, lazy, Suspense } from 'react'
-import { Search, MapPin, Clock, Star, ExternalLink, Percent, CreditCard, ShoppingBag, Gift, Truck, Wallet, Navigation, Loader2 } from 'lucide-react'
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
+import { Search, MapPin, Clock, Star, ExternalLink, Percent, CreditCard, ShoppingBag, Gift, Truck, Wallet, Navigation, Loader2, Calendar, Tag } from 'lucide-react'
+import { OLIVEYOUNG_SALES, SHOPPING_EVENTS, getNextSale } from '../data/shoppingDeals'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -168,6 +169,7 @@ const POPULAR_ITEMS = [
 ]
 
 const SECTIONS = [
+  { id: 'deals', label: { ko: '할인 캘린더', zh: '折扣日历', en: 'Sale Calendar' }, icon: Tag },
   { id: 'duty-free', label: { ko: '면세점', zh: '免税店', en: 'Duty Free' }, icon: ShoppingBag },
   { id: 'districts', label: { ko: '쇼핑 지역', zh: '购物区域', en: 'Shopping Areas' }, icon: MapPin },
   { id: 'online', label: { ko: '온라인몰', zh: '在线商城', en: 'Online Shopping' }, icon: Truck },
@@ -175,8 +177,9 @@ const SECTIONS = [
 ]
 
 export default function ShoppingTab({ lang, setTab }) {
-  const [section, setSection] = useState('duty-free')
+  const [section, setSection] = useState('deals')
   const [searchQuery, setSearchQuery] = useState('')
+  const nextSale = useMemo(() => getNextSale(), [])
 
   return (
     <div className="space-y-4 animate-fade-up pb-4">
@@ -239,6 +242,65 @@ export default function ShoppingTab({ lang, setTab }) {
           )
         })}
       </div>
+
+      {/* 할인 캘린더 */}
+      {section === 'deals' && (
+        <div className="space-y-3">
+          {/* 다음 세일 카운트다운 */}
+          <div className="bg-gradient-to-r from-[#DC2626] to-[#F97316] rounded-2xl p-4 text-white">
+            <div className="flex items-center gap-2 mb-1">
+              <Calendar size={16} />
+              <span className="text-xs font-semibold opacity-90">{L(lang, { ko: '다음 세일', zh: '下次促销', en: 'Next Sale' })}</span>
+            </div>
+            <p className="text-lg font-bold">{nextSale.name}</p>
+            <p className="text-sm opacity-90">
+              {nextSale.type === 'oliveyoung-day'
+                ? L(lang, { ko: `D-${nextSale.daysLeft}일`, zh: `还有${nextSale.daysLeft}天`, en: `${nextSale.daysLeft} days left` })
+                : L(lang, { ko: `${nextSale.month}월 예정`, zh: `预计${nextSale.month}月`, en: `Expected in month ${nextSale.month}` })}
+            </p>
+          </div>
+
+          {/* 올리브영 연간 세일 */}
+          <h2 className="text-sm font-bold text-[#111827] flex items-center gap-1.5">
+            <Tag size={14} className="text-green-600" />
+            {L(lang, { ko: '올리브영 세일 캘린더', zh: 'Olive Young促销日历', en: 'Olive Young Sale Calendar' })}
+          </h2>
+          <div className="space-y-2">
+            {OLIVEYOUNG_SALES.map((sale, i) => (
+              <div key={i} className="bg-white rounded-2xl border border-[#E5E7EB] p-3">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-sm font-bold text-[#1A1A1A]">{sale.name}</p>
+                    <p className="text-xs text-[#666666]">{sale.period}</p>
+                  </div>
+                  <span className="text-xs font-bold text-[#DC2626] bg-red-50 px-2 py-1 rounded-full">{sale.discount}</span>
+                </div>
+                <p className="text-[10px] text-[#999999] mt-1">{L(lang, sale.note)}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* 한국 쇼핑 이벤트 */}
+          <h2 className="text-sm font-bold text-[#111827] flex items-center gap-1.5 mt-4">
+            <ShoppingBag size={14} className="text-purple-600" />
+            {L(lang, { ko: '한국 쇼핑 이벤트', zh: '韩国购物活动', en: 'Korea Shopping Events' })}
+          </h2>
+          <div className="space-y-2">
+            {SHOPPING_EVENTS.map((event, i) => (
+              <div key={i} className="bg-white rounded-2xl border border-[#E5E7EB] p-3">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-sm font-bold text-[#1A1A1A]">{event.name}</p>
+                    <p className="text-xs text-[#666666]">{event.period}</p>
+                  </div>
+                  <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-1 rounded-full">{event.discount}</span>
+                </div>
+                <p className="text-[10px] text-[#999999] mt-1">{L(lang, event.note)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Duty Free Shops */}
       {section === 'duty-free' && (

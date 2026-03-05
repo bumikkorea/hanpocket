@@ -1,0 +1,101 @@
+Board-042: 중복 제거 + 상황별 한국어 통합 + 올리브영 할인 데이터
+
+## 작업 1: 홈탭 상황별 한국어 → 가이드탭 연결로 통합
+
+### 1-1. HomeTab.jsx에서 제거할 것:
+- `SCENE_PHRASE_DETAILS` import 제거
+- `activeScene` state 제거  
+- 상황별 한국어 오버레이 JSX 전체 제거 (`{activeScene && SCENE_PHRASE_DETAILS[activeScene] && (` 부터 닫는 `)}` 까지)
+
+### 1-2. HomeTab.jsx 카드 클릭 변경:
+현재: `onClick={() => setActiveScene(item.pocket)}`
+변경: `onClick={() => setTab(item.pocket)}` 
+
+이렇게 하면 App.jsx에서 해당 pocket 서브페이지로 이동.
+item.pocket 값: restaurant, cafe, transport, convenience, shopping, accommodation, emergency
+
+각각이 이미 존재하는 pocket 서브페이지와 매핑됨 (RestaurantPocket, CafePocket 등).
+
+단, Intent 카드에서 `setActiveScene('emergency')` 하는 부분도 `setTab('sos')`로 변경.
+
+### 1-3. HomeTab.jsx의 SCENE_PHRASES 데이터는 유지
+카드 표시용 데이터(장소 이름, 대표 문구, 이미지)는 유지. 오버레이만 제거.
+
+## 작업 2: 올리브영 연간 할인 캘린더 데이터
+
+`src/data/shoppingDeals.js` 생성:
+
+```js
+export const OLIVEYOUNG_SALES = [
+  { name: '올영세일', period: '1월 초 (약 2주)', month: 1, discount: '최대 50%', note: { ko: '신년 세일, 전 품목 대상', zh: '新年大促，全品类', en: 'New Year sale, all items' } },
+  { name: '올영세일', period: '4월 초 (약 2주)', month: 4, discount: '최대 50%', note: { ko: '봄 시즌 세일', zh: '春季促销', en: 'Spring sale' } },
+  { name: '올영세일', period: '6월 초 (약 2주)', month: 6, discount: '최대 50%', note: { ko: '여름 세일', zh: '夏季促销', en: 'Summer sale' } },
+  { name: '올영세일', period: '9월 초 (약 2주)', month: 9, discount: '최대 50%', note: { ko: '가을 세일', zh: '秋季促销', en: 'Autumn sale' } },
+  { name: '올영세일', period: '11월 말~12월 초 (약 2주)', month: 11, discount: '최대 70%', note: { ko: '연말 최대 세일, 블프 시즌', zh: '年末最大促销', en: 'Year-end biggest sale' } },
+  { name: '올리브영 데이', period: '매월 25일', month: 0, discount: '추가 할인+적립', note: { ko: '매월 25일 멤버십 혜택', zh: '每月25号会员优惠', en: 'Monthly membership day' } },
+]
+
+export const SHOPPING_EVENTS = [
+  { name: '코리아 세일 페스타', period: '11월 (약 2주)', discount: '전국 오프라인+온라인', note: { ko: '한국판 블랙프라이데이, 백화점+면세점+소상공인 참여', zh: '韩国版黑五，百货+免税店+小商户参加', en: 'Korea Black Friday equivalent' } },
+  { name: '코리아 그랜드 세일', period: '1~2월 (약 6주)', discount: '관광객 대상 할인', note: { ko: '외국인 관광객 대상 쇼핑 축제, 면세점 추가 할인', zh: '面向外国游客的购物节', en: 'Tourist shopping festival' } },
+  { name: '다이소 균일가 이벤트', period: '수시', discount: '1,000~5,000원', note: { ko: '한국판 100엔샵, 생활용품 최저가', zh: '韩国版百元店', en: 'Korean dollar store' } },
+  { name: '무신사 세일', period: '5월, 11월', discount: '최대 80%', note: { ko: '패션 최대 할인, MZ세대 인기', zh: '时尚最大折扣', en: 'Fashion mega sale' } },
+]
+
+// 현재 월 기준 다음 세일 안내
+export function getNextSale() {
+  const now = new Date()
+  const month = now.getMonth() + 1
+  const day = now.getDate()
+  
+  // 올영데이 (매월 25일)
+  if (day < 25) {
+    return { type: 'oliveyoung-day', daysLeft: 25 - day, name: '올리브영 데이' }
+  }
+  
+  // 다음 올영세일
+  const saleMonths = [1, 4, 6, 9, 11]
+  for (const sm of saleMonths) {
+    if (sm > month) return { type: 'oliveyoung-sale', month: sm, name: '올영세일' }
+  }
+  return { type: 'oliveyoung-sale', month: 1, name: '올영세일 (내년)' }
+}
+```
+
+### ShoppingTab.jsx에 반영:
+- 할인 정보 섹션에 올리브영 연간 세일 캘린더 표시
+- "다음 세일까지 D-X일" 카운트다운
+- 쇼핑 이벤트 캘린더 카드
+- dead space 대신 실제 데이터로 채우기
+
+할인 카드 디자인:
+```jsx
+{OLIVEYOUNG_SALES.map((sale, i) => (
+  <div key={i} className="bg-white rounded-2xl border border-[#E5E7EB] p-3">
+    <div className="flex justify-between items-center">
+      <div>
+        <p className="text-sm font-bold text-[#1A1A1A]">{sale.name}</p>
+        <p className="text-xs text-[#666666]">{sale.period}</p>
+      </div>
+      <span className="text-xs font-bold text-[#DC2626] bg-red-50 px-2 py-1 rounded-full">{sale.discount}</span>
+    </div>
+    <p className="text-[10px] text-[#999999] mt-1">{L(lang, sale.note)}</p>
+  </div>
+))}
+```
+
+## 작업 3: dead 컴포넌트 정리 (코드만, 삭제는 하지 않음)
+
+검색해서 현재 App.jsx에서 import되지만 실제 라우팅에 연결 안 된 컴포넌트 목록을 주석으로 표기.
+삭제는 하지 않되, `// UNUSED:` 주석 추가.
+
+## 빌드 & 커밋
+```bash
+npm run build
+git add -A && git commit -m "Board-042: Deduplicate scene Korean, add shopping deals data, connect HomeTab to pockets"
+```
+
+## 완료 알림
+```bash
+openclaw system event --text 'Done: Board-042 중복제거 + 올리브영 할인 + 상황별 한국어 통합' --mode now
+```

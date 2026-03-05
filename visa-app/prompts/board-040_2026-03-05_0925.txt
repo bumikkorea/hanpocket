@@ -1,0 +1,123 @@
+Board-040: UI 개선 스프린트 2차 — 중간/낮음 우선순위 13개
+
+⚠️ Board-039가 먼저 커밋되어 있을 수 있음. 충돌 시 git pull 후 진행.
+
+## 작업 2: 여행필수 카드 높이 통일 (HomeTab.jsx)
+여행필수 카드들의 높이가 일정하도록 이미지 영역 높이 고정 + sub 텍스트 1줄 `line-clamp-1` 처리.
+카드 이미지 영역: `h-[80px]` 고정, `object-cover`.
+텍스트 영역: 카드 제목 `text-sm font-bold` + sub `text-[10px] text-[#999999] line-clamp-1`.
+
+## 작업 5: 여행필수 카테고리 시각적 구분 (HomeTab.jsx)
+8개 카드(SOS 제거 시 7개)를 완전 분리하진 않되, 카드 상단에 작은 카테고리 라벨을 추가:
+- 입국카드, SIM/eSIM → 🛬 (입국)
+- 세금환급, 면세한도 → 🛍️ (쇼핑)
+- 택시잡기, 교통카드, 한국지도 → 🚌 (이동)
+이건 카드 이미지 좌상단에 작은 pill 배지로 표시: `absolute top-2 left-2 text-[9px] bg-black/40 text-white px-1.5 py-0.5 rounded-full`
+
+## 작업 6: 비자 선택 카테고리 분류 (App.jsx - ProfileTab)
+현재 30개 비자가 플랫 목록으로 나열됨.
+카테고리별 접이식(accordion)으로 변경:
+```js
+const VISA_CATEGORIES = [
+  { code: 'B', label: { ko: 'B — 사증면제/관광', zh: 'B — 免签/旅游', en: 'B — Visa Exemption' }, types: ['B-1','B-2'] },
+  { code: 'C', label: { ko: 'C — 단기', zh: 'C — 短期', en: 'C — Short-term' }, types: ['C-3','C-4'] },
+  { code: 'D', label: { ko: 'D — 장기(유학/연수/취업)', zh: 'D — 长期(留学/研修)', en: 'D — Long-term' }, types: ['D-1','D-2','D-4','D-5','D-6','D-7','D-8','D-9','D-10'] },
+  { code: 'E', label: { ko: 'E — 취업', zh: 'E — 就业', en: 'E — Employment' }, types: ['E-1','E-2','E-3','E-4','E-5','E-6','E-7','E-9','E-10'] },
+  { code: 'F', label: { ko: 'F — 거주/동포/결혼', zh: 'F — 居住/同胞/结婚', en: 'F — Residence' }, types: ['F-1','F-2','F-3','F-4','F-5','F-6'] },
+  { code: 'G', label: { ko: 'G — 기타', zh: 'G — 其他', en: 'G — Miscellaneous' }, types: ['G-1'] },
+  { code: 'H', label: { ko: 'H — 관광취업/방문취업', zh: 'H — 观光就业', en: 'H — Working Holiday' }, types: ['H-1','H-2'] },
+]
+```
+각 카테고리 헤더를 클릭하면 펼침/접힘. 기본은 모두 접힘.
+가장 많이 쓰는 C-3(단기방문)과 D-2(유학)의 카테고리(C, D)는 기본 펼침.
+
+## 작업 8: 닉네임 미설정 시 첫 진입 토스트 (App.jsx - ProfileTab)
+ProfileTab 마운트 시:
+```js
+useEffect(() => {
+  const nick = localStorage.getItem('hanpocket_nickname')
+  if (!nick) {
+    setTimeout(() => showToastMessage(
+      lang === 'ko' ? '✏️ 닉네임을 설정해보세요!' : 
+      lang === 'zh' ? '✏️ 设置你的昵称吧！' : '✏️ Set your nickname!'
+    ), 500)
+  }
+}, [])
+```
+
+## 작업 9: "탐색" 탭 명칭 변경 (App.jsx)
+bottomTabs에서:
+```js
+{ id: 'service', icon: Grid3x3, label: { ko: '탐색', zh: '探索', en: 'Explore' } }
+```
+→ 변경:
+```js
+{ id: 'service', icon: Compass, label: { ko: '가이드', zh: '指南', en: 'Guide' } }
+```
+Compass 아이콘은 이미 import 되어 있음. 기존 코스탭이 Compass를 쓰고 있으면, 가이드 탭은 `Layers` 또는 `Grid3x3` 유지하되 라벨만 변경.
+→ 실제로는 **라벨만 변경**: `탐색` → `가이드`, `探索` → `指南`, `Explore` → `Guide`. 아이콘은 기존 Grid3x3 유지.
+
+## 작업 10: 상황별 한국어 발음 텍스트 확대 (HomeTab.jsx 오버레이 or scenePhrases 오버레이)
+상황별 한국어 오버레이에서 발음 `[roman]` 텍스트:
+현재: `text-xs text-[#999999] italic`
+변경: `text-sm text-[#666666] italic` (한 단계 크게, 색도 진하게)
+
+## 작업 11: 첫 접속 보너스 XP (KoreanTab.jsx or EducationTab.jsx)
+첫 접속 감지:
+```js
+useEffect(() => {
+  const welcomed = localStorage.getItem('hanpocket_welcomed')
+  if (!welcomed) {
+    setCurrentLevel(prev => Math.min(200, prev + 1))
+    // XP도 추가
+    localStorage.setItem('hanpocket_welcomed', 'true')
+    // 토스트 or 작은 축하 애니메이션
+  }
+}, [])
+```
+KoreanTab.jsx에서 구현. 첫 진입 시 레벨 +1 (0→1), 토스트 "🎉 환영 보너스! +50 XP"
+
+## 작업 12: 학습 세션 첫 2개 기본 해금 (EducationTab.jsx)
+현재 로직에서 `isLocked`를 결정하는 부분:
+```js
+const isLocked = idx > 0 && !prevCompleted
+```
+→ 변경:
+```js
+const isLocked = idx > 1 && !prevCompleted  // 첫 2개(idx 0, 1) 항상 해금
+```
+
+## 작업 13: 긴급 카드 시각적 구분 (HomeTab.jsx)
+상황별 한국어 카드 중 emergency(긴급) 카드에 빨간 테두리 추가:
+```jsx
+className={`... border ${item.pocket === 'emergency' ? 'border-red-400' : 'border-[#E5E7EB]'}`}
+```
+
+## 작업 14: 카드 모서리 rounded-2xl 통일
+HomeTab.jsx 전체에서 `rounded-xl`을 `rounded-2xl`로 통일.
+단, 매우 작은 요소(pill 배지, 버튼 등)는 제외. 카드 컴포넌트만 대상.
+검색: `rounded-xl` → 카드 관련만 `rounded-2xl`로 변경.
+
+## 작업 17: 스켈레톤 UI (HomeTab.jsx)
+정보바에서 날씨/환율 로딩 중일 때:
+- `weather`가 null이면 "—°C" 대신 작은 회색 박스(스켈레톤): 
+  ```jsx
+  {weather ? `${weather.temp}°C` : <span className="inline-block w-8 h-3 bg-[#E5E7EB] rounded animate-pulse" />}
+  ```
+- 환율도 동일하게 처리.
+
+## 작업 18: 가이드 오버레이 디자인 통일 점검
+Board-039에서 GuideLayout.jsx를 만들고 5개 가이드를 리팩터링하므로, 이 작업에서는 추가 확인만.
+혹시 GuideLayout으로 전환되지 않은 가이드가 있으면 전환.
+HomeTab에서 직접 렌더링하는 가이드 오버레이(transit 등)도 GuideLayout 사용하도록 변경.
+
+## 빌드 & 커밋
+```bash
+npm run build
+git add -A && git commit -m "Board-040: UI improvements batch 2 - 13 items (visa accordion, skeleton, card unify, etc)"
+```
+
+## 완료 알림
+```bash
+openclaw system event --text 'Done: Board-040 UI 개선 13개 항목' --mode now
+```

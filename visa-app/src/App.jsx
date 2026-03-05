@@ -1283,13 +1283,13 @@ function ServiceGrid({ lang, L, setSubPage }) {
   const updatingBadge = { ko: '(업데이트중)', zh: '(更新中)', en: '(Updating)' }
 
   const categoryBgColors = {
-    'situational-korean': '#F3F4F6',
-    'travel-food': '#F3F4F6',
-    'hallyu-entertainment': '#F3F4F6',
-    'shopping-beauty': '#F3F4F6',
-    'learning': '#F3F4F6',
-    'daily-life': '#F3F4F6',
-    'tools': '#F3F4F6',
+    'situational-korean': '#F9FAFB',
+    'travel-food': '#F9FAFB',
+    'hallyu-entertainment': '#F9FAFB',
+    'shopping-beauty': '#F9FAFB',
+    'learning': '#F9FAFB',
+    'daily-life': '#F9FAFB',
+    'tools': '#F9FAFB',
   }
 
 
@@ -1300,15 +1300,15 @@ function ServiceGrid({ lang, L, setSubPage }) {
       {implementedCats.map(cat => (
         <div key={cat.id}>
           <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">{L(lang, cat.name)}</h3>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-5 gap-1">
             {cat.pockets.map(p => (
               <button key={p.id} onClick={() => setSubPage(p.id)}
-                className="bg-white rounded-2xl p-3 flex flex-col items-center gap-1.5 border border-[#E5E7EB] transition-all duration-200 active:scale-[0.98]">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                  style={{ backgroundColor: categoryBgColors[cat.id] || '#F3F4F6' }}>
-                  <span className="text-2xl">{p.icon}</span>
+                className="rounded-xl p-2 flex flex-col items-center gap-1 transition-all duration-200 active:scale-[0.95]">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center"
+                  style={{ backgroundColor: categoryBgColors[cat.id] || '#F9FAFB' }}>
+                  <span className="text-xl">{p.icon}</span>
                 </div>
-                <span className="text-xs text-[#1A1A1A] font-medium text-center leading-tight">{L(lang, p.name)}</span>
+                <span className="text-[10px] text-[#1A1A1A] font-medium text-center leading-tight">{L(lang, p.name)}</span>
               </button>
             ))}
           </div>
@@ -1327,15 +1327,15 @@ function ServiceGrid({ lang, L, setSubPage }) {
             <ChevronRight size={14} className={`text-gray-400 transition-transform duration-200 ${showComingSoon ? 'rotate-90' : ''}`} />
           </button>
           {showComingSoon && (
-            <div className="grid grid-cols-3 gap-2 mt-2">
+            <div className="grid grid-cols-5 gap-1 mt-2">
               {unimplementedPockets.map(p => (
                 <div key={p.id}
-                  className="bg-white rounded-2xl p-3 flex flex-col items-center gap-1.5 border border-[#E5E7EB] opacity-60 cursor-default">
-                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center opacity-50"
-                    style={{ backgroundColor: categoryBgColors[p.catId] || '#F3F4F6' }}>
-                    <span className="text-2xl">{p.icon}</span>
+                  className="rounded-xl p-2 flex flex-col items-center gap-1 opacity-60 cursor-default">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center opacity-50"
+                    style={{ backgroundColor: categoryBgColors[p.catId] || '#F9FAFB' }}>
+                    <span className="text-xl">{p.icon}</span>
                   </div>
-                  <span className="text-xs text-[#9CA3AF] font-medium text-center leading-tight">{L(lang, p.name)}</span>
+                  <span className="text-[10px] text-[#9CA3AF] font-medium text-center leading-tight">{L(lang, p.name)}</span>
                   <span className="text-[10px] font-medium px-1.5 py-0.5 rounded"
                     style={{ backgroundColor: '#F5F1EB', color: '#B8860B', border: '1px solid #B8860B' }}>
                     {L(lang, updatingBadge)}

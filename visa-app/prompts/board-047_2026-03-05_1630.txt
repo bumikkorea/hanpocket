@@ -1,0 +1,162 @@
+# Board-047: 한글 기초 레슨 발음 데이터 + 학습 화면 구현
+
+## 문제
+education.js의 세션 0 "한글 기초" 10일 레슨에 발음 데이터가 없음.
+"모음 ㅏㅓㅗㅜㅡㅣ"만 써있으면 중국인이 발음을 모름.
+
+## 작업 1: education.js 세션 0 발음 데이터 추가
+
+세션 0의 각 unit에 `content` 배열 추가. 모든 글자에 로마자 + 중국어 근사 발음 + 예시 단어 포함.
+
+### Day 1: 모음 ㅏㅓㅗㅜㅡㅣ
+```js
+{ day: 1, title: { ko: '모음 ㅏㅓㅗㅜㅡㅣ', zh: '元音 ㅏㅓㅗㅜㅡㅣ', en: 'Vowels ㅏㅓㅗㅜㅡㅣ' },
+  content: [
+    { char: 'ㅏ', roman: 'a', zhSound: '类似"啊"(ā)', example: '아기 (a-gi, 婴儿/baby)', audio: 'a' },
+    { char: 'ㅓ', roman: 'eo', zhSound: '类似"鹅"(é)但嘴张大', example: '어머니 (eo-meo-ni, 妈妈/mother)', audio: 'eo' },
+    { char: 'ㅗ', roman: 'o', zhSound: '类似"哦"(ō)', example: '오리 (o-ri, 鸭子/duck)', audio: 'o' },
+    { char: 'ㅜ', roman: 'u', zhSound: '类似"乌"(ū)', example: '우유 (u-yu, 牛奶/milk)', audio: 'u' },
+    { char: 'ㅡ', roman: 'eu', zhSound: '类似"呃"但嘴扁平', example: '으르렁 (eu-reu-reong, 吼叫/growl)', audio: 'eu' },
+    { char: 'ㅣ', roman: 'i', zhSound: '类似"衣"(yī)', example: '이름 (i-reum, 名字/name)', audio: 'i' },
+  ],
+  quiz: [
+    { q: { zh: 'ㅏ 的发音是？', en: 'How is ㅏ pronounced?' }, options: ['a', 'o', 'u', 'i'], answer: 0 },
+    { q: { zh: '哪个元音发音类似"乌"？', en: 'Which vowel sounds like "oo"?' }, options: ['ㅏ', 'ㅓ', 'ㅜ', 'ㅡ'], answer: 2 },
+    { q: { zh: '"우유"(牛奶)中用到了哪些元音？', en: 'Which vowels are in "우유" (milk)?' }, options: ['ㅗ+ㅜ', 'ㅜ+ㅜ', 'ㅜ+ㅣ', 'ㅗ+ㅣ'], answer: 1 },
+  ]
+},
+```
+
+### Day 2: 자음 ㄱㄴㄷㄹㅁ
+```js
+{ day: 2, title: { ko: '자음 ㄱㄴㄷㄹㅁ', zh: '辅音 ㄱㄴㄷㄹㅁ', en: 'Consonants ㄱㄴㄷㄹㅁ' },
+  content: [
+    { char: 'ㄱ', roman: 'g/k', zhSound: '类似"哥"(gē)的声母', example: '가방 (ga-bang, 包/bag)', audio: 'g' },
+    { char: 'ㄴ', roman: 'n', zhSound: '类似"呢"(ne)的声母', example: '나라 (na-ra, 国家/country)', audio: 'n' },
+    { char: 'ㄷ', roman: 'd/t', zhSound: '类似"的"(de)的声母', example: '다리 (da-ri, 桥·腿/bridge·leg)', audio: 'd' },
+    { char: 'ㄹ', roman: 'r/l', zhSound: '介于"了"和"日"之间', example: '라면 (ra-myeon, 拉面/ramen)', audio: 'r' },
+    { char: 'ㅁ', roman: 'm', zhSound: '类似"么"(me)的声母', example: '마음 (ma-eum, 心/heart)', audio: 'm' },
+  ],
+  quiz: [
+    { q: { zh: 'ㄱ 的发音是？', en: 'How is ㄱ pronounced?' }, options: ['n', 'g/k', 'm', 'd/t'], answer: 1 },
+    { q: { zh: '"나라"(国家)的第一个辅音是？', en: 'First consonant of "나라" (country)?' }, options: ['ㄱ', 'ㄴ', 'ㄷ', 'ㅁ'], answer: 1 },
+    { q: { zh: 'ㄹ 的发音特点是？', en: 'What is special about ㄹ?' }, options: ['像n', '像m', '介于r和l之间', '像g'], answer: 2 },
+  ]
+},
+```
+
+### Day 3: 자음 ㅂㅅㅇㅈㅎ
+```js
+{ day: 3, title: { ko: '자음 ㅂㅅㅇㅈㅎ', zh: '辅音 ㅂㅅㅇㅈㅎ', en: 'Consonants ㅂㅅㅇㅈㅎ' },
+  content: [
+    { char: 'ㅂ', roman: 'b/p', zhSound: '类似"八"(bā)的声母', example: '바다 (ba-da, 大海/sea)', audio: 'b' },
+    { char: 'ㅅ', roman: 's', zhSound: '类似"思"(sī)的声母', example: '사랑 (sa-rang, 爱/love)', audio: 's' },
+    { char: 'ㅇ', roman: 'ng/无声', zhSound: '开头无声，结尾像"嗯"(ng)', example: '아이 (a-i, 孩子/child)', audio: 'ng' },
+    { char: 'ㅈ', roman: 'j', zhSound: '类似"机"(jī)的声母', example: '지하철 (ji-ha-cheol, 地铁/subway)', audio: 'j' },
+    { char: 'ㅎ', roman: 'h', zhSound: '类似"喝"(hē)的声母', example: '한국 (han-guk, 韩国/Korea)', audio: 'h' },
+  ],
+  quiz: [
+    { q: { zh: 'ㅇ 在音节开头时？', en: 'ㅇ at beginning of syllable?' }, options: ['发ng音', '无声', '发m音', '发n音'], answer: 1 },
+    { q: { zh: '"사랑"(爱)的第一个辅音是？', en: 'First consonant of "사랑" (love)?' }, options: ['ㅂ', 'ㅅ', 'ㅈ', 'ㅎ'], answer: 1 },
+  ]
+},
+```
+
+### Day 4: 쌍자음 ㄲㄸㅃㅆㅉ
+```js
+{ day: 4, title: { ko: '쌍자음 ㄲㄸㅃㅆㅉ', zh: '双辅音 ㄲㄸㅃㅆㅉ', en: 'Double consonants' },
+  content: [
+    { char: 'ㄲ', roman: 'kk', zhSound: '比ㄱ更紧更重，类似"格"但更用力', example: '까치 (kka-chi, 喜鹊/magpie)', audio: 'kk' },
+    { char: 'ㄸ', roman: 'tt', zhSound: '比ㄷ更紧更重', example: '떡 (tteok, 年糕/rice cake)', audio: 'tt' },
+    { char: 'ㅃ', roman: 'pp', zhSound: '比ㅂ更紧更重', example: '빵 (ppang, 面包/bread)', audio: 'pp' },
+    { char: 'ㅆ', roman: 'ss', zhSound: '比ㅅ更紧更重', example: '쌀 (ssal, 大米/rice)', audio: 'ss' },
+    { char: 'ㅉ', roman: 'jj', zhSound: '比ㅈ更紧更重', example: '짜장면 (jja-jang-myeon, 炸酱面)', audio: 'jj' },
+  ],
+  quiz: [
+    { q: { zh: '"떡"(年糕)的辅音是？', en: 'Consonant of "떡" (rice cake)?' }, options: ['ㄷ', 'ㄸ', 'ㅌ', 'ㄴ'], answer: 1 },
+    { q: { zh: '双辅音的特点是？', en: 'Double consonants are?' }, options: ['更轻', '更紧更重', '有气音', '无声'], answer: 1 },
+  ]
+},
+```
+
+### Day 5: 복합모음 ㅐㅔㅘㅙㅚ
+```js
+{ day: 5, title: { ko: '복합모음 ㅐㅔㅘㅙㅚ', zh: '复合元音 ㅐㅔㅘㅙㅚ', en: 'Compound vowels' },
+  content: [
+    { char: 'ㅐ', roman: 'ae', zhSound: '类似"哎"(āi)', example: '개 (gae, 狗/dog)', audio: 'ae' },
+    { char: 'ㅔ', roman: 'e', zhSound: '类似"耶"(yē)但不加y', example: '세계 (se-gye, 世界/world)', audio: 'e' },
+    { char: 'ㅘ', roman: 'wa', zhSound: '类似"哇"(wā)', example: '과일 (gwa-il, 水果/fruit)', audio: 'wa' },
+    { char: 'ㅙ', roman: 'wae', zhSound: '类似"歪"(wāi)', example: '왜 (wae, 为什么/why)', audio: 'wae' },
+    { char: 'ㅚ', roman: 'oe', zhSound: '类似"外"(wài)的韵母', example: '외국 (oe-guk, 外国/foreign)', audio: 'oe' },
+  ],
+  quiz: [
+    { q: { zh: '"왜"(为什么)用到了哪个复合元音？', en: 'Which compound vowel is in "왜"?' }, options: ['ㅘ', 'ㅙ', 'ㅚ', 'ㅐ'], answer: 1 },
+  ]
+},
+```
+
+### Day 6~10 (간략화)
+Day 6 (받침): content로 ㄱ받침, ㄴ받침, ㄹ받침, ㅁ받침, ㅂ받침, ㅇ받침 각각 발음 변화 설명
+Day 7 (음절 조합): 가나다라...마바사 연습 + 조합 퀴즈
+Day 8 (단어 읽기): 한국, 서울, 감사, 안녕 등 10개 단어 읽기
+Day 9 (인사말): 안녕하세요, 감사합니다, 죄송합니다 등 핵심 인사 10개
+Day 10 (마스터 테스트): 종합 퀴즈 10문제
+
+**위 Day 6~10도 동일 형식(content 배열 + quiz 배열)으로 완전히 채워야 함. content 최소 5개 + quiz 최소 3개씩.**
+
+## 작업 2: 레슨 상세 화면 (LessonDetailScreen)
+
+현재 KoreanTab.jsx 또는 EducationTab.jsx에서 레슨 클릭 시 학습 내용을 보여주는 화면이 필요.
+
+### UI 구조
+
+```
+[← 뒤로] [Day 1: 모음 ㅏㅓㅗㅜㅡㅣ]
+
+[큰 글자 카드 — 스와이프 가능]
+┌─────────────────────┐
+│         ㅏ          │  ← 180px 크기 한글
+│        [a]          │  ← 로마자 발음
+│   类似"啊"(ā)       │  ← 중국어 근사 발음
+│                     │
+│   🔊 듣기           │  ← TTS 버튼 (speechSynthesis)
+│                     │
+│   예: 아기 (a-gi)   │  ← 예시 단어
+│       婴儿/baby     │
+└─────────────────────┘
+         • • • • • •    ← 6개 도트 인디케이터
+
+[퀴즈 시작 →]          ← 카드 다 보면 퀴즈 버튼 활성화
+```
+
+### 카드 디자인
+- 가로 스와이프 (snap scroll), 각 카드 풀너비
+- 배경: 흰색, border `border-[#E5E7EB]`, `rounded-2xl`
+- 한글: `text-[120px] font-bold text-[#1A1A1A]` 중앙정렬
+- 로마자: `text-2xl text-[#2D5A3D] font-medium`
+- 중국어 발음: `text-sm text-[#666]`
+- TTS: `speechSynthesis` API 사용 (`lang: 'ko-KR'`)
+- 예시: `text-base font-medium` + 번역
+
+### 퀴즈 화면
+카드 다 넘긴 후 "퀴즈 시작" 클릭:
+- 4지선다 (options 배열)
+- 정답 시 초록색 + confetti emoji
+- 오답 시 빨간색 + 정답 표시
+- 다 맞추면 +15 XP, localStorage에 진행도 저장
+
+### 구현 위치
+`src/components/korean-game/LessonDetailScreen.jsx` 새 파일 생성.
+`src/components/KoreanTab.jsx`에서 레슨 클릭 시 이 컴포넌트 표시.
+
+education.js의 unit에 `content`가 있으면 → LessonDetailScreen 표시
+content가 없으면 → 기존 동작 유지 (또는 "준비 중" 표시)
+
+## 빌드 & 배포
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+npm run build
+git add -A && git commit -m "board-047: hangul lesson content + pronunciation + quiz screens"
+npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+openclaw system event --text 'Done: Board-047 한글 기초 발음 데이터 + 학습/퀴즈 화면' --mode now
+```

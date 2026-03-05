@@ -531,26 +531,20 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             {L(lang, { ko: '상황별 한국어', zh: '场景韩语', en: 'Korean by Situation' })}
           </h2>
         </div>
-        <div className="pl-4 pr-0 flex gap-2 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
+        <div className="pl-4 pr-0 flex gap-4 overflow-x-auto scroll-indicator scroll-pl-4 pb-2">
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
               onClick={() => setTab(item.pocket)}
-              className={`snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.97] transition-transform duration-150 border ${item.pocket === 'emergency' ? 'border-red-400 border-2' : 'border-[#E5E7EB]'}`}
-              style={{ width: 130 }}
+              className="flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
+              style={{ width: 64 }}
             >
-              <div className="relative" style={{ height: 84 }}>
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
-                <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none' }} />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <p className="absolute bottom-2.5 left-2.5 text-white text-sm font-bold text-left z-10">
-                  {L(lang, item.scene)}
-                </p>
+              <div className={`w-14 h-14 rounded-full overflow-hidden ${item.pocket === 'emergency' ? 'ring-2 ring-red-400' : ''}`}>
+                <img src={item.img} alt="" className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.parentElement.style.backgroundColor = '#F3F4F6' }} />
               </div>
-              <div className="p-2.5" style={{ backgroundColor: '#FFFFFF', height: 56 }}>
-                <p className="text-xs font-medium text-left" style={{ color: '#1A1A1A' }}>{item.phrase.ko}</p>
-                <p className="text-[11px] mt-0.5 text-left" style={{ color: '#666666' }}>{item.phrase.zh}</p>
-              </div>
+              <span className="text-[11px] font-medium text-center leading-tight" style={{ color: '#1A1A1A' }}>
+                {L(lang, item.scene)}
+              </span>
             </button>
           ))}
           <div className="flex-shrink-0 w-4" />

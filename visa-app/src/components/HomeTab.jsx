@@ -289,12 +289,12 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
 // ── 브랜드 할인 가로 스크롤 ──
 function BrandScrollSection({ lang }) {
   const brands = [
-    { name: { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }, logo: '🫒', discount: { ko: '최대 15% OFF', zh: '最高85折', en: 'Up to 15% OFF' }, color: '#2D5A3D', url: 'https://global.oliveyoung.com' },
-    { name: { ko: '무신사', zh: 'MUSINSA', en: 'MUSINSA' }, logo: '👕', discount: { ko: '최대 70% OFF', zh: '最高3折', en: 'Up to 70% OFF' }, color: '#111827', url: 'https://www.musinsa.com' },
-    { name: { ko: '롯데면세점', zh: '乐天免税店', en: 'Lotte Duty Free' }, logo: '🛍️', discount: { ko: '쿠폰 할인', zh: '优惠券折扣', en: 'Coupon deals' }, color: '#DC2626', url: 'https://kor.lottedfs.com' },
-    { name: { ko: '신라면세점', zh: '新罗免税店', en: 'Shilla Duty Free' }, logo: '✨', discount: { ko: '첫 구매 30%', zh: '首购7折', en: '30% off first buy' }, color: '#B8860B', url: 'https://www.shilladfs.com' },
-    { name: { ko: 'Klook', zh: 'Klook', en: 'Klook' }, logo: '🎫', discount: { ko: '체험 10% 할인', zh: '体验9折', en: '10% off experiences' }, color: '#FF6B35', url: 'https://www.klook.com/ko/' },
-    { name: { ko: '에버랜드', zh: '爱宝乐园', en: 'Everland' }, logo: '🎡', discount: { ko: '앱 전용 할인', zh: 'APP专属折扣', en: 'App-only discount' }, color: '#4A8A5A', url: 'https://www.everland.com' },
+    { name: { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }, logoUrl: 'https://www.oliveyoung.co.kr/favicon.ico', discount: { ko: '외국인 할인', zh: '外国人折扣', en: 'Foreigner discount' }, color: '#fff', url: 'https://global.oliveyoung.com' },
+    { name: { ko: '무신사', zh: 'MUSINSA', en: 'MUSINSA' }, logoUrl: 'https://image.msscdn.net/favicon.ico', discount: { ko: '시즌 세일', zh: '季节促销', en: 'Season sale' }, color: '#fff', url: 'https://www.musinsa.com' },
+    { name: { ko: '롯데면세점', zh: '乐天免税店', en: 'Lotte Duty Free' }, logoUrl: 'https://kor.lottedfs.com/favicon.ico', discount: { ko: '온라인 쿠폰', zh: '在线优惠券', en: 'Online coupon' }, color: '#fff', url: 'https://kor.lottedfs.com' },
+    { name: { ko: '신라면세점', zh: '新罗免税店', en: 'Shilla Duty Free' }, logoUrl: 'https://www.shilladfs.com/favicon.ico', discount: { ko: '신규 가입 혜택', zh: '新注册优惠', en: 'New member deal' }, color: '#fff', url: 'https://www.shilladfs.com' },
+    { name: { ko: 'Klook', zh: 'Klook', en: 'Klook' }, logoUrl: 'https://res.klook.com/image/upload/fl_lossy.progressive,q_85/c_fill,w_64/v1643011905/blog/oteayx3bstsjopmxjgzy.webp', discount: { ko: '체험 할인', zh: '体验折扣', en: 'Experience deals' }, color: '#fff', url: 'https://www.klook.com/ko/' },
+    { name: { ko: '에버랜드', zh: '爱宝乐园', en: 'Everland' }, logoUrl: 'https://www.everland.com/favicon.ico', discount: { ko: '온라인 예매 할인', zh: '在线购票优惠', en: 'Online booking deal' }, color: '#fff', url: 'https://www.everland.com' },
   ]
 
   return (
@@ -310,9 +310,9 @@ function BrandScrollSection({ lang }) {
             className="snap-start flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
             style={{ width: 80 }}
           >
-            <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl shadow-[0_2px_10px_rgba(0,0,0,0.1)]"
+            <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.1)] border border-[#E5E7EB]"
               style={{ backgroundColor: b.color }}>
-              {b.logo}
+              {b.logoUrl ? <img src={b.logoUrl} alt="" className="w-8 h-8 object-contain" onError={e => { e.target.style.display='none'; e.target.parentElement.innerText = L(lang, b.name).charAt(0) }} /> : L(lang, b.name).charAt(0)}
             </div>
             <span className="text-[11px] font-medium text-[#1A1A1A] text-center leading-tight">{L(lang, b.name)}</span>
             <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#DC2626] text-white font-medium">{L(lang, b.discount)}</span>
@@ -1067,8 +1067,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         const makeRestaurantItem = (r) => ({
           name: L(lang, r.name),
           image: r.images?.[0] || 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
-          tags: [r.area?.gu, r.cuisine, getAwardBadge(r.award)].filter(Boolean),
-          sub: r.area?.gu,
+          tags: [[r.area?.city, r.area?.gu, r.area?.dong].filter(Boolean).join(' '), r.cuisine, getAwardBadge(r.award)].filter(Boolean),
+          sub: [r.area?.city, r.area?.gu, r.area?.dong].filter(Boolean).join(' '),
           review: L(lang, SAMPLE_REVIEWS[r.award] || SAMPLE_REVIEWS.blueribbon),
           onClick: () => setTab('food'),
         })

@@ -1922,7 +1922,7 @@ function AppInner() {
             </div>
 
             {/* 우측: 프로필 + 언어설정 */}
-            <div className="flex items-center justify-end gap-1 w-16">
+            <div className="flex items-center justify-end gap-2.5 w-20">
               <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
                 <User size={20} />
               </button>

@@ -126,6 +126,23 @@ export default function KoreanTab({ lang }) {
     } catch { return [] }
   })
 
+  // 토스트 상태
+  const [welcomeToast, setWelcomeToast] = useState(null)
+
+  // 첫 접속 보너스 XP
+  useEffect(() => {
+    const welcomed = localStorage.getItem('hanpocket_welcomed')
+    if (!welcomed) {
+      setCurrentLevel(prev => Math.min(200, prev + 1))
+      localStorage.setItem('hanpocket_welcomed', 'true')
+      setWelcomeToast(
+        lang === 'ko' ? '🎉 환영 보너스! +50 XP' :
+        lang === 'zh' ? '🎉 欢迎奖励！+50 XP' : '🎉 Welcome bonus! +50 XP'
+      )
+      setTimeout(() => setWelcomeToast(null), 3000)
+    }
+  }, [])
+
   // 레벨 저장
   useEffect(() => {
     localStorage.setItem('hanpocket_korean_level', String(currentLevel))
@@ -187,7 +204,7 @@ export default function KoreanTab({ lang }) {
   }
 
   return (
-    <div className="pt-4 pb-24 px-4">
+    <div className="pt-4 pb-24 px-4 relative">
       {/* TOPIK 게이지바 */}
       <TopikGaugeBar currentLevel={currentLevel} lang={lang} />
 
@@ -195,6 +212,13 @@ export default function KoreanTab({ lang }) {
       <Suspense fallback={<LoadingSpinner />}>
         <EducationTab lang={lang} onSessionComplete={handleSessionComplete} />
       </Suspense>
+
+      {/* 환영 토스트 */}
+      {welcomeToast && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#1A1A1A] text-white text-sm px-6 py-3 rounded-full shadow-lg z-50 animate-pulse">
+          {welcomeToast}
+        </div>
+      )}
     </div>
   )
 }

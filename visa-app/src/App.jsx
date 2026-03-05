@@ -6,7 +6,7 @@ import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleA
 
 // import { initServiceWorker, forceProfileDataRefresh, clearUserCache } from './utils/sw-update'
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, MapPin, Menu, Moon, Sun, Footprints, Map, Compass, Layers, Wallet, BookOpen } from 'lucide-react'
+import { MessageCircle, X, Home, Shield, Grid3x3, Wrench, User, Users, Search, ChevronLeft, ChevronDown, Globe, Calendar, Bell, Save, Trash2, Pencil, LogOut, Settings, ChevronRight, HelpCircle, MapPin, Menu, Moon, Sun, Footprints, Map, Compass, Layers, Wallet, BookOpen } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -383,6 +383,90 @@ function ChatTab({ profile, lang }) {
   )
 }
 
+const VISA_CATEGORIES = [
+  { code: 'B', label: { ko: 'B — 사증면제/관광', zh: 'B — 免签/旅游', en: 'B — Visa Exemption' }, types: ['B-1','B-2'] },
+  { code: 'C', label: { ko: 'C — 단기', zh: 'C — 短期', en: 'C — Short-term' }, types: ['C-3','C-4'] },
+  { code: 'D', label: { ko: 'D — 장기(유학/연수/취업)', zh: 'D — 长期(留学/研修)', en: 'D — Long-term' }, types: ['D-1','D-2','D-4','D-5','D-6','D-7','D-8','D-9','D-10'] },
+  { code: 'E', label: { ko: 'E — 취업', zh: 'E — 就业', en: 'E — Employment' }, types: ['E-1','E-2','E-3','E-4','E-5','E-6','E-7','E-9','E-10'] },
+  { code: 'F', label: { ko: 'F — 거주/동포/결혼', zh: 'F — 居住/同胞/结婚', en: 'F — Residence' }, types: ['F-1','F-2','F-3','F-4','F-5','F-6'] },
+  { code: 'G', label: { ko: 'G — 기타', zh: 'G — 其他', en: 'G — Miscellaneous' }, types: ['G-1'] },
+  { code: 'H', label: { ko: 'H — 관광취업/방문취업', zh: 'H — 观光就业', en: 'H — Working Holiday' }, types: ['H-1','H-2'] },
+]
+
+function VisaAccordionModal({ lang, visaTypes, tempVisaType, setTempVisaType, onSave, onClose }) {
+  const [openCats, setOpenCats] = useState(() => {
+    // C, D 카테고리 기본 펼침
+    return { C: true, D: true }
+  })
+
+  const toggleCat = (code) => {
+    setOpenCats(prev => ({ ...prev, [code]: !prev[code] }))
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50">
+      <div className="bg-white rounded-t-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+        <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
+          <h3 className="text-base font-bold text-[#1A1A1A]">
+            {lang === 'ko' ? '비자 타입 선택' : lang === 'zh' ? '选择签证类型' : 'Select Visa Type'}
+          </h3>
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center">
+            <X className="w-5 h-5 text-[#6B7280]" />
+          </button>
+        </div>
+        <div className="overflow-y-auto flex-1 p-2">
+          {VISA_CATEGORIES.map(cat => (
+            <div key={cat.code}>
+              <button
+                onClick={() => toggleCat(cat.code)}
+                className="w-full flex items-center justify-between px-4 py-3 text-left"
+              >
+                <span className="text-sm font-bold text-[#1A1A1A]">{L(lang, cat.label)}</span>
+                <ChevronDown className={`w-4 h-4 text-[#6B7280] transition-transform ${openCats[cat.code] ? 'rotate-180' : ''}`} />
+              </button>
+              {openCats[cat.code] && (
+                <div className="pb-1">
+                  {cat.types.map(code => {
+                    const v = visaTypes.find(vt => vt.code === code)
+                    if (!v) return null
+                    return (
+                      <button
+                        key={v.code}
+                        onClick={() => setTempVisaType(v.code)}
+                        className={`w-full flex items-center gap-3 px-6 py-2.5 rounded-xl text-left transition-colors ${
+                          tempVisaType === v.code ? 'bg-[#2D5A3D]/10' : 'hover:bg-[#F9FAFB]'
+                        }`}
+                      >
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                          tempVisaType === v.code ? 'border-[#2D5A3D]' : 'border-[#D1D5DB]'
+                        }`}>
+                          {tempVisaType === v.code && <div className="w-2.5 h-2.5 rounded-full bg-[#2D5A3D]" />}
+                        </div>
+                        <span className={`text-sm ${tempVisaType === v.code ? 'font-medium text-[#1A1A1A]' : 'text-[#374151]'}`}>
+                          {L(lang, v.label)}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="p-4 border-t border-[#E5E7EB]">
+          <button
+            onClick={onSave}
+            disabled={!tempVisaType}
+            className="w-full py-3 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium disabled:opacity-50 transition-colors"
+          >
+            {lang === 'ko' ? '선택 완료' : lang === 'zh' ? '确认选择' : 'Confirm'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, toggleDarkMode }) {
   // 모달 관리
   const [showDateModal, setShowDateModal] = useState(false)
@@ -464,6 +548,17 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
     setShowToast(true)
     setTimeout(() => setShowToast(false), 1500)
   }
+
+  // 닉네임 미설정 시 첫 진입 토스트
+  useEffect(() => {
+    const nick = localStorage.getItem('hanpocket_nickname')
+    if (!nick) {
+      setTimeout(() => showToastMessage(
+        lang === 'ko' ? '✏️ 닉네임을 설정해보세요!' :
+        lang === 'zh' ? '✏️ 设置你的昵称吧！' : '✏️ Set your nickname!'
+      ), 500)
+    }
+  }, [])
 
   const togglePocketVisibility = (pocketId) => {
     const current = getPocketVisible(pocketId)
@@ -823,49 +918,16 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         )}
       </div>
 
-      {/* 비자 선택 모달 */}
+      {/* 비자 선택 모달 (accordion) */}
       {showVisaModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50">
-          <div className="bg-white rounded-t-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
-            <div className="p-4 border-b border-[#E5E7EB] flex items-center justify-between">
-              <h3 className="text-base font-bold text-[#1A1A1A]">
-                {lang === 'ko' ? '비자 타입 선택' : lang === 'zh' ? '选择签证类型' : 'Select Visa Type'}
-              </h3>
-              <button onClick={() => setShowVisaModal(false)} className="w-8 h-8 flex items-center justify-center">
-                <X className="w-5 h-5 text-[#6B7280]" />
-              </button>
-            </div>
-            <div className="overflow-y-auto flex-1 p-2">
-              {VISA_TYPES.map(v => (
-                <button
-                  key={v.code}
-                  onClick={() => setTempVisaType(v.code)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${
-                    tempVisaType === v.code ? 'bg-[#2D5A3D]/10' : 'hover:bg-[#F9FAFB]'
-                  }`}
-                >
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                    tempVisaType === v.code ? 'border-[#2D5A3D]' : 'border-[#D1D5DB]'
-                  }`}>
-                    {tempVisaType === v.code && <div className="w-2.5 h-2.5 rounded-full bg-[#2D5A3D]" />}
-                  </div>
-                  <span className={`text-sm ${tempVisaType === v.code ? 'font-medium text-[#1A1A1A]' : 'text-[#374151]'}`}>
-                    {L(lang, v.label)}
-                  </span>
-                </button>
-              ))}
-            </div>
-            <div className="p-4 border-t border-[#E5E7EB]">
-              <button
-                onClick={handleSaveVisa}
-                disabled={!tempVisaType}
-                className="w-full py-3 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium disabled:opacity-50 transition-colors"
-              >
-                {lang === 'ko' ? '선택 완료' : lang === 'zh' ? '确认选择' : 'Confirm'}
-              </button>
-            </div>
-          </div>
-        </div>
+        <VisaAccordionModal
+          lang={lang}
+          visaTypes={VISA_TYPES}
+          tempVisaType={tempVisaType}
+          setTempVisaType={setTempVisaType}
+          onSave={handleSaveVisa}
+          onClose={() => setShowVisaModal(false)}
+        />
       )}
 
       {/* 모달 1: 비자 만료일 입력 */}
@@ -1550,7 +1612,7 @@ function AppInner() {
 
   const bottomTabs = [
     { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'service', icon: Grid3x3, label: { ko: '탐색', zh: '探索', en: 'Explore' } },
+    { id: 'service', icon: Grid3x3, label: { ko: '가이드', zh: '指南', en: 'Guide' } },
     { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
     { id: 'korean', icon: BookOpen, label: { ko: '한국어', zh: '韩语', en: 'Korean' } },
   ]

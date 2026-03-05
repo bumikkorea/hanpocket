@@ -536,7 +536,7 @@ export default function EducationTab({ lang, onSessionComplete }) {
         {sessions.map((session, idx) => {
           const completedCount = session.units.filter(u => eduState.completedUnits.includes(`${session.id}-${u.day}`)).length
           const prevCompleted = idx === 0 || sessions[idx-1].units.every(u => eduState.completedUnits.includes(`${sessions[idx-1].id}-${u.day}`))
-          const isLocked = idx > 0 && !prevCompleted
+          const isLocked = idx > 1 && !prevCompleted
           const isCurrent = !isLocked && completedCount < session.units.length && (idx === 0 || prevCompleted)
 
           return (

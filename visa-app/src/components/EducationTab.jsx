@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { Play, Volume2, Mic, Award, Target, CheckCircle, XCircle, ChevronLeft } from 'lucide-react'
 import { sessions, minimaps, xpRules, levelTitles, getLevelFromXp, getNextLevelXp, levels } from '../data/education'
 import Onigiri from './Onigiri'
+
+const LessonDetailScreen = lazy(() => import('./korean-game/LessonDetailScreen'))
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -186,7 +188,7 @@ function SessionCard({ session, isActive, isCurrent, isLocked, completedCount, t
 }
 
 // ─── 레슨 목록 ───
-function LessonList({ session, eduState, onComplete, onOpenMinimap, onOpenUnit, onBack, lang }) {
+function LessonList({ session, eduState, onComplete, onOpenMinimap, onOpenUnit, onOpenLessonDetail, onBack, lang }) {
   return (
     <div className="space-y-3">
       <button onClick={onBack} className="text-[#2D5A3D] text-sm font-medium">
@@ -210,6 +212,7 @@ function LessonList({ session, eduState, onComplete, onOpenMinimap, onOpenUnit, 
               key={unit.day}
               onClick={() => {
                 if (unit.minimap) { onOpenMinimap(unit.minimap) }
+                else if ((isNext || done) && unit.content) { onOpenLessonDetail(unit) }
                 else if (isNext && !done && unit.pronunciation) { onOpenUnit(unit) }
                 else if (isNext || done) { onComplete(unitKey) }
               }}
@@ -446,10 +449,11 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
 
 export default function EducationTab({ lang, onSessionComplete }) {
   const [eduState, setEduState] = useState(loadEduState)
-  const [view, setView] = useState('main') // main | session | minimap | unit
+  const [view, setView] = useState('main') // main | session | minimap | unit | lessonDetail
   const [activeSession, setActiveSession] = useState(null)
   const [activeMinimap, setActiveMinimap] = useState(null)
   const [activeUnit, setActiveUnit] = useState(null)
+  const [lessonDetailUnit, setLessonDetailUnit] = useState(null)
 
   // 오늘 출석 체크
   useEffect(() => {
@@ -500,6 +504,21 @@ export default function EducationTab({ lang, onSessionComplete }) {
     )
   }
 
+  if (view === 'lessonDetail' && lessonDetailUnit && activeSession !== null) {
+    const session = sessions[activeSession]
+    return (
+      <Suspense fallback={<div className="flex justify-center py-20"><div className="animate-spin w-6 h-6 border-2 border-[#2D5A3D] border-t-transparent rounded-full" /></div>}>
+        <LessonDetailScreen
+          unit={lessonDetailUnit}
+          session={session}
+          onBack={() => { setView('session'); setLessonDetailUnit(null) }}
+          onComplete={() => completeUnit(`${session.id}-${lessonDetailUnit.day}`)}
+          lang={lang}
+        />
+      </Suspense>
+    )
+  }
+
   if (view === 'unit' && activeUnit && activeSession !== null) {
     const session = sessions[activeSession]
     return (
@@ -522,6 +541,7 @@ export default function EducationTab({ lang, onSessionComplete }) {
         onComplete={completeUnit}
         onOpenMinimap={(id) => { setActiveMinimap(id); setView('minimap') }}
         onOpenUnit={(unit) => { setActiveUnit(unit); setView('unit') }}
+        onOpenLessonDetail={(unit) => { setLessonDetailUnit(unit); setView('lessonDetail') }}
         onBack={() => { setView('main'); setActiveSession(null) }}
         lang={lang}
       />

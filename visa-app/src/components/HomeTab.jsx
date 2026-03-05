@@ -158,6 +158,45 @@ const SCENE_PHRASES = [
   { scene: { ko: '긴급', zh: '紧急', en: 'Emergency' }, phrase: { ko: '도와주세요!', zh: '请帮帮我！' }, gradient: 'from-[#8B2500] to-[#5C1A00]', pocket: 'emergency', img: 'https://images.unsplash.com/photo-1587745416684-47953f16f02f?w=300&h=200&fit=crop' },
 ]
 
+// ── Intent 카드 데이터 ──
+const INTENT_CARDS = [
+  {
+    id: 'just-arrived',
+    emoji: '🛬',
+    label: { ko: '방금 도착했어요', zh: '刚到韩国', en: 'Just arrived' },
+    sub: { ko: 'SIM, 교통카드, 환전', zh: 'SIM卡、交通卡、换钱', en: 'SIM, transit card, exchange' },
+    color: '#2D5A3D',
+  },
+  {
+    id: 'hungry',
+    emoji: '🍜',
+    label: { ko: '밥 먹고 싶어요', zh: '想吃饭', en: 'Want to eat' },
+    sub: { ko: '식당 추천, 주문법, 배달', zh: '餐厅推荐、点餐、外卖', en: 'Restaurants, ordering, delivery' },
+    color: '#B8860B',
+  },
+  {
+    id: 'move',
+    emoji: '🚕',
+    label: { ko: '이동하고 싶어요', zh: '想去某个地方', en: 'Want to move' },
+    sub: { ko: '택시, 지하철, 버스', zh: '出租车、地铁、公交', en: 'Taxi, subway, bus' },
+    color: '#1A3A28',
+  },
+  {
+    id: 'sick',
+    emoji: '🏥',
+    label: { ko: '아파요 / 긴급', zh: '生病了/紧急', en: 'Sick / Emergency' },
+    sub: { ko: '병원, 약국, 경찰, 대사관', zh: '医院、药店、警察、大使馆', en: 'Hospital, pharmacy, police' },
+    color: '#DC2626',
+  },
+  {
+    id: 'shopping',
+    emoji: '🛍️',
+    label: { ko: '쇼핑하고 싶어요', zh: '想购物', en: 'Want to shop' },
+    sub: { ko: '면세, 환급, 올리브영', zh: '免税、退税、Olive Young', en: 'Duty-free, tax refund' },
+    color: '#6B4C3B',
+  },
+]
+
 export default function HomeTab({ lang, exchangeRate, setTab }) {
   const weather = useWeatherData()
   const { kst: koreaTime, extras: extraTimezones, refresh: refreshTimezones } = useMultiTimezone()
@@ -217,6 +256,38 @@ export default function HomeTab({ lang, exchangeRate, setTab }) {
             : <Plus size={13} />
           }
         </button>
+      </div>
+
+      {/* ─── Intent 카드 섹션 ─── */}
+      <div className="mb-8">
+        <h2 className="text-base font-bold px-4 mb-3" style={{ color: '#1A1A1A' }}>
+          {L(lang, { ko: '지금 뭐 하고 싶어요?', zh: '现在想做什么？', en: 'What do you need?' })}
+        </h2>
+        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
+          {INTENT_CARDS.map(card => (
+            <button
+              key={card.id}
+              onClick={() => {
+                if (card.id === 'just-arrived') setActiveGuide('arrival-card')
+                else if (card.id === 'hungry') setTab('food')
+                else if (card.id === 'move') setTab('transport')
+                else if (card.id === 'sick') setActiveScene('emergency')
+                else if (card.id === 'shopping') setTab('shopping')
+              }}
+              className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] p-3 active:scale-[0.98] transition-transform text-left"
+              style={{ width: 140, height: 100 }}
+            >
+              <span className="text-2xl block">{card.emoji}</span>
+              <p className="text-xs font-bold mt-1.5 leading-tight" style={{ color: '#1A1A1A' }}>
+                {L(lang, card.label)}
+              </p>
+              <p className="text-[10px] mt-0.5 leading-tight" style={{ color: '#999999' }}>
+                {L(lang, card.sub)}
+              </p>
+            </button>
+          ))}
+          <div className="flex-shrink-0 w-4" />
+        </div>
       </div>
 
       {/* ─── 3. 추천 코스 섹션 ─── */}

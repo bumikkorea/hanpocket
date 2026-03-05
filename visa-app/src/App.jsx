@@ -840,6 +840,18 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         {/* 구분선 */}
         <div className="border-t border-[#E5E7EB] my-4"></div>
 
+        {/* 첫 화면 다시보기 */}
+        <button
+          onClick={() => {
+            localStorage.removeItem('hp_welcome_done')
+            setTab('home')
+            window.location.reload()
+          }}
+          className="w-full text-[#2D5A3D] text-sm py-3 transition-colors flex items-center justify-center gap-2 mb-2"
+        >
+          👋 {lang === 'ko' ? '첫 화면 다시보기' : lang === 'zh' ? '重新查看欢迎页' : 'View welcome screen again'}
+        </button>
+
         {/* 로그아웃 버튼 */}
         <button
           onClick={handleLogout}

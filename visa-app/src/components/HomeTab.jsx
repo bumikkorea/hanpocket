@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
 import { ChevronLeft, Plus, Pencil } from 'lucide-react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
 import { SCENE_PHRASE_DETAILS } from '../data/scenePhrases'
@@ -223,6 +223,22 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
     return saved ? JSON.parse(saved) : []
   })
 
+  // 환율 팝오버
+  const [showExchangePopover, setShowExchangePopover] = useState(false)
+  const exchangeRef = useRef(null)
+
+  // 팝오버 외부 클릭 닫기
+  useEffect(() => {
+    if (!showExchangePopover) return
+    const handler = (e) => {
+      if (exchangeRef.current && !exchangeRef.current.contains(e.target)) {
+        setShowExchangePopover(false)
+      }
+    }
+    document.addEventListener('pointerdown', handler)
+    return () => document.removeEventListener('pointerdown', handler)
+  }, [showExchangePopover])
+
   // 토스트 상태
   const [toast, setToast] = useState(null)
   const showToast = (msg) => {
@@ -237,8 +253,28 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
     >
       {/* ─── 상단 정보 바 ─── */}
       <div className="px-4 mb-4 flex items-center gap-2 text-xs flex-wrap" style={{ color: '#999999' }}>
-        {isVisible('weather') && <><span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? `${weather.temp}°C` : <span className="inline-block w-8 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" />}</span><span>·</span></>}
-        {isVisible('exchange') && <><span>¥1 = ₩{exchangeRate?.CNY ? Math.round(cnyRate) : <span className="inline-block w-10 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" />}</span><span>·</span></>}
+        {isVisible('weather') && <><span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? <span className="transition-opacity duration-500 opacity-100">{weather.temp}°C</span> : <span className="inline-block w-8 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" />}</span><span>·</span></>}
+        {isVisible('exchange') && <><span ref={exchangeRef} className="relative">
+          {exchangeRate?.CNY ? <span
+            onClick={() => setShowExchangePopover(!showExchangePopover)}
+            className="cursor-pointer underline decoration-dotted transition-opacity duration-500 opacity-100"
+          >¥1 = ₩{Math.round(cnyRate)}</span> : <>¥1 = ₩<span className="inline-block w-10 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" /></>}
+          {showExchangePopover && (
+            <div className="absolute top-6 left-0 bg-white rounded-2xl border border-[#E5E7EB] p-3 shadow-lg z-20 min-w-[160px]">
+              <p className="text-[10px] text-[#999999] mb-2">{L(lang, { ko: '빠른 환산', zh: '快速换算', en: 'Quick Convert' })}</p>
+              {[10000, 50000, 100000].map(won => (
+                <div key={won} className="flex justify-between text-xs text-[#1A1A1A] py-1">
+                  <span>₩{won.toLocaleString()}</span>
+                  <span className="text-[#2D5A3D] font-medium">≈ ¥{Math.round(won / cnyRate)}</span>
+                </div>
+              ))}
+              <div className="flex justify-between text-xs text-[#1A1A1A] py-1 border-t border-[#E5E7EB] mt-1 pt-1">
+                <span>¥1,000</span>
+                <span className="text-[#2D5A3D] font-medium">≈ ₩{Math.round(1000 * cnyRate).toLocaleString()}</span>
+              </div>
+            </div>
+          )}
+        </span><span>·</span></>}
         {isVisible('clock') && <span>KST {koreaTime}</span>}
         {extraTimezones.map(tz => (
           <span key={tz.id}>
@@ -274,10 +310,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 else if (card.id === 'sick') setActiveScene('emergency')
                 else if (card.id === 'shopping') setTab('shopping')
               }}
-              className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] p-3 active:scale-[0.98] transition-transform text-left"
+              className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] p-3 active:scale-[0.97] transition-transform duration-150 text-left"
               style={{ width: 140, height: 100 }}
             >
-              <span className="text-2xl block">{card.emoji}</span>
+              <span className="text-2xl block active:scale-110 transition-transform">{card.emoji}</span>
               <p className="text-xs font-bold mt-1.5 leading-tight" style={{ color: '#1A1A1A' }}>
                 {L(lang, card.label)}
               </p>
@@ -328,7 +364,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 }
                 else if (item.action === 'sos') setTab('sos')
               }}
-              className="rounded-2xl overflow-hidden active:scale-[0.98] transition-transform border border-[#E5E7EB]"
+              className="rounded-2xl overflow-hidden active:scale-[0.97] transition-transform duration-150 border border-[#E5E7EB]"
             >
               <div className="relative h-[80px]">
                 <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
@@ -359,7 +395,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={i}
               onClick={() => setActiveScene(item.pocket)}
-              className={`snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.98] transition-transform border ${item.pocket === 'emergency' ? 'border-red-400 border-2' : 'border-[#E5E7EB]'}`}
+              className={`snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.97] transition-transform duration-150 border ${item.pocket === 'emergency' ? 'border-red-400 border-2' : 'border-[#E5E7EB]'}`}
               style={{ width: 130 }}
             >
               <div className="relative" style={{ height: 84 }}>
@@ -396,7 +432,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={course.id}
               onClick={() => setTab('course')}
-              className="snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.98] transition-transform border border-[#E5E7EB]"
+              className="snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.97] transition-transform duration-150 border border-[#E5E7EB]"
               style={{ width: 180 }}
             >
               <div
@@ -431,7 +467,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {/* 더보기 카드 */}
           <button
             onClick={() => setTab('course')}
-            className="snap-start flex-shrink-0 rounded-2xl border-2 border-dashed flex items-center justify-center active:scale-[0.98] transition-transform"
+            className="snap-start flex-shrink-0 rounded-2xl border-2 border-dashed flex items-center justify-center active:scale-[0.97] transition-transform duration-150"
             style={{ width: 180, height: 214, borderColor: '#B2DFDB' }}
           >
             <div className="text-center">

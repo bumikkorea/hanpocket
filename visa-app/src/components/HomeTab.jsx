@@ -226,7 +226,7 @@ function PromoBanner({ banners, lang }) {
         {banners.map((b, i) => (
           <button key={i} onClick={b.onClick}
             className="snap-start flex-shrink-0 w-full px-4">
-            <div className="rounded-2xl p-5 h-[140px] flex flex-col justify-end relative overflow-hidden"
+            <div className="rounded-2xl p-5 h-[140px] flex flex-col justify-end relative overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
               style={{ backgroundColor: b.bg }}>
               <span className="text-3xl absolute top-4 right-4">{b.emoji}</span>
               <h3 className="text-white font-bold text-base leading-tight">{L(lang, b.title)}</h3>
@@ -247,21 +247,21 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
   return (
     <div className="mb-10 px-4">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-base font-bold text-[#1A1A1A]">{L(lang, title)}</h2>
+        <h2 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A]">{L(lang, title)}</h2>
         {onViewAll && (
           <button onClick={onViewAll} className="text-xs text-[#999]">
             {L(lang, { ko: '전체보기', zh: '查看全部', en: 'View all' })} &gt;
           </button>
         )}
       </div>
-      <p className="text-xs text-[#999] mb-3">{L(lang, subtitle)}</p>
+      <p className="text-xs text-[#999] mb-3 tracking-wider">{L(lang, subtitle)}</p>
       <div className="grid grid-cols-2 gap-3">
         {items.map((item, i) => (
           <button key={i} onClick={item.onClick} className="text-left active:scale-[0.98] transition-transform">
-            <div className="aspect-[4/3] rounded-xl overflow-hidden mb-2 bg-[#F3F4F6]">
+            <div className="aspect-[4/3] rounded-xl overflow-hidden mb-2 bg-[#F3F4F6] shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
               {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />}
             </div>
-            <p className="text-sm font-bold text-[#1A1A1A] leading-tight line-clamp-1">
+            <p className="text-sm font-semibold tracking-wide text-[#1A1A1A] leading-tight line-clamp-1">
               {item.name}
               {item.rating && <span className="text-[#F59E0B] ml-1">★ {item.rating}</span>}
             </p>
@@ -300,7 +300,7 @@ function BrandScrollSection({ lang }) {
   return (
     <div className="mb-10">
       <div className="flex items-center justify-between mb-3 px-4">
-        <h2 className="text-base font-bold text-[#1A1A1A]">
+        <h2 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A]">
           {L(lang, { ko: '지금 할인하는 브랜드', zh: '正在打折的品牌', en: 'Brands on Sale Now' })}
         </h2>
       </div>
@@ -310,7 +310,7 @@ function BrandScrollSection({ lang }) {
             className="snap-start flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
             style={{ width: 80 }}
           >
-            <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl"
+            <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl shadow-[0_2px_10px_rgba(0,0,0,0.1)]"
               style={{ backgroundColor: b.color }}>
               {b.logo}
             </div>
@@ -394,7 +394,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       style={{ backgroundColor: '#FFFFFF' }}
     >
       {/* ─── 상단 정보 바 ─── */}
-      <div className="px-4 mb-4 flex items-center gap-2 text-xs flex-wrap" style={{ color: '#999999' }}>
+      <div className="px-4 mb-4 flex items-center gap-2 text-xs tracking-wider flex-wrap" style={{ color: '#999999' }}>
         {isVisible('weather') && <><span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? <span className="transition-opacity duration-500 opacity-100">{weather.temp}°C</span> : <span className="inline-block w-8 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" />}</span><span>·</span></>}
         {isVisible('exchange') && <><span ref={exchangeRef} className="relative">
           {exchangeRate?.CNY ? <span
@@ -438,7 +438,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── Intent 카드 섹션 ─── */}
       <div className="mb-8">
-        <h2 className="text-base font-bold px-4 mb-3" style={{ color: '#1A1A1A' }}>
+        <h2 className="text-[15px] font-semibold tracking-wide px-4 mb-3" style={{ color: '#1A1A1A' }}>
           {L(lang, { ko: '지금 뭐 하고 싶어요?', zh: '现在想做什么？', en: 'What do you need?' })}
         </h2>
         <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
@@ -452,7 +452,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 else if (card.id === 'sick') setTab('sos')
                 else if (card.id === 'shopping') setTab('shopping')
               }}
-              className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] p-3 active:scale-[0.97] transition-transform duration-150 text-left"
+              className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 text-left"
               style={{ width: 140, height: 100 }}
             >
               <span className="text-2xl block active:scale-110 transition-transform">{card.emoji}</span>
@@ -474,7 +474,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           onClick={() => setTab('travel')}
           className="flex items-center justify-between w-full mb-3"
         >
-          <h2 className="text-base font-bold" style={{ color: '#1A1A1A' }}>
+          <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
             {L(lang, { ko: '여행 필수', zh: '旅行必备', en: 'Travel Essentials' })}
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
@@ -506,7 +506,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 }
                 else if (item.action === 'sos') setTab('sos')
               }}
-              className="rounded-2xl overflow-hidden active:scale-[0.97] transition-transform duration-150 border border-[#E5E7EB]"
+              className="rounded-2xl overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
             >
               <div className="relative h-[80px]">
                 <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
@@ -527,7 +527,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 5. 상황별 한국어 ─── */}
       <div className="mb-8">
         <div className="flex items-center justify-between w-full mb-3 px-4">
-          <h2 className="text-base font-bold" style={{ color: '#1A1A1A' }}>
+          <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
             {L(lang, { ko: '상황별 한국어', zh: '场景韩语', en: 'Korean by Situation' })}
           </h2>
         </div>
@@ -539,7 +539,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               className="flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
               style={{ width: 64 }}
             >
-              <div className={`w-14 h-14 rounded-full overflow-hidden ${item.pocket === 'emergency' ? 'ring-2 ring-red-400' : ''}`}>
+              <div className={`w-14 h-14 rounded-full overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.1)] ${item.pocket === 'emergency' ? 'ring-2 ring-red-400' : ''}`}>
                 <img src={item.img} alt="" className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.parentElement.style.backgroundColor = '#F3F4F6' }} />
               </div>
               <span className="text-[11px] font-medium text-center leading-tight" style={{ color: '#1A1A1A' }}>
@@ -557,7 +557,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           onClick={() => setTab('course')}
           className="flex items-center justify-between w-full mb-3 px-4"
         >
-          <h2 className="text-base font-bold" style={{ color: '#1A1A1A' }}>
+          <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
             {L(lang, { ko: '추천 코스', zh: '推荐路线', en: 'Recommended Courses' })}
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
@@ -567,7 +567,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={course.id}
               onClick={() => setTab('course')}
-              className="snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.97] transition-transform duration-150 border border-[#E5E7EB]"
+              className="snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
               style={{ width: 180 }}
             >
               <div

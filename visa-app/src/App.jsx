@@ -2306,19 +2306,29 @@ function AppInner() {
       </>
 
       {/* Pine-style Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom" style={{ backgroundColor: 'var(--bg-primary)', borderTop: '1px solid var(--border-primary)' }}>
-        <div className="flex items-center justify-around py-1.5">
+      <div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom"
+        style={{
+          backgroundColor: 'rgba(255,255,255,0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          boxShadow: '0 -1px 20px rgba(0,0,0,0.06)',
+          borderTop: 'none',
+        }}>
+        <div className="flex items-center justify-around py-2">
           {bottomTabs.map(item => {
             const active = tab === item.id
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
-                className="flex flex-col items-center gap-0.5 py-1 relative">
-                <item.icon size={22} strokeWidth={active ? 2 : 1.5} style={{ color: active ? '#2D5A3D' : 'var(--text-tertiary)' }} />
+                className={`flex flex-col items-center gap-0.5 py-1 relative transition-all duration-200 ${active ? '-translate-y-0.5' : ''}`}>
+                <div className={`p-1.5 rounded-xl transition-all duration-200 ${active ? 'bg-[#2D5A3D]/10' : ''}`}>
+                  <item.icon size={active ? 24 : 22} strokeWidth={active ? 2.2 : 1.5} style={{ color: active ? '#2D5A3D' : '#9CA3AF' }} />
+                </div>
                 {item.id === 'profile' && localStorage.getItem('admin_mode') === 'true' && (
                   <span className="absolute top-0 right-1 w-2 h-2 bg-red-500 rounded-full" />
                 )}
-                <span className="text-[11px] font-light" style={{ color: active ? '#2D5A3D' : 'var(--text-tertiary)' }}>{L(lang, item.label)}</span>
-                {active && <div className="w-1 h-1 rounded-full bg-[#2D5A3D] mt-0.5" />}
+                <span className={`text-[10px] tracking-wider transition-all duration-200 ${active ? 'font-semibold text-[#2D5A3D]' : 'font-light text-[#9CA3AF]'}`}>
+                  {L(lang, item.label)}
+                </span>
               </button>
             )
           })}

@@ -273,8 +273,52 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
               </div>
             )}
             {item.sub && <p className="text-[11px] text-[#999] mt-0.5">{item.sub}</p>}
+            {item.review && (
+              <div className="mt-1.5 flex items-start gap-1">
+                <span className="text-[10px] text-[#2D5A3D] font-medium shrink-0">💬</span>
+                <p className="text-[10px] text-[#666] leading-tight line-clamp-2 italic">"{item.review}"</p>
+              </div>
+            )}
           </button>
         ))}
+      </div>
+    </div>
+  )
+}
+
+// ── 브랜드 할인 가로 스크롤 ──
+function BrandScrollSection({ lang }) {
+  const brands = [
+    { name: { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }, logo: '🫒', discount: { ko: '최대 15% OFF', zh: '最高85折', en: 'Up to 15% OFF' }, color: '#2D5A3D', url: 'https://global.oliveyoung.com' },
+    { name: { ko: '무신사', zh: 'MUSINSA', en: 'MUSINSA' }, logo: '👕', discount: { ko: '최대 70% OFF', zh: '最高3折', en: 'Up to 70% OFF' }, color: '#111827', url: 'https://www.musinsa.com' },
+    { name: { ko: '롯데면세점', zh: '乐天免税店', en: 'Lotte Duty Free' }, logo: '🛍️', discount: { ko: '쿠폰 할인', zh: '优惠券折扣', en: 'Coupon deals' }, color: '#DC2626', url: 'https://kor.lottedfs.com' },
+    { name: { ko: '신라면세점', zh: '新罗免税店', en: 'Shilla Duty Free' }, logo: '✨', discount: { ko: '첫 구매 30%', zh: '首购7折', en: '30% off first buy' }, color: '#B8860B', url: 'https://www.shilladfs.com' },
+    { name: { ko: 'Klook', zh: 'Klook', en: 'Klook' }, logo: '🎫', discount: { ko: '체험 10% 할인', zh: '体验9折', en: '10% off experiences' }, color: '#FF6B35', url: 'https://www.klook.com/ko/' },
+    { name: { ko: '에버랜드', zh: '爱宝乐园', en: 'Everland' }, logo: '🎡', discount: { ko: '앱 전용 할인', zh: 'APP专属折扣', en: 'App-only discount' }, color: '#4A8A5A', url: 'https://www.everland.com' },
+  ]
+
+  return (
+    <div className="mb-10">
+      <div className="flex items-center justify-between mb-3 px-4">
+        <h2 className="text-base font-bold text-[#1A1A1A]">
+          {L(lang, { ko: '지금 할인하는 브랜드', zh: '正在打折的品牌', en: 'Brands on Sale Now' })}
+        </h2>
+      </div>
+      <div className="pl-4 pr-0 flex gap-3 overflow-x-auto snap-x snap-mandatory scroll-pl-4 pb-2" style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}>
+        {brands.map((b, i) => (
+          <a key={i} href={b.url} target="_blank" rel="noopener noreferrer"
+            className="snap-start flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
+            style={{ width: 80 }}
+          >
+            <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl"
+              style={{ backgroundColor: b.color }}>
+              {b.logo}
+            </div>
+            <span className="text-[11px] font-medium text-[#1A1A1A] text-center leading-tight">{L(lang, b.name)}</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#DC2626] text-white font-medium">{L(lang, b.discount)}</span>
+          </a>
+        ))}
+        <div className="flex-shrink-0 w-4" />
       </div>
     </div>
   )
@@ -1019,11 +1063,19 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           }))
         }
 
+        const SAMPLE_REVIEWS = {
+          michelin3: { ko: '인생 레스토랑, 다시 와도 감동', zh: '人生餐厅，再来也感动', en: 'Life-changing restaurant' },
+          michelin2: { ko: '분위기와 맛 모두 완벽!', zh: '氛围和味道都完美！', en: 'Perfect ambience and taste!' },
+          michelin1: { ko: '가격 대비 최고의 선택', zh: '性价比最高的选择', en: 'Best value for money' },
+          blueribbon: { ko: '현지인이 줄 서는 맛집', zh: '当地人排队的餐厅', en: 'Locals line up for this' },
+        }
+
         const makeRestaurantItem = (r) => ({
           name: L(lang, r.name),
           image: r.images?.[0] || 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
           tags: [r.area?.gu, r.cuisine, getAwardBadge(r.award)].filter(Boolean),
           sub: r.area?.gu,
+          review: L(lang, SAMPLE_REVIEWS[r.award] || SAMPLE_REVIEWS.blueribbon),
           onClick: () => setTab('food'),
         })
 
@@ -1035,8 +1087,51 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           onClick: () => setTab('course'),
         })
 
+        // 시간대별 추천 섹션
+        const kstHour = new Date(Date.now() + (9 - new Date().getTimezoneOffset() / -60) * 3600000).getHours()
+        let timeSection = null
+        if (kstHour >= 6 && kstHour < 11) {
+          timeSection = {
+            title: { ko: '좋은 아침! 아침식사 추천 🌅', zh: '早安！早餐推荐 🌅', en: 'Good morning! Breakfast picks 🌅' },
+            subtitle: { ko: '든든한 한국식 아침으로 시작하세요', zh: '从丰盛的韩式早餐开始吧', en: 'Start with a hearty Korean breakfast' },
+            items: [
+              { name: L(lang, { ko: '광장시장 빈대떡', zh: '广藏市场绿豆饼', en: 'Gwangjang Market Bindaetteok' }), image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop', tags: [L(lang, { ko: '종로', zh: '钟路', en: 'Jongno' }), L(lang, { ko: '전통시장', zh: '传统市场', en: 'Traditional Market' })], review: L(lang, { ko: '새벽부터 줄 서는 전설의 맛', zh: '凌晨就排队的传奇味道', en: 'Legendary taste worth lining up for' }), onClick: () => setTab('food') },
+              { name: L(lang, { ko: '이삭토스트', zh: 'Isaac Toast', en: 'Isaac Toast' }), image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop', tags: [L(lang, { ko: '전국 체인', zh: '全国连锁', en: 'Nationwide' }), L(lang, { ko: '₩3,000~', zh: '₩3,000~', en: '₩3,000~' })], review: L(lang, { ko: '한국 길거리 토스트의 정석', zh: '韩国街头吐司的经典', en: 'Classic Korean street toast' }), onClick: () => setTab('food') },
+            ],
+          }
+        } else if (kstHour >= 11 && kstHour < 17) {
+          timeSection = {
+            title: { ko: '점심 인기 메뉴 🍱', zh: '午餐热门菜单 🍱', en: 'Popular Lunch Picks 🍱' },
+            subtitle: { ko: '지금 가면 딱 좋은 맛집', zh: '现在去刚刚好的餐厅', en: 'Perfect time to visit these spots' },
+            items: MICHELIN_RESTAURANTS.filter(r => r.cuisine === 'korean' && r.priceRange <= 2).slice(2, 4).map(r => ({
+              ...makeRestaurantItem(r),
+              review: L(lang, { ko: '점심특선이 가성비 최고!', zh: '午餐套餐性价比最高！', en: 'Lunch special is the best value!' }),
+            })),
+          }
+        } else {
+          timeSection = {
+            title: { ko: '저녁엔 여기 어때요? 🌙', zh: '晚上去这里怎么样？🌙', en: 'How about here tonight? 🌙' },
+            subtitle: { ko: '오늘 하루 마무리는 맛있게', zh: '美味地结束今天', en: 'End the day with great food' },
+            items: MICHELIN_RESTAURANTS.filter(r => r.priceRange >= 2).slice(2, 4).map(r => ({
+              ...makeRestaurantItem(r),
+              review: L(lang, { ko: '저녁 분위기 최고, 데이트 추천', zh: '晚上氛围最好，推荐约会', en: 'Great evening vibe, perfect for dates' }),
+            })),
+          }
+        }
+
         return (
           <>
+            {/* 시간대별 추천 */}
+            {timeSection && timeSection.items.length >= 2 && (
+              <RecommendSection
+                lang={lang}
+                title={timeSection.title}
+                subtitle={timeSection.subtitle}
+                items={timeSection.items}
+                onViewAll={() => setTab('food')}
+              />
+            )}
+
             {/* 섹션 1: 한포켓이 선정한 추천 맛집 */}
             {topRestaurants.length >= 2 && (
               <RecommendSection
@@ -1065,8 +1160,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               title={{ ko: '요즘 HOT한 카페 ☕', zh: '最近很火的咖啡厅 ☕', en: 'Trending Cafes ☕' }}
               subtitle={{ ko: '인스타 감성 카페 모음', zh: 'INS风咖啡厅合集', en: 'Instagram-worthy cafe collection' }}
               items={[
-                { name: L(lang, { ko: '성수동 카페거리', zh: '圣水洞咖啡街', en: 'Seongsu Cafe Street' }), image: 'https://images.unsplash.com/photo-1559305616-3f99cd43e353?w=400&h=300&fit=crop', tags: [L(lang, { ko: '서울 성동구', zh: '首尔城东区', en: 'Seongdong-gu' })], onClick: () => setTab('cafe') },
-                { name: L(lang, { ko: '연남동 카페거리', zh: '延南洞咖啡街', en: 'Yeonnam Cafe Street' }), image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop', tags: [L(lang, { ko: '서울 마포구', zh: '首尔麻浦区', en: 'Mapo-gu' })], onClick: () => setTab('cafe') },
+                { name: L(lang, { ko: '성수동 카페거리', zh: '圣水洞咖啡街', en: 'Seongsu Cafe Street' }), image: 'https://images.unsplash.com/photo-1559305616-3f99cd43e353?w=400&h=300&fit=crop', tags: [L(lang, { ko: '서울 성동구', zh: '首尔城东区', en: 'Seongdong-gu' })], review: L(lang, { ko: '인스타 사진 맛집, 커피도 맛있어요', zh: '拍照圣地，咖啡也好喝', en: 'Insta-worthy, great coffee too' }), onClick: () => setTab('cafe') },
+                { name: L(lang, { ko: '연남동 카페거리', zh: '延南洞咖啡街', en: 'Yeonnam Cafe Street' }), image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop', tags: [L(lang, { ko: '서울 마포구', zh: '首尔麻浦区', en: 'Mapo-gu' })], review: L(lang, { ko: '산책+커피의 최고 조합', zh: '散步+咖啡的最佳组合', en: 'Best combo: walk + coffee' }), onClick: () => setTab('cafe') },
               ]}
               onViewAll={() => setTab('cafe')}
             />
@@ -1102,14 +1197,17 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               />
             )}
 
+            {/* 브랜드 할인 가로 스크롤 */}
+            <BrandScrollSection lang={lang} />
+
             {/* 섹션 7: 할인 중인 패션 브랜드 */}
             <RecommendSection
               lang={lang}
               title={{ ko: '할인 중인 패션 브랜드 🛍️', zh: '折扣时尚品牌 🛍️', en: 'Fashion Brands on Sale 🛍️' }}
               subtitle={{ ko: '면세 + 시즌 세일 브랜드', zh: '免税 + 季节折扣品牌', en: 'Duty-free + seasonal sale brands' }}
               items={[
-                { name: L(lang, { ko: '무신사 스토어', zh: 'MUSINSA', en: 'MUSINSA Store' }), image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop', tags: [L(lang, { ko: '최대 70% OFF', zh: '最高70%折扣', en: 'Up to 70% OFF' })], sub: L(lang, { ko: '한국 최대 패션 플랫폼', zh: '韩国最大时尚平台', en: "Korea's largest fashion platform" }), onClick: () => setTab('shopping') },
-                { name: L(lang, { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }), image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop', tags: [L(lang, { ko: '외국인 할인', zh: '外国人折扣', en: 'Foreigner discount' })], sub: L(lang, { ko: 'K-뷰티 쇼핑 성지', zh: 'K-Beauty购物圣地', en: 'K-Beauty shopping mecca' }), onClick: () => setTab('shopping') },
+                { name: L(lang, { ko: '무신사 스토어', zh: 'MUSINSA', en: 'MUSINSA Store' }), image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop', tags: [L(lang, { ko: '최대 70% OFF', zh: '最高70%折扣', en: 'Up to 70% OFF' })], sub: L(lang, { ko: '한국 최대 패션 플랫폼', zh: '韩国最大时尚平台', en: "Korea's largest fashion platform" }), review: L(lang, { ko: '한국 패션 트렌드 한눈에!', zh: '韩国时尚趋势一目了然', en: 'Korean fashion trends at a glance!' }), onClick: () => setTab('shopping') },
+                { name: L(lang, { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }), image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop', tags: [L(lang, { ko: '외국인 할인', zh: '外国人折扣', en: 'Foreigner discount' })], sub: L(lang, { ko: 'K-뷰티 쇼핑 성지', zh: 'K-Beauty购物圣地', en: 'K-Beauty shopping mecca' }), review: L(lang, { ko: 'K-뷰티 원픽! 면세보다 쌀 때도 있어요', zh: 'K-Beauty首选！有时比免税店还便宜', en: 'K-Beauty #1 pick! Sometimes cheaper than duty-free' }), onClick: () => setTab('shopping') },
               ]}
               onViewAll={() => setTab('shopping')}
             />
@@ -1142,8 +1240,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               title={{ ko: '해외 배송 서비스 📦', zh: '国际快递服务 📦', en: 'International Shipping 📦' }}
               subtitle={{ ko: '한국에서 산 것, 집까지 배송!', zh: '在韩国买的东西寄回家！', en: 'Ship your Korean purchases home!' }}
               items={[
-                { name: 'EMS', image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=300&fit=crop', tags: [L(lang, { ko: '한국우체국', zh: '韩国邮局', en: 'Korea Post' }), L(lang, { ko: '3~7일', zh: '3~7天', en: '3~7 days' })], sub: L(lang, { ko: 'EMS 국제특송', zh: 'EMS国际快递', en: 'EMS International Express' }), onClick: () => setTab('parcel') },
-                { name: L(lang, { ko: 'SF Express (顺丰)', zh: '顺丰快递', en: 'SF Express' }), image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=300&fit=crop', tags: [L(lang, { ko: '중국 배송 전문', zh: '中国配送专家', en: 'China delivery' }), L(lang, { ko: '2~5일', zh: '2~5天', en: '2~5 days' })], onClick: () => setTab('parcel') },
+                { name: 'EMS', image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=300&fit=crop', tags: [L(lang, { ko: '한국우체국', zh: '韩国邮局', en: 'Korea Post' }), L(lang, { ko: '3~7일', zh: '3~7天', en: '3~7 days' })], sub: L(lang, { ko: 'EMS 국제특송', zh: 'EMS国际快递', en: 'EMS International Express' }), review: L(lang, { ko: '귀국 전 택배 보내면 빈손 여행 가능!', zh: '回国前寄快递，空手旅行！', en: 'Ship before departure, travel light!' }), onClick: () => setTab('parcel') },
+                { name: L(lang, { ko: 'SF Express (顺丰)', zh: '顺丰快递', en: 'SF Express' }), image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=300&fit=crop', tags: [L(lang, { ko: '중국 배송 전문', zh: '中国配送专家', en: 'China delivery' }), L(lang, { ko: '2~5일', zh: '2~5天', en: '2~5 days' })], review: L(lang, { ko: '중국 배송은 순풍이 가장 빠르고 안전', zh: '寄中国顺丰最快最安全', en: 'Fastest & safest for China delivery' }), onClick: () => setTab('parcel') },
               ]}
               onViewAll={() => setTab('parcel')}
             />
@@ -1154,8 +1252,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               title={{ ko: '베지테리언 맛집 🥬', zh: '素食餐厅 🥬', en: 'Vegetarian Restaurants 🥬' }}
               subtitle={{ ko: '채식주의자도 걱정 없는 한국 여행', zh: '素食者也能放心的韩国之旅', en: 'Worry-free Korea trip for vegetarians' }}
               items={[
-                { name: L(lang, { ko: '플랜트', zh: 'Plant', en: 'Plant' }), image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop', tags: [L(lang, { ko: '이태원', zh: '梨泰院', en: 'Itaewon' }), L(lang, { ko: '비건', zh: '纯素', en: 'Vegan' })], sub: L(lang, { ko: '서울 이태원, 비건 레스토랑', zh: '首尔梨泰院 纯素餐厅', en: 'Vegan restaurant in Itaewon, Seoul' }), onClick: () => setTab('food') },
-                { name: L(lang, { ko: '오세계향', zh: '五世界香', en: 'Osegyehyang' }), image: 'https://images.unsplash.com/photo-1540914124281-342587941389?w=400&h=300&fit=crop', tags: [L(lang, { ko: '종로구', zh: '钟路区', en: 'Jongno' }), L(lang, { ko: '사찰 음식', zh: '寺庙料理', en: 'Temple food' })], sub: L(lang, { ko: '서울 종로구, 사찰 음식', zh: '首尔钟路区 寺庙料理', en: 'Temple cuisine in Jongno, Seoul' }), onClick: () => setTab('food') },
+                { name: L(lang, { ko: '플랜트', zh: 'Plant', en: 'Plant' }), image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop', tags: [L(lang, { ko: '이태원', zh: '梨泰院', en: 'Itaewon' }), L(lang, { ko: '비건', zh: '纯素', en: 'Vegan' })], sub: L(lang, { ko: '서울 이태원, 비건 레스토랑', zh: '首尔梨泰院 纯素餐厅', en: 'Vegan restaurant in Itaewon, Seoul' }), review: L(lang, { ko: '채식주의자 천국, 맛까지 보장', zh: '素食者天堂，味道也有保障', en: 'Vegetarian paradise with guaranteed taste' }), onClick: () => setTab('food') },
+                { name: L(lang, { ko: '오세계향', zh: '五世界香', en: 'Osegyehyang' }), image: 'https://images.unsplash.com/photo-1540914124281-342587941389?w=400&h=300&fit=crop', tags: [L(lang, { ko: '종로구', zh: '钟路区', en: 'Jongno' }), L(lang, { ko: '사찰 음식', zh: '寺庙料理', en: 'Temple food' })], sub: L(lang, { ko: '서울 종로구, 사찰 음식', zh: '首尔钟路区 寺庙料理', en: 'Temple cuisine in Jongno, Seoul' }), review: L(lang, { ko: '사찰 음식의 정수, 마음이 편안해져요', zh: '寺庙料理的精髓，让心灵平静', en: 'Essence of temple food, soothes the soul' }), onClick: () => setTab('food') },
               ]}
               onViewAll={() => setTab('food')}
             />

@@ -1,0 +1,145 @@
+# Board-046: 시간대별 추천 + 브랜드 할인 스크롤 + 리뷰 한줄
+
+## 작업 1: RecommendSection에 review 필드 추가
+
+`src/components/HomeTab.jsx`의 `RecommendSection` 컴포넌트에서 각 item에 `review` 필드를 표시.
+카드 하단, tags 아래에:
+
+```jsx
+{item.review && (
+  <div className="mt-1.5 flex items-start gap-1">
+    <span className="text-[10px] text-[#2D5A3D] font-medium shrink-0">💬</span>
+    <p className="text-[10px] text-[#666] leading-tight line-clamp-2 italic">"{item.review}"</p>
+  </div>
+)}
+```
+
+그리고 기존 12개 섹션의 레스토랑 아이템들에 `review` 필드 추가. `makeRestaurantItem` 함수 수정:
+```js
+const SAMPLE_REVIEWS = {
+  michelin3: { ko: '인생 레스토랑, 다시 와도 감동', zh: '人生餐厅，再来也感动', en: 'Life-changing restaurant' },
+  michelin2: { ko: '분위기와 맛 모두 완벽!', zh: '氛围和味道都完美！', en: 'Perfect ambience and taste!' },
+  michelin1: { ko: '가격 대비 최고의 선택', zh: '性价比最高的选择', en: 'Best value for money' },
+  blueribbon: { ko: '현지인이 줄 서는 맛집', zh: '当地人排队的餐厅', en: 'Locals line up for this' },
+}
+```
+`makeRestaurantItem`에 `review: L(lang, SAMPLE_REVIEWS[r.award] || SAMPLE_REVIEWS.blueribbon)` 추가.
+
+하드코딩 섹션들에도 review 추가:
+- 카페: "인스타 사진 맛집, 커피도 맛있어요" / "散步+咖啡的最佳组合"
+- 무신사: "한국 패션 트렌드 한눈에!" / "韩国时尚趋势一目了然"
+- 올리브영: "K-뷰티 원픽! 면세보다 쌀 때도 있어요" / "K-Beauty首选"
+- 베지테리언: "채식주의자 천국, 맛까지 보장" / "素食者天堂"
+- EMS: "귀국 전 택배 보내면 빈손 여행 가능!" / "回国前寄快递"
+
+## 작업 2: 시간대별 추천 섹션
+
+추천 피드 맨 앞 (섹션 1 위)에 시간대 기반 섹션 삽입.
+
+```js
+// 현재 서울 시간 기준 (KST, UTC+9)
+const kstHour = new Date(Date.now() + (9 - new Date().getTimezoneOffset() / -60) * 3600000).getHours()
+
+let timeSection = null
+if (kstHour >= 6 && kstHour < 11) {
+  // 아침 (6~11시)
+  timeSection = {
+    title: { ko: '좋은 아침! 아침식사 추천 🌅', zh: '早安！早餐推荐 🌅', en: 'Good morning! Breakfast picks 🌅' },
+    subtitle: { ko: '든든한 한국식 아침으로 시작하세요', zh: '从丰盛的韩式早餐开始吧', en: 'Start with a hearty Korean breakfast' },
+    items: [
+      { name: L(lang, {ko:'광장시장 빈대떡',zh:'广藏市场绿豆饼',en:'Gwangjang Market Bindaetteok'}), image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop', tags: [L(lang,{ko:'종로',zh:'钟路',en:'Jongno'}), L(lang,{ko:'전통시장',zh:'传统市场',en:'Traditional Market'})], review: L(lang,{ko:'새벽부터 줄 서는 전설의 맛',zh:'凌晨就排队的传奇味道',en:'Legendary taste worth lining up for'}), onClick: () => setTab('food') },
+      { name: L(lang, {ko:'이삭토스트',zh:'Isaac Toast',en:'Isaac Toast'}), image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop', tags: [L(lang,{ko:'전국 체인',zh:'全国连锁',en:'Nationwide'}), L(lang,{ko:'₩3,000~',zh:'₩3,000~',en:'₩3,000~'})], review: L(lang,{ko:'한국 길거리 토스트의 정석',zh:'韩国街头吐司的经典',en:'Classic Korean street toast'}), onClick: () => setTab('food') },
+    ],
+  }
+} else if (kstHour >= 11 && kstHour < 17) {
+  // 점심 (11~17시)
+  timeSection = {
+    title: { ko: '점심 인기 메뉴 🍱', zh: '午餐热门菜单 🍱', en: 'Popular Lunch Picks 🍱' },
+    subtitle: { ko: '지금 가면 딱 좋은 맛집', zh: '现在去刚刚好的餐厅', en: 'Perfect time to visit these spots' },
+    items: MICHELIN_RESTAURANTS.filter(r => r.cuisine === 'korean' && r.priceRange <= 2).slice(2, 4).map(r => ({
+      ...makeRestaurantItem(r),
+      review: L(lang, {ko:'점심특선이 가성비 최고!',zh:'午餐套餐性价比最高！',en:'Lunch special is the best value!'}),
+    })),
+  }
+} else {
+  // 저녁 (17~6시)
+  timeSection = {
+    title: { ko: '저녁엔 여기 어때요? 🌙', zh: '晚上去这里怎么样？🌙', en: 'How about here tonight? 🌙' },
+    subtitle: { ko: '오늘 하루 마무리는 맛있게', zh: '美味地结束今天', en: 'End the day with great food' },
+    items: MICHELIN_RESTAURANTS.filter(r => r.priceRange >= 2).slice(2, 4).map(r => ({
+      ...makeRestaurantItem(r),
+      review: L(lang, {ko:'저녁 분위기 최고, 데이트 추천',zh:'晚上氛围最好，推荐约会',en:'Great evening vibe, perfect for dates'}),
+    })),
+  }
+}
+```
+
+시간대별 섹션을 `{/* 섹션 1: 한포켓이 선정한 추천 맛집 */}` 바로 위에 삽입:
+```jsx
+{timeSection && (
+  <RecommendSection
+    lang={lang}
+    title={timeSection.title}
+    subtitle={timeSection.subtitle}
+    items={timeSection.items}
+    onViewAll={() => setTab('food')}
+  />
+)}
+```
+
+## 작업 3: 브랜드 할인 가로 스크롤
+
+섹션 7 (할인 중인 패션 브랜드) 바로 위에 `BrandScrollSection` 삽입.
+
+```jsx
+function BrandScrollSection({ lang }) {
+  const brands = [
+    { name: { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }, logo: '🫒', discount: { ko: '최대 15% OFF', zh: '最高85折', en: 'Up to 15% OFF' }, color: '#2D5A3D', url: 'https://global.oliveyoung.com' },
+    { name: { ko: '무신사', zh: 'MUSINSA', en: 'MUSINSA' }, logo: '👕', discount: { ko: '최대 70% OFF', zh: '最高3折', en: 'Up to 70% OFF' }, color: '#111827', url: 'https://www.musinsa.com' },
+    { name: { ko: '롯데면세점', zh: '乐天免税店', en: 'Lotte Duty Free' }, logo: '🛍️', discount: { ko: '쿠폰 할인', zh: '优惠券折扣', en: 'Coupon deals' }, color: '#DC2626', url: 'https://kor.lottedfs.com' },
+    { name: { ko: '신라면세점', zh: '新罗免税店', en: 'Shilla Duty Free' }, logo: '✨', discount: { ko: '첫 구매 30%', zh: '首购7折', en: '30% off first buy' }, color: '#B8860B', url: 'https://www.shilladfs.com' },
+    { name: { ko: 'Klook', zh: 'Klook', en: 'Klook' }, logo: '🎫', discount: { ko: '체험 10% 할인', zh: '体验9折', en: '10% off experiences' }, color: '#FF6B35', url: 'https://www.klook.com/ko/' },
+    { name: { ko: '에버랜드', zh: '爱宝乐园', en: 'Everland' }, logo: '🎡', discount: { ko: '앱 전용 할인', zh: 'APP专属折扣', en: 'App-only discount' }, color: '#4A8A5A', url: 'https://www.everland.com' },
+  ]
+  
+  return (
+    <div className="mb-10">
+      <div className="flex items-center justify-between mb-3 px-4">
+        <h2 className="text-base font-bold text-[#1A1A1A]">
+          {L(lang, { ko: '지금 할인하는 브랜드', zh: '正在打折的品牌', en: 'Brands on Sale Now' })}
+        </h2>
+      </div>
+      <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
+        {brands.map((b, i) => (
+          <a key={i} href={b.url} target="_blank" rel="noopener noreferrer"
+            className="snap-start flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
+            style={{ width: 80 }}
+          >
+            <div className="w-14 h-14 rounded-full flex items-center justify-center text-white text-xl"
+              style={{ backgroundColor: b.color }}>
+              {b.logo}
+            </div>
+            <span className="text-[11px] font-medium text-[#1A1A1A] text-center leading-tight">{L(lang, b.name)}</span>
+            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#DC2626] text-white font-medium">{L(lang, b.discount)}</span>
+          </a>
+        ))}
+        <div className="flex-shrink-0 w-4" />
+      </div>
+    </div>
+  )
+}
+```
+
+`BrandScrollSection`은 섹션 6 (삼겹살) 과 섹션 7 (할인 패션) 사이에 삽입:
+```jsx
+<BrandScrollSection lang={lang} />
+```
+
+## 빌드 & 배포
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+npm run build
+git add -A && git commit -m "board-046: time-based recs, brand scroll, review lines"
+npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+openclaw system event --text 'Done: Board-046 시간대별 추천, 브랜드 스크롤, 리뷰 한줄 추가' --mode now
+```

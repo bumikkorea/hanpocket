@@ -1,0 +1,240 @@
+# Board-045: HomeTab 배달의민족 벤치마크 — 추천 피드 중심 전면 개편
+
+## 핵심 목표
+배달의민족 홈탭 구조를 정확히 벤치마킹하여 HanPocket HomeTab을 리디자인.
+**기존 HomeTab의 모든 콘텐츠(info bar, intent cards, 여행필수, 상황별한국어, 추천코스, SOS 버튼, 시간대 피커, 가이드 오버레이)는 100% 유지**하되, 그 아래에 배민 스타일 추천 피드를 추가.
+
+## 구조 (위→아래 순서)
+
+### 유지 구간 (기존 코드 그대로)
+1. 상단 정보 바 (날씨, 환율, 시간)
+2. Intent 카드 ("지금 뭐 하고 싶어요?")
+3. 여행 필수 가이드 (2x 그리드)
+4. 상황별 한국어 (가로 스크롤)
+5. 추천 코스 (가로 스크롤)
+
+### 새로 추가: 광고/프로모 배너 (추천 코스 바로 아래)
+- 가로 스크롤 배너, 둥근 모서리 (`rounded-2xl`), 높이 160px
+- 페이지네이션: 우하단에 `1/N 전체 >` 표시
+- 3개 배너 (하드코딩, 실제 정보):
+  1. 🛬 "한국 입국 가이드 — 입국카드부터 교통카드까지 한번에!" (bg: #2D5A3D, 흰 글자)
+  2. 💱 "환전 꿀팁 — 공항보다 명동이 1~3% 저렴!" (bg: #B8860B, 흰 글자)
+  3. 🎊 "봄 축제 시즌 — 진해 벚꽃, 여의도 벚꽃, 서울랜턴" (bg: #8B4513, 흰 글자)
+- 자동 스크롤: 4초 간격 (snap scroll)
+- 클릭 시 각각 `setActiveGuide('arrival-card')`, 환전 가이드 (없으면 무반응), `setTab('course')`
+
+### 새로 추가: 추천 피드 섹션들
+
+각 섹션의 레이아웃:
+```
+[섹션 제목 (bold, 16px)]                    [전체보기 >]
+[부제목 (gray, 12px)]
+[2열 그리드 — 카드 2개]
+```
+
+카드 디자인 (배민 동일):
+```
+[사진 (rounded-xl, aspect-[4/3], object-cover)]
+[가게명 ★ 4.9 (리뷰수)]
+[태그들: 뱃지 스타일]
+```
+
+**데이터 소스**: `restaurantData.js`의 MICHELIN_RESTAURANTS (289개) + `koreanFoodDB.js` + `recommendedCourses.js`를 활용. 각 섹션은 필터링 조건으로 다른 레스토랑을 보여줌.
+
+#### 섹션 1: "한포켓이 선정한 추천 맛집" ⭐
+- 부제: "미슐랭 & 블루리본 검증된 맛집"
+- 필터: `award === 'michelin3' || award === 'michelin2'` (3스타+2스타 우선)
+- 카드 2개 표시, Unsplash 이미지 사용 (레스토랑 images[0] 있으면 사용)
+- 카드 내용: 가게명(ko/zh/en) + 지역(area.gu) + cuisine 태그 + award 뱃지(⭐⭐⭐)
+- "전체보기" → `setTab('food')`
+
+#### 섹션 2: "중국인이 많이 찾는 맛집" 🇨🇳
+- 부제: "중국 관광객 방문 인증 맛집"
+- 필터: cuisine이 'korean' 이면서 area.city === '서울', priceRange <= 2 (가성비)
+- 카드 2개
+- "전체보기" → `setTab('food')`
+
+#### 섹션 3: "요즘 HOT한 카페" ☕
+- 부제: "인스타 감성 카페 모음"
+- 하드코딩 2개:
+  1. "성수동 카페거리" — 서울 성동구, 이미지: `https://images.unsplash.com/photo-1559305616-3f99cd43e353?w=400&h=300&fit=crop`
+  2. "연남동 카페거리" — 서울 마포구, 이미지: `https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop`
+- "전체보기" → `setTab('cafe')` (포켓)
+
+#### 섹션 4: "가볍게 둘러볼 수 있는 곳" 🚶
+- 부제: "산책하기 좋은 무료 명소"
+- 코스 데이터에서 category가 'first' 또는 'history'인 것 2개
+- 카드: 코스 이미지 + 이름 + 소요시간 + 장소 수
+- "전체보기" → `setTab('course')`
+
+#### 섹션 5: "{닉네임}님을 위한 맞춤 추천" 👤
+- 부제: "최근 관심사 기반 추천"
+- `localStorage.getItem('hanpocket_profile')`에서 닉네임 가져오기 (없으면 "여행자")
+- `localStorage.getItem('hp_recent_clicks')`에서 최근 클릭 포켓 ID 기반으로 관련 콘텐츠 표시
+- 최근 클릭 없으면 → 미슐랭 1스타 중 랜덤 2개
+- "전체보기" → 최근 클릭한 탭으로
+
+#### 섹션 6: "삼겹살 맛집 추천" 🥩
+- 부제: "한국 와서 삼겹살은 필수!"
+- 필터: restaurantData에서 cuisine === 'korean', 이름에 '삼겹' 또는 '고기' 포함
+- 없으면 korean cuisine priceRange 1~2에서 2개
+- "전체보기" → `setTab('food')`
+
+#### 섹션 7: "할인 중인 패션 브랜드" 🛍️
+- 부제: "면세 + 시즌 세일 브랜드"
+- 하드코딩 2개:
+  1. "무신사 스토어" — 한국 최대 패션 플랫폼, 최대 70% OFF, 이미지: `https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop`
+  2. "올리브영" — K-뷰티 쇼핑 성지, 외국인 할인, 이미지: `https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop`
+- "전체보기" → `setTab('shopping')`
+
+#### 섹션 8: "저녁 레스토랑 추천" 🌙
+- 부제: "오늘 저녁은 여기 어때요?"
+- 필터: priceRange >= 3 (고급), award에 michelin 포함
+- 카드 2개
+- "전체보기" → `setTab('food')`
+
+#### 섹션 9: "봄철 여행지 추천" 🌸
+- 부제: "3~5월 벚꽃 시즌 필수 코스"
+- 코스 데이터에서 season 관련 또는 'jeju', 'busan' 카테고리 2개
+- "전체보기" → `setTab('course')`
+
+#### 섹션 10: "해외 배송 서비스" 📦
+- 부제: "한국에서 산 것, 집까지 배송!"
+- 하드코딩 2개:
+  1. "EMS 국제특송" — 한국우체국, 3~7일 배송, 이미지: `https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=300&fit=crop`
+  2. "SF Express (顺丰)" — 중국 배송 전문, 2~5일, 이미지: `https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=300&fit=crop`
+- "전체보기" → `setTab('parcel')` (포켓)
+
+#### 섹션 11: "베지테리언 맛집" 🥬
+- 부제: "채식주의자도 걱정 없는 한국 여행"
+- 하드코딩 2개:
+  1. "플랜트" — 서울 이태원, 비건 레스토랑
+  2. "오세계향" — 서울 종로구, 사찰 음식
+- "전체보기" → `setTab('food')`
+
+#### 섹션 12: "뷰티케어 몰아사기" 💄
+- 부제: "한국에서만 살 수 있는 K-뷰티"
+- 하드코딩 2개:
+  1. "올리브영 명동 본점" — K-뷰티 성지, 외국인 할인 15%
+  2. "시코르 신세계 강남점" — 프리미엄 뷰티 편집숍
+- "전체보기" → `setTab('shopping')`
+
+### 추천 섹션 공통 컴포넌트
+
+`RecommendSection` 컴포넌트를 HomeTab 내부에 만들기:
+```jsx
+function RecommendSection({ title, subtitle, items, lang, onViewAll, L }) {
+  return (
+    <div className="mb-10 px-4">
+      <div className="flex items-center justify-between mb-1">
+        <h2 className="text-base font-bold text-[#1A1A1A]">{L(lang, title)}</h2>
+        {onViewAll && (
+          <button onClick={onViewAll} className="text-xs text-[#999]">
+            {L(lang, { ko: '전체보기', zh: '查看全部', en: 'View all' })} &gt;
+          </button>
+        )}
+      </div>
+      <p className="text-xs text-[#999] mb-3">{L(lang, subtitle)}</p>
+      <div className="grid grid-cols-2 gap-3">
+        {items.map((item, i) => (
+          <button key={i} onClick={item.onClick} className="text-left active:scale-[0.98] transition-transform">
+            <div className="aspect-[4/3] rounded-xl overflow-hidden mb-2 bg-[#F3F4F6]">
+              {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" loading="lazy" onError={e => e.target.style.display='none'} />}
+            </div>
+            <p className="text-sm font-bold text-[#1A1A1A] leading-tight line-clamp-1">
+              {item.name}
+              {item.rating && <span className="text-[#F59E0B] ml-1">★ {item.rating}</span>}
+            </p>
+            {item.tags && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {item.tags.map((tag, j) => (
+                  <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-[#F3F4F6] text-[#666]">{tag}</span>
+                ))}
+              </div>
+            )}
+            {item.sub && <p className="text-[11px] text-[#999] mt-0.5">{item.sub}</p>}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+```
+
+### 프로모 배너 컴포넌트
+
+`PromoBanner`를 HomeTab 내부에:
+```jsx
+function PromoBanner({ banners, lang, L }) {
+  const scrollRef = useRef(null)
+  const [currentIdx, setCurrentIdx] = useState(0)
+  
+  // 4초 자동 스크롤
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIdx(prev => {
+        const next = (prev + 1) % banners.length
+        scrollRef.current?.scrollTo({ left: next * scrollRef.current.offsetWidth, behavior: 'smooth' })
+        return next
+      })
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [banners.length])
+  
+  // 수동 스크롤 감지
+  const handleScroll = () => {
+    if (!scrollRef.current) return
+    const idx = Math.round(scrollRef.current.scrollLeft / scrollRef.current.offsetWidth)
+    setCurrentIdx(idx)
+  }
+  
+  return (
+    <div className="mb-8 relative">
+      <div ref={scrollRef} onScroll={handleScroll} className="flex overflow-x-auto snap-x snap-mandatory scroll-indicator" style={{ scrollbarWidth: 'none' }}>
+        {banners.map((b, i) => (
+          <button key={i} onClick={b.onClick}
+            className="snap-start flex-shrink-0 w-full px-4">
+            <div className="rounded-2xl p-5 h-[140px] flex flex-col justify-end relative overflow-hidden"
+              style={{ backgroundColor: b.bg }}>
+              <span className="text-3xl absolute top-4 right-4">{b.emoji}</span>
+              <h3 className="text-white font-bold text-base leading-tight">{L(lang, b.title)}</h3>
+              <p className="text-white/80 text-xs mt-1">{L(lang, b.sub)}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+      <div className="absolute bottom-2 right-8 bg-black/40 text-white text-[10px] px-2 py-0.5 rounded-full">
+        {currentIdx + 1} / {banners.length}
+      </div>
+    </div>
+  )
+}
+```
+
+## 중요: 데이터 처리
+
+`MICHELIN_RESTAURANTS` import를 HomeTab에 추가:
+```js
+import { MICHELIN_RESTAURANTS } from '../data/restaurantData'
+```
+
+각 섹션에서 실데이터 필터링:
+- 이미지: `restaurant.images[0]` 사용 (없으면 Unsplash fallback)
+- 이름: `L(lang, restaurant.name)`
+- 지역: `restaurant.area.gu`
+- 요리: `restaurant.cuisine`
+- 등급: `restaurant.award` → 뱃지 텍스트 변환
+- 가격: `restaurant.priceRange` (1~4)
+
+## 빌드 & 배포
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+npm run build
+```
+
+빌드 성공 후:
+```bash
+git add -A && git commit -m "board-045: Baemin-style recommendation feed on HomeTab"
+npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+openclaw system event --text 'Done: Board-045 배민 스타일 추천 피드 HomeTab 적용' --mode now
+```

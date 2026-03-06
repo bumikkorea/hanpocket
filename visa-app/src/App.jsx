@@ -1910,6 +1910,10 @@ function AppInner() {
                 <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
                   <ChevronLeft size={24} />
                 </button>
+              ) : tab !== 'home' ? (
+                <button onClick={() => { setTab('home'); setSubPage(null) }} className="text-[#5F6368] p-1">
+                  <ChevronLeft size={24} />
+                </button>
               ) : (
                 <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -ml-2">
                   <Menu size={22} />

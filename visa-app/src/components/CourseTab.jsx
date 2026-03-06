@@ -27,7 +27,26 @@ function loadKakaoMapAPI() {
 // 이동수단 이모지
 const TRANSPORT_ICON = { walk: '🚶', subway: '🚇', bus: '🚌', taxi: '🚕', car: '🚗' }
 // 장소 타입 이모지
-const STOP_TYPE_ICON = { shopping: '🛍️', food: '🍜', tourism: '🏛️', nature: '🌿' }
+const STOP_TYPE_ICON = { shopping: '🛍️', food: '🍜', tourism: '🏛️', nature: '🌿', cafe: '☕', exhibition: '🎨', park: '🌿', walk: '🚶' }
+// 장소 타입 배경색
+const STOP_TYPE_BG = { cafe: '#F9DEBB', exhibition: '#FFD4BC', park: '#D4EDDA', walk: '#E8E8E8', food: '#FFECD2', shopping: '#E8D5F5', tourism: '#D4E6F1', nature: '#D4EDDA' }
+// 장소 타입 다국어 라벨
+const STOP_TYPE_LABEL = {
+  cafe: { ko: '카페', zh: '咖啡', en: 'Cafe' },
+  exhibition: { ko: '전시/포토존', zh: '展览/拍照', en: 'Exhibition' },
+  park: { ko: '공원/산책', zh: '公园/散步', en: 'Park' },
+  food: { ko: '맛집', zh: '美食', en: 'Food' },
+  shopping: { ko: '쇼핑', zh: '购物', en: 'Shopping' },
+  tourism: { ko: '관광', zh: '观光', en: 'Tourism' },
+  walk: { ko: '산책', zh: '散步', en: 'Walk' },
+  nature: { ko: '자연', zh: '自然', en: 'Nature' },
+}
+// 편의태그 다국어
+const FEATURE_LABEL = {
+  card: { ko: '💳 카드결제', zh: '💳 刷卡', en: '💳 Card' },
+  english_menu: { ko: '🌐 영어메뉴', zh: '🌐 英文菜单', en: '🌐 English menu' },
+  free: { ko: '🆓 무료', zh: '🆓 免费', en: '🆓 Free' },
+}
 // 난이도 라벨
 const DIFF_LABEL = { easy: { ko: '쉬움', zh: '轻松', en: 'Easy' }, medium: { ko: '보통', zh: '适中', en: 'Medium' }, hard: { ko: '힘듦', zh: '较累', en: 'Hard' } }
 
@@ -244,7 +263,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
     if (!stops?.length) return
     const origin = stopName(stops[0], 'ko')
     const dest = stopName(stops[stops.length - 1], 'ko')
-    const middle = stops.slice(1, -1).slice(0, 9) // 경유지 최대 9개
+    const middle = stops.slice(1, -1).slice(0, 9)
     const waypoints = middle.length > 0
       ? middle.map(s => stopName(s, 'ko')).join('|')
       : ''
@@ -263,7 +282,6 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
   const openNaverMaps = () => {
     const stops = course.stops
     if (!stops?.length) return
-    // 네이버맵: lng,lat 순서 (경도 먼저)
     const parts = stops.map(s => `${s.lng},${s.lat},${stopName(s, 'ko')}`)
     const url = `https://map.naver.com/v5/directions/${parts.join('/')}/transit`
     window.open(url, '_blank')
@@ -280,122 +298,197 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
 
   return (
     <div className="h-full flex flex-col">
-      {/* 헤더 */}
+      {/* ── 헤더: 코스명 (ko + en) + 실시간 버튼 ── */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
         <button onClick={onBack} className="p-1"><ChevronLeft size={20} className="text-[#111827]" /></button>
         <div className="flex-1 min-w-0">
           <p className="font-bold text-sm text-[#111827] truncate">
             {isRecommended ? L(lang, course.name) : course.name}
           </p>
+          {isRecommended && course.name?.en && lang !== 'en' && (
+            <p className="text-[11px] text-[#9CA3AF] truncate">{course.name.en}</p>
+          )}
         </div>
+        <button className="text-[11px] text-[#2D5A3D] font-semibold border border-[#2D5A3D] rounded-full px-3 py-1 shrink-0">
+          {L(lang, { ko: '실시간', zh: '实时', en: 'Live' })}
+        </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-        {/* 카카오맵 */}
-        {course.stops?.length > 0 && course.stops[0].lat && (
-          <CourseMap stops={course.stops} />
-        )}
-
-        {/* 코스 정보 */}
+      <div className="flex-1 overflow-y-auto">
+        {/* ── 요약 바: 총 소요시간 | 교통비 | 장소 수 ── */}
         {isRecommended && (
-          <div className="flex items-center gap-3 text-xs text-[#6B7280]">
-            <span className="flex items-center gap-1"><Clock size={12} /> {course.duration}</span>
-            <span>{L(lang, DIFF_LABEL[course.difficulty] || {})}</span>
-            <span>{L(lang, course.estimatedCost)}</span>
+          <div className="flex rounded-2xl border border-[#E5E7EB] divide-x divide-[#E5E7EB] text-center mx-4 mt-4">
+            <div className="flex-1 py-3">
+              <p className="text-[10px] text-[#9CA3AF] mb-0.5">{L(lang, { ko: '총 소요시간', zh: '总耗时', en: 'Duration' })}</p>
+              <p className="text-sm font-bold text-[#111827]">{course.duration}</p>
+            </div>
+            <div className="flex-1 py-3">
+              <p className="text-[10px] text-[#9CA3AF] mb-0.5">{L(lang, { ko: '교통비', zh: '交通费', en: 'Transport' })}</p>
+              <p className="text-sm font-bold text-[#111827]">{course.transportCost || L(lang, { ko: '무료', zh: '免费', en: 'Free' })}</p>
+            </div>
+            <div className="flex-1 py-3">
+              <p className="text-[10px] text-[#9CA3AF] mb-0.5">{L(lang, { ko: '장소', zh: '地点', en: 'Stops' })}</p>
+              <p className="text-sm font-bold text-[#111827]">{course.stops?.length || 0}{L(lang, { ko: '곳', zh: '处', en: '' })}</p>
+            </div>
           </div>
         )}
 
-        {/* 시간표 블록 스타일 */}
-        <div>
-          {/* 시작시간 선택 */}
-          <div className="flex items-center gap-2 mb-4">
-            <Clock size={14} className="text-[#9CA3AF]" />
-            <span className="text-xs text-[#6B7280]">{L(lang, { ko: '시작시간', zh: '开始时间', en: 'Start time' })}</span>
-            <select
-              value={startHour}
-              onChange={e => setStartHour(Number(e.target.value))}
-              className="text-sm font-bold text-[#111827] bg-[#F5F5F5] rounded-lg px-2 py-1 outline-none"
-            >
-              {Array.from({ length: 17 }, (_, i) => i + 6).map(h => (
-                <option key={h} value={h}>{String(h).padStart(2, '0')}:00</option>
-              ))}
-            </select>
-          </div>
+        {/* ── 시작시간 선택 ── */}
+        <div className="flex items-center gap-2 px-4 mt-4 mb-3">
+          <Clock size={14} className="text-[#9CA3AF]" />
+          <span className="text-xs text-[#6B7280]">{L(lang, { ko: '시작시간', zh: '开始时间', en: 'Start time' })}</span>
+          <select
+            value={startHour}
+            onChange={e => setStartHour(Number(e.target.value))}
+            className="text-sm font-bold text-[#111827] bg-[#F5F5F5] rounded-lg px-2 py-1 outline-none"
+          >
+            {Array.from({ length: 17 }, (_, i) => i + 6).map(h => (
+              <option key={h} value={h}>{String(h).padStart(2, '0')}:00</option>
+            ))}
+          </select>
+        </div>
 
-          {/* 타임라인 블록 */}
-          <div className="space-y-0">
-            {course.stops?.map((stop, i) => {
-              // 시간 계산
-              let cumMinutes = startHour * 60 + startMin
-              for (let j = 0; j < i; j++) {
-                cumMinutes += parseDuration(course.stops[j].duration)
-                if (course.transport?.[j]) {
-                  cumMinutes += parseDuration(course.transport[j].duration)
-                }
+        {/* ── 타임라인 블록 ── */}
+        <div className="px-4 pb-4">
+          {course.stops?.map((stop, i) => {
+            // 시간 계산
+            let cumMinutes = startHour * 60 + startMin
+            for (let j = 0; j < i; j++) {
+              cumMinutes += parseDuration(course.stops[j].duration)
+              if (course.transport?.[j]) {
+                cumMinutes += parseDuration(course.transport[j].duration)
               }
-              const hh = String(Math.floor(cumMinutes / 60) % 24).padStart(2, '0')
-              const mm = String(cumMinutes % 60).padStart(2, '0')
-              const blockHeight = Math.max(parseDuration(stop.duration), 30)
+            }
+            const hh = String(Math.floor(cumMinutes / 60) % 24).padStart(2, '0')
+            const mm = String(cumMinutes % 60).padStart(2, '0')
 
-              return (
-                <div key={i}>
-                  {/* 경유지 블록 */}
-                  <div className="flex gap-3">
-                    {/* 시간 라벨 */}
-                    <div className="w-14 shrink-0 text-right pt-3">
-                      <span className="text-xs font-mono text-[#9CA3AF]">{hh}:{mm}</span>
-                    </div>
-                    {/* 블록 */}
+            return (
+              <div key={i}>
+                {/* 경유지 블록 */}
+                <div className="flex gap-3">
+                  {/* 왼쪽: 아이콘 원형 + 수직선 */}
+                  <div className="flex flex-col items-center">
                     <div
-                      className="flex-1 border-l-4 border-[#111827] bg-white rounded-r-xl p-3"
-                      style={{ minHeight: `${blockHeight}px` }}
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
+                      style={{ backgroundColor: STOP_TYPE_BG[stop.type] || '#F3F4F6' }}
                     >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="font-bold text-sm text-[#111827]">
-                            {STOP_TYPE_ICON[stop.type] || '📍'} {isRecommended ? L(lang, stop.name) : stop.name}
-                          </p>
-                          <span className="text-[10px] text-[#6B7280] flex items-center gap-1 mt-1">
-                            <Clock size={10} /> {stop.duration}
-                          </span>
-                        </div>
-                        <span className="text-xs text-[#111827] font-bold bg-white px-2 py-0.5 rounded-lg border border-[#E5E7EB] shrink-0">{i + 1}</span>
-                      </div>
-                      {stop.tip && (
-                        <p className="text-xs text-[#6B7280] mt-2 bg-white rounded-lg px-2 py-1 border border-[#E5E7EB]">
-                          💡 {isRecommended ? L(lang, stop.tip) : stop.tip}
-                        </p>
-                      )}
+                      {STOP_TYPE_ICON[stop.type] || '📍'}
                     </div>
+                    {i < course.stops.length - 1 && <div className="flex-1 w-px bg-[#E5E7EB] my-1" />}
                   </div>
 
-                  {/* 이동 구간 */}
-                  {i < course.stops.length - 1 && (
-                    <div className="flex gap-3">
-                      <div className="w-14 shrink-0" />
-                      <div className="flex-1 border-l-2 border-dashed border-[#D1D5DB] ml-[1px] pl-4 py-2">
-                        <div className="flex items-center gap-2 text-[10px] text-[#9CA3AF]">
-                          <span>{course.transport?.[i] ? (TRANSPORT_ICON[course.transport[i].method] || '🚶') : '🚶'}</span>
-                          <span className="font-medium">{course.transport?.[i]?.duration || '—'}</span>
-                          {course.transport?.[i]?.detail && (
-                            <>
-                              <span className="text-[#E5E7EB]">|</span>
-                              <span>{isRecommended ? L(lang, course.transport[i].detail) : course.transport[i].detail}</span>
-                            </>
-                          )}
-                        </div>
+                  {/* 오른쪽: 콘텐츠 */}
+                  <div className="flex-1 pb-4 min-w-0">
+                    {/* 시간 + 카테고리 태그 */}
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-bold text-[#2D5A3D]">{stop.startTime || `${hh}:${mm}`}</span>
+                      {STOP_TYPE_LABEL[stop.type] && (
+                        <span className="text-[10px] bg-[#F3F4F6] text-[#6B7280] px-2 py-0.5 rounded-full">
+                          {L(lang, STOP_TYPE_LABEL[stop.type])}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* 장소명 (ko) */}
+                    <p className="font-bold text-base text-[#111827]">{isRecommended ? L(lang, stop.name) : stop.name}</p>
+
+                    {/* 영문 이름 */}
+                    {isRecommended && stop.name?.en && lang !== 'en' && (
+                      <p className="text-xs text-[#9CA3AF] mt-0.5">{stop.name.en}</p>
+                    )}
+
+                    {/* 평점 + 소요시간 */}
+                    <div className="flex items-center gap-3 mt-1.5 text-xs">
+                      {stop.naverRating && (
+                        <span className="flex items-center gap-0.5">
+                          <span className="text-[#F59E0B]">★</span>
+                          <span className="font-semibold text-[#111827]">{stop.naverRating}</span>
+                          <span className="text-[#9CA3AF]">{L(lang, { ko: '네이버', zh: 'Naver', en: 'Naver' })}</span>
+                        </span>
+                      )}
+                      {stop.hpRating && (
+                        <span className="flex items-center gap-0.5">
+                          <span className="text-red-400">♥</span>
+                          <span className="font-semibold text-[#111827]">{stop.hpRating}</span>
+                          <span className="text-[#9CA3AF]">{L(lang, { ko: '한포켓', zh: 'HanPocket', en: 'HanPocket' })}</span>
+                        </span>
+                      )}
+                      <span className="flex items-center gap-0.5 text-[#9CA3AF]">
+                        <Clock size={10} /> {stop.duration}
+                      </span>
+                    </div>
+
+                    {/* 편의 태그 */}
+                    {stop.features?.length > 0 && (
+                      <div className="flex gap-1.5 mt-2 flex-wrap">
+                        {stop.features.map((f, fi) => (
+                          <span key={fi} className="text-[10px] px-2 py-0.5 rounded-full bg-[#EBF5FF] text-[#2563EB] font-medium">
+                            {FEATURE_LABEL[f] ? L(lang, FEATURE_LABEL[f]) : f}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* 길찾기 + 회화카드 버튼 */}
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={() => {
+                          if (stop.lat && stop.lng) {
+                            const name = encodeURIComponent(isRecommended ? (stop.name?.ko || L('ko', stop.name)) : stop.name)
+                            window.open(`https://map.kakao.com/link/to/${name},${stop.lat},${stop.lng}`, '_blank')
+                          }
+                        }}
+                        className="flex items-center gap-1 bg-[#DC2626] text-white text-xs font-semibold px-3.5 py-2 rounded-xl active:scale-95 transition-transform"
+                      >
+                        <Navigation size={12} />
+                        {L(lang, { ko: '길찾기', zh: '导航', en: 'Navigate' })}
+                      </button>
+                      <button className="flex items-center gap-1 bg-white border border-[#E5E7EB] text-[#111827] text-xs font-semibold px-3.5 py-2 rounded-xl active:scale-95 transition-transform">
+                        💬 {L(lang, { ko: '회화카드', zh: '会话卡', en: 'Phrase Card' })}
+                      </button>
+                    </div>
+
+                    {/* 팁 */}
+                    {stop.tip && (
+                      <p className="text-[11px] text-[#6B7280] mt-2 leading-relaxed">
+                        💡 {isRecommended ? L(lang, stop.tip) : stop.tip}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* 이동 구간 */}
+                {i < course.stops.length - 1 && (
+                  <div className="flex gap-3 ml-1">
+                    <div className="w-10 flex justify-center">
+                      <div className="w-8 h-8 rounded-full bg-[#F3F4F6] flex items-center justify-center text-sm">
+                        {course.transport?.[i] ? (TRANSPORT_ICON[course.transport[i].method] || '🚶') : '🚶'}
                       </div>
                     </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+                    <div className="flex-1 flex items-center py-2">
+                      <span className="text-xs text-[#9CA3AF]">
+                        {course.transport?.[i] ? (TRANSPORT_ICON[course.transport[i].method] || '🚶') : '🚶'}{' '}
+                        {L(lang, { ko: course.transport?.[i]?.method === 'walk' ? '도보' : course.transport?.[i]?.method === 'subway' ? '지하철' : course.transport?.[i]?.method === 'bus' ? '버스' : course.transport?.[i]?.method === 'taxi' ? '택시' : '도보', zh: course.transport?.[i]?.method === 'walk' ? '步行' : course.transport?.[i]?.method === 'subway' ? '地铁' : course.transport?.[i]?.method === 'bus' ? '公交' : course.transport?.[i]?.method === 'taxi' ? '出租车' : '步行', en: course.transport?.[i]?.method === 'walk' ? 'Walk' : course.transport?.[i]?.method === 'subway' ? 'Subway' : course.transport?.[i]?.method === 'bus' ? 'Bus' : course.transport?.[i]?.method === 'taxi' ? 'Taxi' : 'Walk' })}{' '}
+                        {course.transport?.[i]?.duration || '—'} · {course.transport?.[i]?.cost || '₩0'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
+
+        {/* ── 카카오맵 (타임라인 아래) ── */}
+        {course.stops?.length > 0 && course.stops[0].lat && (
+          <div className="px-4 pb-4">
+            <CourseMap stops={course.stops} />
+          </div>
+        )}
 
         {/* 태그 */}
         {course.tags && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-1.5 px-4 pb-4">
             {course.tags.map((tag, i) => (
               <span key={i} className="text-[10px] text-[#6B7280] bg-[#F5F5F5] px-2 py-0.5 rounded-full">#{tag}</span>
             ))}

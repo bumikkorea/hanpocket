@@ -871,6 +871,50 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed }) {
           ))}
         </div>
       </section>
+
+      {/* C) 일정 추천 섹션 */}
+      <section className="mt-6">
+        <h2 className="text-base font-bold text-[#111827] mb-3">
+          {L(lang, { ko: '추천 일정', zh: '推荐行程', en: 'Suggested Itineraries' })}
+        </h2>
+        <div className="space-y-3">
+          {[
+            { name: { ko: '3일 서울 집중', zh: '3天首尔深度游', en: '3-Day Seoul Focus' }, days: [
+              { day: 1, plan: { ko: '경복궁 → 북촌한옥마을 → 인사동 → 광장시장 (저녁)', zh: '景福宫→北村韩屋村→仁寺洞→广藏市场（晚餐）', en: 'Gyeongbokgung → Bukchon → Insadong → Gwangjang Market (dinner)' } },
+              { day: 2, plan: { ko: '명동 쇼핑 → N서울타워 → 이태원 → 한강공원 (야경)', zh: '明洞购物→N首尔塔→梨泰院→汉江公园（夜景）', en: 'Myeongdong shopping → N Seoul Tower → Itaewon → Hangang Park (night)' } },
+              { day: 3, plan: { ko: '홍대 거리 → 연남동 카페 → 여의도 → DDP (동대문디자인플라자)', zh: '弘大街区→延南洞咖啡→汝矣岛→DDP（东大门设计广场）', en: 'Hongdae → Yeonnam-dong cafes → Yeouido → DDP' } },
+            ]},
+            { name: { ko: '5일 서울+부산', zh: '5天首尔+釜山', en: '5-Day Seoul+Busan' }, days: [
+              { day: 1, plan: { ko: '서울: 경복궁 → 북촌 → 명동', zh: '首尔：景福宫→北村→明洞', en: 'Seoul: Gyeongbokgung → Bukchon → Myeongdong' } },
+              { day: 2, plan: { ko: '서울: 홍대 → N서울타워 → 한강', zh: '首尔：弘大→N首尔塔→汉江', en: 'Seoul: Hongdae → N Seoul Tower → Hangang' } },
+              { day: 3, plan: { ko: '서울: 이태원 → 성수동 카페 → DDP', zh: '首尔：梨泰院→圣水洞咖啡→DDP', en: 'Seoul: Itaewon → Seongsu cafes → DDP' } },
+              { day: 4, plan: { ko: 'KTX→부산 (2.5h) → 해운대 → 광안리 야경', zh: 'KTX→釜山（2.5h）→海云台→广安里夜景', en: 'KTX→Busan (2.5h) → Haeundae → Gwangalli night' } },
+              { day: 5, plan: { ko: '감천문화마을 → 자갈치시장 → 해동용궁사 → 귀국', zh: '甘川文化村→扎嘎其市场→海东龙宫寺→回国', en: 'Gamcheon Village → Jagalchi → Haedong Yonggungsa → depart' } },
+            ]},
+            { name: { ko: '7일 전국일주', zh: '7天全国环游', en: '7-Day Korea Tour' }, days: [
+              { day: 1, plan: { ko: '서울 도착 → 명동/광장시장', zh: '到达首尔→明洞/广藏市场', en: 'Arrive Seoul → Myeongdong/Gwangjang Market' } },
+              { day: 2, plan: { ko: '서울: 경복궁 → 북촌 → N서울타워', zh: '首尔：景福宫→北村→N首尔塔', en: 'Seoul: Gyeongbokgung → Bukchon → N Seoul Tower' } },
+              { day: 3, plan: { ko: 'KTX→대전 (1h) → 유성온천 → 성심당 빵', zh: 'KTX→大田（1h）→儒城温泉→圣心堂面包', en: 'KTX→Daejeon (1h) → Yuseong hot springs → Sungsimdang bakery' } },
+              { day: 4, plan: { ko: '버스→경주 → 불국사 → 석굴암 → 안압지 야경', zh: '巴士→庆州→佛国寺→石窟庵→雁鸭池夜景', en: 'Bus→Gyeongju → Bulguksa → Seokguram → Anapji night' } },
+              { day: 5, plan: { ko: '버스→부산 → 해운대 → 감천문화마을', zh: '巴士→釜山→海云台→甘川文化村', en: 'Bus→Busan → Haeundae → Gamcheon Village' } },
+              { day: 6, plan: { ko: '부산: 자갈치 → 광안리 → 해동용궁사', zh: '釜山：扎嘎其→广安里→海东龙宫寺', en: 'Busan: Jagalchi → Gwangalli → Haedong Yonggungsa' } },
+              { day: 7, plan: { ko: '비행기→제주 (1h) → 성산일출봉 → 협재해변', zh: '飞机→济州（1h）→城山日出峰→挟才海滩', en: 'Flight→Jeju (1h) → Seongsan Ilchulbong → Hyeopjae Beach' } },
+            ]},
+          ].map((it, i) => (
+            <div key={i} className="bg-white rounded-2xl border border-[#E5E7EB] p-4">
+              <h3 className="text-sm font-bold text-[#111827] mb-3">{L(lang, it.name)}</h3>
+              <div className="space-y-2">
+                {it.days.map(d => (
+                  <div key={d.day} className="flex items-start gap-2">
+                    <span className="text-[10px] font-bold text-white bg-[#111827] w-7 h-5 rounded-full flex items-center justify-center shrink-0">D{d.day}</span>
+                    <p className="text-xs text-[#374151]">{L(lang, d.plan)}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   )
 }

@@ -384,6 +384,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       className="pt-4 pb-24"
       style={{ backgroundColor: '#FFFFFF' }}
     >
+    <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
       {/* ─── 상단 정보 바 ─── */}
       <div className="px-4 mb-4 flex items-center gap-2 text-xs tracking-wider flex-wrap" style={{ color: '#999999' }}>
         {isVisible('weather') && <><span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? <span className="transition-opacity duration-500 opacity-100">{weather.temp}°C</span> : <span className="inline-block w-8 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" />}</span><span>·</span></>}
@@ -1267,6 +1268,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {toast}
         </div>
       )}
+    </div>{/* /max-width wrapper */}
     </div>
   )
 }

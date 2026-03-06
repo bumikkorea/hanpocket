@@ -439,7 +439,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               onClick={() => {
                 if (card.id === 'just-arrived') { setArrivalStep('splash'); setShowArrivalFlow(true) }
                 else if (card.id === 'hungry') setTab('food')
-                else if (card.id === 'sick') setTab('sos')
+                else if (card.id === 'sick') setTab('medical')
               }}
               className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 text-left"
               style={{ width: 140, height: 100 }}
@@ -1253,7 +1253,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 플로팅 SOS 버튼 ─── */}
       {isVisible('emergency') && (
         <button
-          onClick={() => setTab('sos')}
+          onClick={() => setOverlay('emergency')}
           className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-[#DC2626] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
           style={{ boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)' }}
         >

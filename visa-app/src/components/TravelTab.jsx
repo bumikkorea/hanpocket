@@ -1,7 +1,10 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
 import { Plane, Train, Bus, Car, MapPin, Clock, DollarSign, Calendar, ChevronRight, ChevronDown, ExternalLink, CreditCard, Bike, Building2, Ticket, Navigation, Shield, Filter, Star, Heart, Users, BookOpen, Phone, Copy, Check, MessageSquare, FileText, PawPrint, AlertTriangle, Syringe, User, PenLine, Globe, Hash, Home, Target, CircleAlert, Info, Receipt, Store, BadgePercent, Smartphone, Wifi, QrCode, Signal, ThumbsUp, CircleCheck, CircleX } from 'lucide-react'
+import { CITIES as TRAVEL_CITIES } from '../data/travelData'
 
 const TravelDiary = lazy(() => import('./TravelDiary/TravelDiary'))
+const CityPage = lazy(() => import('./travel/CityPage'))
+const SpotDetail = lazy(() => import('./travel/SpotDetail'))
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -669,6 +672,8 @@ export default function TravelTab({ lang, setTab, profile }) {
   const [expandedPetStep, setExpandedPetStep] = useState(0)
   const [taxRefundOpen, setTaxRefundOpen] = useState(null)
   const [activeGuide, setActiveGuide] = useState(null)
+  const [selectedCity, setSelectedCity] = useState(null)
+  const [selectedSpot, setSelectedSpot] = useState(null)
 
   const toggleFavorite = (id) => {
     const updated = favorites.includes(id) 
@@ -696,6 +701,42 @@ export default function TravelTab({ lang, setTab, profile }) {
         </div>
       }>
         <TravelDiary lang={lang} onBack={() => setShowDiary(false)} />
+      </Suspense>
+    )
+  }
+
+  // SpotDetail 풀스크린
+  if (selectedSpot) {
+    return (
+      <Suspense fallback={null}>
+        <SpotDetail
+          spot={selectedSpot}
+          lang={lang}
+          city={selectedCity}
+          onBack={() => setSelectedSpot(null)}
+          isFavorite={favorites.includes(selectedSpot.id)}
+          onToggleFavorite={toggleFavorite}
+        />
+      </Suspense>
+    )
+  }
+
+  // CityPage 드릴다운
+  if (selectedCity) {
+    return (
+      <Suspense fallback={
+        <div className="flex items-center justify-center p-8">
+          <div className="w-8 h-8 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin"></div>
+        </div>
+      }>
+        <CityPage
+          city={selectedCity}
+          lang={lang}
+          onBack={() => setSelectedCity(null)}
+          onSpotClick={setSelectedSpot}
+          favorites={favorites}
+          onToggleFavorite={toggleFavorite}
+        />
       </Suspense>
     )
   }
@@ -1198,34 +1239,43 @@ export default function TravelTab({ lang, setTab, profile }) {
         </div>
       )}
 
-      {/* Cities */}
+      {/* Cities — 클룩 스타일 도시 카드 */}
       {section === 'cities' && (
         <div className="space-y-3">
-          {CITIES.map((city, i) => (
-            <div key={i} className={card} onClick={() => setExpandedCity(expandedCity === i ? null : i)}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-bold text-[#111827]">{L(lang, city.name)}</h3>
-                  <p className="text-xs text-[#6B7280] mt-0.5">{L(lang, city.desc)}</p>
+          {TRAVEL_CITIES.map(city => (
+            <div
+              key={city.id}
+              onClick={() => setSelectedCity(city)}
+              className="rounded-2xl overflow-hidden border border-[#E5E7EB] bg-white cursor-pointer transition-transform active:scale-[0.98]"
+            >
+              <div className="relative h-[140px]">
+                <img
+                  src={city.image}
+                  alt={L(lang, city.name)}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  onError={(e) => { e.target.style.display = 'none' }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                {city.comingSoon && (
+                  <span className="absolute top-2.5 right-2.5 text-[10px] px-2 py-0.5 bg-white/90 rounded-full font-semibold text-[#6B7280]">
+                    Coming Soon
+                  </span>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 p-4">
+                  <h3 className="text-lg font-bold text-white">{L(lang, city.name)}</h3>
+                  <p className="text-xs text-white/80 mt-0.5 line-clamp-1">{L(lang, city.description)}</p>
+                  <div className="flex items-center gap-3 mt-1.5 text-[11px] text-white/70">
+                    {city.population && <span className="flex items-center gap-1"><Users size={11} /> {city.population}</span>}
+                    {city.bestSeason && <span className="flex items-center gap-1"><Calendar size={11} /> {L(lang, city.bestSeason)}</span>}
+                    {city.spots.length > 0 && (
+                      <span className="flex items-center gap-1">
+                        <MapPin size={11} /> {city.spots.length} {L(lang, { ko: '스팟', zh: '地点', en: 'spots' })}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <ChevronRight size={16} className={`text-[#9CA3AF] transition-transform ${expandedCity === i ? 'rotate-90' : ''}`} />
               </div>
-              {expandedCity === i && (
-                <div className="mt-3 pt-3 border-t border-[#E5E7EB] space-y-2">
-                  <div>
-                    <p className="text-[10px] text-[#9CA3AF] font-semibold mb-1">{L(lang, { ko: '주요 명소', zh: '主要景点', en: 'Must See' })}</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {city.spots.map((s, j) => (
-                        <span key={j} className="text-[11px] px-2 py-1 bg-[#F3F4F6] rounded-full text-[#374151]">{L(lang, s)}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex gap-4 text-xs text-[#6B7280]">
-                    <span className="flex items-center gap-1"><Train size={12} /> {L(lang, city.access)}</span>
-                    <span className="flex items-center gap-1"><Calendar size={12} /> {L(lang, city.season)}</span>
-                  </div>
-                </div>
-              )}
             </div>
           ))}
         </div>

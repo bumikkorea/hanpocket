@@ -18,7 +18,7 @@ const DutyFreeGuide = lazy(() => import('./guides/DutyFreeGuide'))
 
 const SECTIONS = [
   { id: 'discover', label: { ko: '발견', zh: '发现', en: 'Discover' } },
-  { id: 'arrival', label: { ko: '입국 가이드', zh: '入境指南', en: 'Arrival' } },
+
   { id: 'cities', label: { ko: '도시 가이드', zh: '城市指南', en: 'Cities' } },
   { id: 'transport', label: { ko: '교통', zh: '交通', en: 'Transport' } },
   { id: 'stay', label: { ko: '숙소', zh: '住宿', en: 'Stay' } },

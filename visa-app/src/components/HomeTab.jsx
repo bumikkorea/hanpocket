@@ -165,7 +165,7 @@ const INTENT_CARDS = [
   {
     id: 'just-arrived',
     emoji: '🛬',
-    label: { ko: '방금 도착했어요', zh: '刚到韩国', en: 'Just arrived' },
+    label: { ko: '입국준비', zh: '入境准备', en: 'Entry Prep' },
     sub: { ko: 'SIM, 교통카드, 환전', zh: 'SIM卡、交通卡、换钱', en: 'SIM, transit card, exchange' },
     color: '#2D5A3D',
   },
@@ -771,6 +771,20 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-3">
+            {/* 통역 — 최상단 */}
+            <button
+              onClick={() => { setTab('translator'); setShowArrivalFlow(false) }}
+              className="rounded-2xl border-2 border-[#111827] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+            >
+              <span className="text-3xl">🔄</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '통역 & 번역', zh: '翻译 & 口译', en: 'Translate' })}</p>
+                <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: '말이 안 통할 때, 바로 여기!', zh: '语言不通时，就用这个！', en: "Can't communicate? Start here!" })}</p>
+              </div>
+              <ChevronRight size={18} color="#999" />
+            </button>
+
+            {/* 기존 입국준비 메뉴 */}
             {[
               { id: 'immigration', emoji: '🛬', label: { ko: '전자 입국신고서 작성', zh: '电子入境卡填写', en: 'Electronic Arrival Card' }, sub: { ko: 'Q-CODE로 미리 작성하세요', zh: '用Q-CODE提前填写', en: 'Fill in advance with Q-CODE' } },
               { id: 'transport', emoji: '🚕', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX, 교통카드', zh: '机场出租车、RIDE APP、AREX、交通卡', en: 'Airport taxi, RIDE app, AREX, transit card' } },
@@ -793,6 +807,28 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 <ChevronRight size={18} color="#999" />
               </button>
             ))}
+
+            {/* 하단: 의료, 펫 입국 */}
+            <div className="mt-2 pt-3 border-t border-[#F3F4F6]">
+              <p className="text-[10px] text-[#999] uppercase tracking-wider mb-2 font-semibold">{L(lang, { ko: '더 알아보기', zh: '了解更多', en: 'More Info' })}</p>
+              {[
+                { id: 'nav-medical', emoji: '🏥', label: { ko: '병원 & 약국', zh: '医院 & 药店', en: 'Hospital & Pharmacy' }, sub: { ko: '아프면 어디로? 외국인 진료 병원', zh: '生病了去哪里？外国人就诊医院', en: 'Where to go when sick? Foreigner-friendly hospitals' }, tab: 'medical' },
+                { id: 'nav-pet', emoji: '🐾', label: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, tab: 'pet' },
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => { setTab(item.tab); setShowArrivalFlow(false) }}
+                  className="w-full rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3 mb-2"
+                >
+                  <span className="text-3xl">{item.emoji}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                    <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                  </div>
+                  <ChevronRight size={18} color="#999" />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}

@@ -757,19 +757,22 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               <ChevronRight size={18} color="#999" />
             </button>
 
-            {/* 기존 입국준비 메뉴 */}
+            {/* 입국준비 메뉴 */}
             {[
-              { id: 'immigration', label: { ko: '전자 입국신고서 작성', zh: '电子入境卡填写', en: 'Electronic Arrival Card' }, sub: { ko: 'Q-CODE로 미리 작성하세요', zh: '用Q-CODE提前填写', en: 'Fill in advance with Q-CODE' } },
-              { id: 'transport', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX, 교통카드', zh: '机场出租车、RIDE APP、AREX、交通卡', en: 'Airport taxi, RIDE app, AREX, transit card' } },
+              { id: 'immigration', label: { ko: '입국신고서 작성할래요', zh: '要填入境申报卡', en: 'Fill Arrival Card' }, sub: { ko: '전자(Q-CODE) / 실물 입국카드', zh: '电子(Q-CODE) / 纸质入境卡', en: 'Electronic (Q-CODE) / Physical card' } },
+              { id: 'transport', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX', zh: '机场出租车、RIDE APP、AREX', en: 'Airport taxi, RIDE app, AREX' } },
               { id: 'sim-exchange', label: { ko: 'SIM카드 구매 & 환전할래요', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange money' }, sub: { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport exchange, Myeongdong' } },
-              { id: 'guide-tax-refund', label: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '어디서/어떻게 돌려받죠?', zh: '在哪里/怎么退税？', en: 'Where/how to get refund?' }, guide: 'tax-refund' },
-              { id: 'guide-duty-free', label: { ko: '면세한도', zh: '免税限额', en: 'Duty Free Limit' }, sub: { ko: '쇼핑 후 출국 시 반드시 체크', zh: '购物后出境必查', en: 'Must check before departure' }, guide: 'duty-free' },
-              { id: 'guide-transit', label: { ko: '교통카드', zh: '交通卡', en: 'Transit Card' }, sub: { ko: '현금 안 받는 버스 많아요!', zh: '很多公交不收现金！', en: "Many buses don't accept cash!" }, guide: 'transit' },
               { id: 'guide-map', label: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, guide: 'map-guide' },
+              { id: 'nav-medical', label: { ko: '병원 & 약국', zh: '医院 & 药店', en: 'Hospital & Pharmacy' }, sub: { ko: '아프면 어디로? 외국인 진료 병원', zh: '生病了去哪里？外国人就诊医院', en: 'Where to go when sick? Foreigner-friendly hospitals' }, tab: 'medical' },
+              { id: 'nav-pet', label: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, tab: 'pet' },
             ].map(item => (
               <button
                 key={item.id}
-                onClick={() => { if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) } else { setArrivalStep(item.id) } }}
+                onClick={() => {
+                  if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
+                  else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
+                  else { setArrivalStep(item.id) }
+                }}
                 className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
@@ -779,27 +782,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 <ChevronRight size={18} color="#999" />
               </button>
             ))}
-
-            {/* 하단: 의료, 펫 입국 */}
-            <div className="mt-2 pt-3 border-t border-[#F3F4F6]">
-              <p className="text-[10px] text-[#999] uppercase tracking-wider mb-2 font-semibold">{L(lang, { ko: '더 알아보기', zh: '了解更多', en: 'More Info' })}</p>
-              {[
-                { id: 'nav-medical', label: { ko: '병원 & 약국', zh: '医院 & 药店', en: 'Hospital & Pharmacy' }, sub: { ko: '아프면 어디로? 외국인 진료 병원', zh: '生病了去哪里？外国人就诊医院', en: 'Where to go when sick? Foreigner-friendly hospitals' }, tab: 'medical' },
-                { id: 'nav-pet', label: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, tab: 'pet' },
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => { setTab(item.tab); setShowArrivalFlow(false) }}
-                  className="w-full rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3 mb-2"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
-                    <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
-                  </div>
-                  <ChevronRight size={18} color="#999" />
-                </button>
-              ))}
-            </div>
           </div>
         </div>
       )}
@@ -1034,10 +1016,15 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               { id: 'nav-medical', label: { ko: '병원 & 약국', zh: '医院 & 药店', en: 'Hospital & Pharmacy' }, sub: { ko: '아프면 어디로? 외국인 진료', zh: '生病了去哪里？外国人就诊', en: 'Where to go when sick?' }, tab: 'medical' },
               { id: 'nav-hallyu', label: { ko: '한류 & 엔터', zh: '韩流 & 娱乐', en: 'Hallyu & Entertainment' }, sub: { ko: 'K-POP, 드라마, 팬이벤트', zh: 'K-POP、韩剧、粉丝活动', en: 'K-POP, dramas, fan events' }, tab: 'hallyu' },
               { id: 'nav-delivery', label: { ko: '배달 주문', zh: '点外卖', en: 'Food Delivery' }, sub: { ko: '배달앱 이용 가이드', zh: '外卖App使用指南', en: 'Delivery app guide' }, tab: 'delivery' },
+              { id: 'nav-duty-free', label: { ko: '면세한도', zh: '免税限额', en: 'Duty Free Limit' }, sub: { ko: '쇼핑 전 반드시 체크!', zh: '购物前必查！', en: 'Must check before shopping!' }, guide: 'duty-free' },
+              { id: 'nav-transit', label: { ko: '교통카드', zh: '交通卡', en: 'Transit Card' }, sub: { ko: '현금 안 받는 버스 많아요!', zh: '很多公交不收现金！', en: "Many buses don't accept cash!" }, guide: 'transit' },
             ].map(item => (
               <button
                 key={item.id}
-                onClick={() => { setTab(item.tab); setShowArrivalFlow(false) }}
+                onClick={() => {
+                  if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
+                  else { setTab(item.tab); setShowArrivalFlow(false) }
+                }}
                 className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
@@ -1063,7 +1050,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           <div className="p-4 flex flex-col gap-3">
             {[
               { id: 'dep-tax-refund', label: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '공항에서 환급받는 법', zh: '在机场退税的方法', en: 'How to get refund at airport' }, guide: 'tax-refund' },
-              { id: 'dep-duty-free', label: { ko: '면세한도', zh: '免税限额', en: 'Duty Free Limit' }, sub: { ko: '초과하면 세금 폭탄!', zh: '超过就要交税！', en: 'Exceed the limit? Tax bomb!' }, guide: 'duty-free' },
               { id: 'dep-parcel', label: { ko: '택배 보내기', zh: '寄快递', en: 'Ship Packages' }, sub: { ko: '짐 먼저 보내고 가볍게 출국', zh: '先寄行李轻松出境', en: 'Ship luggage first, travel light' }, tab: 'parcel' },
               { id: 'dep-airport', label: { ko: '공항 이동', zh: '前往机场', en: 'To Airport' }, sub: { ko: 'AREX, 리무진, 택시 비교', zh: 'AREX、大巴、出租车对比', en: 'AREX, limousine, taxi comparison' }, tab: 'travel' },
             ].map(item => (

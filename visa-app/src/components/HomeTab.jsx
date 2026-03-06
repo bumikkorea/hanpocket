@@ -176,13 +176,7 @@ const INTENT_CARDS = [
     sub: { ko: '식당 추천, 주문법, 배달', zh: '餐厅推荐、点餐、外卖', en: 'Restaurants, ordering, delivery' },
     color: '#B8860B',
   },
-  {
-    id: 'move',
-    emoji: '🚕',
-    label: { ko: '이동하고 싶어요', zh: '想去某个地方', en: 'Want to move' },
-    sub: { ko: '택시, 지하철, 버스', zh: '出租车、地铁、公交', en: 'Taxi, subway, bus' },
-    color: '#1A3A28',
-  },
+
   {
     id: 'sick',
     emoji: '🏥',
@@ -445,7 +439,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               onClick={() => {
                 if (card.id === 'just-arrived') { setArrivalStep('splash'); setShowArrivalFlow(true) }
                 else if (card.id === 'hungry') setTab('food')
-                else if (card.id === 'move') setTab('transport')
                 else if (card.id === 'sick') setTab('sos')
               }}
               className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 text-left"

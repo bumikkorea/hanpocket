@@ -485,13 +485,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </button>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { title: { ko: '입국카드', zh: '入境卡填写', en: 'Arrival Card' }, sub: { ko: '한국 여행 외국인 누구나 작성', zh: '所有来韩外国人必填', en: 'Required for all foreign visitors' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: 'arrival-card', img: 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=400&h=200&fit=crop' },
             { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, sub: { ko: '미리 로밍 못했다면?', zh: '没提前开通漫游？', en: "Didn't set up roaming?" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'sim', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=200&fit=crop' },
-            { title: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '어디서/어떻게 돌려받죠?', zh: '在哪里/怎么退税？', en: 'Where/how to get refund?' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'tax-refund', img: 'https://images.unsplash.com/photo-1554672408-730436b60dde?w=400&h=200&fit=crop' },
-            { title: { ko: '면세한도', zh: '免税限额', en: 'Duty Free' }, sub: { ko: '쇼핑 후 출국 시 반드시 체크', zh: '购물后出境必查', en: 'Must check before departure' }, gradient: 'from-[#A0865A] to-[#7A6840]', guide: 'duty-free', img: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=200&fit=crop' },
-            { title: { ko: '택시 잡기', zh: '叫出租车', en: 'Get a Taxi' }, sub: { ko: '한국 번호 없어도 돼요', zh: '不需要韩国手机号', en: 'No Korean number needed' }, gradient: 'from-[#2D5A3D] to-[#1A3A28]', guide: null, action: 'taxi', img: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=400&h=200&fit=crop' },
-            { title: { ko: '교통카드', zh: '交通卡/车票', en: 'Transit Card' }, sub: { ko: '현금 안 받는 버스 많아요!', zh: '很多公交不收现金！', en: "Many buses don't accept cash!" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'transit', img: 'https://images.unsplash.com/photo-1565538810643-b5bdb714032a?w=400&h=200&fit=crop' },
-            { title: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, gradient: 'from-[#B8860B] to-[#8B6914]', guide: 'map-guide', action: 'map', img: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69c07a?w=400&h=200&fit=crop' },
           ].map((item, i) => (
             <button
               key={i}
@@ -820,10 +814,14 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               { id: 'immigration', emoji: '🛬', label: { ko: '전자 입국신고서 작성', zh: '电子入境卡填写', en: 'Electronic Arrival Card' }, sub: { ko: 'Q-CODE로 미리 작성하세요', zh: '用Q-CODE提前填写', en: 'Fill in advance with Q-CODE' } },
               { id: 'transport', emoji: '🚕', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX, 교통카드', zh: '机场出租车、RIDE APP、AREX、交通卡', en: 'Airport taxi, RIDE app, AREX, transit card' } },
               { id: 'sim-exchange', emoji: '💱', label: { ko: 'SIM카드 구매 & 환전할래요', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange money' }, sub: { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport exchange, Myeongdong' } },
+              { id: 'guide-tax-refund', emoji: '💸', label: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '어디서/어떻게 돌려받죠?', zh: '在哪里/怎么退税？', en: 'Where/how to get refund?' }, guide: 'tax-refund' },
+              { id: 'guide-duty-free', emoji: '🛍️', label: { ko: '면세한도', zh: '免税限额', en: 'Duty Free Limit' }, sub: { ko: '쇼핑 후 출국 시 반드시 체크', zh: '购物后出境必查', en: 'Must check before departure' }, guide: 'duty-free' },
+              { id: 'guide-transit', emoji: '💳', label: { ko: '교통카드', zh: '交通卡', en: 'Transit Card' }, sub: { ko: '현금 안 받는 버스 많아요!', zh: '很多公交不收现金！', en: "Many buses don't accept cash!" }, guide: 'transit' },
+              { id: 'guide-map', emoji: '🗺️', label: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, guide: 'map-guide' },
             ].map(item => (
               <button
                 key={item.id}
-                onClick={() => setArrivalStep(item.id)}
+                onClick={() => { if (item.guide) { setActiveGuide(item.guide); setShowArrivalFlow(false) } else { setArrivalStep(item.id) } }}
                 className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <span className="text-3xl">{item.emoji}</span>

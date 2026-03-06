@@ -491,8 +491,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&h=300&fit=crop" alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-3 left-4">
-              <p className="text-white text-lg font-bold">{L(lang, { ko: '한국 모든 여행지', zh: '韩国所有旅游地', en: 'All Korea Destinations' })}</p>
-              <p className="text-white/80 text-xs mt-0.5">{L(lang, { ko: '서울부터 제주까지, 당신만의 여행을 찾아보세요', zh: '从首尔到济州，找到属于你的旅行', en: 'From Seoul to Jeju, find your perfect trip' })}</p>
+              <p className="text-white text-lg font-bold text-left">{L(lang, { ko: '찾기', zh: '搜索', en: 'Search' })}</p>
             </div>
           </div>
         </button>

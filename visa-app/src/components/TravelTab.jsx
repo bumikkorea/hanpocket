@@ -16,11 +16,7 @@ const SimGuide = lazy(() => import('./guides/SimGuide'))
 const TaxRefundGuide = lazy(() => import('./guides/TaxRefundGuide'))
 const DutyFreeGuide = lazy(() => import('./guides/DutyFreeGuide'))
 
-const SECTIONS = [
-  { id: 'discover', label: { ko: '발견', zh: '发现', en: 'Discover' } },
-  { id: 'stay', label: { ko: '숙소', zh: '住宿', en: 'Stay' } },
-  { id: 'parks', label: { ko: '테마파크', zh: '主题公园', en: 'Theme Parks' } },
-]
+const SECTIONS = []
 
 const AIRPORTS = [
   { code: 'ICN', name: { ko: '인천국제공항', zh: '仁川国际机场', en: 'Incheon Intl Airport' }, terminals: 'T1, T2', toCity: [
@@ -654,7 +650,7 @@ function TaxiGuide({ lang, card }) {
 }
 
 export default function TravelTab({ lang, setTab, profile }) {
-  const [section, setSection] = useState('discover')
+  const [section, setSection] = useState('discover') // always discover now
   const [expandedCity, setExpandedCity] = useState(null)
   const [tourDetailItem, setTourDetailItem] = useState(null)
   const [userInterests, setUserInterests] = useState(getUserInterests)
@@ -762,29 +758,17 @@ export default function TravelTab({ lang, setTab, profile }) {
         </div>
       </div>
 
-      {/* Section nav */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-        {SECTIONS.map(s => (
-          <button key={s.id} onClick={() => setSection(s.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
-              section === s.id ? 'bg-[#111827] text-white' : 'bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]'
-            }`}>
-            {L(lang, s.label)}
-          </button>
-        ))}
-      </div>
+      {/* Section nav removed — discover is now the default view */}
 
-      {/* Discover - TourAPI */}
-      {section === 'discover' && (
-        <Suspense fallback={<div className="flex justify-center py-8"><div className="w-8 h-8 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin" /></div>}>
-          <TourSpotSection
-            lang={lang}
-            darkMode={false}
-            onItemClick={setTourDetailItem}
-            title={L(lang, { ko: '한국 여행지 발견', zh: '发现韩国旅游地', en: 'Discover Korea' })}
-          />
-        </Suspense>
-      )}
+      {/* TourAPI spots — default view */}
+      <Suspense fallback={<div className="flex justify-center py-8"><div className="w-8 h-8 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin" /></div>}>
+        <TourSpotSection
+          lang={lang}
+          darkMode={false}
+          onItemClick={setTourDetailItem}
+          title={L(lang, { ko: '한국 여행지', zh: '韩国旅游地', en: 'Korea Travel Spots' })}
+        />
+      </Suspense>
 
       {/* Tour Detail Modal */}
       {tourDetailItem && (
@@ -1301,24 +1285,7 @@ export default function TravelTab({ lang, setTab, profile }) {
         </div>
       )}
 
-      {/* Accommodation */}
-      {section === 'stay' && (
-        <div className="space-y-3">
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-            <p className="text-xs text-amber-700">{L(lang, { ko: '체크인 15:00 / 체크아웃 11:00 이 일반적. 신분증(여권) 항시 지참.', zh: '入住15:00/退房11:00为一般规定。请随身携带身份证件（护照）。', en: 'Check-in 15:00 / Check-out 11:00 is standard. Always carry ID (passport).' })}</p>
-          </div>
-          {ACCOMMODATIONS.map((a, i) => (
-            <div key={i} className={card}>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-[#111827]">{L(lang, a.type)}</h3>
-                <span className="text-xs font-bold text-[#111827]">{a.price}</span>
-              </div>
-              <p className="text-xs text-[#6B7280] mb-1">{L(lang, { ko: '예약', zh: '预订', en: 'Book' })}: {typeof a.platforms === 'string' ? a.platforms : L(lang, a.platforms)}</p>
-              <p className="text-xs text-[#9CA3AF]">{L(lang, a.tips)}</p>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Accommodation section removed */}
 
       {/* Itineraries */}
       {section === 'itinerary' && (
@@ -1456,26 +1423,7 @@ export default function TravelTab({ lang, setTab, profile }) {
         </div>
       )}
 
-      {/* Theme Parks */}
-      {section === 'parks' && (
-        <div className="space-y-3">
-          {PARKS.map((p, i) => (
-            <div key={i} className={card}>
-              <h3 className="text-sm font-bold text-[#111827] mb-1">{L(lang, p.name)}</h3>
-              <div className="flex items-center gap-1 text-xs text-[#6B7280] mb-2">
-                <MapPin size={12} />
-                <span>{L(lang, p.location)}</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-xs mb-2">
-                <div className="flex items-center gap-1 text-[#374151]"><Clock size={12} className="text-[#9CA3AF]" /> {p.hours}</div>
-                <div className="flex items-center gap-1 text-[#374151]"><DollarSign size={12} className="text-[#9CA3AF]" /> {p.price.adult}</div>
-              </div>
-              <p className="text-xs text-[#6B7280] mb-1.5 flex items-center gap-1"><Train size={12} /> {L(lang, p.access)}</p>
-              <p className="text-xs text-[#9CA3AF]">{L(lang, p.tips)}</p>
-            </div>
-          ))}
-        </div>
-      )}
+      {/* Theme Parks section removed */}
 
       {/* Tax Refund & Duty-Free */}
       {section === 'taxrefund' && (

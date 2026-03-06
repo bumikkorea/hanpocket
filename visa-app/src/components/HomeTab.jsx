@@ -744,11 +744,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── 입국준비 플로우 ─── */}
       {showArrivalFlow && arrivalStep === 'menu' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
-              {L(lang, { ko: '무엇을 도와드릴까요?', zh: '需要什么帮助？', en: 'How can we help?' })}
+              {L(lang, { ko: '입국준비', zh: '入境准备', en: 'Entry Prep' })}
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-3">

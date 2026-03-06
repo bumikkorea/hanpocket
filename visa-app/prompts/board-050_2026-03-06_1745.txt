@@ -1,0 +1,196 @@
+# Board-050: CourseDetail 리디자인 — 시간표, 평점, 편의태그, 길찾기/회화카드
+
+## 레퍼런스
+스크린샷의 UI를 정확히 재현:
+- 상단: 코스명 (ko + en) + "실시간" 버튼
+- 요약 바: 총 소요시간 | 교통비 | 장소 수
+- 타임라인: 시작시간 + 카테고리 태그 + 장소명(ko+en) + 네이버/한포켓 평점 + 소요시간 + 편의태그 + 길찾기/회화카드 버튼
+- 이동 구간: 도보 아이콘 + "도보 8분 · 0원"
+
+## 수정 파일
+`src/components/CourseTab.jsx`의 `CourseDetail` 컴포넌트 (약 line 231~470)
+
+## 변경 사항
+
+### 1. 헤더 리디자인
+```jsx
+<div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
+  <button onClick={onBack} className="p-1"><ChevronLeft size={20} className="text-[#111827]" /></button>
+  <div className="flex-1 min-w-0">
+    <p className="font-bold text-sm text-[#111827] truncate">
+      {isRecommended ? L(lang, course.name) : course.name}
+    </p>
+    {/* 영문 이름 (en 또는 zh) 표시 */}
+    {isRecommended && course.name?.en && lang !== 'en' && (
+      <p className="text-[11px] text-[#9CA3AF] truncate">{course.name.en}</p>
+    )}
+  </div>
+  {/* 실시간 버튼 (향후 기능용 placeholder) */}
+  <button className="text-[11px] text-[#2D5A3D] font-semibold border border-[#2D5A3D] rounded-full px-3 py-1">
+    {L(lang, { ko: '실시간', zh: '实时', en: 'Live' })}
+  </button>
+</div>
+```
+
+### 2. 요약 바 (코스 정보 카드)
+기존 한 줄 텍스트를 3칸 카드로 변경:
+```jsx
+{isRecommended && (
+  <div className="flex rounded-2xl border border-[#E5E7EB] divide-x divide-[#E5E7EB] text-center mx-4 mt-4">
+    <div className="flex-1 py-3">
+      <p className="text-[10px] text-[#9CA3AF] mb-0.5">{L(lang, {ko:'총 소요시간', zh:'总耗时', en:'Duration'})}</p>
+      <p className="text-sm font-bold text-[#111827]">{course.duration}</p>
+    </div>
+    <div className="flex-1 py-3">
+      <p className="text-[10px] text-[#9CA3AF] mb-0.5">{L(lang, {ko:'교통비', zh:'交通费', en:'Transport'})}</p>
+      <p className="text-sm font-bold text-[#111827]">{course.transportCost || L(lang, {ko:'무료', zh:'免费', en:'Free'})}</p>
+    </div>
+    <div className="flex-1 py-3">
+      <p className="text-[10px] text-[#9CA3AF] mb-0.5">{L(lang, {ko:'장소', zh:'地点', en:'Stops'})}</p>
+      <p className="text-sm font-bold text-[#111827]">{course.stops?.length || 0}{L(lang, {ko:'곳', zh:'处', en:''})}</p>
+    </div>
+  </div>
+)}
+```
+
+### 3. 타임라인 블록 리디자인
+
+각 stop 블록을 아래 형태로 변경:
+
+```jsx
+{/* 경유지 블록 */}
+<div className="flex gap-3">
+  {/* 왼쪽: 아이콘 원형 */}
+  <div className="flex flex-col items-center">
+    <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg" style={{
+      backgroundColor: stop.type === 'cafe' ? '#F9DEBB' : stop.type === 'exhibition' ? '#FFD4BC' : stop.type === 'park' ? '#D4EDDA' : stop.type === 'walk' ? '#E8E8E8' : '#F3F4F6'
+    }}>
+      {stop.type === 'cafe' ? '☕' : stop.type === 'exhibition' ? '🎨' : stop.type === 'park' ? '🌿' : stop.type === 'food' ? '🍜' : stop.type === 'walk' ? '🚶' : stop.type === 'shopping' ? '🛍️' : stop.type === 'tourism' ? '🏛️' : '📍'}
+    </div>
+    {/* 수직 연결선 (마지막 아닌 경우) */}
+    {i < course.stops.length - 1 && <div className="flex-1 w-px bg-[#E5E7EB] my-1" />}
+  </div>
+  
+  {/* 오른쪽: 콘텐츠 */}
+  <div className="flex-1 pb-4">
+    {/* 시간 + 카테고리 태그 */}
+    <div className="flex items-center gap-2 mb-1">
+      <span className="text-sm font-bold text-[#2D5A3D]">{stop.startTime || `${hh}:${mm}`}</span>
+      <span className="text-[10px] bg-[#F3F4F6] text-[#6B7280] px-2 py-0.5 rounded-full">
+        {stop.type === 'cafe' ? L(lang, {ko:'카페',zh:'咖啡',en:'Cafe'}) : stop.type === 'exhibition' ? L(lang, {ko:'전시/포토존',zh:'展览/拍照',en:'Exhibition'}) : stop.type === 'park' ? L(lang, {ko:'공원/산책',zh:'公园/散步',en:'Park'}) : stop.type === 'food' ? L(lang, {ko:'맛집',zh:'美食',en:'Food'}) : stop.type === 'shopping' ? L(lang, {ko:'쇼핑',zh:'购物',en:'Shopping'}) : stop.type === 'tourism' ? L(lang, {ko:'관광',zh:'观光',en:'Tourism'}) : stop.type === 'walk' ? L(lang, {ko:'산책',zh:'散步',en:'Walk'}) : ''}
+      </span>
+    </div>
+    
+    {/* 장소명 (ko) */}
+    <p className="font-bold text-base text-[#111827]">{isRecommended ? L(lang, stop.name) : stop.name}</p>
+    
+    {/* 영문 이름 */}
+    {isRecommended && stop.name?.en && lang !== 'en' && (
+      <p className="text-xs text-[#9CA3AF] mt-0.5">{stop.name.en}</p>
+    )}
+    
+    {/* 평점 + 소요시간 */}
+    <div className="flex items-center gap-3 mt-1.5 text-xs">
+      {stop.naverRating && (
+        <span className="flex items-center gap-0.5">
+          <span className="text-[#F59E0B]">★</span>
+          <span className="font-semibold text-[#111827]">{stop.naverRating}</span>
+          <span className="text-[#9CA3AF]">{L(lang, {ko:'네이버', zh:'Naver', en:'Naver'})}</span>
+        </span>
+      )}
+      {stop.hpRating && (
+        <span className="flex items-center gap-0.5">
+          <span className="text-red-400">♥</span>
+          <span className="font-semibold text-[#111827]">{stop.hpRating}</span>
+          <span className="text-[#9CA3AF]">{L(lang, {ko:'한포켓', zh:'HanPocket', en:'HanPocket'})}</span>
+        </span>
+      )}
+      <span className="flex items-center gap-0.5 text-[#9CA3AF]">
+        <Clock size={10} /> {stop.duration}
+      </span>
+    </div>
+    
+    {/* 편의 태그 (카드결제, 영어메뉴, 무료 등) */}
+    {stop.features?.length > 0 && (
+      <div className="flex gap-1.5 mt-2">
+        {stop.features.map((f, fi) => (
+          <span key={fi} className="text-[10px] px-2 py-0.5 rounded-full bg-[#EBF5FF] text-[#2563EB] font-medium">
+            {f === 'card' ? (L(lang, {ko:'💳 카드결제', zh:'💳 刷卡', en:'💳 Card'})) : 
+             f === 'english_menu' ? (L(lang, {ko:'🌐 영어메뉴', zh:'🌐 英文菜单', en:'🌐 English menu'})) : 
+             f === 'free' ? (L(lang, {ko:'🆓 무료', zh:'🆓 免费', en:'🆓 Free'})) : f}
+          </span>
+        ))}
+      </div>
+    )}
+    
+    {/* 길찾기 + 회화카드 버튼 */}
+    <div className="flex gap-2 mt-3">
+      <button 
+        onClick={() => {
+          if (stop.lat && stop.lng) window.open(`https://map.kakao.com/link/to/${L('ko', stop.name)},${stop.lat},${stop.lng}`, '_blank')
+        }}
+        className="flex items-center gap-1 bg-[#DC2626] text-white text-xs font-semibold px-3.5 py-2 rounded-xl active:scale-95 transition-transform"
+      >
+        <Navigation size={12} />
+        {L(lang, {ko:'길찾기', zh:'导航', en:'Navigate'})}
+      </button>
+      <button className="flex items-center gap-1 bg-white border border-[#E5E7EB] text-[#111827] text-xs font-semibold px-3.5 py-2 rounded-xl active:scale-95 transition-transform">
+        💬 {L(lang, {ko:'회화카드', zh:'会话卡', en:'Phrase Card'})}
+      </button>
+    </div>
+    
+    {/* 팁 (축소) */}
+    {stop.tip && (
+      <p className="text-[11px] text-[#6B7280] mt-2 leading-relaxed">
+        💡 {isRecommended ? L(lang, stop.tip) : stop.tip}
+      </p>
+    )}
+  </div>
+</div>
+
+{/* 이동 구간 */}
+{i < course.stops.length - 1 && (
+  <div className="flex gap-3 ml-1">
+    <div className="w-10 flex justify-center">
+      <div className="w-8 h-8 rounded-full bg-[#F3F4F6] flex items-center justify-center text-sm">
+        🚶
+      </div>
+    </div>
+    <div className="flex-1 flex items-center py-2">
+      <span className="text-xs text-[#9CA3AF]">
+        🚶 {L(lang, {ko:'도보', zh:'步行', en:'Walk'})} {course.transport?.[i]?.duration || '—'} · {course.transport?.[i]?.cost || '₩0'}
+      </span>
+    </div>
+  </div>
+)}
+```
+
+### 4. 코스 정보 카드 삭제
+기존의 한 줄 정보 표시를 삭제 (요약 바로 대체):
+```jsx
+// 삭제할 부분:
+// <div className="flex items-center gap-3 text-xs text-[#6B7280]">
+//   <span className="flex items-center gap-1"><Clock size={12} /> {course.duration}</span>
+//   ...
+// </div>
+```
+
+### 5. 카카오맵 위치 변경
+지도는 타임라인 아래로 이동 (이동 경로를 다 본 후 지도 확인하는 흐름).
+
+## 기존 data의 하위 호환
+새 필드 (`startTime`, `naverRating`, `hpRating`, `features`, `transportCost`, `cost`)가 없는 코스도 정상 렌더링되어야 함. optional chaining `?.` 사용.
+
+- `startTime` 없으면 → 계산된 시간 표시 (기존 로직)
+- `naverRating`, `hpRating` 없으면 → 평점 미표시
+- `features` 없으면 → 편의 태그 미표시
+- `transportCost` 없으면 → "무료" 표시
+
+## 빌드 & 배포
+```bash
+cd /home/theredboat_ai/.openclaw/workspace/visa-app
+npm run build
+git add -A && git commit -m "board-050: CourseDetail redesign — timeline, ratings, features, navigate"
+npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-dirty=true
+openclaw system event --text 'Done: Board-050 코스 상세 리디자인 완료' --mode now
+```

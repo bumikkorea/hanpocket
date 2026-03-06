@@ -7,6 +7,7 @@ const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
 const SimGuide = lazy(() => import('./guides/SimGuide'))
 const TaxRefundGuide = lazy(() => import('./guides/TaxRefundGuide'))
 const DutyFreeGuide = lazy(() => import('./guides/DutyFreeGuide'))
+const PocketContent = lazy(() => import('./pockets/PocketContent'))
 import GuideLayout from './guides/GuideLayout'
 
 // Re-export 의존성 (App.jsx 등에서 사용)
@@ -347,6 +348,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   // 가이드 오버레이 상태
   const [activeGuide, setActiveGuide] = useState(null)
 
+  // 상황별 한국어 포켓 오버레이 상태
+  const [selectedPocket, setSelectedPocket] = useState(null)
+
   // 방금 도착했어요 웰컴 플로우
   const [showArrivalFlow, setShowArrivalFlow] = useState(false)
   const [arrivalStep, setArrivalStep] = useState('splash') // 'splash' | 'menu' | 'immigration' | 'transport' | 'sim-exchange'
@@ -535,7 +539,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
-              onClick={() => setTab(item.pocket)}
+              onClick={() => setSelectedPocket(item.pocket)}
               className="flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
               style={{ width: 64 }}
             >
@@ -701,6 +705,24 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </Suspense>
       )}
 
+      {/* ─── 상황별 한국어 포켓 오버레이 ─── */}
+      {selectedPocket && (
+        <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
+          <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+            <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
+              <div className="flex items-center gap-3 px-4 py-3">
+                <button onClick={() => setSelectedPocket(null)} className="p-1">
+                  <ChevronLeft size={24} />
+                </button>
+                <h1 className="text-lg font-bold text-[#1A1A1A]">
+                  {L(lang, SCENE_PHRASES.find(s => s.pocket === selectedPocket)?.scene || { ko: '', zh: '', en: '' })}
+                </h1>
+              </div>
+            </div>
+            <PocketContent pocketId={selectedPocket} lang={lang} setTab={setTab} />
+          </div>
+        </Suspense>
+      )}
 
       {/* ─── 시간대 선택 팝업 ─── */}
       {showTzPicker && (

@@ -1,18 +1,5 @@
 export const pocketCategories = [
   {
-    id: 'situational-korean',
-    name: { ko: '상황별 한국어', zh: '场景韩语', en: 'Situational Korean' },
-    icon: '💬',
-    pockets: [
-      { id: 'restaurant', name: { ko: '식당', zh: '餐厅', en: 'Restaurant' }, icon: '🍽️', description: { ko: '입장/주문/계산 표현', zh: '入店/点餐/结账表达', en: 'Entrance/order/payment phrases' }, size: 'md' },
-      { id: 'cafe', name: { ko: '카페', zh: '咖啡厅', en: 'Cafe' }, icon: '☕', description: { ko: '주문/커스텀/포장 표현', zh: '点单/自定义/打包表达', en: 'Order/custom/takeout phrases' }, size: 'md' },
-      { id: 'transport', name: { ko: '교통', zh: '交通', en: 'Transport' }, icon: '🚇', description: { ko: '택시/지하철/버스 표현', zh: '出租车/地铁/公交表达', en: 'Taxi/subway/bus phrases' }, size: 'md' },
-      { id: 'convenience', name: { ko: '편의점', zh: '便利店', en: 'Convenience Store' }, icon: '🏪', description: { ko: '편의점 표현 + 꿀조합', zh: '便利店表达 + 推荐组合', en: 'CVS phrases + combos' }, size: 'md' },
-      { id: 'accommodation', name: { ko: '숙소', zh: '住宿', en: 'Accommodation' }, icon: '🏨', description: { ko: '체크인/요청/체크아웃 표현', zh: '入住/请求/退房表达', en: 'Check-in/request/checkout phrases' }, size: 'md' },
-      { id: 'emergency', name: { ko: '긴급', zh: '紧急', en: 'Emergency' }, icon: '🚨', description: { ko: 'SOS + 긴급연락처 + 증상 표현', zh: 'SOS + 紧急联系 + 症状表达', en: 'SOS + emergency contacts + symptoms' }, size: 'md' },
-    ],
-  },
-  {
     id: 'travel-food',
     name: { ko: '여행', zh: '旅行', en: 'Travel' },
     icon: '✈️',

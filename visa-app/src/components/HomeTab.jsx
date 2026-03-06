@@ -805,26 +805,55 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       )}
 
       {/* 입국신고 상세 */}
+      {/* 입국신고서 — 선택 화면 */}
       {showArrivalFlow && arrivalStep === 'immigration' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
+            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+              {L(lang, { ko: '입국신고서 작성', zh: '入境申报卡填写', en: 'Arrival Card' })}
+            </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-3">
+            <button
+              onClick={() => setArrivalStep('immigration-electronic')}
+              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '전자 입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
+                <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: '온라인으로 미리 작성, 실물 카드 불필요', zh: '在线提前填写，无需纸质卡', en: 'Fill online in advance, no physical card needed' })}</p>
+              </div>
+              <ChevronRight size={18} color="#999" />
+            </button>
+            <button
+              onClick={() => { setOverlay('arrival-card'); setShowArrivalFlow(false) }}
+              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+            >
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '실물 입국카드 작성법', zh: '纸质入境卡填写方法', en: 'Physical Arrival Card Guide' })}</p>
+                <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: '비행기 안에서 받는 종이 카드 작성 가이드', zh: '飞机上发的纸质卡填写指南', en: 'Guide to filling the paper card from the plane' })}</p>
+              </div>
+              <ChevronRight size={18} color="#999" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* 전자 입국신고서 상세 */}
+      {showArrivalFlow && arrivalStep === 'immigration-electronic' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => setArrivalStep('immigration')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
               {L(lang, { ko: '전자 입국신고서', zh: '电子入境卡', en: 'Electronic Arrival Card' })}
             </h2>
           </div>
           <div className="p-4">
-            {/* Q-CODE 카드 */}
             <div className="rounded-2xl bg-[#F0F4FF] p-5">
-              <div className="flex items-start gap-3 mb-3">
-                <span className="text-2xl">✈️</span>
-                <div>
-                  <p className="text-[15px] font-bold text-[#1A1A1A]">{L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
-                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
-                    {L(lang, { ko: '한국 입국 전 온라인으로 미리 작성할 수 있습니다.\n건강상태, 세관신고를 한번에!\n실물 카드를 안 써도 됩니다.', zh: '入韩前可在线提前填写。\n健康状态、海关申报一次搞定！\n不需要纸质卡。', en: 'Fill out online before entering Korea.\nHealth & customs declaration in one go!\nNo physical card needed.' })}
-                  </p>
-                </div>
-              </div>
+              <p className="text-[15px] font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
+              <p className="text-xs text-[#666666] leading-relaxed mb-4">
+                {L(lang, { ko: '한국 입국 전 온라인으로 미리 작성할 수 있습니다.\n건강상태, 세관신고를 한번에!\n실물 카드를 안 써도 됩니다.', zh: '入韩前可在线提前填写。\n健康状态、海关申报一次搞定！\n不需要纸质卡。', en: 'Fill out online before entering Korea.\nHealth & customs declaration in one go!\nNo physical card needed.' })}
+              </p>
               <div className="flex gap-2">
                 <a
                   href="https://ciq.korea.go.kr/coview/board/homeland/linkView.do"

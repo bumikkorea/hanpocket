@@ -519,33 +519,6 @@ export default function ArrivalCardGuide({ lang, onClose }) {
               </div>
             </div>
 
-            {/* Q-CODE 전자입국신고서 */}
-            <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-2xl p-4">
-              <div className="flex items-start gap-2">
-                <span className="text-lg">✈️</span>
-                <div className="flex-1">
-                  <p className="text-sm font-bold text-[#111827] mb-1">
-                    {L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境申报 (Q-CODE)', en: 'Electronic Entry Form (Q-CODE)' })}
-                  </p>
-                  <p className="text-xs text-[#374151] leading-relaxed mb-3">
-                    {L(lang, {
-                      ko: '한국 입국 전 온라인으로 미리 작성할 수 있습니다.\n건강상태, 세관신고를 한번에!\n실물 카드를 안 써도 됩니다.',
-                      zh: '可在入境韩国前在线提前填写。\n健康状况、海关申报一次搞定！\n不用填纸质卡。',
-                      en: 'Fill out online before entering Korea.\nHealth status & customs declaration in one!\nNo need for paper cards.'
-                    }).split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}
-                  </p>
-                  <div className="flex gap-2">
-                    <a href="https://www.q-code.or.kr" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold active:scale-95 transition-transform">
-                      Q-CODE {L(lang, { ko: '바로가기', zh: '前往填写', en: 'Go to site' })}
-                    </a>
-                    <a href="https://www.k-eta.go.kr" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-xl bg-[#374151] text-white text-xs font-bold active:scale-95 transition-transform">
-                      K-ETA ({L(lang, { ko: '비자면제국', zh: '免签国家', en: 'Visa-free' })})
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Source + Footer */}
             <p className="text-[10px] text-gray-400 text-center">
               {L(lang, { ko: '출처: 법무부 출입국외국인정책본부', zh: '来源：法务部出入境外国人政策本部', en: 'Source: Ministry of Justice, Immigration' })}

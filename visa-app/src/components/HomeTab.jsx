@@ -338,11 +338,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   // 코스 데이터 (test 카테고리 제외, 첫 6개)
   const courses = RECOMMENDED_COURSES.filter(c => c.category !== 'test').slice(0, 6)
 
-  // 가이드 오버레이 상태
-  const [activeGuide, setActiveGuide] = useState(null)
-
-  // 상황별 한국어 포켓 오버레이 상태
-  const [selectedPocket, setSelectedPocket] = useState(null)
+  // 가이드/포켓 오버레이 통합 상태
+  // guide: 'map-guide' | 'transit' | 'arrival-card' | 'sim' | 'tax-refund' | 'duty-free'
+  // pocket: 'restaurant' | 'cafe' | 'transport' | 'convenience' | 'shopping' | 'accommodation' | 'emergency'
+  const [overlay, setOverlay] = useState(null)
+  const POCKET_IDS = ['restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency']
 
   // 방금 도착했어요 웰컴 플로우
   const [showArrivalFlow, setShowArrivalFlow] = useState(false)
@@ -500,7 +500,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {SCENE_PHRASES.map((item, i) => (
             <button
               key={i}
-              onClick={() => setSelectedPocket(item.pocket)}
+              onClick={() => setOverlay(item.pocket)}
               className="flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
               style={{ width: 64 }}
             >
@@ -582,10 +582,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       </div>}
 
       {/* ─── 가이드 오버레이 ─── */}
-      {activeGuide && (
+      {overlay && !POCKET_IDS.includes(overlay) && (
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
-          {activeGuide === 'map-guide' && (
-            <GuideLayout title={{ ko: '한국 지도 앱', zh: '韩国地图APP', en: 'Korea Map Apps' }} lang={lang} onClose={() => setActiveGuide(null)}>
+          {overlay === 'map-guide' && (
+            <GuideLayout title={{ ko: '한국 지도 앱', zh: '韩国地图APP', en: 'Korea Map Apps' }} lang={lang} onClose={() => setOverlay(null)}>
               <div className="p-4 rounded-2xl border border-[#E5E7EB]">
                 <h3 className="font-bold text-[#1A1A1A] mb-2">📍 KakaoMap ({L(lang, { ko: '카카오맵', zh: '카카오地图', en: 'KakaoMap' })})</h3>
                 <p className="text-sm text-[#666666] leading-relaxed mb-3">
@@ -611,11 +611,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               </div>
             </GuideLayout>
           )}
-          {activeGuide === 'transit' && (
+          {overlay === 'transit' && (
             <GuideLayout
               title={{ ko: '교통카드 & 표 구매', zh: '交通卡 & 购票指南', en: 'Transit Card & Tickets' }}
               lang={lang}
-              onClose={() => setActiveGuide(null)}
+              onClose={() => setOverlay(null)}
               tip={{ ko: '💡 T-money 잔액은 편의점에서 환불 가능 (카드 반납 시 잔액 - 수수료 500원)', zh: '💡 T-money余额可在便利店退款（退卡时退余额 - 手续费500韩元）', en: '💡 T-money balance is refundable at convenience stores (balance minus ₩500 fee)' }}
             >
               <div className="p-4 rounded-2xl bg-red-50 border border-red-200">
@@ -659,28 +659,28 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               </div>
             </GuideLayout>
           )}
-          {activeGuide === 'arrival-card' && <ArrivalCardGuide lang={lang} onClose={() => setActiveGuide(null)} />}
-          {activeGuide === 'sim' && <SimGuide lang={lang} onClose={() => setActiveGuide(null)} />}
-          {activeGuide === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => setActiveGuide(null)} />}
-          {activeGuide === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => setActiveGuide(null)} />}
+          {overlay === 'arrival-card' && <ArrivalCardGuide lang={lang} onClose={() => setOverlay(null)} />}
+          {overlay === 'sim' && <SimGuide lang={lang} onClose={() => setOverlay(null)} />}
+          {overlay === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => setOverlay(null)} />}
+          {overlay === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => setOverlay(null)} />}
         </Suspense>
       )}
 
       {/* ─── 상황별 한국어 포켓 오버레이 ─── */}
-      {selectedPocket && (
+      {overlay && POCKET_IDS.includes(overlay) && (
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
           <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
             <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
               <div className="flex items-center gap-3 px-4 py-3">
-                <button onClick={() => setSelectedPocket(null)} className="p-1">
+                <button onClick={() => setOverlay(null)} className="p-1">
                   <ChevronLeft size={24} />
                 </button>
                 <h1 className="text-lg font-bold text-[#1A1A1A]">
-                  {L(lang, SCENE_PHRASES.find(s => s.pocket === selectedPocket)?.scene || { ko: '', zh: '', en: '' })}
+                  {L(lang, SCENE_PHRASES.find(s => s.pocket === overlay)?.scene || { ko: '', zh: '', en: '' })}
                 </h1>
               </div>
             </div>
-            <PocketContent pocketId={selectedPocket} lang={lang} setTab={setTab} />
+            <PocketContent pocketId={overlay} lang={lang} setTab={setTab} />
           </div>
         </Suspense>
       )}
@@ -788,7 +788,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             ].map(item => (
               <button
                 key={item.id}
-                onClick={() => { if (item.guide) { setActiveGuide(item.guide); setShowArrivalFlow(false) } else { setArrivalStep(item.id) } }}
+                onClick={() => { if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) } else { setArrivalStep(item.id) } }}
                 className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <span className="text-3xl">{item.emoji}</span>
@@ -947,7 +947,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                   <button
-                    onClick={() => { setActiveGuide('sim'); setShowArrivalFlow(false) }}
+                    onClick={() => { setOverlay('sim'); setShowArrivalFlow(false) }}
                     className="mt-3 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 w-full text-center active:scale-[0.98] transition-transform"
                   >
                     {L(lang, { ko: '자세히 보기', zh: '查看详情', en: 'View Details' })}
@@ -995,7 +995,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             bg: '#2D5A3D',
             title: { ko: '한국 입국 가이드', zh: '韩国入境指南', en: 'Korea Arrival Guide' },
             sub: { ko: '입국카드부터 교통카드까지 한번에!', zh: '入境卡到交通卡一次搞定！', en: 'Arrival card to transit card in one go!' },
-            onClick: () => setActiveGuide('arrival-card'),
+            onClick: () => { setArrivalStep('menu'); setShowArrivalFlow(true) },
           },
           {
             emoji: '💱',

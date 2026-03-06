@@ -472,54 +472,30 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       </div>
 
-      {/* ─── 3. 여행 필수 가이드 (4x2 그리드) ─── */}
+      {/* ─── 3. 한국 모든 여행지 ─── */}
       <div className="mb-8 px-4">
         <button
           onClick={() => setTab('travel')}
           className="flex items-center justify-between w-full mb-3"
         >
           <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
-            {L(lang, { ko: '여행 필수', zh: '旅行必备', en: 'Travel Essentials' })}
+            {L(lang, { ko: '한국 모든 여행지', zh: '韩国所有旅游地', en: 'All Korea Destinations' })}
           </h2>
           <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
         </button>
-        <div className="grid grid-cols-2 gap-2">
-          {[
-            { title: { ko: 'SIM/eSIM', zh: 'SIM/eSIM', en: 'SIM/eSIM' }, sub: { ko: '미리 로밍 못했다면?', zh: '没提前开通漫游？', en: "Didn't set up roaming?" }, gradient: 'from-[#4A8A5A] to-[#2D5A3D]', guide: 'sim', img: 'https://images.unsplash.com/photo-1556656793-08538906a9f8?w=400&h=200&fit=crop' },
-          ].map((item, i) => (
-            <button
-              key={i}
-              onClick={() => {
-                if (item.action === 'map') setActiveGuide('map-guide')
-                else if (item.guide) setActiveGuide(item.guide)
-                else if (item.action === 'taxi') {
-                  const iframe = document.createElement('iframe')
-                  iframe.style.display = 'none'
-                  iframe.src = 'kakaot://'
-                  document.body.appendChild(iframe)
-                  setTimeout(() => {
-                    document.body.removeChild(iframe)
-                    window.open('https://t.kakao.com', '_blank')
-                  }, 1500)
-                }
-                else if (item.action === 'sos') setTab('sos')
-              }}
-              className="rounded-2xl overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
-            >
-              <div className="relative h-[80px]">
-                <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
-                {item.img && <img src={item.img} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.style.display = 'none' }} />}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              </div>
-              <div className="p-2.5 bg-white text-left">
-                <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
-                  {L(lang, item.title)}
-                </p>
-                <p className="text-[10px] mt-0.5 leading-tight line-clamp-1" style={{ color: '#999999' }}>{L(lang, item.sub)}</p>
-              </div>
-            </button>
-          ))}
-        </div>
+        <button
+          onClick={() => setTab('travel')}
+          className="w-full rounded-2xl overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+        >
+          <div className="relative h-[120px]">
+            <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&h=300&fit=crop" alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute bottom-3 left-4">
+              <p className="text-white text-lg font-bold">{L(lang, { ko: '한국 모든 여행지', zh: '韩国所有旅游地', en: 'All Korea Destinations' })}</p>
+              <p className="text-white/80 text-xs mt-0.5">{L(lang, { ko: '서울부터 제주까지, 당신만의 여행을 찾아보세요', zh: '从首尔到济州，找到属于你的旅行', en: 'From Seoul to Jeju, find your perfect trip' })}</p>
+            </div>
+          </div>
+        </button>
       </div>
 
       {/* ─── 5. 상황별 한국어 ─── */}

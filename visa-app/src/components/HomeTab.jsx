@@ -164,25 +164,18 @@ const SCENE_PHRASES = [
 const INTENT_CARDS = [
   {
     id: 'just-arrived',
-    emoji: '🛬',
     label: { ko: '입국준비', zh: '入境准备', en: 'Entry Prep' },
-    sub: { ko: 'SIM, 교통카드, 환전', zh: 'SIM卡、交通卡、换钱', en: 'SIM, transit card, exchange' },
-    color: '#2D5A3D',
+    sub: { ko: 'SIM, 교통카드, 환전, 통역', zh: 'SIM卡、交通卡、换钱、翻译', en: 'SIM, transit card, exchange, translate' },
   },
   {
-    id: 'hungry',
-    emoji: '🍜',
-    label: { ko: '밥 먹고 싶어요', zh: '想吃饭', en: 'Want to eat' },
-    sub: { ko: '식당 추천, 주문법, 배달', zh: '餐厅推荐、点餐、外卖', en: 'Restaurants, ordering, delivery' },
-    color: '#B8860B',
+    id: 'traveling',
+    label: { ko: '여행 중', zh: '旅行中', en: 'Traveling' },
+    sub: { ko: '맛집, 쇼핑, 교통, 의료', zh: '美食、购物、交通、医疗', en: 'Food, shopping, transit, medical' },
   },
-
   {
-    id: 'sick',
-    emoji: '🏥',
-    label: { ko: '아파요 / 긴급', zh: '生病了/紧急', en: 'Sick / Emergency' },
-    sub: { ko: '병원, 약국, 경찰, 대사관', zh: '医院、药店、警察、大使馆', en: 'Hospital, pharmacy, police' },
-    color: '#DC2626',
+    id: 'departure',
+    label: { ko: '출국준비', zh: '出境准备', en: 'Departure Prep' },
+    sub: { ko: '면세, 세금환급, 택배, 공항', zh: '免税、退税、快递、机场', en: 'Duty-free, tax refund, parcel, airport' },
   },
 ]
 
@@ -432,8 +425,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               key={card.id}
               onClick={() => {
                 if (card.id === 'just-arrived') { setArrivalStep('menu'); setShowArrivalFlow(true) }
-                else if (card.id === 'hungry') setTab('food')
-                else if (card.id === 'sick') setTab('medical')
+                else if (card.id === 'traveling') { setArrivalStep('traveling'); setShowArrivalFlow(true) }
+                else if (card.id === 'departure') { setArrivalStep('departure'); setShowArrivalFlow(true) }
               }}
               className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 text-left"
               style={{ width: 140, height: 100 }}
@@ -990,6 +983,76 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── 여행 중 플로우 ─── */}
+      {showArrivalFlow && arrivalStep === 'traveling' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
+            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+              {L(lang, { ko: '여행 중', zh: '旅行中', en: 'Traveling' })}
+            </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-3">
+            {[
+              { id: 'nav-food', label: { ko: '맛집 & 식당', zh: '美食 & 餐厅', en: 'Food & Restaurants' }, sub: { ko: '미슐랭, 한식, 주문법, 배달', zh: '米其林、韩餐、点餐、外卖', en: 'Michelin, Korean food, ordering, delivery' }, tab: 'food' },
+              { id: 'nav-shopping', label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, sub: { ko: '올리브영, 무신사, 면세점', zh: 'Olive Young、MUSINSA、免税店', en: 'Olive Young, MUSINSA, duty-free' }, tab: 'shopping' },
+              { id: 'nav-travel', label: { ko: '여행지 & 코스', zh: '旅游地 & 路线', en: 'Spots & Courses' }, sub: { ko: '서울, 부산, 제주 여행 코스', zh: '首尔、釜山、济州旅行路线', en: 'Seoul, Busan, Jeju courses' }, tab: 'travel' },
+              { id: 'nav-translator', label: { ko: '통역 & 번역', zh: '翻译 & 口译', en: 'Translate' }, sub: { ko: '말이 안 통할 때', zh: '语言不通时', en: "When you can't communicate" }, tab: 'translator' },
+              { id: 'nav-medical', label: { ko: '병원 & 약국', zh: '医院 & 药店', en: 'Hospital & Pharmacy' }, sub: { ko: '아프면 어디로? 외국인 진료', zh: '生病了去哪里？外国人就诊', en: 'Where to go when sick?' }, tab: 'medical' },
+              { id: 'nav-hallyu', label: { ko: '한류 & 엔터', zh: '韩流 & 娱乐', en: 'Hallyu & Entertainment' }, sub: { ko: 'K-POP, 드라마, 팬이벤트', zh: 'K-POP、韩剧、粉丝活动', en: 'K-POP, dramas, fan events' }, tab: 'hallyu' },
+              { id: 'nav-delivery', label: { ko: '배달 주문', zh: '点外卖', en: 'Food Delivery' }, sub: { ko: '배달앱 이용 가이드', zh: '外卖App使用指南', en: 'Delivery app guide' }, tab: 'delivery' },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => { setTab(item.tab); setShowArrivalFlow(false) }}
+                className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                  <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                </div>
+                <ChevronRight size={18} color="#999" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ─── 출국준비 플로우 ─── */}
+      {showArrivalFlow && arrivalStep === 'departure' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
+            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+              {L(lang, { ko: '출국준비', zh: '出境准备', en: 'Departure Prep' })}
+            </h2>
+          </div>
+          <div className="p-4 flex flex-col gap-3">
+            {[
+              { id: 'dep-tax-refund', label: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '공항에서 환급받는 법', zh: '在机场退税的方法', en: 'How to get refund at airport' }, guide: 'tax-refund' },
+              { id: 'dep-duty-free', label: { ko: '면세한도', zh: '免税限额', en: 'Duty Free Limit' }, sub: { ko: '초과하면 세금 폭탄!', zh: '超过就要交税！', en: 'Exceed the limit? Tax bomb!' }, guide: 'duty-free' },
+              { id: 'dep-parcel', label: { ko: '택배 보내기', zh: '寄快递', en: 'Ship Packages' }, sub: { ko: '짐 먼저 보내고 가볍게 출국', zh: '先寄行李轻松出境', en: 'Ship luggage first, travel light' }, tab: 'parcel' },
+              { id: 'dep-airport', label: { ko: '공항 이동', zh: '前往机场', en: 'To Airport' }, sub: { ko: 'AREX, 리무진, 택시 비교', zh: 'AREX、大巴、出租车对比', en: 'AREX, limousine, taxi comparison' }, tab: 'travel' },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
+                  else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
+                }}
+                className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                  <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                </div>
+                <ChevronRight size={18} color="#999" />
+              </button>
+            ))}
           </div>
         </div>
       )}

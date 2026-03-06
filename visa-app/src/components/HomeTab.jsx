@@ -340,14 +340,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
   // 방금 도착했어요 웰컴 플로우
   const [showArrivalFlow, setShowArrivalFlow] = useState(false)
-  const [arrivalStep, setArrivalStep] = useState('splash') // 'splash' | 'menu' | 'immigration' | 'transport' | 'sim-exchange'
-
-  useEffect(() => {
-    if (showArrivalFlow && arrivalStep === 'splash') {
-      const timer = setTimeout(() => setArrivalStep('menu'), 1500)
-      return () => clearTimeout(timer)
-    }
-  }, [showArrivalFlow, arrivalStep])
+  const [arrivalStep, setArrivalStep] = useState('menu') // 'menu' | 'immigration' | 'transport' | 'sim-exchange'
 
   // 시간대 선택 팝업
   const [showTzPicker, setShowTzPicker] = useState(false)
@@ -438,7 +431,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={card.id}
               onClick={() => {
-                if (card.id === 'just-arrived') { setArrivalStep('splash'); setShowArrivalFlow(true) }
+                if (card.id === 'just-arrived') { setArrivalStep('menu'); setShowArrivalFlow(true) }
                 else if (card.id === 'hungry') setTab('food')
                 else if (card.id === 'sick') setTab('medical')
               }}
@@ -749,18 +742,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
 
-      {/* ─── 방금 도착했어요 웰컴 플로우 ─── */}
-      {showArrivalFlow && arrivalStep === 'splash' && (
-        <div className="fixed inset-0 z-50 bg-white flex items-center justify-center animate-fade-in-out">
-          <div className="text-center">
-            <p className="text-4xl mb-4">👋</p>
-            <h1 className="text-xl font-bold text-[#1A1A1A]">
-              {L(lang, { ko: '한국에 오신 걸 환영해요!', zh: '欢迎来到韩国！', en: 'Welcome to Korea!' })}
-            </h1>
-          </div>
-        </div>
-      )}
-
+      {/* ─── 입국준비 플로우 ─── */}
       {showArrivalFlow && arrivalStep === 'menu' && (
         <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">

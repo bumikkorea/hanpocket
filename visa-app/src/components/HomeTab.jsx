@@ -445,8 +445,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 text-left"
               style={{ width: 140, height: 100 }}
             >
-              <span className="text-2xl block active:scale-110 transition-transform">{card.emoji}</span>
-              <p className="text-xs font-bold mt-1.5 leading-tight" style={{ color: '#1A1A1A' }}>
+              <p className="text-xs font-bold leading-tight" style={{ color: '#1A1A1A' }}>
                 {L(lang, card.label)}
               </p>
               <p className="text-[10px] mt-0.5 leading-tight" style={{ color: '#999999' }}>

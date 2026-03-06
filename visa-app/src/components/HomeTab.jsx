@@ -443,7 +443,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── Intent 카드 섹션 ─── */}
       <div className="mb-8">
         <h2 className="text-[15px] font-semibold tracking-wide px-4 mb-3" style={{ color: '#1A1A1A' }}>
-          {L(lang, { ko: '지금 뭐 하고 싶어요?', zh: '现在想做什么？', en: 'What do you need?' })}
+          {L(lang, { ko: '한국 처음이신가요?', zh: '第一次来韩国吗？', en: 'First time in Korea?' })}
         </h2>
         <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
           {INTENT_CARDS.map(card => (
@@ -817,7 +817,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           </div>
           <div className="p-4 flex flex-col gap-3">
             {[
-              { id: 'immigration', emoji: '🛬', label: { ko: '입국신고할게요', zh: '入境申报', en: 'Immigration forms' }, sub: { ko: '전자/실물 입국신고서, 세관신고', zh: '电子/纸质入境卡、海关申报', en: 'E-form, paper form, customs' } },
+              { id: 'immigration', emoji: '🛬', label: { ko: '전자 입국신고서 작성', zh: '电子入境卡填写', en: 'Electronic Arrival Card' }, sub: { ko: 'Q-CODE로 미리 작성하세요', zh: '用Q-CODE提前填写', en: 'Fill in advance with Q-CODE' } },
               { id: 'transport', emoji: '🚕', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX, 교통카드', zh: '机场出租车、RIDE APP、AREX、交通卡', en: 'Airport taxi, RIDE app, AREX, transit card' } },
               { id: 'sim-exchange', emoji: '💱', label: { ko: 'SIM카드 구매 & 환전할래요', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange money' }, sub: { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport exchange, Myeongdong' } },
             ].map(item => (
@@ -844,37 +844,40 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
-              {L(lang, { ko: '🛬 입국신고', zh: '🛬 入境申报', en: '🛬 Immigration' })}
+              {L(lang, { ko: '전자 입국신고서', zh: '电子入境卡', en: 'Electronic Arrival Card' })}
             </h2>
           </div>
-          <div className="p-4 flex flex-col gap-3">
-            <button
-              onClick={() => { setActiveGuide('arrival-card'); setShowArrivalFlow(false) }}
-              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
-            >
-              <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '전자 입국신고서 작성', zh: '电子入境卡填写', en: 'Electronic Arrival Card' })}</p>
-              <p className="text-xs text-[#666666] leading-relaxed mt-1">
-                {L(lang, { ko: 'Q-CODE 앱이나 사이트에서 미리 작성 가능. 비행기 안에서도 Wi-Fi로 가능!', zh: '可在Q-CODE APP或网站提前填写。飞机上也可用Wi-Fi填写！', en: 'Fill in advance via Q-CODE app or website. Also possible on the plane via Wi-Fi!' })}
-              </p>
-            </button>
-            <button
-              onClick={() => { setActiveGuide('arrival-card'); setShowArrivalFlow(false) }}
-              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
-            >
-              <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '실물 입국신고서 작성', zh: '纸质入境卡填写', en: 'Paper Arrival Card' })}</p>
-              <p className="text-xs text-[#666666] leading-relaxed mt-1">
-                {L(lang, { ko: '기내에서 나눠주는 종이 입국신고서. 영문 이름, 여권번호, 체류주소 등 기재.', zh: '飞机上发的纸质入境卡。填写英文姓名、护照号、住宿地址等。', en: 'Paper form distributed on the plane. Fill in English name, passport number, accommodation address, etc.' })}
-              </p>
-            </button>
-            <button
-              onClick={() => { setActiveGuide('duty-free'); setShowArrivalFlow(false) }}
-              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
-            >
-              <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '세관신고서 작성 (필요 시)', zh: '海关申报单（如需）', en: 'Customs Declaration (if needed)' })}</p>
-              <p className="text-xs text-[#666666] leading-relaxed mt-1">
-                {L(lang, { ko: '$10,000 이상 현금, 면세 초과 물품 등이 있을 때만 작성. 없으면 패스!', zh: '仅携带超过$10,000现金或超额免税品时需填写。没有就不用！', en: 'Only needed if carrying over $10,000 cash or excess duty-free goods. Skip if not!' })}
-              </p>
-            </button>
+          <div className="p-4">
+            {/* Q-CODE 카드 */}
+            <div className="rounded-2xl bg-[#F0F4FF] p-5">
+              <div className="flex items-start gap-3 mb-3">
+                <span className="text-2xl">✈️</span>
+                <div>
+                  <p className="text-[15px] font-bold text-[#1A1A1A]">{L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
+                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                    {L(lang, { ko: '한국 입국 전 온라인으로 미리 작성할 수 있습니다.\n건강상태, 세관신고를 한번에!\n실물 카드를 안 써도 됩니다.', zh: '入韩前可在线提前填写。\n健康状态、海关申报一次搞定！\n不需要纸质卡。', en: 'Fill out online before entering Korea.\nHealth & customs declaration in one go!\nNo physical card needed.' })}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <a
+                  href="https://ciq.korea.go.kr/coview/board/homeland/linkView.do"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-3 rounded-xl text-center text-sm font-bold text-white bg-[#3B5BDB] active:scale-[0.97] transition-transform"
+                >
+                  {L(lang, { ko: 'Q-CODE 바로가기', zh: 'Q-CODE 前往', en: 'Go to Q-CODE' })}
+                </a>
+                <a
+                  href="https://www.k-eta.go.kr/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-3 rounded-xl text-center text-sm font-bold text-[#1A1A1A] bg-white border border-[#E5E7EB] active:scale-[0.97] transition-transform"
+                >
+                  {L(lang, { ko: 'K-ETA (비자면제국)', zh: 'K-ETA（免签国）', en: 'K-ETA (Visa-free)' })}
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       )}

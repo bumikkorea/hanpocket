@@ -447,7 +447,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 else if (card.id === 'hungry') setTab('food')
                 else if (card.id === 'move') setTab('transport')
                 else if (card.id === 'sick') setTab('sos')
-                else if (card.id === 'shopping') setTab('shopping')
               }}
               className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 text-left"
               style={{ width: 140, height: 100 }}

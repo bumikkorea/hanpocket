@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react'
-import { X, Camera, Trash2, AlertTriangle, FileText } from 'lucide-react'
+import { ChevronLeft, Camera, Trash2, AlertTriangle, FileText } from 'lucide-react'
 
 const CustomsGuide = lazy(() => import('./CustomsGuide'))
 
@@ -225,13 +225,13 @@ export default function ArrivalCardGuide({ lang, onClose }) {
   return (
     <div className="fixed inset-0 z-[999] bg-white overflow-y-auto">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB] px-5 py-4 flex items-center justify-between">
-        <h1 className="text-lg font-bold text-[#111827]">
+      <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB] px-5 py-4 flex items-center gap-3">
+        <button onClick={onClose} className="p-1">
+          <ChevronLeft size={24} />
+        </button>
+        <h1 className="text-lg font-bold text-[#1A1A1A]">
           {L(lang, { ko: '입국카드 / 세관신고서', zh: '入境卡 / 海关申报', en: 'Arrival Card / Customs' })}
         </h1>
-        <button onClick={onClose} className="p-1 rounded-full hover:bg-[#F3F4F6] transition-colors">
-          <X size={22} className="text-[#111827]" />
-        </button>
       </div>
 
       {/* Tab buttons */}

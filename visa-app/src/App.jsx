@@ -837,25 +837,14 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
           </div>
         </div>
 
-        {/* 구분선 */}
-        <div className="border-t border-[#E5E7EB] my-4"></div>
-
-        {/* 첫 화면 다시보기 */}
+        {/* 로그아웃 버튼 (Free 바로 아래) */}
         <button
           onClick={() => {
+            handleLogout()
             localStorage.removeItem('hp_welcome_done')
-            setTab('home')
-            window.location.reload()
+            setTimeout(() => window.location.reload(), 300)
           }}
-          className="w-full text-[#2D5A3D] text-sm py-3 transition-colors flex items-center justify-center gap-2 mb-2"
-        >
-          👋 {lang === 'ko' ? '첫 화면 다시보기' : lang === 'zh' ? '重新查看欢迎页' : 'View welcome screen again'}
-        </button>
-
-        {/* 로그아웃 버튼 */}
-        <button
-          onClick={handleLogout}
-          className="w-full text-[#6B7280] text-sm py-3 hover:text-[#111827] transition-colors flex items-center justify-center gap-2"
+          className="w-full text-[#6B7280] text-sm py-3 transition-colors flex items-center justify-center gap-2 mt-2"
         >
           <LogOut className="w-4 h-4" />
           {lang === 'ko' ? '로그아웃' : lang === 'zh' ? '注销' : 'Logout'}
@@ -2295,7 +2284,7 @@ function AppInner() {
           <div className="flex-1 overflow-y-auto px-5 py-5">
             {/* Widget Settings Section */}
             <div className="mb-8">
-              <h3 className="text-sm font-bold mb-1" style={{ color: '#1A1A1A' }}>{L(lang, { ko: '내 위젯 설정', zh: '我的小组件设置', en: 'My Widget Settings' })}</h3>
+              <h3 className="text-sm font-bold mb-3" style={{ color: '#1A1A1A' }}>{L(lang, { ko: '내 위젯 설정', zh: '我的小组件设置', en: 'My Widget Settings' })}</h3>
               <p className="text-xs font-semibold mb-4" style={{ color: '#6B7280' }}>{L(lang, { ko: '홈 화면의 위젯을 설정할 수 있습니다.', zh: '可以设置首页的小组件。', en: 'Configure widgets on the home screen.' })}</p>
               <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                 {[
@@ -2336,10 +2325,10 @@ function AppInner() {
               <div className="mb-5">
                 <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '지도', zh: '地图', en: 'Maps' })}</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="카카오맵 (추천)" description="지도, 길찾기, 장소검색" deepLink="kakaomap://" webUrl="https://map.kakao.com" domain="map.kakao.com" />
-                  <AppShortcut name="바이두 지도" description="百度地图 — 중국어 지도" deepLink="baidumap://" webUrl="https://map.baidu.com" domain="map.baidu.com" />
+                  <AppShortcut name="카카오맵" description={L(lang, {ko:'지도, 길찾기, 장소검색', zh:'地图、导航、搜索', en:'Map, directions, search'})} deepLink="kakaomap://" webUrl="https://map.kakao.com" domain="map.kakao.com" />
+                  <AppShortcut name="바이두 지도" description={L(lang, {ko:'중국어 지도', zh:'百度地图 — 中文地图', en:'Chinese map'})} deepLink="baidumap://" webUrl="https://map.baidu.com" domain="map.baidu.com" />
                   <AppShortcut name="구글맵" description="Google Maps" deepLink="comgooglemaps://" webUrl="https://maps.google.com" domain="maps.google.com" />
-                  <AppShortcut name="네이버 지도" description="지도, 내비게이션" deepLink="nmap://" webUrl="https://map.naver.com" domain="map.naver.com" />
+                  <AppShortcut name="네이버 지도" description={L(lang, {ko:'지도, 내비게이션', zh:'地图、导航', en:'Map, navigation'})} deepLink="nmap://" webUrl="https://map.naver.com" domain="map.naver.com" />
                 </div>
               </div>
 
@@ -2347,11 +2336,11 @@ function AppInner() {
               <div className="mb-5">
                 <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '쇼핑/배달', zh: '购物/外卖', en: 'Shopping/Delivery' })}</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="배달의민족" description="음식 배달 주문" deepLink="baemin://" webUrl="https://apps.apple.com/app/id378084485" domain="baemin.com" />
-                  <AppShortcut name="무신사" description="패션 쇼핑몰" deepLink="musinsa://" webUrl="https://apps.apple.com/app/id1095563498" domain="musinsa.com" />
-                  <AppShortcut name="올리브영" description="화장품, 생활용품" deepLink="oliveyoung://" webUrl="https://apps.apple.com/app/id1040498076" domain="global.oliveyoung.com" />
-                  <AppShortcut name="쿠팡" description="온라인 쇼핑몰" deepLink="coupang://" webUrl="https://apps.apple.com/app/id454434967" domain="coupang.com" />
-                  <AppShortcut name="인터파크" description="공연 티켓 구매 전문" deepLink="interpark://" webUrl="https://apps.apple.com/app/id380598498" domain="tickets.interpark.com" />
+                  <AppShortcut name="배달의민족" description={L(lang, {ko:'음식 배달 주문', zh:'外卖订餐', en:'Food delivery'})} deepLink="baemin://" webUrl="https://apps.apple.com/app/id378084485" domain="baemin.com" />
+                  <AppShortcut name="무신사" description={L(lang, {ko:'패션 쇼핑몰', zh:'时尚购物', en:'Fashion shopping'})} deepLink="musinsa://" webUrl="https://apps.apple.com/app/id1095563498" domain="musinsa.com" />
+                  <AppShortcut name="올리브영" description={L(lang, {ko:'화장품, 생활용품', zh:'化妆品、生活用品', en:'Cosmetics, daily goods'})} deepLink="oliveyoung://" webUrl="https://apps.apple.com/app/id1040498076" domain="global.oliveyoung.com" />
+                  <AppShortcut name="쿠팡" description={L(lang, {ko:'온라인 쇼핑몰', zh:'在线购物', en:'Online shopping'})} deepLink="coupang://" webUrl="https://apps.apple.com/app/id454434967" domain="coupang.com" />
+                  <AppShortcut name="인터파크" description={L(lang, {ko:'공연 티켓 구매', zh:'演出门票购买', en:'Show tickets'})} deepLink="interpark://" webUrl="https://apps.apple.com/app/id380598498" domain="tickets.interpark.com" />
                 </div>
               </div>
 
@@ -2359,8 +2348,8 @@ function AppInner() {
               <div className="mb-5">
                 <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '여행/숙박', zh: '旅行/住宿', en: 'Travel/Stay' })}</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="Trip.com" description="항공권, 호텔 예약" deepLink="ctrip://" webUrl="https://www.trip.com/?promo=aff_1892_hp&locale=ko-KR" domain="trip.com" />
-                  <AppShortcut name="Klook" description="액티비티, 투어, 입장권" deepLink="klook://" webUrl="https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket" domain="klook.com" />
+                  <AppShortcut name="Trip.com" description={L(lang, {ko:'항공권, 호텔 예약', zh:'机票、酒店预订', en:'Flights, hotels'})} deepLink="ctrip://" webUrl="https://www.trip.com/?promo=aff_1892_hp&locale=ko-KR" domain="trip.com" />
+                  <AppShortcut name="Klook" description={L(lang, {ko:'액티비티, 투어, 입장권', zh:'活动、旅游、门票', en:'Activities, tours, tickets'})} deepLink="klook://" webUrl="https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket" domain="klook.com" />
                 </div>
               </div>
 
@@ -2368,10 +2357,10 @@ function AppInner() {
               <div className="mb-5">
                 <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '생활/정부', zh: '生活/政府', en: 'Life/Gov' })}</p>
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="카카오톡" description="메신저, 소셜" deepLink="kakaotalk://" webUrl="https://apps.apple.com/app/id362057947" domain="kakaocorp.com" />
-                  <AppShortcut name="당근" description="중고거래, 동네생활" deepLink="daangn://" webUrl="https://apps.apple.com/app/id1018769995" domain="daangn.com" />
-                  <AppShortcut name="정부24" description="정부 민원 서비스" deepLink="" webUrl="https://apps.apple.com/app/id1327365498" domain="gov.kr" />
-                  <AppShortcut name="하이코리아" description="출입국 외국인 정책" deepLink="" webUrl="https://www.hikorea.go.kr" domain="hikorea.go.kr" />
+                  <AppShortcut name="카카오톡" description={L(lang, {ko:'메신저, 소셜', zh:'聊天、社交', en:'Messenger, social'})} deepLink="kakaotalk://" webUrl="https://apps.apple.com/app/id362057947" domain="kakaocorp.com" />
+                  <AppShortcut name="당근" description={L(lang, {ko:'중고거래, 동네생활', zh:'二手交易、社区', en:'Used goods, local life'})} deepLink="daangn://" webUrl="https://apps.apple.com/app/id1018769995" domain="daangn.com" />
+                  <AppShortcut name="정부24" description={L(lang, {ko:'정부 민원 서비스', zh:'政府服务', en:'Government services'})} deepLink="" webUrl="https://apps.apple.com/app/id1327365498" domain="gov.kr" />
+                  <AppShortcut name="하이코리아" description={L(lang, {ko:'출입국 외국인 정책', zh:'出入境外国人政策', en:'Immigration policy'})} deepLink="" webUrl="https://www.hikorea.go.kr" domain="hikorea.go.kr" />
                 </div>
               </div>
             </div>

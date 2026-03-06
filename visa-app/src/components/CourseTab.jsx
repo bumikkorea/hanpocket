@@ -702,13 +702,26 @@ function CreateCourse({ lang, onBack, onSave }) {
 // ═══════════════════════════════════════════════
 // CourseTab — 메인 컴포넌트
 // ═══════════════════════════════════════════════
-export default function CourseTab({ lang }) {
+export default function CourseTab({ lang, deepLink, onDeepLinkConsumed }) {
   const [view, setView] = useState('list') // 'list' | 'detail' | 'create'
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [filter, setFilter] = useState('all')
   const [myCourses, setMyCourses] = useState(() => {
     try { return JSON.parse(localStorage.getItem('my_courses')) || [] } catch { return [] }
   })
+
+  // 딥링크 처리 — 홈탭에서 코스 클릭 시 상세로 직행
+  useEffect(() => {
+    if (!deepLink) return
+    const course = deepLink.itemData
+      || RECOMMENDED_COURSES.find(c => c.id === deepLink.itemId)
+      || myCourses.find(c => c.id === deepLink.itemId)
+    if (course) {
+      setSelectedCourse(course)
+      setView('detail')
+    }
+    onDeepLinkConsumed?.()
+  }, [deepLink])
 
   const saveMyCourses = useCallback((courses) => {
     setMyCourses(courses)

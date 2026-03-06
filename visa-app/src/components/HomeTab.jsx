@@ -1036,7 +1036,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             image: r.images?.[0] || 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
             tags: [r.area?.gu, r.cuisine, getAwardBadge(r.award)].filter(Boolean),
             sub: r.area?.gu,
-            onClick: () => setTab('food'),
+            onClick: () => setTab('food', { itemId: r.id, itemData: r }),
           }))
         }
 
@@ -1053,7 +1053,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           tags: [[r.area?.city, r.area?.gu, r.area?.dong].filter(Boolean).join(' '), r.cuisine, getAwardBadge(r.award)].filter(Boolean),
           sub: [r.area?.city, r.area?.gu, r.area?.dong].filter(Boolean).join(' '),
           review: L(lang, SAMPLE_REVIEWS[r.award] || SAMPLE_REVIEWS.blueribbon),
-          onClick: () => setTab('food'),
+          onClick: () => setTab('food', { itemId: r.id, itemData: r }),
         })
 
         const makeCourseItem = (c) => ({
@@ -1061,7 +1061,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           image: COURSE_IMAGES[c.id] || 'https://images.unsplash.com/photo-1583167625297-fe5e39ebb0f5?w=400&h=300&fit=crop',
           tags: [c.duration, c.stops.length + L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })],
           sub: L(lang, c.description),
-          onClick: () => setTab('course'),
+          onClick: () => setTab('course', { itemId: c.id, itemData: c }),
         })
 
         // 시간대별 추천 섹션

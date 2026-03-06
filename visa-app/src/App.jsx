@@ -1592,6 +1592,7 @@ function AppInner() {
   }
 
   const [subPage, setSubPage] = useState(null)
+  const [deepLink, setDeepLink] = useState(null) // { tab, itemId, itemData }
   const scrollPositions = useRef({}) // { tabId: { y: number, timestamp: number } }
 
   // OAuth 리다이렉트 중이면 온보딩 대신 로딩 표시 (콜백 처리 대기)
@@ -2011,12 +2012,12 @@ function AppInner() {
         )}
         {subPage==='food' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <FoodTab lang={lang} setTab={(t) => setSubPage(t)} />
+            <FoodTab lang={lang} setTab={(t) => setSubPage(t)} deepLink={deepLink?.tab === 'food' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
           </Suspense>
         )}
         {subPage==='shopping' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <ShoppingTab lang={lang} setTab={(t) => setSubPage(t)} />
+            <ShoppingTab lang={lang} setTab={(t) => setSubPage(t)} deepLink={deepLink?.tab === 'shopping' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
           </Suspense>
         )}
         {subPage==='hallyu' && (
@@ -2108,7 +2109,7 @@ function AppInner() {
 
         {tab==='course' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <CourseTab lang={lang} />
+            <CourseTab lang={lang} deepLink={deepLink?.tab === 'course' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
           </Suspense>
         )}
         {tab==='search' && !subPage && (
@@ -2121,7 +2122,7 @@ function AppInner() {
             <KoreanTab lang={lang} />
           </Suspense>
         )}
-        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} widgetSettings={widgetSettings} setTab={(t) => { if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
+        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
         <div className="mt-12 mb-6 px-4 text-center text-[11px] text-[#9CA3AF]">

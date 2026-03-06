@@ -176,10 +176,15 @@ const SECTIONS = [
   { id: 'payment', label: { ko: '결제 가이드', zh: '支付指南', en: 'Payment Guide' }, icon: CreditCard }
 ]
 
-export default function ShoppingTab({ lang, setTab }) {
+export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed }) {
   const [section, setSection] = useState('deals')
   const [searchQuery, setSearchQuery] = useState('')
   const nextSale = useMemo(() => getNextSale(), [])
+
+  // 딥링크 소비 (현재 ShoppingTab에는 딥링크 가능한 상세 뷰 없음, 소비만 처리)
+  useEffect(() => {
+    if (deepLink) onDeepLinkConsumed?.()
+  }, [deepLink])
 
   return (
     <div className="space-y-4 animate-fade-up pb-4">

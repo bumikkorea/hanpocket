@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, lazy, Suspense } from 'react'
-import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter, Navigation, Loader2 } from 'lucide-react'
+import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter, Navigation, Loader2, ChevronLeft } from 'lucide-react'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES, LOCATION_FILTERS, LOCATION_HIERARCHY } from '../data/restaurantData'
 import { trackSearch, trackEvent } from '../utils/analytics'
 
@@ -18,7 +18,7 @@ const AWARD_LABELS = {
 
 const PAGE_SIZE = 20
 
-export default function FoodTab({ lang }) {
+export default function FoodTab({ lang, deepLink, onDeepLinkConsumed }) {
   const [tab, setTab] = useState('all') // 'michelin' | 'blueribbon' | 'all'
   const [search, setSearch] = useState('')
   const [selectedSi, setSelectedSi] = useState('') // 시 (서울특별시, 부산광역시, 경기도 등)
@@ -27,6 +27,19 @@ export default function FoodTab({ lang }) {
   const [cuisine, setCuisine] = useState('all')
   const [sortBy, setSortBy] = useState('name') // 'name' | 'location' | 'award'
   const [shown, setShown] = useState(PAGE_SIZE)
+  const [detailRestaurant, setDetailRestaurant] = useState(null)
+
+  // 딥링크 처리 — 홈탭에서 맛집 클릭 시 상세 모달 직행
+  useEffect(() => {
+    if (!deepLink) return
+    const allList = [...MICHELIN_RESTAURANTS, ...BLUE_RIBBON_RESTAURANTS]
+    const restaurant = deepLink.itemData
+      || allList.find(r => r.id === deepLink.itemId)
+    if (restaurant) {
+      setDetailRestaurant(restaurant)
+    }
+    onDeepLinkConsumed?.()
+  }, [deepLink])
 
   const allRestaurants = useMemo(() => [...MICHELIN_RESTAURANTS, ...BLUE_RIBBON_RESTAURANTS], [])
 
@@ -319,7 +332,7 @@ export default function FoodTab({ lang }) {
       {/* Cards */}
       <div className="space-y-3">
         {visible.map(r => (
-          <div key={r.id} className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
+          <div key={r.id} className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow cursor-pointer active:scale-[0.99] transition-transform" onClick={() => setDetailRestaurant(r)}>
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -371,6 +384,122 @@ export default function FoodTab({ lang }) {
 
       {/* TourAPI 맛집 더보기 */}
       <TourApiFoodSection lang={lang} />
+
+      {/* 맛집 상세 모달 */}
+      {detailRestaurant && (
+        <RestaurantDetailModal restaurant={detailRestaurant} lang={lang} onClose={() => setDetailRestaurant(null)} />
+      )}
+    </div>
+  )
+}
+
+/** 맛집 상세 모달 */
+function RestaurantDetailModal({ restaurant: r, lang, onClose }) {
+  const awardInfo = AWARD_LABELS[r.award]
+  const cuisineLabel = FOOD_CATEGORIES.find(c => c.id === r.cuisine)?.label
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose}>
+      <div className="absolute inset-x-0 bottom-0 max-h-[90vh] bg-white rounded-t-2xl overflow-y-auto animate-slide-up" onClick={e => e.stopPropagation()}>
+        {/* 이미지 영역 */}
+        {r.images?.length > 0 && (
+          <div className="relative">
+            <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+              {r.images.map((img, i) => (
+                <img key={i} src={img} alt="" className="w-full h-56 object-cover shrink-0 snap-center" loading={i === 0 ? 'eager' : 'lazy'} />
+              ))}
+            </div>
+            <button onClick={onClose} className="absolute top-3 left-3 w-8 h-8 flex items-center justify-center bg-black/40 rounded-full text-white">
+              <ChevronLeft size={20} />
+            </button>
+          </div>
+        )}
+        {!r.images?.length && (
+          <div className="flex items-center justify-between p-4 border-b border-[#F3F4F6]">
+            <button onClick={onClose} className="flex items-center gap-1 text-sm text-[#6B7280]">
+              <ChevronLeft size={18} />
+              {lang === 'ko' ? '뒤로' : lang === 'zh' ? '返回' : 'Back'}
+            </button>
+          </div>
+        )}
+
+        <div className="p-5 space-y-4">
+          {/* 이름 + 뱃지 */}
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-lg font-bold text-[#111827]">{L(lang, r.name)}</h2>
+              {awardInfo && r.award !== 'blueribbon' && awardInfo.stars > 0 && (
+                <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                  {Array.from({ length: awardInfo.stars }, (_, i) => (
+                    <Star key={i} size={11} className="fill-amber-500 text-amber-500" />
+                  ))}
+                </span>
+              )}
+              {r.award === 'blueribbon' && (
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full">
+                  <Award size={12} />
+                  {Array.from({ length: r.awardCount }, (_, i) => (
+                    <Star key={i} size={10} className="fill-blue-500 text-blue-500" />
+                  ))}
+                </span>
+              )}
+              {r.award === 'bib' && (
+                <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Bib Gourmand</span>
+              )}
+            </div>
+            {lang !== 'ko' && <p className="text-sm text-[#9CA3AF] mt-0.5">{r.name.ko}</p>}
+          </div>
+
+          {/* 정보 태그 */}
+          <div className="flex flex-wrap gap-2">
+            {cuisineLabel && (
+              <span className="text-xs px-2.5 py-1 bg-[#F3F4F6] rounded-full text-[#4B5563]">{L(lang, cuisineLabel)}</span>
+            )}
+            <span className="text-xs px-2.5 py-1 bg-[#F3F4F6] rounded-full text-[#4B5563]">
+              {'$'.repeat(r.priceRange)}
+            </span>
+          </div>
+
+          {/* 주소 */}
+          <div className="flex items-start gap-2 text-sm text-[#4B5563]">
+            <MapPin size={16} className="shrink-0 mt-0.5 text-[#9CA3AF]" />
+            <span>{r.area.city} {r.area.gu}{r.area.dong ? ' ' + r.area.dong : ''}</span>
+          </div>
+
+          {/* 액션 버튼 */}
+          <div className="flex gap-2">
+            {r.naverMapUrl && (
+              <a href={r.naverMapUrl} target="_blank" rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-white bg-[#111827] rounded-xl">
+                <Navigation size={14} />
+                {lang === 'ko' ? '길찾기' : lang === 'zh' ? '导航' : 'Directions'}
+              </a>
+            )}
+            {r.catchTableUrl && (
+              <a href={r.catchTableUrl} target="_blank" rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-[#111827] bg-[#F3F4F6] rounded-xl">
+                {lang === 'ko' ? '예약하기' : lang === 'zh' ? '预约' : 'Reserve'}
+              </a>
+            )}
+          </div>
+
+          {/* 외부 링크 */}
+          <div className="flex gap-2">
+            {r.michelinUrl && (
+              <a href={r.michelinUrl} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-[#6B7280] hover:text-[#111827]">
+                Michelin Guide <ExternalLink size={10} />
+              </a>
+            )}
+            {r.siksinUrl && (
+              <a href={r.siksinUrl} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1 text-xs text-[#6B7280] hover:text-[#111827]">
+                {lang === 'ko' ? '식신 리뷰' : lang === 'zh' ? '食神评价' : 'Siksin Reviews'} <ExternalLink size={10} />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

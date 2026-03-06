@@ -190,13 +190,6 @@ const INTENT_CARDS = [
     sub: { ko: '병원, 약국, 경찰, 대사관', zh: '医院、药店、警察、大使馆', en: 'Hospital, pharmacy, police' },
     color: '#DC2626',
   },
-  {
-    id: 'shopping',
-    emoji: '🛍️',
-    label: { ko: '쇼핑하고 싶어요', zh: '想购物', en: 'Want to shop' },
-    sub: { ko: '면세, 환급, 올리브영', zh: '免税、退税、Olive Young', en: 'Duty-free, tax refund' },
-    color: '#6B4C3B',
-  },
 ]
 
 // ── 프로모 배너 컴포넌트 ──

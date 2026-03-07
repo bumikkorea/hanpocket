@@ -782,6 +782,48 @@ export default function TravelTab({ lang, setTab, profile }) {
         </Suspense>
       )}
 
+      {/* Cities — 클룩 스타일 도시 카드 */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold text-[#111827] px-4">
+          {L(lang, { ko: '도시별 여행', zh: '按城市旅游', en: 'Travel by City' })}
+        </h2>
+        <div className="space-y-3 px-4">
+          {TRAVEL_CITIES.map(city => (
+            <button
+              key={city.id}
+              onClick={() => setSelectedCity(city)}
+              className="w-full rounded-2xl overflow-hidden border border-[#E5E7EB] bg-white hover:shadow-md transition-all duration-200 active:scale-[0.98]"
+            >
+              <div className="relative h-[140px]">
+                <img
+                  src={city.image}
+                  alt={L(lang, city.name)}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/30" />
+                <div className="absolute bottom-3 left-3 right-3">
+                  <h3 className="text-white font-bold text-lg">
+                    {L(lang, city.name)}
+                  </h3>
+                  <p className="text-white/90 text-sm line-clamp-2">
+                    {L(lang, city.description)}
+                  </p>
+                </div>
+              </div>
+              <div className="p-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-[#6B7280]">
+                    {city.areas?.length || 0}{L(lang, { ko: '개 지역', zh: '个地区', en: ' areas' })} · 
+                    {city.spots?.length || 0}{L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })}
+                  </span>
+                  <ChevronRight size={16} className="text-[#9CA3AF]" />
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Guide overlays */}
       {activeGuide && (
         <Suspense fallback={null}>

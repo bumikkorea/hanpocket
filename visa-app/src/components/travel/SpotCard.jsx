@@ -1,80 +1,110 @@
-/**
- * SpotCard — 클룩 스타일 카드 컴포넌트 (재사용)
- * 이미지 + 카테고리 태그 + 이름 + 평점 + 가격
- */
-import { Star, Heart, MapPin } from 'lucide-react'
-import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../data/travelData'
+import React from 'react'
+import { Star, Heart } from 'lucide-react'
 
-function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
+function L(lang, data) {
+  if (typeof data === 'string') return data
+  return data?.[lang] || data?.en || data?.zh || data?.ko || ''
+}
 
-export default function SpotCard({ spot, lang, areaName, onClick, isFavorite, onToggleFavorite }) {
-  const catLabel = CATEGORY_LABELS[spot.category] || {}
-  const catColor = CATEGORY_COLORS[spot.category] || 'bg-gray-50 text-gray-700'
+// 카테고리 라벨 매핑
+const CATEGORY_LABELS = {
+  food: { ko: '맛집', zh: '美食', en: 'Restaurant' },
+  cafe: { ko: '카페', zh: '咖啡厅', en: 'Cafe' },
+  shopping: { ko: '쇼핑', zh: '购物', en: 'Shopping' },
+  attraction: { ko: '관광', zh: '观光', en: 'Attraction' },
+  experience: { ko: '체험', zh: '体验', en: 'Experience' },
+}
+
+// 지역 라벨 매핑  
+const AREA_LABELS = {
+  myeongdong: { ko: '명동', zh: '明洞', en: 'Myeongdong' },
+  gangnam: { ko: '강남', zh: '江南', en: 'Gangnam' },
+  hongdae: { ko: '홍대', zh: '弘大', en: 'Hongdae' },
+  itaewon: { ko: '이태원', zh: '梨泰院', en: 'Itaewon' },
+  seongsu: { ko: '성수', zh: '圣水', en: 'Seongsu' },
+  bukchon: { ko: '북촌', zh: '北村', en: 'Bukchon' },
+}
+
+export default function SpotCard({ spot, lang, onClick, compact = false }) {
+  const categoryLabel = L(lang, CATEGORY_LABELS[spot.category] || { ko: '장소', zh: '地点', en: 'Place' })
+  const areaLabel = L(lang, AREA_LABELS[spot.area] || { ko: spot.area, zh: spot.area, en: spot.area })
+  const name = L(lang, spot.name)
+  const description = L(lang, spot.description)
+
+  if (compact) {
+    return (
+      <button
+        onClick={onClick}
+        className="flex-shrink-0 w-[280px] rounded-2xl border border-[#E5E7EB] overflow-hidden bg-white hover:shadow-md transition-all duration-200"
+      >
+        <div className="relative h-[140px]">
+          <img 
+            src={spot.image} 
+            alt={name}
+            className="w-full h-full object-cover" 
+          />
+          <span className="absolute top-2 left-2 bg-white/90 text-xs px-2 py-0.5 rounded-full font-medium text-[#374151]">
+            {categoryLabel}
+          </span>
+          <button className="absolute top-2 right-2 p-1 bg-white/90 rounded-full">
+            <Heart size={14} className="text-[#9CA3AF]" />
+          </button>
+        </div>
+        <div className="p-3">
+          <p className="text-[11px] text-[#999] mb-0.5">{categoryLabel} · {areaLabel}</p>
+          <p className="text-sm font-bold text-[#1A1A1A] mb-1 line-clamp-1">{name}</p>
+          {spot.rating && (
+            <div className="flex items-center gap-1 mb-1.5">
+              <Star size={12} className="text-[#FCD34D] fill-current" />
+              <span className="text-xs text-[#666]">{spot.rating}</span>
+              <span className="text-xs text-[#999]">({spot.reviewCount?.toLocaleString() || 0})</span>
+              {spot.tags?.slice(0, 2).map(tag => (
+                <span key={tag} className="text-xs text-[#999]">· {tag}</span>
+              ))}
+            </div>
+          )}
+          <p className="text-sm font-bold text-[#1A1A1A]">{spot.price}</p>
+        </div>
+      </button>
+    )
+  }
 
   return (
-    <div
-      onClick={() => onClick?.(spot)}
-      className="rounded-2xl border border-[#E5E7EB] overflow-hidden bg-white cursor-pointer transition-transform active:scale-[0.98]"
+    <button
+      onClick={onClick}
+      className="rounded-2xl border border-[#E5E7EB] overflow-hidden bg-white hover:shadow-md transition-all duration-200"
     >
-      {/* 이미지 */}
       <div className="relative h-[160px]">
-        <img
-          src={spot.image}
-          alt={L(lang, spot.name)}
-          className="w-full h-full object-cover"
-          loading="lazy"
-          onError={(e) => {
-            e.target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gray-100"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></div>`
-          }}
+        <img 
+          src={spot.image} 
+          alt={name}
+          className="w-full h-full object-cover" 
         />
-        {/* 카테고리 태그 */}
-        <span className={`absolute top-2.5 left-2.5 text-[10px] px-2 py-0.5 rounded-full font-semibold ${catColor}`}>
-          {L(lang, catLabel)}
+        <span className="absolute top-2 left-2 bg-white/90 text-xs px-2 py-0.5 rounded-full font-medium text-[#374151]">
+          {categoryLabel}
         </span>
-        {/* 찜 버튼 */}
-        {onToggleFavorite && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onToggleFavorite(spot.id) }}
-            className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm"
-          >
-            <Heart
-              size={16}
-              className={isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-400'}
-            />
-          </button>
+        <button className="absolute top-2 right-2 p-1 bg-white/90 rounded-full">
+          <Heart size={16} className="text-[#9CA3AF]" />
+        </button>
+      </div>
+      <div className="p-3">
+        <p className="text-[11px] text-[#999] mb-0.5">{categoryLabel} · {areaLabel}</p>
+        <p className="text-sm font-bold text-[#1A1A1A] mb-1">{name}</p>
+        {spot.rating && (
+          <div className="flex items-center gap-1 mb-1.5">
+            <Star size={12} className="text-[#FCD34D] fill-current" />
+            <span className="text-xs text-[#666]">{spot.rating}</span>
+            <span className="text-xs text-[#999]">({spot.reviewCount?.toLocaleString() || 0})</span>
+            {spot.tags?.slice(0, 2).map(tag => (
+              <span key={tag} className="text-xs text-[#999]">· {tag}</span>
+            ))}
+          </div>
+        )}
+        <p className="text-sm font-bold text-[#1A1A1A]">{spot.price}</p>
+        {description && (
+          <p className="text-xs text-[#666] mt-1 line-clamp-2">{description}</p>
         )}
       </div>
-
-      {/* 정보 */}
-      <div className="p-3">
-        {/* 카테고리 · 지역 */}
-        <p className="text-[11px] text-[#999] leading-none">
-          {L(lang, catLabel)}{areaName ? ` · ${areaName}` : ''}
-        </p>
-
-        {/* 이름 */}
-        <p className="text-sm font-bold text-[#1A1A1A] mt-1 line-clamp-1">
-          {L(lang, spot.name)}
-        </p>
-
-        {/* 평점 + 태그 */}
-        <div className="flex items-center gap-1 mt-1.5 text-xs text-[#666]">
-          <Star size={12} className="fill-yellow-400 text-yellow-400 shrink-0" />
-          <span className="font-medium">{spot.rating}</span>
-          <span className="text-[#999]">({spot.reviewCount?.toLocaleString()})</span>
-          {spot.tags?.[0] && (
-            <>
-              <span className="text-[#D1D5DB]">·</span>
-              <span className="truncate">{L(lang, spot.tags[0])}</span>
-            </>
-          )}
-        </div>
-
-        {/* 가격 */}
-        <p className="text-sm font-bold text-[#1A1A1A] mt-1.5">
-          {L(lang, spot.price)}
-        </p>
-      </div>
-    </div>
+    </button>
   )
 }

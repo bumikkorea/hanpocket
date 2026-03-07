@@ -1,177 +1,179 @@
-/**
- * CityPage — 도시별 페이지 (클룩 벤치마킹)
- * 히어로 배너 + 지역 카드 + 탭 필터 + 스팟 카드 리스트
- */
-import { useState } from 'react'
-import { ChevronLeft, ChevronRight, MapPin, Users, Calendar } from 'lucide-react'
+import React, { useState } from 'react'
+import { ChevronLeft } from 'lucide-react'
 import SpotCard from './SpotCard'
-import { CATEGORY_LABELS } from '../../data/travelData'
 
-function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
+function L(lang, data) {
+  if (typeof data === 'string') return data
+  return data?.[lang] || data?.en || data?.zh || data?.ko || ''
+}
 
-const TAB_FILTERS = [
-  { id: 'all', label: { ko: '전체', zh: '全部', en: 'All' } },
+const TABS = [
+  { id: 'overview', label: { ko: '둘러보기', zh: '浏览', en: 'Overview' } },
   { id: 'food', label: { ko: '맛집', zh: '美食', en: 'Food' } },
-  { id: 'attraction', label: { ko: '관광지', zh: '景点', en: 'Sights' } },
-  { id: 'experience', label: { ko: '체험', zh: '体验', en: 'Experience' } },
+  { id: 'experience', label: { ko: '체험&입장', zh: '体验&门票', en: 'Experience' } },
   { id: 'shopping', label: { ko: '쇼핑', zh: '购物', en: 'Shopping' } },
+  { id: 'transport', label: { ko: '교통', zh: '交通', en: 'Transport' } },
 ]
 
-export default function CityPage({ city, lang, onBack, onAreaClick, onSpotClick, favorites, onToggleFavorite }) {
-  const [filter, setFilter] = useState('all')
-  const [selectedArea, setSelectedArea] = useState(null)
+export default function CityPage({ city, lang, onBack, onAreaClick, onSpotClick }) {
+  const [activeTab, setActiveTab] = useState('overview')
 
-  const filteredSpots = city.spots.filter(s => {
-    const matchCategory = filter === 'all' || s.category === filter
-    const matchArea = !selectedArea || s.area === selectedArea
-    return matchCategory && matchArea
-  })
+  const cityName = L(lang, city.name)
+  const cityDescription = L(lang, city.description)
 
-  const getAreaName = (areaId) => {
-    const area = city.areas.find(a => a.id === areaId)
-    return area ? L(lang, area.name) : ''
+  // 탭별 필터링된 스팟들
+  const getFilteredSpots = () => {
+    switch (activeTab) {
+      case 'food':
+        return city.spots.filter(spot => ['food', 'cafe'].includes(spot.category))
+      case 'experience':
+        return city.spots.filter(spot => ['attraction', 'experience'].includes(spot.category))
+      case 'shopping':
+        return city.spots.filter(spot => spot.category === 'shopping')
+      case 'transport':
+        return [] // 교통 정보는 별도 구현
+      default:
+        return city.spots // 전체 스팟
+    }
   }
 
+  const filteredSpots = getFilteredSpots()
+
   return (
-    <div className="space-y-4">
-      {/* 뒤로가기 */}
-      <button onClick={onBack} className="flex items-center gap-1 text-sm font-medium text-[#374151] -mb-2">
-        <ChevronLeft size={18} />
-        {L(lang, { ko: '도시 목록', zh: '城市列表', en: 'Cities' })}
-      </button>
+    <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+      {/* 헤더 */}
+      <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <button onClick={onBack} className="p-1">
+            <ChevronLeft size={24} className="text-[#374151]" />
+          </button>
+          <h1 className="text-lg font-semibold text-[#111827]">{cityName}</h1>
+        </div>
+      </div>
 
-      {/* 히어로 */}
-      <div className="relative rounded-2xl overflow-hidden h-[200px]">
-        <img
-          src={city.image}
-          alt={L(lang, city.name)}
+      {/* 히어로 섹션 */}
+      <div className="relative h-[200px] bg-[#F9FAFB]">
+        <img 
+          src={city.image} 
+          alt={cityName}
           className="w-full h-full object-cover"
-          onError={(e) => { e.target.style.display = 'none' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-5">
-          <h1 className="text-2xl font-bold text-white">{L(lang, city.name)}</h1>
-          <p className="text-sm text-white/80 mt-1 line-clamp-2">{L(lang, city.description)}</p>
-          <div className="flex items-center gap-4 mt-2 text-xs text-white/70">
-            {city.population && (
-              <span className="flex items-center gap-1"><Users size={12} /> {city.population}</span>
-            )}
-            {city.bestSeason && (
-              <span className="flex items-center gap-1"><Calendar size={12} /> {L(lang, city.bestSeason)}</span>
-            )}
-          </div>
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute bottom-4 left-4 right-4">
+          <h2 className="text-2xl font-bold text-white mb-1">{cityName}</h2>
+          <p className="text-white/90 text-sm">{cityDescription}</p>
         </div>
       </div>
 
-      {/* 지역 카드 (수평 스크롤) */}
-      {city.areas.length > 0 && (
-        <div>
-          <h2 className="text-sm font-bold text-[#111827] mb-2.5">
-            {L(lang, { ko: '인기 지역', zh: '热门地区', en: 'Popular Areas' })}
-          </h2>
-          <div className="flex gap-2.5 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-            {city.areas.map(area => (
-              <button
-                key={area.id}
-                onClick={() => setSelectedArea(selectedArea === area.id ? null : area.id)}
-                className={`shrink-0 rounded-xl overflow-hidden border transition-all ${
-                  selectedArea === area.id
-                    ? 'border-[#111827] ring-2 ring-[#111827]/10'
-                    : 'border-[#E5E7EB]'
-                }`}
-                style={{ width: '120px' }}
-              >
-                <div className="relative h-[72px]">
-                  <img
-                    src={area.image}
-                    alt={L(lang, area.name)}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    onError={(e) => { e.target.style.display = 'none' }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <p className="absolute bottom-1.5 left-2 text-xs font-bold text-white">
-                    {L(lang, area.name)}
-                  </p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* 카테고리 필터 탭 */}
-      <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
-        {TAB_FILTERS.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setFilter(tab.id)}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
-              filter === tab.id
-                ? 'bg-[#111827] text-white'
-                : 'bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]'
-            }`}
-          >
-            {L(lang, tab.label)}
-          </button>
-        ))}
-      </div>
-
-      {/* 선택된 지역 배너 */}
-      {selectedArea && (
-        <div className="flex items-center justify-between bg-[#F9FAFB] rounded-xl px-4 py-2.5">
-          <div className="flex items-center gap-2">
-            <MapPin size={14} className="text-[#6B7280]" />
-            <span className="text-sm font-medium text-[#374151]">{getAreaName(selectedArea)}</span>
-          </div>
-          <button
-            onClick={() => setSelectedArea(null)}
-            className="text-xs text-[#6B7280] underline"
-          >
-            {L(lang, { ko: '전체 보기', zh: '查看全部', en: 'Show all' })}
-          </button>
-        </div>
-      )}
-
-      {/* 스팟 카드 그리드 */}
-      {filteredSpots.length > 0 ? (
-        <div className="grid grid-cols-2 gap-3">
-          {filteredSpots.map(spot => (
-            <SpotCard
-              key={spot.id}
-              spot={spot}
-              lang={lang}
-              areaName={getAreaName(spot.area)}
-              onClick={onSpotClick}
-              isFavorite={favorites?.includes(spot.id)}
-              onToggleFavorite={onToggleFavorite}
-            />
+      {/* 탭 네비게이션 */}
+      <div className="sticky top-[64px] z-10 bg-white border-b border-[#E5E7EB]">
+        <div className="flex overflow-x-auto px-4">
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                activeTab === tab.id
+                  ? 'border-[#2D5A3D] text-[#2D5A3D]'
+                  : 'border-transparent text-[#6B7280] hover:text-[#374151]'
+              }`}
+            >
+              {L(lang, tab.label)}
+            </button>
           ))}
         </div>
-      ) : (
-        <div className="text-center py-12">
-          <MapPin size={32} className="mx-auto text-[#D1D5DB] mb-3" />
-          <p className="text-sm text-[#9CA3AF]">
-            {L(lang, { ko: '해당 조건의 스팟이 없습니다', zh: '没有符合条件的地点', en: 'No spots match this filter' })}
-          </p>
-        </div>
-      )}
+      </div>
 
-      {/* Coming Soon 메시지 */}
-      {city.comingSoon && (
-        <div className="text-center py-12 bg-[#F9FAFB] rounded-2xl">
-          <p className="text-lg font-bold text-[#374151] mb-1">
-            {L(lang, { ko: '준비 중이에요', zh: '即将上线', en: 'Coming Soon' })}
-          </p>
-          <p className="text-sm text-[#9CA3AF]">
-            {L(lang, {
-              ko: `${L(lang, city.name)} 콘텐츠를 열심히 준비 중입니다!`,
-              zh: `正在努力准备${L(lang, city.name)}内容！`,
-              en: `We're working hard on ${L(lang, city.name)} content!`,
-            })}
-          </p>
-        </div>
-      )}
+      <div className="p-4 space-y-6">
+        {activeTab === 'overview' && (
+          <>
+            {/* 인기 지역 */}
+            <div>
+              <h3 className="text-lg font-semibold text-[#111827] mb-4">
+                {lang === 'ko' ? '인기 지역' : lang === 'zh' ? '热门地区' : 'Popular Areas'}
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                {city.areas.map(area => (
+                  <button
+                    key={area.id}
+                    onClick={() => onAreaClick?.(area)}
+                    className="group relative h-[120px] rounded-xl overflow-hidden bg-[#F9FAFB] hover:shadow-md transition-all duration-200"
+                  >
+                    <img 
+                      src={area.image} 
+                      alt={L(lang, area.name)}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/30" />
+                    <div className="absolute inset-0 p-3 flex flex-col justify-end">
+                      <h4 className="text-white font-semibold text-sm">
+                        {L(lang, area.name)}
+                      </h4>
+                      <p className="text-white/80 text-xs line-clamp-2">
+                        {L(lang, area.description)}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 인기 스팟 (전체) */}
+            <div>
+              <h3 className="text-lg font-semibold text-[#111827] mb-4">
+                {lang === 'ko' ? '인기 스팟' : lang === 'zh' ? '热门景点' : 'Popular Spots'}
+              </h3>
+              <div className="grid grid-cols-1 gap-4">
+                {city.spots.slice(0, 6).map(spot => (
+                  <SpotCard
+                    key={spot.id}
+                    spot={spot}
+                    lang={lang}
+                    onClick={() => onSpotClick?.(spot)}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'transport' && (
+          <div className="text-center py-12">
+            <p className="text-[#9CA3AF]">
+              {lang === 'ko' ? '교통 정보는 준비 중입니다' : lang === 'zh' ? '交通信息准备中' : 'Transportation info coming soon'}
+            </p>
+          </div>
+        )}
+
+        {activeTab !== 'overview' && activeTab !== 'transport' && (
+          <div>
+            <h3 className="text-lg font-semibold text-[#111827] mb-4">
+              {L(lang, TABS.find(t => t.id === activeTab)?.label || '')}
+            </h3>
+            {filteredSpots.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4">
+                {filteredSpots.map(spot => (
+                  <SpotCard
+                    key={spot.id}
+                    spot={spot}
+                    lang={lang}
+                    onClick={() => onSpotClick?.(spot)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-[#9CA3AF]">
+                  {lang === 'ko' ? '준비 중입니다' : lang === 'zh' ? '准备中' : 'Coming soon'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 하단 여백 */}
+        <div className="h-8" />
+      </div>
     </div>
   )
 }

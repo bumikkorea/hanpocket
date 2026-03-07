@@ -1,454 +1,385 @@
-/**
- * travelData.js — 계층적 여행 데이터 (클룩 벤치마킹)
- * Phase 1: 서울 (6개 지역, 12+ 스팟)
- */
-
 export const CITIES = [
   {
     id: 'seoul',
     name: { ko: '서울', zh: '首尔', en: 'Seoul' },
-    image: 'https://images.unsplash.com/photo-1546874177-9e664107314e?w=800&q=80',
-    description: {
-      ko: '대한민국의 수도, K-문화와 미식의 중심지. 전통과 현대가 공존하는 매력적인 도시.',
-      zh: '韩国首都，K文化与美食的中心。传统与现代共存的魅力城市。',
-      en: 'Capital of Korea, center of K-culture and gastronomy. A charming city where tradition meets modernity.',
+    image: 'https://images.unsplash.com/photo-1583167625297-fe5e39ebb0f5?w=400&h=300&fit=crop',
+    description: { 
+      ko: '대한민국의 수도, K-문화의 중심지. 전통과 현대가 어우러진 매력적인 도시', 
+      zh: '韩国首都，K文化的中心。传统与现代交融的魅力城市', 
+      en: 'Capital of Korea, the heart of K-culture. A charming city where tradition meets modernity' 
     },
-    population: '9.7M',
-    bestSeason: { ko: '봄(4-5월) / 가을(9-11월)', zh: '春天(4-5月) / 秋天(9-11月)', en: 'Spring (Apr-May) / Fall (Sep-Nov)' },
     areas: [
       {
         id: 'myeongdong',
         name: { ko: '명동', zh: '明洞', en: 'Myeongdong' },
-        image: 'https://images.unsplash.com/photo-1583400225507-1eee4bef5f3a?w=800&q=80',
-        description: {
-          ko: '쇼핑과 길거리 음식의 메카. K-뷰티 브랜드가 밀집한 대표적인 관광지.',
-          zh: '购物和街头美食的圣地。K-Beauty品牌聚集的代表性旅游区。',
-          en: 'Mecca of shopping and street food. A top tourist area packed with K-beauty brands.',
+        image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&h=300&fit=crop',
+        description: { 
+          ko: '쇼핑과 길거리 음식의 메카', 
+          zh: '购物和街头美食的圣地', 
+          en: 'Mecca of shopping and street food' 
         },
         tags: ['shopping', 'food', 'kbeauty'],
       },
       {
         id: 'gangnam',
         name: { ko: '강남', zh: '江南', en: 'Gangnam' },
-        image: 'https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?w=800&q=80',
-        description: {
-          ko: '트렌디한 카페, 고급 쇼핑, 가로수길이 있는 서울의 핵심 상권.',
-          zh: '时尚咖啡厅、高端购物、林荫路所在的首尔核心商圈。',
-          en: 'Trendy cafes, upscale shopping, and the iconic Garosu-gil tree-lined street.',
+        image: 'https://images.unsplash.com/photo-1598374213491-1dfbe28b1b9c?w=400&h=300&fit=crop',
+        description: { 
+          ko: '세련된 쇼핑과 카페의 거리', 
+          zh: '时尚购物和咖啡街', 
+          en: 'Stylish shopping and cafe streets' 
         },
-        tags: ['shopping', 'cafe', 'trendy'],
+        tags: ['shopping', 'cafe', 'fashion'],
       },
       {
         id: 'hongdae',
         name: { ko: '홍대', zh: '弘大', en: 'Hongdae' },
-        image: 'https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=800&q=80',
-        description: {
-          ko: '젊은 예술과 인디 문화의 중심. 클럽, 거리 공연, 독립 상점이 가득.',
-          zh: '年轻艺术和独立文化的中心。俱乐部、街头表演、独立商店云集。',
-          en: 'Hub of youth art and indie culture. Clubs, street performances, and indie shops.',
+        image: 'https://images.unsplash.com/photo-1583167625297-fe5e39ebb0f5?w=400&h=300&fit=crop',
+        description: { 
+          ko: '젊음과 예술이 살아있는 클럽 문화의 중심', 
+          zh: '青春艺术与夜生活文化的中心', 
+          en: 'Center of youthful art and nightlife culture' 
         },
-        tags: ['nightlife', 'art', 'cafe'],
+        tags: ['nightlife', 'art', 'music'],
       },
       {
         id: 'itaewon',
         name: { ko: '이태원', zh: '梨泰院', en: 'Itaewon' },
-        image: 'https://images.unsplash.com/photo-1578037571214-25e07834ad4f?w=800&q=80',
-        description: {
-          ko: '다국적 음식과 문화가 공존하는 국제적인 거리. 경리단길, 해방촌.',
-          zh: '多国美食与文化共存的国际街区。经理团路、解放村。',
-          en: 'International district with multicultural food and culture. Gyeongnidan-gil, Haebangchon.',
+        image: 'https://images.unsplash.com/photo-1578037571214-25e07a2bfb89?w=400&h=300&fit=crop',
+        description: { 
+          ko: '세계 각국의 음식과 문화가 만나는 곳', 
+          zh: '世界各国美食与文化交汇的地方', 
+          en: 'Where global cuisine and culture meet' 
         },
-        tags: ['food', 'international', 'nightlife'],
+        tags: ['international', 'food', 'culture'],
       },
       {
         id: 'seongsu',
         name: { ko: '성수', zh: '圣水', en: 'Seongsu' },
-        image: 'https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=800&q=80',
-        description: {
-          ko: '서울의 브루클린. 옛 공장이 갤러리와 카페로 재탄생한 핫플레이스.',
-          zh: '首尔的布鲁克林。旧工厂变身画廊和咖啡厅的热门地区。',
-          en: 'Seoul\'s Brooklyn. Old factories reborn as galleries and cafes.',
+        image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&h=300&fit=crop',
+        description: { 
+          ko: '힙한 카페와 갤러리가 즐비한 문화 공간', 
+          zh: '时尚咖啡厅和画廊聚集的文化空间', 
+          en: 'Cultural space filled with hip cafes and galleries' 
         },
-        tags: ['cafe', 'art', 'trendy'],
+        tags: ['cafe', 'art', 'culture'],
       },
       {
         id: 'bukchon',
         name: { ko: '북촌', zh: '北村', en: 'Bukchon' },
-        image: 'https://images.unsplash.com/photo-1553564552-02ed0b194c14?w=800&q=80',
-        description: {
-          ko: '600년 역사의 한옥마을. 경복궁과 창덕궁 사이 전통 골목길.',
-          zh: '600年历史的韩屋村。景福宫与昌德宫之间的传统巷弄。',
-          en: '600-year-old hanok village. Traditional alleyways between Gyeongbokgung and Changdeokgung.',
+        image: 'https://images.unsplash.com/photo-1578037571214-25e07a2bfb89?w=400&h=300&fit=crop',
+        description: { 
+          ko: '전통 한옥과 현대 문화가 조화된 역사적 공간', 
+          zh: '传统韩屋与现代文化和谐共存的历史空间', 
+          en: 'Historic space where traditional hanok meets modern culture' 
         },
-        tags: ['culture', 'history', 'photo'],
+        tags: ['traditional', 'hanok', 'history'],
       },
     ],
     spots: [
-      // === 명동 ===
+      // 명동 스팟
       {
-        id: 'myeongdong-kyoja',
+        id: 'myeonggyoja',
         name: { ko: '명동교자', zh: '明洞饺子', en: 'Myeongdong Kyoja' },
         area: 'myeongdong',
         category: 'food',
-        image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=800&q=80',
+        image: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
+          'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop'
+        ],
         rating: 4.5,
         reviewCount: 2340,
         priceRange: 1,
         price: '₩10,000~',
-        address: { ko: '서울 중구 명동10길 29', zh: '首尔中区明洞10街29号', en: '29 Myeongdong 10-gil, Jung-gu, Seoul' },
+        address: { ko: '서울 중구 명동10길 29', zh: '首尔市中区明洞10街29号', en: '29, Myeongdong 10-gil, Jung-gu, Seoul' },
         hours: '10:30 - 21:00',
-        description: {
-          ko: '1966년 개업한 명동의 전설. 칼국수와 만두가 유명하며, 미슐랭 빕그르망에 선정.',
-          zh: '1966年开业的明洞传奇。以刀削面和饺子闻名，入选米其林必比登。',
-          en: 'Myeongdong legend since 1966. Famous for knife-cut noodles and dumplings, Michelin Bib Gourmand.',
+        description: { 
+          ko: '1966년 개업한 칼국수와 만두 맛집. 깔끔한 육수와 쫄깃한 면발로 유명', 
+          zh: '1966年开业的刀削面和饺子名店。以清爽的汤头和劲道的面条闻名', 
+          en: 'Famous noodle and dumpling restaurant established in 1966. Known for clear broth and chewy noodles' 
         },
-        tags: [
-          { ko: '미슐랭빕', zh: '米其林必比登', en: 'Bib Gourmand' },
-          { ko: '칼국수', zh: '刀削面', en: 'Kalguksu' },
-          { ko: '만두', zh: '饺子', en: 'Mandu' },
-        ],
-        menu: [
-          { name: { ko: '칼국수', zh: '刀削面', en: 'Kalguksu' }, price: '₩10,000' },
-          { name: { ko: '만두', zh: '饺子', en: 'Mandu' }, price: '₩10,000' },
-          { name: { ko: '비빔국수', zh: '拌面', en: 'Bibim-guksu' }, price: '₩10,000' },
-          { name: { ko: '콩국수', zh: '豆浆面', en: 'Kong-guksu' }, price: '₩11,000' },
-        ],
+        tags: ['미슐랭빕', '칼국수', '만두'],
+        kakaoMapUrl: 'https://place.map.kakao.com/8393463',
         relatedPhrases: 'restaurant',
       },
       {
-        id: 'n-seoul-tower',
+        id: 'nseoultower',
         name: { ko: 'N서울타워', zh: 'N首尔塔', en: 'N Seoul Tower' },
         area: 'myeongdong',
         category: 'attraction',
-        image: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=800&q=80',
-        rating: 4.6,
-        reviewCount: 8920,
-        priceRange: 2,
-        price: '₩16,000',
-        address: { ko: '서울 용산구 남산공원길 105', zh: '首尔龙山区南山公园路105号', en: '105 Namsangongwon-gil, Yongsan-gu, Seoul' },
-        hours: '10:00 - 23:00',
-        description: {
-          ko: '서울의 상징적인 랜드마크. 전망대에서 360도 서울 야경 감상. 남산 케이블카로 접근 가능.',
-          zh: '首尔标志性地标。从展望台360度欣赏首尔夜景。可乘南山缆车前往。',
-          en: 'Iconic Seoul landmark. 360-degree city views from the observation deck. Accessible by Namsan cable car.',
-        },
-        tags: [
-          { ko: '랜드마크', zh: '地标', en: 'Landmark' },
-          { ko: '야경', zh: '夜景', en: 'Night View' },
-          { ko: '전망대', zh: '展望台', en: 'Observatory' },
+        image: 'https://images.unsplash.com/photo-1583167625297-fe5e39ebb0f5?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1583167625297-fe5e39ebb0f5?w=400&h=300&fit=crop'
         ],
-        relatedPhrases: 'attraction',
+        rating: 4.2,
+        reviewCount: 8520,
+        priceRange: 2,
+        price: '₩16,000~',
+        address: { ko: '서울 용산구 남산공원길 105', zh: '首尔市龙山区南山公园路105号', en: '105, Namsangongwon-gil, Yongsan-gu, Seoul' },
+        hours: '10:00 - 23:00',
+        description: { 
+          ko: '서울의 대표 랜드마크. 360도 서울 시내 전망을 감상할 수 있는 전망대', 
+          zh: '首尔的代表性地标。可以360度俯瞰首尔市区的观景台', 
+          en: 'Seoul\'s iconic landmark. Observatory offering 360-degree views of Seoul' 
+        },
+        tags: ['랜드마크', '전망대', '야경'],
+        kakaoMapUrl: 'https://place.map.kakao.com/7886717',
+        relatedPhrases: 'tourist',
       },
-      // === 강남 ===
+      
+      // 강남 스팟
       {
         id: 'garosugil',
-        name: { ko: '가로수길', zh: '林荫路', en: 'Garosu-gil' },
+        name: { ko: '가로수길', zh: '林荫大道', en: 'Garosu-gil' },
         area: 'gangnam',
         category: 'shopping',
-        image: 'https://images.unsplash.com/photo-1560264280-88b68371db39?w=800&q=80',
-        rating: 4.3,
-        reviewCount: 3150,
-        priceRange: 2,
-        price: { ko: '무료 입장', zh: '免费入场', en: 'Free entry' },
-        address: { ko: '서울 강남구 신사동 가로수길', zh: '首尔江南区新沙洞林荫路', en: 'Garosu-gil, Sinsa-dong, Gangnam-gu, Seoul' },
-        hours: { ko: '상시 (가게별 상이)', zh: '全天（各店不同）', en: 'Always open (shops vary)' },
-        description: {
-          ko: '은행나무 가로수 아래 디자이너 숍, 편집숍, 카페가 줄지어 있는 트렌디한 거리.',
-          zh: '银杏树下设计师店、买手店、咖啡厅林立的时尚街道。',
-          en: 'Trendy street lined with designer shops, select shops, and cafes under ginkgo trees.',
-        },
-        tags: [
-          { ko: '편집숍', zh: '买手店', en: 'Select Shop' },
-          { ko: '카페', zh: '咖啡厅', en: 'Cafe' },
-          { ko: '인스타', zh: '打卡', en: 'Instagrammable' },
+        image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop'
         ],
+        rating: 4.3,
+        reviewCount: 1850,
+        priceRange: 3,
+        price: '₩50,000~',
+        address: { ko: '서울 강남구 신사동 가로수길', zh: '首尔市江南区新沙洞林荫大道', en: 'Garosu-gil, Sinsa-dong, Gangnam-gu, Seoul' },
+        hours: '11:00 - 22:00',
+        description: { 
+          ko: '트렌디한 패션 부티크와 카페가 즐비한 쇼핑 거리', 
+          zh: '汇聚时尚精品店和咖啡厅的购物街', 
+          en: 'Shopping street lined with trendy fashion boutiques and cafes' 
+        },
+        tags: ['패션', '쇼핑', '카페'],
+        kakaoMapUrl: 'https://place.map.kakao.com/26910191',
         relatedPhrases: 'shopping',
       },
       {
         id: 'coex',
-        name: { ko: '코엑스', zh: 'COEX', en: 'COEX Mall' },
+        name: { ko: '코엑스', zh: 'COEX', en: 'COEX' },
         area: 'gangnam',
-        category: 'attraction',
-        image: 'https://images.unsplash.com/photo-1573108724029-4c46571d6490?w=800&q=80',
-        rating: 4.4,
-        reviewCount: 5280,
-        priceRange: 2,
-        price: { ko: '무료 (별마당 도서관)', zh: '免费（星空图书馆）', en: 'Free (Starfield Library)' },
-        address: { ko: '서울 강남구 영동대로 513', zh: '首尔江南区永东大路513号', en: '513 Yeongdong-daero, Gangnam-gu, Seoul' },
-        hours: '10:00 - 22:00',
-        description: {
-          ko: '아시아 최대 지하 쇼핑몰. 별마당 도서관, 아쿠아리움, 영화관, 맛집이 한 곳에.',
-          zh: '亚洲最大地下购物中心。星空图书馆、水族馆、电影院、美食一站式体验。',
-          en: 'Asia\'s largest underground mall. Starfield Library, aquarium, cinema, and restaurants all in one.',
-        },
-        tags: [
-          { ko: '별마당도서관', zh: '星空图书馆', en: 'Starfield Library' },
-          { ko: '쇼핑', zh: '购物', en: 'Shopping' },
-          { ko: '실내', zh: '室内', en: 'Indoor' },
+        category: 'experience',
+        image: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=300&fit=crop'
         ],
-        relatedPhrases: 'shopping',
+        rating: 4.1,
+        reviewCount: 3240,
+        priceRange: 2,
+        price: '₩5,000~',
+        address: { ko: '서울 강남구 영동대로 513', zh: '首尔市江南区永东大路513号', en: '513, Yeongdong-daero, Gangnam-gu, Seoul' },
+        hours: '10:00 - 22:00',
+        description: { 
+          ko: '아시아 최대 지하 쇼핑몰과 수족관, 전시장이 한곳에', 
+          zh: '亚洲最大地下购物中心，集水族馆和展览场所于一体', 
+          en: 'Asia\'s largest underground shopping mall with aquarium and exhibition spaces' 
+        },
+        tags: ['쇼핑몰', '수족관', '전시'],
+        kakaoMapUrl: 'https://place.map.kakao.com/7891572',
+        relatedPhrases: 'tourist',
       },
-      // === 홍대 ===
+
+      // 홍대 스팟
       {
-        id: 'yeonnam-cafe',
+        id: 'yeonnamdong-cafe',
         name: { ko: '연남동 카페거리', zh: '延南洞咖啡街', en: 'Yeonnam-dong Cafe Street' },
         area: 'hongdae',
-        category: 'experience',
-        image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80',
-        rating: 4.4,
-        reviewCount: 1870,
-        priceRange: 1,
-        price: '₩5,000~8,000',
-        address: { ko: '서울 마포구 연남동 일대', zh: '首尔麻浦区延南洞一带', en: 'Yeonnam-dong area, Mapo-gu, Seoul' },
-        hours: { ko: '상시 (가게별 상이)', zh: '全天（各店不同）', en: 'Always open (shops vary)' },
-        description: {
-          ko: '경의선숲길을 따라 개성 넘치는 카페와 독립서점이 늘어선 핫한 거리.',
-          zh: '沿着京义线林荫道，个性咖啡厅和独立书店林立的热门街道。',
-          en: 'Trendy street along Gyeongui Line Forest Park with unique cafes and indie bookshops.',
-        },
-        tags: [
-          { ko: '카페', zh: '咖啡厅', en: 'Cafe' },
-          { ko: '산책', zh: '散步', en: 'Walk' },
-          { ko: '포토존', zh: '拍照点', en: 'Photo Spot' },
+        category: 'cafe',
+        image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop'
         ],
+        rating: 4.4,
+        reviewCount: 920,
+        priceRange: 2,
+        price: '₩6,000~',
+        address: { ko: '서울 마포구 연남동', zh: '首尔市麻浦区延南洞', en: 'Yeonnam-dong, Mapo-gu, Seoul' },
+        hours: '09:00 - 22:00',
+        description: { 
+          ko: '감성적인 인디카페들이 모여있는 연남동의 대표 카페거리', 
+          zh: '聚集了感性独立咖啡厅的延南洞代表咖啡街', 
+          en: 'Representative cafe street in Yeonnam-dong with emotional indie cafes' 
+        },
+        tags: ['카페', '감성', '인디'],
+        kakaoMapUrl: 'https://place.map.kakao.com/1450287307',
         relatedPhrases: 'cafe',
       },
       {
-        id: 'hongdae-free-market',
-        name: { ko: '홍대 프리마켓', zh: '弘大自由市场', en: 'Hongdae Free Market' },
+        id: 'hongdae-playground',
+        name: { ko: '홍대놀이터', zh: '弘大游乐场', en: 'Hongdae Playground' },
         area: 'hongdae',
         category: 'experience',
-        image: 'https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800&q=80',
-        rating: 4.2,
-        reviewCount: 980,
-        priceRange: 1,
-        price: { ko: '무료 입장', zh: '免费入场', en: 'Free entry' },
-        address: { ko: '서울 마포구 와우산로21길 19-3 (홍대 놀이터 앞)', zh: '首尔麻浦区卧牛山路21街19-3（弘大游乐场前）', en: '19-3 Wausan-ro 21-gil (Hongdae Playground), Mapo-gu, Seoul' },
-        hours: { ko: '토요일 13:00 - 18:00 (3-11월)', zh: '周六 13:00-18:00（3-11月）', en: 'Sat 13:00-18:00 (Mar-Nov)' },
-        description: {
-          ko: '매주 토요일 열리는 수공예 플리마켓. 젊은 아티스트들의 핸드메이드 작품을 만날 수 있는 곳.',
-          zh: '每周六举办的手工艺跳蚤市场。可以遇见年轻艺术家的手工作品。',
-          en: 'Weekly Saturday handcraft flea market. Meet handmade works from young artists.',
-        },
-        tags: [
-          { ko: '플리마켓', zh: '跳蚤市场', en: 'Flea Market' },
-          { ko: '핸드메이드', zh: '手工', en: 'Handmade' },
-          { ko: '토요일', zh: '周六', en: 'Saturday' },
+        image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=300&fit=crop'
         ],
-        relatedPhrases: 'shopping',
+        rating: 4.0,
+        reviewCount: 1560,
+        priceRange: 1,
+        price: '무료',
+        address: { ko: '서울 마포구 와우산로 홍대놀이터', zh: '首尔市麻浦区卧牛山路弘大游乐场', en: 'Hongdae Playground, Wausan-ro, Mapo-gu, Seoul' },
+        hours: '24시간',
+        description: { 
+          ko: '대학생들의 만남의 장소이자 버스킹과 클럽 문화의 중심지', 
+          zh: '大学生聚会场所，街头表演和俱乐部文化的中心地', 
+          en: 'Meeting place for students and center of busking and club culture' 
+        },
+        tags: ['버스킹', '클럽', '대학가'],
+        kakaoMapUrl: 'https://place.map.kakao.com/21736023',
+        relatedPhrases: 'tourist',
       },
-      // === 이태원 ===
+
+      // 이태원 스팟
       {
-        id: 'gyeongnidan-gil',
-        name: { ko: '경리단길', zh: '经理团路', en: 'Gyeongnidan-gil' },
+        id: 'gyeongridan-gil',
+        name: { ko: '경리단길', zh: '经理团路', en: 'Gyeongridan-gil' },
         area: 'itaewon',
         category: 'food',
-        image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
-        rating: 4.3,
-        reviewCount: 1450,
-        priceRange: 2,
-        price: '₩15,000~30,000',
-        address: { ko: '서울 용산구 회나무로 일대', zh: '首尔龙山区回木路一带', en: 'Hoenamu-ro area, Yongsan-gu, Seoul' },
-        hours: { ko: '상시 (가게별 상이)', zh: '全天（各店不同）', en: 'Always open (shops vary)' },
-        description: {
-          ko: '세계 각국의 맛집이 모인 미식 골목. 중동, 멕시코, 이탈리안, 태국 요리를 한 거리에서.',
-          zh: '汇聚世界各国美食的街区。中东、墨西哥、意大利、泰国料理一条街。',
-          en: 'A gourmet alley with cuisines from around the world. Middle Eastern, Mexican, Italian, Thai all on one street.',
-        },
-        tags: [
-          { ko: '다국적', zh: '多国料理', en: 'Multicultural' },
-          { ko: '미식', zh: '美食', en: 'Gourmet' },
-          { ko: '핫플', zh: '热门', en: 'Trending' },
+        image: 'https://images.unsplash.com/photo-1540914124281-342587941389?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1540914124281-342587941389?w=400&h=300&fit=crop'
         ],
+        rating: 4.5,
+        reviewCount: 2180,
+        priceRange: 3,
+        price: '₩25,000~',
+        address: { ko: '서울 용산구 경리단길', zh: '首尔市龙山区经理团路', en: 'Gyeongridan-gil, Yongsan-gu, Seoul' },
+        hours: '11:00 - 24:00',
+        description: { 
+          ko: '세계 각국의 맛있는 음식과 트렌디한 바가 모여있는 맛집 거리', 
+          zh: '汇聚世界各国美食和时尚酒吧的美食街', 
+          en: 'Gourmet street with delicious international cuisine and trendy bars' 
+        },
+        tags: ['세계음식', '바', '분위기'],
+        kakaoMapUrl: 'https://place.map.kakao.com/2088849642',
         relatedPhrases: 'restaurant',
       },
       {
         id: 'itaewon-antique',
-        name: { ko: '이태원 앤틱가구거리', zh: '梨泰院古董家具街', en: 'Itaewon Antique Street' },
+        name: { ko: '이태원 앤틱거리', zh: '梨泰院古董街', en: 'Itaewon Antique Street' },
         area: 'itaewon',
         category: 'shopping',
-        image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80',
-        rating: 4.1,
-        reviewCount: 620,
-        priceRange: 3,
-        price: { ko: '아이템별 상이', zh: '因商品而异', en: 'Varies by item' },
-        address: { ko: '서울 용산구 이태원로27가길 일대', zh: '首尔龙山区梨泰院路27街一带', en: 'Itaewon-ro 27ga-gil area, Yongsan-gu, Seoul' },
-        hours: '11:00 - 19:00',
-        description: {
-          ko: '유럽풍 앤틱 가구와 빈티지 소품이 가득한 독특한 쇼핑 거리.',
-          zh: '充满欧式古董家具和复古饰品的独特购物街。',
-          en: 'A unique shopping street full of European antique furniture and vintage items.',
-        },
-        tags: [
-          { ko: '앤틱', zh: '古董', en: 'Antique' },
-          { ko: '빈티지', zh: '复古', en: 'Vintage' },
-          { ko: '인테리어', zh: '室内装饰', en: 'Interior' },
+        image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop'
         ],
+        rating: 4.2,
+        reviewCount: 680,
+        priceRange: 3,
+        price: '₩20,000~',
+        address: { ko: '서울 용산구 이태원로', zh: '首尔市龙山区梨泰院路', en: 'Itaewon-ro, Yongsan-gu, Seoul' },
+        hours: '10:00 - 20:00',
+        description: { 
+          ko: '독특한 앤틱 소품과 빈티지 아이템을 찾을 수 있는 쇼핑 거리', 
+          zh: '可以找到独特古董小饰品和复古物品的购物街', 
+          en: 'Shopping street where you can find unique antique accessories and vintage items' 
+        },
+        tags: ['앤틱', '빈티지', '소품'],
+        kakaoMapUrl: 'https://place.map.kakao.com/2088849642',
         relatedPhrases: 'shopping',
       },
-      // === 성수 ===
+
+      // 성수 스팟
       {
-        id: 'seongsu-yeonbang',
-        name: { ko: '성수연방', zh: '圣水联邦', en: 'Seongsu Yeonbang' },
+        id: 'seongsu-union',
+        name: { ko: '성수연방', zh: '圣水联邦', en: 'Seongsu Union' },
         area: 'seongsu',
-        category: 'experience',
-        image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
-        rating: 4.5,
-        reviewCount: 2100,
-        priceRange: 2,
-        price: { ko: '무료 입장', zh: '免费入场', en: 'Free entry' },
-        address: { ko: '서울 성동구 연무장15길 11', zh: '首尔城东区练武场15街11号', en: '11 Yeonmujang 15-gil, Seongdong-gu, Seoul' },
-        hours: '11:00 - 21:00',
-        description: {
-          ko: '옛 공장을 리모델링한 복합문화공간. 팝업스토어, 카페, 갤러리가 있는 성수의 아이콘.',
-          zh: '旧工厂改造的复合文化空间。有快闪店、咖啡厅、画廊的圣水地标。',
-          en: 'Cultural complex in a remodeled factory. Pop-up stores, cafes, and galleries — a Seongsu icon.',
-        },
-        tags: [
-          { ko: '팝업', zh: '快闪', en: 'Pop-up' },
-          { ko: '갤러리', zh: '画廊', en: 'Gallery' },
-          { ko: '인스타', zh: '打卡', en: 'Instagrammable' },
+        category: 'cafe',
+        image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400&h=300&fit=crop'
         ],
+        rating: 4.3,
+        reviewCount: 1240,
+        priceRange: 2,
+        price: '₩7,000~',
+        address: { ko: '서울 성동구 성수동2가', zh: '首尔市城东区圣水洞2街', en: 'Seongsu-dong 2-ga, Seongdong-gu, Seoul' },
+        hours: '08:00 - 22:00',
+        description: { 
+          ko: '공장을 개조한 독특한 인테리어의 대형 카페', 
+          zh: '改造工厂的独特内装大型咖啡厅', 
+          en: 'Large cafe with unique interior design converted from a factory' 
+        },
+        tags: ['공장카페', '인테리어', '대형'],
+        kakaoMapUrl: 'https://place.map.kakao.com/1026854675',
         relatedPhrases: 'cafe',
       },
       {
-        id: 'daelim-changgo',
+        id: 'daelim-warehouse',
         name: { ko: '대림창고갤러리', zh: '大林仓库画廊', en: 'Daelim Warehouse Gallery' },
         area: 'seongsu',
         category: 'attraction',
-        image: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&q=80',
-        rating: 4.3,
-        reviewCount: 890,
-        priceRange: 1,
-        price: '₩5,000',
-        address: { ko: '서울 성동구 성수이로 78', zh: '首尔城东区圣水二路78号', en: '78 Seongsu-iro, Seongdong-gu, Seoul' },
-        hours: '11:00 - 19:00',
-        description: {
-          ko: '1970년대 정미소를 개조한 갤러리. 현대미술 전시와 아트 이벤트가 열리는 문화 공간.',
-          zh: '由1970年代碾米厂改造的画廊。举办现代美术展和艺术活动的文化空间。',
-          en: 'Gallery in a 1970s rice mill. Cultural space hosting contemporary art exhibitions and art events.',
-        },
-        tags: [
-          { ko: '현대미술', zh: '现代美术', en: 'Contemporary Art' },
-          { ko: '전시', zh: '展览', en: 'Exhibition' },
-          { ko: '리노베이션', zh: '改造建筑', en: 'Renovated' },
+        image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=300&fit=crop'
         ],
-        relatedPhrases: 'attraction',
+        rating: 4.6,
+        reviewCount: 890,
+        priceRange: 2,
+        price: '₩12,000~',
+        address: { ko: '서울 종로구 자하문로4길 21', zh: '首尔市钟路区紫霞门路4街21号', en: '21, Jahamun-ro 4-gil, Jongno-gu, Seoul' },
+        hours: '10:00 - 19:00',
+        description: { 
+          ko: '현대미술 전시와 사진 전시로 유명한 갤러리', 
+          zh: '以现代美术展和摄影展闻名的画廊', 
+          en: 'Gallery famous for contemporary art and photography exhibitions' 
+        },
+        tags: ['갤러리', '현대미술', '사진'],
+        kakaoMapUrl: 'https://place.map.kakao.com/27240264',
+        relatedPhrases: 'tourist',
       },
-      // === 북촌 ===
+
+      // 북촌 스팟
       {
         id: 'bukchon-hanok',
         name: { ko: '북촌한옥마을', zh: '北村韩屋村', en: 'Bukchon Hanok Village' },
         area: 'bukchon',
         category: 'attraction',
-        image: 'https://images.unsplash.com/photo-1553564552-02ed0b194c14?w=800&q=80',
-        rating: 4.6,
-        reviewCount: 7650,
-        priceRange: 1,
-        price: { ko: '무료', zh: '免费', en: 'Free' },
-        address: { ko: '서울 종로구 계동길 37', zh: '首尔钟路区桂洞路37号', en: '37 Gyedong-gil, Jongno-gu, Seoul' },
-        hours: { ko: '상시 (주택가이므로 조용히)', zh: '全天（住宅区请保持安静）', en: 'Always open (be quiet — residential area)' },
-        description: {
-          ko: '600년 역사의 전통 한옥 밀집 지역. 경복궁과 창덕궁 사이 아름다운 골목길.',
-          zh: '600年历史的传统韩屋密集区域。景福宫与昌德宫之间的美丽巷弄。',
-          en: '600-year-old traditional hanok village between Gyeongbokgung and Changdeokgung palaces.',
-        },
-        tags: [
-          { ko: '한옥', zh: '韩屋', en: 'Hanok' },
-          { ko: 'UNESCO', zh: 'UNESCO', en: 'UNESCO' },
-          { ko: '포토스팟', zh: '拍照点', en: 'Photo Spot' },
+        image: 'https://images.unsplash.com/photo-1578037571214-25e07a2bfb89?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1578037571214-25e07a2bfb89?w=400&h=300&fit=crop'
         ],
-        relatedPhrases: 'attraction',
+        rating: 4.4,
+        reviewCount: 5620,
+        priceRange: 1,
+        price: '무료',
+        address: { ko: '서울 종로구 계동길', zh: '首尔市钟路区桂洞路', en: 'Gyedong-gil, Jongno-gu, Seoul' },
+        hours: '24시간',
+        description: { 
+          ko: '조선시대 한옥이 그대로 보존된 전통 마을. 한복을 입고 산책하기 좋은 곳', 
+          zh: '保存完好的朝鲜时代韩屋传统村落。适合穿韩服散步的地方', 
+          en: 'Traditional village where Joseon-era hanok are preserved. Perfect for strolling in hanbok' 
+        },
+        tags: ['한옥', '전통', '한복'],
+        kakaoMapUrl: 'https://place.map.kakao.com/8051099',
+        relatedPhrases: 'tourist',
       },
       {
         id: 'changdeokgung',
         name: { ko: '창덕궁', zh: '昌德宫', en: 'Changdeokgung Palace' },
         area: 'bukchon',
         category: 'attraction',
-        image: 'https://images.unsplash.com/photo-1590490681095-e6e001f1f783?w=800&q=80',
-        rating: 4.7,
-        reviewCount: 5430,
+        image: 'https://images.unsplash.com/photo-1578037571214-25e07a2bfb89?w=400&h=300&fit=crop',
+        images: [
+          'https://images.unsplash.com/photo-1578037571214-25e07a2bfb89?w=400&h=300&fit=crop'
+        ],
+        rating: 4.5,
+        reviewCount: 3850,
         priceRange: 1,
-        price: '₩3,000',
-        address: { ko: '서울 종로구 율곡로 99', zh: '首尔钟路区栗谷路99号', en: '99 Yulgok-ro, Jongno-gu, Seoul' },
+        price: '₩3,000~',
+        address: { ko: '서울 종로구 율곡로 99', zh: '首尔市钟路区栗谷路99号', en: '99, Yulgok-ro, Jongno-gu, Seoul' },
         hours: '09:00 - 18:00',
-        description: {
-          ko: 'UNESCO 세계유산. 후원(비밀정원)이 특히 아름다운 조선시대 궁궐.',
-          zh: 'UNESCO世界遗产。后苑（秘密花园）格外美丽的朝鲜王朝宫殿。',
-          en: 'UNESCO World Heritage. A Joseon-era palace with an especially beautiful Secret Garden.',
+        description: { 
+          ko: '유네스코 세계문화유산으로 지정된 조선시대 궁궐. 비원이 특히 아름다움', 
+          zh: '被联合国教科文组织指定为世界文化遗产的朝鲜时代宫殿。后苑尤其美丽', 
+          en: 'Joseon Dynasty palace designated as UNESCO World Heritage. The Secret Garden is especially beautiful' 
         },
-        tags: [
-          { ko: 'UNESCO', zh: 'UNESCO', en: 'UNESCO' },
-          { ko: '비밀정원', zh: '秘密花园', en: 'Secret Garden' },
-          { ko: '궁궐', zh: '宫殿', en: 'Palace' },
-        ],
-        menu: [
-          { name: { ko: '일반 관람', zh: '普通参观', en: 'General Tour' }, price: '₩3,000' },
-          { name: { ko: '후원 특별관람', zh: '后苑特别参观', en: 'Secret Garden Tour' }, price: '₩5,000' },
-        ],
-        relatedPhrases: 'attraction',
+        tags: ['궁궐', '유네스코', '비원'],
+        kakaoMapUrl: 'https://place.map.kakao.com/8140855',
+        relatedPhrases: 'tourist',
       },
     ],
   },
-  {
-    id: 'busan',
-    name: { ko: '부산', zh: '釜山', en: 'Busan' },
-    image: 'https://images.unsplash.com/photo-1590478969909-889789c04ebb?w=800&q=80',
-    description: {
-      ko: '한국 제2의 도시. 해변, 해산물, 영화제로 유명한 항구 도시.',
-      zh: '韩国第二大城市。以海滩、海鲜、电影节闻名的港口城市。',
-      en: 'Korea\'s 2nd largest city. A port city famous for beaches, seafood, and the film festival.',
-    },
-    population: '3.4M',
-    bestSeason: { ko: '여름(7-8월)', zh: '夏天(7-8月)', en: 'Summer (Jul-Aug)' },
-    areas: [],
-    spots: [],
-    comingSoon: true,
-  },
-  {
-    id: 'jeju',
-    name: { ko: '제주', zh: '济州', en: 'Jeju' },
-    image: 'https://images.unsplash.com/photo-1579169825570-dff198fa4c43?w=800&q=80',
-    description: {
-      ko: '화산섬. 자연경관과 해녀 문화. 중국인 비자 면제(30일).',
-      zh: '火山岛。自然景观与海女文化。中国人免签（30天）。',
-      en: 'Volcanic island. Nature and haenyeo culture. Visa-free for Chinese (30 days).',
-    },
-    population: '680K',
-    bestSeason: { ko: '봄/가을', zh: '春/秋', en: 'Spring/Fall' },
-    areas: [],
-    spots: [],
-    comingSoon: true,
-  },
-  {
-    id: 'incheon',
-    name: { ko: '인천', zh: '仁川', en: 'Incheon' },
-    image: 'https://images.unsplash.com/photo-1541411438265-4cb4687110f2?w=800&q=80',
-    description: {
-      ko: '국제공항과 차이나타운이 있는 항구 도시. 송도 신도시.',
-      zh: '拥有国际机场和唐人街的港口城市。松岛新城。',
-      en: 'Port city with the international airport and Chinatown. Songdo New City.',
-    },
-    population: '2.9M',
-    bestSeason: { ko: '연중', zh: '全年', en: 'Year-round' },
-    areas: [],
-    spots: [],
-    comingSoon: true,
-  },
+  // 추후 부산, 제주 등 다른 도시 추가 예정
 ]
 
-// 카테고리 라벨
-export const CATEGORY_LABELS = {
-  food: { ko: '맛집', zh: '美食', en: 'Food' },
-  attraction: { ko: '관광지', zh: '景点', en: 'Attraction' },
-  experience: { ko: '체험', zh: '体验', en: 'Experience' },
-  shopping: { ko: '쇼핑', zh: '购物', en: 'Shopping' },
-}
-
-// 카테고리 색상 (배지)
-export const CATEGORY_COLORS = {
-  food: 'bg-orange-50 text-orange-700',
-  attraction: 'bg-blue-50 text-blue-700',
-  experience: 'bg-purple-50 text-purple-700',
-  shopping: 'bg-emerald-50 text-emerald-700',
-}
+export default CITIES

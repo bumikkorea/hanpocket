@@ -502,7 +502,6 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   const handleAdminLogin = () => {
     if (adminPw === '1005') {
       setAdminMode(true)
-      localStorage.setItem('admin_mode', 'true')
       setShowAdminPwModal(false)
       setShowAdminPanel(true)
       setAdminPw('')
@@ -515,7 +514,6 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   const handleAdminLogout = () => {
     setAdminMode(false)
     setAdminView(false)
-    localStorage.setItem('admin_mode', 'false')
     setShowAdminPanel(false)
   }
 
@@ -2447,7 +2445,7 @@ function AppInner() {
                 <div className={`p-1.5 rounded-xl transition-all duration-200 ${active ? 'bg-[#2D5A3D]/10' : ''}`}>
                   <item.icon size={active ? 24 : 22} strokeWidth={active ? 2.2 : 1.5} style={{ color: active ? '#2D5A3D' : '#9CA3AF' }} />
                 </div>
-                {item.id === 'profile' && localStorage.getItem('admin_mode') === 'true' && (
+                {item.id === 'profile' && adminMode && (
                   <span className="absolute top-0 right-1 w-2 h-2 bg-red-500 rounded-full" />
                 )}
                 <span className={`text-[10px] tracking-wider transition-all duration-200 ${active ? 'font-semibold text-[#2D5A3D]' : 'font-light text-[#9CA3AF]'}`}>

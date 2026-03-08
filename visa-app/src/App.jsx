@@ -488,12 +488,10 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   const [nickname, setNickname] = useState(() => localStorage.getItem('hanpocket_nickname') || '')
   const [editingNickname, setEditingNickname] = useState(false)
 
-  // 관리자 모드
-  const [adminMode, setAdminMode] = useState(() => {
-    try { return localStorage.getItem('admin_mode') === 'true' } catch { return false }
-  })
+  // 관리자 모드 — 항상 사용자 모드로 시작 (보안)
+  const [adminMode, setAdminMode] = useState(false)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
-  const [adminView, setAdminView] = useState(false) // 관리자 뷰 토글
+  const [adminView, setAdminView] = useState(false)
   const [showAdminPwModal, setShowAdminPwModal] = useState(false)
   const [adminPw, setAdminPw] = useState('')
   const [adminPwError, setAdminPwError] = useState(false)

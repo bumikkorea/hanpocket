@@ -1394,6 +1394,15 @@ function AppShortcut({ name, description, deepLink, webUrl, domain }) {
 }
 
 function AppInner() {
+  // Splash screen — show logo for 1.5s on every app launch
+  const [showSplash, setShowSplash] = useState(true)
+  const [splashFading, setSplashFading] = useState(false)
+  useEffect(() => {
+    const fadeTimer = setTimeout(() => setSplashFading(true), 1200)
+    const hideTimer = setTimeout(() => setShowSplash(false), 1500)
+    return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
+  }, [])
+
   const [lang, setLang] = useState('ko')
   const [profile, setProfile] = useState(() => loadProfile())
   const [showNotice, setShowNotice] = useState(false)
@@ -1775,6 +1784,14 @@ function AppInner() {
   }
 
   const currentHero = heroData[tab] || heroData.home
+
+  if (showSplash) {
+    return (
+      <div className={`fixed inset-0 z-[999] flex items-center justify-center bg-white transition-opacity duration-300 ${splashFading ? 'opacity-0' : 'opacity-100'}`}>
+        <Logo size="lg" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen pb-20" style={{ backgroundColor: '#FFFFFF' }}>

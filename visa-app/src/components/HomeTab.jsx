@@ -7,6 +7,10 @@ const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
 const SimGuide = lazy(() => import('./guides/SimGuide'))
 const TaxRefundGuide = lazy(() => import('./guides/TaxRefundGuide'))
 const DutyFreeGuide = lazy(() => import('./guides/DutyFreeGuide'))
+const HalalGuide = lazy(() => import('./guides/HalalGuide'))
+const DietaryCardGuide = lazy(() => import('./guides/DietaryCardGuide'))
+const KidsGuide = lazy(() => import('./guides/KidsGuide'))
+const DutyFreeLimitGuide = lazy(() => import('./guides/DutyFreeLimitGuide'))
 const PocketContent = lazy(() => import('./pockets/PocketContent'))
 import GuideLayout from './guides/GuideLayout'
 
@@ -326,7 +330,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   const courses = RECOMMENDED_COURSES.filter(c => c.category !== 'test').slice(0, 6)
 
   // 가이드/포켓 오버레이 통합 상태
-  // guide: 'map-guide' | 'transit' | 'arrival-card' | 'sim' | 'tax-refund' | 'duty-free'
+  // guide: 'map-guide' | 'transit' | 'arrival-card' | 'sim' | 'tax-refund' | 'duty-free' | 'halal' | 'dietary-card' | 'kids' | 'country-duty-free'
   // pocket: 'restaurant' | 'cafe' | 'transport' | 'convenience' | 'shopping' | 'accommodation' | 'emergency'
   const [overlay, setOverlay] = useState(null)
   const POCKET_IDS = ['restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency']
@@ -363,6 +367,16 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   const showToast = (msg) => {
     setToast(msg)
     setTimeout(() => setToast(null), 2000)
+  }
+
+  // VPN 배너 상태
+  const [showVpnBanner, setShowVpnBanner] = useState(() => {
+    return localStorage.getItem('hanpocket_vpn_banner_closed') !== 'true'
+  })
+
+  const closeVpnBanner = () => {
+    setShowVpnBanner(false)
+    localStorage.setItem('hanpocket_vpn_banner_closed', 'true')
   }
 
   return (
@@ -414,13 +428,13 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </button>
       </div>
 
-      {/* ─── Intent 카드 섹션 ─── */}
-      <div className="mb-8">
-        <h2 className="text-[15px] font-semibold tracking-wide px-4 mb-3" style={{ color: '#1A1A1A' }}>
+      {/* ─── Intent 카드 섹션 (세로 배치) ─── */}
+      <div className="mb-8 px-4">
+        <h2 className="text-[15px] font-semibold tracking-wide mb-4" style={{ color: '#1A1A1A' }}>
           {L(lang, { ko: '한국 처음이신가요?', zh: '第一次来韩国吗？', en: 'First time in Korea?' })}
         </h2>
-        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
-          {INTENT_CARDS.map(card => (
+        <div className="grid grid-cols-3 gap-2">
+          {INTENT_CARDS.map((card) => (
             <button
               key={card.id}
               onClick={() => {
@@ -428,18 +442,17 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 else if (card.id === 'traveling') { setArrivalStep('traveling'); setShowArrivalFlow(true) }
                 else if (card.id === 'departure') { setArrivalStep('departure'); setShowArrivalFlow(true) }
               }}
-              className="snap-start flex-shrink-0 bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 text-left"
-              style={{ width: 120, height: 72 }}
+              className="bg-[#F9FAFB] rounded-2xl border border-[#E5E7EB] p-4 active:scale-[0.97] transition-all duration-150 text-left"
+              style={{ minHeight: 100 }}
             >
-              <p className="text-xs font-bold leading-tight" style={{ color: '#1A1A1A' }}>
+              <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
                 {L(lang, card.label)}
               </p>
-              <p className="text-[10px] mt-0.5 leading-tight" style={{ color: '#999999' }}>
+              <p className="text-[11px] mt-2 leading-relaxed" style={{ color: '#999999' }}>
                 {L(lang, card.sub)}
               </p>
             </button>
           ))}
-          <div className="flex-shrink-0 w-4" />
         </div>
       </div>
 
@@ -745,14 +758,34 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-3">
-            {/* 통역 — 최상단 */}
+            {/* VPN 알림 배너 */}
+            {showVpnBanner && (
+              <div className="rounded-2xl bg-gradient-to-r from-[#10B981] to-[#059669] p-4 text-white relative">
+                <button
+                  onClick={closeVpnBanner}
+                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs"
+                >
+                  ×
+                </button>
+                <div className="pr-8">
+                  <p className="text-sm font-bold">
+                    {L(lang, { ko: '한국에서는 VPN 없이 구글, 유튜브, 인스타 모두 됩니다!', zh: '在韩国无需VPN即可使用Google、YouTube、Instagram！', en: 'In Korea, Google, YouTube, Instagram work without VPN!' })}
+                  </p>
+                  <p className="text-xs mt-1 opacity-90">
+                    {L(lang, { ko: '중국과 달리 모든 앱이 자유롭게 이용 가능해요', zh: '与中国不同，所有应用都可以自由使用', en: 'Unlike China, all apps are freely accessible' })}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* SIM카드 & 환전 — 최상단 강조 */}
             <button
-              onClick={() => { setTab('translator'); setShowArrivalFlow(false) }}
+              onClick={() => setArrivalStep('sim-exchange')}
               className="rounded-2xl border-2 border-[#111827] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '통역 & 번역', zh: '翻译 & 口译', en: 'Translate' })}</p>
-                <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: '말이 안 통할 때, 바로 여기!', zh: '语言不通时，就用这个！', en: "Can't communicate? Start here!" })}</p>
+                <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'SIM카드 구매 & 환전할래요', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange money' })}</p>
+                <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport exchange, Myeongdong' })}</p>
               </div>
               <ChevronRight size={18} color="#999" />
             </button>
@@ -761,9 +794,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             {[
               { id: 'immigration', label: { ko: '입국신고서 작성할래요', zh: '要填入境申报卡', en: 'Fill Arrival Card' }, sub: { ko: '전자(Q-CODE) / 실물 입국카드', zh: '电子(Q-CODE) / 纸质入境卡', en: 'Electronic (Q-CODE) / Physical card' } },
               { id: 'transport', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX', zh: '机场出租车、RIDE APP、AREX', en: 'Airport taxi, RIDE app, AREX' } },
-              { id: 'sim-exchange', label: { ko: 'SIM카드 구매 & 환전할래요', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange money' }, sub: { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport exchange, Myeongdong' } },
+              { id: 'translator', label: { ko: '통역 & 번역', zh: '翻译 & 口译', en: 'Translate' }, sub: { ko: '말이 안 통할 때, 바로 여기!', zh: '语言不通时，就用这个！', en: "Can't communicate? Start here!" }, tab: 'translator' },
               { id: 'guide-map', label: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, guide: 'map-guide' },
-              { id: 'nav-medical', label: { ko: '병원 & 약국', zh: '医院 & 药店', en: 'Hospital & Pharmacy' }, sub: { ko: '아프면 어디로? 외국인 진료 병원', zh: '生病了去哪里？外国人就诊医院', en: 'Where to go when sick? Foreigner-friendly hospitals' }, tab: 'medical' },
+              { id: 'halal-guide', label: { ko: '할랄/무슬림 가이드', zh: '清真/穆斯林指南', en: 'Halal/Muslim Guide' }, sub: { ko: '무슬림 여행자를 위한 맞춤 가이드', zh: '为穆斯林旅行者定制的指南', en: 'Tailored guide for Muslim travelers' }, guide: 'halal' },
+              { id: 'dietary-card-guide', label: { ko: '식이제한 카드', zh: '饮食限制卡', en: 'Dietary Card' }, sub: { ko: '알레르기/채식주의자 식당 소통카드', zh: '过敏/素食者餐厅沟通卡', en: 'Allergy/vegetarian restaurant communication card' }, guide: 'dietary-card' },
+              { id: 'kids-guide', label: { ko: '유아동반 가이드', zh: '带娃旅行指南', en: 'Kids Travel Guide' }, sub: { ko: '아이와 함께하는 한국 여행', zh: '和孩子一起的韩国之旅', en: 'Korea travel with children' }, guide: 'kids' },
               { id: 'nav-pet', label: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, tab: 'pet' },
             ].map(item => (
               <button

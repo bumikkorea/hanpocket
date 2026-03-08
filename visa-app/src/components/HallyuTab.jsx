@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
-import { Music, Search, Users, Tv, Calendar, Ticket, Landmark, PartyPopper, ChevronRight, ExternalLink, Star, Filter, ChevronDown, MapPin, Loader2 } from 'lucide-react'
+import { Music, Search, Tv, Calendar, Ticket, Landmark, PartyPopper, ExternalLink, Star, ChevronDown, MapPin, Loader2 } from 'lucide-react'
 import { idolDatabase, IDOL_GENERATIONS, IDOL_COMPANIES } from '../data/idolData'
 import { CHART_SOURCES, WEEKS, getChartData, searchCharts } from '../data/kpopChartData'
 
@@ -10,9 +10,8 @@ function L(lang, data) {
 
 const SECTIONS = [
   { id: 'chart', icon: Music, label: { ko: 'K-POP 차트', zh: 'K-POP榜单', en: 'K-POP Chart' } },
-  { id: 'idol', icon: Users, label: { ko: '아이돌', zh: '偶像', en: 'Idols' } },
+  { id: 'mystar', icon: Star, label: { ko: '최애 스타', zh: '我的偶像', en: 'My Stars' } },
   { id: 'drama', icon: Tv, label: { ko: 'K-Drama', zh: 'K-Drama', en: 'K-Drama' } },
-  { id: 'events', icon: Ticket, label: { ko: '팬이벤트', zh: '粉丝活动', en: 'Fan Events' } },
   { id: 'tradition', icon: Landmark, label: { ko: '전통체험', zh: '传统体验', en: 'Traditions' } },
   { id: 'festival', icon: PartyPopper, label: { ko: '축제', zh: '节日', en: 'Festivals' } },
 ]
@@ -95,6 +94,20 @@ export default function HallyuTab({ lang }) {
   const [idolCompany, setIdolCompany] = useState('')
   const [idolShown, setIdolShown] = useState(20)
 
+  // Favorite stars
+  const [favStars, setFavStars] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('hp_favorite_stars')) || [] } catch { return [] }
+  })
+  const [favOnly, setFavOnly] = useState(false)
+
+  const toggleFav = (id) => {
+    setFavStars(prev => {
+      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      localStorage.setItem('hp_favorite_stars', JSON.stringify(next))
+      return next
+    })
+  }
+
   // Chart data
   const chartData = useMemo(() => getChartData(chartSource, chartWeek), [chartSource, chartWeek])
   const chartSearchResults = useMemo(() => {
@@ -106,6 +119,7 @@ export default function HallyuTab({ lang }) {
   // Filtered idols
   const filteredIdols = useMemo(() => {
     let list = [...idolDatabase]
+    if (favOnly) list = list.filter(i => favStars.includes(i.id))
     if (idolSearch.trim()) {
       const q = idolSearch.trim().toLowerCase()
       list = list.filter(i => i.name.toLowerCase().includes(q) || i.id.toLowerCase().includes(q))
@@ -113,7 +127,13 @@ export default function HallyuTab({ lang }) {
     if (idolGen) list = list.filter(i => i.gen === idolGen)
     if (idolCompany) list = list.filter(i => i.company.toUpperCase().includes(idolCompany.toUpperCase()))
     return list
-  }, [idolSearch, idolGen, idolCompany])
+  }, [idolSearch, idolGen, idolCompany, favOnly, favStars])
+
+  // Get events for an idol by matching artist name
+  const getIdolEvents = (idol) => {
+    const name = idol.name.toUpperCase()
+    return FAN_EVENTS.filter(e => e.artist.toUpperCase() === name)
+  }
 
   const GEN_LABELS = { '1st': { ko: '1세대', zh: '第1代', en: '1st Gen' }, '2nd': { ko: '2세대', zh: '第2代', en: '2nd Gen' }, '3rd': { ko: '3세대', zh: '第3代', en: '3rd Gen' }, '4th': { ko: '4세대', zh: '第4代', en: '4th Gen' }, '5th': { ko: '5세대', zh: '第5代', en: '5th Gen' } }
 
@@ -266,68 +286,143 @@ export default function HallyuTab({ lang }) {
         </div>
       )}
 
-      {/* Idol Database */}
-      {section === 'idol' && (
+      {/* My Stars (최애 스타) */}
+      {section === 'mystar' && (
         <div className="space-y-3">
-          <h2 className="text-sm font-bold text-[#111827]">{lang === 'ko' ? '아이돌 데이터베이스' : lang === 'zh' ? '偶像数据库' : 'Idol Database'} ({idolDatabase.length})</h2>
-          
-          <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
-            <input
-              type="text"
-              value={idolSearch}
-              onChange={e => { setIdolSearch(e.target.value); setIdolShown(20) }}
-              placeholder={lang === 'ko' ? '아이돌 검색...' : lang === 'zh' ? '搜索偶像...' : 'Search idols...'}
-              className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border border-[#E5E7EB] rounded-xl outline-none focus:border-[#111827] text-[#111827] placeholder:text-[#9CA3AF]"
-            />
+          <h2 className="text-sm font-bold text-[#111827]">
+            {L(lang, { ko: '최애 스타', zh: '我的偶像', en: 'My Stars' })} ({idolDatabase.length})
+          </h2>
+
+          {/* Favorite chips */}
+          {favStars.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {favStars.map(fid => {
+                const idol = idolDatabase.find(i => i.id === fid)
+                if (!idol) return null
+                return (
+                  <button key={fid} onClick={() => { setIdolSearch(idol.name); setIdolShown(20) }}
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-50 text-yellow-700 border border-yellow-200 shrink-0">
+                    <Star size={10} className="fill-yellow-400 text-yellow-400" />
+                    {idol.name}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Fav filter toggle + search */}
+          <div className="flex gap-2 items-center">
+            <button
+              onClick={() => { setFavOnly(f => !f); setIdolShown(20) }}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-all shrink-0 ${
+                favOnly ? 'bg-yellow-50 text-yellow-700 border border-yellow-300' : 'bg-[#F3F4F6] text-[#6B7280]'
+              }`}
+            >
+              <Star size={12} className={favOnly ? 'fill-yellow-400 text-yellow-400' : ''} />
+              {L(lang, { ko: '내 최애', zh: '我的最爱', en: 'My Faves' })}
+              {favStars.length > 0 && <span className="ml-0.5">({favStars.length})</span>}
+            </button>
+            <div className="relative flex-1">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+              <input
+                type="text"
+                value={idolSearch}
+                onChange={e => { setIdolSearch(e.target.value); setIdolShown(20) }}
+                placeholder={L(lang, { ko: '아이돌 검색...', zh: '搜索偶像...', en: 'Search idols...' })}
+                className="w-full pl-9 pr-3 py-2 text-xs bg-white border border-[#E5E7EB] rounded-[6px] outline-none focus:border-[#111827] text-[#111827] placeholder:text-[#9CA3AF]"
+              />
+              {idolSearch && (
+                <button onClick={() => setIdolSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] text-xs">✕</button>
+              )}
+            </div>
           </div>
 
+          {/* Gen / Company filters */}
           <div className="flex gap-2 flex-wrap">
             <div className="relative">
-              <select value={idolGen} onChange={e => { setIdolGen(e.target.value); setIdolShown(20) }} className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none">
-                <option value="">{lang === 'ko' ? '세대 전체' : lang === 'zh' ? '全部世代' : 'All Generations'}</option>
+              <select value={idolGen} onChange={e => { setIdolGen(e.target.value); setIdolShown(20) }} className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-[6px] px-3 py-2 pr-7 text-[#111827] outline-none">
+                <option value="">{L(lang, { ko: '세대 전체', zh: '全部世代', en: 'All Generations' })}</option>
                 {IDOL_GENERATIONS.map(g => <option key={g} value={g}>{L(lang, GEN_LABELS[g] || g)}</option>)}
               </select>
               <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
             </div>
             <div className="relative">
-              <select value={idolCompany} onChange={e => { setIdolCompany(e.target.value); setIdolShown(20) }} className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-lg px-3 py-2 pr-7 text-[#111827] outline-none">
-                <option value="">{lang === 'ko' ? '소속사 전체' : lang === 'zh' ? '全部经纪公司' : 'All Companies'}</option>
+              <select value={idolCompany} onChange={e => { setIdolCompany(e.target.value); setIdolShown(20) }} className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-[6px] px-3 py-2 pr-7 text-[#111827] outline-none">
+                <option value="">{L(lang, { ko: '소속사 전체', zh: '全部经纪公司', en: 'All Companies' })}</option>
                 {IDOL_COMPANIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
               <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
             </div>
           </div>
 
-          <p className="text-xs text-[#9CA3AF]">{filteredIdols.length} {lang === 'ko' ? '결과' : lang === 'zh' ? '个结果' : 'results'}</p>
+          <p className="text-xs text-[#9CA3AF]">{filteredIdols.length} {L(lang, { ko: '결과', zh: '个结果', en: 'results' })}</p>
 
-          {filteredIdols.slice(0, idolShown).map(idol => (
-            <div key={idol.id} className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm font-bold text-[#111827]">{idol.name}</h3>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#6B7280]">{L(lang, GEN_LABELS[idol.gen] || idol.gen)}</span>
+          {/* Idol cards with inline events */}
+          {filteredIdols.slice(0, idolShown).map(idol => {
+            const events = getIdolEvents(idol)
+            const isFav = favStars.includes(idol.id)
+            return (
+              <div key={idol.id} className="bg-white rounded-[6px] p-4 border border-[#E5E7EB]">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-sm font-bold text-[#111827]">{idol.name}</h3>
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#F3F4F6] text-[#6B7280]">{L(lang, GEN_LABELS[idol.gen] || idol.gen)}</span>
+                    </div>
+                    <p className="text-xs text-[#6B7280] mt-1">{idol.company} / {idol.debutYear} / {idol.members > 1 ? `${idol.members} ${L(lang, { ko: '명', zh: '人', en: 'members' })}` : L(lang, { ko: '솔로', zh: '个人', en: 'Solo' })}</p>
                   </div>
-                  <p className="text-xs text-[#6B7280] mt-1">{idol.company} / {idol.debutYear} / {idol.members > 1 ? `${idol.members} ${lang === 'ko' ? '명' : lang === 'zh' ? '人' : 'members'}` : (lang === 'ko' ? '솔로' : lang === 'zh' ? '个人' : 'Solo')}</p>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {idol.socials?.instagram && (
+                      <a href={idol.socials.instagram} target="_blank" rel="noopener noreferrer" className="text-[#9CA3AF] hover:text-[#111827]">
+                        <ExternalLink size={14} />
+                      </a>
+                    )}
+                    <button onClick={() => toggleFav(idol.id)} className="p-0.5">
+                      <Star size={16} className={isFav ? 'fill-yellow-400 text-yellow-400' : 'text-[#D1D5DB]'} />
+                    </button>
+                  </div>
                 </div>
-                {idol.socials?.instagram && (
-                  <a href={idol.socials.instagram} target="_blank" rel="noopener noreferrer" className="text-[#9CA3AF] hover:text-[#111827]">
-                    <ExternalLink size={14} />
-                  </a>
-                )}
+
+                {/* Inline events */}
+                <div className="mt-2 pt-2 border-t border-[#F3F4F6]">
+                  {events.length > 0 ? events.map((ev, ei) => (
+                    <div key={ei} className="flex items-center gap-2 text-xs text-[#6B7280] py-0.5 flex-wrap">
+                      <span className="font-semibold text-[#111827]">{ev.date}</span>
+                      <span>{L(lang, ev.venue)}</span>
+                      <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[10px] font-semibold">{L(lang, ev.type)}</span>
+                      <a href={ev.ticket} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline flex items-center gap-0.5">
+                        <Ticket size={10} />
+                        {L(lang, { ko: '예매', zh: '购票', en: 'Tickets' })}
+                      </a>
+                    </div>
+                  )) : (
+                    <p className="text-[11px] text-[#D1D5DB]">{L(lang, { ko: '예정된 일정 없음', zh: '暂无预定行程', en: 'No scheduled events' })}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
 
           {idolShown < filteredIdols.length && (
             <button
               onClick={() => setIdolShown(s => s + 20)}
-              className="w-full py-3 text-sm font-semibold text-[#111827] bg-[#F3F4F6] hover:bg-[#E5E7EB] rounded-xl transition-colors"
+              className="w-full py-3 text-sm font-semibold text-[#111827] bg-[#F3F4F6] hover:bg-[#E5E7EB] rounded-[6px] transition-colors"
             >
-              {lang === 'ko' ? '더보기' : lang === 'zh' ? '加载更多' : 'Load More'}
+              {L(lang, { ko: '더보기', zh: '加载更多', en: 'Load More' })}
             </button>
           )}
+
+          {/* Ticket guide */}
+          <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[6px] p-3">
+            <p className="text-xs text-[#6B7280] mb-2 font-semibold">
+              {L(lang, { ko: '🎫 티켓 예매 가이드', zh: '🎫 购票指南', en: '🎫 Ticket Guide' })}
+            </p>
+            <ul className="text-xs text-[#6B7280] space-y-1">
+              <li>• {L(lang, { ko: '인터파크: 회원가입 후 본인인증 필수', zh: 'Interpark: 需注册并实名认证', en: 'Interpark: Registration & ID verification required' })}</li>
+              <li>• {L(lang, { ko: 'YES24: 팬클럽 선예매 혜택', zh: 'YES24: 粉丝俱乐部预售优惠', en: 'YES24: Fan club presale benefits' })}</li>
+              <li>• {L(lang, { ko: '위버스: 아티스트별 전용 예매', zh: 'Weverse: 艺人专属购票', en: 'Weverse: Artist-exclusive ticketing' })}</li>
+            </ul>
+          </div>
         </div>
       )}
 
@@ -355,105 +450,6 @@ export default function HallyuTab({ lang }) {
         </div>
       )}
 
-      {/* Fan Events */}
-      {section === 'events' && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-[#111827]">
-              {L(lang, { ko: '2026년 예정된 팬이벤트', zh: '2026年即将举行的粉丝活动', en: '2026 Upcoming Fan Events' })}
-            </h2>
-            <span className="text-xs text-[#9CA3AF]">
-              {L(lang, { ko: '실시간 업데이트', zh: '实时更新', en: 'Live Updates' })}
-            </span>
-          </div>
-          
-          {FAN_EVENTS.map((e, i) => {
-            // 임시로 각 이벤트에 가격과 상태 정보 추가
-            const eventInfo = [
-              { price: '88,000~220,000원', status: { ko: '매진', zh: '售罄', en: 'Sold Out' }, weibo: 'https://weibo.com/bangtan' },
-              { price: '99,000~165,000원', status: { ko: '예매중', zh: '预售中', en: 'On Sale' }, weibo: 'https://weibo.com/seventeen17' },
-              { price: '132,000~198,000원', status: { ko: '예매 예정', zh: '即将开票', en: 'Pre-Sale' }, weibo: 'https://weibo.com/BLACKPINKOFFICIAL' },
-              { price: '110,000~176,000원', status: { ko: '매진', zh: '售罄', en: 'Sold Out' }, weibo: 'https://weibo.com/GDRAGON_OFFICIAL' },
-              { price: '88,000~154,000원', status: { ko: '예매중', zh: '预售中', en: 'On Sale' }, weibo: 'https://weibo.com/aespa' },
-              { price: '77,000~143,000원', status: { ko: '예매중', zh: '预售中', en: 'On Sale' }, bilibili: 'https://space.bilibili.com/382472642' },
-              { price: '무료 (추첨)', status: { ko: '신청 마감', zh: '申请截止', en: 'Application Closed' }, bilibili: 'https://space.bilibili.com/1866888813' },
-              { price: '99,000~176,000원', status: { ko: '예매중', zh: '预售中', en: 'On Sale' }, weibo: 'https://weibo.com/StrayKidsOfficial' },
-              { price: '165,000~330,000원', status: { ko: '곧 오픈', zh: '即将开票', en: 'Coming Soon' }, weibo: 'https://weibo.com/bangtan' },
-              { price: '121,000~198,000원', status: { ko: '곧 오픈', zh: '即将开票', en: 'Coming Soon' }, weibo: 'https://weibo.com/dlwlrma' }
-            ][i] || { price: '미정', status: { ko: '준비중', zh: '准备中', en: 'TBA' } }
-            
-            const statusColor = L(lang, eventInfo.status).includes('매진') || L(lang, eventInfo.status).includes('售罄') || L(lang, eventInfo.status).includes('Sold Out') ? 'bg-red-50 text-red-600' :
-                               L(lang, eventInfo.status).includes('예매중') || L(lang, eventInfo.status).includes('预售中') || L(lang, eventInfo.status).includes('On Sale') ? 'bg-green-50 text-green-600' :
-                               'bg-yellow-50 text-yellow-600'
-                               
-            return (
-              <div key={i} className="bg-white rounded-2xl p-4 border border-[#E5E7EB] card-glow hover:shadow-sm transition-shadow">
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <h3 className="text-sm font-bold text-[#111827]">{e.artist}</h3>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700">{L(lang, e.type)}</span>
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusColor}`}>
-                        {L(lang, eventInfo.status)}
-                      </span>
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-1 text-xs text-[#6B7280]">
-                        <Calendar size={12} />
-                        <span>{e.date}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-xs text-[#6B7280]">
-                        <Landmark size={12} />
-                        <span>{L(lang, e.venue)}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-xs text-[#6B7280]">
-                        <span className="font-semibold">💰</span>
-                        <span>{eventInfo.price}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    {eventInfo.weibo && (
-                      <a href={eventInfo.weibo} target="_blank" rel="noopener noreferrer" 
-                         className="flex items-center gap-1 px-2 py-1 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
-                        <span className="font-semibold">微</span>
-                        {lang === 'zh' && <span>微博</span>}
-                      </a>
-                    )}
-                    {eventInfo.bilibili && (
-                      <a href={eventInfo.bilibili} target="_blank" rel="noopener noreferrer"
-                         className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
-                        <span className="font-semibold">B</span>
-                        {lang === 'zh' && <span>哔哩</span>}
-                      </a>
-                    )}
-                  </div>
-                  <a href={e.ticket} target="_blank" rel="noopener noreferrer" 
-                     className="flex items-center gap-1 text-[11px] font-semibold text-[#111827] bg-[#F3F4F6] hover:bg-[#E5E7EB] px-3 py-1.5 rounded-lg transition-colors">
-                    <Ticket size={12} />
-                    {L(lang, { ko: '예매사이트', zh: '购票网站', en: 'Tickets' })}
-                  </a>
-                </div>
-              </div>
-            )
-          })}
-          
-          {/* 티켓 예매 가이드 */}
-          <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-3">
-            <p className="text-xs text-[#6B7280] mb-2 font-semibold">
-              {L(lang, { ko: '🎫 티켓 예매 가이드', zh: '🎫 购票指南', en: '🎫 Ticket Guide' })}
-            </p>
-            <ul className="text-xs text-[#6B7280] space-y-1">
-              <li>• {L(lang, { ko: '인터파크: 회원가입 후 본인인증 필수', zh: 'Interpark: 需注册并实名认证', en: 'Interpark: Registration & ID verification required' })}</li>
-              <li>• {L(lang, { ko: 'YES24: 팬클럽 선예매 혜택', zh: 'YES24: 粉丝俱乐部预售优惠', en: 'YES24: Fan club presale benefits' })}</li>
-              <li>• {L(lang, { ko: '위버스: 아티스트별 전용 예매', zh: 'Weverse: 艺人专属购票', en: 'Weverse: Artist-exclusive ticketing' })}</li>
-            </ul>
-          </div>
-        </div>
-      )}
 
       {/* Traditional Experiences */}
       {section === 'tradition' && (

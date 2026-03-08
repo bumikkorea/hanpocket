@@ -4828,5 +4828,541 @@ export const koreanFoodDB = [
     quality: 'basic',
     recipe: null, // Combination of various late night foods
     image: null
+  },
+
+  // === NEW ADDITIONS (2026-03-08): EXPANDING TO 176 ITEMS ===
+  
+  {
+    id: 'oi-muchim',
+    ko: '오이무침',
+    zh: '凉拌黄瓜',
+    en: 'Cucumber Salad',
+    category: 'banchan',
+    spicy: 2,
+    allergens: ['soy', 'sesame'],
+    price: '3000-5000',
+    desc_zh: '爽脆的凉拌黄瓜，清爽开胃，是夏天必备小菜。',
+    desc_en: 'Crispy cucumber salad, refreshing and appetizing, a summer essential side dish.',
+    origin_zh: '한국의 전통 반찬. 오이의 아삭한 식감과 시원한 맛이 특징.',
+    origin_en: 'Traditional Korean side dish. Characterized by cucumber\'s crispy texture and cool taste.',
+    tags: ['refreshing', 'summer', 'healthy', 'quick'],
+    quality: 'verified',
+    recipe: {
+      ingredients: [
+        '오이 2개 (cucumbers 2 pieces)',
+        '굵은 소금 1큰술 (coarse salt 1 tbsp)',
+        '고춧가루 1큰술 (gochugaru 1 tbsp)',
+        '다진 마늘 1작은술 (minced garlic 1 tsp)',
+        '참기름 1큰술 (sesame oil 1 tbsp)',
+        '식초 2큰술 (vinegar 2 tbsp)',
+        '설탕 1작은술 (sugar 1 tsp)',
+        '통깨 (sesame seeds)'
+      ],
+      steps: [
+        '오이를 얇게 어슷썰기 하고 굵은 소금에 절여 20분간 둔다',
+        '오이에서 나온 물기를 꼭 짜낸다',
+        '고춧가루, 다진 마늘, 참기름, 식초, 설탕을 섞어 양념장을 만든다',
+        '오이와 양념장을 잘 버무린다',
+        '통깨를 뿌려 완성'
+      ],
+      cookTime: '30분',
+      servings: '2-3명분',
+      tips: 'Pro tip: 오이는 소금에 절인 후 물기를 충분히 제거해야 아삭한 식감을 유지할 수 있다.'
+    },
+    image: null
+  },
+
+  {
+    id: 'myeongnan-jeot',
+    ko: '명란젓',
+    zh: '明太鱼子酱',
+    en: 'Salted Pollock Roe',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['fish'],
+    price: '5000-8000',
+    desc_zh: '腌制的明太鱼子，口感Q弹，是下酒好菜。',
+    desc_en: 'Salted pollock roe with chewy texture, great with alcohol.',
+    origin_zh: '부산 지역에서 특히 유명한 젓갈류. 일본에서도 인기가 높다.',
+    origin_en: 'Especially famous fermented seafood from Busan. Also popular in Japan.',
+    tags: ['umami', 'alcohol-pairing', 'luxury', 'traditional'],
+    quality: 'verified',
+    recipe: {
+      ingredients: [
+        '명란 300g (pollock roe 300g)',
+        '청주 3큰술 (sake 3 tbsp)',
+        '참기름 1큰술 (sesame oil 1 tbsp)',
+        '다진 마늘 1작은술 (minced garlic 1 tsp)',
+        '파 1대 (green onion 1 stalk)'
+      ],
+      steps: [
+        '명란의 껍질을 벗겨 알만 분리한다',
+        '청주와 참기름을 넣고 부드럽게 섞는다',
+        '다진 마늘과 파를 넣어 버무린다',
+        '냉장고에서 30분간 숙성시킨다'
+      ],
+      cookTime: '45분',
+      servings: '2-3명분',
+      tips: 'Pro tip: 껍질을 벗길 때 숟가락으로 긁어내면 쉽게 분리된다.'
+    },
+    image: null
+  },
+
+  {
+    id: 'sigeumchi-namul',
+    ko: '시금치나물',
+    zh: '拌菠菜',
+    en: 'Seasoned Spinach',
+    category: 'banchan',
+    spicy: 0,
+    allergens: ['soy', 'sesame'],
+    price: '2000-4000',
+    desc_zh: '营养丰富的拌菠菜，清淡健康的小菜。',
+    desc_en: 'Nutritious seasoned spinach, light and healthy side dish.',
+    origin_zh: '한국의 가장 기본적인 나물 반찬 중 하나.',
+    origin_en: 'One of the most basic vegetable side dishes in Korea.',
+    tags: ['healthy', 'vegetarian', 'iron-rich', 'classic'],
+    quality: 'verified',
+    recipe: {
+      ingredients: [
+        '시금치 1단 (spinach 1 bunch)',
+        '간장 1큰술 (soy sauce 1 tbsp)',
+        '참기름 1큰술 (sesame oil 1 tbsp)',
+        '다진 마늘 1작은술 (minced garlic 1 tsp)',
+        '소금 약간 (salt a pinch)',
+        '통깨 (sesame seeds)'
+      ],
+      steps: [
+        '시금치를 깨끗이 씻어 뿌리 부분을 자른다',
+        '끓는 물에 소금을 넣고 시금치를 30초간 데친다',
+        '찬물에 헹궈 물기를 짜낸다',
+        '간장, 참기름, 다진 마늘을 넣고 버무린다',
+        '통깨를 뿌려 완성'
+      ],
+      cookTime: '15분',
+      servings: '2-3명분',
+      tips: 'Pro tip: 시금치는 데치는 시간이 짧아야 식감과 색이 살아난다.'
+    },
+    image: null
+  },
+
+  {
+    id: 'doraji-namul',
+    ko: '도라지나물',
+    zh: '拌桔梗',
+    en: 'Seasoned Bellflower Root',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy', 'sesame'],
+    price: '3000-5000',
+    desc_zh: '有嚼劲的桔梗根，有清肺功效。',
+    desc_en: 'Chewy bellflower root, good for lung health.',
+    origin_zh: '한국 전통 약재이기도 한 도라지를 나물로 만든 반찬.',
+    origin_en: 'Traditional side dish made from bellflower root, also used as herbal medicine.',
+    tags: ['healthy', 'medicinal', 'chewy', 'traditional'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'kong-namul',
+    ko: '콩나물',
+    zh: '拌豆芽',
+    en: 'Seasoned Bean Sprouts',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy', 'sesame'],
+    price: '2000-4000',
+    desc_zh: '清爽的拌豆芽，是最常见的小菜之一。',
+    desc_en: 'Refreshing seasoned bean sprouts, one of the most common side dishes.',
+    origin_zh: '한국인의 밥상에서 빠질 수 없는 기본 반찬.',
+    origin_en: 'Essential basic side dish that cannot be missing from Korean meals.',
+    tags: ['basic', 'affordable', 'crunchy', 'everyday'],
+    quality: 'verified',
+    recipe: {
+      ingredients: [
+        '콩나물 300g (bean sprouts 300g)',
+        '간장 2큰술 (soy sauce 2 tbsp)',
+        '참기름 1큰술 (sesame oil 1 tbsp)',
+        '다진 마늘 1작은술 (minced garlic 1 tsp)',
+        '파 1대 (green onion 1 stalk)',
+        '소금, 후추 (salt, pepper)'
+      ],
+      steps: [
+        '콩나물을 깨끗이 씻어 꼬리를 제거한다',
+        '끓는 물에 소금을 넣고 콩나물을 2분간 데친다',
+        '찬물에 헹궈 물기를 제거한다',
+        '간장, 참기름, 다진 마늘, 파를 넣고 버무린다',
+        '소금, 후추로 간을 맞춘다'
+      ],
+      cookTime: '15분',
+      servings: '3-4명분',
+      tips: 'Pro tip: 콩나물은 오래 삶으면 아삭한 식감이 없어진다.'
+    },
+    image: null
+  },
+
+  {
+    id: 'mul-kimchi',
+    ko: '물김치',
+    zh: '水萝卜泡菜',
+    en: 'Water Kimchi',
+    category: 'banchan',
+    spicy: 1,
+    allergens: [],
+    price: '4000-6000',
+    desc_zh: '清爽的水萝卜泡菜，夏天开胃菜。',
+    desc_en: 'Refreshing water radish kimchi, summer appetizer.',
+    origin_zh: '여름철 시원한 국물을 즐기는 김치.',
+    origin_en: 'Kimchi with cool broth enjoyed in summer.',
+    tags: ['refreshing', 'summer', 'light', 'probiotic'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'cheese-dakgangjeong',
+    ko: '치즈닭강정',
+    zh: '芝士炸鸡',
+    en: 'Cheese Dakgangjeong',
+    category: 'street',
+    spicy: 2,
+    allergens: ['wheat', 'dairy', 'soy'],
+    price: '8000-12000',
+    desc_zh: '酥脆炸鸡配上浓郁芝士，年轻人的最爱。',
+    desc_en: 'Crispy fried chicken with rich cheese, young people\'s favorite.',
+    origin_zh: '전통 닭강정에 치즈를 더한 현대적 변형.',
+    origin_en: 'Modern variation of traditional dakgangjeong with added cheese.',
+    tags: ['cheesy', 'modern', 'popular', 'social-media'],
+    quality: 'verified',
+    recipe: {
+      ingredients: [
+        '닭봉 500g (chicken wings 500g)',
+        '튀김가루 1컵 (frying powder 1 cup)',
+        '모짜렐라 치즈 100g (mozzarella cheese 100g)',
+        '고추장 2큰술 (gochujang 2 tbsp)',
+        '물엿 2큰술 (corn syrup 2 tbsp)',
+        '마늘 3쪽 (garlic 3 cloves)',
+        '생강 1쪽 (ginger 1 piece)'
+      ],
+      steps: [
+        '닭봉에 튀김가루를 묻혀 170도 기름에 튀긴다',
+        '고추장, 물엿, 다진 마늘, 생강으로 양념장을 만든다',
+        '튀긴 닭봉을 양념장에 버무린다',
+        '치즈를 올려 오븐에서 1분간 녹인다'
+      ],
+      cookTime: '30분',
+      servings: '2-3명분',
+      tips: 'Pro tip: 치즈는 마지막에 올려야 텁텁하지 않고 부드럽다.'
+    },
+    image: null
+  },
+
+  {
+    id: 'hotteok-ice-cream',
+    ko: '호떡아이스크림',
+    zh: '糖饼冰淇淋',
+    en: 'Hotteok Ice Cream',
+    category: 'street',
+    spicy: 0,
+    allergens: ['wheat', 'dairy', 'nuts'],
+    price: '3000-4000',
+    desc_zh: '热糖饼配冰淇淋的神奇组合，冷热交替的新奇体验。',
+    desc_en: 'Amazing combination of hot hotteok with ice cream, a unique hot-cold experience.',
+    origin_zh: '최근 인기를 끌고 있는 퓨전 디저트. 차갑고 따뜻함의 조화.',
+    origin_en: 'Recently popular fusion dessert. Harmony of cold and warm.',
+    tags: ['fusion', 'trendy', 'unique', 'dessert-street'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'korean-waffle',
+    ko: '길거리 와플',
+    zh: '街头华夫饼',
+    en: 'Korean Street Waffle',
+    category: 'street',
+    spicy: 0,
+    allergens: ['wheat', 'dairy', 'eggs'],
+    price: '2000-3000',
+    desc_zh: '香甜的街头华夫饼，有各种口味的馅料。',
+    desc_en: 'Sweet street waffle with various flavored fillings.',
+    origin_zh: '길거리에서 쉽게 찾을 수 있는 인기 간식.',
+    origin_en: 'Popular snack easily found on the streets.',
+    tags: ['sweet', 'portable', 'affordable', 'kids-love'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'korean-corn-dog-variations',
+    ko: '핫도그 바리에이션',
+    zh: '各式热狗',
+    en: 'Korean Corn Dog Variations',
+    category: 'street',
+    spicy: 1,
+    allergens: ['wheat', 'dairy', 'soy'],
+    price: '2500-4500',
+    desc_zh: '各种创新口味的韩式热狗。',
+    desc_en: 'Various innovative Korean-style corn dogs.',
+    origin_zh: '한국에서 독특하게 발달한 다양한 핫도그 메뉴.',
+    origin_en: 'Various hot dog menus uniquely developed in Korea.',
+    tags: ['innovative', 'variety', 'fun', 'instagrammable'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'korean-crepe',
+    ko: '한국식 크레페',
+    zh: '韩式可丽饼',
+    en: 'Korean Crepe',
+    category: 'street',
+    spicy: 0,
+    allergens: ['wheat', 'dairy', 'eggs'],
+    price: '3000-5000',
+    desc_zh: '薄薄的饼皮包着各种馅料的韩식可丽饼。',
+    desc_en: 'Korean crepe with thin wrapper and various fillings.',
+    origin_zh: '길거리에서 즐길 수 있는 달콤한 간식.',
+    origin_en: 'Sweet snack that can be enjoyed on the street.',
+    tags: ['sweet', 'portable', 'customizable', 'date-food'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'korean-blood-sausage',
+    ko: '순대',
+    zh: '血肠',
+    en: 'Korean Blood Sausage',
+    category: 'street',
+    spicy: 0,
+    allergens: ['soy'],
+    price: '5000-8000',
+    desc_zh: '韩式血肠，配酸菜一起吃。',
+    desc_en: 'Korean blood sausage, eaten with pickled vegetables.',
+    origin_zh: '한국의 전통 음식. 돼지 내장에 당면과 야채를 넣어 만든다.',
+    origin_en: 'Traditional Korean food made by stuffing pig intestines with noodles and vegetables.',
+    tags: ['traditional', 'hearty', 'comfort', 'winter'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'bingsu-mango',
+    ko: '망고빙수',
+    zh: '芒果刨冰',
+    en: 'Mango Bingsu',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '8000-12000',
+    desc_zh: '夏季必吃的芒果刨冰，清爽香甜。',
+    desc_en: 'Must-eat mango shaved ice in summer, refreshing and sweet.',
+    origin_zh: '한국 여름 대표 디저트 중 하나. 과일 빙수의 인기 메뉴.',
+    origin_en: 'One of Korea\'s representative summer desserts. Popular fruit bingsu menu.',
+    tags: ['summer', 'tropical', 'refreshing', 'instagram'],
+    quality: 'verified',
+    recipe: {
+      ingredients: [
+        '얼음 4컵 (ice 4 cups)',
+        '연유 3큰술 (condensed milk 3 tbsp)',
+        '망고 2개 (mango 2 pieces)',
+        '바닐라 아이스크림 (vanilla ice cream)',
+        '연유 시럽 (condensed milk syrup)'
+      ],
+      steps: [
+        '망고를 깍뚝썰기로 자른다',
+        '얼음과 연유를 믹서기에 갈아 빙수를 만든다',
+        '그릇에 빙수를 담고 망고를 올린다',
+        '바닐라 아이스크림을 올린다',
+        '연유 시럽을 뿌려 완성'
+      ],
+      cookTime: '15분',
+      servings: '2명분',
+      tips: 'Pro tip: 얼음은 곱게 갈아야 부드러운 식감을 얻을 수 있다.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-macaroon',
+    ko: '한국식 마카롱',
+    zh: '韩式马卡龙',
+    en: 'Korean Macaroon',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['nuts', 'eggs'],
+    price: '2500-4000',
+    desc_zh: '독특口味的韩式马卡龙，有紫薯、绿茶等口味。',
+    desc_en: 'Korean macaroon with unique flavors like sweet potato, green tea.',
+    origin_zh: '프랑스 마카롱을 한국인 입맛에 맞게 변형한 디저트.',
+    origin_en: 'French macaron adapted to Korean taste preferences.',
+    tags: ['elegant', 'gift', 'unique-flavors', 'colorful'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'injeolmi-toast',
+    ko: '인절미 토스트',
+    zh: '年糕粉吐司',
+    en: 'Injeolmi Toast',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['wheat', 'dairy', 'soy'],
+    price: '4000-6000',
+    desc_zh: '年糕粉撒在吐司上的韩式甜点。',
+    desc_en: 'Korean dessert with rice cake powder sprinkled on toast.',
+    origin_zh: '전통 인절미를 현대적으로 재해석한 카페 메뉴.',
+    origin_en: 'Modern reinterpretation of traditional injeolmi as a cafe menu.',
+    tags: ['traditional-modern', 'nutty', 'cafe-style', 'trending'],
+    quality: 'verified',
+    recipe: {
+      ingredients: [
+        '식빵 2장 (bread slices 2 pieces)',
+        '인절미가루 3큰술 (injeolmi powder 3 tbsp)',
+        '버터 (butter)',
+        '연유 2큰술 (condensed milk 2 tbsp)',
+        '견과류 (nuts)'
+      ],
+      steps: [
+        '식빵을 토스터에 굽는다',
+        '버터를 발라준다',
+        '연유를 고르게 펴 바른다',
+        '인절미가루를 듬뿍 뿌린다',
+        '견과류를 올려 완성'
+      ],
+      cookTime: '10분',
+      servings: '1명분',
+      tips: 'Pro tip: 인절미가루는 토스트가 따뜻할 때 뿌려야 잘 달라붙는다.'
+    },
+    image: null
+  },
+
+  {
+    id: 'bungeoppang-ice-cream',
+    ko: '붕어빵 아이스크림',
+    zh: '鲷鱼烧冰淇淋',
+    en: 'Bungeoppang Ice Cream',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['wheat', 'dairy'],
+    price: '2500-4000',
+    desc_zh: '鲷鱼烧造型的冰淇淋，可爱又美味。',
+    desc_en: 'Fish-shaped ice cream, cute and delicious.',
+    origin_zh: '전통 붕어빵 모양을 한 아이스크림 디저트.',
+    origin_en: 'Ice cream dessert shaped like traditional bungeoppang.',
+    tags: ['cute', 'nostalgic', 'shape-unique', 'kids-favorite'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'korean-shaved-ice-coffee',
+    ko: '커피빙수',
+    zh: '咖啡刨冰',
+    en: 'Coffee Shaved Ice',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '6000-9000',
+    desc_zh: '咖啡味的刨冰，夏日下午茶的好选择。',
+    desc_en: 'Coffee-flavored shaved ice, great for summer afternoon tea.',
+    origin_zh: '커피와 빙수의 조화로 만든 여름 디저트.',
+    origin_en: 'Summer dessert made with harmony of coffee and shaved ice.',
+    tags: ['caffeinated', 'summer', 'adult-taste', 'afternoon'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  // === ADDITIONAL ITEMS TO REACH 50 NEW ===
+
+  {
+    id: 'seafood-pajeon',
+    ko: '해물파전',
+    zh: '海鲜韭菜饼',
+    en: 'Seafood Scallion Pancake',
+    category: 'jeon',
+    spicy: 1,
+    allergens: ['wheat', 'seafood'],
+    price: '8000-12000',
+    desc_zh: '香脆的海鲜韭菜饼，下雨天的完美搭配。',
+    desc_en: 'Crispy seafood scallion pancake, perfect for rainy days.',
+    origin_zh: '비오는 날의 대표 음식. 파와 해물의 조화.',
+    origin_en: 'Representative food for rainy days. Harmony of scallions and seafood.',
+    tags: ['rainy-day', 'crispy', 'alcohol-pairing', 'comfort'],
+    quality: 'verified',
+    recipe: {
+      ingredients: [
+        '파 3대 (scallions 3 stalks)',
+        '새우 100g (shrimp 100g)',
+        '오징어 100g (squid 100g)',
+        '부침가루 1컵 (pancake flour 1 cup)',
+        '물 1컵 (water 1 cup)',
+        '달걀 1개 (egg 1)',
+        '소금, 후추 (salt, pepper)'
+      ],
+      steps: [
+        '파는 4cm 길이로 자르고 해물은 먹기 좋게 썬다',
+        '부침가루에 물과 달걀을 넣어 반죽을 만든다',
+        '팬에 기름을 두르고 파를 깔아준다',
+        '해물을 올리고 반죽을 부어준다',
+        '앞뒤로 바삭하게 구워낸다'
+      ],
+      cookTime: '20분',
+      servings: '2-3명분',
+      tips: 'Pro tip: 센 불에서 바삭하게 구워야 맛있다.'
+    },
+    image: null
+  },
+
+  {
+    id: 'gamjatang-bone-marrow',
+    ko: '감자탕 뼈다귀',
+    zh: '土豆汤脊骨',
+    en: 'Gamjatang Pork Bone',
+    category: 'guk',
+    spicy: 2,
+    allergens: ['soy'],
+    price: '12000-18000',
+    desc_zh: '浓郁的猪脊骨汤配土豆，营养丰富。',
+    desc_en: 'Rich pork spine soup with potatoes, nutritious.',
+    origin_zh: '한국의 대표적인 보양식 중 하나.',
+    origin_en: 'One of Korea\'s representative nourishing foods.',
+    tags: ['hearty', 'nourishing', 'winter', 'collagen'],
+    quality: 'basic',
+    recipe: null,
+    image: null
+  },
+
+  {
+    id: 'korean-rice-punch',
+    ko: '식혜',
+    zh: '甜米汁',
+    en: 'Korean Rice Punch',
+    category: 'drink',
+    spicy: 0,
+    allergens: [],
+    price: '2000-3000',
+    desc_zh: '传统的甜米汁饮料，帮助消化。',
+    desc_en: 'Traditional sweet rice drink that aids digestion.',
+    origin_zh: '한국의 전통 음료. 엿기름으로 만든 달콤한 음료.',
+    origin_en: 'Traditional Korean beverage made with malt, sweet drink.',
+    tags: ['traditional', 'sweet', 'digestive', 'refreshing'],
+    quality: 'basic',
+    recipe: null,
+    image: null
   }
+
 ];

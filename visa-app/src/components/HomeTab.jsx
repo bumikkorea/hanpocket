@@ -269,8 +269,10 @@ function HolidayCalendar({ lang }) {
   const [countries, setCountries] = useState(() => {
     try { return JSON.parse(localStorage.getItem('hp_holiday_countries')) || ['kr'] } catch { return ['kr'] }
   })
-  const [expanded, setExpanded] = useState(false)
-  const currentMonthRef = useRef(null)
+  const today = new Date()
+  const todayStr = today.toISOString().slice(0, 10)
+  const year = today.getFullYear()
+  const [viewMonth, setViewMonth] = useState(today.getMonth())
 
   const toggleCountry = (c) => {
     setCountries(prev => {
@@ -281,118 +283,39 @@ function HolidayCalendar({ lang }) {
     })
   }
 
-  // 펼치면 현재 달로 스크롤
-  useEffect(() => {
-    if (expanded && currentMonthRef.current) {
-      currentMonthRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }, [expanded])
-
-  const today = new Date()
-  const todayStr = today.toISOString().slice(0, 10)
-  const year = today.getFullYear()
-  const currentMonth = today.getMonth()
-
   const allHolidays = countries.flatMap(c => (HOLIDAYS_BY_COUNTRY[c] || []).map(h => ({ ...h, country: c })))
   const countryColor = { kr: 'bg-red-500', cn: 'bg-red-600', tw: 'bg-green-500', hk: 'bg-pink-500' }
   const monthNames = { ko: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'], zh: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'], en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] }
   const dayLabels = { ko: ['일','월','화','수','목','금','토'], zh: ['日','一','二','三','四','五','六'], en: ['S','M','T','W','T','F','S'] }
 
-  const months = expanded ? Array.from({ length: 12 }, (_, i) => i) : [currentMonth]
+  const firstDay = new Date(year, viewMonth, 1).getDay()
+  const daysInMonth = new Date(year, viewMonth + 1, 0).getDate()
+  const cells = []
+  for (let i = 0; i < firstDay; i++) cells.push(null)
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
 
-  // 다가오는 공휴일
-  const upcoming = allHolidays.filter(h => h.date >= todayStr).sort((a, b) => a.date.localeCompare(b.date))
-  const seenKeys = new Set()
-  const upcomingDeduped = []
-  for (const h of upcoming) {
+  const holidayMap = new Map()
+  allHolidays.filter(h => {
+    const d = new Date(h.date)
+    return d.getFullYear() === year && d.getMonth() === viewMonth
+  }).forEach(h => {
+    const day = parseInt(h.date.slice(8, 10))
+    if (!holidayMap.has(day)) holidayMap.set(day, [])
+    holidayMap.get(day).push(h.country)
+  })
+
+  // 이번 달 공휴일 목록
+  const monthHolidays = []
+  const seenH = new Set()
+  allHolidays.filter(h => {
+    const d = new Date(h.date)
+    return d.getFullYear() === year && d.getMonth() === viewMonth
+  }).forEach(h => {
     const key = `${h.date}-${h.country}`
-    if (!seenKeys.has(key)) { seenKeys.add(key); upcomingDeduped.push(h) }
-    if (upcomingDeduped.length >= 5) break
-  }
+    if (!seenH.has(key)) { seenH.add(key); monthHolidays.push(h) }
+  })
 
-  function renderMonth(m) {
-    const firstDay = new Date(year, m, 1).getDay()
-    const daysInMonth = new Date(year, m + 1, 0).getDate()
-    const cells = []
-    for (let i = 0; i < firstDay; i++) cells.push(null)
-    for (let d = 1; d <= daysInMonth; d++) cells.push(d)
-
-    const holidayMap = new Map()
-    allHolidays.filter(h => {
-      const d = new Date(h.date)
-      return d.getFullYear() === year && d.getMonth() === m
-    }).forEach(h => {
-      const day = parseInt(h.date.slice(8, 10))
-      if (!holidayMap.has(day)) holidayMap.set(day, [])
-      holidayMap.get(day).push(h.country)
-    })
-
-    // 이 달의 공휴일 목록
-    const monthHolidays = allHolidays.filter(h => {
-      const d = new Date(h.date)
-      return d.getFullYear() === year && d.getMonth() === m
-    })
-    const seenH = new Set()
-    const monthHolidaysDeduped = []
-    for (const h of monthHolidays) {
-      const key = `${h.date}-${h.country}`
-      if (!seenH.has(key)) { seenH.add(key); monthHolidaysDeduped.push(h) }
-    }
-
-    const isCurrentMonth = m === currentMonth
-
-    return (
-      <div key={m} ref={isCurrentMonth ? currentMonthRef : null} className={`${expanded ? 'mb-6' : ''}`}>
-        {expanded && (
-          <h3 className={`text-[13px] font-semibold mb-2 ${isCurrentMonth ? 'text-[#2D5A3D]' : 'text-[#1A1A1A]'}`}>
-            {L(lang, { ko: `${monthNames.ko[m]}`, zh: `${monthNames.zh[m]}`, en: `${monthNames.en[m]}` })}
-            {isCurrentMonth && <span className="ml-1.5 text-[10px] font-normal text-[#2D5A3D] bg-[#2D5A3D]/10 px-1.5 py-0.5 rounded">NOW</span>}
-          </h3>
-        )}
-        <div className={`rounded-[6px] border border-[#E5E7EB] p-3 ${expanded ? 'mb-2' : 'mb-3'}`}>
-          <div className="grid grid-cols-7 gap-0 text-center mb-1">
-            {dayLabels[lang]?.map((d, i) => (
-              <span key={i} className={`text-[10px] font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-[#999]'}`}>{d}</span>
-            ))}
-          </div>
-          <div className="grid grid-cols-7 gap-0 text-center">
-            {cells.map((d, i) => {
-              if (!d) return <span key={i} />
-              const isToday = isCurrentMonth && d === today.getDate()
-              const hc = holidayMap.get(d)
-              const dayOfWeek = (firstDay + d - 1) % 7
-              return (
-                <div key={i} className="flex flex-col items-center">
-                  <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : hc ? 'text-red-500 font-bold' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[#666]'}`}>
-                    {d}
-                  </span>
-                  {hc && (
-                    <div className="flex gap-[2px] mt-[1px]">
-                      {[...new Set(hc)].map(c => (
-                        <div key={c} className={`w-[4px] h-[4px] rounded-full ${countryColor[c]}`} />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-        {/* 펼침 모드: 각 달별 공휴일 */}
-        {expanded && monthHolidaysDeduped.length > 0 && (
-          <div className="flex flex-col gap-1 mb-2">
-            {monthHolidaysDeduped.map((h, i) => (
-              <div key={i} className="flex items-center gap-2 py-1 px-2 text-[11px]">
-                <span>{COUNTRY_LABELS[h.country]?.flag}</span>
-                <span className="text-[#999]">{h.date.slice(8)}</span>
-                <span className="font-medium text-[#1A1A1A]">{L(lang, h.name)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    )
-  }
+  const isCurrentMonth = viewMonth === today.getMonth()
 
   return (
     <div className="mb-4 px-4">
@@ -414,30 +337,58 @@ function HolidayCalendar({ lang }) {
         ))}
       </div>
 
+      {/* 월 네비게이션: ◀ 2026년 3월 ▶ */}
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A]">
-          {expanded
-            ? L(lang, { ko: `${year}년 공휴일 달력`, zh: `${year}年假日日历`, en: `${year} Holiday Calendar` })
-            : L(lang, { ko: `${year}년 ${monthNames.ko[currentMonth]}`, zh: `${year}年${monthNames.zh[currentMonth]}`, en: `${monthNames.en[currentMonth]} ${year}` })
-          }
-        </h2>
-        <button
-          onClick={() => setExpanded(e => !e)}
-          className="text-[11px] font-medium text-[#2D5A3D] bg-[#2D5A3D]/10 px-2.5 py-1 rounded-[6px]"
-        >
-          {expanded
-            ? L(lang, { ko: '접기', zh: '收起', en: 'Collapse' })
-            : L(lang, { ko: '1년 보기', zh: '查看全年', en: 'Full Year' })
-          }
+        <button onClick={() => setViewMonth(m => Math.max(0, m - 1))} disabled={viewMonth === 0}
+          className={`p-1 rounded-[6px] ${viewMonth === 0 ? 'text-[#D1D5DB]' : 'text-[#1A1A1A] hover:bg-[#F3F4F6] active:bg-[#E5E7EB]'}`}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button onClick={() => setViewMonth(today.getMonth())}
+          className="text-[15px] font-semibold tracking-wide text-[#1A1A1A]">
+          {L(lang, { ko: `${year}년 ${monthNames.ko[viewMonth]}`, zh: `${year}年${monthNames.zh[viewMonth]}`, en: `${monthNames.en[viewMonth]} ${year}` })}
+          {isCurrentMonth && <span className="ml-1 text-[10px] font-normal text-[#2D5A3D]">●</span>}
+        </button>
+        <button onClick={() => setViewMonth(m => Math.min(11, m + 1))} disabled={viewMonth === 11}
+          className={`p-1 rounded-[6px] ${viewMonth === 11 ? 'text-[#D1D5DB]' : 'text-[#1A1A1A] hover:bg-[#F3F4F6] active:bg-[#E5E7EB]'}`}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
 
-      {months.map(m => renderMonth(m))}
+      {/* 캘린더 */}
+      <div className="rounded-[6px] border border-[#E5E7EB] p-3 mb-3">
+        <div className="grid grid-cols-7 gap-0 text-center mb-1">
+          {dayLabels[lang]?.map((d, i) => (
+            <span key={i} className={`text-[10px] font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-[#999]'}`}>{d}</span>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-0 text-center">
+          {cells.map((d, i) => {
+            if (!d) return <span key={i} />
+            const isToday = isCurrentMonth && d === today.getDate()
+            const hc = holidayMap.get(d)
+            const dayOfWeek = (firstDay + d - 1) % 7
+            return (
+              <div key={i} className="flex flex-col items-center">
+                <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : hc ? 'text-red-500 font-bold' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[#666]'}`}>
+                  {d}
+                </span>
+                {hc && (
+                  <div className="flex gap-[2px] mt-[1px]">
+                    {[...new Set(hc)].map(c => (
+                      <div key={c} className={`w-[4px] h-[4px] rounded-full ${countryColor[c]}`} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
 
-      {/* 다가오는 공휴일 (접힌 상태에서만) */}
-      {!expanded && upcomingDeduped.length > 0 && (
+      {/* 이번 달 공휴일 */}
+      {monthHolidays.length > 0 ? (
         <div className="flex flex-col gap-2">
-          {upcomingDeduped.map((h, i) => {
+          {monthHolidays.map((h, i) => {
             const diff = Math.ceil((new Date(h.date) - today) / 86400000)
             return (
               <div key={i} className="flex items-center justify-between py-2 px-3 rounded-[6px] bg-[#F9FAFB]">
@@ -448,13 +399,19 @@ function HolidayCalendar({ lang }) {
                     <span className="text-xs text-[#999] ml-2">{h.date.slice(5).replace('-', '/')}</span>
                   </div>
                 </div>
-                <span className="text-xs text-[#2D5A3D] font-medium">
-                  {diff === 0 ? L(lang, { ko: '오늘', zh: '今天', en: 'Today' }) : diff < 0 ? '' : `D-${diff}`}
-                </span>
+                {diff >= 0 && (
+                  <span className="text-xs text-[#2D5A3D] font-medium">
+                    {diff === 0 ? L(lang, { ko: '오늘', zh: '今天', en: 'Today' }) : `D-${diff}`}
+                  </span>
+                )}
               </div>
             )
           })}
         </div>
+      ) : (
+        <p className="text-xs text-[#999] text-center py-2">
+          {L(lang, { ko: '이번 달 공휴일 없음', zh: '本月无假日', en: 'No holidays this month' })}
+        </p>
       )}
     </div>
   )

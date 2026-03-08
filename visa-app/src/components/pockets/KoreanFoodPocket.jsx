@@ -52,18 +52,25 @@ function FoodCard({ item, lang, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`${bgColor} rounded-2xl p-4 text-left w-full transition-transform active:scale-[0.98]`}
+      className={`${bgColor} rounded-[6px] text-left w-full transition-transform active:scale-[0.98] overflow-hidden`}
     >
-      <div className="flex items-start justify-between mb-2">
-        <span className="text-[11px] text-gray-400 font-medium">
-          {category ? L(lang, category) : ''}
-        </span>
-        {item.spicy > 0 && <SpicyLevel level={item.spicy} />}
-      </div>
-      <p className="text-[15px] font-semibold text-gray-900 leading-tight">{item.ko}</p>
-      <p className="text-[13px] text-gray-500 mt-0.5">{lang === 'en' ? item.en : item.zh}</p>
-      <div className="mt-3">
-        <PriceDisplay price={item.price} />
+      {item.image && (
+        <div className="w-full h-28 overflow-hidden">
+          <img src={item.image} alt={item.ko} className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.parentElement.style.display = 'none' }} />
+        </div>
+      )}
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-2">
+          <span className="text-[11px] text-gray-400 font-medium">
+            {category ? L(lang, category) : ''}
+          </span>
+          {item.spicy > 0 && <SpicyLevel level={item.spicy} />}
+        </div>
+        <p className="text-[15px] font-semibold text-gray-900 leading-tight">{item.ko}</p>
+        <p className="text-[13px] text-gray-500 mt-0.5">{lang === 'en' ? item.en : item.zh}</p>
+        <div className="mt-3">
+          <PriceDisplay price={item.price} />
+        </div>
       </div>
     </button>
   )
@@ -97,8 +104,15 @@ function DetailModal({ item, lang, onClose }) {
         </div>
 
         <div className="px-6 pb-8">
+          {/* Image */}
+          {item.image && (
+            <div className="w-full h-48 rounded-[6px] overflow-hidden mt-4">
+              <img src={item.image} alt={item.ko} className="w-full h-full object-cover" loading="lazy" />
+            </div>
+          )}
+
           {/* Title area */}
-          <div className={`${bgColor} rounded-2xl p-5 mt-4`}>
+          <div className={`${bgColor} rounded-[6px] p-5 mt-4`}>
             <span className="text-[11px] text-gray-400 font-medium">
               {category ? L(lang, category) : ''}
             </span>

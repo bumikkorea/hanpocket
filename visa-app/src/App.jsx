@@ -1398,7 +1398,14 @@ function AppInner() {
   // Splash screen — handled by SplashScreen component
   const [showSplash, setShowSplash] = useState(true)
 
-  const [lang, setLang] = useState('ko')
+  const [lang, setLang] = useState(() => {
+    const saved = localStorage.getItem('hp_lang')
+    if (saved && ['ko','zh','en'].includes(saved)) return saved
+    const sys = (navigator.language || navigator.userLanguage || 'ko').toLowerCase()
+    if (sys.startsWith('zh')) return 'zh'
+    if (sys.startsWith('en')) return 'en'
+    return 'ko'
+  })
   const [profile, setProfile] = useState(() => loadProfile())
   const [showNotice, setShowNotice] = useState(false)
   const [tab, setTab] = useState('home')
@@ -1426,14 +1433,35 @@ function AppInner() {
   }
 
   // Welcome landing overlay (first-run only)
-  const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem('hp_welcome_done'))
+  const [showWelcome, setShowWelcome] = useState(() => {
+    const done = localStorage.getItem('hp_welcome_done')
+    if (done === 'true') return false
+    // 7일간 다시보지 않음 체크
+    const snoozed = localStorage.getItem('hp_welcome_snoozed')
+    if (snoozed && Date.now() - Number(snoozed) < 7 * 24 * 60 * 60 * 1000) return false
+    return true
+  })
   const [welcomeFading, setWelcomeFading] = useState(false)
-  const dismissWelcome = () => {
-    setWelcomeFading(true)
-    setTimeout(() => {
-      setShowWelcome(false)
+  const dismissWelcome = (accepted) => {
+    if (accepted) {
+      // 알림 설정 유도
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission().then(perm => {
+          localStorage.setItem('hp_notification_perm', perm)
+        })
+      }
+      try {
+        if (window.Capacitor?.Plugins?.PushNotifications) {
+          window.Capacitor.Plugins.PushNotifications.requestPermissions()
+        }
+      } catch {}
       localStorage.setItem('hp_welcome_done', 'true')
-    }, 500)
+    } else {
+      // 7일간 다시보지 않음
+      localStorage.setItem('hp_welcome_snoozed', String(Date.now()))
+    }
+    setWelcomeFading(true)
+    setTimeout(() => setShowWelcome(false), 500)
   }
   const handleAuth = (provider) => {
     const p = {
@@ -1789,54 +1817,47 @@ function AppInner() {
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
-      {/* Welcome Landing Overlay (first-run) */}
+      {/* Welcome Landing Overlay (first-run / 7일 스누즈) */}
       {showWelcome && (
-        <div className={`fixed inset-0 z-[300] flex items-end justify-center transition-opacity duration-500 ${welcomeFading ? 'opacity-0' : 'opacity-100'}`}
-          style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}>
-          <div className={`w-full max-w-md bg-white rounded-t-3xl px-6 pt-10 pb-8 animate-slide-up transition-transform duration-500 ${welcomeFading ? 'translate-y-full' : 'translate-y-0'}`}>
-            <div className="text-center mb-6">
-              <span className="text-6xl">👋</span>
-            </div>
-            <div className="text-center mb-8">
-              <h1 className="text-lg font-semibold tracking-wide text-[#1A1A1A] mb-3">
-                {L(lang, { ko: '안녕하세요', zh: '你好', en: 'Hello' })}
+        <div className={`fixed inset-0 z-[300] flex items-end transition-opacity duration-500 ${welcomeFading ? 'opacity-0' : 'opacity-100'}`}
+          style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}>
+          <div className={`w-full bg-white rounded-t-[6px] transition-transform duration-500 ${welcomeFading ? 'translate-y-full' : 'translate-y-0'}`}
+            style={{ minHeight: '50vh' }}>
+            <div className="flex flex-col items-center justify-center px-6 pt-12 pb-10" style={{ minHeight: '50vh' }}>
+              {/* 타이틀 — HomeTab "한국 처음이신가요?"와 동일 스타일 */}
+              <h1 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A] mb-4">
+                {L(lang, { ko: '한국에 오신걸 환영해요', zh: '欢迎来到韩国', en: 'Welcome to Korea' })}
               </h1>
-              <p className="text-sm text-[#666] leading-relaxed tracking-wider whitespace-pre-line">
+
+              {/* 설명 */}
+              <p className="text-sm text-[#666] leading-relaxed tracking-wide text-center whitespace-pre-line mb-10">
                 {L(lang, {
-                  ko: '한포켓은 당신과 가장 가까운\n한국 친구예요.\n한국 좀 알려드릴까요?',
-                  zh: '韩口袋是离你最近的\n韩国朋友。\n让我告诉你关于韩国的事吧？',
-                  en: 'HanPocket is your closest\nKorean friend.\nShall I tell you about Korea?'
+                  ko: '한국 방문객들이 가장 많이 찾는\n여행지는 어디일까요?',
+                  zh: '韩国游客最常去的\n旅行地是哪里呢？',
+                  en: 'Where are the most popular\ndestinations among visitors?'
                 })}
               </p>
+
+              {/* 네, 좋아요! → 알림설정 유도 */}
+              <button
+                onClick={() => dismissWelcome(true)}
+                className="w-full py-3.5 rounded-2xl bg-[#2D5A3D] text-white font-semibold text-sm tracking-wider active:scale-[0.98] transition-transform mb-4"
+              >
+                {L(lang, { ko: '네, 좋아요!', zh: '好的！', en: 'Yes, please!' })}
+              </button>
+
+              {/* 아니요, 괜찮습니다 → 7일간 다시보지 않음 */}
+              <button
+                onClick={() => dismissWelcome(false)}
+                className="w-full text-center text-xs text-[#999] tracking-wider py-2"
+              >
+                {L(lang, {
+                  ko: '아니요, 괜찮습니다',
+                  zh: '不了，谢谢',
+                  en: 'No, thanks'
+                })}
+              </button>
             </div>
-            <button
-              onClick={() => {
-                if ('Notification' in window && Notification.permission === 'default') {
-                  Notification.requestPermission().then(perm => {
-                    localStorage.setItem('hp_notification_perm', perm)
-                  })
-                }
-                try {
-                  if (window.Capacitor?.Plugins?.PushNotifications) {
-                    window.Capacitor.Plugins.PushNotifications.requestPermissions()
-                  }
-                } catch {}
-                dismissWelcome()
-              }}
-              className="w-full py-3.5 rounded-2xl bg-[#2D5A3D] text-white font-semibold text-sm tracking-wider active:scale-[0.98] transition-transform mb-4"
-            >
-              {L(lang, { ko: '네, 좋아요!', zh: '好的！', en: 'Yes, please!' })}
-            </button>
-            <button
-              onClick={() => dismissWelcome()}
-              className="w-full text-center text-xs text-[#999] tracking-wider py-2"
-            >
-              {L(lang, {
-                ko: '아니요, 괜찮습니다',
-                zh: '不了，谢谢',
-                en: 'No, thanks'
-              })}
-            </button>
           </div>
         </div>
       )}
@@ -1940,7 +1961,7 @@ function AppInner() {
               <button onClick={() => { setTab('profile'); setSubPage(null) }} className="text-[#5F6368] p-1">
                 <User size={20} />
               </button>
-              <button onClick={() => setLang(nextLang(lang))} className="text-[#5F6368] p-1">
+              <button onClick={() => { const next = nextLang(lang); setLang(next); localStorage.setItem('hp_lang', next) }} className="text-[#5F6368] p-1">
                 <Globe size={20} />
               </button>
             </div>

@@ -7,9 +7,9 @@ export const pocketCategories = [
       { id: 'travel', name: { ko: '여행', zh: '旅行', en: 'Travel' }, icon: '✈️', description: { ko: '여행 계획부터 현지 정보까지', zh: '从旅行计划到当地信息', en: 'From travel plans to local info' }, size: 'lg' },
       { id: 'koreanfood', name: { ko: '한식백과', zh: '韩食百科', en: 'Korean Food Guide' }, icon: '🍲', description: { ko: '126가지 한식 메뉴 가이드', zh: '126种韩餐菜单指南', en: 'Guide to 126 Korean dishes' }, size: 'lg' },
       { id: 'food', name: { ko: '맛집', zh: '美食', en: 'Food' }, icon: '🍜', description: { ko: '미슐랭부터 블루리본까지', zh: '从米其林到蓝丝带', en: 'From Michelin to Blue Ribbon' }, size: 'lg' },
-      { id: 'trip', name: { ko: '여행 큐레이션', zh: '旅行精选', en: 'Travel Picks' }, icon: '🎫', description: { ko: '인기 체험 & 할인 티켓', zh: '热门体验 & 折扣门票', en: 'Popular experiences & discounted tickets' }, size: 'lg' },
+
       { id: 'festival', name: { ko: '축제/이벤트', zh: '节日/活动', en: 'Festivals' }, icon: '🎊', description: { ko: '이번 주 축제', zh: '本周节日', en: "This week's festivals" }, size: 'md' },
-      { id: 'holiday', name: { ko: '한국 공휴일 캘린더', zh: '韩国公休日日历', en: 'Korean Holiday Calendar' }, icon: '📅', description: { ko: '네이버 달력 스타일', zh: 'Naver日历风格', en: 'Naver Calendar style' }, size: 'lg' },
+
       { id: 'themepark', name: { ko: '놀이공원 할인', zh: '游乐园折扣', en: 'Theme Park Deals' }, icon: '🎡', description: { ko: '롯데월드, 에버랜드 할인 꿀팁', zh: '乐天世界、爱宝乐园折扣攻略', en: 'Lotte World, Everland discount tips' }, size: 'md' },
     ],
   },
@@ -43,7 +43,7 @@ export const pocketCategories = [
     pockets: [
       { id: 'medical', name: { ko: '의료', zh: '医疗', en: 'Medical' }, icon: '🏥', description: { ko: '병원 검색, 건강보험, 응급실', zh: '医院搜索、健康保险、急诊室', en: 'Hospital search, insurance, ER' }, size: 'lg' },
       { id: 'delivery', name: { ko: '배달 주문', zh: '点外卖', en: 'Food Delivery' }, icon: '🛵', description: { ko: '배달앱 주문 & 이용 가이드', zh: '外卖App下单 & 使用指南', en: 'Delivery apps & how-to guide' }, size: 'lg' },
-      { id: 'pet', name: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, icon: '🐾', description: { ko: '반려동물 한국 입국 절차', zh: '宠物入境韩国流程', en: 'Pet import to Korea process' }, size: 'lg' },
+
       { id: 'parcel', name: { ko: '택배', zh: '快递', en: 'Parcel' }, icon: '📦', description: { ko: '택배 보내기/조회', zh: '快递寄送/查询', en: 'Send & Track packages' }, size: 'md' },
       { id: 'cvsnew', name: { ko: '편의점 신상', zh: '便利店新品', en: 'CVS New Items' }, icon: '🛒', description: { ko: 'CU/GS25/세븐일레븐 신상품', zh: 'CU/GS25/7-ELEVEN新品', en: 'New convenience store items' }, size: 'md' },
     ],
@@ -451,7 +451,7 @@ export const IMPLEMENTED_POCKETS = new Set([
   // PocketContent.jsx — 전용 컴포넌트
   'restaurant', 'cafe', 'transport', 'convenience', 'shopping', 'accommodation', 'emergency', 'medical', 'koreanfood',
   // WidgetContent.jsx — 실제 위젯 컴포넌트
-  'holiday', 'parcel',
+  'parcel',
 ])
 
 // Export 별칭 - 기존 코드와의 호환성 유지

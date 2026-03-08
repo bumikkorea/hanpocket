@@ -106,7 +106,7 @@ function TopikGaugeBar({ currentLevel, lang }) {
       </div>
 
       {/* 다음 마일스톤 설명 카드 */}
-      <div className="p-3 rounded-xl border border-[#E5E7EB] bg-white">
+      <div className="p-3 rounded-[6px] border border-[#E5E7EB] bg-white">
         <p className="text-xs font-medium text-[#2D5A3D]">
           {currentLevel >= 200
             ? L(lang, { ko: '🎓 최고 레벨 달성!', zh: '🎓 已达最高级！', en: '🎓 Max level reached!' })

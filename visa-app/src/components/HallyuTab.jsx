@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, lazy, Suspense } from 'react'
 import { Music, Search, Users, Tv, Calendar, Ticket, Landmark, PartyPopper, ChevronRight, ExternalLink, Star, Filter, ChevronDown, MapPin, Loader2 } from 'lucide-react'
 import { idolDatabase, IDOL_GENERATIONS, IDOL_COMPANIES } from '../data/idolData'
+import { CHART_SOURCES, WEEKS, getChartData, searchCharts } from '../data/kpopChartData'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -84,8 +85,9 @@ const FESTIVALS = [
 
 export default function HallyuTab({ lang }) {
   const [section, setSection] = useState('chart')
-  const [chartData, setChartData] = useState([])
-  const [chartLoading, setChartLoading] = useState(false)
+  const [chartSource, setChartSource] = useState('qq')
+  const [chartWeek, setChartWeek] = useState(WEEKS[WEEKS.length - 1].id)
+  const [chartSearch, setChartSearch] = useState('')
 
   // Idol filters
   const [idolSearch, setIdolSearch] = useState('')
@@ -93,30 +95,13 @@ export default function HallyuTab({ lang }) {
   const [idolCompany, setIdolCompany] = useState('')
   const [idolShown, setIdolShown] = useState(20)
 
-  // Static K-POP chart data (2026년 2월 기준 인기 차트)
-  useEffect(() => {
-    if (section !== 'chart' || chartData.length > 0) return
-    setChartLoading(true)
-    
-    // 실제 스트리밍 차트 반영한 2026년 2월 TOP 10
-    const staticChartData = [
-      { id: 1, name: 'Armageddon', artistName: 'aespa', artworkUrl100: '/api/placeholder/100/100', weibo: 'https://weibo.com/aespa' },
-      { id: 2, name: 'Perfect Night', artistName: 'LE SSERAFIM', artworkUrl100: '/api/placeholder/100/100', bilibili: 'https://space.bilibili.com/1665520635' },
-      { id: 3, name: 'Love wins all', artistName: 'IU', artworkUrl100: '/api/placeholder/100/100', weibo: 'https://weibo.com/dlwlrma' },
-      { id: 4, name: 'MAESTRO', artistName: 'SEVENTEEN', artworkUrl100: '/api/placeholder/100/100', weibo: 'https://weibo.com/seventeen17' },
-      { id: 5, name: 'How Sweet', artistName: 'NewJeans', artworkUrl100: '/api/placeholder/100/100', bilibili: 'https://space.bilibili.com/1866888813' },
-      { id: 6, name: 'MAGNETIC', artistName: 'ILLIT', artworkUrl100: '/api/placeholder/100/100', weibo: 'https://weibo.com/ILLIT' },
-      { id: 7, name: 'Supernova', artistName: 'aespa', artworkUrl100: '/api/placeholder/100/100', weibo: 'https://weibo.com/aespa' },
-      { id: 8, name: 'Easy', artistName: 'LE SSERAFIM', artworkUrl100: '/api/placeholder/100/100', bilibili: 'https://space.bilibili.com/1665520635' },
-      { id: 9, name: 'SPOT!', artistName: 'ZICO (Feat. JENNIE)', artworkUrl100: '/api/placeholder/100/100', weibo: 'https://weibo.com/jennierubyjane' },
-      { id: 10, name: 'Steal The Show', artistName: '(G)I-DLE', artworkUrl100: '/api/placeholder/100/100', weibo: 'https://weibo.com/gidle' }
-    ]
-    
-    setTimeout(() => {
-      setChartData(staticChartData)
-      setChartLoading(false)
-    }, 500)
-  }, [section])
+  // Chart data
+  const chartData = useMemo(() => getChartData(chartSource, chartWeek), [chartSource, chartWeek])
+  const chartSearchResults = useMemo(() => {
+    if (!chartSearch.trim()) return null
+    return searchCharts(chartSearch, chartSource)
+  }, [chartSearch, chartSource])
+  const currentWeekInfo = WEEKS.find(w => w.id === chartWeek)
 
   // Filtered idols
   const filteredIdols = useMemo(() => {
@@ -158,75 +143,123 @@ export default function HallyuTab({ lang }) {
       {/* K-POP Chart */}
       {section === 'chart' && (
         <div className="space-y-3">
-          <div className="flex items-center justify-between mb-4">
+          {/* 차트 소스 선택 */}
+          <div className="flex gap-2">
+            {Object.values(CHART_SOURCES).map(src => (
+              <button
+                key={src.id}
+                onClick={() => setChartSource(src.id)}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-[6px] transition-all ${
+                  chartSource === src.id
+                    ? 'text-white'
+                    : 'bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]'
+                }`}
+                style={chartSource === src.id ? { backgroundColor: src.color } : {}}
+              >
+                {lang === 'zh' ? src.name : lang === 'ko' ? src.nameKo : src.nameEn}
+              </button>
+            ))}
+          </div>
+
+          {/* 주차 필터 (가로 스크롤) */}
+          <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+            {WEEKS.map(w => (
+              <button
+                key={w.id}
+                onClick={() => { setChartWeek(w.id); setChartSearch('') }}
+                className={`px-2.5 py-1 text-[11px] font-medium rounded-[6px] whitespace-nowrap transition-all shrink-0 ${
+                  chartWeek === w.id
+                    ? 'bg-[#111827] text-white'
+                    : 'bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]'
+                }`}
+              >
+                {L(lang, w.label)}
+              </button>
+            ))}
+          </div>
+
+          {/* 검색 */}
+          <div className="relative">
+            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+            <input
+              type="text"
+              value={chartSearch}
+              onChange={e => setChartSearch(e.target.value)}
+              placeholder={L(lang, { ko: '곡명 또는 아티스트 검색', zh: '搜索歌名或歌手', en: 'Search song or artist' })}
+              className="w-full pl-9 pr-3 py-2 text-xs bg-[#F9FAFB] border border-[#E5E7EB] rounded-[6px] focus:outline-none focus:ring-1 focus:ring-[#111827]"
+            />
+            {chartSearch && (
+              <button onClick={() => setChartSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] text-xs">✕</button>
+            )}
+          </div>
+
+          {/* 헤더 */}
+          <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-[#111827]">
-              {L(lang, { ko: '2026년 2월 K-POP 인기 차트', zh: '2026年2月 K-POP人气榜', en: '2026 Feb K-POP Chart' })}
+              TOP 10
             </h2>
-            <span className="text-xs text-[#9CA3AF]">
-              {L(lang, { ko: '실시간 업데이트', zh: '实时更新', en: 'Real-time' })}
+            <span className="text-[11px] text-[#9CA3AF]">
+              {currentWeekInfo?.date}
             </span>
           </div>
-          
-          {chartLoading && <p className="text-xs text-[#9CA3AF]">{lang === 'ko' ? '로딩 중...' : lang === 'zh' ? '加载中...' : 'Loading...'}</p>}
-          
-          {chartData.map((song, i) => (
-            <div key={song.id || i} className="bg-white rounded-2xl p-4 border border-[#E5E7EB] card-glow hover:shadow-sm transition-shadow">
-              <div className="flex items-center gap-3">
-                <span className="text-lg font-black text-[#111827] w-8 text-center shrink-0">{i + 1}</span>
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-pink-100 to-purple-100 shrink-0 flex items-center justify-center">
-                  <Music size={16} className="text-pink-600" />
+
+          {/* 검색 결과 모드 */}
+          {chartSearchResults ? (
+            <div className="space-y-1.5">
+              <p className="text-[11px] text-[#9CA3AF]">
+                {L(lang, { ko: `${chartSearchResults.length}개 결과`, zh: `${chartSearchResults.length}个结果`, en: `${chartSearchResults.length} results` })}
+              </p>
+              {chartSearchResults.length === 0 && (
+                <p className="text-xs text-[#9CA3AF] py-4 text-center">
+                  {L(lang, { ko: '검색 결과가 없습니다', zh: '没有搜索结果', en: 'No results found' })}
+                </p>
+              )}
+              {chartSearchResults.map((song, i) => (
+                <div key={`${song.weekId}-${song.rank}`} className="bg-white rounded-[6px] p-3 border border-[#E5E7EB] flex items-center gap-3">
+                  <span className={`text-sm font-black w-6 text-center shrink-0 ${song.rank <= 3 ? 'text-[#EF4444]' : 'text-[#6B7280]'}`}>
+                    {song.rank}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-[#111827] truncate">{song.title}</p>
+                    <p className="text-[11px] text-[#6B7280] truncate">{song.artist}</p>
+                  </div>
+                  <span className="text-[10px] text-[#9CA3AF] shrink-0 bg-[#F3F4F6] px-1.5 py-0.5 rounded">
+                    {L(lang, song.weekLabel)}
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[#111827] truncate">{song.name}</p>
-                  <p className="text-xs text-[#6B7280] truncate">{song.artistName}</p>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  {song.weibo && (
-                    <a href={song.weibo} target="_blank" rel="noopener noreferrer" 
-                       className="flex items-center gap-1 px-2 py-1 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors">
-                      <span className="font-semibold">微</span>
-                      {lang === 'zh' && <span>微博</span>}
-                    </a>
-                  )}
-                  {song.bilibili && (
-                    <a href={song.bilibili} target="_blank" rel="noopener noreferrer"
-                       className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors">
-                      <span className="font-semibold">B</span>
-                      {lang === 'zh' && <span>哔哩</span>}
-                    </a>
-                  )}
-                </div>
-              </div>
-              
-              {/* 트렌드 표시 */}
-              <div className="flex items-center gap-4 mt-3 text-xs text-[#6B7280]">
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>{L(lang, { ko: '상승', zh: '上升', en: 'Rising' })}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star size={12} className="text-yellow-500 fill-current" />
-                  <span>{(Math.random() * 2 + 8).toFixed(1)}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Users size={12} />
-                  <span>{(Math.random() * 500 + 1500).toFixed(0)}K {L(lang, { ko: '스트림', zh: '播放', en: 'streams' })}</span>
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-          
-          {!chartLoading && chartData.length === 0 && (
-            <p className="text-xs text-[#9CA3AF]">{lang === 'ko' ? '차트를 불러올 수 없습니다' : lang === 'zh' ? '无法加载排行榜' : 'Could not load chart'}</p>
+          ) : (
+            /* 주간 차트 */
+            <div className="space-y-1.5">
+              {chartData.map((song) => (
+                <div key={song.rank} className="bg-white rounded-[6px] p-3 border border-[#E5E7EB] flex items-center gap-3 hover:bg-[#F9FAFB] transition-colors">
+                  <span className={`text-lg font-black w-7 text-center shrink-0 ${
+                    song.rank === 1 ? 'text-[#EF4444]' : song.rank <= 3 ? 'text-[#F59E0B]' : 'text-[#6B7280]'
+                  }`}>
+                    {song.rank}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-[#111827] truncate">{song.title}</p>
+                    <p className="text-[11px] text-[#6B7280] truncate">{song.artist}</p>
+                  </div>
+                </div>
+              ))}
+              {chartData.length === 0 && (
+                <p className="text-xs text-[#9CA3AF] py-4 text-center">
+                  {L(lang, { ko: '데이터 없음', zh: '暂无数据', en: 'No data' })}
+                </p>
+              )}
+            </div>
           )}
-          
+
           {/* 차트 설명 */}
-          <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-3 mt-4">
-            <p className="text-xs text-[#6B7280]">
-              {L(lang, { 
-                ko: '💡 멜론, 지니, 플로 등 주요 음원사이트 통합 차트 기준 (2026년 2월 22일)', 
-                zh: '💡 基于Melon、Genie、FLO等主要音源网站的综合榜单（2026年2月22日）', 
-                en: '💡 Based on major streaming platforms: Melon, Genie, FLO (Feb 22, 2026)' 
+          <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[6px] p-3 mt-2">
+            <p className="text-[11px] text-[#6B7280]">
+              {L(lang, {
+                ko: 'QQ뮤직 실제 주간 차트 데이터 (2026년 1월~3월). 韩国榜: QQ뮤직 내 한국 음악 인기순위. Melon榜: 한국 멜론 차트 반영.',
+                zh: 'QQ音乐实际周榜数据（2026年1月~3月）。韩国榜：QQ音乐韩国音乐热度排行。Melon榜：反映韩国Melon排行榜。',
+                en: 'Real weekly chart data from QQ Music (Jan~Mar 2026). Korean Chart: K-pop popularity on QQ Music. Melon Chart: Reflects Korean Melon chart rankings.'
               })}
             </p>
           </div>

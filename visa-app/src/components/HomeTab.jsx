@@ -11,6 +11,7 @@ const HalalGuide = lazy(() => import('./guides/HalalGuide'))
 const DietaryCardGuide = lazy(() => import('./guides/DietaryCardGuide'))
 const KidsGuide = lazy(() => import('./guides/KidsGuide'))
 const DutyFreeLimitGuide = lazy(() => import('./guides/DutyFreeLimitGuide'))
+const PetTab = lazy(() => import('./PetTab'))
 const PocketContent = lazy(() => import('./pockets/PocketContent'))
 import GuideLayout from './guides/GuideLayout'
 
@@ -169,7 +170,7 @@ const INTENT_CARDS = [
   {
     id: 'just-arrived',
     label: { ko: '입국준비', zh: '入境准备', en: 'Entry Prep' },
-    sub: { ko: 'SIM, 교통카드, 환전, 통역', zh: 'SIM卡、交通卡、换钱、翻译', en: 'SIM, transit card, exchange, translate' },
+    sub: { ko: 'SIM, 교통카드, 환전', zh: 'SIM卡、交通卡、换钱', en: 'SIM, transit card, exchange' },
   },
   {
     id: 'traveling',
@@ -211,7 +212,7 @@ function PromoBanner({ banners, lang }) {
         {banners.map((b, i) => (
           <button key={i} onClick={b.onClick}
             className="snap-start flex-shrink-0 w-full px-4">
-            <div className="rounded-2xl p-5 h-[140px] flex flex-col justify-end relative overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+            <div className="rounded-[6px] p-5 h-[140px] flex flex-col justify-end relative overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
               style={{ backgroundColor: b.bg }}>
               <span className="text-3xl absolute top-4 right-4">{b.emoji}</span>
               <h3 className="text-white font-bold text-base leading-tight">{L(lang, b.title)}</h3>
@@ -243,7 +244,7 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
       <div className="grid grid-cols-2 gap-3">
         {items.map((item, i) => (
           <button key={i} onClick={item.onClick} className="text-left active:scale-[0.98] transition-transform">
-            <div className="aspect-[4/3] rounded-xl overflow-hidden mb-2 bg-[#F3F4F6] shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <div className="aspect-[4/3] rounded-[6px] overflow-hidden mb-2 bg-[#F3F4F6] shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
               {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />}
             </div>
             <p className="text-sm font-semibold tracking-wide text-[#1A1A1A] leading-tight line-clamp-1">
@@ -280,6 +281,7 @@ function BrandScrollSection({ lang }) {
     { name: { ko: '신라면세점', zh: '新罗免税店', en: 'Shilla Duty Free' }, logoUrl: 'https://www.shilladfs.com/favicon.ico', discount: { ko: '신규 가입 혜택', zh: '新注册优惠', en: 'New member deal' }, color: '#fff', url: 'https://www.shilladfs.com' },
     { name: { ko: 'Klook', zh: 'Klook', en: 'Klook' }, logoUrl: 'https://res.klook.com/image/upload/fl_lossy.progressive,q_85/c_fill,w_64/v1643011905/blog/oteayx3bstsjopmxjgzy.webp', discount: { ko: '체험 할인', zh: '体验折扣', en: 'Experience deals' }, color: '#fff', url: 'https://www.klook.com/ko/' },
     { name: { ko: '에버랜드', zh: '爱宝乐园', en: 'Everland' }, logoUrl: 'https://www.everland.com/favicon.ico', discount: { ko: '온라인 예매 할인', zh: '在线购票优惠', en: 'Online booking deal' }, color: '#fff', url: 'https://www.everland.com' },
+    { name: { ko: '롯데월드', zh: '乐天世界', en: 'Lotte World' }, logoUrl: 'https://www.lotteworld.com/favicon.ico', discount: { ko: '외국인 우대', zh: '外国人优惠', en: 'Foreigner special' }, color: '#fff', url: 'https://www.lotteworld.com' },
   ]
 
   return (
@@ -394,7 +396,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             className="cursor-pointer underline decoration-dotted transition-opacity duration-500 opacity-100"
           >¥1 = ₩{Math.round(cnyRate)}</span> : <>¥1 = ₩<span className="inline-block w-10 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" /></>}
           {showExchangePopover && (
-            <div className="absolute top-6 left-0 bg-white rounded-2xl border border-[#E5E7EB] p-3 shadow-lg z-20 min-w-[160px]">
+            <div className="absolute top-6 left-0 bg-white rounded-[6px] border border-[#E5E7EB] p-3 shadow-lg z-20 min-w-[160px]">
               <p className="text-[10px] text-[#999999] mb-2">{L(lang, { ko: '빠른 환산', zh: '快速换算', en: 'Quick Convert' })}</p>
               {[10000, 50000, 100000].map(won => (
                 <div key={won} className="flex justify-between text-xs text-[#1A1A1A] py-1">
@@ -442,7 +444,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 else if (card.id === 'traveling') { setArrivalStep('traveling'); setShowArrivalFlow(true) }
                 else if (card.id === 'departure') { setArrivalStep('departure'); setShowArrivalFlow(true) }
               }}
-              className="bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] transition-all duration-150 text-left"
+              className="bg-white rounded-[6px] border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] transition-all duration-150 text-left"
             >
               <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
                 {L(lang, card.label)}
@@ -468,7 +470,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </button>
         <button
           onClick={() => setTab('travel')}
-          className="w-full rounded-2xl overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+          className="w-full rounded-[6px] overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
         >
           <div className="relative h-[120px]">
             <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&h=300&fit=crop" alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
@@ -523,7 +525,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={course.id}
               onClick={() => setTab('course')}
-              className="snap-start flex-shrink-0 rounded-2xl overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
+              className="snap-start flex-shrink-0 rounded-[6px] overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
               style={{ width: 180 }}
             >
               <div
@@ -558,7 +560,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {/* 더보기 카드 */}
           <button
             onClick={() => setTab('course')}
-            className="snap-start flex-shrink-0 rounded-2xl border-2 border-dashed flex items-center justify-center active:scale-[0.97] transition-transform duration-150"
+            className="snap-start flex-shrink-0 rounded-[6px] border-2 border-dashed flex items-center justify-center active:scale-[0.97] transition-transform duration-150"
             style={{ width: 180, height: 214, borderColor: '#B2DFDB' }}
           >
             <div className="text-center">
@@ -576,27 +578,27 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {overlay && !POCKET_IDS.includes(overlay) && (
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
           {overlay === 'map-guide' && (
-            <GuideLayout title={{ ko: '한국 지도 앱', zh: '韩国地图APP', en: 'Korea Map Apps' }} lang={lang} onClose={() => setOverlay(null)}>
-              <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+            <GuideLayout title={{ ko: '한국 지도 앱', zh: '韩国地图APP', en: 'Korea Map Apps' }} lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }}>
+              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
                 <h3 className="font-bold text-[#1A1A1A] mb-2">📍 KakaoMap ({L(lang, { ko: '카카오맵', zh: '카카오地图', en: 'KakaoMap' })})</h3>
                 <p className="text-sm text-[#666666] leading-relaxed mb-3">
                   {L(lang, { ko: '한국에서 가장 많이 쓰는 지도 앱. 길찾기, 대중교통, 맛집, 카페 검색까지 모두 가능합니다. 반드시 설치하세요!', zh: '韩国使用最多的地图APP。找路、公交、美食、咖啡厅搜索全都可以。必须安装！', en: 'The most used map app in Korea. Navigation, transit, restaurants, cafes — all in one. Must install!' })}
                 </p>
                 <div className="flex gap-2">
-                  <a href="https://apps.apple.com/app/id304608425" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-xl bg-[#FEE500] text-[#1A1A1A] text-sm font-bold active:scale-95 transition-transform">
+                  <a href="https://apps.apple.com/app/id304608425" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[6px] bg-[#FEE500] text-[#1A1A1A] text-sm font-bold active:scale-95 transition-transform">
                     App Store
                   </a>
-                  <a href="https://play.google.com/store/apps/details?id=net.daum.android.map" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-xl bg-[#FEE500] text-[#1A1A1A] text-sm font-bold active:scale-95 transition-transform">
+                  <a href="https://play.google.com/store/apps/details?id=net.daum.android.map" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[6px] bg-[#FEE500] text-[#1A1A1A] text-sm font-bold active:scale-95 transition-transform">
                     Google Play
                   </a>
                 </div>
               </div>
-              <div className="p-4 rounded-2xl border border-[#E5E7EB] bg-[#F9FAFB]">
+              <div className="p-4 rounded-[6px] border border-[#E5E7EB] bg-[#F9FAFB]">
                 <h3 className="font-bold text-[#1A1A1A] mb-2">🗺️ {L(lang, { ko: '바이두 지도도 사용 가능!', zh: '百度地图也可以用！', en: 'Baidu Maps also works!' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed mb-3">
                   {L(lang, { ko: '바이두 지도(百度地图)도 한국에서 사용 가능합니다. 중국어로 검색할 수 있어 편리합니다.', zh: '百度地图也可以在韩国使用。可以用中文搜索，很方便。', en: 'Baidu Maps also works in Korea. Convenient for searching in Chinese.' })}
                 </p>
-                <a href="https://map.baidu.com" target="_blank" rel="noopener noreferrer" className="block text-center py-2.5 rounded-xl bg-[#3385FF] text-white text-sm font-bold active:scale-95 transition-transform">
+                <a href="https://map.baidu.com" target="_blank" rel="noopener noreferrer" className="block text-center py-2.5 rounded-[6px] bg-[#3385FF] text-white text-sm font-bold active:scale-95 transition-transform">
                   {L(lang, { ko: '바이두 지도 열기', zh: '打开百度地图', en: 'Open Baidu Maps' })}
                 </a>
               </div>
@@ -606,33 +608,33 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <GuideLayout
               title={{ ko: '교통카드 & 표 구매', zh: '交通卡 & 购票指南', en: 'Transit Card & Tickets' }}
               lang={lang}
-              onClose={() => setOverlay(null)}
+              onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('traveling') }}
               tip={{ ko: '💡 T-money 잔액은 편의점에서 환불 가능 (카드 반납 시 잔액 - 수수료 500원)', zh: '💡 T-money余额可在便利店退款（退卡时退余额 - 手续费500韩元）', en: '💡 T-money balance is refundable at convenience stores (balance minus ₩500 fee)' }}
             >
-              <div className="p-4 rounded-2xl bg-red-50 border border-red-200">
+              <div className="p-4 rounded-[6px] bg-red-50 border border-red-200">
                 <p className="text-sm font-bold text-red-700 leading-relaxed">
                   {L(lang, { ko: '⚠️ 한국 버스 대부분은 현금을 받지 않습니다. 교통카드 없이는 버스를 탈 수 없어요! 반드시 교통카드를 먼저 구매하세요.', zh: '⚠️ 韩国大部分公交不收现金！没有交通卡无法乘坐公交！请务必先购买交通卡。', en: "⚠️ Most Korean buses don't accept cash. You can't ride without a transit card! Buy one first." })}
                 </p>
               </div>
-              <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
                 <h3 className="font-bold text-[#1A1A1A] mb-2">🎫 T-money / Cash Bee</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, { ko: '편의점(CU, GS25, 세븐일레븐)에서 2,500원에 구매. 충전 후 버스·지하철·택시 모두 사용 가능.', zh: '在便利店(CU、GS25、7-11)花2500韩元购买T-money卡，充值后公交、地铁、出租车都能用。', en: 'Buy at convenience stores (CU, GS25, 7-Eleven) for ₩2,500. After charging, use on buses, subway, and taxis.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
                 <h3 className="font-bold text-[#1A1A1A] mb-2">🚇 {L(lang, { ko: '지하철 1회권', zh: '地铁单程票', en: 'Single Journey Ticket' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, { ko: '지하철역 자동발매기에서 구매. 보증금 500원 포함. 하차 후 보증금 환불기에서 500원 돌려받기.', zh: '在地铁站自动售票机购买一次性交通卡。含500韩元押金，下车后在退款机取回。', en: 'Buy at subway station ticket machines. Includes ₩500 deposit. Get the deposit back at refund machines after exiting.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
                 <h3 className="font-bold text-[#1A1A1A] mb-2">🚌 {L(lang, { ko: '버스 이용법', zh: '乘公交方法', en: 'How to Ride Buses' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, { ko: '앞문 탑승 → T-money 태그 → 하차 시 뒷문에서 태그.', zh: '前门上车→刷T-money→下车时后门再刷。', en: 'Board at front door → tap T-money → tap again at rear door when exiting.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
                 <h3 className="font-bold text-[#1A1A1A] mb-2">🔄 {L(lang, { ko: '환승 꿀팁', zh: '换乘小贴士', en: 'Transfer Tips' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, {
@@ -642,7 +644,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   }).split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}
                 </p>
               </div>
-              <div className="p-4 rounded-2xl border border-[#E5E7EB]">
+              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
                 <h3 className="font-bold text-[#1A1A1A] mb-2">💳 {L(lang, { ko: '교통카드 충전', zh: '交通卡充值', en: 'Transit Card Top-up' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, { ko: '편의점 또는 지하철역 충전기에서 가능. 1,000원 단위로 충전할 수 있습니다.', zh: '在便利店或地铁站充值机充值。可以按1000韩元为单位充值。', en: 'Available at convenience stores or subway station machines. Can top up in ₩1,000 increments.' })}
@@ -650,14 +652,23 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               </div>
             </GuideLayout>
           )}
-          {overlay === 'arrival-card' && <ArrivalCardGuide lang={lang} onClose={() => setOverlay(null)} />}
-          {overlay === 'sim' && <SimGuide lang={lang} onClose={() => setOverlay(null)} />}
-          {overlay === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => setOverlay(null)} />}
-          {overlay === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => setOverlay(null)} />}
-          {overlay === 'halal' && <HalalGuide lang={lang} onClose={() => setOverlay(null)} />}
-          {overlay === 'dietary-card' && <DietaryCardGuide lang={lang} onClose={() => setOverlay(null)} />}
-          {overlay === 'kids' && <KidsGuide lang={lang} onClose={() => setOverlay(null)} />}
-          {overlay === 'country-duty-free' && <DutyFreeLimitGuide lang={lang} onClose={() => setOverlay(null)} />}
+          {overlay === 'arrival-card' && <ArrivalCardGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
+          {overlay === 'sim' && <SimGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
+          {overlay === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('departure') }} />}
+          {overlay === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('traveling') }} />}
+          {overlay === 'halal' && <HalalGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
+          {overlay === 'dietary-card' && <DietaryCardGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
+          {overlay === 'kids' && <KidsGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
+          {overlay === 'pet' && (
+            <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+              <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB] px-4 py-3 flex items-center gap-3">
+                <button onClick={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} className="p-1"><ChevronLeft size={20} color="#1A1A1A" /></button>
+                <h2 className="text-[15px] font-semibold text-[#1A1A1A]">{L(lang, { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' })}</h2>
+              </div>
+              <PetTab lang={lang} setTab={() => {}} />
+            </div>
+          )}
+          {overlay === 'country-duty-free' && <DutyFreeLimitGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('departure') }} />}
         </Suspense>
       )}
 
@@ -684,7 +695,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {showTzPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.3)' }} onClick={() => setShowTzPicker(false)}>
           <div
-            className="rounded-2xl mx-6 w-full max-w-sm overflow-hidden"
+            className="rounded-[6px] mx-6 w-full max-w-sm overflow-hidden"
             style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}
             onClick={e => e.stopPropagation()}
           >
@@ -714,7 +725,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                           : [...prev, tz.id]
                       )
                     }}
-                    className="w-full flex items-center justify-between px-3 py-3 rounded-xl active:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between px-3 py-3 rounded-[6px] active:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
                       <span className="text-base">{tz.flag}</span>
@@ -722,7 +733,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                       <span className="text-xs" style={{ color: '#999999' }}>{tz.abbr} {currentTime}</span>
                     </div>
                     <div
-                      className="w-5 h-5 rounded-md flex items-center justify-center"
+                      className="w-5 h-5 rounded-[6px] flex items-center justify-center"
                       style={{
                         border: checked ? 'none' : '1.5px solid #D1D5DB',
                         backgroundColor: checked ? '#3B82F6' : 'transparent',
@@ -741,7 +752,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   refreshTimezones()
                   setShowTzPicker(false)
                 }}
-                className="w-full py-2.5 rounded-xl text-sm font-medium text-white active:scale-[0.98] transition-transform"
+                className="w-full py-2.5 rounded-[6px] text-sm font-medium text-white active:scale-[0.98] transition-transform"
                 style={{ backgroundColor: '#3B82F6' }}
               >
                 {L(lang, { ko: '확인', zh: '确认', en: 'Confirm' })}
@@ -761,30 +772,12 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-3">
-            {/* VPN 알림 배너 */}
-            {showVpnBanner && (
-              <div className="rounded-2xl bg-gradient-to-r from-[#10B981] to-[#059669] p-4 text-white relative">
-                <button
-                  onClick={closeVpnBanner}
-                  className="absolute top-2 right-2 w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-xs"
-                >
-                  ×
-                </button>
-                <div className="pr-8">
-                  <p className="text-sm font-bold">
-                    {L(lang, { ko: '한국에서는 VPN 없이 구글, 유튜브, 인스타 모두 됩니다!', zh: '在韩国无需VPN即可使用Google、YouTube、Instagram！', en: 'In Korea, Google, YouTube, Instagram work without VPN!' })}
-                  </p>
-                  <p className="text-xs mt-1 opacity-90">
-                    {L(lang, { ko: '중국과 달리 모든 앱이 자유롭게 이용 가능해요', zh: '与中国不同，所有应用都可以自由使用', en: 'Unlike China, all apps are freely accessible' })}
-                  </p>
-                </div>
-              </div>
-            )}
+
 
             {/* SIM카드 & 환전 — 최상단 강조 */}
             <button
               onClick={() => setArrivalStep('sim-exchange')}
-              className="rounded-2xl border-2 border-[#111827] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              className="rounded-[6px] border-2 border-[#111827] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
             >
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'SIM카드 구매 & 환전할래요', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange money' })}</p>
@@ -797,12 +790,12 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             {[
               { id: 'immigration', label: { ko: '입국신고서 작성할래요', zh: '要填入境申报卡', en: 'Fill Arrival Card' }, sub: { ko: '전자(Q-CODE) / 실물 입국카드', zh: '电子(Q-CODE) / 纸质入境卡', en: 'Electronic (Q-CODE) / Physical card' } },
               { id: 'transport', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX', zh: '机场出租车、RIDE APP、AREX', en: 'Airport taxi, RIDE app, AREX' } },
-              { id: 'translator', label: { ko: '통역 & 번역', zh: '翻译 & 口译', en: 'Translate' }, sub: { ko: '말이 안 통할 때, 바로 여기!', zh: '语言不通时，就用这个！', en: "Can't communicate? Start here!" }, tab: 'translator' },
+
               { id: 'guide-map', label: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, guide: 'map-guide' },
               { id: 'halal-guide', label: { ko: '할랄/무슬림 가이드', zh: '清真/穆斯林指南', en: 'Halal/Muslim Guide' }, sub: { ko: '무슬림 여행자를 위한 맞춤 가이드', zh: '为穆斯林旅行者定制的指南', en: 'Tailored guide for Muslim travelers' }, guide: 'halal' },
               { id: 'dietary-card-guide', label: { ko: '식이제한 카드', zh: '饮食限制卡', en: 'Dietary Card' }, sub: { ko: '알레르기/채식주의자 식당 소통카드', zh: '过敏/素食者餐厅沟通卡', en: 'Allergy/vegetarian restaurant communication card' }, guide: 'dietary-card' },
               { id: 'kids-guide', label: { ko: '유아동반 가이드', zh: '带娃旅行指南', en: 'Kids Travel Guide' }, sub: { ko: '아이와 함께하는 한국 여행', zh: '和孩子一起的韩国之旅', en: 'Korea travel with children' }, guide: 'kids' },
-              { id: 'nav-pet', label: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, tab: 'pet' },
+              { id: 'nav-pet', label: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, guide: 'pet' },
             ].map(item => (
               <button
                 key={item.id}
@@ -811,7 +804,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
                   else { setArrivalStep(item.id) }
                 }}
-                className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
@@ -837,7 +830,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           <div className="p-4 flex flex-col gap-3">
             <button
               onClick={() => setArrivalStep('immigration-electronic')}
-              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
             >
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '전자 입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
@@ -847,7 +840,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             </button>
             <button
               onClick={() => { setOverlay('arrival-card'); setShowArrivalFlow(false) }}
-              className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
             >
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '실물 입국카드 작성법', zh: '纸质入境卡填写方法', en: 'Physical Arrival Card Guide' })}</p>
@@ -869,7 +862,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             </h2>
           </div>
           <div className="p-4">
-            <div className="rounded-2xl bg-[#F0F4FF] p-5">
+            <div className="rounded-[6px] bg-[#F0F4FF] p-5">
               <p className="text-[15px] font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
               <p className="text-xs text-[#666666] leading-relaxed mb-4">
                 {L(lang, { ko: '한국 입국 전 온라인으로 미리 작성할 수 있습니다.\n건강상태, 세관신고를 한번에!\n실물 카드를 안 써도 됩니다.', zh: '入韩前可在线提前填写。\n健康状态、海关申报一次搞定！\n不需要纸质卡。', en: 'Fill out online before entering Korea.\nHealth & customs declaration in one go!\nNo physical card needed.' })}
@@ -879,7 +872,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   href="https://ciq.korea.go.kr/coview/board/homeland/linkView.do"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 rounded-xl text-center text-sm font-bold text-white bg-[#3B5BDB] active:scale-[0.97] transition-transform"
+                  className="flex-1 py-3 rounded-[6px] text-center text-sm font-bold text-white bg-[#3B5BDB] active:scale-[0.97] transition-transform"
                 >
                   {L(lang, { ko: 'Q-CODE 바로가기', zh: 'Q-CODE 前往', en: 'Go to Q-CODE' })}
                 </a>
@@ -887,7 +880,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   href="https://www.k-eta.go.kr/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 rounded-xl text-center text-sm font-bold text-[#1A1A1A] bg-white border border-[#E5E7EB] active:scale-[0.97] transition-transform"
+                  className="flex-1 py-3 rounded-[6px] text-center text-sm font-bold text-[#1A1A1A] bg-white border border-[#E5E7EB] active:scale-[0.97] transition-transform"
                 >
                   {L(lang, { ko: 'K-ETA (비자면제국)', zh: 'K-ETA（免签国）', en: 'K-ETA (Visa-free)' })}
                 </a>
@@ -911,7 +904,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <div>
               <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '🚕 택시 탈래요', zh: '🚕 坐出租车', en: '🚕 Take a Taxi' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '공항에서 택시 바로 잡기', zh: '机场直接打车', en: 'Get a taxi at the airport' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
@@ -921,14 +914,14 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'RIDE 앱 사용하기', zh: '使用RIDE APP', en: 'Use RIDE App' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, { ko: '한국 번호 없어도 돼요! I·RIDE 앱으로 외국인도 택시 호출 가능.', zh: '不需要韩国手机号！用I·RIDE APP外国人也能叫车。', en: 'No Korean number needed! Foreigners can call taxis with the I·RIDE app.' })}
                   </p>
                   <div className="flex gap-2 mt-3">
-                    <a href="https://apps.apple.com/app/id1596453498" target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">iOS</a>
-                    <a href="https://play.google.com/store/apps/details?id=com.iride.passenger" target="_blank" rel="noopener noreferrer" className="rounded-xl bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">Android</a>
+                    <a href="https://apps.apple.com/app/id1596453498" target="_blank" rel="noopener noreferrer" className="rounded-[6px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">iOS</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.iride.passenger" target="_blank" rel="noopener noreferrer" className="rounded-[6px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">Android</a>
                   </div>
                 </div>
               </div>
@@ -938,7 +931,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <div>
               <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '🚇 대중교통 이용할래요', zh: '🚇 坐公共交通', en: '🚇 Public Transit' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'AREX (공항철도)', zh: 'AREX（机场铁路）', en: 'AREX (Airport Railroad)' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
@@ -948,7 +941,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '일회용 교통카드 구매', zh: '购买一次性交通卡', en: 'Single-use Transit Card' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
@@ -958,7 +951,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'T-money 카드 구매', zh: '购买T-money卡', en: 'Buy T-money Card' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
@@ -988,7 +981,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <div>
               <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '📱 한국 SIM카드 구매', zh: '📱 购买韩国SIM卡', en: '📱 Buy a Korean SIM' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
                   <p className="text-xs text-[#666666] leading-relaxed">
                     {L(lang, {
                       ko: '인천공항 1층에 KT, SKT, LG U+ 로밍센터. eSIM이면 온라인으로도 구매 가능 (Airalo, eSIM Korea 등)',
@@ -998,7 +991,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   </p>
                   <button
                     onClick={() => { setOverlay('sim'); setShowArrivalFlow(false) }}
-                    className="mt-3 rounded-xl bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 w-full text-center active:scale-[0.98] transition-transform"
+                    className="mt-3 rounded-[6px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 w-full text-center active:scale-[0.98] transition-transform"
                   >
                     {L(lang, { ko: '자세히 보기', zh: '查看详情', en: 'View Details' })}
                   </button>
@@ -1010,7 +1003,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <div>
               <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '💱 환전할래요', zh: '💱 换钱', en: '💱 Exchange Money' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '공항 환전소', zh: '机场换钱所', en: 'Airport Exchange' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
@@ -1020,7 +1013,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-[#E5E7EB] p-4">
+                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '도심 환전소 (더 저렴!)', zh: '市区换钱所（更划算！）', en: 'Downtown Exchange (Cheaper!)' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
@@ -1063,7 +1056,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
                   else { setTab(item.tab); setShowArrivalFlow(false) }
                 }}
-                className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
@@ -1098,7 +1091,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
                   else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
                 }}
-                className="rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
@@ -1139,37 +1132,141 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         ]}
       />
 
-      {/* ─── 추천 피드 섹션들 ─── */}
+      {/* ─── 한국 공휴일 캘린더 미니 ─── */}
+      {(() => {
+        const HOLIDAYS_2026 = [
+          { date: '2026-01-01', name: { ko: '신정', zh: '元旦', en: "New Year's Day" } },
+          { date: '2026-01-29', name: { ko: '설날 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+          { date: '2026-01-30', name: { ko: '설날', zh: '春节', en: 'Lunar New Year' } },
+          { date: '2026-01-31', name: { ko: '설날 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+          { date: '2026-03-01', name: { ko: '삼일절', zh: '三一节', en: 'Independence Movement Day' } },
+          { date: '2026-05-05', name: { ko: '어린이날', zh: '儿童节', en: "Children's Day" } },
+          { date: '2026-05-24', name: { ko: '부처님오신날', zh: '佛诞节', en: "Buddha's Birthday" } },
+          { date: '2026-06-06', name: { ko: '현충일', zh: '显忠日', en: 'Memorial Day' } },
+          { date: '2026-08-15', name: { ko: '광복절', zh: '光复节', en: 'Liberation Day' } },
+          { date: '2026-09-24', name: { ko: '추석 연휴', zh: '中秋假期', en: 'Chuseok Holiday' } },
+          { date: '2026-09-25', name: { ko: '추석', zh: '中秋节', en: 'Chuseok' } },
+          { date: '2026-09-26', name: { ko: '추석 연휴', zh: '中秋假期', en: 'Chuseok Holiday' } },
+          { date: '2026-10-03', name: { ko: '개천절', zh: '开天节', en: 'National Foundation Day' } },
+          { date: '2026-10-09', name: { ko: '한글날', zh: '韩文日', en: 'Hangul Day' } },
+          { date: '2026-12-25', name: { ko: '성탄절', zh: '圣诞节', en: 'Christmas' } },
+        ]
+        const today = new Date()
+        const todayStr = today.toISOString().slice(0, 10)
+        const upcoming = HOLIDAYS_2026.filter(h => h.date >= todayStr).slice(0, 3)
+        const year = today.getFullYear()
+        const month = today.getMonth()
+        const firstDay = new Date(year, month, 1).getDay()
+        const daysInMonth = new Date(year, month + 1, 0).getDate()
+        const holidayDates = new Set(HOLIDAYS_2026.filter(h => {
+          const d = new Date(h.date)
+          return d.getFullYear() === year && d.getMonth() === month
+        }).map(h => parseInt(h.date.slice(8, 10))))
+        const monthNames = { ko: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'], zh: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'], en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] }
+        const dayLabels = { ko: ['일','월','화','수','목','금','토'], zh: ['日','一','二','三','四','五','六'], en: ['S','M','T','W','T','F','S'] }
+        const cells = []
+        for (let i = 0; i < firstDay; i++) cells.push(null)
+        for (let d = 1; d <= daysInMonth; d++) cells.push(d)
+
+        return (
+          <div className="mb-8 px-4">
+            <h2 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A] mb-3">
+              {L(lang, { ko: `${year}년 ${monthNames.ko[month]}`, zh: `${year}年${monthNames.zh[month]}`, en: `${monthNames.en[month]} ${year}` })}
+            </h2>
+            {/* 미니 캘린더 */}
+            <div className="rounded-[6px] border border-[#E5E7EB] p-3 mb-3">
+              <div className="grid grid-cols-7 gap-0 text-center mb-1">
+                {dayLabels[lang]?.map((d, i) => (
+                  <span key={i} className={`text-[10px] font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-[#999]'}`}>{d}</span>
+                ))}
+              </div>
+              <div className="grid grid-cols-7 gap-0 text-center">
+                {cells.map((d, i) => {
+                  if (!d) return <span key={i} />
+                  const isToday = d === today.getDate()
+                  const isHoliday = holidayDates.has(d)
+                  const dayOfWeek = (firstDay + d - 1) % 7
+                  return (
+                    <span key={i} className={`text-[11px] py-1 rounded-full ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : isHoliday ? 'text-red-500 font-bold' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[#666]'}`}>
+                      {d}
+                    </span>
+                  )
+                })}
+              </div>
+            </div>
+            {/* 다가오는 공휴일 */}
+            {upcoming.length > 0 && (
+              <div className="flex flex-col gap-2">
+                {upcoming.map((h, i) => {
+                  const diff = Math.ceil((new Date(h.date) - today) / 86400000)
+                  return (
+                    <div key={i} className="flex items-center justify-between py-2 px-3 rounded-[6px] bg-[#F9FAFB]">
+                      <div>
+                        <span className="text-sm font-semibold text-[#1A1A1A]">{L(lang, h.name)}</span>
+                        <span className="text-xs text-[#999] ml-2">{h.date.slice(5).replace('-', '/')}</span>
+                      </div>
+                      <span className="text-xs text-[#2D5A3D] font-medium">
+                        {diff === 0 ? L(lang, { ko: '오늘', zh: '今天', en: 'Today' }) : diff < 0 ? '' : `D-${diff}`}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )
+      })()}
+
+      {/* ─── 추천 피드 섹션들 (8개) ─── */}
       {(() => {
         // 데이터 준비
         const topRestaurants = MICHELIN_RESTAURANTS.filter(r => r.award === 'michelin3' || r.award === 'michelin2').slice(0, 2)
-        const popularRestaurants = MICHELIN_RESTAURANTS.filter(r => r.cuisine === 'korean' && r.area?.city === '서울' && r.priceRange <= 2).slice(0, 2)
-        const dinnerRestaurants = MICHELIN_RESTAURANTS.filter(r => r.priceRange >= 3 && r.award?.includes('michelin')).slice(0, 2)
-        const samgyeopRestaurants = MICHELIN_RESTAURANTS.filter(r => r.cuisine === 'korean' && (r.name?.ko?.includes('삼겹') || r.name?.ko?.includes('고기')))
-        const samgyeop = samgyeopRestaurants.length >= 2 ? samgyeopRestaurants.slice(0, 2) : MICHELIN_RESTAURANTS.filter(r => r.cuisine === 'korean' && r.priceRange >= 1 && r.priceRange <= 2).slice(0, 2)
         const michelin1 = MICHELIN_RESTAURANTS.filter(r => r.award === 'michelin1')
         const allCourses = RECOMMENDED_COURSES.filter(c => c.category !== 'test')
         const walkCourses = allCourses.filter(c => c.category === 'first' || c.category === 'history').slice(0, 2)
         const springCourses = allCourses.filter(c => c.category === 'jeju' || c.category === 'busan').slice(0, 2)
 
-        // 닉네임 & 최근 클릭
-        let nickname = '여행자'
+        // 닉네임
+        let nickname = L(lang, { ko: '여행자', zh: '旅行者', en: 'Traveler' })
         try { const p = JSON.parse(localStorage.getItem('hanpocket_profile') || '{}'); if (p.nickname) nickname = p.nickname } catch {}
+
+        // 맞춤 추천 아이템
         let recentTab = 'food'
-        let personalItems
         try {
           const clicks = JSON.parse(localStorage.getItem('hp_recent_clicks') || '[]')
           if (clicks.length > 0) recentTab = clicks[0]
         } catch {}
-        if (!personalItems) {
-          const shuffled = [...michelin1].sort(() => 0.5 - Math.random()).slice(0, 2)
-          personalItems = shuffled.map(r => ({
-            name: L(lang, r.name),
-            image: r.images?.[0] || 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
-            tags: [r.area?.gu, r.cuisine, getAwardBadge(r.award)].filter(Boolean),
-            sub: r.area?.gu,
-            onClick: () => setTab('food', { itemId: r.id, itemData: r }),
-          }))
+        const personalItems = [...michelin1].sort(() => 0.5 - Math.random()).slice(0, 2).map(r => ({
+          name: L(lang, r.name),
+          image: r.images?.[0] || 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
+          tags: [r.area?.gu, r.cuisine, getAwardBadge(r.award)].filter(Boolean),
+          sub: r.area?.gu,
+          onClick: () => setTab('food', { itemId: r.id, itemData: r }),
+        }))
+
+        // 국가별 인기 여행지 (사용자 언어 기반)
+        const countryLabel = L(lang, { ko: '중국', zh: '中国', en: 'Chinese' })
+        const popularByCountry = allCourses.slice(0, 2)
+
+        // 계절 판별
+        const month = new Date().getMonth() + 1
+        let seasonTitle, seasonSub, seasonCourses
+        if (month >= 3 && month <= 5) {
+          seasonTitle = { ko: '봄철 여행지 추천', zh: '春季旅游推荐', en: 'Spring Travel Picks' }
+          seasonSub = { ko: '벚꽃 시즌 필수 코스', zh: '樱花季必去路线', en: 'Must-visit during cherry blossom season' }
+          seasonCourses = springCourses
+        } else if (month >= 6 && month <= 8) {
+          seasonTitle = { ko: '여름철 여행지 추천', zh: '夏季旅游推荐', en: 'Summer Travel Picks' }
+          seasonSub = { ko: '시원한 바다와 계곡 여행', zh: '凉爽的海边和溪谷之旅', en: 'Cool beaches and valleys' }
+          seasonCourses = allCourses.filter(c => c.category === 'busan' || c.category === 'jeju').slice(0, 2)
+        } else if (month >= 9 && month <= 11) {
+          seasonTitle = { ko: '가을철 여행지 추천', zh: '秋季旅游推荐', en: 'Autumn Travel Picks' }
+          seasonSub = { ko: '단풍 시즌 베스트 코스', zh: '红叶季最佳路线', en: 'Best routes for fall foliage' }
+          seasonCourses = allCourses.filter(c => c.category === 'history' || c.category === 'first').slice(0, 2)
+        } else {
+          seasonTitle = { ko: '겨울철 여행지 추천', zh: '冬季旅游推荐', en: 'Winter Travel Picks' }
+          seasonSub = { ko: '설경과 온천 힐링 여행', zh: '雪景和温泉疗愈之旅', en: 'Snow scenes and hot spring healing' }
+          seasonCourses = allCourses.slice(0, 2)
         }
 
         const SAMPLE_REVIEWS = {
@@ -1196,77 +1293,23 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           onClick: () => setTab('course', { itemId: c.id, itemData: c }),
         })
 
-        // 시간대별 추천 섹션
-        const kstHour = new Date(Date.now() + (9 - new Date().getTimezoneOffset() / -60) * 3600000).getHours()
-        let timeSection = null
-        if (kstHour >= 6 && kstHour < 11) {
-          timeSection = {
-            title: { ko: '좋은 아침! 아침식사 추천 🌅', zh: '早安！早餐推荐 🌅', en: 'Good morning! Breakfast picks 🌅' },
-            subtitle: { ko: '든든한 한국식 아침으로 시작하세요', zh: '从丰盛的韩式早餐开始吧', en: 'Start with a hearty Korean breakfast' },
-            items: [
-              { name: L(lang, { ko: '광장시장 빈대떡', zh: '广藏市场绿豆饼', en: 'Gwangjang Market Bindaetteok' }), image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop', tags: [L(lang, { ko: '종로', zh: '钟路', en: 'Jongno' }), L(lang, { ko: '전통시장', zh: '传统市场', en: 'Traditional Market' })], review: L(lang, { ko: '새벽부터 줄 서는 전설의 맛', zh: '凌晨就排队的传奇味道', en: 'Legendary taste worth lining up for' }), onClick: () => setTab('food') },
-              { name: L(lang, { ko: '이삭토스트', zh: 'Isaac Toast', en: 'Isaac Toast' }), image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop', tags: [L(lang, { ko: '전국 체인', zh: '全国连锁', en: 'Nationwide' }), L(lang, { ko: '₩3,000~', zh: '₩3,000~', en: '₩3,000~' })], review: L(lang, { ko: '한국 길거리 토스트의 정석', zh: '韩国街头吐司的经典', en: 'Classic Korean street toast' }), onClick: () => setTab('food') },
-            ],
-          }
-        } else if (kstHour >= 11 && kstHour < 17) {
-          timeSection = {
-            title: { ko: '점심 인기 메뉴 🍱', zh: '午餐热门菜单 🍱', en: 'Popular Lunch Picks 🍱' },
-            subtitle: { ko: '지금 가면 딱 좋은 맛집', zh: '现在去刚刚好的餐厅', en: 'Perfect time to visit these spots' },
-            items: MICHELIN_RESTAURANTS.filter(r => r.cuisine === 'korean' && r.priceRange <= 2).slice(2, 4).map(r => ({
-              ...makeRestaurantItem(r),
-              review: L(lang, { ko: '점심특선이 가성비 최고!', zh: '午餐套餐性价比最高！', en: 'Lunch special is the best value!' }),
-            })),
-          }
-        } else {
-          timeSection = {
-            title: { ko: '저녁엔 여기 어때요? 🌙', zh: '晚上去这里怎么样？🌙', en: 'How about here tonight? 🌙' },
-            subtitle: { ko: '오늘 하루 마무리는 맛있게', zh: '美味地结束今天', en: 'End the day with great food' },
-            items: MICHELIN_RESTAURANTS.filter(r => r.priceRange >= 2).slice(2, 4).map(r => ({
-              ...makeRestaurantItem(r),
-              review: L(lang, { ko: '저녁 분위기 최고, 데이트 추천', zh: '晚上氛围最好，推荐约会', en: 'Great evening vibe, perfect for dates' }),
-            })),
-          }
-        }
-
         return (
           <>
-            {/* 시간대별 추천 */}
-            {timeSection && timeSection.items.length >= 2 && (
-              <RecommendSection
-                lang={lang}
-                title={timeSection.title}
-                subtitle={timeSection.subtitle}
-                items={timeSection.items}
-                onViewAll={() => setTab('food')}
-              />
-            )}
-
-            {/* 섹션 1: 한포켓이 선정한 추천 맛집 */}
+            {/* 1. 한포켓이 선정한 추천 맛집 */}
             {topRestaurants.length >= 2 && (
               <RecommendSection
                 lang={lang}
-                title={{ ko: '한포켓이 선정한 추천 맛집 ⭐', zh: '韩口袋精选推荐餐厅 ⭐', en: 'HanPocket Top Picks ⭐' }}
+                title={{ ko: '한포켓이 선정한 추천 맛집', zh: '韩口袋精选推荐餐厅', en: 'HanPocket Top Picks' }}
                 subtitle={{ ko: '미슐랭 & 블루리본 검증된 맛집', zh: '米其林 & 蓝丝带认证餐厅', en: 'Michelin & Blue Ribbon verified' }}
                 items={topRestaurants.map(makeRestaurantItem)}
                 onViewAll={() => setTab('food')}
               />
             )}
 
-            {/* 섹션 2: 중국인이 많이 찾는 맛집 */}
-            {popularRestaurants.length >= 2 && (
-              <RecommendSection
-                lang={lang}
-                title={{ ko: '중국인이 많이 찾는 맛집 🇨🇳', zh: '中国游客常去的餐厅 🇨🇳', en: 'Popular with Chinese Tourists 🇨🇳' }}
-                subtitle={{ ko: '중국 관광객 방문 인증 맛집', zh: '中国游客打卡热门餐厅', en: 'Chinese tourist verified restaurants' }}
-                items={popularRestaurants.map(makeRestaurantItem)}
-                onViewAll={() => setTab('food')}
-              />
-            )}
-
-            {/* 섹션 3: 요즘 HOT한 카페 */}
+            {/* 2. 요즘 HOT한 카페 */}
             <RecommendSection
               lang={lang}
-              title={{ ko: '요즘 HOT한 카페 ☕', zh: '最近很火的咖啡厅 ☕', en: 'Trending Cafes ☕' }}
+              title={{ ko: '요즘 HOT한 카페', zh: '最近很火的咖啡厅', en: 'Trending Cafes' }}
               subtitle={{ ko: '인스타 감성 카페 모음', zh: 'INS风咖啡厅合集', en: 'Instagram-worthy cafe collection' }}
               items={[
                 { name: L(lang, { ko: '성수동 카페거리', zh: '圣水洞咖啡街', en: 'Seongsu Cafe Street' }), image: 'https://images.unsplash.com/photo-1559305616-3f99cd43e353?w=400&h=300&fit=crop', tags: [L(lang, { ko: '서울 성동구', zh: '首尔城东区', en: 'Seongdong-gu' })], review: L(lang, { ko: '인스타 사진 맛집, 커피도 맛있어요', zh: '拍照圣地，咖啡也好喝', en: 'Insta-worthy, great coffee too' }), onClick: () => setTab('cafe') },
@@ -1275,106 +1318,69 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               onViewAll={() => setTab('cafe')}
             />
 
-            {/* 섹션 4: 가볍게 둘러볼 수 있는 곳 */}
+            {/* 3. 가볍게 둘러볼 수 있는 곳 */}
             {walkCourses.length >= 2 && (
               <RecommendSection
                 lang={lang}
-                title={{ ko: '가볍게 둘러볼 수 있는 곳 🚶', zh: '轻松逛逛的好地方 🚶', en: 'Easy Places to Explore 🚶' }}
+                title={{ ko: '가볍게 둘러볼 수 있는 곳', zh: '轻松逛逛的好地方', en: 'Easy Places to Explore' }}
                 subtitle={{ ko: '산책하기 좋은 무료 명소', zh: '适合散步的免费景点', en: 'Free attractions great for walking' }}
                 items={walkCourses.map(makeCourseItem)}
                 onViewAll={() => setTab('course')}
               />
             )}
 
-            {/* 섹션 5: 맞춤 추천 */}
+            {/* 4. 사용자님을 위한 맞춤 코스 */}
             <RecommendSection
               lang={lang}
-              title={{ ko: `${nickname}님을 위한 맞춤 추천 👤`, zh: `为${nickname}推荐 👤`, en: `Picks for ${nickname} 👤` }}
+              title={{ ko: `${nickname}님을 위한 맞춤 코스`, zh: `为${nickname}定制的路线`, en: `Custom Course for ${nickname}` }}
               subtitle={{ ko: '최근 관심사 기반 추천', zh: '根据最近兴趣推荐', en: 'Based on your recent interests' }}
               items={personalItems}
               onViewAll={() => setTab(recentTab)}
             />
 
-            {/* 섹션 6: 삼겹살 맛집 추천 */}
-            {samgyeop.length >= 2 && (
+            {/* 5. 올해 국가별 가장 많이 찾은 여행지 */}
+            {popularByCountry.length >= 2 && (
               <RecommendSection
                 lang={lang}
-                title={{ ko: '삼겹살 맛집 추천 🥩', zh: '五花肉美食推荐 🥩', en: 'Samgyeopsal Restaurants 🥩' }}
-                subtitle={{ ko: '한국 와서 삼겹살은 필수!', zh: '来韩国一定要吃五花肉！', en: 'Samgyeopsal is a must in Korea!' }}
-                items={samgyeop.map(makeRestaurantItem)}
-                onViewAll={() => setTab('food')}
-              />
-            )}
-
-            {/* 브랜드 할인 가로 스크롤 */}
-            <BrandScrollSection lang={lang} />
-
-            {/* 섹션 7: 할인 중인 패션 브랜드 */}
-            <RecommendSection
-              lang={lang}
-              title={{ ko: '할인 중인 패션 브랜드 🛍️', zh: '折扣时尚品牌 🛍️', en: 'Fashion Brands on Sale 🛍️' }}
-              subtitle={{ ko: '면세 + 시즌 세일 브랜드', zh: '免税 + 季节折扣品牌', en: 'Duty-free + seasonal sale brands' }}
-              items={[
-                { name: L(lang, { ko: '무신사 스토어', zh: 'MUSINSA', en: 'MUSINSA Store' }), image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop', tags: [L(lang, { ko: '최대 70% OFF', zh: '最高70%折扣', en: 'Up to 70% OFF' })], sub: L(lang, { ko: '한국 최대 패션 플랫폼', zh: '韩国最大时尚平台', en: "Korea's largest fashion platform" }), review: L(lang, { ko: '한국 패션 트렌드 한눈에!', zh: '韩国时尚趋势一目了然', en: 'Korean fashion trends at a glance!' }), onClick: () => setTab('shopping') },
-                { name: L(lang, { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }), image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop', tags: [L(lang, { ko: '외국인 할인', zh: '外国人折扣', en: 'Foreigner discount' })], sub: L(lang, { ko: 'K-뷰티 쇼핑 성지', zh: 'K-Beauty购物圣地', en: 'K-Beauty shopping mecca' }), review: L(lang, { ko: 'K-뷰티 원픽! 면세보다 쌀 때도 있어요', zh: 'K-Beauty首选！有时比免税店还便宜', en: 'K-Beauty #1 pick! Sometimes cheaper than duty-free' }), onClick: () => setTab('shopping') },
-              ]}
-              onViewAll={() => setTab('shopping')}
-            />
-
-            {/* 섹션 8: 저녁 레스토랑 추천 */}
-            {dinnerRestaurants.length >= 2 && (
-              <RecommendSection
-                lang={lang}
-                title={{ ko: '저녁 레스토랑 추천 🌙', zh: '晚餐餐厅推荐 🌙', en: 'Dinner Restaurant Picks 🌙' }}
-                subtitle={{ ko: '오늘 저녁은 여기 어때요?', zh: '今晚去这里怎么样？', en: 'How about here for dinner tonight?' }}
-                items={dinnerRestaurants.map(makeRestaurantItem)}
-                onViewAll={() => setTab('food')}
-              />
-            )}
-
-            {/* 섹션 9: 봄철 여행지 추천 */}
-            {springCourses.length >= 2 && (
-              <RecommendSection
-                lang={lang}
-                title={{ ko: '봄철 여행지 추천 🌸', zh: '春季旅游推荐 🌸', en: 'Spring Travel Picks 🌸' }}
-                subtitle={{ ko: '3~5월 벚꽃 시즌 필수 코스', zh: '3~5月樱花季必去路线', en: 'Must-visit during cherry blossom season' }}
-                items={springCourses.map(makeCourseItem)}
+                title={{ ko: `올해 ${countryLabel} 관광객이 가장 많이 찾은 여행지`, zh: `今年${countryLabel}游客最多的旅游地`, en: `Most Visited by ${countryLabel} Tourists This Year` }}
+                subtitle={{ ko: '2025년 방문객 데이터 기반', zh: '基于2025年访客数据', en: 'Based on 2025 visitor data' }}
+                items={popularByCountry.map(makeCourseItem)}
                 onViewAll={() => setTab('course')}
               />
             )}
 
-            {/* 섹션 10: 해외 배송 서비스 */}
+            {/* 6. 계절별 여행지 추천 */}
+            {seasonCourses.length >= 2 && (
+              <RecommendSection
+                lang={lang}
+                title={seasonTitle}
+                subtitle={seasonSub}
+                items={seasonCourses.map(makeCourseItem)}
+                onViewAll={() => setTab('course')}
+              />
+            )}
+
+            {/* 7. 할인 중인 패션/뷰티 브랜드 */}
+            <BrandScrollSection lang={lang} />
             <RecommendSection
               lang={lang}
-              title={{ ko: '해외 배송 서비스 📦', zh: '国际快递服务 📦', en: 'International Shipping 📦' }}
-              subtitle={{ ko: '한국에서 산 것, 집까지 배송!', zh: '在韩国买的东西寄回家！', en: 'Ship your Korean purchases home!' }}
+              title={{ ko: '할인 중인 패션/뷰티 브랜드', zh: '折扣中的时尚/美妆品牌', en: 'Fashion & Beauty Brands on Sale' }}
+              subtitle={{ ko: '면세 + 시즌 세일 브랜드', zh: '免税 + 季节折扣品牌', en: 'Duty-free + seasonal sale brands' }}
               items={[
-                { name: 'EMS', image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=300&fit=crop', tags: [L(lang, { ko: '한국우체국', zh: '韩国邮局', en: 'Korea Post' }), L(lang, { ko: '3~7일', zh: '3~7天', en: '3~7 days' })], sub: L(lang, { ko: 'EMS 국제특송', zh: 'EMS国际快递', en: 'EMS International Express' }), review: L(lang, { ko: '귀국 전 택배 보내면 빈손 여행 가능!', zh: '回国前寄快递，空手旅行！', en: 'Ship before departure, travel light!' }), onClick: () => setTab('parcel') },
-                { name: L(lang, { ko: 'SF Express (顺丰)', zh: '顺丰快递', en: 'SF Express' }), image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=300&fit=crop', tags: [L(lang, { ko: '중국 배송 전문', zh: '中国配送专家', en: 'China delivery' }), L(lang, { ko: '2~5일', zh: '2~5天', en: '2~5 days' })], review: L(lang, { ko: '중국 배송은 순풍이 가장 빠르고 안전', zh: '寄中国顺丰最快最安全', en: 'Fastest & safest for China delivery' }), onClick: () => setTab('parcel') },
+                { name: L(lang, { ko: '무신사 스토어', zh: 'MUSINSA', en: 'MUSINSA Store' }), image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop', tags: [L(lang, { ko: '최대 70% OFF', zh: '最高70%折扣', en: 'Up to 70% OFF' })], sub: L(lang, { ko: '한국 최대 패션 플랫폼', zh: '韩国最大时尚平台', en: "Korea's largest fashion platform" }), review: L(lang, { ko: '한국 패션 트렌드 한눈에', zh: '韩国时尚趋势一目了然', en: 'Korean fashion trends at a glance' }), onClick: () => setTab('shopping') },
+                { name: L(lang, { ko: '에이블리', zh: 'ABLY', en: 'ABLY' }), image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=300&fit=crop', tags: [L(lang, { ko: 'MZ세대 인기', zh: 'MZ世代人气', en: 'Popular with Gen MZ' })], sub: L(lang, { ko: '2030 여성 패션 1위 앱', zh: '20-30岁女性时尚第一APP', en: '#1 fashion app for young women' }), review: L(lang, { ko: '트렌디한 한국 패션을 저렴하게', zh: '便宜买到韩国潮流时尚', en: 'Trendy Korean fashion at low prices' }), onClick: () => setTab('shopping') },
               ]}
-              onViewAll={() => setTab('parcel')}
+              onViewAll={() => setTab('shopping')}
             />
 
-            {/* 섹션 11: 베지테리언 맛집 */}
+            {/* 8. 뷰티상품 몰아사기 */}
             <RecommendSection
               lang={lang}
-              title={{ ko: '베지테리언 맛집 🥬', zh: '素食餐厅 🥬', en: 'Vegetarian Restaurants 🥬' }}
-              subtitle={{ ko: '채식주의자도 걱정 없는 한국 여행', zh: '素食者也能放心的韩国之旅', en: 'Worry-free Korea trip for vegetarians' }}
-              items={[
-                { name: L(lang, { ko: '플랜트', zh: 'Plant', en: 'Plant' }), image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop', tags: [L(lang, { ko: '이태원', zh: '梨泰院', en: 'Itaewon' }), L(lang, { ko: '비건', zh: '纯素', en: 'Vegan' })], sub: L(lang, { ko: '서울 이태원, 비건 레스토랑', zh: '首尔梨泰院 纯素餐厅', en: 'Vegan restaurant in Itaewon, Seoul' }), review: L(lang, { ko: '채식주의자 천국, 맛까지 보장', zh: '素食者天堂，味道也有保障', en: 'Vegetarian paradise with guaranteed taste' }), onClick: () => setTab('food') },
-                { name: L(lang, { ko: '오세계향', zh: '五世界香', en: 'Osegyehyang' }), image: 'https://images.unsplash.com/photo-1540914124281-342587941389?w=400&h=300&fit=crop', tags: [L(lang, { ko: '종로구', zh: '钟路区', en: 'Jongno' }), L(lang, { ko: '사찰 음식', zh: '寺庙料理', en: 'Temple food' })], sub: L(lang, { ko: '서울 종로구, 사찰 음식', zh: '首尔钟路区 寺庙料理', en: 'Temple cuisine in Jongno, Seoul' }), review: L(lang, { ko: '사찰 음식의 정수, 마음이 편안해져요', zh: '寺庙料理的精髓，让心灵平静', en: 'Essence of temple food, soothes the soul' }), onClick: () => setTab('food') },
-              ]}
-              onViewAll={() => setTab('food')}
-            />
-
-            {/* 섹션 12: 뷰티케어 몰아사기 */}
-            <RecommendSection
-              lang={lang}
-              title={{ ko: '뷰티케어 몰아사기 💄', zh: 'K-Beauty大采购 💄', en: 'K-Beauty Haul 💄' }}
+              title={{ ko: '뷰티상품 몰아사기', zh: 'K-Beauty大采购', en: 'K-Beauty Haul' }}
               subtitle={{ ko: '한국에서만 살 수 있는 K-뷰티', zh: '只有在韩国才能买到的K-Beauty', en: 'K-Beauty you can only get in Korea' }}
               items={[
-                { name: L(lang, { ko: '올리브영 명동 본점', zh: 'Olive Young 明洞总店', en: 'Olive Young Myeongdong' }), image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop', tags: [L(lang, { ko: 'K-뷰티 성지', zh: 'K-Beauty圣地', en: 'K-Beauty mecca' }), L(lang, { ko: '외국인 15% 할인', zh: '外国人85折', en: '15% off for foreigners' })], onClick: () => setTab('shopping') },
-                { name: L(lang, { ko: '시코르 신세계 강남점', zh: 'CHICOR 新世界江南店', en: 'CHICOR Shinsegae Gangnam' }), image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&h=300&fit=crop', tags: [L(lang, { ko: '프리미엄 뷰티', zh: '高端美妆', en: 'Premium beauty' })], sub: L(lang, { ko: '프리미엄 뷰티 편집숍', zh: '高端美妆编辑店', en: 'Premium beauty select shop' }), onClick: () => setTab('shopping') },
+                { name: L(lang, { ko: '올리브영 명동 본점', zh: 'Olive Young 明洞总店', en: 'Olive Young Myeongdong' }), image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop', tags: [L(lang, { ko: '외국인 15% 할인', zh: '外国人85折', en: '15% off for foreigners' }), L(lang, { ko: 'K-뷰티 성지', zh: 'K-Beauty圣地', en: 'K-Beauty mecca' })], review: L(lang, { ko: '면세보다 쌀 때도 있어요', zh: '有时比免税店还便宜', en: 'Sometimes cheaper than duty-free' }), onClick: () => setTab('shopping') },
+                { name: L(lang, { ko: '시코르 신세계 강남점', zh: 'CHICOR 新世界江南店', en: 'CHICOR Shinsegae Gangnam' }), image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&h=300&fit=crop', tags: [L(lang, { ko: '프리미엄 뷰티', zh: '高端美妆', en: 'Premium beauty' })], sub: L(lang, { ko: '프리미엄 뷰티 편집숍', zh: '高端美妆编辑店', en: 'Premium beauty select shop' }), review: L(lang, { ko: '고급 브랜드 한곳에서 비교', zh: '高端品牌一站式比较', en: 'Compare luxury brands in one place' }), onClick: () => setTab('shopping') },
               ]}
               onViewAll={() => setTab('shopping')}
             />

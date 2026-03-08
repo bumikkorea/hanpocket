@@ -124,7 +124,7 @@ function CourseMap({ stops }) {
   }, [stops])
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-[#E5E7EB]" style={{ height: 200 }}>
+    <div className="relative rounded-[6px] overflow-hidden border border-[#E5E7EB]" style={{ height: 200 }}>
       <div ref={mapRef} className="w-full h-full" />
       {!mapReady && (
         <div className="absolute inset-0 bg-[#F5F5F5] flex items-center justify-center">
@@ -142,7 +142,7 @@ function CourseCard({ course, lang, onPress }) {
   return (
     <button
       onClick={onPress}
-      className="w-full bg-white rounded-2xl border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
+      className="w-full bg-white rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
     >
       <div className="flex items-start gap-3">
         <span className="text-3xl">{course.coverEmoji}</span>
@@ -178,7 +178,7 @@ function CourseCard({ course, lang, onPress }) {
 // ═══════════════════════════════════════════════
 function MyCourseCard({ course, lang, onPress, onDelete }) {
   return (
-    <div className="bg-white rounded-2xl border border-[#E5E7EB] p-4 flex items-center gap-3">
+    <div className="bg-white rounded-[6px] border border-[#E5E7EB] p-4 flex items-center gap-3">
       <button onClick={onPress} className="flex-1 text-left min-w-0 active:scale-[0.98] transition-transform">
         <p className="font-bold text-sm text-[#111827] truncate">{course.name}</p>
         <p className="text-[10px] text-[#9CA3AF] mt-1">
@@ -210,7 +210,7 @@ function ShareCard({ course, lang, onClose }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className="w-full max-w-sm">
-        <div className="bg-white rounded-2xl p-6 border border-[#E5E7EB]">
+        <div className="bg-white rounded-[6px] p-6 border border-[#E5E7EB]">
           <p className="text-xs font-bold tracking-widest text-gray-400 mb-4">HANPOCKET</p>
           <h2 className="text-xl font-bold text-[#111827] mb-4">
             {isRecommended ? L(lang, course.name) : course.name}
@@ -236,7 +236,7 @@ function ShareCard({ course, lang, onClose }) {
         <p className="text-center text-xs text-white/80 mt-3">
           {L(lang, { ko: '스크린샷을 찍어 공유하세요!', zh: '截图分享吧！', en: 'Take a screenshot to share!' })}
         </p>
-        <button onClick={onClose} className="w-full mt-2 bg-white rounded-xl py-3 text-sm font-medium text-[#111827]">
+        <button onClick={onClose} className="w-full mt-2 bg-white rounded-[6px] py-3 text-sm font-medium text-[#111827]">
           {L(lang, { ko: '닫기', zh: '关闭', en: 'Close' })}
         </button>
       </div>
@@ -317,7 +317,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
       <div className="flex-1 overflow-y-auto">
         {/* ── 요약 바: 총 소요시간 | 교통비 | 장소 수 ── */}
         {isRecommended && (
-          <div className="flex rounded-2xl border border-[#E5E7EB] divide-x divide-[#E5E7EB] text-center mx-4 mt-4">
+          <div className="flex rounded-[6px] border border-[#E5E7EB] divide-x divide-[#E5E7EB] text-center mx-4 mt-4">
             <div className="flex-1 py-3">
               <p className="text-[10px] text-[#9CA3AF] mb-0.5">{L(lang, { ko: '총 소요시간', zh: '总耗时', en: 'Duration' })}</p>
               <p className="text-sm font-bold text-[#111827]">{course.duration}</p>
@@ -340,7 +340,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
           <select
             value={startHour}
             onChange={e => setStartHour(Number(e.target.value))}
-            className="text-sm font-bold text-[#111827] bg-[#F5F5F5] rounded-lg px-2 py-1 outline-none"
+            className="text-sm font-bold text-[#111827] bg-[#F5F5F5] rounded-[6px] px-2 py-1 outline-none"
           >
             {Array.from({ length: 17 }, (_, i) => i + 6).map(h => (
               <option key={h} value={h}>{String(h).padStart(2, '0')}:00</option>
@@ -438,12 +438,12 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                             window.open(`https://map.kakao.com/link/to/${name},${stop.lat},${stop.lng}`, '_blank')
                           }
                         }}
-                        className="flex items-center gap-1 bg-[#DC2626] text-white text-xs font-semibold px-3.5 py-2 rounded-xl active:scale-95 transition-transform"
+                        className="flex items-center gap-1 bg-[#DC2626] text-white text-xs font-semibold px-3.5 py-2 rounded-[6px] active:scale-95 transition-transform"
                       >
                         <Navigation size={12} />
                         {L(lang, { ko: '길찾기', zh: '导航', en: 'Navigate' })}
                       </button>
-                      <button className="flex items-center gap-1 bg-white border border-[#E5E7EB] text-[#111827] text-xs font-semibold px-3.5 py-2 rounded-xl active:scale-95 transition-transform">
+                      <button className="flex items-center gap-1 bg-white border border-[#E5E7EB] text-[#111827] text-xs font-semibold px-3.5 py-2 rounded-[6px] active:scale-95 transition-transform">
                         💬 {L(lang, { ko: '회화카드', zh: '会话卡', en: 'Phrase Card' })}
                       </button>
                     </div>
@@ -502,7 +502,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
           <button
             onClick={onSave}
             disabled={isSaved}
-            className={`w-full py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+            className={`w-full py-2.5 rounded-[6px] text-sm font-semibold transition-colors ${
               isSaved
                 ? 'bg-[#F5F5F5] text-[#9CA3AF]'
                 : 'bg-[#111827] text-white active:bg-gray-800'
@@ -516,28 +516,28 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={openBaidu}
-            className="bg-white rounded-xl border border-[#E5E7EB] p-3 text-center active:scale-95 transition-transform"
+            className="bg-white rounded-[6px] border border-[#E5E7EB] p-3 text-center active:scale-95 transition-transform"
           >
             <Navigation size={14} className="mx-auto mb-1 text-[#111827]" />
             <span className="text-xs font-semibold text-[#111827]">百度地图</span>
           </button>
           <button
             onClick={openNaverMaps}
-            className="bg-white rounded-xl border border-[#E5E7EB] p-3 text-center active:scale-95 transition-transform"
+            className="bg-white rounded-[6px] border border-[#E5E7EB] p-3 text-center active:scale-95 transition-transform"
           >
             <Navigation size={14} className="mx-auto mb-1 text-[#111827]" />
             <span className="text-xs font-semibold text-[#111827]">Naver地图</span>
           </button>
           <button
             onClick={openGoogleMaps}
-            className="bg-white rounded-xl border border-[#E5E7EB] p-3 text-center active:scale-95 transition-transform"
+            className="bg-white rounded-[6px] border border-[#E5E7EB] p-3 text-center active:scale-95 transition-transform"
           >
             <Navigation size={14} className="mx-auto mb-1 text-[#111827]" />
             <span className="text-xs font-semibold text-[#111827]">谷歌地图</span>
           </button>
           <button
             onClick={openKakaoMap}
-            className="bg-white rounded-xl border border-[#E5E7EB] p-3 text-center active:scale-95 transition-transform"
+            className="bg-white rounded-[6px] border border-[#E5E7EB] p-3 text-center active:scale-95 transition-transform"
           >
             <Navigation size={14} className="mx-auto mb-1 text-[#111827]" />
             <span className="text-xs font-semibold text-[#111827]">Kakao地图</span>
@@ -545,7 +545,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
         </div>
         <button
           onClick={() => setShowShareCard(true)}
-          className="w-full py-2.5 rounded-xl text-sm font-semibold bg-white border border-[#E5E7EB] text-[#111827] flex items-center justify-center gap-2 active:bg-[#F5F5F5] transition-colors"
+          className="w-full py-2.5 rounded-[6px] text-sm font-semibold bg-white border border-[#E5E7EB] text-[#111827] flex items-center justify-center gap-2 active:bg-[#F5F5F5] transition-colors"
         >
           <Share2 size={14} />
           {L(lang, { ko: '공유 카드 만들기', zh: '生成分享卡片', en: 'Create Share Card' })}
@@ -627,7 +627,7 @@ function CreateCourse({ lang, onBack, onSave }) {
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder={L(lang, { ko: '예: 강남 맛집 투어', zh: '例：江南美食之旅', en: 'e.g. Gangnam Food Tour' })}
-            className="w-full bg-[#F5F5F5] rounded-xl px-3 py-2.5 text-sm text-[#111827] outline-none placeholder:text-[#9CA3AF]"
+            className="w-full bg-[#F5F5F5] rounded-[6px] px-3 py-2.5 text-sm text-[#111827] outline-none placeholder:text-[#9CA3AF]"
             maxLength={50}
           />
         </div>
@@ -639,7 +639,7 @@ function CreateCourse({ lang, onBack, onSave }) {
           </label>
           <div className="space-y-2">
             {stops.map((stop, i) => (
-              <div key={i} className="bg-white rounded-xl p-3 border border-[#E5E7EB]">
+              <div key={i} className="bg-white rounded-[6px] p-3 border border-[#E5E7EB]">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="w-5 h-5 rounded-full bg-[#111827] text-white text-[10px] font-bold flex items-center justify-center shrink-0">{i + 1}</span>
                   <input
@@ -647,7 +647,7 @@ function CreateCourse({ lang, onBack, onSave }) {
                     value={stop.name}
                     onChange={e => updateStop(i, 'name', e.target.value)}
                     placeholder={L(lang, { ko: '장소 이름', zh: '地点名称', en: 'Place name' })}
-                    className="flex-1 bg-white rounded-lg px-2 py-1.5 text-sm text-[#111827] outline-none border border-[#E5E7EB] placeholder:text-[#9CA3AF]"
+                    className="flex-1 bg-white rounded-[6px] px-2 py-1.5 text-sm text-[#111827] outline-none border border-[#E5E7EB] placeholder:text-[#9CA3AF]"
                     maxLength={30}
                   />
                   <div className="flex flex-col gap-0.5">
@@ -662,7 +662,7 @@ function CreateCourse({ lang, onBack, onSave }) {
                     value={stop.duration}
                     onChange={e => updateStop(i, 'duration', e.target.value)}
                     placeholder="1h"
-                    className="w-16 bg-white rounded-lg px-2 py-1 text-xs text-[#111827] outline-none border border-[#E5E7EB] placeholder:text-[#9CA3AF]"
+                    className="w-16 bg-white rounded-[6px] px-2 py-1 text-xs text-[#111827] outline-none border border-[#E5E7EB] placeholder:text-[#9CA3AF]"
                     maxLength={10}
                   />
                   <input
@@ -670,7 +670,7 @@ function CreateCourse({ lang, onBack, onSave }) {
                     value={stop.tip}
                     onChange={e => updateStop(i, 'tip', e.target.value)}
                     placeholder={L(lang, { ko: '팁 (선택)', zh: '提示（选填）', en: 'Tip (optional)' })}
-                    className="flex-1 bg-white rounded-lg px-2 py-1 text-xs text-[#111827] outline-none border border-[#E5E7EB] placeholder:text-[#9CA3AF]"
+                    className="flex-1 bg-white rounded-[6px] px-2 py-1 text-xs text-[#111827] outline-none border border-[#E5E7EB] placeholder:text-[#9CA3AF]"
                     maxLength={50}
                   />
                 </div>
@@ -678,7 +678,7 @@ function CreateCourse({ lang, onBack, onSave }) {
             ))}
           </div>
           {stops.length < 10 && (
-            <button onClick={addStop} className="mt-2 w-full py-2 rounded-xl border border-dashed border-[#D1D5DB] text-xs text-[#6B7280] font-medium flex items-center justify-center gap-1 active:bg-[#F5F5F5]">
+            <button onClick={addStop} className="mt-2 w-full py-2 rounded-[6px] border border-dashed border-[#D1D5DB] text-xs text-[#6B7280] font-medium flex items-center justify-center gap-1 active:bg-[#F5F5F5]">
               <Plus size={14} /> {L(lang, { ko: '경유지 추가', zh: '添加经停点', en: 'Add Stop' })}
             </button>
           )}
@@ -690,7 +690,7 @@ function CreateCourse({ lang, onBack, onSave }) {
         <button
           onClick={handleSave}
           disabled={!name.trim() || !stops.some(s => s.name.trim())}
-          className="w-full py-2.5 rounded-xl text-sm font-semibold bg-[#111827] text-white disabled:bg-[#D1D5DB] disabled:text-[#9CA3AF] active:bg-gray-800 transition-colors"
+          className="w-full py-2.5 rounded-[6px] text-sm font-semibold bg-[#111827] text-white disabled:bg-[#D1D5DB] disabled:text-[#9CA3AF] active:bg-gray-800 transition-colors"
         >
           {L(lang, { ko: '저장', zh: '保存', en: 'Save' })}
         </button>
@@ -815,7 +815,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed }) {
         </div>
 
         {myCourses.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-[#E5E7EB] p-6 text-center">
+          <div className="bg-white rounded-[6px] border border-[#E5E7EB] p-6 text-center">
             <p className="text-2xl mb-2">🗺️</p>
             <p className="text-xs text-[#9CA3AF]">
               {L(lang, { ko: '아직 코스가 없어요. 추천 코스로 시작해보세요!', zh: '还没有路线。从推荐路线开始吧！', en: 'No courses yet. Start with a recommended one!' })}
@@ -901,7 +901,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed }) {
               { day: 7, plan: { ko: '비행기→제주 (1h) → 성산일출봉 → 협재해변', zh: '飞机→济州（1h）→城山日出峰→挟才海滩', en: 'Flight→Jeju (1h) → Seongsan Ilchulbong → Hyeopjae Beach' } },
             ]},
           ].map((it, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-[#E5E7EB] p-4">
+            <div key={i} className="bg-white rounded-[6px] border border-[#E5E7EB] p-4">
               <h3 className="text-sm font-bold text-[#111827] mb-3">{L(lang, it.name)}</h3>
               <div className="space-y-2">
                 {it.days.map(d => (

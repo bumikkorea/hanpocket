@@ -192,7 +192,7 @@ export default function LifeToolsTab({ lang, setTab }) {
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-[6px] text-sm font-medium whitespace-nowrap transition-all ${
                 activeCategory === category.id
                   ? 'bg-[#111827] text-white'
                   : 'bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]'
@@ -208,7 +208,7 @@ export default function LifeToolsTab({ lang, setTab }) {
       {/* 콘텐츠 */}
       <div className="space-y-4">
         {currentCategory?.tools.map((tool, idx) => (
-          <div key={idx} className="bg-white border border-[#E5E7EB] rounded-lg p-4">
+          <div key={idx} className="bg-white border border-[#E5E7EB] rounded-[6px] p-4">
             <h3 className="text-sm font-semibold text-[#111827] mb-3">{L(lang, tool.name)}</h3>
             
             {/* 계산기 도구 */}
@@ -220,12 +220,12 @@ export default function LifeToolsTab({ lang, setTab }) {
                     placeholder={L(lang, { ko: 'CNY 금액 입력', zh: '输入人民币金额', en: 'Enter CNY amount' })}
                     value={currencyAmount}
                     onChange={(e) => setCurrencyAmount(e.target.value)}
-                    className="flex-1 px-3 py-2 text-sm border border-[#D1D5DB] rounded-lg focus:ring-2 focus:ring-[#DBEAFE] focus:border-[#3B82F6]"
+                    className="flex-1 px-3 py-2 text-sm border border-[#D1D5DB] rounded-[6px] focus:ring-2 focus:ring-[#DBEAFE] focus:border-[#3B82F6]"
                   />
                   <span className="text-sm text-[#6B7280]">CNY</span>
                 </div>
                 {convertedAmount && (
-                  <div className="bg-[#F3F4F6] rounded-lg p-3">
+                  <div className="bg-[#F3F4F6] rounded-[6px] p-3">
                     <div className="text-sm text-[#6B7280]">
                       {L(lang, { ko: '한국 원화', zh: '韩元', en: 'Korean Won' })}
                     </div>
@@ -246,12 +246,12 @@ export default function LifeToolsTab({ lang, setTab }) {
                     placeholder={L(lang, { ko: '전세금 입력 (만원)', zh: '输入保证金（万韩元）', en: 'Enter deposit (10K KRW)' })}
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(e.target.value)}
-                    className="flex-1 px-3 py-2 text-sm border border-[#D1D5DB] rounded-lg focus:ring-2 focus:ring-[#DBEAFE] focus:border-[#3B82F6]"
+                    className="flex-1 px-3 py-2 text-sm border border-[#D1D5DB] rounded-[6px] focus:ring-2 focus:ring-[#DBEAFE] focus:border-[#3B82F6]"
                   />
                   <span className="text-sm text-[#6B7280]">{L(lang, { ko: '만원', zh: '万韩元', en: '10K KRW' })}</span>
                 </div>
                 {monthlyRent && (
-                  <div className="bg-[#F3F4F6] rounded-lg p-3">
+                  <div className="bg-[#F3F4F6] rounded-[6px] p-3">
                     <div className="text-sm text-[#6B7280]">
                       {L(lang, { ko: '예상 월세', zh: '预计月租', en: 'Estimated Monthly Rent' })}
                     </div>
@@ -268,7 +268,7 @@ export default function LifeToolsTab({ lang, setTab }) {
             {!tool.type && (
               <div className="space-y-2">
                 {tool.items?.map((item, itemIdx) => (
-                  <div key={itemIdx} className="flex items-start gap-3 p-3 bg-[#F9FAFB] rounded-lg">
+                  <div key={itemIdx} className="flex items-start gap-3 p-3 bg-[#F9FAFB] rounded-[6px]">
                     <div className="flex-1 min-w-0">
                       {typeof item === 'string' ? (
                         <span className="text-sm text-[#374151]">{L(lang, item)}</span>
@@ -309,7 +309,7 @@ export default function LifeToolsTab({ lang, setTab }) {
       </div>
 
       {/* 주의사항 */}
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <div className="bg-yellow-50 border border-yellow-200 rounded-[6px] p-4">
         <div className="flex items-start gap-2">
           <AlertCircle size={16} className="text-yellow-600 mt-0.5 shrink-0" />
           <div className="text-sm text-yellow-800">

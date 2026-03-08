@@ -27,6 +27,7 @@ export const koreanFoodDB = [
   {
     id: 'kimchi-jjigae',
     ko: '김치찌개',
+    image: 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
     zh: '泡菜汤',
     en: 'Kimchi Stew',
     category: 'jjigae',
@@ -124,6 +125,7 @@ export const koreanFoodDB = [
   {
     id: 'doenjang-jjigae',
     ko: '된장찌개',
+    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop',
     zh: '大酱汤',
     en: 'Soybean Paste Stew',
     category: 'jjigae',
@@ -221,6 +223,7 @@ export const koreanFoodDB = [
   {
     id: 'sundubu-jjigae',
     ko: '순두부찌개',
+    image: 'https://images.unsplash.com/photo-1583224994076-cbc4e4478093?w=400&h=300&fit=crop',
     zh: '嫩豆腐汤',
     en: 'Soft Tofu Stew',
     category: 'jjigae',
@@ -318,6 +321,7 @@ export const koreanFoodDB = [
   {
     id: 'tteokbokki',
     ko: '떡볶이',
+    image: 'https://images.unsplash.com/photo-1635363638580-c2809d049eee?w=400&h=300&fit=crop',
     zh: '炒年糕',
     en: 'Tteokbokki',
     category: 'bunsik',
@@ -415,6 +419,7 @@ export const koreanFoodDB = [
   {
     id: 'bibimbap',
     ko: '비빔밥',
+    image: 'https://images.unsplash.com/photo-1553163147-622ab57be1c7?w=400&h=300&fit=crop',
     zh: '拌饭',
     en: 'Bibimbap',
     category: 'bap',
@@ -525,6 +530,7 @@ export const koreanFoodDB = [
   {
     id: 'bulgogi',
     ko: '불고기',
+    image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=300&fit=crop',
     zh: '烤牛肉',
     en: 'Bulgogi',
     category: 'gui',
@@ -635,6 +641,7 @@ export const koreanFoodDB = [
   {
     id: 'samgyeopsal',
     ko: '삼겹살',
+    image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop',
     zh: '五花肉',
     en: 'Samgyeopsal',
     category: 'gui',
@@ -734,6 +741,7 @@ export const koreanFoodDB = [
   {
     id: 'pajeon',
     ko: '파전',
+    image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop',
     zh: '葱饼',
     en: 'Green Onion Pancake',
     category: 'jeon',
@@ -833,6 +841,7 @@ export const koreanFoodDB = [
   {
     id: 'baechu-kimchi',
     ko: '배추김치',
+    image: 'https://images.unsplash.com/photo-1583224994076-cbc4e4478093?w=400&h=300&fit=crop',
     zh: '白菜泡菜',
     en: 'Napa Cabbage Kimchi',
     category: 'banchan',
@@ -1044,6 +1053,7 @@ export const koreanFoodDB = [
   {
     id: 'kimchi-bokkeumbap',
     ko: '김치볶음밥',
+    image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&h=300&fit=crop',
     zh: '泡菜炒饭',
     en: 'Kimchi Fried Rice',
     category: 'bap',
@@ -1141,6 +1151,7 @@ export const koreanFoodDB = [
   {
     id: 'ramyeon',
     ko: '라면',
+    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop',
     zh: '拉面',
     en: 'Ramyeon',
     category: 'myeon',
@@ -1243,6 +1254,7 @@ export const koreanFoodDB = [
   {
     id: 'jjajangmyeon',
     ko: '짜장면',
+    image: 'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&h=300&fit=crop',
     zh: '炸酱面',
     en: 'Black Bean Noodles',
     category: 'chinese',
@@ -1355,6 +1367,7 @@ export const koreanFoodDB = [
   {
     id: 'gimbap',
     ko: '김밥',
+    image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop',
     zh: '紫菜包饭',
     en: 'Gimbap',
     category: 'bap',
@@ -1426,6 +1439,7 @@ export const koreanFoodDB = [
   {
     id: 'hotteok',
     ko: '호떡',
+    image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400&h=300&fit=crop',
     zh: '糖饼',
     en: 'Hotteok',
     category: 'street',
@@ -1484,6 +1498,7 @@ export const koreanFoodDB = [
   {
     id: 'soju',
     ko: '소주',
+    image: 'https://images.unsplash.com/photo-1517953377824-516f2dca803f?w=400&h=300&fit=crop',
     zh: '烧酒',
     en: 'Soju',
     category: 'alcohol',
@@ -1503,6 +1518,7 @@ export const koreanFoodDB = [
   {
     id: 'makgeolli',
     ko: '막걸리',
+    image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop',
     zh: '马格利',
     en: 'Makgeolli',
     category: 'alcohol',
@@ -1522,6 +1538,7 @@ export const koreanFoodDB = [
   {
     id: 'banana-milk',
     ko: '바나나우유',
+    image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop',
     zh: '香蕉牛奶',
     en: 'Banana Milk',
     category: 'dessert',
@@ -1541,6 +1558,7 @@ export const koreanFoodDB = [
   {
     id: 'patbingsu',
     ko: '팥빙수',
+    image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop',
     zh: '红豆刨冰',
     en: 'Patbingsu',
     category: 'dessert',
@@ -1601,6 +1619,7 @@ export const koreanFoodDB = [
   {
     id: 'japchae',
     ko: '잡채',
+    image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400&h=300&fit=crop',
     zh: '拌粉条',
     en: 'Japchae',
     category: 'banchan',
@@ -1698,6 +1717,7 @@ export const koreanFoodDB = [
   {
     id: 'galbitang',
     ko: '갈비탕',
+    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&h=300&fit=crop',
     zh: '排骨汤',
     en: 'Short Rib Soup',
     category: 'guk',
@@ -2066,6 +2086,7 @@ export const koreanFoodDB = [
   {
     id: 'sundae',
     ko: '순대',
+    image: 'https://images.unsplash.com/photo-1583224994076-cbc4e4478093?w=400&h=300&fit=crop',
     zh: '血肠',
     en: 'Blood Sausage',
     category: 'street',
@@ -2085,6 +2106,7 @@ export const koreanFoodDB = [
   {
     id: 'bungeoppang',
     ko: '붕어빵',
+    image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400&h=300&fit=crop',
     zh: '鲫鱼烧',
     en: 'Fish-shaped Pastry',
     category: 'street',
@@ -2162,6 +2184,7 @@ export const koreanFoodDB = [
   {
     id: 'corn-dog',
     ko: '핫도그',
+    image: 'https://images.unsplash.com/photo-1635363638580-c2809d049eee?w=400&h=300&fit=crop',
     zh: '韩式热狗',
     en: 'Korean Corn Dog',
     category: 'street',
@@ -2258,6 +2281,7 @@ export const koreanFoodDB = [
   {
     id: 'croffle',
     ko: '크로플',
+    image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
     zh: '可颂华夫饼',
     en: 'Croffle',
     category: 'cafe',
@@ -2305,6 +2329,7 @@ export const koreanFoodDB = [
   {
     id: 'dalgona-coffee',
     ko: '달고나커피',
+    image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop',
     zh: '椪糖咖啡',
     en: 'Dalgona Coffee',
     category: 'cafe',
@@ -2355,6 +2380,7 @@ export const koreanFoodDB = [
   {
     id: 'sikhye',
     ko: '식혜',
+    image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&h=300&fit=crop',
     zh: '甜米露',
     en: 'Sweet Rice Drink',
     category: 'dessert',
@@ -2449,6 +2475,7 @@ export const koreanFoodDB = [
   {
     id: 'gamjajeon',
     ko: '감자전',
+    image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=400&h=300&fit=crop',
     zh: '土豆煎饼',
     en: 'Potato Pancake',
     category: 'jeon',
@@ -2659,6 +2686,7 @@ export const koreanFoodDB = [
   {
     id: 'naengmyeon',
     ko: '냉면',
+    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop',
     zh: '冷面',
     en: 'Cold Noodles',
     category: 'myeon',
@@ -2971,6 +2999,7 @@ export const koreanFoodDB = [
   {
     id: 'korean-fried-chicken',
     ko: '치킨',
+    image: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400&h=300&fit=crop',
     zh: '韩式炸鸡',
     en: 'Korean Fried Chicken',
     category: 'gui',

@@ -19,13 +19,13 @@ function InsuranceGuide({ lang }) {
   const t = LABELS[lang] || LABELS.en
 
   return (
-    <div className="mb-6 bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div className="mb-6 bg-white rounded-[6px] border border-slate-200 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+          <div className="w-10 h-10 bg-slate-100 rounded-[6px] flex items-center justify-center">
             <BookOpen size={20} className="text-slate-600" />
           </div>
           <div>
@@ -58,7 +58,7 @@ function HospitalCard({ hospital, lang }) {
   const waitTime = Math.floor(Math.random() * 60 + 15) // 15~75분
 
   return (
-    <div className="card-glow bg-white rounded-xl border border-slate-200 p-4 hover:border-slate-300 transition-all">
+    <div className="card-glow bg-white rounded-[6px] border border-slate-200 p-4 hover:border-slate-300 transition-all">
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-[#111827] text-base truncate">{L(lang, hospital.name)}</h3>
@@ -92,7 +92,7 @@ function HospitalCard({ hospital, lang }) {
       </div>
 
       {/* 추가 정보 (예상 진료비, 대기시간) */}
-      <div className="bg-slate-50 rounded-lg p-2 mb-3">
+      <div className="bg-slate-50 rounded-[6px] p-2 mb-3">
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div>
             <span className="text-slate-600">
@@ -126,7 +126,7 @@ function HospitalCard({ hospital, lang }) {
         </div>
         
         {/* TODO: 실제 예약 시스템 연동 필요 */}
-        <button className="px-3 py-1.5 text-xs font-medium bg-[#111827] text-white rounded-lg hover:bg-slate-700 transition-colors">
+        <button className="px-3 py-1.5 text-xs font-medium bg-[#111827] text-white rounded-[6px] hover:bg-slate-700 transition-colors">
           {L(lang, { ko: '예약하기', zh: '预约', en: 'Book' })}
         </button>
       </div>
@@ -167,7 +167,7 @@ export default function MedicalTab({ lang = 'ko' }) {
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           placeholder={t.search}
-          className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm text-[#111827] placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-colors bg-white"
+          className="w-full pl-10 pr-4 py-2.5 rounded-[6px] border border-slate-200 text-sm text-[#111827] placeholder-slate-400 focus:outline-none focus:border-slate-400 transition-colors bg-white"
                  />
       </div>
 
@@ -176,14 +176,14 @@ export default function MedicalTab({ lang = 'ko' }) {
         <select
           value={selectedCity}
           onChange={e => setSelectedCity(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-slate-200 text-xs text-[#111827] bg-white focus:outline-none focus:border-slate-400"
+          className="px-3 py-2 rounded-[6px] border border-slate-200 text-xs text-[#111827] bg-white focus:outline-none focus:border-slate-400"
                  >
           {HOSPITAL_CITIES.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
         <select
           value={selectedType}
           onChange={e => setSelectedType(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-slate-200 text-xs text-[#111827] bg-white focus:outline-none focus:border-slate-400"
+          className="px-3 py-2 rounded-[6px] border border-slate-200 text-xs text-[#111827] bg-white focus:outline-none focus:border-slate-400"
                  >
           {HOSPITAL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
         </select>

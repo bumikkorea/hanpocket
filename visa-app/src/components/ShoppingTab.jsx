@@ -198,14 +198,14 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
       </div>
 
       {/* 인기 상품 섹션 */}
-      <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
+      <div className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
         <h2 className="text-sm font-bold text-[#111827] mb-3 flex items-center gap-2">
           <Star size={16} className="text-amber-500" />
           {L(lang, { ko: '인기 쇼핑 아이템', zh: '热门购物商品', en: 'Popular Shopping Items' })}
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {POPULAR_ITEMS.map((item, i) => (
-            <div key={i} className="bg-[#FAFAF8] rounded-lg p-3">
+            <div key={i} className="bg-[#FAFAF8] rounded-[6px] p-3">
               <h3 className="text-xs font-bold text-[#111827]">{L(lang, item.name)}</h3>
               <p className="text-xs text-amber-600 font-semibold mt-1">{item.price}</p>
               <p className="text-[10px] text-[#6B7280] mt-1 leading-relaxed">{L(lang, item.description)}</p>
@@ -223,7 +223,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           placeholder={L(lang, { ko: '상점, 브랜드, 상품 검색...', zh: '搜索商店、品牌、商品...', en: 'Search stores, brands, products...' })}
-          className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-[#E5E7EB] rounded-xl outline-none focus:border-[#111827] text-[#111827] placeholder:text-[#9CA3AF]"
+          className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-[#E5E7EB] rounded-[6px] outline-none focus:border-[#111827] text-[#111827] placeholder:text-[#9CA3AF]"
         />
       </div>
 
@@ -252,7 +252,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
       {section === 'deals' && (
         <div className="space-y-3">
           {/* 다음 세일 카운트다운 */}
-          <div className="bg-gradient-to-r from-[#DC2626] to-[#F97316] rounded-2xl p-4 text-white">
+          <div className="bg-gradient-to-r from-[#DC2626] to-[#F97316] rounded-[6px] p-4 text-white">
             <div className="flex items-center gap-2 mb-1">
               <Calendar size={16} />
               <span className="text-xs font-semibold opacity-90">{L(lang, { ko: '다음 세일', zh: '下次促销', en: 'Next Sale' })}</span>
@@ -272,7 +272,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
           </h2>
           <div className="space-y-2">
             {OLIVEYOUNG_SALES.map((sale, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-[#E5E7EB] p-3">
+              <div key={i} className="bg-white rounded-[6px] border border-[#E5E7EB] p-3">
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-sm font-bold text-[#1A1A1A]">{sale.name}</p>
@@ -292,7 +292,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
           </h2>
           <div className="space-y-2">
             {SHOPPING_EVENTS.map((event, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-[#E5E7EB] p-3">
+              <div key={i} className="bg-white rounded-[6px] border border-[#E5E7EB] p-3">
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-sm font-bold text-[#1A1A1A]">{event.name}</p>
@@ -312,7 +312,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
         <div className="space-y-3">
           <h2 className="text-sm font-bold text-[#111827]">{L(lang, { ko: '주요 면세점', zh: '主要免税店', en: 'Major Duty Free Shops' })}</h2>
           {DUTY_FREE_SHOPS.map(shop => (
-            <div key={shop.id} className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
+            <div key={shop.id} className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="text-sm font-bold text-[#111827]">{L(lang, shop.name)}</h3>
@@ -362,7 +362,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
         <div className="space-y-3">
           <h2 className="text-sm font-bold text-[#111827]">{L(lang, { ko: '쇼핑 지역 가이드', zh: '购物区域指南', en: 'Shopping Districts Guide' })}</h2>
           {SHOPPING_DISTRICTS.map(district => (
-            <div key={district.id} className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
+            <div key={district.id} className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="text-sm font-bold text-[#111827]">{L(lang, district.name)}</h3>
@@ -393,7 +393,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
         <div className="space-y-3">
           <h2 className="text-sm font-bold text-[#111827]">{L(lang, { ko: '온라인 쇼핑몰', zh: '在线购物商城', en: 'Online Shopping Platforms' })}</h2>
           {ONLINE_PLATFORMS.map((platform, i) => (
-            <div key={i} className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
+            <div key={i} className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="text-sm font-bold text-[#111827]">{L(lang, platform.name)}</h3>
@@ -429,7 +429,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
         <div className="space-y-3">
           <h2 className="text-sm font-bold text-[#111827]">{L(lang, { ko: '결제 방법 가이드', zh: '支付方式指南', en: 'Payment Methods Guide' })}</h2>
           
-          <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
+          <div className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
             <h3 className="text-sm font-bold text-[#111827] mb-3">{L(lang, { ko: '중국인 친화적 결제수단', zh: '中国人友好的支付方式', en: 'Chinese-Friendly Payment Methods' })}</h3>
             <div className="space-y-2 text-xs">
               <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
@@ -456,7 +456,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
+          <div className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
             <h3 className="text-sm font-bold text-[#111827] mb-3">{L(lang, { ko: '세금 환급 (Tax Refund)', zh: '退税服务', en: 'Tax Refund Service' })}</h3>
             <div className="text-xs space-y-2 text-[#374151]">
               <p>{L(lang, { ko: '• 3만원 이상 구매 시 부가세 환급 가능', zh: '• 购买3万韩元以上可申请增值税退税', en: '• VAT refund available for purchases over 30,000 KRW' })}</p>
@@ -466,7 +466,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
             </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+          <div className="bg-amber-50 border border-amber-200 rounded-[6px] p-5">
             <h3 className="text-sm font-bold text-amber-800 mb-2">{L(lang, { ko: '쇼핑 꿀팁', zh: '购物秘籍', en: 'Shopping Tips' })}</h3>
             <div className="text-xs space-y-1 text-amber-700">
               <p>• {L(lang, { ko: '면세점은 출국 3시간 전까지 픽업 가능', zh: '免税店可在出境前3小时内取货', en: 'Duty-free pickup available until 3 hours before departure' })}</p>
@@ -530,7 +530,7 @@ function TourApiShoppingSection({ lang }) {
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
         {items.map((item, i) => (
           <div key={item.contentid || i} onClick={() => setDetailItem(item)}
-            className="min-w-[180px] max-w-[180px] rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm cursor-pointer">
+            className="min-w-[180px] max-w-[180px] rounded-[6px] overflow-hidden bg-white border border-gray-100 shadow-sm cursor-pointer">
             {item.firstimage ? (
               <img src={item.firstimage} alt={item.title} className="w-full h-28 object-cover" loading="lazy" />
             ) : (

@@ -442,8 +442,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 else if (card.id === 'traveling') { setArrivalStep('traveling'); setShowArrivalFlow(true) }
                 else if (card.id === 'departure') { setArrivalStep('departure'); setShowArrivalFlow(true) }
               }}
-              className="bg-[#F9FAFB] rounded-2xl border border-[#E5E7EB] p-4 active:scale-[0.97] transition-all duration-150 text-left"
-              style={{ minHeight: 100 }}
+              className="bg-white rounded-2xl border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] transition-all duration-150 text-left"
             >
               <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
                 {L(lang, card.label)}
@@ -655,6 +654,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {overlay === 'sim' && <SimGuide lang={lang} onClose={() => setOverlay(null)} />}
           {overlay === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => setOverlay(null)} />}
           {overlay === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => setOverlay(null)} />}
+          {overlay === 'halal' && <HalalGuide lang={lang} onClose={() => setOverlay(null)} />}
+          {overlay === 'dietary-card' && <DietaryCardGuide lang={lang} onClose={() => setOverlay(null)} />}
+          {overlay === 'kids' && <KidsGuide lang={lang} onClose={() => setOverlay(null)} />}
+          {overlay === 'country-duty-free' && <DutyFreeLimitGuide lang={lang} onClose={() => setOverlay(null)} />}
         </Suspense>
       )}
 
@@ -1047,7 +1050,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               { id: 'nav-food', label: { ko: '맛집 & 식당', zh: '美食 & 餐厅', en: 'Food & Restaurants' }, sub: { ko: '미슐랭, 한식, 주문법, 배달', zh: '米其林、韩餐、点餐、外卖', en: 'Michelin, Korean food, ordering, delivery' }, tab: 'food' },
               { id: 'nav-shopping', label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, sub: { ko: '올리브영, 무신사, 면세점', zh: 'Olive Young、MUSINSA、免税店', en: 'Olive Young, MUSINSA, duty-free' }, tab: 'shopping' },
               { id: 'nav-travel', label: { ko: '여행지 & 코스', zh: '旅游地 & 路线', en: 'Spots & Courses' }, sub: { ko: '서울, 부산, 제주 여행 코스', zh: '首尔、釜山、济州旅行路线', en: 'Seoul, Busan, Jeju courses' }, tab: 'travel' },
-              { id: 'nav-translator', label: { ko: '통역 & 번역', zh: '翻译 & 口译', en: 'Translate' }, sub: { ko: '말이 안 통할 때', zh: '语言不通时', en: "When you can't communicate" }, tab: 'translator' },
+
               { id: 'nav-medical', label: { ko: '병원 & 약국', zh: '医院 & 药店', en: 'Hospital & Pharmacy' }, sub: { ko: '아프면 어디로? 외국인 진료', zh: '生病了去哪里？外国人就诊', en: 'Where to go when sick?' }, tab: 'medical' },
               { id: 'nav-hallyu', label: { ko: '한류 & 엔터', zh: '韩流 & 娱乐', en: 'Hallyu & Entertainment' }, sub: { ko: 'K-POP, 드라마, 팬이벤트', zh: 'K-POP、韩剧、粉丝活动', en: 'K-POP, dramas, fan events' }, tab: 'hallyu' },
               { id: 'nav-delivery', label: { ko: '배달 주문', zh: '点外卖', en: 'Food Delivery' }, sub: { ko: '배달앱 이용 가이드', zh: '外卖App使用指南', en: 'Delivery app guide' }, tab: 'delivery' },
@@ -1085,7 +1088,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           <div className="p-4 flex flex-col gap-3">
             {[
               { id: 'dep-tax-refund', label: { ko: '세금환급', zh: '退税指南', en: 'Tax Refund' }, sub: { ko: '공항에서 환급받는 법', zh: '在机场退税的方法', en: 'How to get refund at airport' }, guide: 'tax-refund' },
-              { id: 'dep-parcel', label: { ko: '택배 보내기', zh: '寄快递', en: 'Ship Packages' }, sub: { ko: '짐 먼저 보내고 가볍게 출국', zh: '先寄行李轻松出境', en: 'Ship luggage first, travel light' }, tab: 'parcel' },
+              { id: 'country-duty-free', label: { ko: '국가별 면세한도', zh: '各国免税限额', en: 'Duty Free Limits by Country' }, sub: { ko: '내 나라로 가져갈 수 있는 한도', zh: '能带回我国的限额', en: 'Limits for bringing back to your country' }, guide: 'country-duty-free' },
+              { id: 'dep-parcel', label: { ko: '택배 보내기', zh: '寄快递', en: 'Ship Packages' }, sub: { ko: '짐 먼저 보내고 가볍게 출국', zh: '先寄행이轻松出境', en: 'Ship luggage first, travel light' }, tab: 'parcel' },
               { id: 'dep-airport', label: { ko: '공항 이동', zh: '前往机场', en: 'To Airport' }, sub: { ko: 'AREX, 리무진, 택시 비교', zh: 'AREX、大巴、出租车对比', en: 'AREX, limousine, taxi comparison' }, tab: 'travel' },
             ].map(item => (
               <button

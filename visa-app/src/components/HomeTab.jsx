@@ -184,6 +184,217 @@ const INTENT_CARDS = [
   },
 ]
 
+// ── 공휴일 캘린더 컴포넌트 (한국 + 중국/대만/홍콩 토글) ──
+const HOLIDAYS_BY_COUNTRY = {
+  kr: [
+    { date: '2026-01-01', name: { ko: '신정', zh: '元旦', en: "New Year's Day" } },
+    { date: '2026-01-29', name: { ko: '설날 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+    { date: '2026-01-30', name: { ko: '설날', zh: '春节', en: 'Lunar New Year' } },
+    { date: '2026-01-31', name: { ko: '설날 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+    { date: '2026-03-01', name: { ko: '삼일절', zh: '三一节', en: 'Independence Movement Day' } },
+    { date: '2026-05-05', name: { ko: '어린이날', zh: '儿童节', en: "Children's Day" } },
+    { date: '2026-05-24', name: { ko: '부처님오신날', zh: '佛诞节', en: "Buddha's Birthday" } },
+    { date: '2026-06-06', name: { ko: '현충일', zh: '显忠日', en: 'Memorial Day' } },
+    { date: '2026-08-15', name: { ko: '광복절', zh: '光复节', en: 'Liberation Day' } },
+    { date: '2026-09-24', name: { ko: '추석 연휴', zh: '中秋假期', en: 'Chuseok Holiday' } },
+    { date: '2026-09-25', name: { ko: '추석', zh: '中秋节', en: 'Chuseok' } },
+    { date: '2026-09-26', name: { ko: '추석 연휴', zh: '中秋假期', en: 'Chuseok Holiday' } },
+    { date: '2026-10-03', name: { ko: '개천절', zh: '开天节', en: 'National Foundation Day' } },
+    { date: '2026-10-09', name: { ko: '한글날', zh: '韩文日', en: 'Hangul Day' } },
+    { date: '2026-12-25', name: { ko: '성탄절', zh: '圣诞节', en: 'Christmas' } },
+  ],
+  cn: [
+    { date: '2026-01-01', name: { ko: '원단', zh: '元旦', en: "New Year's Day" } },
+    { date: '2026-01-29', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
+    { date: '2026-01-30', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
+    { date: '2026-01-31', name: { ko: '춘절(설날)', zh: '春节(除夕)', en: 'Spring Festival (Eve)' } },
+    { date: '2026-02-01', name: { ko: '춘절', zh: '春节(初一)', en: 'Spring Festival' } },
+    { date: '2026-02-02', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
+    { date: '2026-02-03', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
+    { date: '2026-02-04', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
+    { date: '2026-04-04', name: { ko: '청명절', zh: '清明节', en: 'Qingming Festival' } },
+    { date: '2026-05-01', name: { ko: '노동절', zh: '劳动节', en: 'Labor Day' } },
+    { date: '2026-05-02', name: { ko: '노동절 연휴', zh: '劳动节假期', en: 'Labor Day Holiday' } },
+    { date: '2026-05-03', name: { ko: '노동절 연휴', zh: '劳动节假期', en: 'Labor Day Holiday' } },
+    { date: '2026-06-19', name: { ko: '단오절', zh: '端午节', en: 'Dragon Boat Festival' } },
+    { date: '2026-09-25', name: { ko: '중추절', zh: '中秋节', en: 'Mid-Autumn Festival' } },
+    { date: '2026-10-01', name: { ko: '국경절', zh: '国庆节', en: 'National Day' } },
+    { date: '2026-10-02', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
+    { date: '2026-10-03', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
+    { date: '2026-10-04', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
+    { date: '2026-10-05', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
+    { date: '2026-10-06', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
+    { date: '2026-10-07', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
+  ],
+  tw: [
+    { date: '2026-01-01', name: { ko: '개국기념일', zh: '元旦/开国纪念日', en: "New Year's / Republic Day" } },
+    { date: '2026-01-29', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+    { date: '2026-01-30', name: { ko: '춘절 연휴', zh: '除夕', en: 'Lunar New Year Eve' } },
+    { date: '2026-01-31', name: { ko: '춘절', zh: '春节', en: 'Lunar New Year' } },
+    { date: '2026-02-01', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+    { date: '2026-02-02', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+    { date: '2026-02-28', name: { ko: '228 평화기념일', zh: '228和平纪念日', en: '228 Peace Memorial Day' } },
+    { date: '2026-04-04', name: { ko: '아동절/청명절', zh: '儿童节/清明节', en: "Children's Day / Qingming" } },
+    { date: '2026-06-19', name: { ko: '단오절', zh: '端午节', en: 'Dragon Boat Festival' } },
+    { date: '2026-09-25', name: { ko: '중추절', zh: '中秋节', en: 'Mid-Autumn Festival' } },
+    { date: '2026-10-10', name: { ko: '쌍십절(국경일)', zh: '双十节/国庆日', en: 'Double Tenth Day' } },
+  ],
+  hk: [
+    { date: '2026-01-01', name: { ko: '원단', zh: '元旦', en: "New Year's Day" } },
+    { date: '2026-01-31', name: { ko: '춘절', zh: '农历新年', en: 'Lunar New Year' } },
+    { date: '2026-02-01', name: { ko: '춘절 연휴', zh: '农历新年假期', en: 'Lunar New Year' } },
+    { date: '2026-02-02', name: { ko: '춘절 연휴', zh: '农历新年假期', en: 'Lunar New Year' } },
+    { date: '2026-04-03', name: { ko: '성금요일', zh: '耶稣受难节', en: 'Good Friday' } },
+    { date: '2026-04-04', name: { ko: '청명절', zh: '清明节', en: 'Qingming Festival' } },
+    { date: '2026-04-06', name: { ko: '부활절 월요일', zh: '复活节星期一', en: 'Easter Monday' } },
+    { date: '2026-05-01', name: { ko: '노동절', zh: '劳动节', en: 'Labor Day' } },
+    { date: '2026-05-24', name: { ko: '부처님오신날', zh: '佛诞', en: "Buddha's Birthday" } },
+    { date: '2026-06-19', name: { ko: '단오절', zh: '端午节', en: 'Dragon Boat Festival' } },
+    { date: '2026-07-01', name: { ko: '홍콩반환기념일', zh: '香港回归纪念日', en: 'HKSAR Day' } },
+    { date: '2026-09-25', name: { ko: '중추절 다음날', zh: '中秋节翌日', en: 'Day after Mid-Autumn' } },
+    { date: '2026-10-01', name: { ko: '국경절', zh: '国庆节', en: 'National Day' } },
+    { date: '2026-10-26', name: { ko: '중양절', zh: '重阳节', en: 'Chung Yeung Festival' } },
+    { date: '2026-12-25', name: { ko: '성탄절', zh: '圣诞节', en: 'Christmas' } },
+  ],
+}
+
+const COUNTRY_LABELS = {
+  kr: { ko: '한국', zh: '韩国', en: 'Korea', flag: '🇰🇷' },
+  cn: { ko: '중국', zh: '中国', en: 'China', flag: '🇨🇳' },
+  tw: { ko: '대만', zh: '台湾', en: 'Taiwan', flag: '🇹🇼' },
+  hk: { ko: '홍콩', zh: '香港', en: 'Hong Kong', flag: '🇭🇰' },
+}
+
+function HolidayCalendar({ lang }) {
+  const [countries, setCountries] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('hp_holiday_countries')) || ['kr'] } catch { return ['kr'] }
+  })
+
+  const toggleCountry = (c) => {
+    setCountries(prev => {
+      const next = prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c]
+      const result = next.length === 0 ? ['kr'] : next // 최소 1개
+      localStorage.setItem('hp_holiday_countries', JSON.stringify(result))
+      return result
+    })
+  }
+
+  const today = new Date()
+  const todayStr = today.toISOString().slice(0, 10)
+  const year = today.getFullYear()
+  const month = today.getMonth()
+  const firstDay = new Date(year, month, 1).getDay()
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+
+  // 선택된 국가들의 공휴일 합치기
+  const allHolidays = countries.flatMap(c => (HOLIDAYS_BY_COUNTRY[c] || []).map(h => ({ ...h, country: c })))
+  const holidayDatesThisMonth = new Map()
+  allHolidays.filter(h => {
+    const d = new Date(h.date)
+    return d.getFullYear() === year && d.getMonth() === month
+  }).forEach(h => {
+    const day = parseInt(h.date.slice(8, 10))
+    if (!holidayDatesThisMonth.has(day)) holidayDatesThisMonth.set(day, [])
+    holidayDatesThisMonth.get(day).push(h.country)
+  })
+
+  const upcoming = allHolidays.filter(h => h.date >= todayStr).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 5)
+  // 중복 날짜 제거 (같은 날 다른 국가)
+  const seenDates = new Set()
+  const upcomingDeduped = []
+  for (const h of upcoming) {
+    const key = `${h.date}-${h.country}`
+    if (!seenDates.has(key)) { seenDates.add(key); upcomingDeduped.push(h) }
+  }
+
+  const monthNames = { ko: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'], zh: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'], en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] }
+  const dayLabels = { ko: ['일','월','화','수','목','금','토'], zh: ['日','一','二','三','四','五','六'], en: ['S','M','T','W','T','F','S'] }
+  const cells = []
+  for (let i = 0; i < firstDay; i++) cells.push(null)
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
+
+  // 국가별 색상
+  const countryColor = { kr: 'bg-red-500', cn: 'bg-red-600', tw: 'bg-green-500', hk: 'bg-pink-500' }
+
+  return (
+    <div className="mb-4 px-4">
+      {/* 국가 토글 */}
+      <div className="flex items-center gap-2 mb-3">
+        {Object.entries(COUNTRY_LABELS).map(([code, info]) => (
+          <button
+            key={code}
+            onClick={() => toggleCountry(code)}
+            className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-[6px] transition-all ${
+              countries.includes(code)
+                ? 'bg-[#111827] text-white'
+                : 'bg-[#F3F4F6] text-[#9CA3AF]'
+            }`}
+          >
+            <span>{info.flag}</span>
+            <span>{L(lang, info)}</span>
+          </button>
+        ))}
+      </div>
+
+      <h2 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A] mb-3">
+        {L(lang, { ko: `${year}년 ${monthNames.ko[month]}`, zh: `${year}年${monthNames.zh[month]}`, en: `${monthNames.en[month]} ${year}` })}
+      </h2>
+      {/* 미니 캘린더 */}
+      <div className="rounded-[6px] border border-[#E5E7EB] p-3 mb-3">
+        <div className="grid grid-cols-7 gap-0 text-center mb-1">
+          {dayLabels[lang]?.map((d, i) => (
+            <span key={i} className={`text-[10px] font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-[#999]'}`}>{d}</span>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-0 text-center">
+          {cells.map((d, i) => {
+            if (!d) return <span key={i} />
+            const isToday = d === today.getDate()
+            const holidayCountries = holidayDatesThisMonth.get(d)
+            const dayOfWeek = (firstDay + d - 1) % 7
+            return (
+              <div key={i} className="flex flex-col items-center">
+                <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : holidayCountries ? 'text-red-500 font-bold' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[#666]'}`}>
+                  {d}
+                </span>
+                {holidayCountries && (
+                  <div className="flex gap-[2px] mt-[1px]">
+                    {[...new Set(holidayCountries)].map(c => (
+                      <div key={c} className={`w-[4px] h-[4px] rounded-full ${countryColor[c]}`} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+      {/* 다가오는 공휴일 */}
+      {upcomingDeduped.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {upcomingDeduped.map((h, i) => {
+            const diff = Math.ceil((new Date(h.date) - today) / 86400000)
+            return (
+              <div key={i} className="flex items-center justify-between py-2 px-3 rounded-[6px] bg-[#F9FAFB]">
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px]">{COUNTRY_LABELS[h.country]?.flag}</span>
+                  <div>
+                    <span className="text-sm font-semibold text-[#1A1A1A]">{L(lang, h.name)}</span>
+                    <span className="text-xs text-[#999] ml-2">{h.date.slice(5).replace('-', '/')}</span>
+                  </div>
+                </div>
+                <span className="text-xs text-[#2D5A3D] font-medium">
+                  {diff === 0 ? L(lang, { ko: '오늘', zh: '今天', en: 'Today' }) : diff < 0 ? '' : `D-${diff}`}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── 프로모 배너 컴포넌트 ──
 function PromoBanner({ banners, lang }) {
   const scrollRef = useRef(null)
@@ -1104,6 +1315,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
 
+      {/* ─── 공휴일 캘린더 (배너 위) ─── */}
+      <HolidayCalendar lang={lang} />
+
       {/* ─── 광고/프로모 배너 ─── */}
       <PromoBanner
         lang={lang}
@@ -1131,91 +1345,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           },
         ]}
       />
-
-      {/* ─── 한국 공휴일 캘린더 미니 ─── */}
-      {(() => {
-        const HOLIDAYS_2026 = [
-          { date: '2026-01-01', name: { ko: '신정', zh: '元旦', en: "New Year's Day" } },
-          { date: '2026-01-29', name: { ko: '설날 연휴', zh: '春节假期', en: 'Lunar New Year' } },
-          { date: '2026-01-30', name: { ko: '설날', zh: '春节', en: 'Lunar New Year' } },
-          { date: '2026-01-31', name: { ko: '설날 연휴', zh: '春节假期', en: 'Lunar New Year' } },
-          { date: '2026-03-01', name: { ko: '삼일절', zh: '三一节', en: 'Independence Movement Day' } },
-          { date: '2026-05-05', name: { ko: '어린이날', zh: '儿童节', en: "Children's Day" } },
-          { date: '2026-05-24', name: { ko: '부처님오신날', zh: '佛诞节', en: "Buddha's Birthday" } },
-          { date: '2026-06-06', name: { ko: '현충일', zh: '显忠日', en: 'Memorial Day' } },
-          { date: '2026-08-15', name: { ko: '광복절', zh: '光复节', en: 'Liberation Day' } },
-          { date: '2026-09-24', name: { ko: '추석 연휴', zh: '中秋假期', en: 'Chuseok Holiday' } },
-          { date: '2026-09-25', name: { ko: '추석', zh: '中秋节', en: 'Chuseok' } },
-          { date: '2026-09-26', name: { ko: '추석 연휴', zh: '中秋假期', en: 'Chuseok Holiday' } },
-          { date: '2026-10-03', name: { ko: '개천절', zh: '开天节', en: 'National Foundation Day' } },
-          { date: '2026-10-09', name: { ko: '한글날', zh: '韩文日', en: 'Hangul Day' } },
-          { date: '2026-12-25', name: { ko: '성탄절', zh: '圣诞节', en: 'Christmas' } },
-        ]
-        const today = new Date()
-        const todayStr = today.toISOString().slice(0, 10)
-        const upcoming = HOLIDAYS_2026.filter(h => h.date >= todayStr).slice(0, 3)
-        const year = today.getFullYear()
-        const month = today.getMonth()
-        const firstDay = new Date(year, month, 1).getDay()
-        const daysInMonth = new Date(year, month + 1, 0).getDate()
-        const holidayDates = new Set(HOLIDAYS_2026.filter(h => {
-          const d = new Date(h.date)
-          return d.getFullYear() === year && d.getMonth() === month
-        }).map(h => parseInt(h.date.slice(8, 10))))
-        const monthNames = { ko: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'], zh: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'], en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] }
-        const dayLabels = { ko: ['일','월','화','수','목','금','토'], zh: ['日','一','二','三','四','五','六'], en: ['S','M','T','W','T','F','S'] }
-        const cells = []
-        for (let i = 0; i < firstDay; i++) cells.push(null)
-        for (let d = 1; d <= daysInMonth; d++) cells.push(d)
-
-        return (
-          <div className="mb-8 px-4">
-            <h2 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A] mb-3">
-              {L(lang, { ko: `${year}년 ${monthNames.ko[month]}`, zh: `${year}年${monthNames.zh[month]}`, en: `${monthNames.en[month]} ${year}` })}
-            </h2>
-            {/* 미니 캘린더 */}
-            <div className="rounded-[6px] border border-[#E5E7EB] p-3 mb-3">
-              <div className="grid grid-cols-7 gap-0 text-center mb-1">
-                {dayLabels[lang]?.map((d, i) => (
-                  <span key={i} className={`text-[10px] font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-[#999]'}`}>{d}</span>
-                ))}
-              </div>
-              <div className="grid grid-cols-7 gap-0 text-center">
-                {cells.map((d, i) => {
-                  if (!d) return <span key={i} />
-                  const isToday = d === today.getDate()
-                  const isHoliday = holidayDates.has(d)
-                  const dayOfWeek = (firstDay + d - 1) % 7
-                  return (
-                    <span key={i} className={`text-[11px] py-1 rounded-full ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : isHoliday ? 'text-red-500 font-bold' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[#666]'}`}>
-                      {d}
-                    </span>
-                  )
-                })}
-              </div>
-            </div>
-            {/* 다가오는 공휴일 */}
-            {upcoming.length > 0 && (
-              <div className="flex flex-col gap-2">
-                {upcoming.map((h, i) => {
-                  const diff = Math.ceil((new Date(h.date) - today) / 86400000)
-                  return (
-                    <div key={i} className="flex items-center justify-between py-2 px-3 rounded-[6px] bg-[#F9FAFB]">
-                      <div>
-                        <span className="text-sm font-semibold text-[#1A1A1A]">{L(lang, h.name)}</span>
-                        <span className="text-xs text-[#999] ml-2">{h.date.slice(5).replace('-', '/')}</span>
-                      </div>
-                      <span className="text-xs text-[#2D5A3D] font-medium">
-                        {diff === 0 ? L(lang, { ko: '오늘', zh: '今天', en: 'Today' }) : diff < 0 ? '' : `D-${diff}`}
-                      </span>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </div>
-        )
-      })()}
 
       {/* ─── 추천 피드 섹션들 (8개) ─── */}
       {(() => {

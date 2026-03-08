@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, lazy, Suspense } from 'react'
+import SplashScreen from './components/SplashScreen'
 import useDarkMode from './hooks/useDarkMode'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
 import { initKakao, loginWithKakao, loginWithKakaoPopup, logoutFromKakao, getKakaoUser, isKakaoLoggedIn, handleKakaoCallback } from './utils/kakaoAuth'
@@ -1394,14 +1395,8 @@ function AppShortcut({ name, description, deepLink, webUrl, domain }) {
 }
 
 function AppInner() {
-  // Splash screen — show logo for 1.5s on every app launch
+  // Splash screen — handled by SplashScreen component
   const [showSplash, setShowSplash] = useState(true)
-  const [splashFading, setSplashFading] = useState(false)
-  useEffect(() => {
-    const fadeTimer = setTimeout(() => setSplashFading(true), 1200)
-    const hideTimer = setTimeout(() => setShowSplash(false), 1500)
-    return () => { clearTimeout(fadeTimer); clearTimeout(hideTimer) }
-  }, [])
 
   const [lang, setLang] = useState('ko')
   const [profile, setProfile] = useState(() => loadProfile())
@@ -1786,11 +1781,7 @@ function AppInner() {
   const currentHero = heroData[tab] || heroData.home
 
   if (showSplash) {
-    return (
-      <div className={`fixed inset-0 z-[999] flex items-center justify-center bg-white transition-opacity duration-300 ${splashFading ? 'opacity-0' : 'opacity-100'}`}>
-        <Logo size="lg" />
-      </div>
-    )
+    return <SplashScreen onFinish={() => setShowSplash(false)} />
   }
 
   return (

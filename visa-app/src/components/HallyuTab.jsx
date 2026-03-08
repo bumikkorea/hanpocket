@@ -82,7 +82,7 @@ const FESTIVALS = [
 
 // ─── Component ───
 
-export default function HallyuTab({ lang }) {
+export default function HallyuTab({ lang, adminView = false }) {
   const [section, setSection] = useState('chart')
   const [chartSource, setChartSource] = useState('qq')
   const [chartWeek, setChartWeek] = useState(WEEKS[WEEKS.length - 1].id)
@@ -163,6 +163,27 @@ export default function HallyuTab({ lang }) {
       {/* K-POP Chart */}
       {section === 'chart' && (
         <div className="space-y-3">
+          {/* 관리자 뷰: 차트 데이터 현황 */}
+          {adminView && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-[6px] p-3 space-y-2">
+              <p className="text-[11px] font-bold text-yellow-800">ADMIN: K-POP 차트 데이터</p>
+              <div className="grid grid-cols-3 gap-2 text-[11px]">
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">소스</p>
+                  <p className="font-bold text-[#111827]">{Object.keys(CHART_SOURCES).length}개</p>
+                </div>
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">주차</p>
+                  <p className="font-bold text-[#111827]">{WEEKS.length}주</p>
+                </div>
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">기간</p>
+                  <p className="font-bold text-[#111827]">W01~W10</p>
+                </div>
+              </div>
+              <p className="text-[10px] text-yellow-700">데이터 소스: QQ Music API (topId:16 韩国榜, topId:129 Melon榜) · 수동 수집</p>
+            </div>
+          )}
           {/* 차트 소스 선택 */}
           <div className="flex gap-2">
             {Object.values(CHART_SOURCES).map(src => (
@@ -289,6 +310,32 @@ export default function HallyuTab({ lang }) {
       {/* My Stars (최애 스타) */}
       {section === 'mystar' && (
         <div className="space-y-3">
+          {/* 관리자 뷰: 데이터 현황 */}
+          {adminView && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-[6px] p-3 space-y-2">
+              <p className="text-[11px] font-bold text-yellow-800">ADMIN: 최애 스타 데이터 현황</p>
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">등록 스타</p>
+                  <p className="font-bold text-[#111827]">{idolDatabase.length}개</p>
+                </div>
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">이벤트</p>
+                  <p className="font-bold text-[#111827]">{FAN_EVENTS.length}개</p>
+                </div>
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">소속사</p>
+                  <p className="font-bold text-[#111827]">{IDOL_COMPANIES.length}개</p>
+                </div>
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">자동 업데이트</p>
+                  <p className="font-bold text-orange-500">미설정</p>
+                </div>
+              </div>
+              <p className="text-[10px] text-yellow-700">이벤트 매칭: FAN_EVENTS.artist ↔ idolDatabase.name (부분일치)</p>
+            </div>
+          )}
+
           <h2 className="text-sm font-bold text-[#111827]">
             {L(lang, { ko: '최애 스타', zh: '我的偶像', en: 'My Stars' })} ({idolDatabase.length})
           </h2>
@@ -429,6 +476,22 @@ export default function HallyuTab({ lang }) {
       {/* K-Drama */}
       {section === 'drama' && (
         <div className="space-y-3">
+          {adminView && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-[6px] p-3 space-y-2">
+              <p className="text-[11px] font-bold text-yellow-800">ADMIN: K-Drama 데이터</p>
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">등록 드라마</p>
+                  <p className="font-bold text-[#111827]">{DRAMAS.length}개</p>
+                </div>
+                <div className="bg-white rounded-[6px] p-2">
+                  <p className="text-[#9CA3AF]">데이터 소스</p>
+                  <p className="font-bold text-orange-500">수동 (정적)</p>
+                </div>
+              </div>
+              <p className="text-[10px] text-yellow-700">TODO: TMDB API 연동 → 실시간 인기/방영중/예정작 자동 업데이트</p>
+            </div>
+          )}
           <h2 className="text-sm font-bold text-[#111827]">{lang === 'ko' ? '인기 K-Drama TOP 20' : lang === 'zh' ? '热门韩剧 TOP 20' : 'Popular K-Drama TOP 20'}</h2>
           {DRAMAS.map((d, i) => (
             <div key={i} className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">

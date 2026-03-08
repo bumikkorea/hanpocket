@@ -649,7 +649,7 @@ function TaxiGuide({ lang, card }) {
   )
 }
 
-export default function TravelTab({ lang, setTab, profile }) {
+export default function TravelTab({ lang, setTab, profile, adminView = false }) {
   const [section, setSection] = useState('discover') // always discover now
   const [expandedCity, setExpandedCity] = useState(null)
   const [tourDetailItem, setTourDetailItem] = useState(null)

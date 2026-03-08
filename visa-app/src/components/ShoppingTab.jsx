@@ -176,7 +176,7 @@ const SECTIONS = [
   { id: 'payment', label: { ko: '결제 가이드', zh: '支付指南', en: 'Payment Guide' }, icon: CreditCard }
 ]
 
-export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed }) {
+export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed, adminView = false }) {
   const [section, setSection] = useState('deals')
   const [searchQuery, setSearchQuery] = useState('')
   const nextSale = useMemo(() => getNextSale(), [])

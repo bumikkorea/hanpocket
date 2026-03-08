@@ -493,6 +493,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
     try { return localStorage.getItem('admin_mode') === 'true' } catch { return false }
   })
   const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [adminView, setAdminView] = useState(false) // 관리자 뷰 토글
   const [showAdminPwModal, setShowAdminPwModal] = useState(false)
   const [adminPw, setAdminPw] = useState('')
   const [adminPwError, setAdminPwError] = useState(false)
@@ -515,6 +516,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
 
   const handleAdminLogout = () => {
     setAdminMode(false)
+    setAdminView(false)
     localStorage.setItem('admin_mode', 'false')
     setShowAdminPanel(false)
   }
@@ -1971,6 +1973,33 @@ function AppInner() {
 
       <OfflineNotice lang={lang} />
 
+      {/* 관리자 뷰 토글 바 */}
+      {adminMode && (
+        <div className="sticky top-[52px] z-40 bg-[#111827] px-4 py-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <span className="text-[11px] font-semibold text-white">ADMIN</span>
+          </div>
+          <button
+            onClick={() => setAdminView(v => !v)}
+            className="flex items-center gap-2 text-[11px] font-medium"
+          >
+            <span className={adminView ? 'text-[#9CA3AF]' : 'text-white'}>
+              {lang === 'ko' ? '사용자' : lang === 'zh' ? '用户' : 'User'}
+            </span>
+            <div
+              className={`w-9 h-5 rounded-full relative transition-colors ${adminView ? 'bg-yellow-400' : 'bg-[#374151]'}`}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${adminView ? 'translate-x-4' : 'translate-x-0.5'}`} />
+            </div>
+            <span className={adminView ? 'text-yellow-400 font-bold' : 'text-[#9CA3AF]'}>
+              {lang === 'ko' ? '관리자' : lang === 'zh' ? '管理员' : 'Admin'}
+            </span>
+          </button>
+        </div>
+      )}
+
       {/* Content — full width, no side padding (tabs handle their own padding) */}
       <div className="pt-1 pb-4 tab-enter" key={`${tab}-${subPage || ''}`}>
         {/* Install / Push notification banner */}
@@ -2036,22 +2065,22 @@ function AppInner() {
         <div className="px-4">
         {subPage==='travel' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <TravelTab lang={lang} setTab={(t) => setSubPage(t)} />
+            <TravelTab lang={lang} adminView={adminView} setTab={(t) => setSubPage(t)} />
           </Suspense>
         )}
         {subPage==='food' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <FoodTab lang={lang} setTab={(t) => setSubPage(t)} deepLink={deepLink?.tab === 'food' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
+            <FoodTab lang={lang} adminView={adminView} setTab={(t) => setSubPage(t)} deepLink={deepLink?.tab === 'food' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
           </Suspense>
         )}
         {subPage==='shopping' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <ShoppingTab lang={lang} setTab={(t) => setSubPage(t)} deepLink={deepLink?.tab === 'shopping' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
+            <ShoppingTab lang={lang} adminView={adminView} setTab={(t) => setSubPage(t)} deepLink={deepLink?.tab === 'shopping' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
           </Suspense>
         )}
         {subPage==='hallyu' && (
           <Suspense fallback={<LoadingSpinner />}>
-            <HallyuTab lang={lang} setTab={(t) => setSubPage(t)} />
+            <HallyuTab lang={lang} adminView={adminView} setTab={(t) => setSubPage(t)} />
           </Suspense>
         )}
         {subPage==='learn' && (
@@ -2138,7 +2167,7 @@ function AppInner() {
 
         {tab==='course' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <CourseTab lang={lang} deepLink={deepLink?.tab === 'course' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
+            <CourseTab lang={lang} adminView={adminView} deepLink={deepLink?.tab === 'course' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
           </Suspense>
         )}
         {tab==='search' && !subPage && (
@@ -2151,7 +2180,7 @@ function AppInner() {
             <KoreanTab lang={lang} />
           </Suspense>
         )}
-        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} exchangeRate={exchangeRate} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
+        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRate} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
         <div className="mt-12 mb-6 px-4 text-center text-[11px] text-[#9CA3AF]">

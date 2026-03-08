@@ -702,7 +702,7 @@ function CreateCourse({ lang, onBack, onSave }) {
 // ═══════════════════════════════════════════════
 // CourseTab — 메인 컴포넌트
 // ═══════════════════════════════════════════════
-export default function CourseTab({ lang, deepLink, onDeepLinkConsumed }) {
+export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminView = false }) {
   const [view, setView] = useState('list') // 'list' | 'detail' | 'create'
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [filter, setFilter] = useState('all')

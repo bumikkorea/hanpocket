@@ -18,7 +18,7 @@ const AWARD_LABELS = {
 
 const PAGE_SIZE = 20
 
-export default function FoodTab({ lang, deepLink, onDeepLinkConsumed }) {
+export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView = false }) {
   const [tab, setTab] = useState('all') // 'michelin' | 'blueribbon' | 'all'
   const [search, setSearch] = useState('')
   const [selectedSi, setSelectedSi] = useState('') // 시 (서울특별시, 부산광역시, 경기도 등)

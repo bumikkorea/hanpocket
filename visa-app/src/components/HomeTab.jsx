@@ -319,7 +319,7 @@ function getAwardBadge(award) {
   return ''
 }
 
-export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {} }) {
+export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {}, adminView = false }) {
   const isVisible = (key) => widgetSettings[key] !== false
   const weather = useWeatherData()
   const { kst: koreaTime, extras: extraTimezones, refresh: refreshTimezones } = useMultiTimezone()

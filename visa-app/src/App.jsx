@@ -469,7 +469,7 @@ function VisaAccordionModal({ lang, visaTypes, tempVisaType, setTempVisaType, on
   )
 }
 
-function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, toggleDarkMode }) {
+function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, toggleDarkMode, adminMode, setAdminMode, setAdminView }) {
   // 모달 관리
   const [showDateModal, setShowDateModal] = useState(false)
   const [showNotifModal, setShowNotifModal] = useState(false)
@@ -488,10 +488,8 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   const [nickname, setNickname] = useState(() => localStorage.getItem('hanpocket_nickname') || '')
   const [editingNickname, setEditingNickname] = useState(false)
 
-  // 관리자 모드 — 항상 사용자 모드로 시작 (보안)
-  const [adminMode, setAdminMode] = useState(false)
+  // 관리자 모드 (state는 AppInner에서 관리, props로 받음)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
-  const [adminView, setAdminView] = useState(false)
   const [showAdminPwModal, setShowAdminPwModal] = useState(false)
   const [adminPw, setAdminPw] = useState('')
   const [adminPwError, setAdminPwError] = useState(false)
@@ -1421,6 +1419,10 @@ function AppInner() {
   const { isDark, toggleDarkMode } = useDarkMode()
   const s = t[lang]
 
+  // 관리자 모드 — 항상 사용자 모드로 시작 (보안)
+  const [adminMode, setAdminMode] = useState(false)
+  const [adminView, setAdminView] = useState(false)
+
   // Auth popup state (replaces onboarding)
   const [showAuthPopup, setShowAuthPopup] = useState(() => {
     return !loadProfile() && !localStorage.getItem('hanpocket_dismissed_auth')
@@ -2178,7 +2180,7 @@ function AppInner() {
         )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRate} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet'].includes(t)) { setTab('service'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
-        {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} />}
+        {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} adminMode={adminMode} setAdminMode={setAdminMode} setAdminView={setAdminView} />}
         <div className="mt-12 mb-6 px-4 text-center text-[11px] text-[#9CA3AF]">
           <p>© 2026 HanPocket. All rights reserved.</p>
         </div>

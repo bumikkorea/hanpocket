@@ -155,3 +155,10 @@
 - 비자 타입으로 자동 분류 (온보딩에서 선택한 비자)
 - 커뮤니티 게시판에서 닉네임 옆에 주머니 색 배지 표시
 - 긴급/응급 기능은 등급 무관 전체 제공
+
+## 배포 (Cloudflare Pages)
+- 프로젝트: `hanpocket` → **hanpocket.pages.dev**
+- 방법: `CLOUDFLARE_API_TOKEN="9fjj-jM3nMHUZIVuRyUWocXJu_aNRE3UWnZeK-AL" npx wrangler pages deploy dist --project-name=hanpocket --branch=main --commit-message="..."`
+- Vercel 토큰 만료 → Cloudflare Pages로 전환
+- **코드 변경 시 시월이 수동 배포** (자동 배포 오류 경험 있음)
+- 커밋 메시지는 영어/ASCII로 (한글 이모지 → UTF-8 에러 남)

@@ -137,31 +137,22 @@ export default function SplashScreen({ onFinish }) {
   const [fadeOut, setFadeOut] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => setFadeOut(true), 2500)
-    const finish = setTimeout(() => onFinish(), 3200)
+    const timer = setTimeout(() => setFadeOut(true), 1500)
+    const finish = setTimeout(() => onFinish(), 1900)
     return () => { clearTimeout(timer); clearTimeout(finish) }
   }, [onFinish])
 
   return (
     <div
       className={`fixed inset-0 z-[100] flex flex-col transition-opacity duration-700 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
-      style={{ backgroundColor: '#FAFAFA' }}
+      style={{ backgroundColor: '#C4715A' }}
       onClick={() => { setFadeOut(true); setTimeout(onFinish, 500) }}
     >
-      {/* 상단 텍스트 — 카카오T 스타일 중앙 배치 */}
-      <div className="flex-1 flex flex-col items-center justify-center" style={{ paddingBottom: '15vh' }}>
-        <p className="text-xs tracking-[0.25em] font-normal mb-3" style={{ color: '#999', fontFamily: 'Inter, sans-serif' }}>
-          입국부터 출국까지
-        </p>
-        <div className="w-6 h-px mx-auto mb-3" style={{ backgroundColor: '#DDD' }} />
-        <h1 className="text-2xl font-semibold tracking-[0.12em]" style={{ color: '#1A1A1A', fontFamily: 'Inter, sans-serif' }}>
-          HANPOCKET
+      {/* NEAR 로고 */}
+      <div className="flex-1 flex items-center justify-center">
+        <h1 className="text-7xl font-black tracking-tight" style={{ color: '#ffffff', fontFamily: "'Caveat', cursive", letterSpacing: -2 }}>
+          NEAR
         </h1>
-      </div>
-
-      {/* 하단 우측 캐릭터 — 카카오T 스타일 */}
-      <div className="absolute bottom-8 right-4" style={{ width: '65%', maxWidth: 280 }}>
-        <TravelCharacter />
       </div>
     </div>
   )

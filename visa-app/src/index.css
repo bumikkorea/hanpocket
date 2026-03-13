@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
 @import "tailwindcss";
 
 :root {
@@ -24,6 +26,29 @@
   --pine-gradient: linear-gradient(to bottom, #2D5A3D, #1A3A28);
   --pine-gradient-light: linear-gradient(to bottom, #4A8A5A, #2D5A3D);
   --gold-accent: #B8860B;
+
+  /* 추가 컴포넌트 변수 */
+  --card-bg: #FFFFFF;         /* 카드 배경 */
+  --card-hover: #F5F1EB;      /* 카드 호버 */
+  --modal-bg: #FFFFFF;        /* 모달 배경 */
+  --modal-overlay: rgba(0, 0, 0, 0.5);  /* 모달 오버레이 */
+  --input-bg: #FFFFFF;        /* 입력 필드 배경 */
+  --input-border: #D4CFC7;    /* 입력 필드 테두리 */
+  --input-focus: #2D5A3D;     /* 입력 필드 포커스 */
+  --button-bg: #2D5A3D;       /* 버튼 배경 */
+  --button-hover: #1A3A28;    /* 버튼 호버 */
+  --button-text: #FFFFFF;     /* 버튼 텍스트 */
+  --link-color: #2D5A3D;      /* 링크 색상 */
+  --link-hover: #1A3A28;      /* 링크 호버 */
+  --icon-color: #4A4A4A;      /* 아이콘 색상 */
+  --icon-active: #2D5A3D;     /* 활성 아이콘 */
+  --shadow: rgba(0, 0, 0, 0.1);  /* 그림자 */
+  --warning-bg: #FFF8DC;      /* 경고 배경 */
+  --warning-text: #B8860B;    /* 경고 텍스트 */
+  --error-bg: #FFF5F5;        /* 에러 배경 */
+  --error-text: #E74C3C;      /* 에러 텍스트 */
+  --success-bg: #F7FAF8;      /* 성공 배경 */
+  --success-text: #2D5A3D;    /* 성공 텍스트 */
 }
 
 /* 다크모드 CSS 변수 - 래플스 딥 포레스트 */
@@ -42,6 +67,29 @@
   --accent-gold: #D4A017;
   --accent-mint: #7AB8B0;
   --accent: #4A8A5A;
+
+  /* 추가 다크모드 컴포넌트 변수 */
+  --card-bg: #1A2820;         /* 카드 배경 */
+  --card-hover: #243428;      /* 카드 호버 */
+  --modal-bg: #0F1A14;        /* 모달 배경 */
+  --modal-overlay: rgba(15, 26, 20, 0.8);  /* 모달 오버레이 */
+  --input-bg: #243428;        /* 입력 필드 배경 */
+  --input-border: #3A4A3E;    /* 입력 필드 테두리 */
+  --input-focus: #4A8A5A;     /* 입력 필드 포커스 */
+  --button-bg: #2D5A3D;       /* 버튼 배경 */
+  --button-hover: #4A8A5A;    /* 버튼 호버 */
+  --button-text: #F5F1EB;     /* 버튼 텍스트 */
+  --link-color: #7AB8B0;      /* 링크 색상 */
+  --link-hover: #B2DFDB;      /* 링크 호버 */
+  --icon-color: #D4CFC7;      /* 아이콘 색상 */
+  --icon-active: #4A8A5A;     /* 활성 아이콘 */
+  --shadow: rgba(0, 0, 0, 0.4);  /* 그림자 */
+  --warning-bg: #3D2D1A;      /* 경고 배경 */
+  --warning-text: #D4A017;    /* 경고 텍스트 */
+  --error-bg: #3D1A1A;        /* 에러 배경 */
+  --error-text: #E74C3C;      /* 에러 텍스트 */
+  --success-bg: #1A3D28;      /* 성공 배경 */
+  --success-text: #4A8A5A;    /* 성공 텍스트 */
 }
 
 /* 시스템 다크모드 기본 지원 */
@@ -70,7 +118,7 @@
 
 body {
   margin: 0;
-  font-family: 'Noto Sans KR', 'Noto Sans SC', Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: 'Pretendard Variable', Pretendard, 'Noto Sans SC', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -81,7 +129,7 @@ body {
 }
 
 h1, h2, h3 {
-  font-family: 'Noto Sans KR', 'Noto Sans SC', Inter, sans-serif;
+  font-family: 'Pretendard Variable', Pretendard, 'Noto Sans SC', sans-serif;
   letter-spacing: -0.01em;
   font-weight: 500;
 }
@@ -470,4 +518,14 @@ h1, h2, h3 {
 }
 .animate-slide-up {
   animation: slideUp 0.5s ease-out forwards;
+}
+
+/* PlaceDetail → 도착지 설정 후 이름 입력란 반짝임 */
+@keyframes flash-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(17,17,17,0); }
+  25%, 75% { box-shadow: 0 0 0 4px rgba(17,17,17,0.25); }
+  50% { box-shadow: 0 0 0 6px rgba(17,17,17,0.15); }
+}
+.flash-highlight {
+  animation: flash-pulse 1.5s ease;
 }

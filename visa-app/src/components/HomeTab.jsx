@@ -1,8 +1,13 @@
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
 import { ChevronLeft, ChevronRight, Plus, Pencil } from 'lucide-react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
+import { POPUP_STORES, DISTRICTS, isClosingSoon, getDdayLabel, isActiveOrUpcoming } from '../data/popupData'
 import { MICHELIN_RESTAURANTS } from '../data/restaurantData'
+import { getClothingRecommendation } from '../data/clothingGuide'
+import { getCurrentSeasonContent } from '../data/seasonalContent'
+import { trackEvent } from '../utils/analytics'
 
+const TranslatorTab = lazy(() => import('./TranslatorTab'))
 const ArrivalCardGuide = lazy(() => import('./guides/ArrivalCardGuide'))
 const SimGuide = lazy(() => import('./guides/SimGuide'))
 const TaxRefundGuide = lazy(() => import('./guides/TaxRefundGuide'))
@@ -13,6 +18,7 @@ const KidsGuide = lazy(() => import('./guides/KidsGuide'))
 const DutyFreeLimitGuide = lazy(() => import('./guides/DutyFreeLimitGuide'))
 const PetTab = lazy(() => import('./PetTab'))
 const PocketContent = lazy(() => import('./pockets/PocketContent'))
+const ImmigrationWaitTime = lazy(() => import('./ImmigrationWaitTime'))
 import GuideLayout from './guides/GuideLayout'
 
 // Re-export 의존성 (App.jsx 등에서 사용)
@@ -23,41 +29,92 @@ import { trackActivity, L } from './home/utils/helpers'
 
 function getEnabledPocketsForSection() { return [] }
 
-// ── 날씨 데이터 훅 ──
-function useWeatherData() {
-  const [weather, setWeather] = useState(null)
-  useEffect(() => {
-    const city = localStorage.getItem('weather_city') || 'Seoul'
-    fetch(`https://wttr.in/${city}?format=j1`)
-      .then(r => r.json())
-      .then(data => {
-        const cc = data.current_condition?.[0]
-        if (cc) setWeather({ temp: cc.temp_C, desc: cc.weatherDesc?.[0]?.value || '' })
-      })
-      .catch(() => {})
-  }, [])
-  return weather
-}
+// useWeatherData removed — replaced by useWeather (Open-Meteo)
 
 // ── 시간대 데이터 ──
 const TIMEZONE_OPTIONS = [
-  { id: 'CST', flag: '\u{1F1E8}\u{1F1F3}', name: '中国', abbr: 'CST', offset: 8 },
-  { id: 'JST', flag: '\u{1F1EF}\u{1F1F5}', name: '日本', abbr: 'JST', offset: 9 },
-  { id: 'EST', flag: '\u{1F1FA}\u{1F1F8}', name: '美国东部', abbr: 'EST', offset: -5 },
-  { id: 'PST', flag: '\u{1F1FA}\u{1F1F8}', name: '美国西部', abbr: 'PST', offset: -8 },
-  { id: 'GMT', flag: '\u{1F1EC}\u{1F1E7}', name: '英国', abbr: 'GMT', offset: 0 },
-  { id: 'SGT', flag: '\u{1F1F8}\u{1F1EC}', name: '新加坡', abbr: 'SGT', offset: 8 },
-  { id: 'AEST', flag: '\u{1F1E6}\u{1F1FA}', name: '悉尼', abbr: 'AEST', offset: 11 },
-  { id: 'ICT_TH', flag: '\u{1F1F9}\u{1F1ED}', name: '泰国', abbr: 'ICT', offset: 7 },
-  { id: 'ICT_VN', flag: '\u{1F1FB}\u{1F1F3}', name: '越南', abbr: 'ICT', offset: 7 },
-  { id: 'PHT', flag: '\u{1F1F5}\u{1F1ED}', name: '菲律宾', abbr: 'PHT', offset: 8 },
+  { id: 'CST', code: 'CN', flag: '\u{1F1E8}\u{1F1F3}', name: { ko: '중국', zh: '中国', en: 'China' }, abbr: 'CST', offset: 8 , lat: 35.7, lon: 139.7 },
+  { id: 'JST', code: 'JP', flag: '\u{1F1EF}\u{1F1F5}', name: { ko: '일본', zh: '日本', en: 'Japan' }, abbr: 'JST', offset: 9 , lat: 40.7, lon: -74.0 },
+  { id: 'EST', code: 'US', flag: '\u{1F1FA}\u{1F1F8}', name: { ko: '미국 동부', zh: '美国东部', en: 'US East' }, abbr: 'EST', offset: -5 , lat: 34.1, lon: -118.2 },
+  { id: 'PST', code: 'US', flag: '\u{1F1FA}\u{1F1F8}', name: { ko: '미국 서부', zh: '美国西部', en: 'US West' }, abbr: 'PST', offset: -8 , lat: 51.5, lon: -0.1 },
+  { id: 'GMT', code: 'GB', flag: '\u{1F1EC}\u{1F1E7}', name: { ko: '영국', zh: '英国', en: 'UK' }, abbr: 'GMT', offset: 0 , lat: 1.35, lon: 103.8 },
+  { id: 'SGT', code: 'SG', flag: '\u{1F1F8}\u{1F1EC}', name: { ko: '싱가포르', zh: '新加坡', en: 'Singapore' }, abbr: 'SGT', offset: 8 , lat: -33.9, lon: 151.2 },
+  { id: 'AEST', code: 'AU', flag: '\u{1F1E6}\u{1F1FA}', name: { ko: '호주(시드니)', zh: '悉尼', en: 'Sydney' }, abbr: 'AEST', offset: 11 , lat: 13.8, lon: 100.5 },
+  { id: 'ICT_TH', code: 'TH', flag: '\u{1F1F9}\u{1F1ED}', name: { ko: '태국', zh: '泰国', en: 'Thailand' }, abbr: 'ICT', offset: 7 , lat: 21.0, lon: 105.9 },
+    { id: 'ICT_VN', code: 'VN', flag: '\u{1F1FB}\u{1F1F3}', name: { ko: '베트남', zh: '越南', en: 'Vietnam' }, abbr: 'ICT', offset: 7, lat: 21.0, lon: 105.9 },
+  { id: 'PHT', code: 'PH', flag: '\u{1F1F5}\u{1F1ED}', name: { ko: '필리핀', zh: '菲律宾', en: 'Philippines' }, abbr: 'PHT', offset: 8, lat: 14.6, lon: 121.0 },
 ]
+
+// Seoul coordinates for Korea weather
+const SEOUL_COORDS = { lat: 37.57, lon: 126.98 }
+
+// WMO weather code → emoji
+function weatherEmoji(code) {
+  if (code === 0) return '☀️'
+  if (code <= 3) return '⛅'
+  if (code <= 48) return '🌫️'
+  if (code <= 55) return '🌦️'
+  if (code <= 67) return '🌧️'
+  if (code <= 77) return '❄️'
+  if (code <= 86) return '❄️'
+  if (code <= 99) return '⛈️'
+  return '🌡️'
+}
+
+// Open-Meteo weather hook (free, no API key, 30min cache)
+const _weatherCache = { data: {}, ts: 0 }
+function useWeather(tzIds) {
+  const [data, setData] = useState(_weatherCache.data)
+
+  useEffect(() => {
+    // Build list of points to fetch
+    const points = [{ id: 'KST', lat: SEOUL_COORDS.lat, lon: SEOUL_COORDS.lon }]
+    tzIds.forEach(tzId => {
+      const tz = TIMEZONE_OPTIONS.find(t => t.id === tzId)
+      if (tz?.lat) points.push({ id: tz.id, lat: tz.lat, lon: tz.lon })
+    })
+
+    // Use cache if fresh (30 min)
+    const cacheKey = points.map(p => p.id).sort().join(',')
+    if (_weatherCache.key === cacheKey && Date.now() - _weatherCache.ts < 30 * 60 * 1000) {
+      setData(_weatherCache.data)
+      return
+    }
+
+    Promise.all(points.map(p =>
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}&current=temperature_2m,weather_code&timezone=auto`)
+        .then(r => r.json())
+        .then(j => ({ id: p.id, temp: Math.round(j.current?.temperature_2m ?? 0), emoji: weatherEmoji(j.current?.weather_code ?? 0) }))
+        .catch(() => ({ id: p.id, temp: null, emoji: '' }))
+    )).then(results => {
+      const map = {}
+      results.forEach(r => { map[r.id] = { temp: r.temp, emoji: r.emoji } })
+      _weatherCache.data = map
+      _weatherCache.key = cacheKey
+      _weatherCache.ts = Date.now()
+      setData(map)
+    })
+  }, [tzIds.join(',')])
+
+  return data
+}
 
 function getTimeForOffset(offset) {
   const now = new Date()
   const utc = now.getTime() + now.getTimezoneOffset() * 60000
   const t = new Date(utc + offset * 3600000)
   return t.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+}
+
+// 한국(KST +9) 대비 날짜 차이 표시: -1d / +1d / 빈값
+function getDayDiffLabel(offset) {
+  const now = new Date()
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000
+  const kstDate = new Date(utc + 9 * 3600000).getDate()
+  const tzDate = new Date(utc + offset * 3600000).getDate()
+  if (tzDate > kstDate) return '+1d'
+  if (tzDate < kstDate) return '-1d'
+  return ''
 }
 
 // ── 멀티 시간대 훅 ──
@@ -169,55 +226,162 @@ const SCENE_PHRASES = [
 const INTENT_CARDS = [
   {
     id: 'just-arrived',
-    label: { ko: '입국준비', zh: '入境准备', en: 'Entry Prep' },
-    sub: { ko: 'SIM, 교통카드, 환전', zh: 'SIM卡、交通卡、换钱', en: 'SIM, transit card, exchange' },
-  },
-  {
-    id: 'traveling',
-    label: { ko: '여행 중', zh: '旅行中', en: 'Traveling' },
-    sub: { ko: '맛집, 쇼핑, 교통, 의료', zh: '美食、购物、交通、医疗', en: 'Food, shopping, transit, medical' },
+    label: { ko: '입국하기', zh: '入境', en: 'Arrival' },
+    sub: { ko: '입국심사, SIM, 교통, 숙소', zh: '入境审查、SIM卡、交通、住宿', en: 'Immigration, SIM, transport, hotel' },
   },
   {
     id: 'departure',
-    label: { ko: '출국준비', zh: '出境准备', en: 'Departure Prep' },
+    label: { ko: '출국하기', zh: '出境', en: 'Departure' },
     sub: { ko: '면세, 세금환급, 택배, 공항', zh: '免税、退税、快递、机场', en: 'Duty-free, tax refund, parcel, airport' },
+  },
+  {
+    id: 'interpret',
+    label: { ko: '번역&통역', zh: '翻译&口译', en: 'Translate' },
+    sub: { ko: '식당, 카페, 쇼핑, 교통, 긴급', zh: '餐厅、咖啡厅、购物、交通、紧急', en: 'Restaurant, cafe, shop, transit, emergency' },
   },
 ]
 
-// ── 공휴일 캘린더 컴포넌트 (한국 + 중국/대만/홍콩 토글) ──
+// ── 입국 3단계 경로 ──
+const ARRIVAL_PHASES = [
+  { id: 'entry', label: { ko: '입국하기', zh: '入境', en: 'Arrival' } },
+  { id: 'move', label: { ko: '숙소로 이동', zh: '前往住宿', en: 'To Hotel' } },
+  { id: 'hotel', label: { ko: '숙소 도착', zh: '到达住宿', en: 'At Hotel' } },
+]
+
+// ── 포켓걸 미니 SVG (경로바용) ──
+function PocketGirlMini({ size = 24 }) {
+  return (
+    <svg viewBox="0 0 40 60" width={size} height={size * 1.5} fill="none">
+      <circle cx="20" cy="12" r="10" fill="#FFE4CC" />
+      <ellipse cx="20" cy="8" rx="11" ry="6" fill="#2C1810" />
+      <circle cx="16" cy="13" r="1.5" fill="#1A1A1A" />
+      <circle cx="24" cy="13" r="1.5" fill="#1A1A1A" />
+      <path d="M18 17 Q20 19 22 17" stroke="#E88" strokeWidth="1" fill="none" />
+      <rect x="14" y="22" width="12" height="16" rx="4" fill="#FF6B6B" />
+      <rect x="12" y="38" width="5" height="12" rx="2" fill="#FFE4CC" />
+      <rect x="23" y="38" width="5" height="12" rx="2" fill="#FFE4CC" />
+      <rect x="30" y="30" width="6" height="8" rx="2" fill="#E5E7EB" />
+      <rect x="32" y="38" width="2" height="6" rx="1" fill="#9CA3AF" />
+    </svg>
+  )
+}
+
+// ── 포켓걸 인사 SVG (입국 팝업용) ──
+function PocketGirlBow() {
+  return (
+    <svg viewBox="0 0 200 240" width={160} height={192} fill="none">
+      <g transform="translate(60, 20)">
+        <ellipse cx="40" cy="30" rx="28" ry="12" fill="#2C1810" />
+        <ellipse cx="40" cy="40" rx="22" ry="24" fill="#FFE4CC" />
+        <circle cx="33" cy="38" r="3" fill="#1A1A1A" /><circle cx="32" cy="36" r="1.2" fill="white" />
+        <circle cx="47" cy="38" r="3" fill="#1A1A1A" /><circle cx="46" cy="36" r="1.2" fill="white" />
+        <path d="M37 45 Q40 48 43 45" stroke="#FF8888" strokeWidth="1.5" fill="none" />
+        <ellipse cx="28" cy="42" rx="4" ry="3" fill="#FFCCCC" opacity="0.5" />
+        <ellipse cx="52" cy="42" rx="4" ry="3" fill="#FFCCCC" opacity="0.5" />
+      </g>
+      <g transform="translate(40, 90)">
+        <rect x="20" y="0" width="40" height="50" rx="12" fill="#FF6B6B" />
+        <rect x="10" y="10" width="15" height="6" rx="3" fill="#FFE4CC" transform="rotate(-30, 10, 10)" />
+        <rect x="55" y="10" width="15" height="6" rx="3" fill="#FFE4CC" transform="rotate(30, 70, 10)" />
+        <rect x="25" y="50" width="12" height="30" rx="4" fill="#FFE4CC" />
+        <rect x="43" y="50" width="12" height="30" rx="4" fill="#FFE4CC" />
+      </g>
+      <g transform="translate(110, 100)">
+        <rect x="0" y="0" width="18" height="24" rx="4" fill="#E5E7EB" />
+        <rect x="3" y="24" width="4" height="14" rx="2" fill="#9CA3AF" />
+        <rect x="11" y="24" width="4" height="14" rx="2" fill="#9CA3AF" />
+      </g>
+    </svg>
+  )
+}
+
+// ── 포켓걸 우는 SVG (출국 팝업용) ──
+function PocketGirlCry() {
+  return (
+    <svg viewBox="0 0 200 240" width={160} height={192} fill="none">
+      <g transform="translate(60, 20)">
+        <ellipse cx="40" cy="30" rx="28" ry="12" fill="#2C1810" />
+        <ellipse cx="40" cy="40" rx="22" ry="24" fill="#FFE4CC" />
+        <path d="M30 36 Q33 33 36 36" stroke="#1A1A1A" strokeWidth="2" fill="none" />
+        <path d="M44 36 Q47 33 50 36" stroke="#1A1A1A" strokeWidth="2" fill="none" />
+        <path d="M37 48 Q40 46 43 48" stroke="#CC6666" strokeWidth="1.5" fill="none" />
+        <path d="M31 40 Q30 52 29 56" stroke="#88CCFF" strokeWidth="1.5" fill="none" opacity="0.7" />
+        <path d="M49 40 Q50 52 51 56" stroke="#88CCFF" strokeWidth="1.5" fill="none" opacity="0.7" />
+      </g>
+      <g transform="translate(40, 90)">
+        <rect x="20" y="0" width="40" height="50" rx="12" fill="#6B8CFF" />
+        <rect x="15" y="15" width="12" height="6" rx="3" fill="#FFE4CC" />
+        <rect x="53" y="15" width="12" height="6" rx="3" fill="#FFE4CC" />
+        <rect x="25" y="50" width="12" height="30" rx="4" fill="#FFE4CC" />
+        <rect x="43" y="50" width="12" height="30" rx="4" fill="#FFE4CC" />
+      </g>
+    </svg>
+  )
+}
+
+// ── 공휴일 + 기념일 캘린더 (한국 + 중국/대만/홍콩 토글) ──
+// type: 'holiday'(공휴일, 빨간색) | 'special'(기념일, 파란색) — 날짜 확정 이벤트만 수록
+// 2026년 기준, timeanddate.com 검증 완료
 const HOLIDAYS_BY_COUNTRY = {
   kr: [
+    // ── 공휴일 ──
     { date: '2026-01-01', name: { ko: '신정', zh: '元旦', en: "New Year's Day" } },
-    { date: '2026-01-29', name: { ko: '설날 연휴', zh: '春节假期', en: 'Lunar New Year' } },
-    { date: '2026-01-30', name: { ko: '설날', zh: '春节', en: 'Lunar New Year' } },
-    { date: '2026-01-31', name: { ko: '설날 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+    { date: '2026-02-16', name: { ko: '설날 연휴', zh: '春节假期', en: 'Seollal Holiday' } },
+    { date: '2026-02-17', name: { ko: '설날', zh: '春节', en: 'Seollal (Lunar New Year)' } },
+    { date: '2026-02-18', name: { ko: '설날 연휴', zh: '春节假期', en: 'Seollal Holiday' } },
     { date: '2026-03-01', name: { ko: '삼일절', zh: '三一节', en: 'Independence Movement Day' } },
+    { date: '2026-03-02', name: { ko: '대체공휴일(삼일절)', zh: '补休(三一节)', en: 'Substitute Holiday' } },
+    { date: '2026-05-01', name: { ko: '근로자의 날', zh: '劳动节', en: 'Labor Day' }, type: 'special' },
     { date: '2026-05-05', name: { ko: '어린이날', zh: '儿童节', en: "Children's Day" } },
     { date: '2026-05-24', name: { ko: '부처님오신날', zh: '佛诞节', en: "Buddha's Birthday" } },
+    { date: '2026-05-25', name: { ko: '대체공휴일(석가탄신일)', zh: '补休(佛诞节)', en: 'Substitute Holiday' } },
+    { date: '2026-06-03', name: { ko: '지방선거일', zh: '地方选举日', en: 'Local Election Day' } },
     { date: '2026-06-06', name: { ko: '현충일', zh: '显忠日', en: 'Memorial Day' } },
     { date: '2026-08-15', name: { ko: '광복절', zh: '光复节', en: 'Liberation Day' } },
+    { date: '2026-08-17', name: { ko: '대체공휴일(광복절)', zh: '补休(光复节)', en: 'Substitute Holiday' } },
     { date: '2026-09-24', name: { ko: '추석 연휴', zh: '中秋假期', en: 'Chuseok Holiday' } },
     { date: '2026-09-25', name: { ko: '추석', zh: '中秋节', en: 'Chuseok' } },
     { date: '2026-09-26', name: { ko: '추석 연휴', zh: '中秋假期', en: 'Chuseok Holiday' } },
     { date: '2026-10-03', name: { ko: '개천절', zh: '开天节', en: 'National Foundation Day' } },
+    { date: '2026-10-05', name: { ko: '대체공휴일(개천절)', zh: '补休(开天节)', en: 'Substitute Holiday' } },
     { date: '2026-10-09', name: { ko: '한글날', zh: '韩文日', en: 'Hangul Day' } },
     { date: '2026-12-25', name: { ko: '성탄절', zh: '圣诞节', en: 'Christmas' } },
+    // ── 기념일 (고정 날짜) ──
+    { date: '2026-02-14', name: { ko: '발렌타인데이', zh: '情人节', en: "Valentine's Day" }, type: 'special' },
+    { date: '2026-03-14', name: { ko: '화이트데이', zh: '白色情人节', en: 'White Day' }, type: 'special' },
+    { date: '2026-04-14', name: { ko: '블랙데이', zh: '黑色情人节', en: 'Black Day' }, type: 'special' },
+    { date: '2026-05-08', name: { ko: '어버이날', zh: '父母节', en: "Parents' Day" }, type: 'special' },
+    { date: '2026-05-15', name: { ko: '스승의 날', zh: '教师节', en: "Teachers' Day" }, type: 'special' },
+    { date: '2026-10-31', name: { ko: '할로윈', zh: '万圣节', en: 'Halloween' }, type: 'special' },
+    { date: '2026-11-11', name: { ko: '빼빼로데이', zh: 'Pepero Day', en: 'Pepero Day' }, type: 'special' },
+    { date: '2026-12-24', name: { ko: '크리스마스 이브', zh: '平安夜', en: 'Christmas Eve' }, type: 'special' },
+    { date: '2026-12-31', name: { ko: '연말', zh: '跨年夜', en: "New Year's Eve" }, type: 'special' },
   ],
   cn: [
+    // ── 공휴일 ──
     { date: '2026-01-01', name: { ko: '원단', zh: '元旦', en: "New Year's Day" } },
-    { date: '2026-01-29', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
-    { date: '2026-01-30', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
-    { date: '2026-01-31', name: { ko: '춘절(설날)', zh: '春节(除夕)', en: 'Spring Festival (Eve)' } },
-    { date: '2026-02-01', name: { ko: '춘절', zh: '春节(初一)', en: 'Spring Festival' } },
-    { date: '2026-02-02', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
-    { date: '2026-02-03', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
-    { date: '2026-02-04', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival' } },
-    { date: '2026-04-04', name: { ko: '청명절', zh: '清明节', en: 'Qingming Festival' } },
+    { date: '2026-02-15', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival Holiday' } },
+    { date: '2026-02-16', name: { ko: '춘절(제석)', zh: '除夕', en: 'Spring Festival Eve' } },
+    { date: '2026-02-17', name: { ko: '춘절(초하루)', zh: '春节(初一)', en: 'Chinese New Year' } },
+    { date: '2026-02-18', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival Holiday' } },
+    { date: '2026-02-19', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival Holiday' } },
+    { date: '2026-02-20', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival Holiday' } },
+    { date: '2026-02-21', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival Holiday' } },
+    { date: '2026-02-22', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival Holiday' } },
+    { date: '2026-02-23', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Spring Festival Holiday' } },
+    { date: '2026-04-05', name: { ko: '청명절', zh: '清明节', en: 'Qingming Festival' } },
+    { date: '2026-04-06', name: { ko: '청명절 연휴', zh: '清明节假期', en: 'Qingming Holiday' } },
     { date: '2026-05-01', name: { ko: '노동절', zh: '劳动节', en: 'Labor Day' } },
     { date: '2026-05-02', name: { ko: '노동절 연휴', zh: '劳动节假期', en: 'Labor Day Holiday' } },
     { date: '2026-05-03', name: { ko: '노동절 연휴', zh: '劳动节假期', en: 'Labor Day Holiday' } },
+    { date: '2026-05-04', name: { ko: '노동절 연휴', zh: '劳动节假期', en: 'Labor Day Holiday' } },
+    { date: '2026-05-05', name: { ko: '노동절 연휴', zh: '劳动节假期', en: 'Labor Day Holiday' } },
     { date: '2026-06-19', name: { ko: '단오절', zh: '端午节', en: 'Dragon Boat Festival' } },
+    { date: '2026-06-20', name: { ko: '단오절 연휴', zh: '端午节假期', en: 'Dragon Boat Holiday' } },
+    { date: '2026-06-21', name: { ko: '단오절 연휴', zh: '端午节假期', en: 'Dragon Boat Holiday' } },
     { date: '2026-09-25', name: { ko: '중추절', zh: '中秋节', en: 'Mid-Autumn Festival' } },
+    { date: '2026-09-26', name: { ko: '중추절 연휴', zh: '中秋节假期', en: 'Mid-Autumn Holiday' } },
+    { date: '2026-09-27', name: { ko: '중추절 연휴', zh: '中秋节假期', en: 'Mid-Autumn Holiday' } },
     { date: '2026-10-01', name: { ko: '국경절', zh: '国庆节', en: 'National Day' } },
     { date: '2026-10-02', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
     { date: '2026-10-03', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
@@ -225,36 +389,98 @@ const HOLIDAYS_BY_COUNTRY = {
     { date: '2026-10-05', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
     { date: '2026-10-06', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
     { date: '2026-10-07', name: { ko: '국경절 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
+    // ── 기념일 (중국인에게 중요한 고정 날짜) ──
+    { date: '2026-02-14', name: { ko: '발렌타인데이', zh: '情人节', en: "Valentine's Day" }, type: 'special' },
+    { date: '2026-03-03', name: { ko: '원소절(정월대보름)', zh: '元宵节', en: 'Lantern Festival' }, type: 'special' },
+    { date: '2026-03-08', name: { ko: '세계 여성의 날', zh: '三八妇女节', en: "Int'l Women's Day" }, type: 'special' },
+    { date: '2026-03-12', name: { ko: '식목일(중국)', zh: '植树节', en: 'Arbor Day (CN)' }, type: 'special' },
+    { date: '2026-03-14', name: { ko: '화이트데이', zh: '白色情人节', en: 'White Day' }, type: 'special' },
+    { date: '2026-05-04', name: { ko: '청년절', zh: '五四青年节', en: 'Youth Day' }, type: 'special' },
+    { date: '2026-05-10', name: { ko: '어머니의 날', zh: '母亲节', en: "Mother's Day" }, type: 'special' },
+    { date: '2026-05-20', name: { ko: '520 사랑의 날', zh: '520表白日', en: '520 Love Day' }, type: 'special' },
+    { date: '2026-06-01', name: { ko: '아동절(중국)', zh: '六一儿童节', en: "Children's Day (CN)" }, type: 'special' },
+    { date: '2026-06-21', name: { ko: '아버지의 날', zh: '父亲节', en: "Father's Day" }, type: 'special' },
+    { date: '2026-07-01', name: { ko: '중국공산당 창당일', zh: '建党节', en: 'CPC Founding Day' }, type: 'special' },
+    { date: '2026-08-01', name: { ko: '건군절', zh: '建军节', en: 'Army Day' }, type: 'special' },
+    { date: '2026-08-19', name: { ko: '칠석(중국 발렌타인)', zh: '七夕节', en: 'Qixi (Chinese Valentine)' }, type: 'special' },
+    { date: '2026-09-10', name: { ko: '교사절(중국)', zh: '教师节', en: "Teachers' Day (CN)" }, type: 'special' },
+    { date: '2026-10-18', name: { ko: '중양절(경로일)', zh: '重阳节', en: 'Double Ninth Festival' }, type: 'special' },
+    { date: '2026-10-31', name: { ko: '할로윈', zh: '万圣节', en: 'Halloween' }, type: 'special' },
+    { date: '2026-11-11', name: { ko: '광군절(쇼핑축제)', zh: '双十一/光棍节', en: 'Singles Day / 11.11' }, type: 'special' },
+    { date: '2026-12-12', name: { ko: '솽스얼(쇼핑축제)', zh: '双十二', en: '12.12 Shopping Day' }, type: 'special' },
+    { date: '2026-12-24', name: { ko: '크리스마스 이브', zh: '平安夜', en: 'Christmas Eve' }, type: 'special' },
+    { date: '2026-12-25', name: { ko: '성탄절', zh: '圣诞节', en: 'Christmas' }, type: 'special' },
+    { date: '2026-12-31', name: { ko: '연말', zh: '跨年夜', en: "New Year's Eve" }, type: 'special' },
   ],
   tw: [
+    // ── 공휴일 ──
     { date: '2026-01-01', name: { ko: '개국기념일', zh: '元旦/开国纪念日', en: "New Year's / Republic Day" } },
-    { date: '2026-01-29', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year' } },
-    { date: '2026-01-30', name: { ko: '춘절 연휴', zh: '除夕', en: 'Lunar New Year Eve' } },
-    { date: '2026-01-31', name: { ko: '춘절', zh: '春节', en: 'Lunar New Year' } },
-    { date: '2026-02-01', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year' } },
-    { date: '2026-02-02', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year' } },
+    { date: '2026-02-14', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year Holiday' } },
+    { date: '2026-02-15', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year Holiday' } },
+    { date: '2026-02-16', name: { ko: '춘절(제석)', zh: '除夕', en: 'Lunar New Year Eve' } },
+    { date: '2026-02-17', name: { ko: '춘절(초하루)', zh: '春节', en: 'Lunar New Year' } },
+    { date: '2026-02-18', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year Holiday' } },
+    { date: '2026-02-19', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year Holiday' } },
+    { date: '2026-02-20', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year Holiday' } },
+    { date: '2026-02-21', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year Holiday' } },
+    { date: '2026-02-22', name: { ko: '춘절 연휴', zh: '春节假期', en: 'Lunar New Year Holiday' } },
+    { date: '2026-02-27', name: { ko: '228 평화기념일 연휴', zh: '228和平纪念日假期', en: '228 Memorial Holiday' } },
     { date: '2026-02-28', name: { ko: '228 평화기념일', zh: '228和平纪念日', en: '228 Peace Memorial Day' } },
-    { date: '2026-04-04', name: { ko: '아동절/청명절', zh: '儿童节/清明节', en: "Children's Day / Qingming" } },
+    { date: '2026-04-03', name: { ko: '아동절 연휴', zh: '儿童节假期', en: "Children's Day Holiday" } },
+    { date: '2026-04-04', name: { ko: '아동절', zh: '儿童节', en: "Children's Day" } },
+    { date: '2026-04-05', name: { ko: '청명절', zh: '清明节', en: 'Tomb Sweeping Day' } },
+    { date: '2026-04-06', name: { ko: '청명절 연휴', zh: '清明节假期', en: 'Tomb Sweeping Holiday' } },
+    { date: '2026-05-01', name: { ko: '노동절', zh: '劳动节', en: 'Labor Day' } },
     { date: '2026-06-19', name: { ko: '단오절', zh: '端午节', en: 'Dragon Boat Festival' } },
     { date: '2026-09-25', name: { ko: '중추절', zh: '中秋节', en: 'Mid-Autumn Festival' } },
+    { date: '2026-09-28', name: { ko: '공자탄신일', zh: '教师节/孔子诞辰', en: "Teachers' Day / Confucius" } },
+    { date: '2026-10-09', name: { ko: '국경일 연휴', zh: '国庆假期', en: 'National Day Holiday' } },
     { date: '2026-10-10', name: { ko: '쌍십절(국경일)', zh: '双十节/国庆日', en: 'Double Tenth Day' } },
+    // ── 기념일 ──
+    { date: '2026-02-14', name: { ko: '발렌타인데이', zh: '情人节', en: "Valentine's Day" }, type: 'special' },
+    { date: '2026-03-14', name: { ko: '화이트데이', zh: '白色情人节', en: 'White Day' }, type: 'special' },
+    { date: '2026-05-10', name: { ko: '어머니의 날', zh: '母亲节', en: "Mother's Day" }, type: 'special' },
+    { date: '2026-08-08', name: { ko: '아버지의 날(대만)', zh: '父亲节(88节)', en: "Father's Day (TW)" }, type: 'special' },
+    { date: '2026-08-19', name: { ko: '칠석', zh: '七夕情人节', en: 'Qixi Festival' }, type: 'special' },
+    { date: '2026-10-18', name: { ko: '중양절', zh: '重阳节', en: 'Double Ninth Festival' }, type: 'special' },
+    { date: '2026-10-31', name: { ko: '할로윈', zh: '万圣节', en: 'Halloween' }, type: 'special' },
+    { date: '2026-12-24', name: { ko: '크리스마스 이브', zh: '平安夜', en: 'Christmas Eve' }, type: 'special' },
+    { date: '2026-12-25', name: { ko: '성탄절', zh: '圣诞节', en: 'Christmas' }, type: 'special' },
+    { date: '2026-12-31', name: { ko: '연말', zh: '跨年夜', en: "New Year's Eve" }, type: 'special' },
   ],
   hk: [
+    // ── 공휴일 ──
     { date: '2026-01-01', name: { ko: '원단', zh: '元旦', en: "New Year's Day" } },
-    { date: '2026-01-31', name: { ko: '춘절', zh: '农历新年', en: 'Lunar New Year' } },
-    { date: '2026-02-01', name: { ko: '춘절 연휴', zh: '农历新年假期', en: 'Lunar New Year' } },
-    { date: '2026-02-02', name: { ko: '춘절 연휴', zh: '农历新年假期', en: 'Lunar New Year' } },
+    { date: '2026-02-17', name: { ko: '춘절', zh: '农历新年初一', en: 'Lunar New Year' } },
+    { date: '2026-02-18', name: { ko: '춘절 연휴', zh: '农历新年假期', en: 'Lunar New Year Holiday' } },
+    { date: '2026-02-19', name: { ko: '춘절 연휴', zh: '农历新年假期', en: 'Lunar New Year Holiday' } },
     { date: '2026-04-03', name: { ko: '성금요일', zh: '耶稣受难节', en: 'Good Friday' } },
-    { date: '2026-04-04', name: { ko: '청명절', zh: '清明节', en: 'Qingming Festival' } },
+    { date: '2026-04-04', name: { ko: '성토요일', zh: '耶稣受难节翌日', en: 'Holy Saturday' } },
+    { date: '2026-04-05', name: { ko: '청명절', zh: '清明节', en: 'Tomb Sweeping Day' } },
     { date: '2026-04-06', name: { ko: '부활절 월요일', zh: '复活节星期一', en: 'Easter Monday' } },
+    { date: '2026-04-07', name: { ko: '대체공휴일(부활절)', zh: '补假(复活节)', en: 'Substitute Holiday' } },
     { date: '2026-05-01', name: { ko: '노동절', zh: '劳动节', en: 'Labor Day' } },
     { date: '2026-05-24', name: { ko: '부처님오신날', zh: '佛诞', en: "Buddha's Birthday" } },
+    { date: '2026-05-25', name: { ko: '대체공휴일(석가탄신)', zh: '补假(佛诞)', en: 'Substitute Holiday' } },
     { date: '2026-06-19', name: { ko: '단오절', zh: '端午节', en: 'Dragon Boat Festival' } },
     { date: '2026-07-01', name: { ko: '홍콩반환기념일', zh: '香港回归纪念日', en: 'HKSAR Day' } },
-    { date: '2026-09-25', name: { ko: '중추절 다음날', zh: '中秋节翌日', en: 'Day after Mid-Autumn' } },
+    { date: '2026-09-26', name: { ko: '중추절 다음날', zh: '中秋节翌日', en: 'Day after Mid-Autumn' } },
     { date: '2026-10-01', name: { ko: '국경절', zh: '国庆节', en: 'National Day' } },
-    { date: '2026-10-26', name: { ko: '중양절', zh: '重阳节', en: 'Chung Yeung Festival' } },
+    { date: '2026-10-18', name: { ko: '중양절', zh: '重阳节', en: 'Chung Yeung Festival' } },
+    { date: '2026-10-19', name: { ko: '대체공휴일(중양절)', zh: '补假(重阳节)', en: 'Substitute Holiday' } },
     { date: '2026-12-25', name: { ko: '성탄절', zh: '圣诞节', en: 'Christmas' } },
+    { date: '2026-12-26', name: { ko: '성탄절 연휴', zh: '圣诞节假期', en: 'Boxing Day' } },
+    // ── 기념일 ──
+    { date: '2026-02-14', name: { ko: '발렌타인데이', zh: '情人节', en: "Valentine's Day" }, type: 'special' },
+    { date: '2026-03-14', name: { ko: '화이트데이', zh: '白色情人节', en: 'White Day' }, type: 'special' },
+    { date: '2026-05-10', name: { ko: '어머니의 날', zh: '母亲节', en: "Mother's Day" }, type: 'special' },
+    { date: '2026-06-21', name: { ko: '아버지의 날', zh: '父亲节', en: "Father's Day" }, type: 'special' },
+    { date: '2026-08-19', name: { ko: '칠석', zh: '七夕情人节', en: 'Qixi Festival' }, type: 'special' },
+    { date: '2026-09-25', name: { ko: '중추절', zh: '中秋节', en: 'Mid-Autumn Festival' }, type: 'special' },
+    { date: '2026-10-31', name: { ko: '할로윈', zh: '万圣节', en: 'Halloween' }, type: 'special' },
+    { date: '2026-11-11', name: { ko: '광군절', zh: '双十一/光棍节', en: 'Singles Day / 11.11' }, type: 'special' },
+    { date: '2026-12-24', name: { ko: '크리스마스 이브', zh: '平安夜', en: 'Christmas Eve' }, type: 'special' },
+    { date: '2026-12-31', name: { ko: '연말', zh: '跨年夜', en: "New Year's Eve" }, type: 'special' },
   ],
 }
 
@@ -285,6 +511,7 @@ function HolidayCalendar({ lang }) {
 
   const allHolidays = countries.flatMap(c => (HOLIDAYS_BY_COUNTRY[c] || []).map(h => ({ ...h, country: c })))
   const countryColor = { kr: 'bg-red-500', cn: 'bg-red-600', tw: 'bg-green-500', hk: 'bg-pink-500' }
+  const specialColor = { kr: 'bg-blue-400', cn: 'bg-blue-500', tw: 'bg-teal-400', hk: 'bg-purple-400' }
   const monthNames = { ko: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'], zh: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'], en: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] }
   const dayLabels = { ko: ['일','월','화','수','목','금','토'], zh: ['日','一','二','三','四','五','六'], en: ['S','M','T','W','T','F','S'] }
 
@@ -301,25 +528,50 @@ function HolidayCalendar({ lang }) {
   }).forEach(h => {
     const day = parseInt(h.date.slice(8, 10))
     if (!holidayMap.has(day)) holidayMap.set(day, [])
-    holidayMap.get(day).push(h.country)
+    holidayMap.get(day).push({ country: h.country, type: h.type || 'holiday' })
   })
 
-  // 이번 달 공휴일 목록
-  const monthHolidays = []
+  // 이번 달 일정 목록 — 연속 날짜는 그룹핑 (춘절 02/15~02/23 식)
+  const monthItems = []
   const seenH = new Set()
-  allHolidays.filter(h => {
+  const rawList = allHolidays.filter(h => {
     const d = new Date(h.date)
     return d.getFullYear() === year && d.getMonth() === viewMonth
-  }).forEach(h => {
+  })
+  // dedup
+  const deduped = []
+  rawList.forEach(h => {
     const key = `${h.date}-${h.country}`
-    if (!seenH.has(key)) { seenH.add(key); monthHolidays.push(h) }
+    if (!seenH.has(key)) { seenH.add(key); deduped.push(h) }
+  })
+  // group consecutive days with same country + same base name (연휴/假期 stripped)
+  const baseName = (n) => {
+    const s = typeof n === 'string' ? n : (n?.ko || '')
+    return s.replace(/\s*연휴.*$/, '').replace(/\s*假期.*$/, '').replace(/\s*Holiday.*$/i, '').replace(/\(.*\)/, '').trim()
+  }
+  const grouped = []
+  deduped.forEach(h => {
+    const bn = baseName(h.name)
+    const last = grouped[grouped.length - 1]
+    if (last && last.country === h.country && baseName(last.name) === bn && (last.type || 'holiday') === (h.type || 'holiday')) {
+      // check consecutive: last endDate +1 day === h.date
+      const lastEnd = new Date(last.endDate || last.date)
+      const cur = new Date(h.date)
+      const diff = (cur - lastEnd) / 86400000
+      if (diff <= 1) {
+        last.endDate = h.date
+        // keep the most descriptive name (shortest = base name preferred)
+        return
+      }
+    }
+    grouped.push({ ...h, endDate: h.date })
   })
 
   const isCurrentMonth = viewMonth === today.getMonth()
 
   return (
     <div className="mb-4 px-4">
-      {/* 국가 토글 */}
+      {/* 국가 토글 + 범례 */}
       <div className="flex items-center gap-2 mb-3">
         {Object.entries(COUNTRY_LABELS).map(([code, info]) => (
           <button
@@ -335,6 +587,10 @@ function HolidayCalendar({ lang }) {
             <span>{L(lang, info)}</span>
           </button>
         ))}
+        <div className="ml-auto flex items-center gap-3">
+          <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500" /><span className="text-[10px] text-[#999]">{L(lang, { ko: '공휴일', zh: '假日', en: 'Holiday' })}</span></div>
+          <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-blue-400" /><span className="text-[10px] text-[#999]">{L(lang, { ko: '기념일', zh: '纪念日', en: 'Special' })}</span></div>
+        </div>
       </div>
 
       {/* 월 네비게이션: ◀ 2026년 3월 ▶ */}
@@ -366,16 +622,18 @@ function HolidayCalendar({ lang }) {
             if (!d) return <span key={i} />
             const isToday = isCurrentMonth && d === today.getDate()
             const hc = holidayMap.get(d)
+            const hasHoliday = hc?.some(x => x.type === 'holiday')
+            const hasSpecial = hc?.some(x => x.type === 'special')
             const dayOfWeek = (firstDay + d - 1) % 7
             return (
               <div key={i} className="flex flex-col items-center">
-                <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : hc ? 'text-red-500 font-bold' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[#666]'}`}>
+                <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : hasHoliday ? 'text-red-500 font-bold' : hasSpecial ? 'text-blue-500 font-medium' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[#666]'}`}>
                   {d}
                 </span>
                 {hc && (
                   <div className="flex gap-[2px] mt-[1px]">
-                    {[...new Set(hc)].map(c => (
-                      <div key={c} className={`w-[4px] h-[4px] rounded-full ${countryColor[c]}`} />
+                    {[...new Map(hc.map(x => [`${x.country}-${x.type}`, x])).values()].map((x, j) => (
+                      <div key={j} className={`w-[4px] h-[4px] rounded-full ${x.type === 'special' ? (specialColor[x.country] || 'bg-blue-400') : countryColor[x.country]}`} />
                     ))}
                   </div>
                 )}
@@ -385,23 +643,34 @@ function HolidayCalendar({ lang }) {
         </div>
       </div>
 
-      {/* 이번 달 공휴일 */}
-      {monthHolidays.length > 0 ? (
+      {/* 이번 달 일정 (연속 날짜 그룹핑) */}
+      {grouped.length > 0 ? (
         <div className="flex flex-col gap-2">
-          {monthHolidays.map((h, i) => {
-            const diff = Math.ceil((new Date(h.date) - today) / 86400000)
+          {grouped.map((h, i) => {
+            const startDiff = Math.ceil((new Date(h.date) - today) / 86400000)
+            const endDiff = h.endDate !== h.date ? Math.ceil((new Date(h.endDate) - today) / 86400000) : null
+            const isSpecial = h.type === 'special'
+            const isRange = h.endDate && h.endDate !== h.date
+            const dateLabel = isRange
+              ? `${h.date.slice(5).replace('-','/')} ~ ${h.endDate.slice(5).replace('-','/')}`
+              : h.date.slice(5).replace('-', '/')
+            // D-day: show based on start date, or "진행중" if within range
+            let dday = null
+            if (startDiff > 0) dday = `D-${startDiff}`
+            else if (startDiff === 0) dday = L(lang, { ko: '오늘', zh: '今天', en: 'Today' })
+            else if (endDiff !== null && endDiff >= 0) dday = L(lang, { ko: '진행중', zh: '进行中', en: 'Ongoing' })
             return (
-              <div key={i} className="flex items-center justify-between py-2 px-3 rounded-[6px] bg-[#F9FAFB]">
+              <div key={i} className={`flex items-center justify-between py-2 px-3 rounded-[6px] ${isSpecial ? 'bg-[#F0F4FF]' : 'bg-[#F9FAFB]'}`}>
                 <div className="flex items-center gap-2">
                   <span className="text-[13px]">{COUNTRY_LABELS[h.country]?.flag}</span>
                   <div>
-                    <span className="text-sm font-semibold text-[#1A1A1A]">{L(lang, h.name)}</span>
-                    <span className="text-xs text-[#999] ml-2">{h.date.slice(5).replace('-', '/')}</span>
+                    <span className={`text-sm ${isSpecial ? 'font-medium text-[#4B5563]' : 'font-semibold text-[#1A1A1A]'}`}>{L(lang, h.name)}</span>
+                    <span className="text-xs text-[#999] ml-2">{dateLabel}</span>
                   </div>
                 </div>
-                {diff >= 0 && (
-                  <span className="text-xs text-[#2D5A3D] font-medium">
-                    {diff === 0 ? L(lang, { ko: '오늘', zh: '今天', en: 'Today' }) : `D-${diff}`}
+                {dday && (
+                  <span className={`text-xs font-medium whitespace-nowrap ${isSpecial ? 'text-[#6366F1]' : 'text-[#2D5A3D]'}`}>
+                    {dday}
                   </span>
                 )}
               </div>
@@ -410,9 +679,10 @@ function HolidayCalendar({ lang }) {
         </div>
       ) : (
         <p className="text-xs text-[#999] text-center py-2">
-          {L(lang, { ko: '이번 달 공휴일 없음', zh: '本月无假日', en: 'No holidays this month' })}
+          {L(lang, { ko: '이번 달 일정 없음', zh: '本月无日程', en: 'Nothing this month' })}
         </p>
       )}
+
     </div>
   )
 }
@@ -445,7 +715,7 @@ function PromoBanner({ banners, lang }) {
         {banners.map((b, i) => (
           <button key={i} onClick={b.onClick}
             className="snap-start flex-shrink-0 w-full px-4">
-            <div className="rounded-[6px] p-5 h-[140px] flex flex-col justify-end relative overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+            <div className="rounded-[6px] p-5 h-[140px] flex flex-col justify-end relative overflow-hidden "
               style={{ backgroundColor: b.bg }}>
               <span className="text-3xl absolute top-4 right-4">{b.emoji}</span>
               <h3 className="text-white font-bold text-base leading-tight">{L(lang, b.title)}</h3>
@@ -477,7 +747,7 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
       <div className="grid grid-cols-2 gap-3">
         {items.map((item, i) => (
           <button key={i} onClick={item.onClick} className="text-left active:scale-[0.98] transition-transform">
-            <div className="aspect-[4/3] rounded-[6px] overflow-hidden mb-2 bg-[#F3F4F6] shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <div className="aspect-[4/3] rounded-[6px] overflow-hidden mb-2 bg-[#F3F4F6] ">
               {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />}
             </div>
             <p className="text-sm font-semibold tracking-wide text-[#1A1A1A] leading-tight line-clamp-1">
@@ -501,6 +771,153 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
           </button>
         ))}
       </div>
+    </div>
+  )
+}
+
+// ── 세금환급 계산기 ──
+// 한국 Tax Free 환급 구간 (2024년 기준, 부가세 10%)
+// 3만원 이상 구매 시 환급 가능, 단일 매장 기준
+const TAX_REFUND_TABLE = [
+  { min: 30000, max: 49999, refund: 1500 },
+  { min: 50000, max: 74999, refund: 3500 },
+  { min: 75000, max: 99999, refund: 5000 },
+  { min: 100000, max: 124999, refund: 7000 },
+  { min: 125000, max: 149999, refund: 9000 },
+  { min: 150000, max: 174999, refund: 10000 },
+  { min: 175000, max: 199999, refund: 12000 },
+  { min: 200000, max: 249999, refund: 14000 },
+  { min: 250000, max: 299999, refund: 18000 },
+  { min: 300000, max: 399999, refund: 22000 },
+  { min: 400000, max: 499999, refund: 30000 },
+  { min: 500000, max: 749999, refund: 38000 },
+  { min: 750000, max: 999999, refund: 58000 },
+]
+
+function calcTaxRefund(amount) {
+  if (amount < 30000) return 0
+  // 100만원 이상은 부가세 공식 적용 (약 7~8%)
+  if (amount >= 1000000) return Math.round(amount / 11 * 0.85)
+  const row = TAX_REFUND_TABLE.find(r => amount >= r.min && amount <= r.max)
+  return row ? row.refund : Math.round(amount / 11 * 0.85)
+}
+
+function TaxRefundCalculator({ lang }) {
+  const [amount, setAmount] = useState('')
+  const num = parseInt(amount.replace(/,/g, '')) || 0
+  const refund = calcTaxRefund(num)
+
+  const format = (n) => n.toLocaleString()
+
+  const quickAmounts = [50000, 100000, 200000, 500000, 1000000]
+
+  return (
+    <div className="max-w-[480px] mx-auto px-4 py-6">
+      {/* 안내 */}
+      <div className="bg-[#F8F9FA] rounded-[6px] p-4 mb-6 border border-[#E5E7EB]">
+        <p className="text-xs text-[#6B7280] leading-relaxed">
+          {lang === 'ko' ? '외국인 관광객은 1개 매장에서 3만원 이상 구매 시 부가세(VAT)를 환급받을 수 있습니다. 출국 시 공항 Tax Refund 카운터에서 처리하세요.'
+          : lang === 'zh' ? '外国游客在单店消费满3万韩元即可申请退税(VAT)。请在出境时于机场退税柜台办理。'
+          : 'Foreign tourists can get a VAT refund on purchases over ₩30,000 at a single store. Process at the airport Tax Refund counter before departure.'}
+        </p>
+      </div>
+
+      {/* 입력 */}
+      <div className="mb-4">
+        <label className="text-xs font-semibold text-[#6B7280] block mb-2">
+          {lang === 'ko' ? '구매 금액 (₩)' : lang === 'zh' ? '购买金额 (₩)' : 'Purchase Amount (₩)'}
+        </label>
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#999] text-lg font-medium">₩</span>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={amount}
+            onChange={e => {
+              const v = e.target.value.replace(/[^0-9]/g, '')
+              setAmount(v ? parseInt(v).toLocaleString() : '')
+            }}
+            placeholder={lang === 'ko' ? '금액 입력' : lang === 'zh' ? '输入金额' : 'Enter amount'}
+            className="w-full pl-10 pr-4 py-4 bg-white border border-[#E5E7EB] rounded-[6px] text-xl font-bold text-[#1A1A1A] outline-none focus:border-[#2D5A3D] transition-colors"
+          />
+        </div>
+      </div>
+
+      {/* 빠른 금액 버튼 */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {quickAmounts.map(q => (
+          <button
+            key={q}
+            onClick={() => setAmount(q.toLocaleString())}
+            className="px-3 py-1.5 rounded-full text-xs font-medium border border-[#E5E7EB] text-[#374151] active:scale-95 transition-all"
+            style={{ backgroundColor: num === q ? '#F0F7F4' : '#fff' }}
+          >
+            ₩{format(q)}
+          </button>
+        ))}
+      </div>
+
+      {/* 결과 */}
+      <div className="bg-white rounded-[6px] border border-[#E5E7EB] overflow-hidden">
+        <div className="p-5 text-center border-b border-[#E5E7EB]" style={{ backgroundColor: num >= 30000 ? '#F0F7F4' : '#F9FAFB' }}>
+          <p className="text-xs text-[#6B7280] mb-1">
+            {lang === 'ko' ? '예상 환급액' : lang === 'zh' ? '预计退税金额' : 'Estimated Refund'}
+          </p>
+          <p className="text-3xl font-black" style={{ color: num >= 30000 ? '#2D5A3D' : '#D1D5DB' }}>
+            ₩{format(refund)}
+          </p>
+          {num > 0 && num < 30000 && (
+            <p className="text-xs text-[#EF4444] mt-2">
+              {lang === 'ko' ? '3만원 이상 구매 시 환급 가능' : lang === 'zh' ? '消费满3万韩元才可退税' : 'Min ₩30,000 required for refund'}
+            </p>
+          )}
+        </div>
+
+        {num >= 30000 && (
+          <div className="p-4 space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-[#6B7280]">{lang === 'ko' ? '구매 금액' : lang === 'zh' ? '购买金额' : 'Purchase'}</span>
+              <span className="font-medium text-[#1A1A1A]">₩{format(num)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-[#6B7280]">{lang === 'ko' ? '환급액' : lang === 'zh' ? '退税额' : 'Refund'}</span>
+              <span className="font-bold text-[#2D5A3D]">₩{format(refund)}</span>
+            </div>
+            <div className="flex justify-between text-sm border-t border-[#F0F0F0] pt-2">
+              <span className="text-[#6B7280]">{lang === 'ko' ? '실제 부담액' : lang === 'zh' ? '实际支付' : 'Actual cost'}</span>
+              <span className="font-bold text-[#1A1A1A]">₩{format(num - refund)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-[#6B7280]">{lang === 'ko' ? '할인율' : lang === 'zh' ? '折扣率' : 'Discount'}</span>
+              <span className="font-bold text-[#B8860B]">-{(refund / num * 100).toFixed(1)}%</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 환급 방법 안내 */}
+      <div className="mt-6 space-y-3">
+        <h3 className="text-sm font-bold text-[#1A1A1A]">
+          {lang === 'ko' ? '환급 방법' : lang === 'zh' ? '退税方式' : 'How to get refund'}
+        </h3>
+        {[
+          { step: '1', text: { ko: 'Tax Free 가맹점에서 쇼핑', zh: '在Tax Free加盟店购物', en: 'Shop at Tax Free stores' } },
+          { step: '2', text: { ko: '영수증과 Tax Free 서류 보관', zh: '保管好收据和退税单', en: 'Keep receipts & Tax Free forms' } },
+          { step: '3', text: { ko: '공항 세관에서 물품 확인 (출국장 전)', zh: '在机场海关确认商品（出境前）', en: 'Customs inspection at airport (before departure)' } },
+          { step: '4', text: { ko: '환급 카운터에서 현금/카드 환급', zh: '在退税柜台领取现金/退回卡', en: 'Get cash/card refund at counter' } },
+        ].map(s => (
+          <div key={s.step} className="flex gap-3 items-start">
+            <span className="w-6 h-6 rounded-full bg-[#F0F7F4] text-[#2D5A3D] text-xs font-bold flex items-center justify-center shrink-0">{s.step}</span>
+            <p className="text-sm text-[#374151]">{L(lang, s.text)}</p>
+          </div>
+        ))}
+      </div>
+
+      <p className="text-[10px] text-[#BCBCBC] mt-6 text-center">
+        {lang === 'ko' ? '* 환급액은 예상치이며 실제 금액은 다를 수 있습니다'
+        : lang === 'zh' ? '* 退税金额为预估值，实际金额可能有差异'
+        : '* Refund amounts are estimates and may vary'}
+      </p>
     </div>
   )
 }
@@ -530,7 +947,7 @@ function BrandScrollSection({ lang }) {
             className="snap-start flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
             style={{ width: 80 }}
           >
-            <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden shadow-[0_2px_10px_rgba(0,0,0,0.1)] border border-[#E5E7EB]"
+            <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden  border border-[#E5E7EB]"
               style={{ backgroundColor: b.color }}>
               {b.logoUrl ? <img src={b.logoUrl} alt="" className="w-8 h-8 object-contain" onError={e => { e.target.style.display='none'; e.target.parentElement.innerText = L(lang, b.name).charAt(0) }} /> : L(lang, b.name).charAt(0)}
             </div>
@@ -554,12 +971,13 @@ function getAwardBadge(award) {
 
 export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {}, adminView = false }) {
   const isVisible = (key) => widgetSettings[key] !== false
-  const weather = useWeatherData()
+  // weather now comes from weatherData (useWeather hook)
   const { kst: koreaTime, extras: extraTimezones, refresh: refreshTimezones } = useMultiTimezone()
   const todayExpr = getTodayExpression()
 
   // 환율: prop에서 CNY 환율 추출
-  const cnyRate = exchangeRate?.CNY || 191
+  const cnyRate = exchangeRate?.exchangeRate?.CNY || 191
+  const cnyChange = exchangeRate?.rateChanges?.CNY || 0
 
   // 코스 데이터 (test 카테고리 제외, 첫 6개)
   const courses = RECOMMENDED_COURSES.filter(c => c.category !== 'test').slice(0, 6)
@@ -573,6 +991,34 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   // 방금 도착했어요 웰컴 플로우
   const [showArrivalFlow, setShowArrivalFlow] = useState(false)
   const [arrivalStep, setArrivalStep] = useState('menu') // 'menu' | 'immigration' | 'transport' | 'sim-exchange'
+  const [arrivalPhase, setArrivalPhase] = useState('entry') // 'entry' | 'move' | 'hotel'
+  const [arrivalPopup, setArrivalPopup] = useState(false)
+  const [departurePopup, setDeparturePopup] = useState(false)
+
+  // 입국 팝업 → 1.5초 후 경로 화면
+  useEffect(() => {
+    if (arrivalPopup) {
+      const t = setTimeout(() => {
+        setArrivalPopup(false)
+        setArrivalPhase('entry')
+        setArrivalStep('menu')
+        setShowArrivalFlow(true)
+      }, 1500)
+      return () => clearTimeout(t)
+    }
+  }, [arrivalPopup])
+
+  // 출국 팝업 → 1.5초 후 기존 출국 화면
+  useEffect(() => {
+    if (departurePopup) {
+      const t = setTimeout(() => {
+        setDeparturePopup(false)
+        setArrivalStep('departure')
+        setShowArrivalFlow(true)
+      }, 1500)
+      return () => clearTimeout(t)
+    }
+  }, [departurePopup])
 
   // 시간대 선택 팝업
   const [showTzPicker, setShowTzPicker] = useState(false)
@@ -580,6 +1026,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
     const saved = localStorage.getItem('hanpocket_extra_timezones')
     return saved ? JSON.parse(saved) : []
   })
+
+  // 날씨 데이터 (Open-Meteo, 30분 캐시)
+  const weatherData = useWeather(tzSelection)
 
   // 환율 팝오버
   const [showExchangePopover, setShowExchangePopover] = useState(false)
@@ -604,6 +1053,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
     setTimeout(() => setToast(null), 2000)
   }
 
+  // 팝업스토어 지역 필터
+  const [popupDistrict, setPopupDistrict] = useState('all')
+  const filteredPopups = (popupDistrict === 'all' ? POPUP_STORES : POPUP_STORES.filter(p => p.district === popupDistrict)).filter(isActiveOrUpcoming)
+  const [selectedPopup, setSelectedPopup] = useState(null)
+
   // VPN 배너 상태
   const [showVpnBanner, setShowVpnBanner] = useState(() => {
     return localStorage.getItem('hanpocket_vpn_banner_closed') !== 'true'
@@ -616,20 +1070,29 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
   return (
     <div
-      className="pt-4 pb-24"
+      className="pt-2 pb-24"
       style={{ backgroundColor: '#FFFFFF' }}
     >
     <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
       {/* ─── 상단 정보 바 ─── */}
-      <div className="px-4 mb-4 flex items-center gap-2 text-xs tracking-wider flex-wrap" style={{ color: '#999999' }}>
-        {isVisible('weather') && <><span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weather ? <span className="transition-opacity duration-500 opacity-100">{weather.temp}°C</span> : <span className="inline-block w-8 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" />}</span><span>·</span></>}
+      <div className="mb-1 flex items-center gap-2 text-xs tracking-wider flex-wrap" style={{ color: '#999999' }}>
+        {isVisible('weather') && <><span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weatherData.KST ? <span className="transition-opacity duration-500 opacity-100">{weatherData.KST.emoji}{weatherData.KST.temp}°{(() => {
+          const clothingRec = getClothingRecommendation(weatherData.KST.temp, 0, 50, lang)
+          return clothingRec.temperature ? ` ${clothingRec.temperature.icon}` : ''
+        })()}</span> : <span className="inline-block w-8 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" />}</span><span>·</span></>}
         {isVisible('exchange') && <><span ref={exchangeRef} className="relative">
-          {exchangeRate?.CNY ? <span
+          {exchangeRate?.exchangeRate?.CNY ? <span
             onClick={() => setShowExchangePopover(!showExchangePopover)}
             className="cursor-pointer underline decoration-dotted transition-opacity duration-500 opacity-100"
-          >¥1 = ₩{Math.round(cnyRate)}</span> : <>¥1 = ₩<span className="inline-block w-10 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" /></>}
+          >¥1 = ₩{Math.round(cnyRate)} 
+            {cnyChange !== 0 && (
+              <span className={`ml-1 text-[10px] ${cnyChange > 0 ? 'text-red-600' : 'text-blue-600'}`}>
+                {cnyChange > 0 ? '↗️' : '↘️'}{Math.abs(cnyChange)}%
+              </span>
+            )}
+          </span> : <>¥1 = ₩<span className="inline-block w-10 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" /></>}
           {showExchangePopover && (
-            <div className="absolute top-6 left-0 bg-white rounded-[6px] border border-[#E5E7EB] p-3 shadow-lg z-20 min-w-[160px]">
+            <div className="absolute top-6 left-0 bg-white rounded-[6px] border border-[#E5E7EB] p-3  z-20 min-w-[160px]">
               <p className="text-[10px] text-[#999999] mb-2">{L(lang, { ko: '빠른 환산', zh: '快速换算', en: 'Quick Convert' })}</p>
               {[10000, 50000, 100000].map(won => (
                 <div key={won} className="flex justify-between text-xs text-[#1A1A1A] py-1">
@@ -641,16 +1104,24 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 <span>¥1,000</span>
                 <span className="text-[#2D5A3D] font-medium">≈ ₩{Math.round(1000 * cnyRate).toLocaleString()}</span>
               </div>
+              <p className="text-[9px] text-[#BCBCBC] mt-2 pt-1 border-t border-[#F0F0F0]">
+                {exchangeRate?._date || ''} · exchangerate-api.com
+              </p>
             </div>
           )}
         </span><span>·</span></>}
         {isVisible('clock') && <span>KST {koreaTime}</span>}
-        {extraTimezones.map(tz => (
-          <span key={tz.id}>
-            <span>·</span>
-            {' '}<span style={{ color: '#3B82F6' }}>{tz.abbr} {tz.time}</span>
-          </span>
-        ))}
+        {extraTimezones.map(tz => {
+          const dd = getDayDiffLabel(tz.offset)
+          const w = weatherData[tz.id]
+          return (
+            <span key={tz.id}>
+              <span>·</span>
+              {' '}<span style={{ color: '#3B82F6' }}>{tz.abbr} {tz.time}{w ? ` ${w.emoji}${w.temp}°` : ''}</span>
+              {dd && <span className="text-[9px] text-[#F59E0B] ml-0.5">{dd}</span>}
+            </span>
+          )
+        })}
         <button
           onClick={() => setShowTzPicker(true)}
           className="ml-0.5 inline-flex items-center justify-center rounded-full active:scale-95 transition-transform"
@@ -663,149 +1134,284 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </button>
       </div>
 
-      {/* ─── Intent 카드 섹션 (세로 배치) ─── */}
-      <div className="mb-8 px-4">
-        <h2 className="text-[15px] font-semibold tracking-wide mb-4" style={{ color: '#1A1A1A' }}>
-          {L(lang, { ko: '한국 처음이신가요?', zh: '第一次来韩国吗？', en: 'First time in Korea?' })}
-        </h2>
-        <div className="grid grid-cols-3 gap-2">
-          {INTENT_CARDS.map((card) => (
-            <button
-              key={card.id}
-              onClick={() => {
-                if (card.id === 'just-arrived') { setArrivalStep('menu'); setShowArrivalFlow(true) }
-                else if (card.id === 'traveling') { setArrivalStep('traveling'); setShowArrivalFlow(true) }
-                else if (card.id === 'departure') { setArrivalStep('departure'); setShowArrivalFlow(true) }
-              }}
-              className="bg-white rounded-[6px] border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)] p-3 active:scale-[0.97] transition-all duration-150 text-left"
-            >
-              <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
-                {L(lang, card.label)}
-              </p>
-              <p className="text-[11px] mt-2 leading-relaxed" style={{ color: '#999999' }}>
-                {L(lang, card.sub)}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* ─── Intent 카드 섹션 (풀카드 히어로형) ─── */}
+      <div className="mb-2">
+        <p className="text-[11px] font-semibold tracking-widest uppercase mb-2" style={{ color: '#AAAAAA' }}>
+          {L(lang, { ko: '무엇을 도와드릴까요', zh: '需要什么帮助', en: 'How can we help' })}
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          {/* 입국 */}
+          <button
+            onClick={() => setArrivalPopup(true)}
+            className="flex flex-col items-center justify-center p-4 rounded-[12px] active:scale-[0.98] transition-all duration-150"
+            style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)' }}
+          >
+            <p className="text-[15px] font-bold text-white">
+              {L(lang, { ko: '입국', zh: '入境', en: 'Arrival' })}
+            </p>
+          </button>
 
-      {/* ─── 3. 한국 모든 여행지 ─── */}
-      <div className="mb-8 px-4">
-        <button
-          onClick={() => setTab('travel')}
-          className="flex items-center justify-between w-full mb-3"
-        >
-          <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
-            {L(lang, { ko: '한국 모든 여행지', zh: '韩国所有旅游地', en: 'All Korea Destinations' })}
-          </h2>
-          <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
-        </button>
-        <button
-          onClick={() => setTab('travel')}
-          className="w-full rounded-[6px] overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
-        >
-          <div className="relative h-[120px]">
-            <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&h=300&fit=crop" alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute bottom-3 left-4">
-              <p className="text-white text-lg font-bold text-left">{L(lang, { ko: '찾기', zh: '搜索', en: 'Search' })}</p>
-            </div>
-          </div>
-        </button>
-      </div>
+          {/* 출국 */}
+          <button
+            onClick={() => setDeparturePopup(true)}
+            className="flex flex-col items-center justify-center p-4 rounded-[12px] active:scale-[0.98] transition-all duration-150"
+            style={{ background: 'linear-gradient(135deg, #14532D 0%, #1A6B3A 100%)' }}
+          >
+            <p className="text-[15px] font-bold text-white">
+              {L(lang, { ko: '출국', zh: '出境', en: 'Departure' })}
+            </p>
+          </button>
 
-      {/* ─── 5. 상황별 한국어 ─── */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between w-full mb-3 px-4">
-          <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
-            {L(lang, { ko: '상황별 한국어', zh: '场景韩语', en: 'Korean by Situation' })}
-          </h2>
-        </div>
-        <div className="pl-4 pr-0 flex gap-4 overflow-x-auto scroll-indicator scroll-pl-4 pb-2">
-          {SCENE_PHRASES.map((item, i) => (
-            <button
-              key={i}
-              onClick={() => setOverlay(item.pocket)}
-              className="flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
-              style={{ width: 64 }}
-            >
-              <div className={`w-14 h-14 rounded-full overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.1)] ${item.pocket === 'emergency' ? 'ring-2 ring-red-400' : ''}`}>
-                <img src={item.img} alt="" className="w-full h-full object-cover" loading="lazy" onError={(e) => { e.target.parentElement.style.backgroundColor = '#F3F4F6' }} />
-              </div>
-              <span className="text-[11px] font-medium text-center leading-tight" style={{ color: '#1A1A1A' }}>
-                {L(lang, item.scene)}
-              </span>
-            </button>
-          ))}
-          <div className="flex-shrink-0 w-4" />
-        </div>
-      </div>
-
-      {/* ─── 5. 추천 코스 섹션 ─── */}
-      {isVisible('course') && <div className="mb-8">
-        <button
-          onClick={() => setTab('course')}
-          className="flex items-center justify-between w-full mb-3 px-4"
-        >
-          <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
-            {L(lang, { ko: '추천 코스', zh: '推荐路线', en: 'Recommended Courses' })}
-          </h2>
-          <span className="text-sm" style={{ color: '#666666' }}>&rarr;</span>
-        </button>
-        <div className="pl-4 pr-0 flex gap-3 overflow-x-auto scroll-indicator snap-x snap-mandatory scroll-pl-4 pb-2">
-          {courses.map(course => (
-            <button
-              key={course.id}
-              onClick={() => setTab('course')}
-              className="snap-start flex-shrink-0 rounded-[6px] overflow-hidden active:scale-[0.97] active:shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-all duration-150 border border-[#E5E7EB] shadow-[0_2px_12px_rgba(0,0,0,0.06)]"
-              style={{ width: 180 }}
-            >
-              <div
-                className="relative flex items-end p-3"
-                style={{ height: 150 }}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${COURSE_GRADIENTS[course.category] || 'from-[#6A6A5A] to-[#4A4A3A]'}`} />
-                {COURSE_IMAGES[course.id] && (
-                  <img
-                    src={COURSE_IMAGES[course.id]}
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover"
-                    loading="lazy"
-                    onError={(e) => { e.target.style.display = 'none' }}
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                <p className="relative text-white text-sm font-bold leading-tight text-left z-10">
-                  {L(lang, course.name)}
-                </p>
-              </div>
-              <div className="p-2.5" style={{ backgroundColor: '#FFFFFF', height: 64 }}>
-                <p className="text-[11px] line-clamp-2 text-left leading-relaxed" style={{ color: '#666666' }}>
-                  {L(lang, course.description)}
-                </p>
-                <p className="text-[10px] mt-1 text-left" style={{ color: '#666666' }}>
-                  {course.stops.length}{L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })} · {course.duration}
-                </p>
-              </div>
-            </button>
-          ))}
-          {/* 더보기 카드 */}
+          {/* 택시 */}
           <button
             onClick={() => setTab('course')}
-            className="snap-start flex-shrink-0 rounded-[6px] border-2 border-dashed flex items-center justify-center active:scale-[0.97] transition-transform duration-150"
-            style={{ width: 180, height: 214, borderColor: '#B2DFDB' }}
+            className="flex flex-col items-center justify-center p-4 rounded-[12px] active:scale-[0.98] transition-all duration-150"
+            style={{ background: 'linear-gradient(135deg, #EA7317 0%, #F59E0B 100%)' }}
           >
-            <div className="text-center">
-              <p className="text-lg mb-1" style={{ color: '#666666' }}>&rarr;</p>
-              <p className="text-xs font-medium" style={{ color: '#666666' }}>
-                {L(lang, { ko: '더보기', zh: '查看更多', en: 'View More' })}
-              </p>
-            </div>
+            <p className="text-[15px] font-bold text-white">
+              {L(lang, { ko: '택시', zh: '出租车', en: 'Taxi' })}
+            </p>
           </button>
-          <div className="flex-shrink-0 w-4" />
+
+          {/* 음식배달 */}
+          <button
+            onClick={() => setTab('tools')}
+            className="flex flex-col items-center justify-center p-4 rounded-[12px] active:scale-[0.98] transition-all duration-150"
+            style={{ background: 'linear-gradient(135deg, #DC2626 0%, #EF4444 100%)' }}
+          >
+            <p className="text-[15px] font-bold text-white">
+              {L(lang, { ko: '음식배달', zh: '外卖', en: 'Food Delivery' })}
+            </p>
+          </button>
         </div>
-      </div>}
+      </div>
+
+      {/* ─── 2.5 세금환급 / 여행다이어리 ─── */}
+      <div className="mb-4 grid grid-cols-2 gap-2">
+        <button
+          onClick={() => setOverlay('tax-refund-calc')}
+          className="bg-white rounded-[6px] border border-[#E5E7EB]  p-3 active:scale-[0.97] transition-all duration-150 text-left"
+        >
+          <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
+            {L(lang, { ko: '세금환급', zh: '退税计算', en: 'Tax Refund' })}
+          </p>
+          <p className="text-[11px] mt-2 leading-relaxed" style={{ color: '#999999' }}>
+            {L(lang, { ko: '쇼핑 금액 → 환급액', zh: '购物金额→退税额', en: 'Amount → Refund' })}
+          </p>
+        </button>
+        <button
+          onClick={() => setTab('course')}
+          className="bg-white rounded-[6px] border border-[#E5E7EB]  p-3 active:scale-[0.97] transition-all duration-150 text-left"
+        >
+          <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
+            {L(lang, { ko: '여행다이어리', zh: '旅行日记', en: 'Travel Diary' })}
+          </p>
+          <p className="text-[11px] mt-2 leading-relaxed" style={{ color: '#999999' }}>
+            {L(lang, { ko: '내 여행코스 만들기', zh: '创建我的路线', en: 'Create my itinerary' })}
+          </p>
+        </button>
+      </div>
+
+      {/* ─── 팝업스토어 큐레이션 ─── */}
+      <div className="mb-8">
+        <div className="px-4 flex items-center justify-between mb-3">
+          <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
+            {L(lang, { ko: '이번 주 팝업', zh: '本周快闪店', en: "This Week's Popups" })}
+          </h2>
+          <span className="text-[11px] font-medium" style={{ color: '#2D5A3D' }}>
+            {filteredPopups.length}{L(lang, { ko: '개 운영 중', zh: '家运营中', en: ' open now' })}
+          </span>
+        </div>
+
+        {/* 지역 필터 */}
+        <div className="px-4 flex gap-2 mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+          {DISTRICTS.map(d => (
+            <button
+              key={d.id}
+              onClick={() => setPopupDistrict(d.id)}
+              className="flex-shrink-0 px-3 py-1 rounded-full text-[12px] font-medium transition-colors"
+              style={{
+                backgroundColor: popupDistrict === d.id ? '#1A1A1A' : '#F3F4F6',
+                color: popupDistrict === d.id ? '#FFFFFF' : '#666666',
+              }}
+            >
+              {L(lang, d.label)}
+            </button>
+          ))}
+        </div>
+
+        {/* 팝업 카드 */}
+        {filteredPopups.length === 0 ? (
+          <div className="mx-4 rounded-[8px] border border-[#E5E7EB] p-6 text-center">
+            <p className="text-[13px] text-[#999]">
+              {L(lang, { ko: '현재 운영 중인 팝업이 없습니다', zh: '目前没有运营中的快闪店', en: 'No popups running now' })}
+            </p>
+          </div>
+        ) : (
+          <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-pl-4" style={{ scrollbarWidth: 'none' }}>
+            {filteredPopups.map(popup => {
+              const dday = getDdayLabel(popup, lang)
+              const closingSoon = isClosingSoon(popup)
+              const districtLabel = { ko: { seongsu: '성수', hongdae: '홍대/연남', hannam: '한남/이태원', gangnam: '강남/압구정', yeouido: '더현대', myeongdong: '명동/롯데', other: '기타' }, zh: { seongsu: '圣水', hongdae: '弘大/延南', hannam: '汉南/梨泰院', gangnam: '江南/狎鸥亭', yeouido: '现代百货', myeongdong: '明洞/乐天', other: '其他' }, en: { seongsu: 'Seongsu', hongdae: 'Hongdae', hannam: 'Hannam', gangnam: 'Gangnam', yeouido: 'The Hyundai', myeongdong: 'Myeongdong', other: 'Other' } }
+              return (
+                <button
+                  key={popup.id}
+                  onClick={() => setSelectedPopup(popup)}
+                  className="snap-start flex-shrink-0 rounded-[8px] overflow-hidden border border-[#E5E7EB] active:scale-[0.97] transition-all duration-150 bg-white text-left"
+                >
+                  <div className="relative h-[130px]">
+                    <img src={popup.image} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    {popup.hot && (
+                      <div className="absolute top-2 left-2 bg-[#FF3B30] text-white text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wider">
+                        HOT
+                      </div>
+                    )}
+                    <div
+                      className="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
+                      style={{ backgroundColor: closingSoon ? '#FF3B30' : 'rgba(0,0,0,0.5)' }}
+                    >
+                      {dday}
+                    </div>
+                    <div className="absolute bottom-2 left-2">
+                      <p className="text-white text-[10px] font-semibold tracking-wider uppercase opacity-80">{popup.brand}</p>
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <p className="text-[13px] font-bold text-[#1A1A1A] leading-tight mb-1 line-clamp-1">
+                      {L(lang, popup.title)}
+                    </p>
+                    <p className="text-[11px] text-[#999] mb-1.5">
+                      {districtLabel[lang]?.[popup.district] || popup.district} · ~{popup.period.end.slice(5).replace('-', '/')}
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {(popup.tags[lang] || popup.tags.ko).slice(0, 2).map((tag, i) => (
+                        <span key={i} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#F3F4F6] text-[#666]">{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+            <div className="flex-shrink-0 w-4" />
+          </div>
+        )}
+      </div>
+
+      {/* ─── 팝업 상세 바텀시트 ─── */}
+      {selectedPopup && (() => {
+        const p = selectedPopup
+        const distLabel = { ko: { seongsu: '성수', hongdae: '홍대/연남', hannam: '한남/이태원', gangnam: '강남/압구정', yeouido: '더현대', myeongdong: '명동/롯데', other: '기타' }, zh: { seongsu: '圣水', hongdae: '弘大/延南', hannam: '汉南/梨泰院', gangnam: '江南/狎鸥亭', yeouido: '现代百货', myeongdong: '明洞/乐天', other: '其他' }, en: { seongsu: 'Seongsu', hongdae: 'Hongdae', hannam: 'Hannam', gangnam: 'Gangnam', yeouido: 'The Hyundai', myeongdong: 'Myeongdong', other: 'Other' } }
+        return (
+          <div className="fixed inset-0 z-[300] flex flex-col justify-end" onClick={() => setSelectedPopup(null)}>
+            <div className="absolute inset-0 bg-black/40" />
+            <div
+              className="relative bg-white rounded-t-[20px] overflow-hidden"
+              style={{ maxHeight: '85vh' }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* 이미지 헤더 */}
+              <div className="relative h-[200px]">
+                <img src={p.image} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <button
+                  onClick={() => setSelectedPopup(null)}
+                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/40 flex items-center justify-center text-white text-lg leading-none"
+                >×</button>
+                {p.hot && (
+                  <div className="absolute top-4 left-4 bg-[#FF3B30] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">HOT</div>
+                )}
+                <div className="absolute bottom-4 left-4 right-4">
+                  <p className="text-white/70 text-[11px] font-semibold tracking-widest uppercase mb-1">{p.brand}</p>
+                  <p className="text-white text-[18px] font-bold leading-tight">{L(lang, p.title)}</p>
+                </div>
+              </div>
+
+              {/* 본문 */}
+              <div className="p-5 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 200px)' }}>
+                {/* D-day 배지 + 기간 */}
+                <div className="flex items-center gap-2 mb-4">
+                  <span
+                    className="text-[11px] font-bold px-2.5 py-1 rounded-full text-white"
+                    style={{ backgroundColor: isClosingSoon(p) ? '#FF3B30' : '#1A1A1A' }}
+                  >
+                    {getDdayLabel(p, lang)}
+                  </span>
+                  <span className="text-[13px] text-[#666]">
+                    {p.period.start.slice(5).replace('-', '/')} ~ {p.period.end.slice(5).replace('-', '/')}
+                  </span>
+                </div>
+
+                {/* 위치 */}
+                <div className="mb-4">
+                  <p className="text-[11px] text-[#999] mb-1">{L(lang, { ko: '위치', zh: '地点', en: 'Location' })}</p>
+                  <p className="text-[14px] font-medium text-[#1A1A1A]">
+                    {distLabel[lang]?.[p.district] || p.district}
+                  </p>
+                  <p className="text-[13px] text-[#666] mt-0.5">
+                    {typeof p.address === 'object' ? L(lang, p.address) : p.address}
+                  </p>
+                </div>
+
+                {/* 태그 */}
+                {p.tags && (
+                  <div className="flex flex-wrap gap-1.5 mb-5">
+                    {(p.tags[lang] || p.tags.ko || []).map((tag, i) => (
+                      <span key={i} className="text-[12px] px-2.5 py-1 rounded-full bg-[#F3F4F6] text-[#444]">
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* 지도 버튼 */}
+                <div className="flex gap-2">
+                  {p.kakaoMapUrl && (
+                    <button
+                      onClick={() => window.open(p.kakaoMapUrl, '_blank')}
+                      className="flex-1 py-3 rounded-[8px] font-bold text-[14px] text-[#1A1A1A] active:scale-[0.97] transition-transform"
+                      style={{ backgroundColor: '#FEE500' }}
+                    >
+                      {L(lang, { ko: '카카오맵으로 보기', zh: '用카카오地图查看', en: 'Open in KakaoMap' })}
+                    </button>
+                  )}
+                  {p.naverMapUrl && (
+                    <button
+                      onClick={() => window.open(p.naverMapUrl, '_blank')}
+                      className="flex-1 py-3 rounded-[8px] font-bold text-[14px] text-white active:scale-[0.97] transition-transform"
+                      style={{ backgroundColor: '#03C75A' }}
+                    >
+                      {L(lang, { ko: '네이버지도', zh: 'Naver地图', en: 'NaverMap' })}
+                    </button>
+                  )}
+                  {!p.kakaoMapUrl && !p.naverMapUrl && (
+                    <button
+                      onClick={() => {
+                        const q = typeof p.address === 'object' ? (p.address.ko || p.address.zh) : p.address
+                        window.open(`kakaomap://search?q=${encodeURIComponent(q || L(lang, p.title))}`, '_blank')
+                      }}
+                      className="flex-1 py-3 rounded-[8px] font-bold text-[14px] text-[#1A1A1A] active:scale-[0.97] transition-transform"
+                      style={{ backgroundColor: '#FEE500' }}
+                    >
+                      {L(lang, { ko: '지도에서 찾기', zh: '在地图中查找', en: 'Find on Map' })}
+                    </button>
+                  )}
+                </div>
+
+                {/* 출처 링크 */}
+                {p.sourceUrl && (
+                  <button
+                    onClick={() => window.open(p.sourceUrl, '_blank')}
+                    className="mt-3 w-full py-2.5 rounded-[8px] text-[13px] text-[#666] border border-[#E5E7EB] active:scale-[0.97] transition-transform"
+                  >
+                    {L(lang, { ko: '원본 보기', zh: '查看原文', en: 'View Source' })}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* ─── 가이드 오버레이 ─── */}
       {overlay && !POCKET_IDS.includes(overlay) && (
@@ -889,7 +1495,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {overlay === 'sim' && <SimGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
           {overlay === 'tax-refund' && <TaxRefundGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('departure') }} />}
           {overlay === 'duty-free' && <DutyFreeGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('traveling') }} />}
-          {overlay === 'halal' && <HalalGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
+          {/* halal guide removed */}
           {overlay === 'dietary-card' && <DietaryCardGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
           {overlay === 'kids' && <KidsGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
           {overlay === 'pet' && (
@@ -903,6 +1509,44 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           )}
           {overlay === 'country-duty-free' && <DutyFreeLimitGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('departure') }} />}
         </Suspense>
+      )}
+
+      {/* ─── 통역&번역 허브 오버레이 — TranslatorTab 임베드 ─── */}
+      {overlay === 'interpret-hub' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
+            <div className="flex items-center gap-3 px-4 py-3">
+              <button onClick={() => setOverlay(null)} className="p-1">
+                <ChevronLeft size={24} />
+              </button>
+              <h1 className="text-lg font-bold text-[#1A1A1A]">
+                {L(lang, { ko: '통역&번역', zh: '口译&翻译', en: 'Interpret & Translate' })}
+              </h1>
+            </div>
+          </div>
+          <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
+            <div className="max-w-[480px] mx-auto px-4 py-4">
+              <TranslatorTab lang={lang} />
+            </div>
+          </Suspense>
+        </div>
+      )}
+
+      {/* ─── 세금환급 계산기 오버레이 ─── */}
+      {overlay === 'tax-refund-calc' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
+            <div className="flex items-center gap-3 px-4 py-3">
+              <button onClick={() => setOverlay(null)} className="p-1">
+                <ChevronLeft size={24} />
+              </button>
+              <h1 className="text-lg font-bold text-[#1A1A1A]">
+                {L(lang, { ko: '세금환급 계산기', zh: '退税计算器', en: 'Tax Refund Calculator' })}
+              </h1>
+            </div>
+          </div>
+          <TaxRefundCalculator lang={lang} />
+        </div>
       )}
 
       {/* ─── 상황별 한국어 포켓 오버레이 ─── */}
@@ -960,10 +1604,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     }}
                     className="w-full flex items-center justify-between px-3 py-3 rounded-[6px] active:bg-gray-50 transition-colors"
                   >
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-base">{tz.flag}</span>
-                      <span className="text-sm" style={{ color: '#1A1A1A' }}>{tz.name}</span>
-                      <span className="text-xs" style={{ color: '#999999' }}>{tz.abbr} {currentTime}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono text-[#9CA3AF] w-5">{tz.code}</span>
+                      <span className="text-sm text-[#1A1A1A]">{L(lang, tz.name)}</span>
+                      <span className="text-xs text-[#999]">{tz.abbr} {currentTime}</span>
+                      {(() => { const dd = getDayDiffLabel(tz.offset); return dd ? <span className="text-[10px] text-[#F59E0B] font-medium">{dd}</span> : null })()}
                     </div>
                     <div
                       className="w-5 h-5 rounded-[6px] flex items-center justify-center"
@@ -995,57 +1640,141 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
 
-      {/* ─── 입국준비 플로우 ─── */}
+      {/* ─── 입국/출국 환영/이별 팝업 ─── */}
+      {arrivalPopup && (
+        <div className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center animate-fade-in">
+          <p className="text-lg font-bold text-[#1A1A1A] mb-6 text-center px-8" style={{ whiteSpace: 'pre-line' }}>
+            {L(lang, { ko: '반가워요.\n한국 혹시 처음이신가요?', zh: '欢迎！\n这是您第一次来韩国吗？', en: 'Welcome!\nIs this your first time in Korea?' })}
+          </p>
+          <PocketGirlBow />
+        </div>
+      )}
+      {departurePopup && (
+        <div className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center animate-fade-in">
+          <p className="text-lg font-bold text-[#1A1A1A] mb-6 text-center px-8" style={{ whiteSpace: 'pre-line' }}>
+            {L(lang, { ko: '벌써 돌아가세요?\n아쉽지만 다음을 기약해요!', zh: '这么快就要走了？\n虽然不舍，但下次再见！', en: 'Leaving already?\nSee you next time!' })}
+          </p>
+          <PocketGirlCry />
+        </div>
+      )}
+
+      {/* ─── 입국하기 플로우 (3단계 경로바) ─── */}
       {showArrivalFlow && arrivalStep === 'menu' && (
         <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
-              {L(lang, { ko: '입국준비', zh: '入境准备', en: 'Entry Prep' })}
+              {L(lang, { ko: '입국하기', zh: '入境', en: 'Arrival' })}
             </h2>
           </div>
+
+          {/* 경로바 — 3단계 + 포켓걸 */}
+          <div className="px-6 pt-5 pb-2">
+            <div className="relative flex items-center justify-between">
+              {/* 연결선 */}
+              <div className="absolute top-3 left-[16%] right-[16%] h-[2px] bg-[#E5E7EB]" />
+              <div className="absolute top-3 left-[16%] h-[2px] bg-[#1A1A1A] transition-all duration-300" style={{
+                width: arrivalPhase === 'entry' ? '0%' : arrivalPhase === 'move' ? '34%' : '68%'
+              }} />
+              {ARRIVAL_PHASES.map((p, i) => (
+                <button key={p.id} onClick={() => setArrivalPhase(p.id)} className="relative flex flex-col items-center z-10" style={{ width: '33%' }}>
+                  {arrivalPhase === p.id && (
+                    <div className="absolute -top-8">
+                      <PocketGirlMini size={18} />
+                    </div>
+                  )}
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${
+                    arrivalPhase === p.id ? 'bg-[#1A1A1A] text-white' : 'bg-[#E5E7EB] text-[#999]'
+                  }`}>{i + 1}</div>
+                  <span className={`text-[10px] mt-1.5 text-center leading-tight ${
+                    arrivalPhase === p.id ? 'text-[#1A1A1A] font-bold' : 'text-[#999]'
+                  }`}>{L(lang, p.label)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 단계별 기능 목록 */}
           <div className="p-4 flex flex-col gap-3">
-
-
-            {/* SIM카드 & 환전 — 최상단 강조 */}
-            <button
-              onClick={() => setArrivalStep('sim-exchange')}
-              className="rounded-[6px] border-2 border-[#111827] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
-            >
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'SIM카드 구매 & 환전할래요', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange money' })}</p>
-                <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport exchange, Myeongdong' })}</p>
-              </div>
-              <ChevronRight size={18} color="#999" />
-            </button>
-
-            {/* 입국준비 메뉴 */}
-            {[
-              { id: 'immigration', label: { ko: '입국신고서 작성할래요', zh: '要填入境申报卡', en: 'Fill Arrival Card' }, sub: { ko: '전자(Q-CODE) / 실물 입국카드', zh: '电子(Q-CODE) / 纸质入境卡', en: 'Electronic (Q-CODE) / Physical card' } },
-              { id: 'transport', label: { ko: '택시/대중교통 이용할래요', zh: '坐出租车/公共交通', en: 'Taxi / Public transit' }, sub: { ko: '공항택시, RIDE앱, AREX', zh: '机场出租车、RIDE APP、AREX', en: 'Airport taxi, RIDE app, AREX' } },
-
-              { id: 'guide-map', label: { ko: '한국지도', zh: '韩国地图', en: 'Korea Map' }, sub: { ko: '카카오맵 필수 설치', zh: '必装KakaoMap', en: 'Must install KakaoMap' }, guide: 'map-guide' },
-              { id: 'halal-guide', label: { ko: '할랄/무슬림 가이드', zh: '清真/穆斯林指南', en: 'Halal/Muslim Guide' }, sub: { ko: '무슬림 여행자를 위한 맞춤 가이드', zh: '为穆斯林旅行者定制的指南', en: 'Tailored guide for Muslim travelers' }, guide: 'halal' },
-              { id: 'dietary-card-guide', label: { ko: '식이제한 카드', zh: '饮食限制卡', en: 'Dietary Card' }, sub: { ko: '알레르기/채식주의자 식당 소통카드', zh: '过敏/素食者餐厅沟通卡', en: 'Allergy/vegetarian restaurant communication card' }, guide: 'dietary-card' },
-              { id: 'kids-guide', label: { ko: '유아동반 가이드', zh: '带娃旅行指南', en: 'Kids Travel Guide' }, sub: { ko: '아이와 함께하는 한국 여행', zh: '和孩子一起的韩国之旅', en: 'Korea travel with children' }, guide: 'kids' },
-              { id: 'nav-pet', label: { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, guide: 'pet' },
+            {arrivalPhase === 'entry' && [
+              { id: 'immigration-wait', label: { ko: '입국심사 대기시간 조회', zh: '入境审查等候时间查询', en: 'Immigration Wait Time' }, sub: { ko: '인천공항 T1/T2 실시간', zh: '仁川机场T1/T2实时', en: 'Incheon T1/T2 real-time' }, highlight: true },
+              { id: 'immigration', label: { ko: '입국신고서 작성하는 법', zh: '入境申报卡填写方法', en: 'How to Fill Arrival Card' }, sub: { ko: '전자(Q-CODE) / 실물 카드', zh: '电子(Q-CODE) / 纸质卡', en: 'Q-CODE / Physical card' } },
+              { id: 'sim-exchange', label: { ko: 'SIM카드 구매 & 환전', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange' }, sub: { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport, Myeongdong' } },
+              { id: 'nav-pet', label: { ko: '펫(반려동물) 입국 가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, guide: 'pet' },
+              { id: 'airport-facilities', label: { ko: '공항 시설 정보', zh: '机场设施信息', en: 'Airport Facilities' }, sub: { ko: '수유실, 휠체어, 라운지, 편의시설', zh: '母婴室、轮椅、休息室、便利设施', en: 'Nursing room, wheelchair, lounge' } },
+              { id: 'dietary-card-guide', label: { ko: '내가 못먹는 음식 등록', zh: '登记不能吃的食物', en: 'Register Dietary Restrictions' }, sub: { ko: '식당에서 한국어로 보여주기', zh: '在餐厅展示韩语卡片', en: 'Show Korean card at restaurants' }, guide: 'dietary-card' },
             ].map(item => (
               <button
                 key={item.id}
                 onClick={() => {
                   if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
-                  else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
                   else { setArrivalStep(item.id) }
                 }}
+                className={`rounded-[6px] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3 ${
+                  item.highlight ? 'border-2 border-blue-500 bg-blue-50' : 'border border-[#E5E7EB]'
+                }`}
+              >
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-bold ${item.highlight ? 'text-blue-700' : 'text-[#1A1A1A]'}`}>{L(lang, item.label)}</p>
+                  <p className={`text-xs mt-0.5 ${item.highlight ? 'text-blue-500' : 'text-[#666]'}`}>{L(lang, item.sub)}</p>
+                </div>
+                <ChevronRight size={18} color={item.highlight ? '#3B82F6' : '#999'} />
+              </button>
+            ))}
+
+            {arrivalPhase === 'move' && [
+              { id: 'transport-bus', label: { ko: '버스 타는 법', zh: '坐公交车', en: 'How to Ride Bus' }, sub: { ko: 'T-money 충전, 찍기, 환승', zh: 'T-money充值、刷卡、换乘', en: 'T-money, tap, transfer' } },
+              { id: 'transport-subway', label: { ko: '지하철 타는 법', zh: '坐地铁', en: 'How to Ride Subway' }, sub: { ko: '1회용 표, T-money, 갈아타기', zh: '单程票、T-money、换乘', en: 'Single ticket, T-money, transfer' } },
+              { id: 'transport-arex', label: { ko: 'AREX(공항철도) 타는 법', zh: '坐AREX机场铁路', en: 'How to Ride AREX' }, sub: { ko: '인천공항 ↔ 서울역 직통/일반', zh: '仁川机场↔首尔站 直达/普通', en: 'Incheon ↔ Seoul Station' } },
+              { id: 'transport-taxi', label: { ko: '택시 타는 법', zh: '坐出租车', en: 'How to Ride Taxi' }, sub: { ko: 'RIDE앱, 짐 크기 확인, 한국어 카드', zh: 'RIDE APP、行李确认、韩语卡片', en: 'RIDE app, luggage check, Korean card' } },
+              { id: 'transport-navi', label: { ko: '길찾기', zh: '导航', en: 'Navigation' }, sub: { ko: '공항에서 숙소까지 경로 검색', zh: '从机场到住宿的路线搜索', en: 'Route from airport to hotel' } },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => setArrivalStep(item.id)}
                 className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
-                  <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                  <p className="text-xs text-[#666] mt-0.5">{L(lang, item.sub)}</p>
                 </div>
                 <ChevronRight size={18} color="#999" />
               </button>
             ))}
+
+            {arrivalPhase === 'hotel' && [
+              { id: 'hotel-checkin', label: { ko: '체크인 한국어 카드', zh: '入住韩语卡片', en: 'Check-in Korean Card' }, sub: { ko: '체크인, 짐 맡기기, 번역기', zh: '办入住、寄存行李、翻译', en: 'Check-in, luggage storage, translator' } },
+              { id: 'hotel-nearby', label: { ko: '숙소 주변 살펴보기', zh: '查看住宿周边', en: 'Explore Nearby' }, sub: { ko: '편의점, 생활시설 확인', zh: '便利店、生活设施确认', en: 'Convenience store, amenities' } },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => setArrivalStep(item.id)}
+                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                  <p className="text-xs text-[#666] mt-0.5">{L(lang, item.sub)}</p>
+                </div>
+                <ChevronRight size={18} color="#999" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 입국심사 대기시간 상세 */}
+      {showArrivalFlow && arrivalStep === 'immigration-wait' && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+            <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
+            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+              {L(lang, { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' })}
+            </h2>
+          </div>
+          <div className="p-4">
+            <Suspense fallback={<div className="flex justify-center py-8"><div className="w-6 h-6 border-2 border-gray-200 rounded-full border-t-[#111827] animate-spin" /></div>}>
+              <ImmigrationWaitTime lang={lang} />
+            </Suspense>
           </div>
         </div>
       )}
@@ -1337,214 +2066,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
 
-      {/* ─── 공휴일 캘린더 (배너 위) ─── */}
-      <HolidayCalendar lang={lang} />
-
-      {/* ─── 광고/프로모 배너 ─── */}
-      <PromoBanner
-        lang={lang}
-        banners={[
-          {
-            emoji: '🛬',
-            bg: '#2D5A3D',
-            title: { ko: '한국 입국 가이드', zh: '韩国入境指南', en: 'Korea Arrival Guide' },
-            sub: { ko: '입국카드부터 교통카드까지 한번에!', zh: '入境卡到交通卡一次搞定！', en: 'Arrival card to transit card in one go!' },
-            onClick: () => { setArrivalStep('menu'); setShowArrivalFlow(true) },
-          },
-          {
-            emoji: '💱',
-            bg: '#B8860B',
-            title: { ko: '환전 꿀팁', zh: '换钱攻略', en: 'Exchange Tips' },
-            sub: { ko: '공항보다 명동이 1~3% 저렴!', zh: '明洞比机场便宜1~3%！', en: 'Myeongdong is 1~3% cheaper than airport!' },
-            onClick: () => {},
-          },
-          {
-            emoji: '🎊',
-            bg: '#8B4513',
-            title: { ko: '봄 축제 시즌', zh: '春季庆典', en: 'Spring Festival Season' },
-            sub: { ko: '진해 벚꽃, 여의도 벚꽃, 서울랜턴', zh: '镇海樱花、汝矣岛樱花、首尔灯笼', en: 'Jinhae Cherry Blossom, Yeouido, Seoul Lantern' },
-            onClick: () => setTab('course'),
-          },
-        ]}
-      />
-
-      {/* ─── 추천 피드 섹션들 (8개) ─── */}
-      {(() => {
-        // 데이터 준비
-        const topRestaurants = MICHELIN_RESTAURANTS.filter(r => r.award === 'michelin3' || r.award === 'michelin2').slice(0, 2)
-        const michelin1 = MICHELIN_RESTAURANTS.filter(r => r.award === 'michelin1')
-        const allCourses = RECOMMENDED_COURSES.filter(c => c.category !== 'test')
-        const walkCourses = allCourses.filter(c => c.category === 'first' || c.category === 'history').slice(0, 2)
-        const springCourses = allCourses.filter(c => c.category === 'jeju' || c.category === 'busan').slice(0, 2)
-
-        // 닉네임
-        let nickname = L(lang, { ko: '여행자', zh: '旅行者', en: 'Traveler' })
-        try { const p = JSON.parse(localStorage.getItem('hanpocket_profile') || '{}'); if (p.nickname) nickname = p.nickname } catch {}
-
-        // 맞춤 추천 아이템
-        let recentTab = 'food'
-        try {
-          const clicks = JSON.parse(localStorage.getItem('hp_recent_clicks') || '[]')
-          if (clicks.length > 0) recentTab = clicks[0]
-        } catch {}
-        const personalItems = [...michelin1].sort(() => 0.5 - Math.random()).slice(0, 2).map(r => ({
-          name: L(lang, r.name),
-          image: r.images?.[0] || 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
-          tags: [r.area?.gu, r.cuisine, getAwardBadge(r.award)].filter(Boolean),
-          sub: r.area?.gu,
-          onClick: () => setTab('food', { itemId: r.id, itemData: r }),
-        }))
-
-        // 국가별 인기 여행지 (사용자 언어 기반)
-        const countryLabel = L(lang, { ko: '중국', zh: '中国', en: 'Chinese' })
-        const popularByCountry = allCourses.slice(0, 2)
-
-        // 계절 판별
-        const month = new Date().getMonth() + 1
-        let seasonTitle, seasonSub, seasonCourses
-        if (month >= 3 && month <= 5) {
-          seasonTitle = { ko: '봄철 여행지 추천', zh: '春季旅游推荐', en: 'Spring Travel Picks' }
-          seasonSub = { ko: '벚꽃 시즌 필수 코스', zh: '樱花季必去路线', en: 'Must-visit during cherry blossom season' }
-          seasonCourses = springCourses
-        } else if (month >= 6 && month <= 8) {
-          seasonTitle = { ko: '여름철 여행지 추천', zh: '夏季旅游推荐', en: 'Summer Travel Picks' }
-          seasonSub = { ko: '시원한 바다와 계곡 여행', zh: '凉爽的海边和溪谷之旅', en: 'Cool beaches and valleys' }
-          seasonCourses = allCourses.filter(c => c.category === 'busan' || c.category === 'jeju').slice(0, 2)
-        } else if (month >= 9 && month <= 11) {
-          seasonTitle = { ko: '가을철 여행지 추천', zh: '秋季旅游推荐', en: 'Autumn Travel Picks' }
-          seasonSub = { ko: '단풍 시즌 베스트 코스', zh: '红叶季最佳路线', en: 'Best routes for fall foliage' }
-          seasonCourses = allCourses.filter(c => c.category === 'history' || c.category === 'first').slice(0, 2)
-        } else {
-          seasonTitle = { ko: '겨울철 여행지 추천', zh: '冬季旅游推荐', en: 'Winter Travel Picks' }
-          seasonSub = { ko: '설경과 온천 힐링 여행', zh: '雪景和温泉疗愈之旅', en: 'Snow scenes and hot spring healing' }
-          seasonCourses = allCourses.slice(0, 2)
-        }
-
-        const SAMPLE_REVIEWS = {
-          michelin3: { ko: '인생 레스토랑, 다시 와도 감동', zh: '人生餐厅，再来也感动', en: 'Life-changing restaurant' },
-          michelin2: { ko: '분위기와 맛 모두 완벽!', zh: '氛围和味道都完美！', en: 'Perfect ambience and taste!' },
-          michelin1: { ko: '가격 대비 최고의 선택', zh: '性价比最高的选择', en: 'Best value for money' },
-          blueribbon: { ko: '현지인이 줄 서는 맛집', zh: '当地人排队的餐厅', en: 'Locals line up for this' },
-        }
-
-        const makeRestaurantItem = (r) => ({
-          name: L(lang, r.name),
-          image: r.images?.[0] || 'https://images.unsplash.com/photo-1498654896293-37aacf113fd9?w=400&h=300&fit=crop',
-          tags: [[r.area?.city, r.area?.gu, r.area?.dong].filter(Boolean).join(' '), r.cuisine, getAwardBadge(r.award)].filter(Boolean),
-          sub: [r.area?.city, r.area?.gu, r.area?.dong].filter(Boolean).join(' '),
-          review: L(lang, SAMPLE_REVIEWS[r.award] || SAMPLE_REVIEWS.blueribbon),
-          onClick: () => setTab('food', { itemId: r.id, itemData: r }),
-        })
-
-        const makeCourseItem = (c) => ({
-          name: L(lang, c.name),
-          image: COURSE_IMAGES[c.id] || 'https://images.unsplash.com/photo-1583167625297-fe5e39ebb0f5?w=400&h=300&fit=crop',
-          tags: [c.duration, c.stops.length + L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })],
-          sub: L(lang, c.description),
-          onClick: () => setTab('course', { itemId: c.id, itemData: c }),
-        })
-
-        return (
-          <>
-            {/* 1. 한포켓이 선정한 추천 맛집 */}
-            {topRestaurants.length >= 2 && (
-              <RecommendSection
-                lang={lang}
-                title={{ ko: '한포켓이 선정한 추천 맛집', zh: '韩口袋精选推荐餐厅', en: 'HanPocket Top Picks' }}
-                subtitle={{ ko: '미슐랭 & 블루리본 검증된 맛집', zh: '米其林 & 蓝丝带认证餐厅', en: 'Michelin & Blue Ribbon verified' }}
-                items={topRestaurants.map(makeRestaurantItem)}
-                onViewAll={() => setTab('food')}
-              />
-            )}
-
-            {/* 2. 요즘 HOT한 카페 */}
-            <RecommendSection
-              lang={lang}
-              title={{ ko: '요즘 HOT한 카페', zh: '最近很火的咖啡厅', en: 'Trending Cafes' }}
-              subtitle={{ ko: '인스타 감성 카페 모음', zh: 'INS风咖啡厅合集', en: 'Instagram-worthy cafe collection' }}
-              items={[
-                { name: L(lang, { ko: '성수동 카페거리', zh: '圣水洞咖啡街', en: 'Seongsu Cafe Street' }), image: 'https://images.unsplash.com/photo-1559305616-3f99cd43e353?w=400&h=300&fit=crop', tags: [L(lang, { ko: '서울 성동구', zh: '首尔城东区', en: 'Seongdong-gu' })], review: L(lang, { ko: '인스타 사진 맛집, 커피도 맛있어요', zh: '拍照圣地，咖啡也好喝', en: 'Insta-worthy, great coffee too' }), onClick: () => setTab('cafe') },
-                { name: L(lang, { ko: '연남동 카페거리', zh: '延南洞咖啡街', en: 'Yeonnam Cafe Street' }), image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop', tags: [L(lang, { ko: '서울 마포구', zh: '首尔麻浦区', en: 'Mapo-gu' })], review: L(lang, { ko: '산책+커피의 최고 조합', zh: '散步+咖啡的最佳组合', en: 'Best combo: walk + coffee' }), onClick: () => setTab('cafe') },
-              ]}
-              onViewAll={() => setTab('cafe')}
-            />
-
-            {/* 3. 가볍게 둘러볼 수 있는 곳 */}
-            {walkCourses.length >= 2 && (
-              <RecommendSection
-                lang={lang}
-                title={{ ko: '가볍게 둘러볼 수 있는 곳', zh: '轻松逛逛的好地方', en: 'Easy Places to Explore' }}
-                subtitle={{ ko: '산책하기 좋은 무료 명소', zh: '适合散步的免费景点', en: 'Free attractions great for walking' }}
-                items={walkCourses.map(makeCourseItem)}
-                onViewAll={() => setTab('course')}
-              />
-            )}
-
-            {/* 4. 사용자님을 위한 맞춤 코스 */}
-            <RecommendSection
-              lang={lang}
-              title={{ ko: `${nickname}님을 위한 맞춤 코스`, zh: `为${nickname}定制的路线`, en: `Custom Course for ${nickname}` }}
-              subtitle={{ ko: '최근 관심사 기반 추천', zh: '根据最近兴趣推荐', en: 'Based on your recent interests' }}
-              items={personalItems}
-              onViewAll={() => setTab(recentTab)}
-            />
-
-            {/* 5. 올해 국가별 가장 많이 찾은 여행지 */}
-            {popularByCountry.length >= 2 && (
-              <RecommendSection
-                lang={lang}
-                title={{ ko: `올해 ${countryLabel} 관광객이 가장 많이 찾은 여행지`, zh: `今年${countryLabel}游客最多的旅游地`, en: `Most Visited by ${countryLabel} Tourists This Year` }}
-                subtitle={{ ko: '2025년 방문객 데이터 기반', zh: '基于2025年访客数据', en: 'Based on 2025 visitor data' }}
-                items={popularByCountry.map(makeCourseItem)}
-                onViewAll={() => setTab('course')}
-              />
-            )}
-
-            {/* 6. 계절별 여행지 추천 */}
-            {seasonCourses.length >= 2 && (
-              <RecommendSection
-                lang={lang}
-                title={seasonTitle}
-                subtitle={seasonSub}
-                items={seasonCourses.map(makeCourseItem)}
-                onViewAll={() => setTab('course')}
-              />
-            )}
-
-            {/* 7. 할인 중인 패션/뷰티 브랜드 */}
-            <BrandScrollSection lang={lang} />
-            <RecommendSection
-              lang={lang}
-              title={{ ko: '할인 중인 패션/뷰티 브랜드', zh: '折扣中的时尚/美妆品牌', en: 'Fashion & Beauty Brands on Sale' }}
-              subtitle={{ ko: '면세 + 시즌 세일 브랜드', zh: '免税 + 季节折扣品牌', en: 'Duty-free + seasonal sale brands' }}
-              items={[
-                { name: L(lang, { ko: '무신사 스토어', zh: 'MUSINSA', en: 'MUSINSA Store' }), image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop', tags: [L(lang, { ko: '최대 70% OFF', zh: '最高70%折扣', en: 'Up to 70% OFF' })], sub: L(lang, { ko: '한국 최대 패션 플랫폼', zh: '韩国最大时尚平台', en: "Korea's largest fashion platform" }), review: L(lang, { ko: '한국 패션 트렌드 한눈에', zh: '韩国时尚趋势一目了然', en: 'Korean fashion trends at a glance' }), onClick: () => setTab('shopping') },
-                { name: L(lang, { ko: '에이블리', zh: 'ABLY', en: 'ABLY' }), image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&h=300&fit=crop', tags: [L(lang, { ko: 'MZ세대 인기', zh: 'MZ世代人气', en: 'Popular with Gen MZ' })], sub: L(lang, { ko: '2030 여성 패션 1위 앱', zh: '20-30岁女性时尚第一APP', en: '#1 fashion app for young women' }), review: L(lang, { ko: '트렌디한 한국 패션을 저렴하게', zh: '便宜买到韩国潮流时尚', en: 'Trendy Korean fashion at low prices' }), onClick: () => setTab('shopping') },
-              ]}
-              onViewAll={() => setTab('shopping')}
-            />
-
-            {/* 8. 뷰티상품 몰아사기 */}
-            <RecommendSection
-              lang={lang}
-              title={{ ko: '뷰티상품 몰아사기', zh: 'K-Beauty大采购', en: 'K-Beauty Haul' }}
-              subtitle={{ ko: '한국에서만 살 수 있는 K-뷰티', zh: '只有在韩国才能买到的K-Beauty', en: 'K-Beauty you can only get in Korea' }}
-              items={[
-                { name: L(lang, { ko: '올리브영 명동 본점', zh: 'Olive Young 明洞总店', en: 'Olive Young Myeongdong' }), image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&h=300&fit=crop', tags: [L(lang, { ko: '외국인 15% 할인', zh: '外国人85折', en: '15% off for foreigners' }), L(lang, { ko: 'K-뷰티 성지', zh: 'K-Beauty圣地', en: 'K-Beauty mecca' })], review: L(lang, { ko: '면세보다 쌀 때도 있어요', zh: '有时比免税店还便宜', en: 'Sometimes cheaper than duty-free' }), onClick: () => setTab('shopping') },
-                { name: L(lang, { ko: '시코르 신세계 강남점', zh: 'CHICOR 新世界江南店', en: 'CHICOR Shinsegae Gangnam' }), image: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&h=300&fit=crop', tags: [L(lang, { ko: '프리미엄 뷰티', zh: '高端美妆', en: 'Premium beauty' })], sub: L(lang, { ko: '프리미엄 뷰티 편집숍', zh: '高端美妆编辑店', en: 'Premium beauty select shop' }), review: L(lang, { ko: '고급 브랜드 한곳에서 비교', zh: '高端品牌一站式比较', en: 'Compare luxury brands in one place' }), onClick: () => setTab('shopping') },
-              ]}
-              onViewAll={() => setTab('shopping')}
-            />
-          </>
-        )
-      })()}
-
       {/* ─── 플로팅 SOS 버튼 ─── */}
       {isVisible('emergency') && (
         <button
           onClick={() => setOverlay('emergency')}
-          className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-[#DC2626] text-white flex items-center justify-center shadow-lg active:scale-95 transition-transform"
-          style={{ boxShadow: '0 4px 12px rgba(220, 38, 38, 0.4)' }}
+          className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-[#DC2626] text-white flex items-center justify-center  active:scale-95 transition-transform"
         >
           <span className="text-lg font-bold">SOS</span>
         </button>
@@ -1552,7 +2078,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── 토스트 ─── */}
       {toast && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 text-white text-sm px-6 py-3 rounded-full shadow-lg z-50 animate-pulse" style={{ backgroundColor: 'var(--text-primary)' }}>
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 text-white text-sm px-6 py-3 rounded-full  z-50 animate-pulse" style={{ backgroundColor: 'var(--text-primary)' }}>
           {toast}
         </div>
       )}

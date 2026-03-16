@@ -21,6 +21,7 @@ const SECTIONS = [
     emoji: '🛠',
     items: [
       { id: 'tool-exchange', emoji: '💱', label: { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency Converter' }, sub: 'currency' },
+      { id: 'tool-taxrefund', emoji: '🧾', label: { ko: '세금환급 계산기', zh: '退税计算器', en: 'Tax Refund Calculator' }, detail: { ko: '구매금액 입력 → 환급액 확인', zh: '输入购买金额 → 查看退税额', en: 'Enter amount → check refund' }, sub: 'taxrefund' },
       { id: 'tool-learn',    emoji: '📚', label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' }, detail: { ko: '여행자를 위한 실용 한국어', zh: '旅行者实用韩语', en: 'Practical Korean' }, tool: 'learn' },
       { id: 'tool-taxi',     emoji: '🚕', label: { ko: '택시 요금 계산', zh: '出租车费用', en: 'Taxi Calculator' }, tab: 'taxi-calc' },
     ]

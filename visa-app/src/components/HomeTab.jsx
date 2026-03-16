@@ -1239,7 +1239,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             { icon: AirplaneTakeoff, label: { ko: '출국', zh: '出境', en: 'Depart' }, color: '#C4725A', onClick: () => setDeparturePopup(true) },
             { icon: PhMapPin, label: { ko: '지도', zh: '地图', en: 'Map' }, color: '#D4956B', onClick: () => setTab('near-map') },
             { icon: ChatCircleText, label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#8B6F5C', onClick: () => setTab('show-korean') },
-            { icon: Receipt, label: { ko: '텍스환급', zh: '退税', en: 'Tax Refund' }, color: '#7A8B6F', onClick: () => setTab('taxrefund') },
             { icon: FirstAidKit, label: { ko: '긴급', zh: '紧急', en: 'SOS' }, color: '#C62828', onClick: () => setTab('sos') },
             { icon: PhGlobe, label: { ko: '한국문화', zh: '韩国文化', en: 'Culture' }, color: '#B8860B', onClick: () => setTab('korean-culture') },
             { icon: Plus, label: { ko: '더보기', zh: '更多', en: 'More' }, color: '#888', onClick: () => setTab('more') },
@@ -1909,22 +1908,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
 
-      {/* ─── 세금환급 계산기 오버레이 ─── */}
-      {overlay === 'tax-refund-calc' && (
-        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
-            <div className="flex items-center gap-3 px-4 py-3">
-              <button onClick={() => setOverlay(null)} className="p-1">
-                <ChevronLeft size={24} />
-              </button>
-              <h1 className="text-lg font-bold text-[#1A1A1A]">
-                {L(lang, { ko: '세금환급 계산기', zh: '退税计算器', en: 'Tax Refund Calculator' })}
-              </h1>
-            </div>
-          </div>
-          <TaxRefundCalculator lang={lang} />
-        </div>
-      )}
+
 
       {/* ─── 상황별 한국어 포켓 오버레이 ─── */}
       {overlay && POCKET_IDS.includes(overlay) && (

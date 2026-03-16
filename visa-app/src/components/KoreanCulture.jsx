@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, Suspense, lazy } from 'react'
 import { ChevronLeft, MessageSquare, ThumbsUp, Send } from 'lucide-react'
 import { CULTURE_DIFFS, CULTURE_CATEGORIES } from '../data/cultureDifferences'
+
+const ShowKorean = lazy(() => import('./ShowKorean'))
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -90,7 +92,7 @@ function CultureBoard({ lang }) {
 
 export default function KoreanCulture({ lang, onBack }) {
   const [activeCat, setActiveCat] = useState(null)
-  const [activeTab, setActiveTab] = useState('list') // list | board
+  const [activeTab, setActiveTab] = useState('list') // list | korean
 
   const filtered = activeCat ? CULTURE_DIFFS.filter(d => d.cat === activeCat) : CULTURE_DIFFS
 
@@ -113,16 +115,18 @@ export default function KoreanCulture({ lang, onBack }) {
           {L(lang, { ko: '문화 차이 50', zh: '文化差异50', en: '50 Differences' })}
         </button>
         <button
-          onClick={() => setActiveTab('board')}
+          onClick={() => setActiveTab('korean')}
           className="flex-1 py-2 rounded-full text-sm font-medium transition-all"
-          style={{ backgroundColor: activeTab === 'board' ? '#C4725A' : '#F3F4F6', color: activeTab === 'board' ? '#FFF' : '#666' }}
+          style={{ backgroundColor: activeTab === 'korean' ? '#C4725A' : '#F3F4F6', color: activeTab === 'korean' ? '#FFF' : '#666' }}
         >
-          {L(lang, { ko: '문화 토크', zh: '文化讨论', en: 'Culture Talk' })}
+          {L(lang, { ko: '한국어', zh: '韩语', en: 'Korean' })}
         </button>
       </div>
 
-      {activeTab === 'board' ? (
-        <CultureBoard lang={lang} />
+      {activeTab === 'korean' ? (
+        <Suspense fallback={<div className="flex justify-center py-8"><div className="w-6 h-6 border-2 border-gray-200 rounded-full border-t-[#111827] animate-spin" /></div>}>
+          <ShowKorean lang={lang} onBack={() => setActiveTab('list')} embedded />
+        </Suspense>
       ) : (
         <>
           {/* 카테고리 필터 */}

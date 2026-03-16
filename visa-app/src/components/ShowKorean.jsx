@@ -153,7 +153,7 @@ function PhraseCard({ phrase, lang }) {
   )
 }
 
-export default function ShowKorean({ lang, onBack }) {
+export default function ShowKorean({ lang, onBack, embedded }) {
   const [activeScene, setActiveScene] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
 

@@ -37,64 +37,40 @@ const QUICK_AREAS = [
   { id: 'yeouido',   label: { ko: '여의도', zh: '汝矣岛', en: 'Yeouido' }, lat: 37.5219, lng: 126.9245, zoom: 4 },
 ]
 
-// ─── Magic Pill Selector (드롭다운 + 터치 드래그) ───
+// ─── Magic Pill Selector (토글 드롭다운) ───
 function MagicPillSelector({ areas, lang, onSelect }) {
   const [expanded, setExpanded] = useState(false)
   const [selected, setSelected] = useState(areas[0])
-  const [hoverIdx, setHoverIdx] = useState(null)
-  const itemRefs = useRef([])
-  const containerRef = useRef(null)
 
-  const handleSelect = useCallback((area) => {
+  const handleSelect = useCallback((area, e) => {
+    e.stopPropagation()
+    e.preventDefault()
     setSelected(area)
     setExpanded(false)
-    setHoverIdx(null)
     onSelect(area)
   }, [onSelect])
 
-  // 터치 시작 → 펼치기
-  const handleTouchStart = useCallback((e) => {
-    if (!expanded) {
-      e.preventDefault()
-      setExpanded(true)
-    }
-  }, [expanded])
+  const toggleDropdown = useCallback((e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setExpanded(v => !v)
+  }, [])
 
-  // 터치 이동 → 어느 항목 위인지 하이라이트
-  const handleTouchMove = useCallback((e) => {
-    if (!expanded) return
-    const touch = e.touches[0]
-    const idx = itemRefs.current.findIndex(el => {
-      if (!el) return false
-      const rect = el.getBoundingClientRect()
-      return touch.clientX >= rect.left && touch.clientX <= rect.right &&
-             touch.clientY >= rect.top && touch.clientY <= rect.bottom
-    })
-    setHoverIdx(idx >= 0 ? idx : null)
-  }, [expanded])
-
-  // 터치 끝 → 하이라이트된 항목 선택
-  const handleTouchEnd = useCallback(() => {
-    if (!expanded) return
-    if (hoverIdx !== null && hoverIdx >= 0) {
-      handleSelect(areas[hoverIdx])
-    } else {
-      setExpanded(false)
-      setHoverIdx(null)
-    }
-  }, [expanded, hoverIdx, areas, handleSelect])
+  const closeDropdown = useCallback((e) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setExpanded(false)
+  }, [])
 
   return (
-    <div className="relative" ref={containerRef}>
-      {/* ── 접힌 상태: pill 버튼 ── */}
+    <div className="relative">
       <button
-        onTouchStart={handleTouchStart}
-        onClick={() => setExpanded(v => !v)}
+        onClick={toggleDropdown}
+        onTouchEnd={(e) => { e.stopPropagation() }}
         className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold text-white"
         style={{
           background: '#1A1A1A',
           boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          transition: 'all 0.2s ease',
         }}
       >
         <MapPin size={14} weight="fill" />
@@ -102,11 +78,12 @@ function MagicPillSelector({ areas, lang, onSelect }) {
         <span className="text-[10px] opacity-60 ml-0.5">{expanded ? '▲' : '▼'}</span>
       </button>
 
-      {/* ── 펼쳐진 상태: 아래로 드롭다운 ── */}
       {expanded && (
         <>
-          {/* 배경 터치 시 닫기 */}
-          <div className="fixed inset-0 z-30" onClick={() => { setExpanded(false); setHoverIdx(null) }} />
+          <div className="fixed inset-0 z-30"
+            onClick={closeDropdown}
+            onTouchEnd={closeDropdown}
+          />
           <div
             className="absolute top-full right-0 mt-1 z-40 bg-white rounded-[14px] py-1 overflow-hidden"
             style={{
@@ -114,29 +91,29 @@ function MagicPillSelector({ areas, lang, onSelect }) {
               minWidth: 140,
               animation: 'pillAppear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both',
             }}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            onTouchEnd={(e) => e.stopPropagation()}
           >
-            {areas.map((area, i) => {
-              const isHover = hoverIdx === i
+            {areas.map((area) => {
               const isCurrent = selected.id === area.id
               return (
-                <div
+                <button
                   key={area.id}
-                  ref={el => itemRefs.current[i] = el}
-                  onClick={() => handleSelect(area)}
-                  className="px-4 py-2.5 flex items-center gap-2 transition-colors duration-100 cursor-pointer select-none"
+                  onClick={(e) => handleSelect(area, e)}
+                  onTouchEnd={(e) => e.stopPropagation()}
+                  className="w-full px-4 py-2.5 flex items-center gap-2 cursor-pointer select-none active:bg-[#1A1A1A] active:text-white transition-colors duration-100"
                   style={{
-                    background: isHover ? '#1A1A1A' : isCurrent ? '#F5F5F5' : 'transparent',
-                    color: isHover ? '#FFF' : '#1A1A1A',
+                    background: isCurrent ? '#F5F5F5' : 'transparent',
+                    color: '#1A1A1A',
                   }}
                 >
-                  <span className="text-[12px] w-4">{isHover ? <MapPin size={14} weight="fill" /> : isCurrent ? <MapPin size={14} weight="duotone" /> : null}</span>
-                  <span className={`text-[13px] ${isCurrent || isHover ? 'font-bold' : 'font-medium'}`}>
+                  <span className="w-4 flex items-center justify-center">
+                    {isCurrent ? <MapPin size={14} weight="duotone" color="#C4725A" /> : null}
+                  </span>
+                  <span className={`text-[13px] ${isCurrent ? 'font-bold' : 'font-medium'}`}>
                     {L(lang, area.label)}
                   </span>
-                  {isCurrent && !isHover && <span className="text-[10px] text-[#999] ml-auto">현재</span>}
-                </div>
+                  {isCurrent && <span className="text-[10px] text-[#999] ml-auto">현재</span>}
+                </button>
               )
             })}
           </div>

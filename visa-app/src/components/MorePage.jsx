@@ -8,19 +8,6 @@ function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d
 
 const SECTIONS = [
   {
-    title: { ko: '긴급 정보', zh: '紧急信息', en: 'Emergency' },
-    emoji: '🆘',
-    items: [
-      { id: 'sos-langcard', emoji: '🗣️', label: { ko: '긴급 한국어 카드', zh: '紧急韩语卡', en: 'Emergency Korean Card' }, detail: { ko: '증상·상황별 한국어 표현 + TTS', zh: '症状·场景韩语表达 + TTS', en: 'Symptom & situation Korean phrases + TTS' }, sub: 'sos-language' },
-      { id: 'sos-phone',    emoji: '📞', label: { ko: '긴급 전화번호', zh: '紧急电话', en: 'Emergency Numbers' }, sub: 'emergency-numbers' },
-      { id: 'sos-hospital', emoji: '🏥', label: { ko: '가까운 병원', zh: '附近医院', en: 'Nearby Hospital' }, action: 'search', query: '외국인진료 병원' },
-      { id: 'sos-embassy',  emoji: '🏛️', label: { ko: '중국 대사관', zh: '中国大使馆', en: 'Chinese Embassy' }, detail: '02-738-1038' },
-      { id: 'sos-police',   emoji: '👮', label: { ko: '관광경찰', zh: '旅游警察', en: 'Tourist Police' }, detail: '1330' },
-      { id: 'sos-lost',     emoji: '📦', label: { ko: '분실물 신고', zh: '失物报告', en: 'Lost & Found' }, sub: 'lost-item' },
-      { id: 'sos-allergy',  emoji: '⚠️', label: { ko: '알레르기 카드', zh: '过敏卡', en: 'Allergy Card' }, sub: 'allergy-card' },
-    ]
-  },
-  {
     title: { ko: '통역 & 번역', zh: '口译 & 翻译', en: 'Translation' },
     emoji: '🗣️',
     items: [
@@ -71,6 +58,19 @@ const SECTIONS = [
       { id: 'comm-wechat', emoji: '💚', label: { ko: '위챗방 참여', zh: '加入微信群', en: 'Join WeChat Group' }, external: true },
       { id: 'comm-xhs',    emoji: '📕', label: { ko: 'NEAR 小红书', zh: 'NEAR小红书', en: 'NEAR Xiaohongshu' }, external: true },
       { id: 'comm-feedback',emoji: '✉️', label: { ko: '의견 보내기', zh: '发送反馈', en: 'Send Feedback' } },
+    ]
+  },
+  {
+    title: { ko: '긴급 정보', zh: '紧急信息', en: 'Emergency' },
+    emoji: '🆘',
+    items: [
+      { id: 'sos-langcard', emoji: '🗣️', label: { ko: '긴급 한국어 카드', zh: '紧急韩语卡', en: 'Emergency Korean Card' }, detail: { ko: '증상·상황별 한국어 표현 + TTS', zh: '症状·场景韩语表达 + TTS', en: 'Symptom & situation Korean phrases + TTS' }, sub: 'sos-language' },
+      { id: 'sos-phone',    emoji: '📞', label: { ko: '긴급 전화번호', zh: '紧急电话', en: 'Emergency Numbers' }, sub: 'emergency-numbers' },
+      { id: 'sos-hospital', emoji: '🏥', label: { ko: '가까운 병원', zh: '附近医院', en: 'Nearby Hospital' }, action: 'search', query: '외국인진료 병원' },
+      { id: 'sos-embassy',  emoji: '🏛️', label: { ko: '중국 대사관', zh: '中国大使馆', en: 'Chinese Embassy' }, detail: '02-738-1038' },
+      { id: 'sos-police',   emoji: '👮', label: { ko: '관광경찰', zh: '旅游警察', en: 'Tourist Police' }, detail: '1330' },
+      { id: 'sos-lost',     emoji: '📦', label: { ko: '분실물 신고', zh: '失物报告', en: 'Lost & Found' }, sub: 'lost-item' },
+      { id: 'sos-allergy',  emoji: '⚠️', label: { ko: '알레르기 카드', zh: '过敏卡', en: 'Allergy Card' }, sub: 'allergy-card' },
     ]
   },
   {

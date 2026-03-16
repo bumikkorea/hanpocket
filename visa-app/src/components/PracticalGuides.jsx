@@ -1186,3 +1186,241 @@ export function WeatherRecommend({ lang }) {
     </div>
   )
 }
+
+// ─── Visit Seoul B등급: 의료관광 ────────────────────────────────
+const MEDICAL_ITEMS = [
+  { id: 'mt-1', emoji: '💉', name: { ko: '피부과/미용', zh: '皮肤科/美容', en: 'Dermatology/Beauty' },
+    area: { ko: '강남 압구정', zh: '江南狎鸥亭', en: 'Gangnam Apgujeong' },
+    desc: { ko: '보톡스, 필러, 레이저 시술. 중국어 상담 가능 병원 다수', zh: '肉毒素、玻尿酸、激光治疗。多家医院提供中文咨询', en: 'Botox, filler, laser treatments. Many clinics offer Chinese consultation' },
+    price: '₩100,000~', hospitals: [
+      { name: { ko: '아이디병원', zh: 'ID医院', en: 'ID Hospital' }, tel: '02-3496-9500', chinese: true, lat: 37.5249, lng: 127.0390 },
+      { name: { ko: '바노바기성형외과', zh: 'Banobagi整形外科', en: 'Banobagi' }, tel: '02-522-6636', chinese: true, lat: 37.5040, lng: 127.0395 },
+    ]},
+  { id: 'mt-2', emoji: '🦷', name: { ko: '치과', zh: '牙科', en: 'Dentistry' },
+    area: { ko: '강남 신사동', zh: '江南新沙洞', en: 'Gangnam Sinsa' },
+    desc: { ko: '임플란트, 라미네이트, 치아교정. 한국 치과 가성비 최고', zh: '种植牙、贴面、牙齿矫正。韩国牙科性价比极高', en: 'Implants, veneers, orthodontics. Best value in Korea' },
+    price: '₩500,000~', hospitals: [
+      { name: { ko: '연세세브란스치과', zh: '延世Severance牙科', en: 'Yonsei Severance Dental' }, tel: '02-2228-3200', chinese: true, lat: 37.5622, lng: 126.9410 },
+    ]},
+  { id: 'mt-3', emoji: '👁️', name: { ko: '안과 (라식/라섹)', zh: '眼科(LASIK/LASEK)', en: 'Ophthalmology (LASIK)' },
+    area: { ko: '강남역', zh: '江南站', en: 'Gangnam Station' },
+    desc: { ko: '라식/라섹/렌즈삽입. 한국이 세계 최저 가격대', zh: 'LASIK/LASEK/ICL。韩国价格全球最低', en: 'LASIK/LASEK/ICL. Lowest prices worldwide' },
+    price: '₩800,000~', hospitals: [
+      { name: { ko: '비앤빛강남밝은세상안과', zh: 'B&VIIT江南明亮眼科', en: 'B&VIIT Gangnam' }, tel: '02-533-5501', chinese: true, lat: 37.4970, lng: 127.0285 },
+    ]},
+  { id: 'mt-4', emoji: '🏥', name: { ko: '종합검진', zh: '综合体检', en: 'Health Checkup' },
+    area: { ko: '서울 전역', zh: '首尔全域', en: 'All Seoul' },
+    desc: { ko: '1~2일 종합건강검진. 중국 대비 50% 이상 저렴', zh: '1~2天综合健康体检。比中国便宜50%以上', en: '1-2 day comprehensive checkup. 50%+ cheaper than China' },
+    price: '₩300,000~', hospitals: [
+      { name: { ko: '삼성서울병원', zh: '三星首尔医院', en: 'Samsung Medical Center' }, tel: '02-3410-2000', chinese: true, lat: 37.4881, lng: 127.0857 },
+      { name: { ko: '서울아산병원', zh: '首尔峨山医院', en: 'Asan Medical Center' }, tel: '02-3010-5001', chinese: true, lat: 37.5262, lng: 127.1076 },
+    ]},
+]
+
+export function MedicalTourism({ lang }) {
+  const [expanded, setExpanded] = useState(null)
+
+  return (
+    <div className="px-4 pt-4 pb-24">
+      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">🏥 {L(lang, { ko: '의료관광', zh: '医疗旅游', en: 'Medical Tourism' })}</p>
+      <p className="text-[11px] text-[#9CA3AF] mb-1">{L(lang, { ko: '한국 의료 서비스를 합리적 가격에', zh: '以合理的价格享受韩国医疗服务', en: 'Korean medical services at reasonable prices' })}</p>
+      <div className="bg-[#FFF5F2] rounded-[10px] px-3 py-2 mb-4">
+        <p className="text-[10px] text-[#C4725A] font-medium">💡 {L(lang, { ko: '한국은 성형, 피부, 치과, 안과, 종합검진 분야에서 세계적 수준이며 가격은 미국·중국 대비 30~70% 저렴합니다', zh: '韩国在整形、皮肤、牙科、眼科、综合体检领域世界领先，价格比美国·中国低30~70%', en: 'Korea is world-class in cosmetic, dental, ophthalmology, and health checkups at 30-70% lower prices' })}</p>
+      </div>
+
+      <div className="space-y-3">
+        {MEDICAL_ITEMS.map(item => {
+          const isOpen = expanded === item.id
+          return (
+            <div key={item.id} className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <button onClick={() => setExpanded(isOpen ? null : item.id)} className="w-full text-left px-4 py-3 flex items-center gap-3">
+                <span className="text-2xl">{item.emoji}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-bold text-[#111827]">{L(lang, item.name)}</p>
+                  <p className="text-[10px] text-[#9CA3AF] mt-0.5">📍 {L(lang, item.area)} · {item.price}</p>
+                </div>
+                <span className={`text-[#9CA3AF] transition-transform ${isOpen ? 'rotate-180' : ''}`}>▾</span>
+              </button>
+              {isOpen && (
+                <div className="px-4 pb-4">
+                  <p className="text-[12px] text-[#555] mb-3">{L(lang, item.desc)}</p>
+                  <p className="text-[11px] font-bold text-[#374151] mb-2">{L(lang, { ko: '추천 병원', zh: '推荐医院', en: 'Recommended Hospitals' })}</p>
+                  <div className="space-y-2">
+                    {item.hospitals.map(h => (
+                      <div key={L(lang, h.name)} className="bg-[#F9FAFB] rounded-[10px] px-3 py-2.5 flex items-center gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[12px] font-medium text-[#111827]">{L(lang, h.name)}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <a href={`tel:${h.tel}`} className="text-[10px] text-[#4F46E5]">📞 {h.tel}</a>
+                            {h.chinese && <span className="text-[9px] bg-[#DCFCE7] text-[#16A34A] px-1.5 py-0.5 rounded-full">🇨🇳 {L(lang, { ko: '중국어 OK', zh: '中文OK', en: 'Chinese OK' })}</span>}
+                          </div>
+                        </div>
+                        <a href={`https://map.kakao.com/link/map/${encodeURIComponent(L(lang, h.name))},${h.lat},${h.lng}`}
+                          target="_blank" rel="noreferrer"
+                          className="text-[10px] bg-[#FEE500] text-[#111827] font-bold px-2 py-1 rounded-full shrink-0">🗺</a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      <a href="https://www.visitseoul.net/medical" target="_blank" rel="noreferrer"
+        className="block w-full mt-4 py-3 rounded-[12px] bg-[#111827] text-white text-[13px] font-bold text-center">
+        🏥 {L(lang, { ko: 'Visit Seoul 의료관광 더보기', zh: '查看更多Visit Seoul医疗旅游', en: 'More Medical Tourism on Visit Seoul' })}
+      </a>
+    </div>
+  )
+}
+
+// ─── Visit Seoul B등급: 서울스테이 ────────────────────────────────
+const SEOUL_STAY_DATA = [
+  { id: 'ss-1', emoji: '🏛', type: { ko: '한옥스테이', zh: '韩屋民宿', en: 'Hanok Stay' },
+    desc: { ko: '전통 한옥에서 하룻밤. 북촌, 서촌, 은평 한옥마을', zh: '在传统韩屋住一晚。北村、西村、恩平韩屋村', en: 'One night in traditional hanok. Bukchon, Seochon, Eunpyeong' },
+    areas: [
+      { name: { ko: '북촌한옥마을', zh: '北村韩屋村', en: 'Bukchon Hanok Village' }, lat: 37.5826, lng: 126.9849, price: '₩80,000~' },
+      { name: { ko: '서촌 (경복궁 서쪽)', zh: '西村(景福宫西)', en: 'Seochon' }, lat: 37.5768, lng: 126.9706, price: '₩70,000~' },
+    ]},
+  { id: 'ss-2', emoji: '🏢', type: { ko: '게스트하우스', zh: '旅馆', en: 'Guesthouse' },
+    desc: { ko: '합리적 가격 + 여행자 교류. 홍대, 이태원, 명동 밀집', zh: '合理价格+旅行者交流。弘大、梨泰院、明洞集中', en: 'Affordable + traveler exchange. Concentrated in Hongdae, Itaewon, Myeongdong' },
+    areas: [
+      { name: { ko: '홍대입구역', zh: '弘大入口站', en: 'Hongdae Station' }, lat: 37.5571, lng: 126.9254, price: '₩25,000~' },
+      { name: { ko: '명동', zh: '明洞', en: 'Myeongdong' }, lat: 37.5636, lng: 126.9869, price: '₩30,000~' },
+    ]},
+  { id: 'ss-3', emoji: '🌿', type: { ko: '템플스테이', zh: '寺庙住宿', en: 'Temple Stay' },
+    desc: { ko: '사찰에서 명상과 전통 체험. 서울 도심 속 사찰', zh: '在寺庙冥想和体验传统文化。首尔市中心的寺庙', en: 'Meditation and traditional experience at temples in Seoul' },
+    areas: [
+      { name: { ko: '조계사', zh: '曹溪寺', en: 'Jogyesa Temple' }, lat: 37.5733, lng: 126.9835, price: '₩50,000~' },
+      { name: { ko: '봉은사', zh: '奉恩寺', en: 'Bongeunsa Temple' }, lat: 37.5154, lng: 127.0582, price: '₩50,000~' },
+    ]},
+  { id: 'ss-4', emoji: '🏨', type: { ko: '한강뷰 호텔', zh: '汉江景酒店', en: 'Han River View Hotel' },
+    desc: { ko: '한강이 보이는 호텔에서 서울 야경 감상', zh: '在可以看到汉江的酒店欣赏首尔夜景', en: 'Enjoy Seoul night view from hotels overlooking Han River' },
+    areas: [
+      { name: { ko: '여의도 콘래드', zh: '汝矣岛康莱德', en: 'Conrad Seoul Yeouido' }, lat: 37.5253, lng: 126.9270, price: '₩250,000~' },
+      { name: { ko: '반포 JW메리어트', zh: '盘浦JW万豪', en: 'JW Marriott Banpo' }, lat: 37.5084, lng: 127.0001, price: '₩300,000~' },
+    ]},
+]
+
+export function SeoulStay({ lang }) {
+  const [selected, setSelected] = useState(null)
+
+  return (
+    <div className="px-4 pt-4 pb-24">
+      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">🏠 {L(lang, { ko: '서울 스테이', zh: '首尔住宿', en: 'Seoul Stay' })}</p>
+      <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '한옥부터 한강뷰 호텔까지, 서울에서 어디서 잘까?', zh: '从韩屋到汉江景酒店，在首尔住哪里？', en: 'From hanok to Han River view hotels, where to stay in Seoul?' })}</p>
+
+      <div className="space-y-3">
+        {SEOUL_STAY_DATA.map(item => {
+          const isOpen = selected === item.id
+          return (
+            <div key={item.id} className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+              <button onClick={() => setSelected(isOpen ? null : item.id)} className="w-full text-left px-4 py-3.5 flex items-center gap-3">
+                <span className="text-2xl">{item.emoji}</span>
+                <div className="flex-1">
+                  <p className="text-[14px] font-bold text-[#111827]">{L(lang, item.type)}</p>
+                  <p className="text-[11px] text-[#9CA3AF] mt-0.5">{L(lang, item.desc)}</p>
+                </div>
+                <span className={`text-[#9CA3AF] transition-transform ${isOpen ? 'rotate-180' : ''}`}>▾</span>
+              </button>
+              {isOpen && (
+                <div className="px-4 pb-4 space-y-2">
+                  {item.areas.map(a => (
+                    <div key={L(lang, a.name)} className="bg-[#F9FAFB] rounded-[10px] px-3 py-2.5 flex items-center gap-3">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] font-medium text-[#111827]">{L(lang, a.name)}</p>
+                        <p className="text-[10px] text-[#9CA3AF] mt-0.5">💰 {a.price}</p>
+                      </div>
+                      <a href={`https://map.kakao.com/link/search/${encodeURIComponent(L(lang, a.name) + ' 숙소')}`}
+                        target="_blank" rel="noreferrer"
+                        className="text-[10px] bg-[#FEE500] text-[#111827] font-bold px-2 py-1 rounded-full shrink-0">🗺 {L(lang, { ko: '검색', zh: '搜索', en: 'Search' })}</a>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      <a href="https://www.visitseoul.net/accommodation" target="_blank" rel="noreferrer"
+        className="block w-full mt-4 py-3 rounded-[12px] bg-[#111827] text-white text-[13px] font-bold text-center">
+        🏠 {L(lang, { ko: 'Visit Seoul 숙소 더보기', zh: '查看更多Visit Seoul住宿', en: 'More on Visit Seoul Accommodation' })}
+      </a>
+    </div>
+  )
+}
+
+// ─── Visit Seoul B등급: 문화 라운지 ────────────────────────────────
+const CULTURE_LOUNGE_DATA = [
+  { id: 'cl-1', emoji: '🎨', name: { ko: '서울문화재단 문화비축기지', zh: '首尔文化储备基地', en: 'Culture Tank' },
+    desc: { ko: '옛 석유비축기지를 문화공간으로 재탄생. 전시·공연·마켓', zh: '旧石油储备基地变身文化空间。展览·演出·市集', en: 'Former oil reserve converted to cultural space. Exhibitions, shows, markets' },
+    address: { ko: '마포구 증산로 87', zh: '麻浦区增山路87号', en: '87 Jeungsan-ro, Mapo-gu' },
+    lat: 37.5679, lng: 126.9137, free: true },
+  { id: 'cl-2', emoji: '📚', name: { ko: '서울책보고', zh: '首尔书宝库', en: 'Seoul Book Repository' },
+    desc: { ko: '고가 하부 공간을 활용한 세계 최대 중고서점. 무료', zh: '利用高架桥下空间打造的世界最大二手书店。免费', en: "World's largest secondhand bookstore under an overpass. Free" },
+    address: { ko: '송파구 잠실로 32', zh: '松坡区蚕室路32号', en: '32 Jamsil-ro, Songpa-gu' },
+    lat: 37.5117, lng: 127.1019, free: true },
+  { id: 'cl-3', emoji: '🎭', name: { ko: '서울로7017', zh: '首尔路7017', en: 'Seoullo 7017' },
+    desc: { ko: '옛 고가도로를 공중 정원으로. 서울역~남산 산책 코스', zh: '旧高架路变空中花园。首尔站~南山散步路线', en: 'Old overpass turned aerial garden. Seoul Station to Namsan walk' },
+    address: { ko: '중구 청파로 432', zh: '中区青坡路432号', en: '432 Cheongpa-ro, Jung-gu' },
+    lat: 37.5544, lng: 126.9710, free: true },
+  { id: 'cl-4', emoji: '🖼️', name: { ko: 'DDP (동대문디자인플라자)', zh: 'DDP(东大门设计广场)', en: 'DDP (Dongdaemun Design Plaza)' },
+    desc: { ko: '자하 하디드 건축. 전시·패션쇼·야시장. 서울의 랜드마크', zh: '扎哈·哈迪德建筑。展览·时装秀·夜市。首尔地标', en: 'Zaha Hadid architecture. Exhibitions, fashion shows, night market' },
+    address: { ko: '중구 을지로 281', zh: '中区乙支路281号', en: '281 Eulji-ro, Jung-gu' },
+    lat: 37.5671, lng: 127.0095, free: false },
+  { id: 'cl-5', emoji: '🎵', name: { ko: '서울예술의전당', zh: '首尔艺术殿堂', en: 'Seoul Arts Center' },
+    desc: { ko: '오페라, 발레, 클래식. 한국 최고의 공연 예술 공간', zh: '歌剧、芭蕾、古典乐。韩国最高水平的表演艺术空间', en: 'Opera, ballet, classical. Korea\'s premier performing arts venue' },
+    address: { ko: '서초구 남부순환로 2406', zh: '瑞草区南部循环路2406号', en: '2406 Nambusunhwan-ro, Seocho-gu' },
+    lat: 37.4784, lng: 127.0113, free: false },
+  { id: 'cl-6', emoji: '🏛', name: { ko: '국립현대미술관 서울관', zh: '国立现代美术馆首尔馆', en: 'MMCA Seoul' },
+    desc: { ko: '삼청동 위치. 현대미술 상설전 + 특별전', zh: '三清洞位置。现代美术常设展+特别展', en: 'In Samcheong-dong. Permanent + special exhibitions of contemporary art' },
+    address: { ko: '종로구 삼청로 30', zh: '钟路区三清路30号', en: '30 Samcheong-ro, Jongno-gu' },
+    lat: 37.5787, lng: 126.9800, free: false },
+]
+
+export function CultureLounge({ lang }) {
+  return (
+    <div className="px-4 pt-4 pb-24">
+      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">🎨 {L(lang, { ko: '서울 문화 라운지', zh: '首尔文化空间', en: 'Seoul Culture Lounge' })}</p>
+      <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '서울에서 꼭 가봐야 할 문화 공간', zh: '在首尔必访的文化空间', en: 'Must-visit cultural spaces in Seoul' })}</p>
+
+      <div className="space-y-2.5">
+        {CULTURE_LOUNGE_DATA.map(item => (
+          <div key={item.id} className="bg-white rounded-[14px] p-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+            <div className="flex items-start gap-3">
+              <span className="text-2xl mt-0.5">{item.emoji}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-[14px] font-bold text-[#111827]">{L(lang, item.name)}</p>
+                  {item.free && <span className="text-[9px] bg-[#DCFCE7] text-[#16A34A] px-1.5 py-0.5 rounded-full font-medium">FREE</span>}
+                </div>
+                <p className="text-[12px] text-[#555] mt-1">{L(lang, item.desc)}</p>
+                <p className="text-[10px] text-[#9CA3AF] mt-1">📍 {L(lang, item.address)}</p>
+                <div className="flex gap-2 mt-2">
+                  <a href={`https://map.kakao.com/link/to/${encodeURIComponent(L(lang, item.name))},${item.lat},${item.lng}`}
+                    target="_blank" rel="noreferrer"
+                    className="text-[10px] bg-[#FEE500] text-[#111827] font-bold px-2.5 py-1 rounded-full active:scale-95 transition-transform">
+                    🗺 {L(lang, { ko: '길찾기', zh: '导航', en: 'Navigate' })}
+                  </a>
+                  <a href={`https://map.kakao.com/link/map/${encodeURIComponent(L(lang, item.name))},${item.lat},${item.lng}`}
+                    target="_blank" rel="noreferrer"
+                    className="text-[10px] bg-[#EEF2FF] text-[#4F46E5] font-medium px-2.5 py-1 rounded-full active:scale-95 transition-transform">
+                    📍 {L(lang, { ko: '지도', zh: '地图', en: 'Map' })}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <a href="https://www.visitseoul.net/culture" target="_blank" rel="noreferrer"
+        className="block w-full mt-4 py-3 rounded-[12px] bg-[#111827] text-white text-[13px] font-bold text-center">
+        🎨 {L(lang, { ko: 'Visit Seoul 문화관광 더보기', zh: '查看更多Visit Seoul文化旅游', en: 'More Culture on Visit Seoul' })}
+      </a>
+    </div>
+  )
+}

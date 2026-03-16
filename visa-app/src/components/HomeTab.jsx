@@ -1240,9 +1240,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             { icon: PhMapPin, label: { ko: '지도', zh: '地图', en: 'Map' }, color: '#D4956B', onClick: () => setTab('near-map') },
             { icon: ChatCircleText, label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#8B6F5C', onClick: () => setTab('show-korean') },
             { icon: Receipt, label: { ko: '텍스환급', zh: '退税', en: 'Tax Refund' }, color: '#7A8B6F', onClick: () => setTab('taxrefund') },
-            { icon: CoffeeBean, label: { ko: '라운지', zh: '休息室', en: 'Lounge' }, color: '#6B8DAD', onClick: () => setTab('flight-info') },
+            { icon: FirstAidKit, label: { ko: '긴급', zh: '紧急', en: 'SOS' }, color: '#C62828', onClick: () => setTab('sos') },
             { icon: PhGlobe, label: { ko: '한국문화', zh: '韩国文化', en: 'Culture' }, color: '#B8860B', onClick: () => setTab('korean-culture') },
-            { icon: Plus, label: { ko: '더보기', zh: '更多', en: 'More' }, color: '#888', onClick: () => setTab('tools') },
+            { icon: Plus, label: { ko: '더보기', zh: '更多', en: 'More' }, color: '#888', onClick: () => setTab('more') },
           ].map(({ icon: Icon, label, color, onClick }) => (
             <button
               key={L(lang, label)}
@@ -2075,6 +2075,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   { id: 'nav-pet', icon: PawPrint, color: '#B8860B', label: { ko: '펫 입국\n가이드', zh: '宠物入境\n指南', en: 'Pet Entry\nGuide' }, guide: 'pet' },
                   { id: 'airport-facilities', icon: Building, color: '#7A8B6F', label: { ko: '공항\n시설 정보', zh: '机场\n设施信息', en: 'Airport\nFacilities' } },
                   { id: 'dietary-card-guide', icon: ForkKnife, color: '#8B6F5C', label: { ko: '못먹는 음식\n등록', zh: '不能吃的\n食物登记', en: 'Dietary\nRestrictions' }, guide: 'dietary-card' },
+                  { id: 'airport-lounge', icon: CoffeeBean, color: '#6B8DAD', label: { ko: '공항\n라운지', zh: '机场\n休息室', en: 'Airport\nLounge' }, subPage: 'flight-info' },
                 ].map(item => {
                   const IconComponent = item.icon
                   return (
@@ -2082,6 +2083,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                       key={item.id}
                       onClick={() => {
                         if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
+                        else if (item.subPage) { setTab(item.subPage); setShowArrivalFlow(false) }
                         else { setArrivalStep(item.id) }
                       }}
                       className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"

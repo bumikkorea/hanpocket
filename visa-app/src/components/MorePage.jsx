@@ -11,6 +11,7 @@ const SECTIONS = [
     title: { ko: '긴급 정보', zh: '紧急信息', en: 'Emergency' },
     emoji: '🆘',
     items: [
+      { id: 'sos-langcard', emoji: '🗣️', label: { ko: '긴급 한국어 카드', zh: '紧急韩语卡', en: 'Emergency Korean Card' }, detail: { ko: '증상·상황별 한국어 표현 + TTS', zh: '症状·场景韩语表达 + TTS', en: 'Symptom & situation Korean phrases + TTS' }, sub: 'sos-language' },
       { id: 'sos-phone',    emoji: '📞', label: { ko: '긴급 전화번호', zh: '紧急电话', en: 'Emergency Numbers' }, sub: 'emergency-numbers' },
       { id: 'sos-hospital', emoji: '🏥', label: { ko: '가까운 병원', zh: '附近医院', en: 'Nearby Hospital' }, action: 'search', query: '외국인진료 병원' },
       { id: 'sos-embassy',  emoji: '🏛️', label: { ko: '중국 대사관', zh: '中国大使馆', en: 'Chinese Embassy' }, detail: '02-738-1038' },
@@ -20,12 +21,20 @@ const SECTIONS = [
     ]
   },
   {
+    title: { ko: '통역 & 번역', zh: '口译 & 翻译', en: 'Translation' },
+    emoji: '🗣️',
+    items: [
+      { id: 'tool-translator', emoji: '🗣️', label: { ko: '통역&번역', zh: '口译&翻译', en: 'Translate' }, detail: { ko: '실시간 통역, 상황별 한국어', zh: '实时翻译、场景韩语', en: 'Real-time translation' }, tool: 'translator' },
+      { id: 'tool-sign',      emoji: '📸', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dictionary' }, detail: { ko: '카메라로 간판 번역', zh: '相机翻译招牌', en: 'Camera sign translation' }, tool: 'artranslate' },
+      { id: 'tool-korean20',  emoji: '💬', label: { ko: '기본 한국어 20문장', zh: '基础韩语20句', en: '20 Korean Phrases' }, sub: 'basic-korean' },
+    ]
+  },
+  {
     title: { ko: '실용 도구', zh: '实用工具', en: 'Tools' },
     emoji: '🛠',
     items: [
       { id: 'tool-exchange', emoji: '💱', label: { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency Converter' }, sub: 'currency' },
-      { id: 'tool-korean',   emoji: '🗣️', label: { ko: '기본 한국어 20문장', zh: '基础韩语20句', en: '20 Korean Phrases' }, sub: 'basic-korean' },
-      { id: 'tool-translate', emoji: '📷', label: { ko: '메뉴 번역', zh: '菜单翻译', en: 'Menu Translator' }, tab: 'translator' },
+      { id: 'tool-learn',    emoji: '📚', label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' }, detail: { ko: '여행자를 위한 실용 한국어', zh: '旅行者实用韩语', en: 'Practical Korean' }, tool: 'learn' },
       { id: 'tool-taxi',     emoji: '🚕', label: { ko: '택시 요금 계산', zh: '出租车费用', en: 'Taxi Calculator' }, tab: 'taxi-calc' },
     ]
   },
@@ -49,6 +58,10 @@ const SECTIONS = [
       { id: 'guide-events',    emoji: '📅', label: { ko: '오늘의 서울 행사', zh: '今日首尔活动', en: "Today's Seoul Events" }, sub: 'today-events' },
       { id: 'guide-hcourse',   emoji: '🗺️', label: { ko: '한류 테마 코스', zh: '韩流主题路线', en: 'Hallyu Course Map' }, sub: 'hallyu-course' },
       { id: 'guide-taste',     emoji: '🍽️', label: { ko: '서울의 맛 가이드', zh: '首尔美食指南', en: 'Taste of Seoul' }, sub: 'taste-seoul' },
+      { id: 'guide-medical',   emoji: '🏥', label: { ko: '의료관광 가이드', zh: '医疗旅游指南', en: 'Medical Tourism' }, sub: 'medical-tourism' },
+      { id: 'guide-stay',      emoji: '🏠', label: { ko: '서울 스테이', zh: '首尔住宿', en: 'Seoul Stay' }, sub: 'seoul-stay' },
+      { id: 'guide-culture',   emoji: '🎨', label: { ko: '문화 라운지', zh: '文化空间', en: 'Culture Lounge' }, sub: 'culture-lounge' },
+      { id: 'guide-fitness',   emoji: '🏋️', label: { ko: '운동 가이드', zh: '健身指南', en: 'Fitness Guide' }, detail: { ko: '헬스장, 수영장, 요가', zh: '健身房、游泳池、瑜伽', en: 'Gym, pool, yoga' }, tool: 'fitness' },
     ]
   },
   {
@@ -73,6 +86,11 @@ const SECTIONS = [
 
 export default function MorePage({ lang, setTab, setSubPage }) {
   const handleItemClick = (item) => {
+    if (item.tool) {
+      // subPage로 직접 열기
+      if (setSubPage) setSubPage(item.tool)
+      return
+    }
     if (item.sub) {
       // C 섹션 가이드 페이지로 이동
       if (setSubPage) setSubPage(item.sub)
@@ -112,7 +130,7 @@ export default function MorePage({ lang, setTab, setSubPage }) {
                 <span className="text-[16px]">{item.emoji}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-medium text-[#1A1A1A]">{L(lang, item.label)}</p>
-                  {item.detail && <p className="text-[11px] text-[#9CA3AF] mt-0.5">{item.detail}</p>}
+                  {item.detail && <p className="text-[11px] text-[#9CA3AF] mt-0.5">{typeof item.detail === 'string' ? item.detail : L(lang, item.detail)}</p>}
                 </div>
                 <ChevronRight size={16} className="text-[#D1D5DB] shrink-0" />
               </button>

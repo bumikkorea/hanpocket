@@ -90,7 +90,11 @@ const HikingCourses = lazy(() => import('./components/PracticalGuides').then(m =
 const TodayEvents = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.TodayEvents })))
 const HallyuCourseMap = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.HallyuCourseMap })))
 const TasteOfSeoul = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.TasteOfSeoul })))
+const MedicalTourism = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.MedicalTourism })))
+const SeoulStay = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.SeoulStay })))
+const CultureLounge = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.CultureLounge })))
 const KoreanCulture = lazy(() => import('./components/KoreanCulture'))
+const SOSLanguageCard = lazy(() => import('./components/SOSLanguageCard'))
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -2365,6 +2369,10 @@ function AppInner() {
         {subPage === 'today-events' && <Suspense fallback={<LoadingSpinner />}><TodayEvents lang={lang} /></Suspense>}
         {subPage === 'hallyu-course' && <Suspense fallback={<LoadingSpinner />}><HallyuCourseMap lang={lang} /></Suspense>}
         {subPage === 'taste-seoul' && <Suspense fallback={<LoadingSpinner />}><TasteOfSeoul lang={lang} /></Suspense>}
+        {subPage === 'medical-tourism' && <Suspense fallback={<LoadingSpinner />}><MedicalTourism lang={lang} /></Suspense>}
+        {subPage === 'seoul-stay' && <Suspense fallback={<LoadingSpinner />}><SeoulStay lang={lang} /></Suspense>}
+        {subPage === 'culture-lounge' && <Suspense fallback={<LoadingSpinner />}><CultureLounge lang={lang} /></Suspense>}
+        {subPage === 'sos-language' && <Suspense fallback={<LoadingSpinner />}><SOSLanguageCard lang={lang} /></Suspense>}
 
         {/* Pocket catch-all — 전용 탭이 없는 pocket ID는 PocketContent로 렌더링 */}
         {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet','wishlist','taxrefund','departure','heatmap','passport-scan','departure-shopping','taxi','subway','performance','flight-info','show-korean','near-map','korean-culture'].includes(subPage) && (
@@ -2398,7 +2406,7 @@ function AppInner() {
             </Suspense>
           </div>
         )}
-        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRateData} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet','taxrefund','departure','heatmap','wishlist','passport-scan','departure-shopping','flight-info','show-korean','near-map','korean-culture'].includes(t)) { setTab('tools'); setSubPage(t) } else { setTab(t) }}} />}
+        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRateData} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet','taxrefund','departure','heatmap','wishlist','passport-scan','departure-shopping','flight-info','show-korean','near-map','korean-culture'].includes(t)) { setTab('home'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
         {(tab==='popup' || tab==='near-map') && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>

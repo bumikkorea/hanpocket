@@ -36,80 +36,110 @@ const QUICK_AREAS = [
   { id: 'yeouido',   label: { ko: '여의도', zh: '汝矣岛', en: 'Yeouido' }, emoji: '📍', lat: 37.5219, lng: 126.9245, zoom: 4 },
 ]
 
-// ─── Magic Pill Selector ───
+// ─── Magic Pill Selector (드롭다운 + 터치 드래그) ───
 function MagicPillSelector({ areas, lang, onSelect }) {
   const [expanded, setExpanded] = useState(false)
   const [selected, setSelected] = useState(areas[0])
-  const [dragIdx, setDragIdx] = useState(null)
+  const [hoverIdx, setHoverIdx] = useState(null)
+  const itemRefs = useRef([])
   const containerRef = useRef(null)
-  const pillRefs = useRef([])
 
   const handleSelect = useCallback((area) => {
     setSelected(area)
     setExpanded(false)
-    setDragIdx(null)
+    setHoverIdx(null)
     onSelect(area)
   }, [onSelect])
 
-  // 터치 드래그 → 어느 pill 위인지 계산
+  // 터치 시작 → 펼치기
+  const handleTouchStart = useCallback((e) => {
+    if (!expanded) {
+      e.preventDefault()
+      setExpanded(true)
+    }
+  }, [expanded])
+
+  // 터치 이동 → 어느 항목 위인지 하이라이트
   const handleTouchMove = useCallback((e) => {
     if (!expanded) return
     const touch = e.touches[0]
-    const idx = pillRefs.current.findIndex(el => {
+    const idx = itemRefs.current.findIndex(el => {
       if (!el) return false
       const rect = el.getBoundingClientRect()
       return touch.clientX >= rect.left && touch.clientX <= rect.right &&
              touch.clientY >= rect.top && touch.clientY <= rect.bottom
     })
-    setDragIdx(idx >= 0 ? idx : null)
+    setHoverIdx(idx >= 0 ? idx : null)
   }, [expanded])
 
+  // 터치 끝 → 하이라이트된 항목 선택
   const handleTouchEnd = useCallback(() => {
-    if (dragIdx !== null && dragIdx >= 0) {
-      handleSelect(areas[dragIdx])
+    if (!expanded) return
+    if (hoverIdx !== null && hoverIdx >= 0) {
+      handleSelect(areas[hoverIdx])
+    } else {
+      setExpanded(false)
+      setHoverIdx(null)
     }
-  }, [dragIdx, areas, handleSelect])
+  }, [expanded, hoverIdx, areas, handleSelect])
 
   return (
-    <div className="mb-2 flex items-center gap-1.5" ref={containerRef}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {!expanded ? (
-        /* ── 접힌 상태: 선택된 pill 하나 ── */
-        <button
-          onClick={() => setExpanded(true)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold text-white active:scale-95"
-          style={{
-            background: '#1A1A1A',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-            transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-          }}
-        >
-          <span className="text-[14px]">📍</span>
-          {L(lang, selected.label)}
-          <span className="text-[10px] opacity-60 ml-0.5">▼</span>
-        </button>
-      ) : (
-        /* ── 펼쳐진 상태: 모든 지역 pill ── */
-        areas.map((area, i) => (
-          <button
-            key={area.id}
-            ref={el => pillRefs.current[i] = el}
-            onClick={() => handleSelect(area)}
-            className="flex-shrink-0 px-3 py-2 rounded-full text-[11px] font-semibold active:scale-95"
+    <div className="relative" ref={containerRef}>
+      {/* ── 접힌 상태: pill 버튼 ── */}
+      <button
+        onTouchStart={handleTouchStart}
+        onClick={() => setExpanded(v => !v)}
+        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold text-white"
+        style={{
+          background: '#1A1A1A',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          transition: 'all 0.2s ease',
+        }}
+      >
+        <span className="text-[13px]">📍</span>
+        {L(lang, selected.label)}
+        <span className="text-[10px] opacity-60 ml-0.5">{expanded ? '▲' : '▼'}</span>
+      </button>
+
+      {/* ── 펼쳐진 상태: 아래로 드롭다운 ── */}
+      {expanded && (
+        <>
+          {/* 배경 터치 시 닫기 */}
+          <div className="fixed inset-0 z-30" onClick={() => { setExpanded(false); setHoverIdx(null) }} />
+          <div
+            className="absolute top-full right-0 mt-1 z-40 bg-white rounded-[14px] py-1 overflow-hidden"
             style={{
-              background: dragIdx === i ? '#1A1A1A' : selected.id === area.id ? '#333' : '#FFFFFF',
-              color: (dragIdx === i || selected.id === area.id) ? '#FFF' : '#555',
-              boxShadow: dragIdx === i ? '0 2px 12px rgba(0,0,0,0.25)' : '0 1px 4px rgba(0,0,0,0.08)',
-              transform: dragIdx === i ? 'scale(1.15)' : 'scale(1)',
-              transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              animation: `pillAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) ${i * 0.04}s both`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+              minWidth: 140,
+              animation: 'pillAppear 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both',
             }}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
-            {L(lang, area.label)}
-          </button>
-        ))
+            {areas.map((area, i) => {
+              const isHover = hoverIdx === i
+              const isCurrent = selected.id === area.id
+              return (
+                <div
+                  key={area.id}
+                  ref={el => itemRefs.current[i] = el}
+                  onClick={() => handleSelect(area)}
+                  className="px-4 py-2.5 flex items-center gap-2 transition-colors duration-100 cursor-pointer select-none"
+                  style={{
+                    background: isHover ? '#1A1A1A' : isCurrent ? '#F5F5F5' : 'transparent',
+                    color: isHover ? '#FFF' : '#1A1A1A',
+                  }}
+                >
+                  <span className="text-[12px]">{isHover ? '👉' : isCurrent ? '📍' : ''}</span>
+                  <span className={`text-[13px] ${isCurrent || isHover ? 'font-bold' : 'font-medium'}`}>
+                    {L(lang, area.label)}
+                  </span>
+                  {isCurrent && !isHover && <span className="text-[10px] text-[#999] ml-auto">현재</span>}
+                </div>
+              )
+            })}
+          </div>
+        </>
       )}
     </div>
   )

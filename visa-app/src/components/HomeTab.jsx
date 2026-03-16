@@ -1106,6 +1106,65 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
 
 
+      {/* ─── 여행 다이어리 (내 코스) ─── */}
+      {(() => {
+        const saved = (() => { try { return JSON.parse(localStorage.getItem('hp_saved_courses') || '[]') } catch { return [] } })()
+        return (
+          <div className="mb-8 px-4">
+            <div className="rounded-[16px] bg-white p-5" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-[20px]">📔</span>
+                  <h2 className="text-[15px] font-bold text-[#1A1A1A]">{L(lang, { ko: '내 여행 다이어리', zh: '我的旅行日记', en: 'My Travel Diary' })}</h2>
+                </div>
+                <button
+                  onClick={() => setTab('course')}
+                  className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#F5F5F5] text-[#666] active:bg-[#E5E7EB] transition-colors"
+                >
+                  {L(lang, { ko: '전체보기', zh: '查看全部', en: 'View All' })}
+                </button>
+              </div>
+
+              {saved.length === 0 ? (
+                <div className="text-center py-6">
+                  <p className="text-[13px] text-[#999] mb-3">{L(lang, { ko: '아직 저장한 코스가 없어요', zh: '还没有保存的路线', en: 'No saved courses yet' })}</p>
+                  <button
+                    onClick={() => setTab('course')}
+                    className="text-[12px] font-semibold px-4 py-2 rounded-full text-white active:scale-95 transition-transform"
+                    style={{ backgroundColor: '#1A1A1A' }}
+                  >
+                    {L(lang, { ko: '추천 코스 둘러보기', zh: '浏览推荐路线', en: 'Browse Courses' })}
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
+                  {saved.slice(0, 5).map(course => (
+                    <button
+                      key={course.id}
+                      onClick={() => setTab('course')}
+                      className="shrink-0 w-36 bg-[#FAFAFA] rounded-[10px] border border-[#F0F0F0] p-3 text-left active:scale-[0.97] transition-transform"
+                    >
+                      <p className="font-bold text-[12px] text-[#1A1A1A] truncate">{course.name}</p>
+                      <p className="text-[10px] text-[#999] mt-1">
+                        {course.stops?.length || 0} {L(lang, { ko: '곳', zh: '处', en: 'stops' })}
+                        {course.duration ? ` · ${course.duration}` : ''}
+                      </p>
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setTab('course')}
+                    className="shrink-0 w-36 rounded-[10px] border border-dashed border-[#D1D5DB] p-3 flex flex-col items-center justify-center gap-1 active:bg-[#F9F9F9] transition-colors"
+                  >
+                    <Plus size={16} className="text-[#999]" />
+                    <span className="text-[11px] text-[#999]">{L(lang, { ko: '코스 만들기', zh: '创建路线', en: 'Create Course' })}</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )
+      })()}
+
       {/* ─── #30 이번 주 인기 팝업 TOP 5 ─── */}
       {(() => {
         const top5 = [...(activePopups.length > 0 ? activePopups : POPUP_STORES.filter(isOpenToday))]

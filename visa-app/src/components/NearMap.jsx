@@ -419,72 +419,47 @@ export default function NearMap({ lang }) {
       {/* ─── 퀵서치 레이어 — 1터치로 주변 찾기 ─── */}
       {activeLayer === 'quick' && (
         <div className="mb-2">
-          {/* 메인 6개 버튼 — 항상 보임 */}
-          <div className="grid grid-cols-3 gap-2 mb-2">
-            {QUICK_SEARCH_PRIMARY.map(item => (
-              <button key={item.query} onClick={() => searchOnMap(item.query)}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-[12px] bg-white text-left active:scale-95 transition-transform"
-                style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-                <item.icon size={20} weight="duotone" color="#C4725A" />
-                <span className="text-[12px] font-semibold text-[#1A1A1A]">{L(lang, item.label)}</span>
-              </button>
-            ))}
-          </div>
-          {/* 더보기 토글 */}
-          <button onClick={() => setShowMoreQuick(v => !v)}
-            className="w-full text-center text-[11px] text-[#9CA3AF] py-1 mb-1">
-            {showMoreQuick
-              ? L(lang, { ko: '접기 ▲', zh: '收起 ▲', en: 'Less ▲' })
-              : L(lang, { ko: '더보기 ▼', zh: '更多 ▼', en: 'More ▼' })}
-          </button>
-          {showMoreQuick && (
-            <div className="grid grid-cols-3 gap-2">
-              {QUICK_SEARCH_MORE.map(item => (
+          <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+            {[...QUICK_SEARCH_PRIMARY, ...QUICK_SEARCH_MORE].map(item => {
+              const Icon = item.icon
+              return (
                 <button key={item.query} onClick={() => searchOnMap(item.query)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-[12px] bg-white text-left active:scale-95 transition-transform"
-                  style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-                  <item.icon size={18} weight="duotone" color="#8B6F5C" />
-                  <span className="text-[11px] font-medium text-[#555]">{L(lang, item.label)}</span>
+                  className="flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-[11px] font-medium bg-white text-[#555] border border-[#E5E7EB] active:scale-95 transition-all">
+                  <Icon size={14} weight="duotone" color="#C4725A" />
+                  {L(lang, item.label)}
                 </button>
-              ))}
-            </div>
-          )}
+              )
+            })}
+          </div>
         </div>
       )}
 
       {/* ─── 팝업 레이어 필터 ─── */}
       {activeLayer === 'popup' && (
         <div className="mb-2">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="flex-1" />
-            <span className="text-[10px] text-[#9CA3AF]">
-              {pinsLoading ? '...' : `${filteredPins.length} ${L(lang, { ko: '개', zh: '个', en: '' })}`}
-            </span>
-          </div>
-
-          {/* 장소 유형 필터 */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1 mb-1.5" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
             {VENUE_FILTERS.map(f => (
               <button key={f.v} onClick={() => setVenueFilter(f.v)}
-                className={`px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap shrink-0 transition-all ${venueFilter === f.v ? 'bg-[#111827] text-white' : 'bg-white text-[#555]'}`}
-                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+                className={`flex-shrink-0 px-2.5 py-1.5 rounded-full text-[11px] font-medium border transition-all ${
+                  venueFilter === f.v ? 'bg-[#111827] text-white border-transparent' : 'bg-white text-[#666] border-[#E5E7EB]'
+                }`}>
                 {L(lang, f)}
               </button>
             ))}
-          </div>
-
-          {/* #32 팝업 유형 필터 + 카테고리별 수 */}
-          <div className="flex gap-1.5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-            {TYPE_FILTERS.map(f => {
-              const cnt = f.v === 'all' ? allPins.length : allPins.filter(p => p.popup_type === f.v).length
+            {TYPE_FILTERS.filter(f => f.v !== 'all').map(f => {
+              const cnt = allPins.filter(p => p.popup_type === f.v).length
               return (
                 <button key={f.v} onClick={() => setTypeFilter(f.v)}
-                  className={`px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap shrink-0 transition-all ${typeFilter === f.v ? 'bg-[#111827] text-white' : 'bg-white text-[#555]'}`}
-                  style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
-                  {f.em} {L(lang, f)} <span className="opacity-60">({cnt})</span>
+                  className={`flex-shrink-0 px-2.5 py-1.5 rounded-full text-[11px] font-medium border transition-all ${
+                    typeFilter === f.v ? 'bg-[#111827] text-white border-transparent' : 'bg-white text-[#666] border-[#E5E7EB]'
+                  }`}>
+                  {f.em} {L(lang, f)}
                 </button>
               )
             })}
+            <span className="flex-shrink-0 flex items-center text-[10px] text-[#9CA3AF] px-1">
+              {pinsLoading ? '...' : `${filteredPins.length}${L(lang, { ko: '개', zh: '个', en: '' })}`}
+            </span>
           </div>
         </div>
       )}
@@ -586,126 +561,20 @@ export default function NearMap({ lang }) {
                 <button onClick={() => setActivePopup(null)} className="text-[#9CA3AF] text-xl leading-none ml-2 shrink-0 p-1">✕</button>
               </div>
 
-              {/* D-day + cn_score 뱃지 (#27) */}
-              {(() => {
-                const cnScore = Math.min(10, (
-                  (activePopup.chinese_staff ? 4 : 0) + (activePopup.tax_refund ? 1 : 0) +
-                  (activePopup.entry_type !== 'paid' ? 0.5 : 0)
-                ))
-                const scoreColor = cnScore >= 6 ? '#16A34A' : cnScore >= 3 ? '#EA580C' : '#9CA3AF'
-                const scoreBg = cnScore >= 6 ? '#F0FDF4' : cnScore >= 3 ? '#FFF7ED' : '#F3F4F6'
-                return (
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {/* cn_score 뱃지 */}
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ backgroundColor: scoreBg, color: scoreColor }}>
-                      🇨🇳 {cnScore.toFixed(1)}/10
-                    </span>
-                    {activePopup.isClosingSoon && <span className="text-[10px] bg-[#FEF2F2] text-[#DC2626] px-2 py-0.5 rounded-full font-bold">🔥 D-{activePopup.daysLeft}</span>}
-
-                    {activePopup.chinese_staff     && <span className="text-[10px] bg-[#FFF7ED] text-[#EA580C] px-2 py-0.5 rounded-full">🗣️ {L(lang, { ko: '중문', zh: '中文', en: 'CN' })}</span>}
-                    {activePopup.tax_refund        && <span className="text-[10px] bg-[#F0FDF4] text-[#16A34A] px-2 py-0.5 rounded-full">💰 {L(lang, { ko: '환급', zh: '退税', en: 'Refund' })}</span>}
-                    {activePopup.entry_type !== 'paid' && <span className="text-[10px] bg-[#F3F4F6] text-[#555] px-2 py-0.5 rounded-full">{L(lang, { ko: '무료', zh: '免费', en: 'Free' })}</span>}
-                  </div>
-                )
-              })()}
-
-              {/* 📋 체크리스트 — 전항목 (#26) */}
-              <div className="bg-[#F9FAFB] rounded-[12px] p-3 mb-3">
-                <p className="text-[11px] font-bold text-[#374151] mb-2">📋 {L(lang, { ko: '체크리스트', zh: '清单', en: 'Checklist' })}</p>
-                <div className="space-y-1.5 text-[11px] text-[#555]">
-
-                  {/* 중국어 서비스 */}
-                  <div className="flex items-center gap-2">
-                    <span>🗣️</span>
-                    <span>{L(lang, { ko: '중국어', zh: '中文服务', en: 'Chinese' })}: {activePopup.chinese_staff
-                      ? L(lang, { ko: '직원 가능 ✅', zh: '有中文员工 ✅', en: 'Staff available ✅' })
-                      : L(lang, { ko: '없음 (번역앱 추천)', zh: '无 (建议用翻译APP)', en: 'None (use translator)' })}</span>
-                  </div>
-                  {/* 입장 */}
-                  <div className="flex items-center gap-2">
-                    <span>🎫</span>
-                    <span>{L(lang, { ko: '입장', zh: '入场', en: 'Entry' })}: {
-                      activePopup.entry_type === 'paid'
-                        ? L(lang, { ko: '유료 💰', zh: '收费 💰', en: 'Paid 💰' })
-                        : activePopup.reservation_url
-                          ? L(lang, { ko: '무료 (예약 필요)', zh: '免费 (需预约)', en: 'Free (reservation required)' })
-                          : L(lang, { ko: '무료 입장 ✅', zh: '免费入场 ✅', en: 'Free entry ✅' })
-                    }</span>
-                  </div>
-                  {/* 영업시간 */}
-                  {(activePopup.open_time || activePopup.close_time) && (
-                    <div className="flex items-center gap-2">
-                      <span>⏰</span>
-                      <span>{activePopup.open_time || '10:00'} ~ {activePopup.close_time || '20:00'}</span>
-                    </div>
-                  )}
-                  {/* 기간 */}
-                  <div className="flex items-center gap-2">
-                    <span>📅</span>
-                    <span>{activePopup.period?.start?.slice(5).replace('-','/')} ~ {activePopup.period?.end?.slice(5).replace('-','/')}
-                      {activePopup.daysLeft != null && <span className="ml-1 text-[#DC2626] font-bold">({L(lang, { ko: `D-${activePopup.daysLeft}`, zh: `还剩${activePopup.daysLeft}天`, en: `${activePopup.daysLeft}d left` })})</span>}
-                    </span>
-                  </div>
-                  {/* 위치 / 층 */}
-                  <div className="flex items-center gap-2">
-                    <span>📍</span>
-                    <span>{activePopup.venue_name}{activePopup.floor ? ` · ${L(lang, activePopup.floor)}` : ''}</span>
-                  </div>
-                  {/* 주소 */}
-                  {activePopup.address && (
-                    <div className="flex items-center gap-2">
-                      <span>🏠</span>
-                      <span className="text-[#9CA3AF]">{L(lang, activePopup.address)}</span>
-                    </div>
-                  )}
-                  {/* 세금환급 */}
-                  <div className="flex items-center gap-2">
-                    <span>💰</span>
-                    <span>{L(lang, { ko: '세금환급', zh: '退税', en: 'Tax Refund' })}: {activePopup.tax_refund
-                      ? L(lang, { ko: '가능 ✅', zh: '可退税 ✅', en: 'Available ✅' })
-                      : L(lang, { ko: '불가', zh: '不可退税', en: 'Not available' })}</span>
-                  </div>
-                  {/* 대기 정보 */}
-                  {activePopup.queue_info_zh && (
-                    <div className="flex items-center gap-2">
-                      <span>⏳</span>
-                      <span>{activePopup.queue_info_zh}</span>
-                    </div>
-                  )}
-                  {/* 예약 링크 */}
-                  {activePopup.reservation_url && (
-                    <div className="flex items-center gap-2">
-                      <span>🔗</span>
-                      <a href={activePopup.reservation_url} target="_blank" rel="noreferrer" className="text-[#4F46E5] underline">
-                        {L(lang, { ko: '예약하기', zh: '立即预约', en: 'Reserve Now' })}
-                      </a>
-                    </div>
-                  )}
-                </div>
+              {/* 핵심 정보 한줄 */}
+              <div className="flex flex-wrap gap-1.5 mb-3 text-[10px]">
+                {activePopup.isClosingSoon && <span className="bg-[#FEF2F2] text-[#DC2626] px-2 py-0.5 rounded-full font-bold">🔥 D-{activePopup.daysLeft}</span>}
+                {activePopup.entry_type !== 'paid' && <span className="bg-[#F3F4F6] text-[#555] px-2 py-0.5 rounded-full">{L(lang, { ko: '무료', zh: '免费', en: 'Free' })}</span>}
+                {activePopup.chinese_staff && <span className="bg-[#FFF7ED] text-[#EA580C] px-2 py-0.5 rounded-full">🗣️ {L(lang, { ko: '중문', zh: '中文', en: 'CN' })}</span>}
+                <span className="bg-[#F3F4F6] text-[#555] px-2 py-0.5 rounded-full">
+                  {activePopup.open_time || '10:00'}~{activePopup.close_time || '20:00'}
+                </span>
+                <span className="bg-[#F3F4F6] text-[#555] px-2 py-0.5 rounded-full">
+                  ~{activePopup.period?.end?.slice(5).replace('-','/')}
+                </span>
               </div>
 
-              {/* #39 크라우드소싱 대기시간 */}
-              {(() => {
-                const reviews = JSON.parse(localStorage.getItem('hp_popup_reviews') || '[]')
-                const recent = reviews.filter(r => r.popupId === activePopup.id && Date.now() - r.ts < 24*60*60*1000)
-                if (recent.length === 0) return null
-                const crowdMap = { low: { emoji: '😌', label: { ko: '한산', zh: '很空', en: 'Quiet' } }, medium: { emoji: '🙂', label: { ko: '보통', zh: '一般', en: 'Normal' } }, high: { emoji: '😅', label: { ko: '붐빔', zh: '很挤', en: 'Busy' } }, packed: { emoji: '🥵', label: { ko: '줄섰음', zh: '排队', en: 'Packed' } } }
-                const latest = recent[recent.length - 1]
-                const info = crowdMap[latest.crowd_level]
-                if (!info) return null
-                const ago = Math.floor((Date.now() - latest.ts) / (60*1000))
-                return (
-                  <div className="bg-[#FFFBEB] rounded-[10px] px-3 py-2 mb-3 flex items-center gap-2">
-                    <span className="text-lg">{info.emoji}</span>
-                    <div>
-                      <p className="text-[11px] font-bold text-[#92400E]">{L(lang, { ko: '현재 혼잡도', zh: '当前拥挤度', en: 'Current Crowd' })}: {L(lang, info.label)}</p>
-                      <p className="text-[9px] text-[#B45309]">{ago < 60 ? `${ago}${L(lang, { ko: '분 전 제보', zh: '分钟前', en: 'min ago' })}` : `${Math.floor(ago/60)}${L(lang, { ko: '시간 전', zh: '小时前', en: 'h ago' })}`} · {recent.length}{L(lang, { ko: '명 제보', zh: '人反馈', en: ' reports' })}</p>
-                    </div>
-                  </div>
-                )
-              })()}
-
-              {/* CTA 버튼들 + #34 리뷰 */}
+              {/* CTA 버튼 */}
               <div className="flex gap-2">
                 <button
                   onClick={() => {
@@ -716,100 +585,19 @@ export default function NearMap({ lang }) {
                   style={{ backgroundColor: '#FEE500' }}>
                   🗺 {L(lang, { ko: '길찾기', zh: '导航', en: 'Navigate' })}
                 </button>
-                <button onClick={() => setShowReview(true)}
-                  className="py-2.5 px-4 rounded-[10px] text-[12px] font-bold text-white active:scale-95 transition-transform"
-                  style={{ backgroundColor: '#C4725A' }}>
-                  ⭐ {L(lang, { ko: '리뷰', zh: '评价', en: 'Review' })}
-                </button>
                 <button
                   onClick={() => {
-                    // #36 팝업 공유 카드 (위챗/XHS/기본)
                     const title = L(lang, activePopup.title)
                     const venue = activePopup.venue_name || ''
-                    const period = `${activePopup.period?.start?.slice(5).replace('-','/')}~${activePopup.period?.end?.slice(5).replace('-','/')}`
-                    const badges = [
-                      activePopup.chinese_staff && '中文服务✅',
-                      activePopup.tax_refund && '退税✅',
-                    ].filter(Boolean).join(' ')
-                    const shareText = `📍 ${title}\n🏬 ${venue}\n📅 ${period}\n${badges}\n\n#首尔快闪 #韩国旅游 #NEAR`
-                    if (navigator.share) {
-                      navigator.share({ title, text: shareText })
-                    } else {
-                      navigator.clipboard?.writeText(shareText)
-                      alert(L(lang, { ko: '클립보드에 복사되었습니다!', zh: '已复制到剪贴板！', en: 'Copied to clipboard!' }))
-                    }
+                    const period = `~${activePopup.period?.end?.slice(5).replace('-','/')}`
+                    const shareText = `📍 ${title}\n🏬 ${venue} ${period}\n\n#首尔快闪 #NEAR`
+                    if (navigator.share) { navigator.share({ title, text: shareText }) }
+                    else { navigator.clipboard?.writeText(shareText) }
                   }}
                   className="py-2.5 px-3 rounded-[10px] text-[12px] font-bold text-[#555] border border-[#E5E7EB] active:scale-95 transition-transform">
                   📤
                 </button>
               </div>
-
-              {/* 小红书 링크 */}
-              {activePopup.source_xhs && (
-                <a href={activePopup.source_xhs} target="_blank" rel="noreferrer"
-                  className="mt-3 flex items-center justify-center gap-1.5 bg-[#FEF2F2] text-[#DC2626] text-[12px] font-semibold py-2 rounded-xl active:scale-95 transition-transform">
-                  📕 {L(lang, { ko: '小红书 후기', zh: '小红书攻略', en: 'Xiaohongshu Reviews' })}
-                </a>
-              )}
-
-              {/* #42 방문 인증 스탬프 */}
-              {(() => {
-                const stamps = JSON.parse(localStorage.getItem('hp_popup_stamps') || '[]')
-                const visited = stamps.includes(activePopup.id)
-                return (
-                  <button onClick={() => {
-                    if (visited) return
-                    const prev = JSON.parse(localStorage.getItem('hp_popup_stamps') || '[]')
-                    localStorage.setItem('hp_popup_stamps', JSON.stringify([...prev, activePopup.id]))
-                    alert(L(lang, { ko: '🎉 방문 인증 완료! 스탬프 획득!', zh: '🎉 打卡成功！获得印章！', en: '🎉 Checked in! Stamp earned!' }))
-                  }}
-                    className={`w-full py-2.5 rounded-[10px] text-[12px] font-bold mb-3 active:scale-95 transition-transform ${
-                      visited ? 'bg-[#F0FDF4] text-[#16A34A]' : 'bg-[#F3F4F6] text-[#555]'}`}>
-                    {visited
-                      ? `✅ ${L(lang, { ko: '방문 완료', zh: '已打卡', en: 'Visited' })}`
-                      : `📍 ${L(lang, { ko: '방문 인증하기', zh: '打卡', en: 'Check In' })}`}
-                  </button>
-                )
-              })()}
-
-              {/* #38 주변 맛집/카페 추천 */}
-              {activePopup.lat && activePopup.lng && (
-                <div className="mt-3 flex gap-2">
-                  <a href={`https://map.kakao.com/link/search/${encodeURIComponent('맛집')}?q=${activePopup.lat},${activePopup.lng}`}
-                    target="_blank" rel="noreferrer"
-                    className="flex-1 py-2 rounded-[10px] bg-[#FFF7ED] text-[11px] font-semibold text-[#EA580C] text-center active:scale-95 transition-transform">
-                    🍜 {L(lang, { ko: '주변 맛집', zh: '附近美食', en: 'Nearby Food' })}
-                  </a>
-                  <a href={`https://map.kakao.com/link/search/${encodeURIComponent('카페')}?q=${activePopup.lat},${activePopup.lng}`}
-                    target="_blank" rel="noreferrer"
-                    className="flex-1 py-2 rounded-[10px] bg-[#FDF4FF] text-[11px] font-semibold text-[#9333EA] text-center active:scale-95 transition-transform">
-                    ☕ {L(lang, { ko: '주변 카페', zh: '附近咖啡', en: 'Nearby Cafe' })}
-                  </a>
-                </div>
-              )}
-
-              {/* #37 비슷한 팝업 추천 */}
-              {(() => {
-                const similar = allPins
-                  .filter(p => p.id !== activePopup.id && (p.popup_type === activePopup.popup_type || p.district === activePopup.district))
-                  .slice(0, 3)
-                if (similar.length === 0) return null
-                return (
-                  <div className="mt-4">
-                    <p className="text-[11px] font-bold text-[#374151] mb-2">💡 {L(lang, { ko: '이것도 좋아할 거예요', zh: '你可能还喜欢', en: 'You might also like' })}</p>
-                    <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-                      {similar.map(s => (
-                        <button key={s.id} onClick={() => setActivePopup(s)}
-                          className="flex-shrink-0 w-[120px] rounded-[10px] bg-[#F9FAFB] p-2.5 text-left active:scale-95 transition-transform">
-                          <span className="text-lg">{s.emoji}</span>
-                          <p className="text-[11px] font-semibold text-[#111827] truncate mt-1">{L(lang, s.title)}</p>
-                          <p className="text-[9px] text-[#9CA3AF] truncate mt-0.5">{s.venue_name}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )
-              })()}
             </div>
           </div>
         )}

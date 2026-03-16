@@ -2586,40 +2586,6 @@ function AppInner() {
 
           {/* Scrollable Content */}
           <div className="flex-1 overflow-y-auto px-5 py-5">
-            {/* Widget Settings Section */}
-            <div className="mb-8">
-              <h3 className="text-sm font-bold mb-3" style={{ color: '#1A1A1A' }}>{L(lang, { ko: '내 위젯 설정', zh: '我的小组件设置', en: 'My Widget Settings' })}</h3>
-              <p className="text-xs font-semibold mb-4" style={{ color: '#6B7280' }}>{L(lang, { ko: '홈 화면의 위젯을 설정할 수 있습니다.', zh: '可以设置首页的小组件。', en: 'Configure widgets on the home screen.' })}</p>
-              <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                {[
-                  { key: 'exchange', label: { ko: '환율', zh: '汇率', en: 'Exchange' } },
-                  { key: 'clock', label: { ko: '한국 시간', zh: '韩国时间', en: 'Korea Time' } },
-                  { key: 'emergency', label: { ko: '긴급 연락처', zh: '紧急联系', en: 'Emergency' } },
-                ].map((w, i, arr) => {
-                  const isOn = widgetSettings[w.key] !== false
-                  return (
-                    <div key={w.key} className="flex items-center justify-between px-4 py-3.5">
-                      <span className="text-sm font-bold" style={{ color: '#1A1A1A' }}>{L(lang, w.label)}</span>
-                      <button
-                        onClick={() => {
-                          const next = { ...widgetSettings, [w.key]: !isOn }
-                          setWidgetSettings(next)
-                          localStorage.setItem('hanpocket_widgets', JSON.stringify(next))
-                        }}
-                        className="relative w-11 h-6 rounded-full transition-colors duration-200"
-                        style={{ backgroundColor: isOn ? '#2D5A3D' : '#D1D5DB' }}
-                      >
-                        <span
-                          className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200"
-                          style={{ transform: isOn ? 'translateX(20px)' : 'translateX(0)' }}
-                        />
-                      </button>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
             {/* App Shortcuts Section */}
             <div>
               <h3 className="text-sm font-bold mb-4" style={{ color: '#1A1A1A' }}>{L(lang, { ko: '앱 바로가기', zh: 'APP快捷方式', en: 'App Shortcuts' })}</h3>
@@ -2656,16 +2622,7 @@ function AppInner() {
                 </div>
               </div>
 
-              {/* 생활/정부 */}
-              <div className="mb-5">
-                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '생활/정부', zh: '生活/政府', en: 'Life/Gov' })}</p>
-                <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
-                  <AppShortcut name="카카오톡" description={L(lang, {ko:'메신저, 소셜', zh:'聊天、社交', en:'Messenger, social'})} deepLink="kakaotalk://" webUrl="https://apps.apple.com/app/id362057947" domain="kakaocorp.com" />
-                  <AppShortcut name="당근" description={L(lang, {ko:'중고거래, 동네생활', zh:'二手交易、社区', en:'Used goods, local life'})} deepLink="daangn://" webUrl="https://apps.apple.com/app/id1018769995" domain="daangn.com" />
-                  <AppShortcut name="정부24" description={L(lang, {ko:'정부 민원 서비스', zh:'政府服务', en:'Government services'})} deepLink="" webUrl="https://apps.apple.com/app/id1327365498" domain="gov.kr" />
-                  <AppShortcut name="하이코리아" description={L(lang, {ko:'출입국 외국인 정책', zh:'出入境外国人政策', en:'Immigration policy'})} deepLink="" webUrl="https://www.hikorea.go.kr" domain="hikorea.go.kr" />
-                </div>
-              </div>
+
             </div>
           </div>
         </div>

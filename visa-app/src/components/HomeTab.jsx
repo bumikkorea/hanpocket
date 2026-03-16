@@ -1235,12 +1235,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 {isHot && (
                   <div className="absolute top-2 left-2 bg-[#FF3B30] text-white text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wider">HOT</div>
                 )}
-                {/* 중국인 결제 배지 */}
-                {(popup.payment_alipay || popup.payment_wechatpay) && (
-                  <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[9px] px-1.5 py-0.5 rounded-full">
-                    {popup.payment_alipay ? '支付宝' : '微信支付'}
-                  </div>
-                )}
+
                 <div className="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
                   style={{ backgroundColor: showOpenBadge ? '#2D5A3D' : closingSoon ? '#FF3B30' : 'rgba(0,0,0,0.5)' }}>
                   {showOpenBadge ? L(lang, { ko: '오픈 예정', zh: '即将开幕', en: 'Soon' }) : dday}

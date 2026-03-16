@@ -93,7 +93,7 @@ export default function NearMap({ lang }) {
   const filteredPins = allPins.filter(p => {
     if (venueFilter !== 'all' && p.venue_type !== venueFilter) return false
     if (typeFilter  !== 'all' && p.popup_type  !== typeFilter)  return false
-    if (cnFilter && !p.payment_alipay && !p.payment_wechatpay)  return false
+
     if (todayOnly) {
       const today = new Date().toISOString().slice(0, 10)
       if (!(p.period?.start <= today && p.period?.end >= today)) return false
@@ -171,7 +171,7 @@ export default function NearMap({ lang }) {
         el.innerHTML = `
           <div style="background:${spot.color};color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 8px rgba(0,0,0,0.25);cursor:pointer;border:2px solid white;position:relative">
             ${spot.emoji}
-            ${spot.payment_alipay || spot.payment_wechatpay ? '<div style="position:absolute;bottom:-4px;right:-4px;width:14px;height:14px;background:#1677FF;border-radius:50%;border:1.5px solid white;font-size:8px;display:flex;align-items:center;justify-content:center">支</div>' : ''}
+
           </div>`
         const overlay = new window.kakao.maps.CustomOverlay({ map, position: mPos, content: el, yAnchor: 1 })
         overlaysRef.current.push(overlay)
@@ -374,13 +374,7 @@ export default function NearMap({ lang }) {
       {/* ─── 팝업 레이어 필터 ─── */}
       {activeLayer === 'popup' && (
         <div className="mb-2">
-          {/* 支付宝/微信 필터 — 눈에 띄는 위치 */}
           <div className="flex items-center gap-2 mb-2">
-            <button onClick={() => setCnFilter(f => !f)}
-              className={`flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-full transition-all ${cnFilter ? 'bg-[#1677FF] text-white' : 'bg-white text-[#9CA3AF] border border-[#E5E7EB]'}`}
-              style={{ boxShadow: cnFilter ? 'none' : '0 1px 3px rgba(0,0,0,0.06)' }}>
-              💳 支付宝/微信
-            </button>
             <div className="flex-1" />
             <span className="text-[10px] text-[#9CA3AF]">
               {pinsLoading ? '...' : `${filteredPins.length} ${L(lang, { ko: '개', zh: '个', en: '' })}`}
@@ -514,8 +508,7 @@ export default function NearMap({ lang }) {
               {/* D-day + cn_score 뱃지 (#27) */}
               {(() => {
                 const cnScore = Math.min(10, (
-                  (activePopup.payment_alipay ? 2 : 0) + (activePopup.payment_wechatpay ? 2 : 0) +
-                  (activePopup.chinese_staff ? 2 : 0) + (activePopup.tax_refund ? 0.5 : 0) +
+                  (activePopup.chinese_staff ? 4 : 0) + (activePopup.tax_refund ? 1 : 0) +
                   (activePopup.entry_type !== 'paid' ? 0.5 : 0)
                 ))
                 const scoreColor = cnScore >= 6 ? '#16A34A' : cnScore >= 3 ? '#EA580C' : '#9CA3AF'
@@ -527,8 +520,7 @@ export default function NearMap({ lang }) {
                       🇨🇳 {cnScore.toFixed(1)}/10
                     </span>
                     {activePopup.isClosingSoon && <span className="text-[10px] bg-[#FEF2F2] text-[#DC2626] px-2 py-0.5 rounded-full font-bold">🔥 D-{activePopup.daysLeft}</span>}
-                    {activePopup.payment_alipay    && <span className="text-[10px] bg-[#EEF2FF] text-[#4F46E5] px-2 py-0.5 rounded-full">✅ 支付宝</span>}
-                    {activePopup.payment_wechatpay && <span className="text-[10px] bg-[#F0FDF4] text-[#16A34A] px-2 py-0.5 rounded-full">✅ 微信</span>}
+
                     {activePopup.chinese_staff     && <span className="text-[10px] bg-[#FFF7ED] text-[#EA580C] px-2 py-0.5 rounded-full">🗣️ {L(lang, { ko: '중문', zh: '中文', en: 'CN' })}</span>}
                     {activePopup.tax_refund        && <span className="text-[10px] bg-[#F0FDF4] text-[#16A34A] px-2 py-0.5 rounded-full">💰 {L(lang, { ko: '환급', zh: '退税', en: 'Refund' })}</span>}
                     {activePopup.entry_type !== 'paid' && <span className="text-[10px] bg-[#F3F4F6] text-[#555] px-2 py-0.5 rounded-full">{L(lang, { ko: '무료', zh: '免费', en: 'Free' })}</span>}
@@ -540,15 +532,7 @@ export default function NearMap({ lang }) {
               <div className="bg-[#F9FAFB] rounded-[12px] p-3 mb-3">
                 <p className="text-[11px] font-bold text-[#374151] mb-2">📋 {L(lang, { ko: '체크리스트', zh: '清单', en: 'Checklist' })}</p>
                 <div className="space-y-1.5 text-[11px] text-[#555]">
-                  {/* 결제수단 */}
-                  <div className="flex items-center gap-2">
-                    <span>💳</span>
-                    <span>{L(lang, { ko: '결제', zh: '支付', en: 'Payment' })}: {[
-                      activePopup.payment_alipay && '支付宝✅',
-                      activePopup.payment_wechatpay && '微信✅',
-                      '현금✅', 'VISA✅'
-                    ].filter(Boolean).join(' ')}</span>
-                  </div>
+
                   {/* 중국어 서비스 */}
                   <div className="flex items-center gap-2">
                     <span>🗣️</span>
@@ -663,8 +647,6 @@ export default function NearMap({ lang }) {
                     const venue = activePopup.venue_name || ''
                     const period = `${activePopup.period?.start?.slice(5).replace('-','/')}~${activePopup.period?.end?.slice(5).replace('-','/')}`
                     const badges = [
-                      activePopup.payment_alipay && '支付宝✅',
-                      activePopup.payment_wechatpay && '微信✅',
                       activePopup.chinese_staff && '中文服务✅',
                       activePopup.tax_refund && '退税✅',
                     ].filter(Boolean).join(' ')
@@ -856,7 +838,7 @@ export default function NearMap({ lang }) {
                     <p className="text-[11px] text-[#9CA3AF] truncate">{spot.venue_name} · ~{spot.period?.end?.slice(5).replace('-','/')}</p>
                   </div>
                   <div className="flex gap-1 mt-1">
-                    {spot.payment_alipay    && <span className="text-[9px] bg-[#EEF2FF] text-[#4F46E5] px-1 py-0.5 rounded">支付宝</span>}
+
                     {spot.payment_wechatpay && <span className="text-[9px] bg-[#F0FDF4] text-[#16A34A] px-1 py-0.5 rounded">微信</span>}
                     {spot.chinese_staff     && <span className="text-[9px] bg-[#FFF7ED] text-[#EA580C] px-1 py-0.5 rounded">中文</span>}
                   </div>

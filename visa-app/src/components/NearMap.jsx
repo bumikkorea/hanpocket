@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState, useCallback, lazy, Suspense } from 'react'
+import { MapPin, Storefront, Bus, ForkKnife, Coffee, Train, Package, Pill, Taxi, FirstAidKit, Bank, Camera, ShoppingBag, Toilet, CurrencyDollar, WifiHigh, AirplaneTakeoff, Sparkle, Hospital, NavigationArrow } from '@phosphor-icons/react'
 import { usePopupMap } from '../hooks/usePopupStores'
 const PopupReviewForm = lazy(() => import('./PopupReviewForm'))
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
 const VENUE_FILTERS = [
-  { v: 'all',              ko: '전체', zh: '全部', en: 'All' },
-  { v: 'department_store', ko: '백화점', zh: '百货店', en: 'Dept Store' },
-  { v: 'hotplace',         ko: '핫플', zh: '热门地', en: 'Hotplace' },
-  { v: 'hangang',          ko: '한강', zh: '汉江', en: 'Han River' },
-  { v: 'mall',             ko: '복합몰', zh: '综合商场', en: 'Mall' },
-  { v: 'other',            ko: '기타', zh: '其他', en: 'Other' },
+  { v: 'all',              ko: '전체', zh: '全部', en: 'All', icon: null },
+  { v: 'department_store', ko: '백화점', zh: '百货店', en: 'Dept Store', icon: Storefront },
+  { v: 'hotplace',         ko: '핫플', zh: '热门地', en: 'Hotplace', icon: Sparkle },
+  { v: 'hangang',          ko: '한강', zh: '汉江', en: 'Han River', icon: NavigationArrow },
+  { v: 'mall',             ko: '복합몰', zh: '综合商场', en: 'Mall', icon: ShoppingBag },
+  { v: 'other',            ko: '기타', zh: '其他', en: 'Other', icon: null },
 ]
 
 const TYPE_FILTERS = [
@@ -27,13 +28,13 @@ const TYPE_FILTERS = [
 
 // 3.1 퀵 이동 지역 데이터
 const QUICK_AREAS = [
-  { id: 'seongsu',   label: { ko: '성수', zh: '圣水', en: 'Seongsu' }, emoji: '📍', lat: 37.5446, lng: 127.0560, zoom: 4 },
-  { id: 'hongdae',   label: { ko: '홍대', zh: '弘大', en: 'Hongdae' }, emoji: '📍', lat: 37.5563, lng: 126.9236, zoom: 4 },
-  { id: 'gangnam',   label: { ko: '강남', zh: '江南', en: 'Gangnam' }, emoji: '📍', lat: 37.4979, lng: 127.0276, zoom: 4 },
-  { id: 'myeongdong',label: { ko: '명동', zh: '明洞', en: 'Myeongdong' }, emoji: '📍', lat: 37.5636, lng: 126.9869, zoom: 4 },
-  { id: 'ddp',       label: { ko: 'DDP', zh: 'DDP', en: 'DDP' }, emoji: '📍', lat: 37.5671, lng: 127.0095, zoom: 4 },
-  { id: 'itaewon',   label: { ko: '이태원', zh: '梨泰院', en: 'Itaewon' }, emoji: '📍', lat: 37.5345, lng: 126.9946, zoom: 4 },
-  { id: 'yeouido',   label: { ko: '여의도', zh: '汝矣岛', en: 'Yeouido' }, emoji: '📍', lat: 37.5219, lng: 126.9245, zoom: 4 },
+  { id: 'seongsu',   label: { ko: '성수', zh: '圣水', en: 'Seongsu' }, lat: 37.5446, lng: 127.0560, zoom: 4 },
+  { id: 'hongdae',   label: { ko: '홍대', zh: '弘大', en: 'Hongdae' }, lat: 37.5563, lng: 126.9236, zoom: 4 },
+  { id: 'gangnam',   label: { ko: '강남', zh: '江南', en: 'Gangnam' }, lat: 37.4979, lng: 127.0276, zoom: 4 },
+  { id: 'myeongdong',label: { ko: '명동', zh: '明洞', en: 'Myeongdong' }, lat: 37.5636, lng: 126.9869, zoom: 4 },
+  { id: 'ddp',       label: { ko: 'DDP', zh: 'DDP', en: 'DDP' }, lat: 37.5671, lng: 127.0095, zoom: 4 },
+  { id: 'itaewon',   label: { ko: '이태원', zh: '梨泰院', en: 'Itaewon' }, lat: 37.5345, lng: 126.9946, zoom: 4 },
+  { id: 'yeouido',   label: { ko: '여의도', zh: '汝矣岛', en: 'Yeouido' }, lat: 37.5219, lng: 126.9245, zoom: 4 },
 ]
 
 // ─── Magic Pill Selector (드롭다운 + 터치 드래그) ───
@@ -96,7 +97,7 @@ function MagicPillSelector({ areas, lang, onSelect }) {
           transition: 'all 0.2s ease',
         }}
       >
-        <span className="text-[13px]">📍</span>
+        <MapPin size={14} weight="fill" />
         {L(lang, selected.label)}
         <span className="text-[10px] opacity-60 ml-0.5">{expanded ? '▲' : '▼'}</span>
       </button>
@@ -130,7 +131,7 @@ function MagicPillSelector({ areas, lang, onSelect }) {
                     color: isHover ? '#FFF' : '#1A1A1A',
                   }}
                 >
-                  <span className="text-[12px]">{isHover ? '👉' : isCurrent ? '📍' : ''}</span>
+                  <span className="text-[12px] w-4">{isHover ? <MapPin size={14} weight="fill" /> : isCurrent ? <MapPin size={14} weight="duotone" /> : null}</span>
                   <span className={`text-[13px] ${isCurrent || isHover ? 'font-bold' : 'font-medium'}`}>
                     {L(lang, area.label)}
                   </span>
@@ -147,30 +148,30 @@ function MagicPillSelector({ areas, lang, onSelect }) {
 
 // 3.1 레이어 탭 정의
 const LAYER_TABS = [
-  { id: 'quick',    label: { ko: '주변 찾기', zh: '找附近', en: 'Nearby' }, emoji: '📍' },
-  { id: 'popup',    label: { ko: '팝업', zh: '快闪店', en: 'Popups' }, emoji: '🎪' },
-  { id: 'citytour', label: { ko: '시티투어', zh: '观光巴士', en: 'City Tour' }, emoji: '🚌' },
+  { id: 'quick',    label: { ko: '주변 찾기', zh: '找附近', en: 'Nearby' }, icon: MapPin },
+  { id: 'popup',    label: { ko: '팝업', zh: '快闪店', en: 'Popups' }, icon: Storefront },
+  { id: 'citytour', label: { ko: '시티투어', zh: '观光巴士', en: 'City Tour' }, icon: Bus },
 ]
 
 // 퀵서치 버튼 — 중국 여성 관광객이 가장 많이 찾는 것 (1터치)
 const QUICK_SEARCH_PRIMARY = [
-  { emoji: '🍽', label: { ko: '밥', zh: '吃饭', en: 'Food' }, query: '맛집' },
-  { emoji: '☕', label: { ko: '카페', zh: '咖啡', en: 'Cafe' }, query: '카페' },
-  { emoji: '🚇', label: { ko: '지하철', zh: '地铁', en: 'Subway' }, query: '지하철역' },
-  { emoji: '🏪', label: { ko: '편의점', zh: '便利店', en: 'CVS' }, query: '편의점' },
-  { emoji: '💊', label: { ko: '약국', zh: '药店', en: 'Pharmacy' }, query: '약국' },
-  { emoji: '🚕', label: { ko: '택시', zh: '出租车', en: 'Taxi' }, query: '택시 승강장' },
+  { icon: ForkKnife, label: { ko: '밥', zh: '吃饭', en: 'Food' }, query: '맛집' },
+  { icon: Coffee, label: { ko: '카페', zh: '咖啡', en: 'Cafe' }, query: '카페' },
+  { icon: Train, label: { ko: '지하철', zh: '地铁', en: 'Subway' }, query: '지하철역' },
+  { icon: Package, label: { ko: '편의점', zh: '便利店', en: 'CVS' }, query: '편의점' },
+  { icon: Pill, label: { ko: '약국', zh: '药店', en: 'Pharmacy' }, query: '약국' },
+  { icon: Taxi, label: { ko: '택시', zh: '出租车', en: 'Taxi' }, query: '택시 승강장' },
 ]
 const QUICK_SEARCH_MORE = [
-  { emoji: '💄', label: { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }, query: '올리브영' },
-  { emoji: '🏥', label: { ko: '병원', zh: '医院', en: 'Hospital' }, query: '병원' },
-  { emoji: '🏧', label: { ko: 'ATM', zh: 'ATM', en: 'ATM' }, query: 'ATM' },
-  { emoji: '📸', label: { ko: '포토스팟', zh: '打卡地', en: 'Photo Spot' }, query: '포토존' },
-  { emoji: '🛍', label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, query: '쇼핑' },
-  { emoji: '🚻', label: { ko: '화장실', zh: '厕所', en: 'Restroom' }, query: '화장실' },
-  { emoji: '💱', label: { ko: '환전', zh: '换钱', en: 'Exchange' }, query: '환전소' },
-  { emoji: '📶', label: { ko: '와이파이', zh: 'WiFi', en: 'WiFi' }, query: '무료 와이파이' },
-  { emoji: '✈', label: { ko: '공항버스', zh: '机场巴士', en: 'Airport Bus' }, query: '공항버스 정류장' },
+  { icon: Sparkle, label: { ko: '올리브영', zh: 'Olive Young', en: 'Olive Young' }, query: '올리브영' },
+  { icon: Hospital, label: { ko: '병원', zh: '医院', en: 'Hospital' }, query: '병원' },
+  { icon: Bank, label: { ko: 'ATM', zh: 'ATM', en: 'ATM' }, query: 'ATM' },
+  { icon: Camera, label: { ko: '포토스팟', zh: '打卡地', en: 'Photo Spot' }, query: '포토존' },
+  { icon: ShoppingBag, label: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, query: '쇼핑' },
+  { icon: Toilet, label: { ko: '화장실', zh: '厕所', en: 'Restroom' }, query: '화장실' },
+  { icon: CurrencyDollar, label: { ko: '환전', zh: '换钱', en: 'Exchange' }, query: '환전소' },
+  { icon: WifiHigh, label: { ko: '와이파이', zh: 'WiFi', en: 'WiFi' }, query: '무료 와이파이' },
+  { icon: AirplaneTakeoff, label: { ko: '공항버스', zh: '机场巴士', en: 'Airport Bus' }, query: '공항버스 정류장' },
 ]
 
 export default function NearMap({ lang }) {
@@ -427,7 +428,7 @@ export default function NearMap({ lang }) {
                 activeLayer === lt.id ? 'bg-white text-[#111827]' : 'text-[#888]'
               }`}
               style={activeLayer === lt.id ? { boxShadow: '0 1px 3px rgba(0,0,0,0.08)' } : {}}>
-              {lt.emoji} {L(lang, lt.label)}
+              {lt.icon && <lt.icon size={14} weight="bold" style={{ display: 'inline', verticalAlign: '-2px', marginRight: 3 }} />}{L(lang, lt.label)}
             </button>
           ))}
         </div>
@@ -447,7 +448,7 @@ export default function NearMap({ lang }) {
               <button key={item.query} onClick={() => searchOnMap(item.query)}
                 className="flex items-center gap-2 px-3 py-2.5 rounded-[12px] bg-white text-left active:scale-95 transition-transform"
                 style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-                <span className="text-[18px]">{item.emoji}</span>
+                <item.icon size={20} weight="duotone" color="#C4725A" />
                 <span className="text-[12px] font-semibold text-[#1A1A1A]">{L(lang, item.label)}</span>
               </button>
             ))}
@@ -465,7 +466,7 @@ export default function NearMap({ lang }) {
                 <button key={item.query} onClick={() => searchOnMap(item.query)}
                   className="flex items-center gap-2 px-3 py-2 rounded-[12px] bg-white text-left active:scale-95 transition-transform"
                   style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-                  <span className="text-[16px]">{item.emoji}</span>
+                  <item.icon size={18} weight="duotone" color="#8B6F5C" />
                   <span className="text-[11px] font-medium text-[#555]">{L(lang, item.label)}</span>
                 </button>
               ))}

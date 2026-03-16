@@ -119,6 +119,7 @@ const SCENES = [
 
 function PhraseCard({ phrase, lang }) {
   const [copied, setCopied] = useState(false)
+  const [flipped, setFlipped] = useState(false)
 
   const speak = (text) => {
     if ('speechSynthesis' in window) {
@@ -136,18 +137,26 @@ function PhraseCard({ phrase, lang }) {
   }
 
   return (
-    <div className="bg-white rounded-[16px] p-4 active:scale-[0.98] transition-all" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-      <p className="text-[17px] font-bold text-[#1A1A1A] mb-1">{phrase.ko}</p>
-      <p className="text-[13px] text-[#888] mb-0.5">{phrase.pron}</p>
-      <p className="text-[13px] text-[#555]">{lang === 'en' ? phrase.en : phrase.zh}</p>
-      <div className="flex gap-2 mt-3">
-        <button onClick={() => speak(phrase.ko)} className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#F7F3EF] text-[#8B6F5C] text-xs font-medium active:scale-95 transition-transform">
-          <Volume2 size={14} /> {lang === 'ko' ? '듣기' : lang === 'zh' ? '听' : 'Listen'}
-        </button>
-        <button onClick={copy} className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#F7F3EF] text-[#8B6F5C] text-xs font-medium active:scale-95 transition-transform">
-          {copied ? <Check size={14} /> : <Copy size={14} />}
-          {copied ? (lang === 'ko' ? '복사됨' : lang === 'zh' ? '已复制' : 'Copied') : (lang === 'ko' ? '복사' : lang === 'zh' ? '复制' : 'Copy')}
-        </button>
+    <div className={`flip-card${flipped ? ' flipped' : ''}`} onClick={() => setFlipped(f => !f)} style={{ minHeight: 120 }}>
+      <div className="flip-card-inner" style={{ minHeight: 120 }}>
+        <div className="flip-card-front bg-white rounded-[16px] p-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+          <p className="text-[17px] font-bold text-[#1A1A1A] mb-1">{lang === 'en' ? phrase.en : phrase.zh}</p>
+          <p className="text-[12px] text-[#BCBCBC] mt-2">{lang === 'ko' ? '탭하여 한국어 보기' : lang === 'zh' ? '点击查看韩语' : 'Tap to see Korean'}</p>
+        </div>
+        <div className="flip-card-back bg-[#1A1A1A] rounded-[16px] p-4" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+          <p className="text-[17px] font-bold text-white mb-1">{phrase.ko}</p>
+          <p className="text-[13px] text-[#999] mb-0.5">{phrase.pron}</p>
+          <p className="text-[12px] text-[#888]">{lang === 'en' ? phrase.en : phrase.zh}</p>
+          <div className="flex gap-2 mt-3">
+            <button onClick={e => { e.stopPropagation(); speak(phrase.ko) }} className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white text-xs font-medium active:scale-95 transition-transform">
+              <Volume2 size={14} /> {lang === 'ko' ? '듣기' : lang === 'zh' ? '听' : 'Listen'}
+            </button>
+            <button onClick={e => { e.stopPropagation(); copy() }} className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/10 text-white text-xs font-medium active:scale-95 transition-transform">
+              {copied ? <Check size={14} /> : <Copy size={14} />}
+              {copied ? '✓' : (lang === 'ko' ? '복사' : lang === 'zh' ? '复制' : 'Copy')}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )

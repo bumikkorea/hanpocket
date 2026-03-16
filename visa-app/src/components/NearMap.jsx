@@ -559,7 +559,7 @@ export default function NearMap({ lang }) {
 
         {/* 3.3 팝업 상세 바텀시트 */}
         {activePopup && (
-          <div className="absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-[20px] overflow-y-auto" style={{ maxHeight: '60%', boxShadow: '0 -4px 20px rgba(0,0,0,0.15)' }}>
+          <div className="morph-enter absolute bottom-0 left-0 right-0 z-20 bg-white rounded-t-[20px] overflow-y-auto" style={{ maxHeight: '60%', boxShadow: '0 -4px 20px rgba(0,0,0,0.15)' }}>
             {/* 드래그 핸들 */}
             <div className="flex justify-center pt-2 pb-1">
               <div className="w-10 h-1 rounded-full bg-[#D1D5DB]" />

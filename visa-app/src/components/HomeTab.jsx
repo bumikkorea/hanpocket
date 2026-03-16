@@ -1283,7 +1283,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               </div>
             ) : (
               <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-pl-4 mb-6" style={{ scrollbarWidth: 'none' }}>
-                {activePopups.map(popup => <PopupCard key={popup.id} popup={popup} showOpenBadge={false} />)}
+                {activePopups.map((popup, i) => <div key={popup.id} className="stagger-item" style={{ animationDelay: `${i * 0.06}s` }}><PopupCard popup={popup} showOpenBadge={false} /></div>)}
                 <div className="flex-shrink-0 w-4" />
               </div>
             )}
@@ -1343,7 +1343,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
                 {/* 예정 팝업 카드 */}
                 <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-pl-4" style={{ scrollbarWidth: 'none' }}>
-                  {upcomingPopups.map(popup => <PopupCard key={popup.id} popup={popup} showOpenBadge={true} />)}
+                  {upcomingPopups.map((popup, i) => <div key={popup.id} className="stagger-item" style={{ animationDelay: `${i * 0.06}s` }}><PopupCard popup={popup} showOpenBadge={true} /></div>)}
                   <div className="flex-shrink-0 w-4" />
                 </div>
               </>

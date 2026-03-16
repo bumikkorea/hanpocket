@@ -10,10 +10,24 @@ function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d
 export function CurrencyCalc({ lang }) {
   const [amount, setAmount] = useState('')
   const [direction, setDirection] = useState('cny2krw') // cny2krw | krw2cny
-  const RATE = 192.5 // 1 CNY ≈ 192.5 KRW (폴백)
+  const FALLBACK = 192.5
+  const [rate, setRate] = useState(FALLBACK)
+  const [loading, setLoading] = useState(true)
+
+  useState(() => {
+    fetch('https://api.exchangerate-api.com/v4/latest/KRW')
+      .then(r => r.json())
+      .then(data => {
+        const cny = data.rates?.CNY
+        if (cny) setRate(Math.round((1 / cny) * 100) / 100)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  })
+
   const converted = direction === 'cny2krw'
-    ? (parseFloat(amount) || 0) * RATE
-    : (parseFloat(amount) || 0) / RATE
+    ? (parseFloat(amount) || 0) * rate
+    : (parseFloat(amount) || 0) / rate
 
   return (
     <div className="px-4 pt-4 pb-24">
@@ -24,7 +38,7 @@ export function CurrencyCalc({ lang }) {
             className="text-[13px] font-bold text-[#C4725A] px-3 py-1.5 rounded-full bg-[#FFF5F2] active:scale-95">
             {direction === 'cny2krw' ? '🇨🇳 → 🇰🇷' : '🇰🇷 → 🇨🇳'} ⇄
           </button>
-          <span className="text-[11px] text-[#9CA3AF]">1 CNY ≈ {RATE.toFixed(1)} KRW</span>
+          <span className="text-[11px] text-[#9CA3AF]">1 CNY ≈ {rate.toFixed(1)} KRW {loading ? '' : '· 실시간'}</span>
         </div>
         <input type="number" value={amount} onChange={e => setAmount(e.target.value)}
           placeholder={direction === 'cny2krw' ? '人民币金额' : '韩元金额'}
@@ -40,9 +54,10 @@ export function CurrencyCalc({ lang }) {
         <p className="text-[11px] font-bold text-[#374151] mb-2">💡 {L(lang, { ko: '빠른 참고', zh: '快速参考', en: 'Quick Reference' })}</p>
         {[100, 500, 1000, 5000, 10000].map(v => (
           <div key={v} className="flex justify-between text-[11px] text-[#555] py-1" style={{ borderBottom: '1px solid #F3F4F6' }}>
-            <span>¥{v}</span><span>≈ ₩{(v * RATE).toLocaleString('ko-KR', { maximumFractionDigits: 0 })}</span>
+            <span>¥{v}</span><span>≈ ₩{(v * rate).toLocaleString('ko-KR', { maximumFractionDigits: 0 })}</span>
           </div>
         ))}
+        <p className="text-[9px] text-[#BCBCBC] mt-2">open.er-api.com</p>
       </div>
     </div>
   )

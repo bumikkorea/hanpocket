@@ -25,6 +25,7 @@ export const pocketCategories = [
       { id: 'tradition', name: { ko: '한국 전통 체험', zh: '韩国传统体验', en: 'Korean Traditional Experience' }, icon: 'Landmark', description: { ko: '요리·문화·계절 체험', zh: '料理·文化·季节体验', en: 'Cooking, culture & seasonal activities' }, size: 'lg' },
       { id: 'holiday', name: { ko: '한국 공휴일 캘린더', zh: '韩国公休日日历', en: 'Korean Holiday Calendar' }, icon: 'Calendar', description: { ko: '네이버 달력 스타일', zh: 'Naver日历风格', en: 'Naver Calendar style' }, size: 'lg' },
       { id: 'taxrefund', name: { ko: '택스리펀드', zh: '退税指南', en: 'Tax Refund' }, icon: 'Coins', description: { ko: '환급 계산기 & 공항 안내', zh: '退税计算器 & 机场指南', en: 'Refund calculator & airport guide' }, size: 'lg' },
+      { id: 'flight', name: { ko: '비행기 도착 추적', zh: '航班到达追踪', en: 'Flight Tracker' }, icon: 'PlaneLanding', description: { ko: '편명 입력 → 실시간 도착 현황', zh: '输入航班号 → 实时到达状态', en: 'Enter flight # → real-time arrival status' }, size: 'lg' },
     ],
   },
   {

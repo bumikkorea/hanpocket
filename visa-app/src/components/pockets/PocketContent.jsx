@@ -5,6 +5,7 @@ import EmergencyPocket from './EmergencyPocket'
 import CafePocket from './CafePocket'
 import ShoppingPocket from './ShoppingPocket'
 import AccommodationPocket from './AccommodationPocket'
+import FlightPocket from './FlightPocket'
 import WidgetContent from '../home/common/WidgetContent'
 
 export default function PocketContent({ pocketId, lang, setTab }) {
@@ -16,6 +17,7 @@ export default function PocketContent({ pocketId, lang, setTab }) {
     case 'cafe': return <CafePocket lang={lang} />
     case 'shopping': return <ShoppingPocket lang={lang} />
     case 'accommodation': return <AccommodationPocket lang={lang} />
+    case 'flight': return <FlightPocket lang={lang} />
     default:
       // 기존 위젯 콘텐츠 폴백
       return <WidgetContent widgetId={pocketId} lang={lang} setTab={setTab} />

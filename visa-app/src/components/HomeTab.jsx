@@ -1085,12 +1085,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── Quick Action 4×2 그리드 ─── */}
       <div className="mt-3 mb-10 px-5">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           {[
             { icon: AirplaneLanding, label: { ko: '입국', zh: '入境', en: 'Arrival' }, color: '#C4725A', onClick: () => setArrivalPopup(true) },
             { icon: AirplaneTakeoff, label: { ko: '출국', zh: '出境', en: 'Depart' }, color: '#C4725A', onClick: () => setDeparturePopup(true) },
-            { icon: ChatCircleText, label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#8B6F5C', onClick: () => setTab('show-korean') },
-            { icon: PhGlobe, label: { ko: '한국문화', zh: '韩国文化', en: 'Culture' }, color: '#B8860B', onClick: () => setTab('korean-culture') },
+            { icon: PhGlobe, label: { ko: '한국어·문화', zh: '韩语·文化', en: 'Korean & Culture' }, color: '#8B6F5C', onClick: () => setTab('korean-culture') },
           ].map(({ icon: Icon, label, color, onClick }) => (
             <button
               key={L(lang, label)}

@@ -11,8 +11,8 @@ const SECTIONS = [
     title: { ko: '통역 & 번역', zh: '口译 & 翻译', en: 'Translation' },
     emoji: '🗣️',
     items: [
-      { id: 'tool-translator', emoji: '🗣️', label: { ko: '통역&번역', zh: '口译&翻译', en: 'Translate' }, detail: { ko: '실시간 통역, 상황별 한국어', zh: '实时翻译、场景韩语', en: 'Real-time translation' }, tool: 'translator' },
-      { id: 'tool-sign',      emoji: '📸', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dictionary' }, detail: { ko: '카메라로 간판 번역', zh: '相机翻译招牌', en: 'Camera sign translation' }, tool: 'artranslate' },
+      { id: 'tool-translator', emoji: '🗣️', label: { ko: '통역&번역', zh: '口译&翻译', en: 'Translate' }, tool: 'translator' },
+      { id: 'tool-sign',      emoji: '📸', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dictionary' }, tool: 'artranslate' },
       { id: 'tool-korean20',  emoji: '💬', label: { ko: '기본 한국어 20문장', zh: '基础韩语20句', en: '20 Korean Phrases' }, sub: 'basic-korean' },
     ]
   },
@@ -21,8 +21,8 @@ const SECTIONS = [
     emoji: '🛠',
     items: [
       { id: 'tool-exchange', emoji: '💱', label: { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency Converter' }, sub: 'currency' },
-      { id: 'tool-taxrefund', emoji: '🧾', label: { ko: '세금환급 계산기', zh: '退税计算器', en: 'Tax Refund Calculator' }, detail: { ko: '구매금액 입력 → 환급액 확인', zh: '输入购买金额 → 查看退税额', en: 'Enter amount → check refund' }, sub: 'taxrefund' },
-      { id: 'tool-learn',    emoji: '📚', label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' }, detail: { ko: '여행자를 위한 실용 한국어', zh: '旅行者实用韩语', en: 'Practical Korean' }, tool: 'learn' },
+      { id: 'tool-taxrefund', emoji: '🧾', label: { ko: '세금환급 계산기', zh: '退税计算器', en: 'Tax Refund Calculator' }, sub: 'taxrefund' },
+      { id: 'tool-learn',    emoji: '📚', label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' }, tool: 'learn' },
       { id: 'tool-taxi',     emoji: '🚕', label: { ko: '택시 요금 계산', zh: '出租车费用', en: 'Taxi Calculator' }, tab: 'taxi-calc' },
     ]
   },
@@ -49,7 +49,7 @@ const SECTIONS = [
       { id: 'guide-medical',   emoji: '🏥', label: { ko: '의료관광 가이드', zh: '医疗旅游指南', en: 'Medical Tourism' }, sub: 'medical-tourism' },
       { id: 'guide-stay',      emoji: '🏠', label: { ko: '서울 스테이', zh: '首尔住宿', en: 'Seoul Stay' }, sub: 'seoul-stay' },
       { id: 'guide-culture',   emoji: '🎨', label: { ko: '문화 라운지', zh: '文化空间', en: 'Culture Lounge' }, sub: 'culture-lounge' },
-      { id: 'guide-fitness',   emoji: '🏋️', label: { ko: '운동 가이드', zh: '健身指南', en: 'Fitness Guide' }, detail: { ko: '헬스장, 수영장, 요가', zh: '健身房、游泳池、瑜伽', en: 'Gym, pool, yoga' }, tool: 'fitness' },
+      { id: 'guide-fitness',   emoji: '🏋️', label: { ko: '운동 가이드', zh: '健身指南', en: 'Fitness Guide' }, tool: 'fitness' },
     ]
   },
   {
@@ -65,11 +65,11 @@ const SECTIONS = [
     title: { ko: '긴급 정보', zh: '紧急信息', en: 'Emergency' },
     emoji: '🆘',
     items: [
-      { id: 'sos-langcard', emoji: '🗣️', label: { ko: '긴급 한국어 카드', zh: '紧急韩语卡', en: 'Emergency Korean Card' }, detail: { ko: '증상·상황별 한국어 표현 + TTS', zh: '症状·场景韩语表达 + TTS', en: 'Symptom & situation Korean phrases + TTS' }, sub: 'sos-language' },
+      { id: 'sos-langcard', emoji: '🗣️', label: { ko: '긴급 한국어 카드', zh: '紧急韩语卡', en: 'Emergency Korean Card' }, sub: 'sos-language' },
       { id: 'sos-phone',    emoji: '📞', label: { ko: '긴급 전화번호', zh: '紧急电话', en: 'Emergency Numbers' }, sub: 'emergency-numbers' },
       { id: 'sos-hospital', emoji: '🏥', label: { ko: '가까운 병원', zh: '附近医院', en: 'Nearby Hospital' }, action: 'search', query: '외국인진료 병원' },
-      { id: 'sos-embassy',  emoji: '🏛️', label: { ko: '중국 대사관', zh: '中国大使馆', en: 'Chinese Embassy' }, detail: '02-738-1038' },
-      { id: 'sos-police',   emoji: '👮', label: { ko: '관광경찰', zh: '旅游警察', en: 'Tourist Police' }, detail: '1330' },
+      { id: 'sos-embassy',  emoji: '🏛️', label: { ko: '중국 대사관', zh: '中国大使馆', en: 'Chinese Embassy' }, sub: 'embassy' },
+      { id: 'sos-police',   emoji: '👮', label: { ko: '관광경찰', zh: '旅游警察', en: 'Tourist Police' }, sub: 'tourist-police' },
       { id: 'sos-lost',     emoji: '📦', label: { ko: '분실물 신고', zh: '失物报告', en: 'Lost & Found' }, sub: 'lost-item' },
       { id: 'sos-allergy',  emoji: '⚠️', label: { ko: '알레르기 카드', zh: '过敏卡', en: 'Allergy Card' }, sub: 'allergy-card' },
     ]

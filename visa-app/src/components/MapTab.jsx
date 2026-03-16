@@ -1202,6 +1202,30 @@ export default function MapTab({ lang }) {
       name: { ko: '화장실', zh: '洗手间', en: 'Restroom' },
       color: '#8D6E63',
       kakaoCode: null
+    },
+    {
+      id: 'hair',
+      name: { ko: '헤어샵', zh: '美发店', en: 'Hair Salon' },
+      color: '#E84393',
+      kakaoCode: null
+    },
+    {
+      id: 'wedding',
+      name: { ko: '웨딩촬영', zh: '婚纱摄影', en: 'Wedding Photo' },
+      color: '#FD79A8',
+      kakaoCode: null
+    },
+    {
+      id: 'makeup',
+      name: { ko: '메이크업', zh: '化妆', en: 'Makeup' },
+      color: '#A29BFE',
+      kakaoCode: null
+    },
+    {
+      id: 'semiperm',
+      name: { ko: '반영구', zh: '半永久纹绣', en: 'Semi-Permanent' },
+      color: '#6C5CE7',
+      kakaoCode: null
     }
   ]
 

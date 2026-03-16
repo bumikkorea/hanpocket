@@ -46,6 +46,10 @@ export const pocketCategories = [
     pockets: [
       { id: 'shopping', name: { ko: '쇼핑탭', zh: '购物标签', en: 'Shopping Tab' }, icon: 'ShoppingBag', description: { ko: '한국에서 스마트하게 쇼핑하기', zh: '在韩国聪明购物', en: 'Shop smart in Korea' }, size: 'lg' },
       { id: 'beauty', name: { ko: 'K-뷰티', zh: 'K-美妆', en: 'K-Beauty' }, icon: 'Sparkles', description: { ko: '올리브영 매장 찾기 & 해외 배송', zh: 'Olive Young门店 & 海外配送', en: 'Olive Young stores & global shipping' }, size: 'lg' },
+      { id: 'wedding-photo', name: { ko: '웨딩 촬영', zh: '婚纱摄影', en: 'Wedding Photo' }, icon: 'Camera', description: { ko: '유명 웨딩 촬영지 & 스튜디오', zh: '知名婚纱摄影地 & 工作室', en: 'Popular wedding photo spots & studios' }, size: 'lg' },
+      { id: 'hair-salon', name: { ko: '헤어샵', zh: '美发店', en: 'Hair Salon' }, icon: 'Scissors', description: { ko: '유명 헤어샵 & 중국어 가능 매장', zh: '知名美发店 & 中文服务门店', en: 'Top hair salons & Chinese-friendly shops' }, size: 'lg' },
+      { id: 'makeup-studio', name: { ko: '메이크업', zh: '化妆工作室', en: 'Makeup Studio' }, icon: 'Palette', description: { ko: '웨딩/증명사진/일상 메이크업', zh: '婚礼/证件照/日常化妆', en: 'Wedding/ID photo/daily makeup' }, size: 'lg' },
+      { id: 'semi-permanent', name: { ko: '눈썹&헤어라인 문신', zh: '眉毛&发际线纹绣', en: 'Brow & Hairline Tattoo' }, icon: 'Pen', description: { ko: '반영구 눈썹/헤어라인 인기 샵', zh: '半永久眉毛/发际线热门店', en: 'Popular semi-permanent brow & hairline shops' }, size: 'lg' },
       { id: 'fashiontrend', name: { ko: 'K-패션', zh: 'K-时尚', en: 'K-Fashion' }, icon: 'Shirt', description: { ko: '무신사/W컨셉/29CM 쇼핑', zh: 'MUSINSA/W Concept/29CM购物', en: 'MUSINSA/W Concept/29CM shopping' }, size: 'lg' },
       { id: 'oliveyoung', name: { ko: '올리브영 세일', zh: 'Olive Young大促', en: 'Olive Young Sale' }, icon: 'Tag', description: { ko: '세일 일정 & 알림', zh: '大促日程 & 提醒', en: 'Sale schedule & alerts' }, size: 'md' },
       { id: 'cvsnew', name: { ko: '편의점 신상', zh: '便利店新品', en: 'CVS New Items' }, icon: 'ShoppingCart', description: { ko: 'CU/GS25/세븐일레븐 신상품', zh: 'CU/GS25/7-ELEVEN新品', en: 'New convenience store items' }, size: 'md' },
@@ -293,6 +297,37 @@ export const pocketMockData = {
       { rank: 1, name: { ko: '토리든 다이브인 세럼', zh: 'Torriden Dive-in精华', en: 'Torriden Dive-in Serum' } },
       { rank: 2, name: { ko: '라운드랩 자작나무 수분크림', zh: 'Round Lab桦树水分霜', en: 'Round Lab Birch Cream' } },
       { rank: 3, name: { ko: '넘버즈인 3번 세럼', zh: 'Numbuzin 3号精华', en: 'Numbuzin No.3 Serum' } },
+    ],
+  },
+  'wedding-photo': {
+    items: [
+      { name: { ko: '제주 애월 해안도로', zh: '济州涯月海岸公路', en: 'Jeju Aewol Coastal Road' }, area: { ko: '제주', zh: '济州', en: 'Jeju' }, category: { ko: '야외 촬영지', zh: '外景拍摄地', en: 'Outdoor Location' } },
+      { name: { ko: '서울숲 & 뚝섬', zh: '首尔林 & 纛岛', en: 'Seoul Forest & Ttukseom' }, area: { ko: '성수', zh: '圣水', en: 'Seongsu' }, category: { ko: '야외 촬영지', zh: '外景拍摄地', en: 'Outdoor Location' } },
+      { name: { ko: '북촌 한옥마을', zh: '北村韩屋村', en: 'Bukchon Hanok Village' }, area: { ko: '종로', zh: '钟路', en: 'Jongno' }, category: { ko: '한옥 촬영', zh: '韩屋拍摄', en: 'Hanok Shoot' } },
+      { name: { ko: '을왕리 해변', zh: '乙旺里海滩', en: 'Eurwangni Beach' }, area: { ko: '인천', zh: '仁川', en: 'Incheon' }, category: { ko: '해변 촬영', zh: '海边拍摄', en: 'Beach Shoot' } },
+      { name: { ko: '양평 두물머리', zh: '杨平两水头', en: 'Yangpyeong Dumulmeori' }, area: { ko: '양평', zh: '杨平', en: 'Yangpyeong' }, category: { ko: '자연 촬영', zh: '自然风光拍摄', en: 'Nature Shoot' } },
+    ],
+  },
+  'hair-salon': {
+    items: [
+      { name: { ko: '제니하우스', zh: 'Jenny House', en: 'Jenny House' }, area: { ko: '청담', zh: '清潭', en: 'Cheongdam' }, category: { ko: '셀럽 헤어샵', zh: '明星美发店', en: 'Celebrity Salon' } },
+      { name: { ko: '차홍아르더', zh: 'Chahong Ardor', en: 'Chahong Ardor' }, area: { ko: '강남', zh: '江南', en: 'Gangnam' }, category: { ko: '프리미엄', zh: '高端', en: 'Premium' } },
+      { name: { ko: '준오헤어', zh: 'Juno Hair', en: 'Juno Hair' }, area: { ko: '전국', zh: '全国', en: 'Nationwide' }, category: { ko: '프랜차이즈', zh: '连锁店', en: 'Franchise' } },
+      { name: { ko: '이철헤어커커', zh: 'Lee Chul Hair', en: 'Lee Chul Hair Kerker' }, area: { ko: '강남', zh: '江南', en: 'Gangnam' }, category: { ko: '프리미엄', zh: '高端', en: 'Premium' } },
+    ],
+  },
+  'makeup-studio': {
+    items: [
+      { name: { ko: '정샘물 뷰티하우스', zh: 'Jung Saem Mool', en: 'Jung Saem Mool Beauty House' }, area: { ko: '청담', zh: '清潭', en: 'Cheongdam' }, category: { ko: '웨딩 메이크업', zh: '婚礼化妆', en: 'Wedding Makeup' } },
+      { name: { ko: '이니스프리 메이크업 스튜디오', zh: 'Innisfree化妆工作室', en: 'Innisfree Makeup Studio' }, area: { ko: '명동', zh: '明洞', en: 'Myeongdong' }, category: { ko: '체험 메이크업', zh: '体验化妆', en: 'Experience Makeup' } },
+      { name: { ko: '헤라 서울 플래그십', zh: 'HERA首尔旗舰店', en: 'HERA Seoul Flagship' }, area: { ko: '한남', zh: '汉南', en: 'Hannam' }, category: { ko: '프리미엄', zh: '高端', en: 'Premium' } },
+    ],
+  },
+  'semi-permanent': {
+    items: [
+      { name: { ko: '도쿄바비 반영구', zh: 'Tokyo Barbie半永久', en: 'Tokyo Barbie Semi-Permanent' }, area: { ko: '강남', zh: '江南', en: 'Gangnam' }, category: { ko: '눈썹 문신', zh: '眉毛纹绣', en: 'Brow Tattoo' } },
+      { name: { ko: '르메이 뷰티', zh: 'Le May Beauty', en: 'Le May Beauty' }, area: { ko: '신사', zh: '新沙', en: 'Sinsa' }, category: { ko: '헤어라인', zh: '发际线', en: 'Hairline' } },
+      { name: { ko: '뮤즈클리닉', zh: 'Muse Clinic', en: 'Muse Clinic' }, area: { ko: '압구정', zh: '狎鸥亭', en: 'Apgujeong' }, category: { ko: '눈썹+헤어라인', zh: '眉毛+发际线', en: 'Brow + Hairline' } },
     ],
   },
   fashiontrend: {

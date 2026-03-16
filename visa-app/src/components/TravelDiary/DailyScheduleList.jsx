@@ -149,8 +149,8 @@ export default function DailyScheduleList({ lang, schedules, onScheduleClick, on
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
                 onClick={() => onScheduleClick(schedule)}
-                className={`bg-white border border-[#E5E7EB] rounded-xl p-3 cursor-pointer hover:shadow-md transition-all ${
-                  dragOverIndex === index ? 'border-[#111827] shadow-md' : ''
+                className={`bg-white border border-[#E5E7EB] rounded-xl p-3 cursor-pointer hover: transition-all ${
+                  dragOverIndex === index ? 'border-[#111827] ' : ''
                 } ${draggedIndex === index ? 'opacity-50' : ''}`}
               >
                 <div className="flex items-start gap-3">

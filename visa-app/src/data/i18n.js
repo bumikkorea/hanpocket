@@ -111,6 +111,17 @@ export const t = {
     immigrationOfficeGeneral: '출입국·외국인청 (거주지 관할)',
     estimatedFeeRange: '50,000원 - 200,000원',
     estimatedDurationRange: '2-4주',
+    
+    // Accessibility
+    accessibility: {
+      homeTab: '홈 탭, 입국 준비와 여행 정보를 제공합니다',
+      serviceTab: '서비스 탭, 25개의 한국 생활 전문 서비스',
+      courseTab: '코스 탭, 추천 한국 여행 코스',
+      koreanTab: '한국어 탭, 게임형 한국어 학습',
+      exchangeRate: '환율 정보 위젯, 실시간 위안화-원화 환율',
+      weather: '날씨 정보 위젯, 서울 현재 날씨',
+      clock: '시계 위젯, 한국 표준시',
+    },
   },
   zh: {
     appTitle: '🇰🇷 韩国签证指南',
@@ -219,6 +230,17 @@ export const t = {
     immigrationOfficeGeneral: '出入境·外国人厅（居住地管辖）',
     estimatedFeeRange: '50,000韩元 - 200,000韩元',
     estimatedDurationRange: '2-4周',
+    
+    // Accessibility
+    accessibility: {
+      homeTab: '主页，提供入境准备和旅行信息',
+      serviceTab: '服务，25个专门的韩国生活服务',
+      courseTab: '路线，推荐的韩国旅游路线',
+      koreanTab: '韩语，游戏化韩语学习',
+      exchangeRate: '汇率信息组件，实时人民币-韩元汇率',
+      weather: '天气信息组件，首尔当前天气',
+      clock: '时钟组件，韩国标准时间',
+    },
   },
   en: {
     appTitle: '🇰🇷 Korea Visa Guide',
@@ -327,5 +349,16 @@ export const t = {
     immigrationOfficeGeneral: 'Immigration Office (jurisdiction of residence)',
     estimatedFeeRange: '50,000 KRW - 200,000 KRW',
     estimatedDurationRange: '2-4 weeks',
+    
+    // Accessibility
+    accessibility: {
+      homeTab: 'Home tab, provides entry preparation and travel information',
+      serviceTab: 'Service tab, 25 specialized Korea life services',
+      courseTab: 'Course tab, recommended Korea travel routes',
+      koreanTab: 'Korean tab, gamified Korean language learning',
+      exchangeRate: 'Exchange rate widget, real-time CNY-KRW rate',
+      weather: 'Weather widget, Seoul current weather',
+      clock: 'Clock widget, Korea Standard Time',
+    },
   },
 };

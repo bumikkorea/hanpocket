@@ -35,7 +35,7 @@ export default function SpotCard({ spot, lang, onClick, compact = false }) {
     return (
       <button
         onClick={onClick}
-        className="flex-shrink-0 w-[280px] rounded-2xl border border-[#E5E7EB] overflow-hidden bg-white hover:shadow-md transition-all duration-200"
+        className="flex-shrink-0 w-[280px] rounded-2xl border border-[#E5E7EB] overflow-hidden bg-white hover: transition-all duration-200"
       >
         <div className="relative h-[140px]">
           <img 
@@ -72,7 +72,7 @@ export default function SpotCard({ spot, lang, onClick, compact = false }) {
   return (
     <button
       onClick={onClick}
-      className="rounded-2xl border border-[#E5E7EB] overflow-hidden bg-white hover:shadow-md transition-all duration-200"
+      className="rounded-2xl border border-[#E5E7EB] overflow-hidden bg-white hover: transition-all duration-200"
     >
       <div className="relative h-[160px]">
         <img 

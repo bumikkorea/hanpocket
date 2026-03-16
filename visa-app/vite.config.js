@@ -2,12 +2,12 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
-import basicSsl from '@vitejs/plugin-basic-ssl'
+// import basicSsl from '@vitejs/plugin-basic-ssl'
 
 export default defineConfig({
   plugins: [
     react(), 
-    basicSsl(),
+    // basicSsl(),  // disabled — causes connection issues in WSL
     tailwindcss(),
     // PWA 비활성화 - 서비스워커 캐시/업데이트 문제 해결
     // VitePWA({...})
@@ -21,6 +21,15 @@ export default defineConfig({
         target: 'https://rss.marketingtools.apple.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/apple-music/, ''),
+      },
+      '/api/kakao': {
+        target: 'https://dapi.kakao.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/kakao/, ''),
+        headers: {
+          'Authorization': 'KakaoAK d93decd524c15c3455ff05983ca07fac',
+          'KA': 'sdk/1.0 os/javascript lang/ko-KR origin/localhost',
+        },
       },
     },
   },

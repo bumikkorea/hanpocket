@@ -16,7 +16,10 @@
   --accent-green: #2D5A3D;    /* 딥 그린 (야자수/식물) */
   --accent-gold: #B8860B;     /* 골드/황동 (조명/손잡이) */
   --accent-mint: #B2DFDB;     /* 민트/옥색 (분수대) */
-  --accent: #2D5A3D;
+  --accent: #C4725A;          /* NEAR 브라운 — 메인 액센트 */
+  --accent-warm: #C4725A;     /* 테라코타 */
+  --accent-sand: #D4956B;     /* 모래색 */
+  --accent-clay: #8B6F5C;     /* 클레이 */
 
   /* 소나무 브랜드 컬러 시스템 */
   --pine-dark: #1A3A28;
@@ -35,8 +38,8 @@
   --input-bg: #FFFFFF;        /* 입력 필드 배경 */
   --input-border: #D4CFC7;    /* 입력 필드 테두리 */
   --input-focus: #2D5A3D;     /* 입력 필드 포커스 */
-  --button-bg: #2D5A3D;       /* 버튼 배경 */
-  --button-hover: #1A3A28;    /* 버튼 호버 */
+  --button-bg: #C4725A;       /* NEAR 브라운 버튼 */
+  --button-hover: #A85C47;    /* 버튼 호버 */
   --button-text: #FFFFFF;     /* 버튼 텍스트 */
   --link-color: #2D5A3D;      /* 링크 색상 */
   --link-hover: #1A3A28;      /* 링크 호버 */

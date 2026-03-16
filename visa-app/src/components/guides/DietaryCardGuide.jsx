@@ -266,7 +266,7 @@ export default function DietaryCardGuide({ lang, onClose }) {
             <div className="flex justify-center">
               <div 
                 ref={cardRef}
-                className="w-80 p-6 rounded-2xl shadow-lg"
+                className="w-80 p-6 rounded-2xl "
                 style={{
                   backgroundColor: getSelectedStyle().bg,
                   borderColor: getSelectedStyle().border,

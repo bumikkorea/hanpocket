@@ -186,7 +186,7 @@ export default function KoreanPhraseCard({
     : illustration
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 relative">
+    <div className="bg-white rounded-2xl overflow-hidden  border border-gray-100 relative">
       {/* H) Bookmark icon — top right */}
       <button
         onClick={onBookmark}

@@ -7,7 +7,7 @@ function L(lang, data) {
 
 export default function GuideLayout({ title, lang, onClose, children, tip }) {
   return (
-    <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+    <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
       <div className="px-4 pt-4 pb-20">
         {/* 헤더 */}
         <div className="flex items-center gap-3 mb-6">

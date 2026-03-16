@@ -108,6 +108,10 @@ export default function MapTab({ lang }) {
   const [destinationSearchResults, setDestinationSearchResults] = useState([])
   const [showDestinationResults, setShowDestinationResults] = useState(false)
 
+  // 🚌 시티투어버스 관련 상태
+  const [selectedBusRoute, setSelectedBusRoute] = useState('all') // 'all' | 'downtown' | 'night' | 'traditional' | 'panorama'
+  const [busPolylines, setBusPolylines] = useState([])
+
   const L = (data) => {
     if (typeof data === 'string') return data
     return data?.[lang] || data?.ko || ''
@@ -367,9 +371,8 @@ export default function MapTab({ lang }) {
 
       const script = document.createElement('script')
       script.type = 'text/javascript'
-      // services, clusterer 라이브러리 추가 + 언어 파라미터 시도
-      const langParam = currentLang !== 'ko' ? `&hl=${currentLang}` : ''
-      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false${langParam}`
+      // 외국인 대상 서비스 — 항상 영어로 로드
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false&hl=en`
       script.onload = () => {
         window.kakao.maps.load(() => {
           // 원래 언어로 복원
@@ -601,7 +604,8 @@ export default function MapTab({ lang }) {
       transport: { emoji: '🚇', color: '#45B7D1' },
       shopping: { emoji: '🛍️', color: '#96CEB4' },
       tourism: { emoji: '🏛️', color: '#FECA57' },
-      zeropay: { emoji: '💳', color: '#7C3AED' }
+      zeropay: { emoji: '💳', color: '#7C3AED' },
+      city_tour_bus: { emoji: '🚌', color: '#E53935' }
     }
     
     const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#111827' }
@@ -1038,7 +1042,13 @@ export default function MapTab({ lang }) {
   // 카카오 카테고리 검색
   const searchByCategory = (categoryId) => {
     setSelectedCategory(categoryId)
-    
+
+    // 시티투어 폴리라인 정리 (다른 카테고리로 전환 시)
+    if (categoryId !== 'city_tour_bus' && busPolylines.length > 0) {
+      busPolylines.forEach(pl => pl.setMap(null))
+      setBusPolylines([])
+    }
+
     if (categoryId === 'all') {
       // 전체 카테고리는 기존 마커들 표시
       return
@@ -1135,6 +1145,91 @@ export default function MapTab({ lang }) {
           newMarkers.push(marker)
         })
         setMarkers(newMarkers)
+      })
+      return
+    }
+
+    // 🚌 시티투어버스 카테고리 처리
+    if (category.isCityTourBus) {
+      if (!map) return
+      markers.forEach(marker => marker.setMap(null))
+      setMarkers([])
+      // 기존 폴리라인 제거
+      busPolylines.forEach(pl => pl.setMap(null))
+      setBusPolylines([])
+
+      import('../data/cityTourBusData.js').then(({ CITY_TOUR_ROUTES, CITY_TOUR_STOPS, ROUTE_COLORS }) => {
+        const routeFilter = selectedBusRoute
+        const routes = routeFilter === 'all' ? CITY_TOUR_ROUTES : CITY_TOUR_ROUTES.filter(r => r.id === routeFilter)
+        const stops = routeFilter === 'all' ? CITY_TOUR_STOPS : CITY_TOUR_STOPS.filter(s => s.route === routeFilter)
+
+        const newMarkers = []
+        const newPolylines = []
+
+        // 노선별 폴리라인 그리기
+        routes.forEach(route => {
+          const routeStops = CITY_TOUR_STOPS.filter(s => s.route === route.id).sort((a, b) => a.order - b.order)
+          if (routeStops.length < 2) return
+          const path = routeStops.map(s => new window.kakao.maps.LatLng(s.lat, s.lng))
+          // 순환 노선은 시작점으로 돌아오기
+          if (route.id === 'downtown') path.push(path[0])
+          const polyline = new window.kakao.maps.Polyline({
+            path,
+            strokeWeight: 4,
+            strokeColor: route.color,
+            strokeOpacity: 0.8,
+            strokeStyle: 'solid',
+            map
+          })
+          newPolylines.push(polyline)
+        })
+
+        // 정류소 마커 생성
+        stops.forEach(stop => {
+          const routeColor = ROUTE_COLORS[stop.route] || '#E53935'
+          const isStart = stop.isStart
+          const markerSize = isStart ? 36 : 28
+          const markerImg = new window.kakao.maps.MarkerImage(
+            'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
+              <svg viewBox="0 0 ${markerSize} ${markerSize}" xmlns="http://www.w3.org/2000/svg" width="${markerSize}" height="${markerSize}">
+                <circle cx="${markerSize/2}" cy="${markerSize/2}" r="${markerSize/2 - 1}" fill="${routeColor}" stroke="white" stroke-width="2"/>
+                <text x="${markerSize/2}" y="${markerSize/2 + 5}" text-anchor="middle" font-size="${isStart ? 16 : 13}" fill="white" font-weight="bold">${isStart ? '🚌' : stop.order}</text>
+              </svg>
+            `),
+            new window.kakao.maps.Size(markerSize, markerSize)
+          )
+
+          const position = new window.kakao.maps.LatLng(stop.lat, stop.lng)
+          const marker = new window.kakao.maps.Marker({ position, map, image: markerImg })
+          const routeInfo = CITY_TOUR_ROUTES.find(r => r.id === stop.route)
+
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            map.setCenter(position)
+            setSelectedMarker({
+              id: `citytour-${stop.route}-${stop.order}`,
+              name: stop.name,
+              description: {
+                ko: `🚌 ${L(routeInfo.name)} ${stop.order}번 정류소\n📍 ${L(stop.landmark)}\n🕐 ${L(routeInfo.hours)} · ${L(routeInfo.interval)}\n💰 ${L(routeInfo.price)}`,
+                zh: `🚌 ${stop.name.zh} — ${routeInfo.name.zh} #${stop.order}\n📍 ${stop.landmark.zh}\n🕐 ${routeInfo.hours.zh} · ${routeInfo.interval.zh}\n💰 ${routeInfo.price.zh}`,
+                en: `🚌 ${routeInfo.name.en} Stop #${stop.order}\n📍 ${stop.landmark.en}\n🕐 ${routeInfo.hours.en} · ${routeInfo.interval.en}\n💰 ${routeInfo.price.en}`
+              },
+              lat: stop.lat, lng: stop.lng,
+              category: 'city_tour_bus',
+              categoryName: L(routeInfo.name)
+            })
+          })
+          newMarkers.push(marker)
+        })
+
+        setMarkers(newMarkers)
+        setBusPolylines(newPolylines)
+
+        // 전체 보기일 때 서울 중심으로 줌
+        if (routeFilter === 'all' && stops.length > 0) {
+          const bounds = new window.kakao.maps.LatLngBounds()
+          stops.forEach(s => bounds.extend(new window.kakao.maps.LatLng(s.lat, s.lng)))
+          map.setBounds(bounds, 50)
+        }
       })
       return
     }
@@ -1343,13 +1438,20 @@ export default function MapTab({ lang }) {
       color: '#7C3AED',
       kakaoCode: null,
       isZeropay: true
+    },
+    {
+      id: 'city_tour_bus',
+      name: { ko: '시티투어', zh: '观光巴士', en: 'City Tour' },
+      color: '#E53935',
+      kakaoCode: null,
+      isCityTourBus: true
     }
   ]
 
   return (
     <div className="bg-white" style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
       {/* 검색 헤더 */}
-      <div className="bg-white sticky top-0 z-40 shadow-sm">
+      <div className="bg-white sticky top-0 z-40 ">
         <div className="px-3 py-2.5 flex items-center gap-2">
           {/* 검색 입력창 */}
           <div className="flex-1 relative search-container">
@@ -1373,14 +1475,14 @@ export default function MapTab({ lang }) {
             {/* 검색 결과 드롭다운 */}
             {(showSearchResults || isSearching) && (
               isSearching ? (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-50">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl  z-50">
                   <div className="px-3 py-3 text-center flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent" />
                     <span className="text-sm text-gray-400">{L({ ko: "검색 중...", zh: "搜索中...", en: "Searching..." })}</span>
                   </div>
                 </div>
               ) : searchResults.length > 0 ? (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto z-50">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl  max-h-60 overflow-y-auto z-50">
                   {searchResults.map((result) => (
                     <button key={result.id} onClick={() => selectSearchResult(result)}
                       className="w-full px-3 py-2.5 text-left hover:bg-gray-50 border-b border-gray-50 last:border-0">
@@ -1391,7 +1493,7 @@ export default function MapTab({ lang }) {
                   ))}
                 </div>
               ) : (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-50">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl  z-50">
                   <div className="px-3 py-4 text-center text-sm text-gray-400">
                     {L({ ko: "검색 결과가 없습니다", zh: "没有搜索结果", en: "No results" })}
                   </div>
@@ -1433,10 +1535,45 @@ export default function MapTab({ lang }) {
         </div>
       </div>
 
+      {/* 🚌 시티투어 노선 서브필터 — city_tour_bus 선택 시에만 표시 */}
+      {selectedCategory === 'city_tour_bus' && (
+        <div className="bg-white border-b border-gray-100 z-30 relative">
+          <div className="px-4 py-1.5">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+              <span className="text-[10px] text-gray-400 flex-shrink-0 mr-1">🚌</span>
+              {[
+                { id: 'all',         name: { ko: '전체노선', zh: '全部路线', en: 'All Routes' }, color: '#374151' },
+                { id: 'downtown',    name: { ko: '🔴 도심순환', zh: '🔴 市中心', en: '🔴 Downtown' }, color: '#E53935' },
+                { id: 'night',       name: { ko: '🔵 야경', zh: '🔵 夜景', en: '🔵 Night' }, color: '#1E88E5' },
+                { id: 'traditional', name: { ko: '🟢 전통문화', zh: '🟢 传统文化', en: '🟢 Traditional' }, color: '#43A047' },
+                { id: 'panorama',    name: { ko: '🟠 파노라마', zh: '🟠 全景', en: '🟠 Panorama' }, color: '#FB8C00' },
+              ].map(route => (
+                <button
+                  key={route.id}
+                  onClick={() => {
+                    setSelectedBusRoute(route.id)
+                    // 노선 변경 시 다시 그리기
+                    setTimeout(() => searchByCategory('city_tour_bus'), 50)
+                  }}
+                  className={`flex-shrink-0 px-2.5 py-1 rounded-full border transition-all text-[11px] font-medium ${
+                    selectedBusRoute === route.id
+                      ? 'text-white border-transparent'
+                      : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+                  }`}
+                  style={selectedBusRoute === route.id ? { backgroundColor: route.color, borderColor: route.color } : {}}
+                >
+                  {L(route.name)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 지도 영역 */}
       <div className="relative flex-1 bg-gray-50" style={{ flex: 1, minHeight: 0 }}>
         {/* 카카오 지도 컨테이너 */}
-        <div 
+        <div
           ref={mapRef}
           className="w-full h-full"
         />
@@ -1553,7 +1690,7 @@ export default function MapTab({ lang }) {
               }
             }, 15000)
           }}
-          className={`absolute top-[130px] right-[6px] z-40 w-9 h-9 bg-white rounded shadow-md flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-300 ${locatingUser ? 'animate-pulse' : ''}`}
+          className={`absolute top-[130px] right-[6px] z-40 w-9 h-9 bg-white rounded  flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-300 ${locatingUser ? 'animate-pulse' : ''}`}
           title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
         >
           {locatingUser
@@ -1618,7 +1755,7 @@ export default function MapTab({ lang }) {
                       />
                     </div>
                     {showStartResults && startResults.length > 0 && (
-                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-28 overflow-y-auto z-50">
+                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg  max-h-28 overflow-y-auto z-50">
                         {startResults.map(r => (
                           <button key={r.id} onClick={() => selectLocation(r, true)}
                             className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 text-[11px] border-b border-gray-50 last:border-0">
@@ -1642,7 +1779,7 @@ export default function MapTab({ lang }) {
                       />
                     </div>
                     {showEndResults && endResults.length > 0 && (
-                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-28 overflow-y-auto z-50">
+                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg  max-h-28 overflow-y-auto z-50">
                         {endResults.map(r => (
                           <button key={r.id} onClick={() => selectLocation(r, false)}
                             className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 text-[11px] border-b border-gray-50 last:border-0">
@@ -1853,7 +1990,7 @@ export default function MapTab({ lang }) {
                         />
                         
                         {showDestinationResults && destinationSearchResults.length > 0 && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
+                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg  max-h-60 overflow-y-auto z-10">
                             {destinationSearchResults.map((result) => (
                               <button
                                 key={result.id}

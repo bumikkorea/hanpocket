@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HanPocket - Place Detail</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #f5f5f5;
+    color: #111;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .container {
+    max-width: 480px;
+    width: 100%;
+    background: #fff;
+    min-height: 100vh;
+  }
+  
+  /* 헤더 */
+  .header {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 10;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header .back { font-size: 20px; cursor: pointer; }
+  .header .title { font-size: 17px; font-weight: 600; flex: 1; }
+  .header .share { font-size: 18px; cursor: pointer; }
+  
+  /* 미니맵 */
+  .minimap {
+    width: 100%;
+    height: 180px;
+    background: #e8e8e8;
+    position: relative;
+    overflow: hidden;
+  }
+  .minimap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .minimap .pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    font-size: 32px;
+  }
+  .minimap .map-label {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+  
+  /* 메인 정보 */
+  .main-info {
+    padding: 20px;
+  }
+  .place-name {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .place-name-sub {
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 12px;
+  }
+  .category-badge {
+    display: inline-block;
+    background: #111;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 6px;
+  }
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .tag {
+    background: #f0f0f0;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #333;
+    font-weight: 500;
+  }
+  .tag.highlight {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  /* 액션 버튼 */
+  .action-bar {
+    display: flex;
+    gap: 0;
+    padding: 16px 20px;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 8px solid #f5f5f5;
+  }
+  .action-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 8px 0;
+  }
+  .action-btn .icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .action-btn .label {
+    font-size: 11px;
+    color: #555;
+    font-weight: 500;
+  }
+  
+  /* 영업시간 */
+  .section {
+    padding: 20px;
+    border-bottom: 8px solid #f5f5f5;
+  }
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hours-status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .hours-status.open { background: #e8f5e9; color: #2e7d32; }
+  .hours-status.closed { background: #fce4ec; color: #c62828; }
+  .hours-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+    color: #555;
+  }
+  .hours-row .day { font-weight: 500; color: #333; }
+  .hours-note {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #999;
+    line-height: 1.5;
+  }
+  
+  /* 외국인 정보 */
+  .info-card {
+    background: #fafafa;
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .info-card .info-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .info-card .info-desc {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+  }
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .info-mini {
+    background: #fafafa;
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+  }
+  .info-mini .emoji { font-size: 22px; margin-bottom: 4px; }
+  .info-mini .info-label { font-size: 11px; color: #999; margin-bottom: 2px; }
+  .info-mini .info-value { font-size: 13px; font-weight: 600; }
+  
+  /* 층별 안내 */
+  .floor-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .floor-item:last-child { border-bottom: none; }
+  .floor-num {
+    width: 44px;
+    height: 44px;
+    background: #111;
+    color: #fff;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+  .floor-num.special { background: #2e7d32; }
+  .floor-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .floor-desc {
+    font-size: 12px;
+    color: #888;
+  }
+  
+  /* 추천 포인트 */
+  .highlight-card {
+    background: #111;
+    color: #fff;
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 10px;
+  }
+  .highlight-card .hl-text {
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .highlight-card .hl-sub {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+  }
+  
+  /* 리뷰 요약 */
+  .review-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .review-score {
+    text-align: center;
+  }
+  .review-score .num {
+    font-size: 36px;
+    font-weight: 700;
+  }
+  .review-score .stars {
+    font-size: 14px;
+    color: #f59e0b;
+  }
+  .review-score .count {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+  }
+  .review-bars { flex: 1; }
+  .review-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .review-bar-label { width: 70px; color: #555; }
+  .review-bar {
+    flex: 1;
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .review-bar-fill {
+    height: 100%;
+    background: #111;
+    border-radius: 3px;
+  }
+  .review-bar-pct { width: 32px; text-align: right; color: #888; font-size: 11px; }
+  
+  .review-comment {
+    background: #fafafa;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #555;
+    font-style: italic;
+  }
+  .review-comment .author {
+    font-size: 11px;
+    color: #999;
+    margin-top: 6px;
+    font-style: normal;
+  }
+  
+  /* 주변 추천 */
+  .nearby-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .nearby-item:last-child { border-bottom: none; }
+  .nearby-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+  .nearby-name { font-size: 14px; font-weight: 500; }
+  .nearby-dist { font-size: 12px; color: #999; }
+  .nearby-tag {
+    margin-left: auto;
+    background: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #555;
+  }
+  
+  /* 카카오맵 바 */
+  .bottom-bar {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    border-top: 1px solid #eee;
+    padding: 12px 20px;
+    display: flex;
+    gap: 10px;
+  }
+  .btn-kakao {
+    flex: 1;
+    background: #fee500;
+    color: #111;
+    border: none;
+    padding: 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn-navi {
+    width: 52px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  
+  <!-- 헤더 -->
+  <div class="header">
+    <span class="back">←</span>
+    <span class="title">场所详情</span>
+    <span class="share">↗</span>
+  </div>
+  
+  <!-- 미니맵 -->
+  <div class="minimap" style="background: linear-gradient(135deg, #ddd 0%, #ccc 100%);">
+    <span class="pin">📍</span>
+    <span class="map-label">汝矣岛站 3号出口 直达</span>
+  </div>
+  
+  <!-- 메인 정보 -->
+  <div class="main-info">
+    <div class="place-name">The Hyundai 首尔</div>
+    <div class="place-name-sub">더현대 서울 · The Hyundai Seoul</div>
+    
+    <span class="category-badge">百货商店</span>
+    
+    <div class="tag-row">
+      <span class="tag highlight">免税</span>
+      <span class="tag highlight">支付宝</span>
+      <span class="tag highlight">微信支付</span>
+      <span class="tag highlight">银联卡</span>
+      <span class="tag">中文服务</span>
+      <span class="tag">奢侈品</span>
+      <span class="tag">美食</span>
+    </div>
+  </div>
+  
+  <!-- 액션 버튼 -->
+  <div class="action-bar">
+    <button class="action-btn">
+      <div class="icon">📞</div>
+      <span class="label">电话</span>
+    </button>
+    <button class="action-btn">
+      <div class="icon">🗺</div>
+      <span class="label">导航</span>
+    </button>
+    <button class="action-btn">
+      <div class="icon">🎫</div>
+      <span class="label">优惠券</span>
+    </button>
+    <button class="action-btn">
+      <div class="icon">💾</div>
+      <span class="label">收藏</span>
+    </button>
+    <button class="action-btn">
+      <div class="icon">↗️</div>
+      <span class="label">分享</span>
+    </button>
+  </div>
+  
+  <!-- 영업시간 -->
+  <div class="section">
+    <div class="section-title">
+      营业时间
+      <span class="hours-status open">营业中</span>
+    </div>
+    <div class="hours-row"><span class="day">周一~周四</span><span>10:30 - 20:00</span></div>
+    <div class="hours-row"><span class="day">周五~周日</span><span>10:30 - 20:30</span></div>
+    <div class="hours-row"><span class="day">休息日</span><span style="color:#c62828;">每月第一个周一</span></div>
+    <div class="hours-note">※ 节假日营业时间可能调整，建议提前确认</div>
+  </div>
+  
+  <!-- 외국인 실용 정보 -->
+  <div class="section">
+    <div class="section-title">外国人专属信息</div>
+    
+    <div class="info-card">
+      <div class="info-title">🏷 即时退税</div>
+      <div class="info-desc">
+        单次消费满 ₩15,000 即可退税<br>
+        位置：1层服务台旁<br>
+        携带护照，买完直接退，不用去机场排队
+      </div>
+    </div>
+    
+    <div class="info-grid">
+      <div class="info-mini">
+        <div class="emoji">💳</div>
+        <div class="info-label">支付方式</div>
+        <div class="info-value">银联/支付宝/微信</div>
+      </div>
+      <div class="info-mini">
+        <div class="emoji">📶</div>
+        <div class="info-label">WiFi</div>
+        <div class="info-value">THE HYUNDAI FREE</div>
+      </div>
+      <div class="info-mini">
+        <div class="emoji">💱</div>
+        <div class="info-label">外币兑换</div>
+        <div class="info-value">1层兑换处</div>
+      </div>
+      <div class="info-mini">
+        <div class="emoji">🧳</div>
+        <div class="info-label">行李寄存</div>
+        <div class="info-value">B1层储物柜</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 추천 포인트 -->
+  <div class="section">
+    <div class="section-title">HanPocket 推荐</div>
+    
+    <div class="highlight-card">
+      <div class="hl-text">5层室内花园 Sounds Forest</div>
+      <div class="hl-sub">首尔最美百货打卡点 — 必拍！</div>
+    </div>
+    <div class="highlight-card">
+      <div class="hl-text">B2层网红美食街</div>
+      <div class="hl-sub">排队名店集中 — 松露炸鸡、奶油面包、手工甜品</div>
+    </div>
+    <div class="highlight-card">
+      <div class="hl-text">韩国独立设计师品牌</div>
+      <div class="hl-sub">3层 — 在中国买不到的本土品牌集合</div>
+    </div>
+  </div>
+  
+  <!-- 층별 안내 -->
+  <div class="section">
+    <div class="section-title">楼层指南</div>
+    
+    <div class="floor-item">
+      <div class="floor-num">6F</div>
+      <div>
+        <div class="floor-name">美食·餐厅</div>
+        <div class="floor-desc">韩餐 · 日料 · 中餐 · 西餐</div>
+      </div>
+    </div>
+    <div class="floor-item">
+      <div class="floor-num special">5F</div>
+      <div>
+        <div class="floor-name">🌿 Sounds Forest 室内花园</div>
+        <div class="floor-desc">休息空间 · 展览 · 打卡圣地</div>
+      </div>
+    </div>
+    <div class="floor-item">
+      <div class="floor-num">4F</div>
+      <div>
+        <div class="floor-name">女装 · 运动</div>
+        <div class="floor-desc">NIKE · adidas · NEW BALANCE · ZARA</div>
+      </div>
+    </div>
+    <div class="floor-item">
+      <div class="floor-num">3F</div>
+      <div>
+        <div class="floor-name">设计师品牌</div>
+        <div class="floor-desc">韩国设计师 · MAJE · SANDRO</div>
+      </div>
+    </div>
+    <div class="floor-item">
+      <div class="floor-num">2F</div>
+      <div>
+        <div class="floor-name">奢侈品 · 手表</div>
+        <div class="floor-desc">HERMÈS · CARTIER · ROLEX</div>
+      </div>
+    </div>
+    <div class="floor-item">
+      <div class="floor-num">1F</div>
+      <div>
+        <div class="floor-name">奢侈品</div>
+        <div class="floor-desc">CHANEL · LOUIS VUITTON · DIOR · GUCCI</div>
+      </div>
+    </div>
+    <div class="floor-item">
+      <div class="floor-num" style="background:#555">B1</div>
+      <div>
+        <div class="floor-name">日常市场</div>
+        <div class="floor-desc">超市 · 生活用品 · 星巴克</div>
+      </div>
+    </div>
+    <div class="floor-item">
+      <div class="floor-num" style="background:#555">B2</div>
+      <div>
+        <div class="floor-name">创意美食街</div>
+        <div class="floor-desc">网红美食 · 甜品 · 手工面包</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 리뷰 요약 -->
+  <div class="section">
+    <div class="section-title">评价摘要</div>
+    
+    <div class="review-summary">
+      <div class="review-score">
+        <div class="num">4.5</div>
+        <div class="stars">★★★★☆</div>
+        <div class="count">12,847条</div>
+      </div>
+      <div class="review-bars">
+        <div class="review-bar-row">
+          <span class="review-bar-label">环境漂亮</span>
+          <div class="review-bar"><div class="review-bar-fill" style="width:89%"></div></div>
+          <span class="review-bar-pct">89%</span>
+        </div>
+        <div class="review-bar-row">
+          <span class="review-bar-label">品牌齐全</span>
+          <div class="review-bar"><div class="review-bar-fill" style="width:76%"></div></div>
+          <span class="review-bar-pct">76%</span>
+        </div>
+        <div class="review-bar-row">
+          <span class="review-bar-label">美食好吃</span>
+          <div class="review-bar"><div class="review-bar-fill" style="width:71%"></div></div>
+          <span class="review-bar-pct">71%</span>
+        </div>
+        <div class="review-bar-row">
+          <span class="review-bar-label">周末太挤</span>
+          <div class="review-bar"><div class="review-bar-fill" style="width:23%;background:#c62828"></div></div>
+          <span class="review-bar-pct">23%</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="review-comment">
+      "来首尔必去！5楼花园太美了，B2美食街每家都想吃。退税也很方便，直接在1楼办好了。"
+      <div class="author">— 小红书用户 · 2026.02</div>
+    </div>
+  </div>
+  
+  <!-- 주변 추천 -->
+  <div class="section" style="border-bottom: none; padding-bottom: 80px;">
+    <div class="section-title">周边推荐</div>
+    
+    <div class="nearby-item">
+      <div class="nearby-icon">🌊</div>
+      <div>
+        <div class="nearby-name">汝矣岛汉江公园</div>
+        <div class="nearby-dist">步行 8分钟</div>
+      </div>
+      <span class="nearby-tag">散步</span>
+    </div>
+    <div class="nearby-item">
+      <div class="nearby-icon">🛍</div>
+      <div>
+        <div class="nearby-name">IFC Mall</div>
+        <div class="nearby-dist">步行 3分钟</div>
+      </div>
+      <span class="nearby-tag">购物</span>
+    </div>
+    <div class="nearby-item">
+      <div class="nearby-icon">🏙</div>
+      <div>
+        <div class="nearby-name">63大厦展望台</div>
+        <div class="nearby-dist">步行 15分钟</div>
+      </div>
+      <span class="nearby-tag">观景</span>
+    </div>
+  </div>
+  
+  <!-- 하단 바 -->
+  <div class="bottom-bar">
+    <button class="btn-kakao">카카오맵으로 길찾기</button>
+    <button class="btn-navi">🧭</button>
+  </div>
+  
+</div>
+</body>
+</html>

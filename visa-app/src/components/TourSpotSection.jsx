@@ -17,7 +17,7 @@ export function SpotCard({ item, lang, darkMode, onClick }) {
       onClick={() => onClick?.(item)}
       className={`rounded-xl overflow-hidden cursor-pointer transition-transform active:scale-[0.98] ${
         darkMode ? 'bg-zinc-800' : 'bg-white border border-gray-100'
-      } shadow-sm`}
+      } `}
     >
       {item.firstimage ? (
         <img

@@ -447,7 +447,7 @@ export default function KidsGuide({ lang, onClose }) {
                   <div className="flex justify-center">
                     <div 
                       ref={cardRef}
-                      className="w-72 bg-white border-4 border-red-500 rounded-2xl p-4 shadow-lg"
+                      className="w-72 bg-white border-4 border-red-500 rounded-2xl p-4 "
                     >
                       <div className="text-center space-y-3">
                         <div className="bg-red-100 rounded-lg p-2">

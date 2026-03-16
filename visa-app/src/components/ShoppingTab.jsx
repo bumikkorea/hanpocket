@@ -530,7 +530,7 @@ function TourApiShoppingSection({ lang }) {
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
         {items.map((item, i) => (
           <div key={item.contentid || i} onClick={() => setDetailItem(item)}
-            className="min-w-[180px] max-w-[180px] rounded-[6px] overflow-hidden bg-white border border-gray-100 shadow-sm cursor-pointer">
+            className="min-w-[180px] max-w-[180px] rounded-[6px] overflow-hidden bg-white border border-gray-100  cursor-pointer">
             {item.firstimage ? (
               <img src={item.firstimage} alt={item.title} className="w-full h-28 object-cover" loading="lazy" />
             ) : (

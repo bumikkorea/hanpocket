@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
-import { ChevronLeft, ChevronRight, Plus, Pencil } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, Pencil, Bell, BellRing } from 'lucide-react'
+import { AirplaneLanding, AirplaneTakeoff, MapPin as PhMapPin, ChatCircleText, Receipt, CoffeeBean, FirstAidKit, Globe as PhGlobe, Clock, Note, Phone, ForkKnife, Building, PawPrint } from '@phosphor-icons/react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
-import { POPUP_STORES, DISTRICTS, isClosingSoon, getDdayLabel, isActiveOrUpcoming } from '../data/popupData'
+import { POPUP_STORES, DISTRICTS, DISTRICT_ORDER, isClosingSoon, getDdayLabel, isActiveOrUpcoming, isOpenToday, getStatusLabel } from '../data/popupData'
+import { usePopupStores } from '../hooks/usePopupStores'
 import { MICHELIN_RESTAURANTS } from '../data/restaurantData'
-import { getClothingRecommendation } from '../data/clothingGuide'
+import { SPOTS, SPOT_CATEGORIES, WIFI_SPOTS } from '../data/spotData'
 import { getCurrentSeasonContent } from '../data/seasonalContent'
 import { trackEvent } from '../utils/analytics'
 
@@ -20,6 +22,7 @@ const PetTab = lazy(() => import('./PetTab'))
 const PocketContent = lazy(() => import('./pockets/PocketContent'))
 const ImmigrationWaitTime = lazy(() => import('./ImmigrationWaitTime'))
 import GuideLayout from './guides/GuideLayout'
+import { EditorialColumns } from './CourseTab'
 
 // Re-export 의존성 (App.jsx 등에서 사용)
 import LucideIcon from './home/common/LucideIcon'
@@ -222,6 +225,19 @@ const SCENE_PHRASES = [
   { scene: { ko: '긴급', zh: '紧急', en: 'Emergency' }, phrase: { ko: '도와주세요!', zh: '请帮帮我！' }, gradient: 'from-[#8B2500] to-[#5C1A00]', pocket: 'emergency', img: 'https://images.unsplash.com/photo-1587745416684-47953f16f02f?w=300&h=200&fit=crop' },
 ]
 
+// ── Quick Action 카드 색상 팔레트 ──
+// v1 (저장용 — 원색): 입국 #5B9BD5 / 출국 #52B788 / 택시 #F5C518 / 음식배달 #E85555
+// v2 (저장용 — 누드 각색): arrival #2E6FA3 / departure #2A7A54 / taxi #8A6E00 / food #B03030
+// v3 (저장용 — 누드 배경 + 로고색 #C4725A 텍스트 통일): arrival #D6E9F8 / departure #C8E6D8 / taxi #FAF0C0 / food #F8D0D0
+// v4 (현재 — 흰색 배경 + 검은 텍스트, 세금환급 카드와 통일)
+const LOGO_COLOR = '#C4725A'
+const QUICK_CARD_COLORS = {
+  arrival:  { bg: '#FFFFFF', text: '#1A1A1A' },
+  departure:{ bg: '#FFFFFF', text: '#1A1A1A' },
+  taxi:     { bg: '#FFFFFF', text: '#1A1A1A' },
+  food:     { bg: '#FFFFFF', text: '#1A1A1A' },
+}
+
 // ── Intent 카드 데이터 ──
 const INTENT_CARDS = [
   {
@@ -248,76 +264,6 @@ const ARRIVAL_PHASES = [
   { id: 'hotel', label: { ko: '숙소 도착', zh: '到达住宿', en: 'At Hotel' } },
 ]
 
-// ── 포켓걸 미니 SVG (경로바용) ──
-function PocketGirlMini({ size = 24 }) {
-  return (
-    <svg viewBox="0 0 40 60" width={size} height={size * 1.5} fill="none">
-      <circle cx="20" cy="12" r="10" fill="#FFE4CC" />
-      <ellipse cx="20" cy="8" rx="11" ry="6" fill="#2C1810" />
-      <circle cx="16" cy="13" r="1.5" fill="#1A1A1A" />
-      <circle cx="24" cy="13" r="1.5" fill="#1A1A1A" />
-      <path d="M18 17 Q20 19 22 17" stroke="#E88" strokeWidth="1" fill="none" />
-      <rect x="14" y="22" width="12" height="16" rx="4" fill="#FF6B6B" />
-      <rect x="12" y="38" width="5" height="12" rx="2" fill="#FFE4CC" />
-      <rect x="23" y="38" width="5" height="12" rx="2" fill="#FFE4CC" />
-      <rect x="30" y="30" width="6" height="8" rx="2" fill="#E5E7EB" />
-      <rect x="32" y="38" width="2" height="6" rx="1" fill="#9CA3AF" />
-    </svg>
-  )
-}
-
-// ── 포켓걸 인사 SVG (입국 팝업용) ──
-function PocketGirlBow() {
-  return (
-    <svg viewBox="0 0 200 240" width={160} height={192} fill="none">
-      <g transform="translate(60, 20)">
-        <ellipse cx="40" cy="30" rx="28" ry="12" fill="#2C1810" />
-        <ellipse cx="40" cy="40" rx="22" ry="24" fill="#FFE4CC" />
-        <circle cx="33" cy="38" r="3" fill="#1A1A1A" /><circle cx="32" cy="36" r="1.2" fill="white" />
-        <circle cx="47" cy="38" r="3" fill="#1A1A1A" /><circle cx="46" cy="36" r="1.2" fill="white" />
-        <path d="M37 45 Q40 48 43 45" stroke="#FF8888" strokeWidth="1.5" fill="none" />
-        <ellipse cx="28" cy="42" rx="4" ry="3" fill="#FFCCCC" opacity="0.5" />
-        <ellipse cx="52" cy="42" rx="4" ry="3" fill="#FFCCCC" opacity="0.5" />
-      </g>
-      <g transform="translate(40, 90)">
-        <rect x="20" y="0" width="40" height="50" rx="12" fill="#FF6B6B" />
-        <rect x="10" y="10" width="15" height="6" rx="3" fill="#FFE4CC" transform="rotate(-30, 10, 10)" />
-        <rect x="55" y="10" width="15" height="6" rx="3" fill="#FFE4CC" transform="rotate(30, 70, 10)" />
-        <rect x="25" y="50" width="12" height="30" rx="4" fill="#FFE4CC" />
-        <rect x="43" y="50" width="12" height="30" rx="4" fill="#FFE4CC" />
-      </g>
-      <g transform="translate(110, 100)">
-        <rect x="0" y="0" width="18" height="24" rx="4" fill="#E5E7EB" />
-        <rect x="3" y="24" width="4" height="14" rx="2" fill="#9CA3AF" />
-        <rect x="11" y="24" width="4" height="14" rx="2" fill="#9CA3AF" />
-      </g>
-    </svg>
-  )
-}
-
-// ── 포켓걸 우는 SVG (출국 팝업용) ──
-function PocketGirlCry() {
-  return (
-    <svg viewBox="0 0 200 240" width={160} height={192} fill="none">
-      <g transform="translate(60, 20)">
-        <ellipse cx="40" cy="30" rx="28" ry="12" fill="#2C1810" />
-        <ellipse cx="40" cy="40" rx="22" ry="24" fill="#FFE4CC" />
-        <path d="M30 36 Q33 33 36 36" stroke="#1A1A1A" strokeWidth="2" fill="none" />
-        <path d="M44 36 Q47 33 50 36" stroke="#1A1A1A" strokeWidth="2" fill="none" />
-        <path d="M37 48 Q40 46 43 48" stroke="#CC6666" strokeWidth="1.5" fill="none" />
-        <path d="M31 40 Q30 52 29 56" stroke="#88CCFF" strokeWidth="1.5" fill="none" opacity="0.7" />
-        <path d="M49 40 Q50 52 51 56" stroke="#88CCFF" strokeWidth="1.5" fill="none" opacity="0.7" />
-      </g>
-      <g transform="translate(40, 90)">
-        <rect x="20" y="0" width="40" height="50" rx="12" fill="#6B8CFF" />
-        <rect x="15" y="15" width="12" height="6" rx="3" fill="#FFE4CC" />
-        <rect x="53" y="15" width="12" height="6" rx="3" fill="#FFE4CC" />
-        <rect x="25" y="50" width="12" height="30" rx="4" fill="#FFE4CC" />
-        <rect x="43" y="50" width="12" height="30" rx="4" fill="#FFE4CC" />
-      </g>
-    </svg>
-  )
-}
 
 // ── 공휴일 + 기념일 캘린더 (한국 + 중국/대만/홍콩 토글) ──
 // type: 'holiday'(공휴일, 빨간색) | 'special'(기념일, 파란색) — 날짜 확정 이벤트만 수록
@@ -600,7 +546,7 @@ function HolidayCalendar({ lang }) {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
         <button onClick={() => setViewMonth(today.getMonth())}
-          className="text-[15px] font-semibold tracking-wide text-[#1A1A1A]">
+          className="typo-title" style={{ fontSize: 16 }}>
           {L(lang, { ko: `${year}년 ${monthNames.ko[viewMonth]}`, zh: `${year}年${monthNames.zh[viewMonth]}`, en: `${monthNames.en[viewMonth]} ${year}` })}
           {isCurrentMonth && <span className="ml-1 text-[10px] font-normal text-[#2D5A3D]">●</span>}
         </button>
@@ -734,25 +680,25 @@ function PromoBanner({ banners, lang }) {
 // ── 추천 섹션 컴포넌트 ──
 function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
   return (
-    <div className="mb-10 px-4">
+    <div className="mb-10 px-5">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A]">{L(lang, title)}</h2>
+        <h2 className="typo-title">{L(lang, title)}</h2>
         {onViewAll && (
-          <button onClick={onViewAll} className="text-xs text-[#999]">
+          <button onClick={onViewAll} className="typo-caption">
             {L(lang, { ko: '전체보기', zh: '查看全部', en: 'View all' })} &gt;
           </button>
         )}
       </div>
-      <p className="text-xs text-[#999] mb-3 tracking-wider">{L(lang, subtitle)}</p>
+      <p className="typo-caption mb-4">{L(lang, subtitle)}</p>
       <div className="grid grid-cols-2 gap-3">
         {items.map((item, i) => (
-          <button key={i} onClick={item.onClick} className="text-left active:scale-[0.98] transition-transform">
-            <div className="aspect-[4/3] rounded-[6px] overflow-hidden mb-2 bg-[#F3F4F6] ">
+          <button key={i} onClick={item.onClick} className="text-left active:scale-[0.97] transition-transform">
+            <div className="aspect-[3/2] rounded-[14px] overflow-hidden mb-2.5 bg-[#F3F4F6]" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
               {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />}
             </div>
-            <p className="text-sm font-semibold tracking-wide text-[#1A1A1A] leading-tight line-clamp-1">
+            <p className="text-[14px] font-semibold leading-tight line-clamp-1" style={{ color: 'var(--dark)' }}>
               {item.name}
-              {item.rating && <span className="text-[#F59E0B] ml-1">★ {item.rating}</span>}
+              {item.rating && <span className="text-[#F59E0B] ml-1 text-[12px] font-normal">★ {item.rating}</span>}
             </p>
             {item.tags && (
               <div className="flex flex-wrap gap-1 mt-1">
@@ -936,8 +882,9 @@ function BrandScrollSection({ lang }) {
 
   return (
     <div className="mb-10">
-      <div className="flex items-center justify-between mb-3 px-4">
-        <h2 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A]">
+      <div className="mb-4 px-5">
+        <p className="typo-whisper mb-1">BRANDS</p>
+        <h2 className="typo-title">
           {L(lang, { ko: '지금 할인하는 브랜드', zh: '正在打折的品牌', en: 'Brands on Sale Now' })}
         </h2>
       </div>
@@ -969,15 +916,38 @@ function getAwardBadge(award) {
   return ''
 }
 
+
+// -- 실시간 CNY/KRW 환율 (open.er-api.com, 30분 캐시) --
+const _liveRateCache = { rate: null, ts: 0 }
+function useLiveCNYRate(fallback) {
+  const [rate, setRate] = useState(() => _liveRateCache.rate || fallback || 191)
+  useEffect(() => {
+    if (_liveRateCache.rate && Date.now() - _liveRateCache.ts < 30 * 60 * 1000) {
+      setRate(_liveRateCache.rate); return
+    }
+    fetch('https://open.er-api.com/v6/latest/CNY')
+      .then(r => r.json())
+      .then(d => {
+        const krw = d.rates && d.rates.KRW
+        if (krw && krw > 100) {
+          _liveRateCache.rate = krw
+          _liveRateCache.ts = Date.now()
+          setRate(krw)
+        }
+      })
+      .catch(() => {})
+  }, [])
+  return rate
+}
+
 export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {}, adminView = false }) {
   const isVisible = (key) => widgetSettings[key] !== false
   // weather now comes from weatherData (useWeather hook)
   const { kst: koreaTime, extras: extraTimezones, refresh: refreshTimezones } = useMultiTimezone()
   const todayExpr = getTodayExpression()
 
-  // 환율: prop에서 CNY 환율 추출
-  const cnyRate = exchangeRate?.exchangeRate?.CNY || 191
-  const cnyChange = exchangeRate?.rateChanges?.CNY || 0
+  // 환율: 실시간 CNY/KRW (open.er-api.com, 30분 캐시)
+  const cnyRate = useLiveCNYRate(exchangeRate?.exchangeRate?.CNY || 191)
 
   // 코스 데이터 (test 카테고리 제외, 첫 6개)
   const courses = RECOMMENDED_COURSES.filter(c => c.category !== 'test').slice(0, 6)
@@ -1053,10 +1023,127 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
     setTimeout(() => setToast(null), 2000)
   }
 
-  // 팝업스토어 지역 필터
+  // 팝업/핫플 공유 지역 필터 + 핫플 카테고리
   const [popupDistrict, setPopupDistrict] = useState('all')
-  const filteredPopups = (popupDistrict === 'all' ? POPUP_STORES : POPUP_STORES.filter(p => p.district === popupDistrict)).filter(isActiveOrUpcoming)
+  const [spotCategory, setSpotCategory] = useState('cafe')
+  const [savedColumnIds, setSavedColumnIds] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('hp_editorial_saved') || '[]') } catch { return [] }
+  })
+  const saveColumnInterest = (id) => {
+    setSavedColumnIds(prev => {
+      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      localStorage.setItem('hp_editorial_saved', JSON.stringify(next))
+      return next
+    })
+  }
+  // DB 팝업 데이터
+  const { active: dbActive, upcoming: dbUpcoming, loading: popupLoading } = usePopupStores({ district: popupDistrict })
+
+  const distFiltered = (() => {
+    const list = popupDistrict === 'all' ? POPUP_STORES : POPUP_STORES.filter(p => p.district === popupDistrict)
+    return [...list].sort((a, b) => {
+      const ai = DISTRICT_ORDER.indexOf(a.district)
+      const bi = DISTRICT_ORDER.indexOf(b.district)
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
+    })
+  })()
+  // DB 데이터 우선, 없으면 정적 데이터 fallback
+  const activePopups   = dbActive.length   > 0 ? dbActive   : distFiltered.filter(isOpenToday)
+  const upcomingPopups = dbUpcoming.length > 0 ? dbUpcoming : distFiltered.filter(p => {
+    const now = new Date(); const start = new Date(p.period.start)
+    const twoWeeks = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000)
+    return start > now && start <= twoWeeks
+  })
+  // 하위호환 (기존 코드에서 사용)
+  const filteredPopups = distFiltered.filter(isActiveOrUpcoming)
   const [selectedPopup, setSelectedPopup] = useState(null)
+
+  // 알림 권한 상태
+  const [notifPerm, setNotifPerm] = useState(() => {
+    if (typeof window !== 'undefined' && 'Notification' in window) return Notification.permission
+    return 'unsupported'
+  })
+  const [notifToast, setNotifToast] = useState(null) // 'granted'|'denied'|'unsupported'|null
+  const showNotifToast = (msg) => { setNotifToast(msg); setTimeout(() => setNotifToast(null), 2500) }
+  // #31 팝업 알림 구독 카테고리
+  const [popupSubCategories, setPopupSubCategories] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('hp_popup_sub_cats') || '["all"]') } catch { return ['all'] }
+  })
+  const togglePopupSub = (cat) => {
+    setPopupSubCategories(prev => {
+      let next
+      if (cat === 'all') { next = ['all'] }
+      else {
+        next = prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev.filter(c => c !== 'all'), cat]
+        if (next.length === 0) next = ['all']
+      }
+      localStorage.setItem('hp_popup_sub_cats', JSON.stringify(next))
+      return next
+    })
+  }
+  const [showSubSheet, setShowSubSheet] = useState(false)
+
+  const handleBellClick = async () => {
+    if (!('Notification' in window)) { showNotifToast('unsupported'); return }
+    if (notifPerm === 'denied') { showNotifToast('denied'); return }
+    if (notifPerm === 'granted') { setShowSubSheet(true); return } // #31 구독 설정 시트 열기
+    try {
+      const result = await Notification.requestPermission()
+      setNotifPerm(result)
+      if (result === 'granted') setShowSubSheet(true)
+      else showNotifToast(result)
+    } catch (_) { showNotifToast('unsupported') }
+  }
+
+  // 팝업 오픈 알림 발송 (앱 진입 시 오늘 오픈한 팝업 체크)
+  useEffect(() => {
+    if (notifPerm !== 'granted') return
+    const notified = JSON.parse(localStorage.getItem('hp_popup_notified') || '[]')
+    const newlyOpened = POPUP_STORES.filter(p => {
+      if (notified.includes(p.id)) return false
+      const now = new Date(); const start = new Date(p.period.start)
+      const diffHours = (now - start) / (1000 * 60 * 60)
+      return diffHours >= 0 && diffHours < 24 // 오늘 오픈
+    })
+    if (newlyOpened.length === 0) return
+    const updated = [...notified]
+    newlyOpened.forEach(p => {
+      const name = p.title?.[lang] || p.title?.ko || p.brand
+      const body = lang === 'zh'
+        ? `'${name}' 快闪店已开幕，去看看吧~`
+        : lang === 'en'
+        ? `'${name}' is now open. Check it out~`
+        : `'${name}' 팝업이 오픈했습니다. 한번 둘러볼까요~?`
+      try { new Notification('🎉 HanPocket', { body, icon: '/icon.svg', tag: `popup-${p.id}` }) } catch (_) {}
+      updated.push(p.id)
+    })
+    localStorage.setItem('hp_popup_notified', JSON.stringify(updated))
+  }, [notifPerm, lang])
+
+  // 예정 팝업 오픈 시 알림 예약 (앱이 열려있는 동안만)
+  useEffect(() => {
+    if (notifPerm !== 'granted') return
+    const notified = JSON.parse(localStorage.getItem('hp_popup_notified') || '[]')
+    const timers = []
+    upcomingPopups.forEach(p => {
+      if (notified.includes(p.id)) return
+      const delay = new Date(p.period.start) - new Date()
+      if (delay > 0 && delay < 48 * 60 * 60 * 1000) { // 48시간 이내 예정만
+        timers.push(setTimeout(() => {
+          const name = p.title?.[lang] || p.title?.ko || p.brand
+          const body = lang === 'zh'
+            ? `'${name}' 快闪店已开幕，去看看吧~`
+            : lang === 'en'
+            ? `'${name}' is now open. Check it out~`
+            : `'${name}' 팝업이 오픈했습니다. 한번 둘러볼까요~?`
+          try { new Notification('🎉 HanPocket', { body, icon: '/icon.svg', tag: `popup-${p.id}` }) } catch (_) {}
+          const next = [...JSON.parse(localStorage.getItem('hp_popup_notified') || '[]'), p.id]
+          localStorage.setItem('hp_popup_notified', JSON.stringify(next))
+        }, delay))
+      }
+    })
+    return () => timers.forEach(clearTimeout)
+  }, [notifPerm, upcomingPopups, lang])
 
   // VPN 배너 상태
   const [showVpnBanner, setShowVpnBanner] = useState(() => {
@@ -1070,55 +1157,67 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
   return (
     <div
-      className="pt-2 pb-24"
+      className="pt-6 pb-24"
       style={{ backgroundColor: '#FFFFFF' }}
     >
     <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
       {/* ─── 상단 정보 바 ─── */}
-      <div className="mb-1 flex items-center gap-2 text-xs tracking-wider flex-wrap" style={{ color: '#999999' }}>
-        {isVisible('weather') && <><span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })} {weatherData.KST ? <span className="transition-opacity duration-500 opacity-100">{weatherData.KST.emoji}{weatherData.KST.temp}°{(() => {
-          const clothingRec = getClothingRecommendation(weatherData.KST.temp, 0, 50, lang)
-          return clothingRec.temperature ? ` ${clothingRec.temperature.icon}` : ''
-        })()}</span> : <span className="inline-block w-8 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" />}</span><span>·</span></>}
-        {isVisible('exchange') && <><span ref={exchangeRef} className="relative">
-          {exchangeRate?.exchangeRate?.CNY ? <span
-            onClick={() => setShowExchangePopover(!showExchangePopover)}
-            className="cursor-pointer underline decoration-dotted transition-opacity duration-500 opacity-100"
-          >¥1 = ₩{Math.round(cnyRate)} 
-            {cnyChange !== 0 && (
-              <span className={`ml-1 text-[10px] ${cnyChange > 0 ? 'text-red-600' : 'text-blue-600'}`}>
-                {cnyChange > 0 ? '↗️' : '↘️'}{Math.abs(cnyChange)}%
+      <div className="px-4 mb-3 flex items-center gap-1.5 text-xs tracking-wide flex-wrap" style={{ color: '#999999' }}>
+        {/* 날씨 + 온도 — 항상 표시 */}
+        {weatherData.KST
+          ? <span className="font-medium" style={{ color: '#333333' }}>{weatherData.KST.emoji}{weatherData.KST.temp}°</span>
+          : <span className="inline-block w-8 h-3 rounded animate-pulse align-middle" style={{ background: '#E5E7EB' }} />
+        }
+        <span style={{ color: '#DDDDDD' }}>·</span>
+        {/* 도시 */}
+        <span>{L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })}</span>
+        {/* 서울 시간 */}
+        {isVisible('clock') && (
+          <>
+            <span style={{ color: '#DDDDDD' }}>·</span>
+            <span>{koreaTime}</span>
+          </>
+        )}
+        {/* 환율 */}
+        {isVisible('exchange') && (
+          <>
+            <span style={{ color: '#DDDDDD' }}>·</span>
+            <span ref={exchangeRef} className="relative">
+              <span
+                onClick={() => setShowExchangePopover(!showExchangePopover)}
+                className="cursor-pointer"
+                style={{ borderBottom: '1px dotted #CCCCCC' }}
+              >
+                ¥1 = ₩{Math.round(cnyRate)}
               </span>
-            )}
-          </span> : <>¥1 = ₩<span className="inline-block w-10 h-3 bg-[#E5E7EB] rounded animate-pulse align-middle" /></>}
-          {showExchangePopover && (
-            <div className="absolute top-6 left-0 bg-white rounded-[6px] border border-[#E5E7EB] p-3  z-20 min-w-[160px]">
-              <p className="text-[10px] text-[#999999] mb-2">{L(lang, { ko: '빠른 환산', zh: '快速换算', en: 'Quick Convert' })}</p>
-              {[10000, 50000, 100000].map(won => (
-                <div key={won} className="flex justify-between text-xs text-[#1A1A1A] py-1">
-                  <span>₩{won.toLocaleString()}</span>
-                  <span className="text-[#2D5A3D] font-medium">≈ ¥{Math.round(won / cnyRate)}</span>
+              {showExchangePopover && (
+                <div className="absolute left-0 bg-white rounded-[10px] border border-[#E5E7EB] p-3 z-20" style={{ top: 22, minWidth: 170, boxShadow: '0 4px 20px rgba(0,0,0,0.10)' }}>
+                  <p className="text-[10px] mb-2" style={{ color: '#999' }}>{L(lang, { ko: '빠른 환산', zh: '快速换算', en: 'Quick Convert' })}</p>
+                  {[10000, 50000, 100000].map(won => (
+                    <div key={won} className="flex justify-between text-xs py-1" style={{ color: '#1A1A1A' }}>
+                      <span>₩{won.toLocaleString()}</span>
+                      <span className="font-medium" style={{ color: '#2D5A3D' }}>≈ ¥{Math.round(won / cnyRate)}</span>
+                    </div>
+                  ))}
+                  <div className="flex justify-between text-xs py-1 mt-1 pt-1" style={{ color: '#1A1A1A', borderTop: '1px solid #F0F0F0' }}>
+                    <span>¥1,000</span>
+                    <span className="font-medium" style={{ color: '#2D5A3D' }}>≈ ₩{Math.round(1000 * cnyRate).toLocaleString()}</span>
+                  </div>
+                  <p className="text-[9px] mt-2 pt-1" style={{ color: '#BCBCBC', borderTop: '1px solid #F0F0F0' }}>실시간 · open.er-api.com</p>
                 </div>
-              ))}
-              <div className="flex justify-between text-xs text-[#1A1A1A] py-1 border-t border-[#E5E7EB] mt-1 pt-1">
-                <span>¥1,000</span>
-                <span className="text-[#2D5A3D] font-medium">≈ ₩{Math.round(1000 * cnyRate).toLocaleString()}</span>
-              </div>
-              <p className="text-[9px] text-[#BCBCBC] mt-2 pt-1 border-t border-[#F0F0F0]">
-                {exchangeRate?._date || ''} · exchangerate-api.com
-              </p>
-            </div>
-          )}
-        </span><span>·</span></>}
-        {isVisible('clock') && <span>KST {koreaTime}</span>}
+              )}
+            </span>
+          </>
+        )}
+        {/* 사용자 국가 시간 (+/- 서울 대비) */}
         {extraTimezones.map(tz => {
-          const dd = getDayDiffLabel(tz.offset)
-          const w = weatherData[tz.id]
+          const diffH = tz.offset - 9
+          const diffLabel = diffH === 0 ? '±0h' : `${diffH > 0 ? '+' : ''}${diffH}h`
           return (
-            <span key={tz.id}>
-              <span>·</span>
-              {' '}<span style={{ color: '#3B82F6' }}>{tz.abbr} {tz.time}{w ? ` ${w.emoji}${w.temp}°` : ''}</span>
-              {dd && <span className="text-[9px] text-[#F59E0B] ml-0.5">{dd}</span>}
+            <span key={tz.id} className="flex items-center gap-1">
+              <span style={{ color: '#DDDDDD' }}>·</span>
+              <span className="font-semibold" style={{ color: '#1A1A1A' }}>{tz.flag} {tz.time}</span>
+              <span style={{ color: '#BCBCBC', fontSize: 10 }}>({diffLabel})</span>
             </span>
           )
         })}
@@ -1127,176 +1226,236 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           className="ml-0.5 inline-flex items-center justify-center rounded-full active:scale-95 transition-transform"
           style={{ color: '#3B82F6', width: 18, height: 18 }}
         >
-          {extraTimezones.length > 0
-            ? <Pencil size={11} />
-            : <Plus size={13} />
-          }
+          {extraTimezones.length > 0 ? <Pencil size={11} /> : <Plus size={13} />}
         </button>
       </div>
 
-      {/* ─── Intent 카드 섹션 (풀카드 히어로형) ─── */}
-      <div className="mb-2">
-        <p className="text-[11px] font-semibold tracking-widest uppercase mb-2" style={{ color: '#AAAAAA' }}>
-          {L(lang, { ko: '무엇을 도와드릴까요', zh: '需要什么帮助', en: 'How can we help' })}
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          {/* 입국 */}
-          <button
-            onClick={() => setArrivalPopup(true)}
-            className="flex flex-col items-center justify-center p-4 rounded-[12px] active:scale-[0.98] transition-all duration-150"
-            style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E3A5F 100%)' }}
-          >
-            <p className="text-[15px] font-bold text-white">
-              {L(lang, { ko: '입국', zh: '入境', en: 'Arrival' })}
-            </p>
-          </button>
-
-          {/* 출국 */}
-          <button
-            onClick={() => setDeparturePopup(true)}
-            className="flex flex-col items-center justify-center p-4 rounded-[12px] active:scale-[0.98] transition-all duration-150"
-            style={{ background: 'linear-gradient(135deg, #14532D 0%, #1A6B3A 100%)' }}
-          >
-            <p className="text-[15px] font-bold text-white">
-              {L(lang, { ko: '출국', zh: '出境', en: 'Departure' })}
-            </p>
-          </button>
-
-          {/* 택시 */}
-          <button
-            onClick={() => setTab('course')}
-            className="flex flex-col items-center justify-center p-4 rounded-[12px] active:scale-[0.98] transition-all duration-150"
-            style={{ background: 'linear-gradient(135deg, #EA7317 0%, #F59E0B 100%)' }}
-          >
-            <p className="text-[15px] font-bold text-white">
-              {L(lang, { ko: '택시', zh: '出租车', en: 'Taxi' })}
-            </p>
-          </button>
-
-          {/* 음식배달 */}
-          <button
-            onClick={() => setTab('tools')}
-            className="flex flex-col items-center justify-center p-4 rounded-[12px] active:scale-[0.98] transition-all duration-150"
-            style={{ background: 'linear-gradient(135deg, #DC2626 0%, #EF4444 100%)' }}
-          >
-            <p className="text-[15px] font-bold text-white">
-              {L(lang, { ko: '음식배달', zh: '外卖', en: 'Food Delivery' })}
-            </p>
-          </button>
-        </div>
-      </div>
-
-      {/* ─── 2.5 세금환급 / 여행다이어리 ─── */}
-      <div className="mb-4 grid grid-cols-2 gap-2">
-        <button
-          onClick={() => setOverlay('tax-refund-calc')}
-          className="bg-white rounded-[6px] border border-[#E5E7EB]  p-3 active:scale-[0.97] transition-all duration-150 text-left"
-        >
-          <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
-            {L(lang, { ko: '세금환급', zh: '退税计算', en: 'Tax Refund' })}
-          </p>
-          <p className="text-[11px] mt-2 leading-relaxed" style={{ color: '#999999' }}>
-            {L(lang, { ko: '쇼핑 금액 → 환급액', zh: '购物金额→退税额', en: 'Amount → Refund' })}
-          </p>
-        </button>
-        <button
-          onClick={() => setTab('course')}
-          className="bg-white rounded-[6px] border border-[#E5E7EB]  p-3 active:scale-[0.97] transition-all duration-150 text-left"
-        >
-          <p className="text-sm font-bold leading-tight" style={{ color: '#1A1A1A' }}>
-            {L(lang, { ko: '여행다이어리', zh: '旅行日记', en: 'Travel Diary' })}
-          </p>
-          <p className="text-[11px] mt-2 leading-relaxed" style={{ color: '#999999' }}>
-            {L(lang, { ko: '내 여행코스 만들기', zh: '创建我的路线', en: 'Create my itinerary' })}
-          </p>
-        </button>
-      </div>
-
-      {/* ─── 팝업스토어 큐레이션 ─── */}
-      <div className="mb-8">
-        <div className="px-4 flex items-center justify-between mb-3">
-          <h2 className="text-[15px] font-semibold tracking-wide" style={{ color: '#1A1A1A' }}>
-            {L(lang, { ko: '이번 주 팝업', zh: '本周快闪店', en: "This Week's Popups" })}
-          </h2>
-          <span className="text-[11px] font-medium" style={{ color: '#2D5A3D' }}>
-            {filteredPopups.length}{L(lang, { ko: '개 운영 중', zh: '家运营中', en: ' open now' })}
-          </span>
-        </div>
-
-        {/* 지역 필터 */}
-        <div className="px-4 flex gap-2 mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-          {DISTRICTS.map(d => (
+      {/* ─── Quick Action 4×2 그리드 ─── */}
+      <div className="mt-3 mb-10 px-5">
+        <p className="typo-whisper mb-3">QUICK ACCESS</p>
+        <div className="grid grid-cols-4 gap-3">
+          {[
+            { icon: AirplaneLanding, label: { ko: '입국', zh: '入境', en: 'Arrival' }, color: '#C4725A', onClick: () => setArrivalPopup(true) },
+            { icon: AirplaneTakeoff, label: { ko: '출국', zh: '出境', en: 'Depart' }, color: '#C4725A', onClick: () => setDeparturePopup(true) },
+            { icon: PhMapPin, label: { ko: '지도', zh: '地图', en: 'Map' }, color: '#D4956B', onClick: () => setTab('near-map') },
+            { icon: ChatCircleText, label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#8B6F5C', onClick: () => setTab('show-korean') },
+            { icon: Receipt, label: { ko: '텍스환급', zh: '退税', en: 'Tax Refund' }, color: '#7A8B6F', onClick: () => setTab('taxrefund') },
+            { icon: CoffeeBean, label: { ko: '라운지', zh: '休息室', en: 'Lounge' }, color: '#6B8DAD', onClick: () => setTab('flight-info') },
+            { icon: PhGlobe, label: { ko: '한국문화', zh: '韩国文化', en: 'Culture' }, color: '#B8860B', onClick: () => setTab('korean-culture') },
+            { icon: Plus, label: { ko: '더보기', zh: '更多', en: 'More' }, color: '#888', onClick: () => setTab('tools') },
+          ].map(({ icon: Icon, label, color, onClick }) => (
             <button
-              key={d.id}
-              onClick={() => setPopupDistrict(d.id)}
-              className="flex-shrink-0 px-3 py-1 rounded-full text-[12px] font-medium transition-colors"
-              style={{
-                backgroundColor: popupDistrict === d.id ? '#1A1A1A' : '#F3F4F6',
-                color: popupDistrict === d.id ? '#FFFFFF' : '#666666',
-              }}
+              key={L(lang, label)}
+              onClick={onClick}
+              className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"
+              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
             >
-              {L(lang, d.label)}
+              <Icon size={26} weight="light" style={{ color }} />
+              <span className="typo-caption" style={{ color: '#555' }}>{L(lang, label)}</span>
             </button>
           ))}
         </div>
-
-        {/* 팝업 카드 */}
-        {filteredPopups.length === 0 ? (
-          <div className="mx-4 rounded-[8px] border border-[#E5E7EB] p-6 text-center">
-            <p className="text-[13px] text-[#999]">
-              {L(lang, { ko: '현재 운영 중인 팝업이 없습니다', zh: '目前没有运营中的快闪店', en: 'No popups running now' })}
-            </p>
-          </div>
-        ) : (
-          <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-pl-4" style={{ scrollbarWidth: 'none' }}>
-            {filteredPopups.map(popup => {
-              const dday = getDdayLabel(popup, lang)
-              const closingSoon = isClosingSoon(popup)
-              const districtLabel = { ko: { seongsu: '성수', hongdae: '홍대/연남', hannam: '한남/이태원', gangnam: '강남/압구정', yeouido: '더현대', myeongdong: '명동/롯데', other: '기타' }, zh: { seongsu: '圣水', hongdae: '弘大/延南', hannam: '汉南/梨泰院', gangnam: '江南/狎鸥亭', yeouido: '现代百货', myeongdong: '明洞/乐天', other: '其他' }, en: { seongsu: 'Seongsu', hongdae: 'Hongdae', hannam: 'Hannam', gangnam: 'Gangnam', yeouido: 'The Hyundai', myeongdong: 'Myeongdong', other: 'Other' } }
-              return (
-                <button
-                  key={popup.id}
-                  onClick={() => setSelectedPopup(popup)}
-                  className="snap-start flex-shrink-0 rounded-[8px] overflow-hidden border border-[#E5E7EB] active:scale-[0.97] transition-all duration-150 bg-white text-left"
-                >
-                  <div className="relative h-[130px]">
-                    <img src={popup.image} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    {popup.hot && (
-                      <div className="absolute top-2 left-2 bg-[#FF3B30] text-white text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wider">
-                        HOT
-                      </div>
-                    )}
-                    <div
-                      className="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
-                      style={{ backgroundColor: closingSoon ? '#FF3B30' : 'rgba(0,0,0,0.5)' }}
-                    >
-                      {dday}
-                    </div>
-                    <div className="absolute bottom-2 left-2">
-                      <p className="text-white text-[10px] font-semibold tracking-wider uppercase opacity-80">{popup.brand}</p>
-                    </div>
-                  </div>
-                  <div className="p-3">
-                    <p className="text-[13px] font-bold text-[#1A1A1A] leading-tight mb-1 line-clamp-1">
-                      {L(lang, popup.title)}
-                    </p>
-                    <p className="text-[11px] text-[#999] mb-1.5">
-                      {districtLabel[lang]?.[popup.district] || popup.district} · ~{popup.period.end.slice(5).replace('-', '/')}
-                    </p>
-                    <div className="flex flex-wrap gap-1">
-                      {(popup.tags[lang] || popup.tags.ko).slice(0, 2).map((tag, i) => (
-                        <span key={i} className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#F3F4F6] text-[#666]">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </button>
-              )
-            })}
-            <div className="flex-shrink-0 w-4" />
-          </div>
-        )}
       </div>
+
+      {/* ─── 어디 가요? 섹션 헤더 ─── */}
+      <div className="px-5 mb-4">
+        <p className="typo-whisper mb-1">WHERE TO GO</p>
+        <p className="typo-title">{L(lang, { ko: '어디 가요?', zh: '去哪里？', en: 'Where to go?' })}</p>
+      </div>
+
+      {/* ─── #30 이번 주 인기 팝업 TOP 5 ─── */}
+      {(() => {
+        const top5 = [...(activePopups.length > 0 ? activePopups : POPUP_STORES.filter(isOpenToday))]
+          .filter(p => p.hot || (p.isClosingSoon))
+          .sort((a, b) => (a.daysLeft ?? 99) - (b.daysLeft ?? 99))
+          .slice(0, 5)
+        if (top5.length === 0) return null
+        return (
+          <div className="mb-6 px-4">
+            <p className="text-[15px] font-bold text-[#1A1A1A] mb-3">
+              🔥 {L(lang, { ko: '이번 주 인기 팝업 TOP 5', zh: '本周热门快闪 TOP 5', en: 'This Week\'s Top 5 Popups' })}
+            </p>
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+              {top5.map((p, i) => {
+                const title = L(lang, p.title) || p.brand
+                const closingSoon = p.isClosingSoon ?? isClosingSoon(p)
+                return (
+                  <button key={p.id}
+                    onClick={() => setSelectedPopup(p)}
+                    className="flex-shrink-0 w-[140px] rounded-[14px] overflow-hidden text-left active:scale-95 transition-transform relative"
+                    style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                    <div className="h-[90px] relative" style={{ background: p.color || '#F3F4F6' }}>
+                      {p.image && <img src={p.image} alt="" className="w-full h-full object-cover" loading="lazy" />}
+                      <span className="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">#{i + 1}</span>
+                      {closingSoon && <span className="absolute top-1.5 right-1.5 bg-[#DC2626] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">D-{p.daysLeft ?? getDdayLabel(p, 'en')}</span>}
+                    </div>
+                    <div className="p-2 bg-white">
+                      <p className="text-[11px] font-semibold text-[#111827] truncate">{title}</p>
+                      <p className="text-[9px] text-[#9CA3AF] truncate mt-0.5">{p.venue_name || L(lang, p.address)}</p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })()}
+
+      {/* ─── 팝업스토어 큐레이션 ─── */}
+      {(() => {
+        const districtLabel = { ko: { seongsu: '성수', gangnam: '강남/압구정', hannam: '한남/이태원', hongdae: '홍대/연남동', myeongdong: '명동/을지로', yeouido: '여의도/한강', other: '기타' }, zh: { seongsu: '圣水', gangnam: '江南/狎鸥亭', hannam: '汉南/梨泰院', hongdae: '弘大/延南洞', myeongdong: '明洞/乙支路', yeouido: '汝矣岛/汉江', other: '其他' }, en: { seongsu: 'Seongsu', gangnam: 'Gangnam', hannam: 'Hannam', hongdae: 'Hongdae', myeongdong: 'Myeongdong', yeouido: 'Yeouido', other: 'Other' } }
+        const PopupCard = ({ popup, showOpenBadge }) => {
+          // DB 데이터와 정적 데이터 모두 지원
+          const dday = popup.daysLeft !== undefined
+            ? (popup.daysLeft <= 0 ? L(lang, { ko: '오늘마감', zh: '今日结束', en: 'Last Day' }) : `D-${popup.daysLeft}`)
+            : getDdayLabel(popup, lang)
+          const closingSoon = popup.isClosingSoon !== undefined ? popup.isClosingSoon : isClosingSoon(popup)
+          const imgSrc = popup.image || popup.cover_image || ''
+          const isHot = popup.hot || popup.is_hot === 1
+          const title = popup.title || { ko: popup.title_ko || '', zh: popup.title_zh || '', en: popup.title_en || '' }
+          const endDate = popup.period?.end || popup.end_date || ''
+          const startDate = popup.period?.start || popup.start_date || ''
+
+          return (
+            <button
+              key={popup.id}
+              onClick={() => setSelectedPopup(popup)}
+              className="snap-start flex-shrink-0 rounded-[16px] overflow-hidden active:scale-[0.97] transition-all duration-150 bg-white text-left"
+              style={{ width: 200, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            >
+              <div className="relative h-[150px]" style={{ background: popup.color || '#F3F4F6' }}>
+                {imgSrc ? (
+                  <img src={imgSrc} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-30">{popup.emoji || '📌'}</div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                {isHot && (
+                  <div className="absolute top-2 left-2 bg-[#FF3B30] text-white text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wider">HOT</div>
+                )}
+                {/* 중국인 결제 배지 */}
+                {(popup.payment_alipay || popup.payment_wechatpay) && (
+                  <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[9px] px-1.5 py-0.5 rounded-full">
+                    {popup.payment_alipay ? '支付宝' : '微信支付'}
+                  </div>
+                )}
+                <div className="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
+                  style={{ backgroundColor: showOpenBadge ? '#2D5A3D' : closingSoon ? '#FF3B30' : 'rgba(0,0,0,0.5)' }}>
+                  {showOpenBadge ? L(lang, { ko: '오픈 예정', zh: '即将开幕', en: 'Soon' }) : dday}
+                </div>
+              </div>
+              <div className="p-3">
+                <p className="typo-whisper mb-0.5">{popup.brand}</p>
+                <p className="text-[13px] font-semibold leading-tight mb-1.5 line-clamp-2" style={{ color: 'var(--dark)' }}>{L(lang, title)}</p>
+                <p className="typo-caption">
+                  {popup.venue_name || districtLabel[lang]?.[popup.district] || popup.district} · {showOpenBadge ? startDate.slice(5).replace('-', '/') + L(lang, { ko: ' 오픈', zh: ' 开幕', en: ' open' }) : '~' + endDate.slice(5).replace('-', '/')}
+                </p>
+              </div>
+            </button>
+          )
+        }
+        return (
+          <div className="mb-10">
+            {/* ── 지역 필터 ── */}
+            <div className="px-5 flex gap-2 mb-5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+              {DISTRICTS.map(d => (
+                <button key={d.id} onClick={() => setPopupDistrict(d.id)}
+                  className="flex-shrink-0 px-3 py-1 rounded-full text-[12px] font-medium transition-all duration-150"
+                  style={{ backgroundColor: popupDistrict === d.id ? '#1A1A1A' : '#F3F4F6', color: popupDistrict === d.id ? '#FFFFFF' : '#666666', transform: popupDistrict === d.id ? 'scale(1.1)' : 'scale(1)' }}>
+                  {L(lang, d.label)}
+                </button>
+              ))}
+            </div>
+
+            {/* ── 진행 중 팝업 ── */}
+            <div className="px-5 mb-3">
+              <p className="typo-whisper mb-1">NOW OPEN</p>
+              <div className="flex items-center justify-between">
+                <h2 className="typo-title">
+                  {L(lang, { ko: '진행 중 팝업', zh: '进行中快闪店', en: 'Active Popups' })}
+                </h2>
+                <span className="typo-caption" style={{ color: '#2D5A3D' }}>
+                  {activePopups.length}{L(lang, { ko: '개 운영 중', zh: '家运营中', en: ' open now' })}
+                </span>
+              </div>
+            </div>
+            {activePopups.length === 0 ? (
+              <div className="mx-4 rounded-[8px] border border-[#E5E7EB] p-5 text-center mb-6">
+                <p className="text-[13px] text-[#999]">
+                  {L(lang, { ko: '현재 운영 중인 팝업이 없습니다', zh: '目前没有运营中的快闪店', en: 'No popups open right now' })}
+                </p>
+              </div>
+            ) : (
+              <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-pl-4 mb-6" style={{ scrollbarWidth: 'none' }}>
+                {activePopups.map(popup => <PopupCard key={popup.id} popup={popup} showOpenBadge={false} />)}
+                <div className="flex-shrink-0 w-4" />
+              </div>
+            )}
+
+            {/* ── 예정 중인 팝업 ── */}
+            {upcomingPopups.length > 0 && (
+              <>
+                <div className="px-5 mb-3">
+                  <p className="typo-whisper mb-1">COMING SOON</p>
+                  <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <h2 className="typo-title">
+                      {L(lang, { ko: '예정 중인 팝업', zh: '即将开幕快闪店', en: 'Upcoming Popups' })}
+                    </h2>
+                    {/* 🔔 벨 아이콘 — 클릭 시 알림 권한 요청 */}
+                    <button
+                      onClick={handleBellClick}
+                      className="flex items-center justify-center active:scale-90 transition-transform"
+                      title={notifPerm === 'granted' ? 'Notifications on' : notifPerm === 'denied' ? 'Blocked in settings' : 'Enable notifications'}
+                    >
+                      {notifPerm === 'granted'
+                        ? <BellRing size={15} style={{ color: '#F59E0B' }} />
+                        : <Bell size={15} style={{ color: '#C0C0C0' }} />
+                      }
+                    </button>
+                  </div>
+                  <span className="typo-caption">
+                    {upcomingPopups.length}{L(lang, { ko: '개 오픈 예정', zh: '家即将开幕', en: ' coming soon' })}
+                  </span>
+                  </div>
+                </div>
+
+                {/* 알림 유도 리마인더 (권한 없을 때, 아이콘 없이) */}
+                {notifPerm !== 'granted' && notifPerm !== 'unsupported' && (
+                  <div className="mx-4 mb-3 rounded-[10px] bg-[#FFF8F0] border border-[#FFD4A3] px-4 py-3 flex items-center justify-between gap-3">
+                    <p className="text-[12px] text-[#92400E] leading-tight">
+                      {L(lang, {
+                        ko: '팝업 오픈 시 알림을 받아보세요!',
+                        zh: '开幕时接收通知！',
+                        en: 'Get notified when popups open!'
+                      })}
+                    </p>
+                    {notifPerm === 'denied' ? (
+                      <span className="text-[10px] text-[#9CA3AF] flex-shrink-0">
+                        {L(lang, { ko: '설정에서 허용', zh: '在设置中允许', en: 'Enable in settings' })}
+                      </span>
+                    ) : (
+                      <button
+                        onClick={handleBellClick}
+                        className="flex-shrink-0 text-[11px] font-bold"
+                        style={{ color: '#F59E0B' }}
+                      >
+                        {L(lang, { ko: '설정하기 →', zh: '去设置 →', en: 'Set up →' })}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* 예정 팝업 카드 */}
+                <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-pl-4" style={{ scrollbarWidth: 'none' }}>
+                  {upcomingPopups.map(popup => <PopupCard key={popup.id} popup={popup} showOpenBadge={true} />)}
+                  <div className="flex-shrink-0 w-4" />
+                </div>
+              </>
+            )}
+          </div>
+        )
+      })()}
 
       {/* ─── 팝업 상세 바텀시트 ─── */}
       {selectedPopup && (() => {
@@ -1413,6 +1572,224 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         )
       })()}
 
+      {/* ─── 광고 배너 #1 ─── */}
+      <div className="mb-8 px-4">
+        <div
+          className="rounded-[12px] overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform"
+          style={{ height: 100, background: 'linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%)', border: '1px solid #E5E7EB' }}
+          onClick={() => { trackEvent('ad_click', { slot: 'home_1' }) }}
+        >
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-[11px] tracking-widest uppercase" style={{ color: '#BCBCBC' }}>AD</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── 서울 에디토리얼 ─── */}
+      <div className="mb-10 px-5">
+        <EditorialColumns lang={lang} savedIds={savedColumnIds} onSave={saveColumnInterest} onCreateCourse={() => setTab('course')} />
+      </div>
+
+      {/* ─── 핫플/편의/Wi-Fi 섹션 ─── */}
+      {(() => {
+        // 네이버지도 오픈 (편의점/화장실)
+        const openNaverMap = (query) => {
+          const distTerms = { seongsu: '성수동', gangnam: '강남', hannam: '한남이태원', hongdae: '홍대', myeongdong: '명동', yeouido: '여의도' }
+          const distTerm = popupDistrict !== 'all' ? distTerms[popupDistrict] + ' ' : ''
+          const url = `https://map.naver.com/v5/search/${encodeURIComponent(distTerm + query)}`
+          window.open(url, '_blank')
+        }
+
+        // 스팟 카드 필터
+        const filtered = SPOTS.filter(s =>
+          s.category === spotCategory &&
+          (popupDistrict === 'all' || s.district === popupDistrict)
+        ).sort((a, b) => {
+          const ai = DISTRICT_ORDER.indexOf(a.district)
+          const bi = DISTRICT_ORDER.indexOf(b.district)
+          return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
+        })
+
+        // Wi-Fi 데이터
+        const wifiList = popupDistrict === 'all'
+          ? Object.values(WIFI_SPOTS).flat()
+          : (WIFI_SPOTS[popupDistrict] || [])
+
+        return (
+          <div className="mb-10">
+            {/* ── 알림 토스트 ── */}
+            {notifToast && (
+              <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[500] px-4 py-2 rounded-full text-[12px] font-semibold text-white shadow-lg animate-fade-in"
+                style={{ backgroundColor: notifToast === 'granted' ? '#2D5A3D' : notifToast === 'denied' ? '#FF3B30' : '#666' }}>
+                {notifToast === 'granted' && L(lang, { ko: '✅ 알림이 설정되었습니다', zh: '✅ 通知已开启', en: '✅ Notifications enabled' })}
+                {notifToast === 'denied' && L(lang, { ko: '⛔ 설정 > 알림에서 허용해 주세요', zh: '⛔ 请在设置>通知中允许', en: '⛔ Enable in Settings > Notifications' })}
+                {notifToast === 'unsupported' && L(lang, { ko: '📵 이 브라우저는 알림을 지원하지 않습니다', zh: '📵 此浏览器不支持通知', en: '📵 Notifications not supported' })}
+              </div>
+            )}
+
+            {/* 카테고리 탭 */}
+            <div className="px-4 flex gap-2 mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+              {SPOT_CATEGORIES.map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setSpotCategory(cat.id)
+                    if (cat.mapQuery) openNaverMap(cat.mapQuery[lang] || cat.mapQuery.ko)
+                  }}
+                  className="flex-shrink-0 px-3 py-1 rounded-full text-[12px] font-medium transition-all duration-150"
+                  style={{
+                    backgroundColor: spotCategory === cat.id ? '#1A1A1A' : '#F3F4F6',
+                    color: spotCategory === cat.id ? '#FFFFFF' : '#666666',
+                    transform: spotCategory === cat.id ? 'scale(1.1)' : 'scale(1)',
+                  }}
+                >
+                  {L(lang, cat.label)}
+                </button>
+              ))}
+            </div>
+
+            {/* ── Wi-Fi 정보 ── */}
+            {spotCategory === 'wifi' && (
+              <div className="px-4 space-y-2">
+                {wifiList.length === 0 ? (
+                  <p className="text-[13px]" style={{ color: '#999' }}>{L(lang, { ko: '해당 지역 Wi-Fi 정보가 없습니다', zh: '该地区无Wi-Fi信息', en: 'No WiFi info for this area' })}</p>
+                ) : wifiList.map((w, i) => (
+                  <div key={i} className="rounded-[10px] border border-[#E5E7EB] bg-white p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-bold mb-0.5 line-clamp-1" style={{ color: '#1A1A1A' }}>{L(lang, w.place)}</p>
+                        <p className="text-[11px] font-mono mb-1" style={{ color: '#3B82F6' }}>📶 {w.ssid}</p>
+                        <p className="text-[11px]" style={{ color: '#666' }}>{L(lang, w.note)}</p>
+                      </div>
+                      <span className="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: '#F0FDF4', color: '#2D5A3D' }}>
+                        {L(lang, w.provider)}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* ── 네이버지도 랜딩 (편의점/화장실/배터리) ── */}
+            {['convenience', 'restroom', 'battery'].includes(spotCategory) && (() => {
+              const cat = SPOT_CATEGORIES.find(c => c.id === spotCategory)
+              const query = cat?.mapQuery?.[lang] || cat?.mapQuery?.ko || ''
+              const META = {
+                convenience: { emoji: '🏪', ko: '편의점', zh: '便利店', en: 'convenience stores' },
+                restroom:    { emoji: '🚹🚺', ko: '화장실', zh: '洗手间', en: 'restrooms' },
+                battery:     { emoji: '🔋', ko: '보조배터리 대여', zh: '充电宝租借', en: 'battery rentals' },
+              }
+              const m = META[spotCategory]
+              return (
+                <div className="px-4">
+                  <button
+                    onClick={() => openNaverMap(query)}
+                    className="w-full flex items-center justify-center gap-3 py-5 rounded-[14px] active:scale-[0.98] transition-all duration-150"
+                    style={{ border: '2px solid #1A1A1A', background: '#fff' }}
+                  >
+                    <span style={{ fontSize: 24 }}>{m.emoji}</span>
+                    <div className="text-left">
+                      <p className="text-[14px] font-bold" style={{ color: '#1A1A1A' }}>
+                        {L(lang, { ko: `근처 ${m.ko} 검색`, zh: `搜索附近${m.zh}`, en: `Find nearby ${m.en}` })}
+                      </p>
+                      <p className="text-[11px]" style={{ color: '#999' }}>
+                        {L(lang, { ko: '네이버지도 앱으로 연결', zh: '跳转至Naver地图', en: 'Opens in Naver Map' })}
+                      </p>
+                    </div>
+                  </button>
+                  {spotCategory === 'battery' && (
+                    <p className="text-[10px] text-center mt-2" style={{ color: '#AAAAAA' }}>
+                      {L(lang, { ko: '짠배터리 · 보충 · 쿠배터리 등 대여 기기 검색', zh: '搜索各品牌充电宝租借机', en: 'Finds rental kiosks near you' })}
+                    </p>
+                  )}
+                </div>
+              )
+            })()}
+
+            {/* ── 카드 목록 (카페/음식/쇼핑) — 지역별 그룹 + 큰 카드 ── */}
+            {!['wifi', 'convenience', 'restroom', 'battery'].includes(spotCategory) && (() => {
+              if (filtered.length === 0) return (
+                <p className="px-4 text-[13px]" style={{ color: '#999' }}>
+                  {L(lang, { ko: '해당 지역의 핫플이 없어요', zh: '该地区暂无推荐', en: 'No spots in this area yet' })}
+                </p>
+              )
+              // 지역별 그룹화
+              const districtNames = {
+                seongsu: { ko: '성수', zh: '圣水', en: 'Seongsu' },
+                gangnam: { ko: '강남/압구정', zh: '江南/狎鸥亭', en: 'Gangnam' },
+                hannam:  { ko: '한남/이태원', zh: '汉南/梨泰院', en: 'Hannam' },
+                hongdae: { ko: '홍대/연남', zh: '弘大/延南', en: 'Hongdae' },
+                myeongdong: { ko: '명동/을지로', zh: '明洞/乙支路', en: 'Myeongdong' },
+                yeouido: { ko: '여의도/한강', zh: '汝矣岛/汉江', en: 'Yeouido' },
+              }
+              const groups = {}
+              filtered.forEach(s => {
+                if (!groups[s.district]) groups[s.district] = []
+                groups[s.district].push(s)
+              })
+              const orderedDistricts = ['seongsu','gangnam','hannam','hongdae','myeongdong','yeouido']
+                .filter(d => groups[d])
+              return (
+                <div className="space-y-5">
+                  {orderedDistricts.map(district => (
+                    <div key={district}>
+                      <p className="px-4 text-[11px] font-semibold tracking-wider uppercase mb-2" style={{ color: '#AAAAAA' }}>
+                        {L(lang, districtNames[district] || { ko: district })}
+                      </p>
+                      <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-1 snap-x scroll-pl-4" style={{ scrollbarWidth: 'none' }}>
+                        {groups[district].map(spot => (
+                          <button
+                            key={spot.id}
+                            onClick={() => window.open(spot.naverMap, '_blank')}
+                            className="flex-shrink-0 text-left active:scale-[0.97] transition-all duration-150 snap-start rounded-[10px] overflow-hidden border border-[#E8E8E8]"
+                            style={{ width: 155 }}
+                          >
+                            <div className="relative" style={{ height: 110 }}>
+                              <img
+                                src={spot.image}
+                                alt=""
+                                className="absolute inset-0 w-full h-full object-cover"
+                                loading="lazy"
+                                onError={e => { e.target.parentElement.style.background = '#F3F4F6' }}
+                              />
+                              {spot.hot && (
+                                <div className="absolute top-2 left-2 bg-[#FF3B30] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">HOT</div>
+                              )}
+                            </div>
+                            <div className="p-2.5 bg-white">
+                              <p className="text-[12px] font-bold leading-tight line-clamp-1" style={{ color: '#1A1A1A' }}>
+                                {L(lang, spot.name)}
+                              </p>
+                              <p className="text-[10px] mt-0.5" style={{ color: '#AAAAAA' }}>
+                                {L(lang, spot.category === 'cafe' ? { ko: '카페', zh: '咖啡', en: 'Cafe' } : spot.category === 'food' ? { ko: '맛집', zh: '美食', en: 'Food' } : { ko: '쇼핑', zh: '购물', en: 'Shop' })}
+                              </p>
+                            </div>
+                          </button>
+                        ))}
+                        <div className="flex-shrink-0 w-4" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            })()}
+          </div>
+        )
+      })()}
+
+      {/* ─── 광고 배너 #2 ─── */}
+      <div className="mb-8 px-4">
+        <div
+          className="rounded-[12px] overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform"
+          style={{ height: 100, background: 'linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%)', border: '1px solid #E5E7EB' }}
+          onClick={() => { trackEvent('ad_click', { slot: 'home_2' }) }}
+        >
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-[11px] tracking-widest uppercase" style={{ color: '#BCBCBC' }}>AD</span>
+          </div>
+        </div>
+      </div>
+
       {/* ─── 가이드 오버레이 ─── */}
       {overlay && !POCKET_IDS.includes(overlay) && (
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
@@ -1499,10 +1876,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {overlay === 'dietary-card' && <DietaryCardGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
           {overlay === 'kids' && <KidsGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
           {overlay === 'pet' && (
-            <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+            <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
               <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB] px-4 py-3 flex items-center gap-3">
                 <button onClick={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} className="p-1"><ChevronLeft size={20} color="#1A1A1A" /></button>
-                <h2 className="text-[15px] font-semibold text-[#1A1A1A]">{L(lang, { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' })}</h2>
+                <h2 className="typo-title" style={{ fontSize: 16 }}>{L(lang, { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' })}</h2>
               </div>
               <PetTab lang={lang} setTab={() => {}} />
             </div>
@@ -1513,7 +1890,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── 통역&번역 허브 오버레이 — TranslatorTab 임베드 ─── */}
       {overlay === 'interpret-hub' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
             <div className="flex items-center gap-3 px-4 py-3">
               <button onClick={() => setOverlay(null)} className="p-1">
@@ -1534,7 +1911,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── 세금환급 계산기 오버레이 ─── */}
       {overlay === 'tax-refund-calc' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
             <div className="flex items-center gap-3 px-4 py-3">
               <button onClick={() => setOverlay(null)} className="p-1">
@@ -1552,7 +1929,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 상황별 한국어 포켓 오버레이 ─── */}
       {overlay && POCKET_IDS.includes(overlay) && (
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
-          <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
             <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
               <div className="flex items-center gap-3 px-4 py-3">
                 <button onClick={() => setOverlay(null)} className="p-1">
@@ -1642,25 +2019,23 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── 입국/출국 환영/이별 팝업 ─── */}
       {arrivalPopup && (
-        <div className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center animate-fade-in">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-[200] bg-white flex flex-col items-center justify-center animate-fade-in">
           <p className="text-lg font-bold text-[#1A1A1A] mb-6 text-center px-8" style={{ whiteSpace: 'pre-line' }}>
             {L(lang, { ko: '반가워요.\n한국 혹시 처음이신가요?', zh: '欢迎！\n这是您第一次来韩国吗？', en: 'Welcome!\nIs this your first time in Korea?' })}
           </p>
-          <PocketGirlBow />
         </div>
       )}
       {departurePopup && (
-        <div className="fixed inset-0 z-[200] bg-white flex flex-col items-center justify-center animate-fade-in">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-[200] bg-white flex flex-col items-center justify-center animate-fade-in">
           <p className="text-lg font-bold text-[#1A1A1A] mb-6 text-center px-8" style={{ whiteSpace: 'pre-line' }}>
             {L(lang, { ko: '벌써 돌아가세요?\n아쉽지만 다음을 기약해요!', zh: '这么快就要走了？\n虽然不舍，但下次再见！', en: 'Leaving already?\nSee you next time!' })}
           </p>
-          <PocketGirlCry />
         </div>
       )}
 
       {/* ─── 입국하기 플로우 (3단계 경로바) ─── */}
       {showArrivalFlow && arrivalStep === 'menu' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
@@ -1668,8 +2043,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             </h2>
           </div>
 
-          {/* 경로바 — 3단계 + 포켓걸 */}
-          <div className="px-6 pt-5 pb-2">
+          {/* 경로바 — 3단계 */}
+          <div className="px-6 pt-3 pb-2">
             <div className="relative flex items-center justify-between">
               {/* 연결선 */}
               <div className="absolute top-3 left-[16%] right-[16%] h-[2px] bg-[#E5E7EB]" />
@@ -1677,12 +2052,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 width: arrivalPhase === 'entry' ? '0%' : arrivalPhase === 'move' ? '34%' : '68%'
               }} />
               {ARRIVAL_PHASES.map((p, i) => (
-                <button key={p.id} onClick={() => setArrivalPhase(p.id)} className="relative flex flex-col items-center z-10" style={{ width: '33%' }}>
-                  {arrivalPhase === p.id && (
-                    <div className="absolute -top-8">
-                      <PocketGirlMini size={18} />
-                    </div>
-                  )}
+                <button key={p.id} onClick={() => setArrivalPhase(p.id)} className="flex flex-col items-center z-10" style={{ width: '33%' }}>
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${
                     arrivalPhase === p.id ? 'bg-[#1A1A1A] text-white' : 'bg-[#E5E7EB] text-[#999]'
                   }`}>{i + 1}</div>
@@ -1695,76 +2065,83 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           </div>
 
           {/* 단계별 기능 목록 */}
-          <div className="p-4 flex flex-col gap-3">
-            {arrivalPhase === 'entry' && [
-              { id: 'immigration-wait', label: { ko: '입국심사 대기시간 조회', zh: '入境审查等候时间查询', en: 'Immigration Wait Time' }, sub: { ko: '인천공항 T1/T2 실시간', zh: '仁川机场T1/T2实时', en: 'Incheon T1/T2 real-time' }, highlight: true },
-              { id: 'immigration', label: { ko: '입국신고서 작성하는 법', zh: '入境申报卡填写方法', en: 'How to Fill Arrival Card' }, sub: { ko: '전자(Q-CODE) / 실물 카드', zh: '电子(Q-CODE) / 纸质卡', en: 'Q-CODE / Physical card' } },
-              { id: 'sim-exchange', label: { ko: 'SIM카드 구매 & 환전', zh: '买SIM卡 & 换钱', en: 'Buy SIM & Exchange' }, sub: { ko: 'eSIM, 공항 환전, 명동 환전소', zh: 'eSIM、机场换钱、明洞换钱所', en: 'eSIM, airport, Myeongdong' } },
-              { id: 'nav-pet', label: { ko: '펫(반려동물) 입국 가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물과 함께 한국으로', zh: '带宠物一起来韩国', en: 'Bring your pet to Korea' }, guide: 'pet' },
-              { id: 'airport-facilities', label: { ko: '공항 시설 정보', zh: '机场设施信息', en: 'Airport Facilities' }, sub: { ko: '수유실, 휠체어, 라운지, 편의시설', zh: '母婴室、轮椅、休息室、便利设施', en: 'Nursing room, wheelchair, lounge' } },
-              { id: 'dietary-card-guide', label: { ko: '내가 못먹는 음식 등록', zh: '登记不能吃的食物', en: 'Register Dietary Restrictions' }, sub: { ko: '식당에서 한국어로 보여주기', zh: '在餐厅展示韩语卡片', en: 'Show Korean card at restaurants' }, guide: 'dietary-card' },
-            ].map(item => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
-                  else { setArrivalStep(item.id) }
-                }}
-                className={`rounded-[6px] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3 ${
-                  item.highlight ? 'border-2 border-blue-500 bg-blue-50' : 'border border-[#E5E7EB]'
-                }`}
-              >
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-bold ${item.highlight ? 'text-blue-700' : 'text-[#1A1A1A]'}`}>{L(lang, item.label)}</p>
-                  <p className={`text-xs mt-0.5 ${item.highlight ? 'text-blue-500' : 'text-[#666]'}`}>{L(lang, item.sub)}</p>
-                </div>
-                <ChevronRight size={18} color={item.highlight ? '#3B82F6' : '#999'} />
-              </button>
-            ))}
+          <div className="p-4">
+            {arrivalPhase === 'entry' && (
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { id: 'immigration-wait', icon: Clock, color: '#C4725A', label: { ko: '입국심사\n대기시간', zh: '入境审查\n等候时间', en: 'Immigration\nWait Time' } },
+                  { id: 'immigration', icon: Note, color: '#C4725A', label: { ko: '입국신고서\n작성법', zh: '入境申报卡\n填写方法', en: 'Arrival Card\nHow-to' } },
+                  { id: 'sim-exchange', icon: Phone, color: '#D4956B', label: { ko: 'SIM카드\n& 환전', zh: 'SIM卡\n& 换钱', en: 'SIM Card\n& Exchange' } },
+                  { id: 'nav-pet', icon: PawPrint, color: '#B8860B', label: { ko: '펫 입국\n가이드', zh: '宠物入境\n指南', en: 'Pet Entry\nGuide' }, guide: 'pet' },
+                  { id: 'airport-facilities', icon: Building, color: '#7A8B6F', label: { ko: '공항\n시설 정보', zh: '机场\n设施信息', en: 'Airport\nFacilities' } },
+                  { id: 'dietary-card-guide', icon: ForkKnife, color: '#8B6F5C', label: { ko: '못먹는 음식\n등록', zh: '不能吃的\n食物登记', en: 'Dietary\nRestrictions' }, guide: 'dietary-card' },
+                ].map(item => {
+                  const IconComponent = item.icon
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
+                        else { setArrivalStep(item.id) }
+                      }}
+                      className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"
+                      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+                    >
+                      <IconComponent size={26} color={item.color} weight="duotone" />
+                      <span className="typo-caption text-center leading-tight whitespace-pre-line" style={{ color: '#555' }}>{L(lang, item.label)}</span>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
 
-            {arrivalPhase === 'move' && [
-              { id: 'transport-bus', label: { ko: '버스 타는 법', zh: '坐公交车', en: 'How to Ride Bus' }, sub: { ko: 'T-money 충전, 찍기, 환승', zh: 'T-money充值、刷卡、换乘', en: 'T-money, tap, transfer' } },
-              { id: 'transport-subway', label: { ko: '지하철 타는 법', zh: '坐地铁', en: 'How to Ride Subway' }, sub: { ko: '1회용 표, T-money, 갈아타기', zh: '单程票、T-money、换乘', en: 'Single ticket, T-money, transfer' } },
-              { id: 'transport-arex', label: { ko: 'AREX(공항철도) 타는 법', zh: '坐AREX机场铁路', en: 'How to Ride AREX' }, sub: { ko: '인천공항 ↔ 서울역 직통/일반', zh: '仁川机场↔首尔站 直达/普通', en: 'Incheon ↔ Seoul Station' } },
-              { id: 'transport-taxi', label: { ko: '택시 타는 법', zh: '坐出租车', en: 'How to Ride Taxi' }, sub: { ko: 'RIDE앱, 짐 크기 확인, 한국어 카드', zh: 'RIDE APP、行李确认、韩语卡片', en: 'RIDE app, luggage check, Korean card' } },
-              { id: 'transport-navi', label: { ko: '길찾기', zh: '导航', en: 'Navigation' }, sub: { ko: '공항에서 숙소까지 경로 검색', zh: '从机场到住宿的路线搜索', en: 'Route from airport to hotel' } },
-            ].map(item => (
-              <button
-                key={item.id}
-                onClick={() => setArrivalStep(item.id)}
-                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
-                  <p className="text-xs text-[#666] mt-0.5">{L(lang, item.sub)}</p>
-                </div>
-                <ChevronRight size={18} color="#999" />
-              </button>
-            ))}
+            {arrivalPhase === 'move' && (
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { id: 'transport-bus', icon: '🚌', label: { ko: '버스\n타는 법', zh: '坐公交车', en: 'How to\nRide Bus' } },
+                  { id: 'transport-subway', icon: '🚇', label: { ko: '지하철\n타는 법', zh: '坐地铁', en: 'How to\nRide Subway' } },
+                  { id: 'transport-arex', icon: '🚄', label: { ko: 'AREX\n공항철도', zh: 'AREX\n机场铁路', en: 'AREX\nAirport Rail' } },
+                  { id: 'transport-taxi', icon: '🚕', label: { ko: '택시\n타는 법', zh: '坐出租车', en: 'How to\nRide Taxi' } },
+                  { id: 'transport-navi', icon: '🗺', label: { ko: '길찾기', zh: '导航', en: 'Navigation' } },
+                ].map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => setArrivalStep(item.id)}
+                    className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"
+                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+                  >
+                    <span className="text-[22px]">{item.icon}</span>
+                    <span className="typo-caption text-center leading-tight whitespace-pre-line" style={{ color: '#555' }}>{L(lang, item.label)}</span>
+                  </button>
+                ))}
+              </div>
+            )}
 
-            {arrivalPhase === 'hotel' && [
-              { id: 'hotel-checkin', label: { ko: '체크인 한국어 카드', zh: '入住韩语卡片', en: 'Check-in Korean Card' }, sub: { ko: '체크인, 짐 맡기기, 번역기', zh: '办入住、寄存行李、翻译', en: 'Check-in, luggage storage, translator' } },
-              { id: 'hotel-nearby', label: { ko: '숙소 주변 살펴보기', zh: '查看住宿周边', en: 'Explore Nearby' }, sub: { ko: '편의점, 생활시설 확인', zh: '便利店、生活设施确认', en: 'Convenience store, amenities' } },
-            ].map(item => (
-              <button
-                key={item.id}
-                onClick={() => setArrivalStep(item.id)}
-                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
-                  <p className="text-xs text-[#666] mt-0.5">{L(lang, item.sub)}</p>
-                </div>
-                <ChevronRight size={18} color="#999" />
-              </button>
-            ))}
+            {arrivalPhase === 'hotel' && (
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { id: 'hotel-checkin', icon: '🔑', label: { ko: '체크인\n한국어 카드', zh: '入住\n韩语卡片', en: 'Check-in\nKorean Card' } },
+                  { id: 'hotel-nearby', icon: '🏪', label: { ko: '숙소 주변\n살펴보기', zh: '查看\n住宿周边', en: 'Explore\nNearby' } },
+                ].map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => setArrivalStep(item.id)}
+                    className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"
+                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+                  >
+                    <span className="text-[22px]">{item.icon}</span>
+                    <span className="typo-caption text-center leading-tight whitespace-pre-line" style={{ color: '#555' }}>{L(lang, item.label)}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {/* 입국심사 대기시간 상세 */}
       {showArrivalFlow && arrivalStep === 'immigration-wait' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
@@ -1782,7 +2159,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 입국신고 상세 */}
       {/* 입국신고서 — 선택 화면 */}
       {showArrivalFlow && arrivalStep === 'immigration' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
@@ -1816,7 +2193,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* 전자 입국신고서 상세 */}
       {showArrivalFlow && arrivalStep === 'immigration-electronic' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setArrivalStep('immigration')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
@@ -1854,7 +2231,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* 택시/대중교통 상세 */}
       {showArrivalFlow && arrivalStep === 'transport' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto animate-fade-in">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
@@ -1931,7 +2308,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* SIM & 환전 상세 */}
       {showArrivalFlow && arrivalStep === 'sim-exchange' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto animate-fade-in">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto animate-fade-in">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
@@ -1993,7 +2370,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── 여행 중 플로우 ─── */}
       {showArrivalFlow && arrivalStep === 'traveling' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
@@ -2033,7 +2410,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── 출국준비 플로우 ─── */}
       {showArrivalFlow && arrivalStep === 'departure' && (
-        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+        <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
             <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
@@ -2070,9 +2447,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {isVisible('emergency') && (
         <button
           onClick={() => setOverlay('emergency')}
-          className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-[#DC2626] text-white flex items-center justify-center  active:scale-95 transition-transform"
+          className="fixed bottom-20 right-4 z-40 w-9 h-9 rounded-full bg-[#DC2626] text-white flex items-center justify-center active:scale-95 transition-transform"
+          style={{ boxShadow: '0 2px 8px rgba(220,38,38,0.3)' }}
         >
-          <span className="text-lg font-bold">SOS</span>
+          <span className="text-[10px] font-bold">SOS</span>
         </button>
       )}
 
@@ -2083,6 +2461,42 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
     </div>{/* /max-width wrapper */}
+
+      {/* #31 팝업 알림 구독 설정 시트 */}
+      {showSubSheet && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={() => setShowSubSheet(false)}>
+          <div className="absolute inset-0 bg-black/30" />
+          <div className="relative w-full max-w-[480px] bg-white rounded-t-[20px] p-5 pb-8 animate-slide-up" onClick={e => e.stopPropagation()}>
+            <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-[#D1D5DB]" /></div>
+            <p className="text-[15px] font-bold text-[#1A1A1A] mb-1">🔔 {L(lang, { ko: '팝업 알림 설정', zh: '快闪通知设置', en: 'Popup Notifications' })}</p>
+            <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '관심 카테고리의 새 팝업을 알려드려요', zh: '新快闪开幕时通知您', en: 'Get notified for new popups' })}</p>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { id: 'all', label: { ko: '전체', zh: '全部', en: 'All' }, em: '📌' },
+                { id: 'kpop', label: { ko: 'K-POP', zh: 'K-POP', en: 'K-POP' }, em: '🎤' },
+                { id: 'fashion', label: { ko: '패션', zh: '时尚', en: 'Fashion' }, em: '👗' },
+                { id: 'beauty', label: { ko: '뷰티', zh: '美妆', en: 'Beauty' }, em: '💄' },
+                { id: 'character', label: { ko: '캐릭터', zh: '角色', en: 'Character' }, em: '🧸' },
+                { id: 'exhibition', label: { ko: '전시', zh: '展览', en: 'Exhibition' }, em: '🎨' },
+                { id: 'food', label: { ko: 'F&B', zh: '美食', en: 'Food' }, em: '🍽️' },
+              ].map(cat => {
+                const active = popupSubCategories.includes(cat.id)
+                return (
+                  <button key={cat.id} onClick={() => togglePopupSub(cat.id)}
+                    className="text-[12px] px-3 py-1.5 rounded-full transition-colors"
+                    style={{ background: active ? '#111827' : '#F3F4F6', color: active ? '#FFF' : '#6B7280' }}>
+                    {cat.em} {L(lang, cat.label)}
+                  </button>
+                )
+              })}
+            </div>
+            <button onClick={() => setShowSubSheet(false)}
+              className="mt-5 w-full py-3 rounded-[12px] bg-[#111827] text-white text-[13px] font-bold active:scale-95 transition-transform">
+              {L(lang, { ko: '저장', zh: '保存', en: 'Save' })}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

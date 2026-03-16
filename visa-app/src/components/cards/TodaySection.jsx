@@ -35,7 +35,7 @@ function HScrollSection({ children }) {
 
 function TodayWidgetCard({ widget, lang, setTab }) {
   return (
-    <div className={`w-[280px] h-[320px] shrink-0 bg-white border border-[#E5E7EB] rounded-lg p-4 flex flex-col shadow-sm`} style={{ scrollSnapAlign: 'start' }}>
+    <div className={`w-[280px] h-[320px] shrink-0 bg-white border border-[#E5E7EB] rounded-lg p-4 flex flex-col `} style={{ scrollSnapAlign: 'start' }}>
       <div className="mb-3 shrink-0">
         <div className="flex items-center gap-2">
           <LucideIcon name={widget.icon} size={16} className="text-[#111827]" />

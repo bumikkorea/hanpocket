@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react'
 import { Heart, Lock, ChevronDown, ChevronUp, CheckCircle2, Circle, Gamepad2 } from 'lucide-react'
 import { CHAPTERS, loadGameState, saveGameState, xpToLevel, levelXpRange, recoverHearts, updateStreak } from './gameData'
-import LessonScreen from './LessonScreen'
+const LessonScreen = lazy(() => import('./LessonScreen'))
 import StreakBanner from './StreakBanner'
 
 function L(lang, obj) {
@@ -68,13 +68,19 @@ export default function KoreanGameMain({ lang }) {
   // 레슨 화면
   if (activeLesson && activeLessonData) {
     return (
-      <LessonScreen
-        lang={lang}
-        lesson={activeLessonData}
-        gameState={gameState}
-        onComplete={handleLessonComplete}
-        onExit={handleLessonExit}
-      />
+      <Suspense fallback={
+        <div className="flex items-center justify-center h-screen">
+          <div className="animate-spin w-6 h-6 border-2 border-[#2D5A3D] border-t-transparent rounded-full"></div>
+        </div>
+      }>
+        <LessonScreen
+          lang={lang}
+          lesson={activeLessonData}
+          gameState={gameState}
+          onComplete={handleLessonComplete}
+          onExit={handleLessonExit}
+        />
+      </Suspense>
     )
   }
 

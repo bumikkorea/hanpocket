@@ -307,7 +307,7 @@ export default function ScheduleModal({ lang, schedule, onSave, onDelete, onClos
                       onClick={() => setFormData(prev => ({ ...prev, category: cat.id }))}
                       className={`flex items-center gap-2 p-3 rounded-lg border-2 transition-all ${
                         formData.category === cat.id
-                          ? 'border-current shadow-sm'
+                          ? 'border-current '
                           : 'border-[#E5E7EB] hover:border-[#D1D5DB]'
                       }`}
                       style={{ 
@@ -353,7 +353,7 @@ export default function ScheduleModal({ lang, schedule, onSave, onDelete, onClos
                       onClick={() => setFormData(prev => ({ ...prev, transport: trans.id }))}
                       className={`flex items-center gap-2 p-2 rounded-lg border transition-all ${
                         formData.transport === trans.id
-                          ? 'border-[#111827] bg-[#111827] text-white shadow-sm'
+                          ? 'border-[#111827] bg-[#111827] text-white '
                           : 'border-[#E5E7EB] text-[#6B7280] hover:border-[#D1D5DB]'
                       }`}
                     >

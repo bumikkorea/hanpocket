@@ -3961,7 +3961,7 @@ export const koreanFoodDB = [
     image: null
   },
 
-  // === ADDITIONAL BANCHAN - COMPLETING 50 NEW ITEMS ===
+  // === ADDITIONAL BANCHAN (반찬) - PRIORITY 1 ===
 
   {
     id: 'braised-lotus-root',
@@ -3974,7 +3974,7 @@ export const koreanFoodDB = [
     price: '반찬',
     desc_zh: '莲藕片甜辣煮制。口感脆嫩的根菜料理。',
     desc_en: 'Lotus root slices braised in sweet-savory sauce. Crisp-tender root vegetable dish.',
-    origin_zh: '연못에서 자라는 연근을 활용한 전통 나물. 식이섬유가 풍부.',
+    origin_zh: '연못에서 자라는 연근을 활용한 전통 나물. 식이섬유가 풍부하다.',
     origin_en: 'Traditional seasoned vegetable using pond-grown lotus root. Rich in dietary fiber.',
     tags: ['crunchy', 'fiber-rich', 'traditional', 'sweet'],
     quality: 'basic',
@@ -4061,422 +4061,2434 @@ export const koreanFoodDB = [
       difficulty: 1,
       ingredients: [
         {
-          ko: '가지 3개',
-          zh: '茄子 3个',
-          en: 'Eggplants 3',
+          ko: '가지 2개',
+          zh: '茄子 2个',
+          en: 'Eggplants 2',
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 新鲜茄子',
-            cn_tb: '// TODO: taobao search: 新鲜茄子'
+            cn_jd: '// TODO: jd.com search: 茄子',
+            cn_tb: '// TODO: taobao search: 茄子'
           }
         }
       ],
-      steps_zh: ['茄子蒸10分钟', '撕成条状', '调味料拌匀'],
-      steps_en: ['Steam eggplants 10 minutes', 'Tear into strips', 'Mix with seasonings'],
-      tips_zh: '一定要用蒸的，不能煮烂。',
-      tips_en: 'Must steam, not boil to avoid mushiness.'
+      steps_zh: ['茄子蒸15分钟', '撕成条状', '调味拌制'],
+      steps_en: ['Steam eggplants 15 min', 'Tear into strips', 'Season and mix'],
+      tips_zh: '要蒸透才好撕，手撕比刀切入味。',
+      tips_en: 'Steam thoroughly for easy tearing, hand-torn absorbs seasoning better than knife-cut.'
     },
     image: null
   },
 
   {
-    id: 'seasoned-zucchini',
-    ko: '호박나물',
-    zh: '嫩南瓜菜',
-    en: 'Seasoned Zucchini',
+    id: 'seasoned-balloon-flower',
+    ko: '도라지무침',
+    zh: '桔梗拌菜',
+    en: 'Seasoned Balloon Flower',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '桔梗根撕成丝调味。略带苦味的药膳小菜。',
+    desc_en: 'Balloon flower root torn into strips and seasoned. Medicinal side dish with slight bitterness.',
+    origin_zh: '전통 약재이기도 한 도라지를 활용한 건강 나물.',
+    origin_en: 'Healthy seasoned vegetable using balloon flower root, also traditional medicine.',
+    tags: ['medicinal', 'bitter', 'healthy', 'traditional'],
+    quality: 'verified',
+    recipe: {
+      time: '30분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '도라지 200g',
+          zh: '桔梗根 200g',
+          en: 'Balloon flower root 200g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 桔梗根',
+            cn_tb: '// TODO: taobao search: 桔梗根'
+          }
+        }
+      ],
+      steps_zh: ['桔梗撕成丝', '盐水腌去苦味', '挤干调味'],
+      steps_en: ['Tear balloon flower into strips', 'Salt to remove bitterness', 'Squeeze dry and season'],
+      tips_zh: '一定要用手撕，刀切容易断。腌制去苦味是关键。',
+      tips_en: 'Must hand-tear, knife cutting breaks easily. Salting to remove bitterness is key.'
+    },
+    image: null
+  },
+
+  {
+    id: 'seasoned-perilla-leaves',
+    ko: '깻잎무침',
+    zh: '紫苏叶',
+    en: 'Seasoned Perilla Leaves',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '紫苏叶腌制调味。香气浓郁的绿叶小菜。',
+    desc_en: 'Pickled and seasoned perilla leaves. Fragrant green leafy side dish.',
+    origin_zh: '한국인이 가장 좋아하는 쌈채소 중 하나. 독특한 향이 특징.',
+    origin_en: 'One of Korean\'s favorite wrapping vegetables. Characterized by unique aroma.',
+    tags: ['fragrant', 'unique', 'wrapping', 'polarizing'],
+    quality: 'verified',
+    recipe: {
+      time: '2시간',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '깻잎 30장',
+          zh: '紫苏叶 30片',
+          en: 'Perilla leaves 30',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 紫苏叶',
+            cn_tb: '// TODO: taobao search: 紫苏叶'
+          }
+        }
+      ],
+      steps_zh: ['紫苏叶洗净', '调制腌制汁', '腌制2小时'],
+      steps_en: ['Wash perilla leaves clean', 'Prepare pickling sauce', 'Pickle 2 hours'],
+      tips_zh: '不要洗太用力，叶子容易破。腌制汁要偏咸。',
+      tips_en: 'Don\'t wash too vigorously, leaves tear easily. Pickling sauce should be on salty side.'
+    },
+    image: null
+  },
+
+  {
+    id: 'seasoned-crown-daisy',
+    ko: '쑥갓무침',
+    zh: '茼蒿拌菜',
+    en: 'Seasoned Crown Daisy',
     category: 'banchan',
     spicy: 0,
-    allergens: [],
+    allergens: ['soy'],
     price: '반찬',
-    desc_zh: '嫩南瓜丝炒制调味。清淡爽口的蔬菜小菜。',
-    desc_en: 'Julienned zucchini sautéed and seasoned. Light and refreshing vegetable dish.',
-    origin_zh: '여름 호박이 많을 때 만드는 기본 나물.',
-    origin_en: 'Basic seasoned vegetable made during summer zucchini abundance.',
-    tags: ['light', 'summery', 'mild', 'green'],
+    desc_zh: '茼蒿叶调味小菜。清香爽口的春季蔬菜。',
+    desc_en: 'Seasoned crown daisy leaves. Refreshing spring vegetable with clean fragrance.',
+    origin_zh: '봄철에 나는 쑥갓을 활용한 계절 나물.',
+    origin_en: 'Seasonal vegetable using spring crown daisy.',
+    tags: ['spring', 'fragrant', 'seasonal', 'light'],
     quality: 'basic',
     recipe: {
       time: '15분',
       difficulty: 1,
       ingredients: [
         {
-          ko: '애호박 2개',
-          zh: '嫩南瓜 2个',
-          en: 'Young zucchini 2',
+          ko: '쑥갓 200g',
+          zh: '茼蒿 200g',
+          en: 'Crown daisy 200g',
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 嫩南瓜 西葫芦',
-            cn_tb: '// TODO: taobao search: 嫩南瓜 西葫芦'
+            cn_jd: '// TODO: jd.com search: 茼蒿',
+            cn_tb: '// TODO: taobao search: 茼蒿'
           }
         }
       ],
-      steps_zh: ['南瓜切丝盐腌', '挤干水分炒制', '调味装盘'],
-      steps_en: ['Julienne and salt zucchini', 'Squeeze dry and sauté', 'Season and plate'],
-      tips_zh: '盐腌出水是关键步骤。',
-      tips_en: 'Salting to draw out water is key step.'
+      steps_zh: ['茼蒿焯水', '调味拌制'],
+      steps_en: ['Blanch crown daisy', 'Season and mix'],
+      tips_zh: '焯水时间要短，保持脆嫩。',
+      tips_en: 'Blanching time should be short to maintain crispness.'
     },
     image: null
   },
 
-  // === MORE STREET FOOD ===
+  {
+    id: 'seasoned-garlic-chives',
+    ko: '부추무침',
+    zh: '韭菜拌菜',
+    en: 'Seasoned Garlic Chives',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '韭菜段调味小菜。香味浓郁的绿色蔬菜。',
+    desc_en: 'Seasoned garlic chive segments. Fragrant green vegetable.',
+    origin_zh: '부추의 독특한 향을 살린 전통 나물.',
+    origin_en: 'Traditional vegetable highlighting garlic chive\'s unique aroma.',
+    tags: ['pungent', 'green', 'traditional', 'strong-flavor'],
+    quality: 'basic',
+    recipe: {
+      time: '15분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '부추 1단',
+          zh: '韭菜 1把',
+          en: 'Garlic chives 1 bunch',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 韭菜',
+            cn_tb: '// TODO: taobao search: 韭菜'
+          }
+        }
+      ],
+      steps_zh: ['韭菜切段', '开水快速焯', '调味拌制'],
+      steps_en: ['Cut chives into segments', 'Quick blanch in boiling water', 'Season and mix'],
+      tips_zh: '焯水要快，保持翠绿和脆嫩。',
+      tips_en: 'Blanch quickly to maintain green color and crispness.'
+    },
+    image: null
+  },
 
   {
-    id: 'rice-cake-skewer',
-    ko: '떡꼬치',
-    zh: '年糕串',
-    en: 'Rice Cake Skewer',
-    category: 'street',
+    id: 'seasoned-cabbage',
+    ko: '배추겉절이',
+    zh: '白菜泡菜',
+    en: 'Fresh Cabbage Kimchi',
+    category: 'banchan',
     spicy: 2,
-    allergens: [],
-    price: '3000-5000',
-    desc_zh: '年糕串配辣椒酱。学生最爱的便宜小吃。',
-    desc_en: 'Rice cake skewers with spicy sauce. Students\' favorite cheap snack.',
-    origin_zh: '학교 앞 분식점의 대표 메뉴. 저렴하고 배부른 간식.',
-    origin_en: 'Representative menu of snack shops near schools. Cheap and filling snack.',
-    tags: ['student', 'cheap', 'spicy', 'filling'],
-    quality: 'basic',
-    recipe: {
-      time: '20분',
-      difficulty: 1,
-      ingredients: [
-        {
-          ko: '떡 300g',
-          zh: '年糕 300g',
-          en: 'Rice cakes 300g',
-          substitute: null,
-          buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 韩国年糕',
-            cn_tb: '// TODO: taobao search: 韩国年糕'
-          }
-        }
-      ],
-      steps_zh: ['年糕串竹签', '煮软后炒制', '配辣椒酱'],
-      steps_en: ['Skewer rice cakes', 'Cook until soft then stir-fry', 'Serve with spicy sauce'],
-      tips_zh: '年糕要先煮软再炒才不会硬。',
-      tips_en: 'Rice cakes must be boiled soft first before stir-frying.'
-    },
-    image: null
-  },
-
-  {
-    id: 'korean-pancake-mix',
-    ko: '모듬전',
-    zh: '综合煎饼',
-    en: 'Korean Mixed Pancakes',
-    category: 'street',
-    spicy: 0,
-    allergens: ['wheat', 'egg', 'seafood'],
-    price: '12000-18000',
-    desc_zh: '各种煎饼的组合拼盘。雨天聚餐必备。',
-    desc_en: 'Assorted pancake platter. Essential for rainy day gatherings.',
-    origin_zh: '비오는 날 막걸리와 함께 먹는 대표적인 안주.',
-    origin_en: 'Representative drinking snack eaten with makgeolli on rainy days.',
-    tags: ['variety', 'rainy-day', 'sharing', 'traditional'],
-    quality: 'basic',
-    recipe: {
-      time: '45분',
-      difficulty: 3,
-      ingredients: [
-        {
-          ko: '밀가루 3컵',
-          zh: '面粉 3杯',
-          en: 'Flour 3 cups',
-          substitute: null,
-          buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 韩式煎饼粉 面粉',
-            cn_tb: '// TODO: taobao search: 韩式煎饼粉 面粉'
-          }
-        }
-      ],
-      steps_zh: ['准备各种配菜', '分别制作煎饼', '拼盘装饰'],
-      steps_en: ['Prepare various ingredients', 'Make different pancakes separately', 'Arrange on platter'],
-      tips_zh: '每种煎饼都要掌握不同技巧。',
-      tips_en: 'Each pancake type requires different techniques.'
-    },
-    image: null
-  },
-
-  {
-    id: 'korean-sausage',
-    ko: '순대',
-    zh: '韩式香肠',
-    en: 'Korean Blood Sausage',
-    category: 'street',
-    spicy: 0,
-    allergens: ['pork'],
-    price: '8000-12000',
-    desc_zh: '猪血肠配蘸料。传统街头小吃。',
-    desc_en: 'Blood sausage with dipping sauce. Traditional street snack.',
-    origin_zh: '전통적으로 음식을 아껴 먹던 시대의 지혜가 담긴 음식.',
-    origin_en: 'Food containing wisdom from era of food conservation.',
-    tags: ['traditional', 'hearty', 'protein', 'warming'],
-    quality: 'basic',
-    recipe: null, // Usually bought pre-made
-    image: null
-  },
-
-  // === MORE CAFE ITEMS ===
-
-  {
-    id: 'sweet-red-bean-latte',
-    ko: '팥라떼',
-    zh: '红豆拿铁',
-    en: 'Sweet Red Bean Latte',
-    category: 'cafe',
-    spicy: 0,
-    allergens: ['dairy'],
-    price: '5000-7000',
-    desc_zh: '红豆味的奶茶。韩式传统甜品口味。',
-    desc_en: 'Red bean flavored milk tea. Traditional Korean dessert flavor.',
-    origin_zh: '전통 팥빙수에서 영감을 받은 현대적 음료.',
-    origin_en: 'Modern beverage inspired by traditional red bean shaved ice.',
-    tags: ['traditional', 'sweet', 'creamy', 'nostalgic'],
-    quality: 'basic',
-    recipe: {
-      time: '15분',
-      difficulty: 1,
-      ingredients: [
-        {
-          ko: '팥앙금 3큰술',
-          zh: '红豆沙 3大勺',
-          en: 'Red bean paste 3 tbsp',
-          substitute: null,
-          buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 红豆沙 红豆馅',
-            cn_tb: '// TODO: taobao search: 红豆沙 红豆馅'
-          }
-        }
-      ],
-      steps_zh: ['红豆沙加热水调开', '加牛奶和糖', '打泡沫装饰'],
-      steps_en: ['Dissolve red bean paste in hot water', 'Add milk and sugar', 'Froth and garnish'],
-      tips_zh: '红豆沙要完全融化才好喝。',
-      tips_en: 'Red bean paste must completely dissolve for good taste.'
-    },
-    image: null
-  },
-
-  {
-    id: 'misugaru-latte',
-    ko: '미숫가루라떼',
-    zh: '谷物粉拿铁',
-    en: 'Grain Powder Latte',
-    category: 'cafe',
-    spicy: 0,
-    allergens: ['dairy'],
-    price: '5000-6000',
-    desc_zh: '韩式谷物粉调制的健康饮品。营养丰富。',
-    desc_en: 'Healthy drink made with Korean grain powder blend. Nutritious.',
-    origin_zh: '전통 미숫가루를 현대적 음료로 재탄생시킨 건강 음료.',
-    origin_en: 'Healthy drink reborn from traditional grain powder as modern beverage.',
-    tags: ['healthy', 'traditional', 'nutty', 'nutritious'],
-    quality: 'basic',
-    recipe: {
-      time: '10분',
-      difficulty: 1,
-      ingredients: [
-        {
-          ko: '미숫가루 3큰술',
-          zh: '谷物粉 3大勺',
-          en: 'Mixed grain powder 3 tbsp',
-          substitute: null,
-          buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 韩式谷物粉 미숫가루',
-            cn_tb: '// TODO: taobao search: 韩式谷物粉 미숫가루'
-          }
-        }
-      ],
-      steps_zh: ['谷物粉加牛奶调匀', '加蜂蜜调味', '冰块装饰'],
-      steps_en: ['Mix grain powder with milk', 'Sweeten with honey', 'Serve with ice'],
-      tips_zh: '要充分搅拌防结块。',
-      tips_en: 'Must mix thoroughly to prevent lumping.'
-    },
-    image: null
-  },
-
-  // === MORE DESSERTS ===
-
-  {
-    id: 'korean-traditional-cookie',
-    ko: '한과',
-    zh: '韩式传统点心',
-    en: 'Korean Traditional Cookies',
-    category: 'dessert',
-    spicy: 0,
-    allergens: [],
-    price: '8000-15000',
-    desc_zh: '各种传统韩式点心。节日礼品常见。',
-    desc_en: 'Various traditional Korean confections. Common holiday gifts.',
-    origin_zh: '궁중과 양반가에서 전해내려온 전통 과자류.',
-    origin_en: 'Traditional confections passed down from royal court and aristocratic families.',
-    tags: ['traditional', 'festive', 'elegant', 'gift'],
-    quality: 'basic',
-    recipe: null, // Complex traditional process
-    image: null
-  },
-
-  {
-    id: 'korean-shaved-ice-variety',
-    ko: '빙수',
-    zh: '刨冰系列',
-    en: 'Korean Shaved Ice Varieties',
-    category: 'dessert',
-    spicy: 0,
-    allergens: ['dairy'],
-    price: '8000-18000',
-    desc_zh: '各种口味的韩式刨冰。夏天解暑必备。',
-    desc_en: 'Various flavored Korean shaved ice. Essential summer cooling dessert.',
-    origin_zh: '전통 팥빙수에서 발전한 다양한 현대적 변형.',
-    origin_en: 'Various modern variations developed from traditional red bean shaved ice.',
-    tags: ['summer', 'refreshing', 'variety', 'cooling'],
-    quality: 'basic',
-    recipe: {
-      time: '20분',
-      difficulty: 1,
-      ingredients: [
-        {
-          ko: '얼음 4컵',
-          zh: '冰块 4杯',
-          en: 'Ice 4 cups',
-          substitute: null,
-          buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 冰块制冰机',
-            cn_tb: '// TODO: taobao search: 冰块制冰机'
-          }
-        }
-      ],
-      steps_zh: ['制作刨冰', '准备配料', '装饰摆盘'],
-      steps_en: ['Make shaved ice', 'Prepare toppings', 'Garnish and plate'],
-      tips_zh: '冰要够细才好吃。',
-      tips_en: 'Ice must be fine enough for good texture.'
-    },
-    image: null
-  },
-
-  // === FILLING OTHER CATEGORIES ===
-
-  {
-    id: 'korean-army-base-soup',
-    ko: '육개장',
-    zh: '辣牛肉汤',
-    en: 'Spicy Beef Soup',
-    category: 'guk',
-    spicy: 3,
-    allergens: ['beef'],
-    price: '10000-15000',
-    desc_zh: '辣牛肉丝汤配蕨菜。韩国人的解酒汤。',
-    desc_en: 'Spicy beef shred soup with bracken. Korean hangover soup.',
-    origin_zh: '조선시대부터 전해내려온 보양식. 매운 맛이 숙취 해소에 도움.',
-    origin_en: 'Nourishing food passed down from Joseon era. Spicy taste helps relieve hangovers.',
-    tags: ['spicy', 'hangover', 'nourishing', 'traditional'],
+    allergens: ['seafood'],
+    price: '반찬',
+    desc_zh: '新鲜白菜制成的即食泡菜。不发酵的清爽口味。',
+    desc_en: 'Fresh instant kimchi made with napa cabbage. Refreshing non-fermented taste.',
+    origin_zh: '김치를 담글 시간이 없을 때 만드는 즉석 김치.',
+    origin_en: 'Instant kimchi made when there\'s no time to make proper fermented kimchi.',
+    tags: ['instant', 'fresh', 'crunchy', 'spicy'],
     quality: 'verified',
     recipe: {
       time: '1시간',
       difficulty: 2,
       ingredients: [
         {
-          ko: '소고기 300g',
-          zh: '牛肉 300g',
-          en: 'Beef 300g',
+          ko: '배추 1/2포기',
+          zh: '白菜 1/2颗',
+          en: 'Napa cabbage 1/2 head',
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 牛肉丝 牛肉片',
-            cn_tb: '// TODO: taobao search: 牛肉丝 牛肉片'
-          }
-        },
-        {
-          ko: '고사리 100g',
-          zh: '蕨菜 100g',
-          en: 'Bracken 100g',
-          substitute: { zh: '没有蕨菜可用其他山菜', en: 'Can substitute other mountain vegetables if bracken unavailable' },
-          buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 蕨菜干 山菜',
-            cn_tb: '// TODO: taobao search: 蕨菜干 山菜'
-          }
-        },
-        {
-          ko: '고춧가루 2큰술',
-          zh: '辣椒粉 2大勺',
-          en: 'Chili powder 2 tbsp',
-          substitute: null,
-          buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 韩国辣椒粉',
-            cn_tb: '// TODO: taobao search: 韩国辣椒粉'
+            cn_jd: '// TODO: jd.com search: 大白菜',
+            cn_tb: '// TODO: taobao search: 大白菜'
           }
         }
       ],
-      steps_zh: ['牛肉丝炒香', '加水煮汤30分钟', '放蕨菜和调料煮20分钟'],
-      steps_en: ['Stir-fry beef shreds until fragrant', 'Add water and simmer 30 min', 'Add bracken and seasonings, cook 20 min'],
-      tips_zh: '一定要够辣才是正宗口味！',
-      tips_en: 'Must be spicy enough for authentic flavor!'
+      steps_zh: ['白菜切块盐腌', '调制即食调料', '拌匀即食'],
+      steps_en: ['Cut cabbage and salt', 'Prepare instant seasoning', 'Mix and eat immediately'],
+      tips_zh: '盐腌要够时间出水，调料要比普通泡菜稍淡。',
+      tips_en: 'Salt long enough to draw water, seasoning should be lighter than regular kimchi.'
     },
     image: null
   },
 
   {
-    id: 'korean-seaweed-rice',
-    ko: '김밥',
-    zh: '海苔包饭',
-    en: 'Korean Seaweed Rice Rolls',
-    category: 'bap',
+    id: 'seasoned-fernbrake',
+    ko: '고사리나물',
+    zh: '蕨菜',
+    en: 'Seasoned Fernbrake',
+    category: 'banchan',
     spicy: 0,
-    allergens: ['sesame', 'egg'],
-    price: '3000-5000',
-    desc_zh: '海苔包各种配菜的米饭卷。韩国便当代表。',
-    desc_en: 'Rice rolls wrapped in seaweed with various fillings. Korean lunch box representative.',
-    origin_zh: '일제강점기 일본 스시의 영향으로 만들어진 한국화된 음식.',
-    origin_en: 'Korean-adapted food created under Japanese sushi influence during colonial period.',
-    tags: ['portable', 'healthy', 'colorful', 'lunch'],
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '蕨菜干泡发调味。有韧性的山菜小菜。',
+    desc_en: 'Dried fernbrake rehydrated and seasoned. Chewy mountain vegetable.',
+    origin_zh: '산에서 자라는 고사리를 말려 보관했다가 먹는 전통 나물.',
+    origin_en: 'Traditional vegetable made by drying mountain fernbrake for storage.',
+    tags: ['mountain', 'chewy', 'traditional', 'wild'],
     quality: 'basic',
+    recipe: {
+      time: '4시간',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '고사리 50g (건조)',
+          zh: '蕨菜干 50g',
+          en: 'Dried fernbrake 50g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 蕨菜干',
+            cn_tb: '// TODO: taobao search: 蕨菜干'
+          }
+        }
+      ],
+      steps_zh: ['蕨菜泡发4小时', '挤干炒香', '调味拌制'],
+      steps_en: ['Soak fernbrake 4 hours', 'Squeeze dry and stir-fry', 'Season and mix'],
+      tips_zh: '一定要泡够时间，不然有毒性。挤干水分很重要。',
+      tips_en: 'Must soak long enough to remove toxins. Squeezing dry is important.'
+    },
+    image: null
+  },
+
+  {
+    id: 'seasoned-royal-fern',
+    ko: '고비나물',
+    zh: '薇菜',
+    en: 'Seasoned Royal Fern',
+    category: 'banchan',
+    spicy: 0,
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '薇菜干调味小菜。口感比蕨菜更嫩的山菜。',
+    desc_en: 'Seasoned dried royal fern. Mountain vegetable with more tender texture than fernbrake.',
+    origin_zh: '고사리보다 부드러운 식감의 고급 산나물.',
+    origin_en: 'Premium mountain vegetable with softer texture than fernbrake.',
+    tags: ['mountain', 'tender', 'premium', 'wild'],
+    quality: 'basic',
+    recipe: {
+      time: '3시간',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '고비 50g (건조)',
+          zh: '薇菜干 50g',
+          en: 'Dried royal fern 50g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 薇菜干',
+            cn_tb: '// TODO: taobao search: 薇菜干'
+          }
+        }
+      ],
+      steps_zh: ['薇菜泡发3小时', '挤干调味'],
+      steps_en: ['Soak royal fern 3 hours', 'Squeeze dry and season'],
+      tips_zh: '比蕨菜嫩，不要炒太久。',
+      tips_en: 'More tender than fernbrake, don\'t stir-fry too long.'
+    },
+    image: null
+  },
+
+  {
+    id: 'seasoned-mung-bean-jelly',
+    ko: '청포묵무침',
+    zh: '绿豆凉粉',
+    en: 'Seasoned Mung Bean Jelly',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '绿豆凉粉条拌辣椒调料。清爽滑嫩的夏季小菜。',
+    desc_en: 'Mung bean jelly strips with spicy seasoning. Refreshing smooth summer side dish.',
+    origin_zh: '더운 여름철 시원하게 먹는 대표적인 묵 요리.',
+    origin_en: 'Representative mung bean jelly dish eaten cool in hot summer.',
+    tags: ['summer', 'cooling', 'smooth', 'refreshing'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '청포묵 1모',
+          zh: '绿豆凉粉 1块',
+          en: 'Mung bean jelly 1 block',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 绿豆凉粉',
+            cn_tb: '// TODO: taobao search: 绿豆凉粉'
+          }
+        }
+      ],
+      steps_zh: ['凉粉切条', '调制酱汁', '拌匀即食'],
+      steps_en: ['Cut jelly into strips', 'Prepare sauce', 'Mix and serve immediately'],
+      tips_zh: '凉粉要切得均匀，酱汁要够味。',
+      tips_en: 'Cut jelly evenly, sauce must be flavorful.'
+    },
+    image: null
+  },
+
+  {
+    id: 'seasoned-acorn-jelly',
+    ko: '도토리묵무침',
+    zh: '橡子凉粉',
+    en: 'Seasoned Acorn Jelly',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '橡子凉粉拌菜。有淡淡苦味的传统凉粉。',
+    desc_en: 'Seasoned acorn jelly salad. Traditional jelly with subtle bitter taste.',
+    origin_zh: '도토리로 만든 전통 묵. 구황식품이기도 했다.',
+    origin_en: 'Traditional jelly made from acorns. Also served as famine food.',
+    tags: ['traditional', 'bitter', 'wild', 'historic'],
+    quality: 'basic',
+    recipe: {
+      time: '25분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '도토리묵 1모',
+          zh: '橡子凉粉 1块',
+          en: 'Acorn jelly 1 block',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 橡子凉粉',
+            cn_tb: '// TODO: taobao search: 橡子凉粉'
+          }
+        }
+      ],
+      steps_zh: ['橡子凉粉切块', '调制调料', '配蔬菜丝'],
+      steps_en: ['Cut acorn jelly into pieces', 'Prepare seasoning', 'Serve with julienned vegetables'],
+      tips_zh: '有天然苦味，配甜酱汁平衡。',
+      tips_en: 'Has natural bitter taste, balance with sweet sauce.'
+    },
+    image: null
+  },
+
+  {
+    id: 'seasoned-buckwheat-jelly',
+    ko: '메밀묵무침',
+    zh: '荞麦凉粉',
+    en: 'Seasoned Buckwheat Jelly',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '荞麦凉粉拌菜。灰色的传统凉粉小菜。',
+    desc_en: 'Seasoned buckwheat jelly salad. Gray-colored traditional jelly side dish.',
+    origin_zh: '메밀로 만든 회색빛 묵. 강원도 지역 특산.',
+    origin_en: 'Gray jelly made from buckwheat. Gangwon province specialty.',
+    tags: ['regional', 'gray', 'buckwheat', 'traditional'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '메밀묵 1모',
+          zh: '荞麦凉粉 1块',
+          en: 'Buckwheat jelly 1 block',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 荞麦凉粉',
+            cn_tb: '// TODO: taobao search: 荞麦凉粉'
+          }
+        }
+      ],
+      steps_zh: ['荞麦凉粉切条', '调料拌匀'],
+      steps_en: ['Cut buckwheat jelly into strips', 'Mix with seasoning'],
+      tips_zh: '口感比绿豆凉粉稍硬，有荞麦香。',
+      tips_en: 'Slightly firmer texture than mung bean jelly, with buckwheat aroma.'
+    },
+    image: null
+  },
+
+  {
+    id: 'pickled-garlic-scapes',
+    ko: '마늘쫑무침',
+    zh: '蒜苔拌菜',
+    en: 'Pickled Garlic Scapes',
+    category: 'banchan',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '반찬',
+    desc_zh: '蒜苔腌制调味。脆嫩有蒜香的春季蔬菜。',
+    desc_en: 'Pickled and seasoned garlic scapes. Crisp-tender spring vegetable with garlic aroma.',
+    origin_zh: '마늘 밭에서 나는 마늘쫑을 활용한 계절 반찬.',
+    origin_en: 'Seasonal side dish using garlic scapes from garlic fields.',
+    tags: ['spring', 'garlicky', 'crunchy', 'seasonal'],
+    quality: 'basic',
+    recipe: {
+      time: '30분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '마늘쫑 300g',
+          zh: '蒜苔 300g',
+          en: 'Garlic scapes 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 蒜苔 蒜薹',
+            cn_tb: '// TODO: taobao search: 蒜苔 蒜薹'
+          }
+        }
+      ],
+      steps_zh: ['蒜苔切段焯水', '调料腌制'],
+      steps_en: ['Cut scapes into segments and blanch', 'Pickle with seasonings'],
+      tips_zh: '不要煮太久，保持脆嫩口感。',
+      tips_en: 'Don\'t cook too long to maintain crisp-tender texture.'
+    },
+    image: null
+  },
+
+  // === STREET FOOD (길거리) - PRIORITY 2 ===
+
+  {
+    id: 'korean-chicken-skewer',
+    ko: '닭꼬치',
+    zh: '鸡肉串',
+    en: 'Korean Chicken Skewer',
+    category: 'street',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '3000-5000',
+    desc_zh: '甜辣烤鸡肉串。韩国街头经典烧烤。',
+    desc_en: 'Sweet-spicy grilled chicken skewers. Classic Korean street BBQ.',
+    origin_zh: '70년대부터 길거리에서 팔기 시작한 대표적인 꼬치 요리.',
+    origin_en: 'Representative skewer dish sold on streets since the 1970s.',
+    tags: ['grilled', 'sweet-spicy', 'portable', 'classic'],
+    quality: 'verified',
     recipe: {
       time: '40분',
       difficulty: 2,
       ingredients: [
         {
-          ko: '김 5장',
-          zh: '海苔片 5张',
-          en: 'Seaweed sheets 5',
+          ko: '닭고기 500g',
+          zh: '鸡肉 500g',
+          en: 'Chicken 500g',
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 海苔片 寿司海苔',
-            cn_tb: '// TODO: taobao search: 海苔片 寿司海苔'
+            cn_jd: '// TODO: jd.com search: 鸡腿肉 鸡胸肉',
+            cn_tb: '// TODO: taobao search: 鸡腿肉 鸡胸肉'
           }
         }
       ],
-      steps_zh: ['准备各种配菜', '米饭调味', '卷制切段'],
-      steps_en: ['Prepare various fillings', 'Season rice', 'Roll and slice'],
-      tips_zh: '卷的时候要紧实，切的时候刀要锋利。',
-      tips_en: 'Roll tightly, use sharp knife for cutting.'
+      steps_zh: ['鸡肉切块腌制', '串竹签', '刷酱烤制'],
+      steps_en: ['Cut chicken into chunks and marinate', 'Skewer', 'Brush with sauce and grill'],
+      tips_zh: '甜辣酱是灵魂！要反复刷酱。',
+      tips_en: 'Sweet-spicy sauce is the soul! Must brush sauce repeatedly.'
     },
     image: null
   },
 
   {
-    id: 'korean-noodle-cold',
-    ko: '물냉면',
-    zh: '水冷面',
-    en: 'Cold Water Noodles',
-    category: 'myeon',
+    id: 'korean-sausage-on-stick',
+    ko: '소세지',
+    zh: '烤肠',
+    en: 'Grilled Sausage on Stick',
+    category: 'street',
+    spicy: 0,
+    allergens: ['pork'],
+    price: '2000-3000',
+    desc_zh: '竹签烤香肠配芥末酱。简单经典的街头小食。',
+    desc_en: 'Grilled sausage on stick with mustard sauce. Simple classic street snack.',
+    origin_zh: '가장 기본적인 길거리 안주. 간단하지만 인기가 많다.',
+    origin_en: 'Most basic street drinking snack. Simple but very popular.',
+    tags: ['simple', 'basic', 'grilled', 'mustard'],
+    quality: 'basic',
+    recipe: {
+      time: '15분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '소세지 10개',
+          zh: '香肠 10根',
+          en: 'Sausages 10',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 烤肠 香肠',
+            cn_tb: '// TODO: taobao search: 烤肠 香肠'
+          }
+        }
+      ],
+      steps_zh: ['香肠串竹签', '烤制翻面', '配芥末酱'],
+      steps_en: ['Skewer sausages', 'Grill turning sides', 'Serve with mustard'],
+      tips_zh: '不要烤过头，表面微焦即可。',
+      tips_en: 'Don\'t overcook, just slightly charred on surface.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-rice-cake-skewer',
+    ko: '떡꼬치',
+    zh: '年糕串',
+    en: 'Rice Cake Skewer',
+    category: 'street',
+    spicy: 2,
+    allergens: [],
+    price: '2000-4000',
+    desc_zh: '年糕串配辣酱。Q弹有嚼劲的街头小吃。',
+    desc_en: 'Rice cake skewers with spicy sauce. Chewy street snack.',
+    origin_zh: '떡볶이의 꼬치 버전. 먹기 편하게 만든 길거리 음식.',
+    origin_en: 'Skewer version of tteokbokki. Street food made convenient to eat.',
+    tags: ['chewy', 'spicy', 'convenient', 'sauce'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '가래떡 300g',
+          zh: '年糕条 300g',
+          en: 'Rice cake sticks 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 韩国年糕条',
+            cn_tb: '// TODO: taobao search: 韩国年糕条'
+          }
+        }
+      ],
+      steps_zh: ['年糕串竹签', '煮软', '刷辣酱'],
+      steps_en: ['Skewer rice cakes', 'Cook until soft', 'Brush with spicy sauce'],
+      tips_zh: '年糕要煮透，不然太硬难嚼。',
+      tips_en: 'Rice cakes must be cooked through or too hard to chew.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-pancake-mix',
+    ko: '파전믹스',
+    zh: '葱饼粉',
+    en: 'Pancake Mix Street Style',
+    category: 'street',
+    spicy: 0,
+    allergens: ['wheat', 'seafood'],
+    price: '4000-6000',
+    desc_zh: '即食葱饼粉现做煎饼。街头快手小食。',
+    desc_en: 'Instant pancake mix made fresh. Quick street snack.',
+    origin_zh: '파전을 간편하게 만들 수 있도록 개발된 길거리 음식.',
+    origin_en: 'Street food developed to make pajeon conveniently.',
+    tags: ['instant', 'quick', 'crispy', 'convenient'],
+    quality: 'basic',
+    recipe: {
+      time: '15분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '파전믹스 200g',
+          zh: '葱饼粉 200g',
+          en: 'Pancake mix 200g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 韩式葱饼粉',
+            cn_tb: '// TODO: taobao search: 韩式葱饼粉'
+          }
+        }
+      ],
+      steps_zh: ['加水调成糊', '加葱丝海鲜', '煎制酥脆'],
+      steps_en: ['Add water to make batter', 'Add green onion and seafood', 'Pan-fry until crispy'],
+      tips_zh: '水量要控制好，太稀不成型。',
+      tips_en: 'Control water amount carefully, too thin won\'t hold shape.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-fish-shaped-waffle',
+    ko: '붕어빵와플',
+    zh: '鲫鱼华夫饼',
+    en: 'Fish-shaped Waffle',
+    category: 'street',
+    spicy: 0,
+    allergens: ['wheat', 'dairy'],
+    price: '3000-5000',
+    desc_zh: '鱼形华夫饼配各种馅料。创新街头甜品。',
+    desc_en: 'Fish-shaped waffle with various fillings. Innovative street dessert.',
+    origin_zh: '전통 붕어빵과 와플의 결합으로 탄생한 퓨전 디저트.',
+    origin_en: 'Fusion dessert born from combining traditional bungeoppang with waffle.',
+    tags: ['fusion', 'shaped', 'innovative', 'sweet'],
+    quality: 'basic',
+    recipe: {
+      time: '25분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '와플믹스 300g',
+          zh: '华夫饼粉 300g',
+          en: 'Waffle mix 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 华夫饼预拌粉',
+            cn_tb: '// TODO: taobao search: 华夫饼预拌粉'
+          }
+        }
+      ],
+      steps_zh: ['调制华夫面糊', '鱼形模具烤制', '加各种馅料'],
+      steps_en: ['Prepare waffle batter', 'Cook in fish-shaped mold', 'Add various fillings'],
+      tips_zh: '模具要预热，面糊倒入量要适中。',
+      tips_en: 'Preheat mold, pour appropriate amount of batter.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-fried-squid',
+    ko: '오징어튀김',
+    zh: '炸鱿鱼',
+    en: 'Korean Fried Squid',
+    category: 'street',
+    spicy: 1,
+    allergens: ['wheat', 'seafood'],
+    price: '5000-8000',
+    desc_zh: '裹面糊炸鱿鱼圈。酥脆的海鲜街头小吃。',
+    desc_en: 'Battered and fried squid rings. Crispy seafood street snack.',
+    origin_zh: '바다에서 잡은 오징어를 활용한 대표적인 해변 길거리 음식.',
+    origin_en: 'Representative beach street food using fresh caught squid.',
+    tags: ['seafood', 'crispy', 'coastal', 'battered'],
+    quality: 'verified',
+    recipe: {
+      time: '30분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '오징어 2마리',
+          zh: '鱿鱼 2只',
+          en: 'Squids 2',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 新鲜鱿鱼',
+            cn_tb: '// TODO: taobao search: 新鲜鱿鱼'
+          }
+        }
+      ],
+      steps_zh: ['鱿鱼切圈', '调制面糊', '热油炸至金黄'],
+      steps_en: ['Cut squid into rings', 'Prepare batter', 'Deep fry in hot oil until golden'],
+      tips_zh: '油温要够高，炸出来才酥脆。不要炸太久。',
+      tips_en: 'Oil must be hot enough for crispiness. Don\'t fry too long.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-sweet-potato',
+    ko: '구운고구마',
+    zh: '烤红薯',
+    en: 'Roasted Sweet Potato',
+    category: 'street',
+    spicy: 0,
+    allergens: [],
+    price: '3000-5000',
+    desc_zh: '炭火烤红薯。冬天街头的温暖小食。',
+    desc_en: 'Charcoal-roasted sweet potato. Warming winter street snack.',
+    origin_zh: '겨울철 길거리에서 파는 대표적인 간식. 달고 따뜻하다.',
+    origin_en: 'Representative winter street snack. Sweet and warm.',
+    tags: ['winter', 'sweet', 'warm', 'natural'],
+    quality: 'basic',
+    recipe: {
+      time: '45분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '고구마 4개',
+          zh: '红薯 4个',
+          en: 'Sweet potatoes 4',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 红薯 番薯',
+            cn_tb: '// TODO: taobao search: 红薯 番薯'
+          }
+        }
+      ],
+      steps_zh: ['红薯洗净', '炭火烤40分钟', '烤至软糯香甜'],
+      steps_en: ['Wash sweet potatoes', 'Roast on charcoal 40 min', 'Roast until soft and sweet'],
+      tips_zh: '要选择适中大小的，太大烤不透。',
+      tips_en: 'Choose medium size, too large won\'t cook through.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-grilled-corn',
+    ko: '옥수수',
+    zh: '烤玉米',
+    en: 'Grilled Corn',
+    category: 'street',
+    spicy: 0,
+    allergens: [],
+    price: '3000-5000',
+    desc_zh: '炭火烤玉米配盐或黄油。夏季街头清香小食。',
+    desc_en: 'Charcoal-grilled corn with salt or butter. Summer street snack with fresh aroma.',
+    origin_zh: '여름철 길거리의 대표적인 간식. 고소하고 달다.',
+    origin_en: 'Representative summer street snack. Nutty and sweet.',
+    tags: ['summer', 'charcoal', 'sweet', 'natural'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '옥수수 4개',
+          zh: '玉米 4根',
+          en: 'Corn ears 4',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 玉米 新鲜玉米',
+            cn_tb: '// TODO: taobao search: 玉米 新鲜玉米'
+          }
+        }
+      ],
+      steps_zh: ['玉米剥皮', '炭火烤制', '刷黄油撒盐'],
+      steps_en: ['Husk corn', 'Grill on charcoal', 'Brush butter and sprinkle salt'],
+      tips_zh: '要不断转动，烤得均匀。',
+      tips_en: 'Keep turning for even cooking.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-chicken-feet',
+    ko: '닭발',
+    zh: '鸡爪',
+    en: 'Spicy Chicken Feet',
+    category: 'street',
+    spicy: 3,
+    allergens: ['soy'],
+    price: '8000-12000',
+    desc_zh: '超辣鸡爪配蔬菜。韩国年轻人最爱的下酒菜。',
+    desc_en: 'Super spicy chicken feet with vegetables. Korean youth\'s favorite drinking snack.',
+    origin_zh: '90년대부터 인기를 끌기 시작한 매운 안주. 젊은층에게 인기.',
+    origin_en: 'Spicy drinking snack that gained popularity since 1990s. Popular among young people.',
+    tags: ['super-spicy', 'chewy', 'drinking', 'youth'],
+    quality: 'verified',
+    recipe: {
+      time: '1시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '닭발 1kg',
+          zh: '鸡爪 1kg',
+          en: 'Chicken feet 1kg',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 鸡爪 凤爪',
+            cn_tb: '// TODO: taobao search: 鸡爪 凤爪'
+          }
+        }
+      ],
+      steps_zh: ['鸡爪清理干净', '调制超辣酱', '炖煮45分钟'],
+      steps_en: ['Clean chicken feet thoroughly', 'Prepare super spicy sauce', 'Braise 45 minutes'],
+      tips_zh: '一定要够辣！配啤酒最棒。要炖到软糯。',
+      tips_en: 'Must be spicy enough! Perfect with beer. Braise until tender.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-fish-cake-bar',
+    ko: '어묵바',
+    zh: '鱼糕棒',
+    en: 'Fish Cake Bar',
+    category: 'street',
+    spicy: 0,
+    allergens: ['seafood'],
+    price: '1000-2000',
+    desc_zh: '竹签鱼糕配热汤。最便宜的街头暖身小食。',
+    desc_en: 'Fish cake on stick with hot broth. Cheapest warming street snack.',
+    origin_zh: '가장 저렴한 길거리 간식. 따뜻한 국물이 일품.',
+    origin_en: 'Cheapest street snack. Warm broth is excellent.',
+    tags: ['cheap', 'warming', 'basic', 'broth'],
+    quality: 'basic',
+    recipe: {
+      time: '15분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '어묵 10개',
+          zh: '鱼糕 10块',
+          en: 'Fish cakes 10',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 韩式鱼糕',
+            cn_tb: '// TODO: taobao search: 韩式鱼糕'
+          }
+        }
+      ],
+      steps_zh: ['鱼糕串竹签', '热汤煮制', '配汤享用'],
+      steps_en: ['Skewer fish cakes', 'Cook in hot broth', 'Serve with broth'],
+      tips_zh: '汤底要够鲜，这是关键。',
+      tips_en: 'Broth must be savory enough, that\'s the key.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-tempura-vegetables',
+    ko: '야채튀김',
+    zh: '蔬菜天妇罗',
+    en: 'Vegetable Tempura',
+    category: 'street',
     spicy: 0,
     allergens: ['wheat'],
+    price: '4000-6000',
+    desc_zh: '各种蔬菜裹面糊油炸。清爽的炸物小吃。',
+    desc_en: 'Various vegetables battered and fried. Light fried snack.',
+    origin_zh: '일본 덴푸라의 한국식 변형. 야채 중심의 건강한 튀김.',
+    origin_en: 'Korean adaptation of Japanese tempura. Healthy vegetable-centered fried food.',
+    tags: ['vegetable', 'light', 'healthy', 'crispy'],
+    quality: 'basic',
+    recipe: {
+      time: '30분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '야채 모음 500g',
+          zh: '蔬菜组合 500g',
+          en: 'Mixed vegetables 500g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 天妇罗蔬菜',
+            cn_tb: '// TODO: taobao search: 天妇罗蔬菜'
+          }
+        }
+      ],
+      steps_zh: ['蔬菜切块', '调制面糊', '油炸至酥脆'],
+      steps_en: ['Cut vegetables', 'Prepare batter', 'Fry until crispy'],
+      tips_zh: '面糊要冰的，这样更酥脆。',
+      tips_en: 'Batter should be cold for extra crispiness.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-rice-ball',
+    ko: '주먹밥',
+    zh: '饭团',
+    en: 'Korean Rice Ball',
+    category: 'street',
+    spicy: 1,
+    allergens: ['sesame'],
+    price: '3000-5000',
+    desc_zh: '手握饭团配各种馅料。便携的街头主食。',
+    desc_en: 'Hand-shaped rice balls with various fillings. Portable street staple.',
+    origin_zh: '간편하게 먹을 수 있는 길거리 주식. 다양한 속을 넣는다.',
+    origin_en: 'Convenient street staple food. Various fillings added.',
+    tags: ['portable', 'filling', 'convenient', 'staple'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '밥 3공기',
+          zh: '米饭 3碗',
+          en: 'Cooked rice 3 bowls',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 大米 寿司米',
+            cn_tb: '// TODO: taobao search: 大米 寿司米'
+          }
+        }
+      ],
+      steps_zh: ['米饭调味', '加各种配菜', '手握成团'],
+      steps_en: ['Season rice', 'Add various fillings', 'Shape by hand'],
+      tips_zh: '米饭要有粘性，手要湿润防粘。',
+      tips_en: 'Rice must be sticky, keep hands moist to prevent sticking.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-grilled-mushroom',
+    ko: '버섯구이',
+    zh: '烤蘑菇',
+    en: 'Grilled Mushroom',
+    category: 'street',
+    spicy: 0,
+    allergens: ['soy'],
+    price: '4000-6000',
+    desc_zh: '大蘑菇烤制配调料。素食街头烧烤。',
+    desc_en: 'Large grilled mushrooms with seasoning. Vegetarian street BBQ.',
+    origin_zh: '버섯을 통째로 구워먹는 건강한 길거리 음식.',
+    origin_en: 'Healthy street food of whole grilled mushrooms.',
+    tags: ['vegetarian', 'healthy', 'umami', 'grilled'],
+    quality: 'basic',
+    recipe: {
+      time: '15분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '새송이버섯 4개',
+          zh: '杏鲍菇 4个',
+          en: 'King oyster mushrooms 4',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 杏鲍菇',
+            cn_tb: '// TODO: taobao search: 杏鲍菇'
+          }
+        }
+      ],
+      steps_zh: ['蘑菇刷酱', '烤制翻面', '撒芝麻'],
+      steps_en: ['Brush mushrooms with sauce', 'Grill turning sides', 'Sprinkle sesame'],
+      tips_zh: '不要烤太久，保持嫩滑口感。',
+      tips_en: 'Don\'t grill too long to maintain tender texture.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-cheese-stick',
+    ko: '치즈스틱',
+    zh: '芝士棒',
+    en: 'Cheese Stick',
+    category: 'street',
+    spicy: 0,
+    allergens: ['dairy', 'wheat'],
+    price: '3000-5000',
+    desc_zh: '芝士条裹面糊油炸。拉丝效果受欢迎。',
+    desc_en: 'Cheese sticks battered and fried. Popular for stretchy cheese effect.',
+    origin_zh: '2000년대부터 인기를 끌기 시작한 치즈 간식.',
+    origin_en: 'Cheese snack that gained popularity since 2000s.',
+    tags: ['cheese', 'stretchy', 'modern', 'fried'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '치즈스틱 10개',
+          zh: '芝士条 10根',
+          en: 'Cheese sticks 10',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 芝士条 奶酪条',
+            cn_tb: '// TODO: taobao search: 芝士条 奶酪条'
+          }
+        }
+      ],
+      steps_zh: ['芝士条裹面糊', '油炸至金黄', '趁热享用'],
+      steps_en: ['Coat cheese sticks in batter', 'Fry until golden', 'Enjoy while hot'],
+      tips_zh: '一定要趁热吃，冷了就不拉丝了。',
+      tips_en: 'Must eat while hot, cheese won\'t stretch when cold.'
+    },
+    image: null
+  },
+
+  // === CAFE ITEMS - PRIORITY 3 ===
+
+  {
+    id: 'korean-shaved-ice-coffee',
+    ko: '커피빙수',
+    zh: '咖啡刨冰',
+    en: 'Coffee Shaved Ice',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy'],
     price: '8000-12000',
-    desc_zh: '冰汤荞麦冷面。夏天解暑面食。',
-    desc_en: 'Cold buckwheat noodles in ice broth. Summer cooling noodle dish.',
-    origin_zh: '평양 지역의 대표 음식으로 시원한 육수가 특징.',
-    origin_en: 'Representative food of Pyongyang region characterized by cool broth.',
-    tags: ['cold', 'refreshing', 'summer', 'buckwheat'],
+    desc_zh: '咖啡味刨冰配奶油和豆子。成人版刨冰。',
+    desc_en: 'Coffee-flavored shaved ice with cream and beans. Adult version of bingsu.',
+    origin_zh: '커피 문화와 빙수가 만난 한국적 디저트.',
+    origin_en: 'Korean dessert where coffee culture meets bingsu.',
+    tags: ['coffee', 'adult', 'bitter-sweet', 'summer'],
+    quality: 'verified',
+    recipe: {
+      time: '25분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '에스프레소 4샷',
+          zh: '浓缩咖啡 4份',
+          en: 'Espresso 4 shots',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 浓缩咖啡',
+            cn_tb: '// TODO: taobao search: 浓缩咖啡'
+          }
+        }
+      ],
+      steps_zh: ['制作咖啡冰块', '刨冰机打冰', '配奶油咖啡豆'],
+      steps_en: ['Make coffee ice cubes', 'Shave ice', 'Top with cream and coffee beans'],
+      tips_zh: '咖啡要够浓，不然味道淡。配炼乳更香甜。',
+      tips_en: 'Coffee must be strong enough or flavor will be weak. Condensed milk adds richness.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-tiramisu-bingsu',
+    ko: '티라미수빙수',
+    zh: '提拉米苏刨冰',
+    en: 'Tiramisu Bingsu',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy', 'wheat'],
+    price: '12000-18000',
+    desc_zh: '提拉米苏口味刨冰。意式甜品的韩式演绎。',
+    desc_en: 'Tiramisu-flavored shaved ice. Korean interpretation of Italian dessert.',
+    origin_zh: '이탈리아 디저트를 한국식 빙수로 재해석한 퓨전 디저트.',
+    origin_en: 'Fusion dessert reinterpreting Italian dessert as Korean bingsu.',
+    tags: ['fusion', 'premium', 'coffee', 'creamy'],
+    quality: 'basic',
+    recipe: {
+      time: '35분',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '마스카포네 200g',
+          zh: '马斯卡彭芝士 200g',
+          en: 'Mascarpone cheese 200g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 马斯卡彭芝士',
+            cn_tb: '// TODO: taobao search: 马斯卡彭芝士'
+          }
+        }
+      ],
+      steps_zh: ['制作提拉米苏层', '牛奶刨冰', '组合装饰'],
+      steps_en: ['Make tiramisu layers', 'Milk shaved ice', 'Combine and decorate'],
+      tips_zh: '层次分明是关键，每层都要有不同口感。',
+      tips_en: 'Distinct layers are key, each layer should have different texture.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-matcha-latte',
+    ko: '말차라떼',
+    zh: '抹茶拿铁',
+    en: 'Matcha Latte',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '5000-7000',
+    desc_zh: '抹茶粉调制的绿色拿铁。健康的咖啡替代品。',
+    desc_en: 'Green latte made with matcha powder. Healthy coffee alternative.',
+    origin_zh: '일본 말차 문화가 한국 카페에 정착한 음료.',
+    origin_en: 'Drink where Japanese matcha culture settled in Korean cafes.',
+    tags: ['healthy', 'green', 'antioxidant', 'trendy'],
+    quality: 'basic',
+    recipe: {
+      time: '10분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '말차가루 2큰술',
+          zh: '抹茶粉 2大勺',
+          en: 'Matcha powder 2 tbsp',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 抹茶粉',
+            cn_tb: '// TODO: taobao search: 抹茶粉'
+          }
+        }
+      ],
+      steps_zh: ['抹茶粉调开', '加热牛奶', '打奶泡混合'],
+      steps_en: ['Dissolve matcha powder', 'Heat milk', 'Froth and combine'],
+      tips_zh: '抹茶粉要过筛，不然有颗粒感。',
+      tips_en: 'Sift matcha powder to avoid grittiness.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-black-sesame-latte',
+    ko: '흑임자라떼',
+    zh: '黑芝麻拿铁',
+    en: 'Black Sesame Latte',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy', 'sesame'],
+    price: '5500-7500',
+    desc_zh: '黑芝麻粉调制的营养拿铁。香浓的坚果味。',
+    desc_en: 'Nutritious latte made with black sesame powder. Rich nutty flavor.',
+    origin_zh: '한국 전통 식재료를 활용한 건강한 카페 음료.',
+    origin_en: 'Healthy cafe beverage using traditional Korean ingredients.',
+    tags: ['nutritious', 'nutty', 'traditional', 'healthy'],
+    quality: 'basic',
+    recipe: {
+      time: '12분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '흑임자가루 2큰술',
+          zh: '黑芝麻粉 2大勺',
+          en: 'Black sesame powder 2 tbsp',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 黑芝麻粉',
+            cn_tb: '// TODO: taobao search: 黑芝麻粉'
+          }
+        }
+      ],
+      steps_zh: ['黑芝麻粉调糊', '加热牛奶', '混合调味'],
+      steps_en: ['Make black sesame paste', 'Heat milk', 'Mix and season'],
+      tips_zh: '黑芝麻很香，不要加太多糖。',
+      tips_en: 'Black sesame is very fragrant, don\'t add too much sugar.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-sweet-potato-latte',
+    ko: '고구마라떼',
+    zh: '红薯拿铁',
+    en: 'Sweet Potato Latte',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '5500-7500',
+    desc_zh: '红薯泥调制的秋季拿铁。自然甜味的创新饮品。',
+    desc_en: 'Fall latte made with sweet potato puree. Innovative drink with natural sweetness.',
+    origin_zh: '가을철 고구마를 활용한 계절 음료.',
+    origin_en: 'Seasonal drink utilizing fall sweet potatoes.',
+    tags: ['seasonal', 'autumn', 'sweet', 'innovative'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '고구마 1개',
+          zh: '红薯 1个',
+          en: 'Sweet potato 1',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 红薯',
+            cn_tb: '// TODO: taobao search: 红薯'
+          }
+        }
+      ],
+      steps_zh: ['红薯蒸熟打泥', '加牛奶调匀', '加热调味'],
+      steps_en: ['Steam and puree sweet potato', 'Mix with milk', 'Heat and season'],
+      tips_zh: '红薯要选甜的，这样不用加太多糖。',
+      tips_en: 'Choose sweet potatoes so you don\'t need much added sugar.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-corn-latte',
+    ko: '옥수수라떼',
+    zh: '玉米拿铁',
+    en: 'Corn Latte',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '5000-7000',
+    desc_zh: '玉米汁调制的特色拿铁。清甜的谷物饮品。',
+    desc_en: 'Specialty latte made with corn juice. Sweet grain beverage.',
+    origin_zh: '옥수수의 단맛을 활용한 독특한 카페 음료.',
+    origin_en: 'Unique cafe beverage utilizing corn\'s natural sweetness.',
+    tags: ['unique', 'grain', 'sweet', 'specialty'],
+    quality: 'basic',
+    recipe: {
+      time: '15분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '옥수수즙 200ml',
+          zh: '玉米汁 200ml',
+          en: 'Corn juice 200ml',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 玉米汁',
+            cn_tb: '// TODO: taobao search: 玉米汁'
+          }
+        }
+      ],
+      steps_zh: ['玉米汁加热', '加牛奶调匀', '打奶泡'],
+      steps_en: ['Heat corn juice', 'Mix with milk', 'Create milk foam'],
+      tips_zh: '玉米汁本身就甜，糖要少放。',
+      tips_en: 'Corn juice is naturally sweet, add less sugar.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-taro-latte',
+    ko: '타로라떼',
+    zh: '芋头拿铁',
+    en: 'Taro Latte',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '6000-8000',
+    desc_zh: '芋头粉调制的紫色拿铁。Instagram人气饮品。',
+    desc_en: 'Purple latte made with taro powder. Instagram-popular drink.',
+    origin_zh: '동남아 타로 문화가 한국 카페에 들어온 트렌디 음료.',
+    origin_en: 'Trendy drink where Southeast Asian taro culture entered Korean cafes.',
+    tags: ['purple', 'Instagram', 'trendy', 'colorful'],
+    quality: 'basic',
+    recipe: {
+      time: '12분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '타로가루 2큰술',
+          zh: '芋头粉 2大勺',
+          en: 'Taro powder 2 tbsp',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 芋头粉',
+            cn_tb: '// TODO: taobao search: 芋头粉'
+          }
+        }
+      ],
+      steps_zh: ['芋头粉调糊', '加牛奶调色', '打泡装饰'],
+      steps_en: ['Make taro paste', 'Add milk for color', 'Froth and decorate'],
+      tips_zh: '颜色要够紫才好看，适合拍照。',
+      tips_en: 'Must be purple enough to look good, perfect for photos.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-brown-sugar-latte',
+    ko: '흑당라떼',
+    zh: '黑糖拿铁',
+    en: 'Brown Sugar Latte',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '5500-7500',
+    desc_zh: '黑糖糖浆调制的焦糖拿铁。甜腻的治愈系饮品。',
+    desc_en: 'Caramel latte made with brown sugar syrup. Sweet healing beverage.',
+    origin_zh: '대만에서 시작된 흑당 열풍이 한국에 상륙한 음료.',
+    origin_en: 'Drink where Taiwan\'s brown sugar craze landed in Korea.',
+    tags: ['sweet', 'caramel', 'trendy', 'healing'],
+    quality: 'basic',
+    recipe: {
+      time: '15분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '흑당시럽 3큰술',
+          zh: '黑糖糖浆 3大勺',
+          en: 'Brown sugar syrup 3 tbsp',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 黑糖糖浆',
+            cn_tb: '// TODO: taobao search: 黑糖糖浆'
+          }
+        }
+      ],
+      steps_zh: ['制作黑糖糖浆', '加牛奶调制', '创造焦糖纹理'],
+      steps_en: ['Make brown sugar syrup', 'Add milk', 'Create caramel texture'],
+      tips_zh: '糖浆要煮到焦糖色，这样才香。',
+      tips_en: 'Syrup must be cooked to caramel color for aroma.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-coconut-latte',
+    ko: '코코넛라떼',
+    zh: '椰子拿铁',
+    en: 'Coconut Latte',
+    category: 'cafe',
+    spicy: 0,
+    allergens: [],
+    price: '6000-8000',
+    desc_zh: '椰奶调制的热带风情拿铁。清香的植物奶饮品。',
+    desc_en: 'Tropical latte made with coconut milk. Fragrant plant-based beverage.',
+    origin_zh: '비건 트렌드와 함께 인기를 얻은 식물성 라떼.',
+    origin_en: 'Plant-based latte that gained popularity with vegan trends.',
+    tags: ['vegan', 'tropical', 'plant-based', 'fragrant'],
+    quality: 'basic',
+    recipe: {
+      time: '10분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '코코넛밀크 300ml',
+          zh: '椰奶 300ml',
+          en: 'Coconut milk 300ml',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 椰奶',
+            cn_tb: '// TODO: taobao search: 椰奶'
+          }
+        }
+      ],
+      steps_zh: ['椰奶加热', '调制咖啡', '混合打泡'],
+      steps_en: ['Heat coconut milk', 'Prepare coffee', 'Mix and froth'],
+      tips_zh: '椰奶本身就有甜味，糖要控制。',
+      tips_en: 'Coconut milk is naturally sweet, control sugar amount.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-caramel-macchiato',
+    ko: '카라멜마키아또',
+    zh: '焦糖玛奇朵',
+    en: 'Caramel Macchiato',
+    category: 'cafe',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '5500-7500',
+    desc_zh: '香草拿铁配焦糖糖浆。韩国咖啡厅经典饮品。',
+    desc_en: 'Vanilla latte with caramel syrup. Classic Korean cafe beverage.',
+    origin_zh: '스타벅스를 통해 한국에 널리 알려진 대표적인 카페 음료.',
+    origin_en: 'Representative cafe beverage widely known in Korea through Starbucks.',
+    tags: ['classic', 'sweet', 'caramel', 'popular'],
+    quality: 'basic',
+    recipe: {
+      time: '12분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '카라멜시럽 2큰술',
+          zh: '焦糖糖浆 2大勺',
+          en: 'Caramel syrup 2 tbsp',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 焦糖糖浆',
+            cn_tb: '// TODO: taobao search: 焦糖糖浆'
+          }
+        }
+      ],
+      steps_zh: ['制作香草拿铁', '顶部加奶泡', '淋焦糖糖浆'],
+      steps_en: ['Make vanilla latte', 'Top with milk foam', 'Drizzle caramel syrup'],
+      tips_zh: '焦糖要在最后淋，这样有层次感。',
+      tips_en: 'Drizzle caramel at end for layered effect.'
+    },
+    image: null
+  },
+
+  // === DESSERT ITEMS - PRIORITY 4 ===
+
+  {
+    id: 'korean-rice-cake-dessert',
+    ko: '인절미',
+    zh: '豆粉年糕',
+    en: 'Injeolmi Rice Cake',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['soy'],
+    price: '8000-12000',
+    desc_zh: '糯米年糕裹黄豆粉。韩国传统甜点。',
+    desc_en: 'Glutinous rice cake coated with soybean powder. Traditional Korean dessert.',
+    origin_zh: '조선시대부터 내려온 대표적인 한국 전통 디저트.',
+    origin_en: 'Representative traditional Korean dessert from Joseon era.',
+    tags: ['traditional', 'chewy', 'nutty', 'classic'],
+    quality: 'verified',
+    recipe: {
+      time: '2시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '찹쌀가루 2컵',
+          zh: '糯米粉 2杯',
+          en: 'Glutinous rice flour 2 cups',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 糯米粉',
+            cn_tb: '// TODO: taobao search: 糯米粉'
+          }
+        },
+        {
+          ko: '콩가루 1컵',
+          zh: '黄豆粉 1杯',
+          en: 'Soybean powder 1 cup',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 黄豆粉',
+            cn_tb: '// TODO: taobao search: 黄豆粉'
+          }
+        }
+      ],
+      steps_zh: ['糯米粉加水蒸制', '趁热捶打成团', '裹黄豆粉切块'],
+      steps_en: ['Steam rice flour with water', 'Pound while hot into dough', 'Coat with soybean powder and cut'],
+      tips_zh: '一定要趁热捶打，冷了就硬了。黄豆粉要够香。',
+      tips_en: 'Must pound while hot, gets hard when cold. Soybean powder must be fragrant.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-honey-cookie',
+    ko: '약과',
+    zh: '药果',
+    en: 'Yakgwa Honey Cookie',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['wheat'],
+    price: '10000-15000',
+    desc_zh: '蜂蜜油炸的传统糕点。酥脆香甜的宫廷甜品。',
+    desc_en: 'Traditional honey-fried pastry. Crispy sweet royal court dessert.',
+    origin_zh: '조선왕조 궁중에서 먹던 고급 과자. 꿀의 달콤함이 일품.',
+    origin_en: 'Premium confection eaten in Joseon royal court. Honey sweetness is excellent.',
+    tags: ['traditional', 'honey', 'royal', 'crispy'],
+    quality: 'verified',
+    recipe: {
+      time: '3시간',
+      difficulty: 4,
+      ingredients: [
+        {
+          ko: '밀가루 2컵',
+          zh: '面粉 2杯',
+          en: 'Flour 2 cups',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 面粉',
+            cn_tb: '// TODO: taobao search: 面粉'
+          }
+        },
+        {
+          ko: '꿀 1컵',
+          zh: '蜂蜜 1杯',
+          en: 'Honey 1 cup',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 蜂蜜',
+            cn_tb: '// TODO: taobao search: 蜂蜜'
+          }
+        }
+      ],
+      steps_zh: ['面团发酵', '切花样油炸', '蜂蜜浸泡'],
+      steps_en: ['Ferment dough', 'Cut patterns and fry', 'Soak in honey'],
+      tips_zh: '油温要控制好，炸出花纹才美。蜂蜜要浸透。',
+      tips_en: 'Control oil temperature for beautiful patterns. Honey must soak through.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-flower-cake',
+    ko: '화전',
+    zh: '花煎',
+    en: 'Flower Pancake',
+    category: 'dessert',
+    spicy: 0,
+    allergens: [],
+    price: '12000-18000',
+    desc_zh: '糯米粉煎饼配真花瓣。春季限定的美丽甜品。',
+    desc_en: 'Glutinous rice pancake with real flower petals. Beautiful spring-limited dessert.',
+    origin_zh: '봄철 꽃이 피는 시기에 만드는 계절 디저트. 매우 아름답다.',
+    origin_en: 'Seasonal dessert made during spring flower blooming season. Very beautiful.',
+    tags: ['seasonal', 'spring', 'beautiful', 'floral'],
     quality: 'basic',
     recipe: {
       time: '1시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '찹쌀가루 1컵',
+          zh: '糯米粉 1杯',
+          en: 'Glutinous rice flour 1 cup',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 糯米粉',
+            cn_tb: '// TODO: taobao search: 糯米粉'
+          }
+        },
+        {
+          ko: '꽃잎 (식용)',
+          zh: '花瓣 (可食用)',
+          en: 'Edible flower petals',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 食用花瓣',
+            cn_tb: '// TODO: taobao search: 食用花瓣'
+          }
+        }
+      ],
+      steps_zh: ['糯米粉调糊', '摊饼贴花瓣', '煎制定型'],
+      steps_en: ['Make rice flour batter', 'Spread and place petals', 'Pan-fry to set'],
+      tips_zh: '花瓣一定要可食用的，不能有农药。',
+      tips_en: 'Petals must be edible, no pesticides.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-persimmon-punch',
+    ko: '수정과',
+    zh: '柿饼茶',
+    en: 'Persimmon Punch',
+    category: 'dessert',
+    spicy: 0,
+    allergens: [],
+    price: '8000-12000',
+    desc_zh: '干柿子配肉桂生姜的传统饮品。冬季温暖甜汤。',
+    desc_en: 'Traditional drink with dried persimmons, cinnamon and ginger. Warming winter sweet soup.',
+    origin_zh: '조선시대부터 마시던 전통 음료. 감기 예방에도 좋다.',
+    origin_en: 'Traditional beverage drunk since Joseon era. Good for preventing colds.',
+    tags: ['traditional', 'warming', 'winter', 'medicinal'],
+    quality: 'basic',
+    recipe: {
+      time: '2시간',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '곶감 6개',
+          zh: '柿饼 6个',
+          en: 'Dried persimmons 6',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 柿饼',
+            cn_tb: '// TODO: taobao search: 柿饼'
+          }
+        }
+      ],
+      steps_zh: ['柿饼泡水2小时', '加肉桂生姜煮', '加蜂蜜调味'],
+      steps_en: ['Soak persimmons 2 hours', 'Add cinnamon and ginger, boil', 'Sweeten with honey'],
+      tips_zh: '要用好的柿饼，这样才甜。肉桂不要放太多。',
+      tips_en: 'Use quality persimmons for sweetness. Don\'t add too much cinnamon.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-cinnamon-tea',
+    ko: '계피차',
+    zh: '肉桂茶',
+    en: 'Cinnamon Tea',
+    category: 'dessert',
+    spicy: 0,
+    allergens: [],
+    price: '6000-8000',
+    desc_zh: '肉桂煮制的温暖茶饮。香气浓郁的传统茶。',
+    desc_en: 'Warming tea made with cinnamon. Fragrant traditional tea.',
+    origin_zh: '몸을 따뜻하게 해주는 전통 차. 겨울철에 특히 인기.',
+    origin_en: 'Traditional tea that warms the body. Especially popular in winter.',
+    tags: ['warming', 'fragrant', 'traditional', 'winter'],
+    quality: 'basic',
+    recipe: {
+      time: '30분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '계피 20g',
+          zh: '肉桂 20g',
+          en: 'Cinnamon 20g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 肉桂',
+            cn_tb: '// TODO: taobao search: 肉桂'
+          }
+        }
+      ],
+      steps_zh: ['肉桂煮水20分钟', '过滤调味'],
+      steps_en: ['Boil cinnamon in water 20 min', 'Strain and sweeten'],
+      tips_zh: '煮太久会苦，20분이 적당하다.',
+      tips_en: 'Too long makes it bitter, 20 minutes is just right.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-ginger-tea',
+    ko: '생강차',
+    zh: '生姜茶',
+    en: 'Ginger Tea',
+    category: 'dessert',
+    spicy: 1,
+    allergens: [],
+    price: '6000-8000',
+    desc_zh: '生姜蜂蜜茶。暖胃驱寒的健康茶饮。',
+    desc_en: 'Ginger honey tea. Healthy tea that warms stomach and drives away cold.',
+    origin_zh: '감기에 걸렸을 때 마시는 대표적인 민간요법 차.',
+    origin_en: 'Representative folk remedy tea drunk when catching cold.',
+    tags: ['healthy', 'warming', 'medicinal', 'spicy'],
+    quality: 'basic',
+    recipe: {
+      time: '25분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '생강 50g',
+          zh: '生姜 50g',
+          en: 'Ginger 50g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 新鲜生姜',
+            cn_tb: '// TODO: taobao search: 新鲜生姜'
+          }
+        }
+      ],
+      steps_zh: ['生姜切片煮水', '加蜂蜜调味'],
+      steps_en: ['Slice ginger and boil in water', 'Sweeten with honey'],
+      tips_zh: '生姜不要放太多，太辣难喝。',
+      tips_en: 'Don\'t add too much ginger, too spicy to drink.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-citron-tea',
+    ko: '유자차',
+    zh: '柚子茶',
+    en: 'Citron Tea',
+    category: 'dessert',
+    spicy: 0,
+    allergens: [],
+    price: '6000-8000',
+    desc_zh: '柚子蜂蜜茶。酸甜清香的维C茶饮。',
+    desc_en: 'Citron honey tea. Sweet-sour fragrant vitamin C beverage.',
+    origin_zh: '겨울철 비타민C 보충을 위한 전통 차. 감기 예방에 좋다.',
+    origin_en: 'Traditional tea for winter vitamin C supplement. Good for preventing colds.',
+    tags: ['vitamin-c', 'citrus', 'healthy', 'fragrant'],
+    quality: 'verified',
+    recipe: {
+      time: '10분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '유자청 2큰술',
+          zh: '柚子茶酱 2大勺',
+          en: 'Citron tea jam 2 tbsp',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 韩国柚子茶',
+            cn_tb: '// TODO: taobao search: 韩国柚子茶'
+          }
+        }
+      ],
+      steps_zh: ['热水冲泡柚子茶酱', '搅匀即可'],
+      steps_en: ['Pour hot water over citron jam', 'Stir well'],
+      tips_zh: '水不要太烫，会破坏维生素C。',
+      tips_en: 'Water shouldn\'t be too hot, destroys vitamin C.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-red-bean-porridge',
+    ko: '팥죽',
+    zh: '红豆粥',
+    en: 'Red Bean Porridge',
+    category: 'dessert',
+    spicy: 0,
+    allergens: [],
+    price: '8000-12000',
+    desc_zh: '红豆熬煮的甜粥配年糕丸子。冬至传统甜品。',
+    desc_en: 'Sweet porridge made with red beans and rice cake dumplings. Traditional winter solstice dessert.',
+    origin_zh: '동지날 먹는 전통 음식. 귀신을 쫓는다는 의미도 있다.',
+    origin_en: 'Traditional food eaten on winter solstice. Also believed to ward off evil spirits.',
+    tags: ['traditional', 'winter-solstice', 'sweet', 'warming'],
+    quality: 'verified',
+    recipe: {
+      time: '2시간',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '팥 2컵',
+          zh: '红豆 2杯',
+          en: 'Red beans 2 cups',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 红豆',
+            cn_tb: '// TODO: taobao search: 红豆'
+          }
+        }
+      ],
+      steps_zh: ['红豆煮烂压泥', '加糯米粉丸子', '调甜度'],
+      steps_en: ['Boil red beans until soft, mash', 'Add rice flour dumplings', 'Adjust sweetness'],
+      tips_zh: '红豆要煮够时间才烂。丸子不要太大。',
+      tips_en: 'Red beans need long cooking to get soft. Don\'t make dumplings too large.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-pine-nut-porridge',
+    ko: '잣죽',
+    zh: '松子粥',
+    en: 'Pine Nut Porridge',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['nuts'],
+    price: '15000-20000',
+    desc_zh: '松子研磨制成的高级粥品。香浓的坚果甜品。',
+    desc_en: 'Premium porridge made with ground pine nuts. Rich nutty dessert.',
+    origin_zh: '조선시대 궁중에서 먹던 고급 죽. 영양가가 높다.',
+    origin_en: 'Premium porridge eaten in Joseon royal court. High nutritional value.',
+    tags: ['premium', 'nutty', 'royal', 'nutritious'],
+    quality: 'basic',
+    recipe: {
+      time: '1시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '잣 1컵',
+          zh: '松子 1杯',
+          en: 'Pine nuts 1 cup',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 松子',
+            cn_tb: '// TODO: taobao search: 松子'
+          }
+        }
+      ],
+      steps_zh: ['松子研磨成浆', '加米煮粥', '调甜度'],
+      steps_en: ['Grind pine nuts into paste', 'Add rice and cook porridge', 'Adjust sweetness'],
+      tips_zh: '松子要研磨得够细，这样口感才顺滑。',
+      tips_en: 'Pine nuts must be ground fine enough for smooth texture.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-pumpkin-porridge',
+    ko: '호박죽',
+    zh: '南瓜粥',
+    en: 'Pumpkin Porridge',
+    category: 'dessert',
+    spicy: 0,
+    allergens: [],
+    price: '8000-12000',
+    desc_zh: '南瓜熬煮的甜粥。橙色的营养甜品。',
+    desc_en: 'Sweet porridge made with pumpkin. Orange nutritious dessert.',
+    origin_zh: '가을철 호박이 많을 때 만드는 계절 죽.',
+    origin_en: 'Seasonal porridge made during fall pumpkin harvest.',
+    tags: ['autumn', 'orange', 'nutritious', 'sweet'],
+    quality: 'basic',
+    recipe: {
+      time: '45분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '호박 1개',
+          zh: '南瓜 1个',
+          en: 'Pumpkin 1',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 南瓜',
+            cn_tb: '// TODO: taobao search: 南瓜'
+          }
+        }
+      ],
+      steps_zh: ['南瓜蒸熟打泥', '加米煮粥', '调甜度'],
+      steps_en: ['Steam pumpkin and puree', 'Add rice and cook porridge', 'Adjust sweetness'],
+      tips_zh: '南瓜要选甜的，这样不用加太多糖。',
+      tips_en: 'Choose sweet pumpkin so you don\'t need much added sugar.'
+    },
+    image: null
+  },
+
+  // === COMPLETING 47 MORE ITEMS ===
+
+  {
+    id: 'korean-sausage-stew',
+    ko: '소시지찌개',
+    zh: '香肠锅',
+    en: 'Sausage Stew',
+    category: 'jjigae',
+    spicy: 2,
+    allergens: ['pork'],
+    price: '8000-12000',
+    desc_zh: '香肠配蔬菜的简易炖锅。现代家庭料理。',
+    desc_en: 'Simple stew with sausages and vegetables. Modern home cooking.',
+    origin_zh: '서구 음식이 들어온 후 만들어진 퓨전 찌개.',
+    origin_en: 'Fusion stew created after Western food introduction.',
+    tags: ['fusion', 'modern', 'easy', 'hearty'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '소시지 300g',
+          zh: '香肠 300g',
+          en: 'Sausages 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 香肠',
+            cn_tb: '// TODO: taobao search: 香肠'
+          }
+        }
+      ],
+      steps_zh: ['香肠切片炒制', '加蔬菜和水', '炖煮15分钟'],
+      steps_en: ['Slice and fry sausages', 'Add vegetables and water', 'Stew 15 minutes'],
+      tips_zh: '香肠本身有味道，调料要少放。',
+      tips_en: 'Sausages are already flavored, use less seasoning.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-cheese-ramen',
+    ko: '치즈라면',
+    zh: '芝士拉面',
+    en: 'Cheese Ramen',
+    category: 'myeon',
+    spicy: 2,
+    allergens: ['wheat', 'dairy'],
+    price: '4000-6000',
+    desc_zh: '方便面配芝士片。年轻人最爱的创新吃法。',
+    desc_en: 'Instant ramen with cheese slices. Young people\'s favorite innovative way.',
+    origin_zh: '2000년대부터 젊은층 사이에서 유행한 라면 먹는 법.',
+    origin_en: 'Ramen eating method popular among youth since 2000s.',
+    tags: ['fusion', 'youth', 'creamy', 'trendy'],
+    quality: 'verified',
+    recipe: {
+      time: '8분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '라면 1봉지',
+          zh: '拉面 1包',
+          en: 'Ramen 1 pack',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 韩国辛拉면',
+            cn_tb: '// TODO: taobao search: 韩国辛拉면'
+          }
+        },
+        {
+          ko: '치즈 2장',
+          zh: '芝士片 2张',
+          en: 'Cheese slices 2',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 芝士片',
+            cn_tb: '// TODO: taobao search: 芝士片'
+          }
+        }
+      ],
+      steps_zh: ['按正常方法煮拉面', '关火放芝士片', '趁热拌匀享用'],
+      steps_en: ['Cook ramen normally', 'Turn off heat and add cheese', 'Mix while hot and enjoy'],
+      tips_zh: '一定要关火再放芝士，这样不会结块。',
+      tips_en: 'Must turn off heat before adding cheese to prevent clumping.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-egg-drop-soup',
+    ko: '계란탕',
+    zh: '蛋花汤',
+    en: 'Korean Egg Drop Soup',
+    category: 'guk',
+    spicy: 0,
+    allergens: ['egg'],
+    price: '6000-8000',
+    desc_zh: '简单的蛋花汤。清淡的家常汤品。',
+    desc_en: 'Simple egg drop soup. Light home-style soup.',
+    origin_zh: '가장 간단하게 만들 수 있는 집밥 국물 요리.',
+    origin_en: 'Simplest home-cooked soup dish to make.',
+    tags: ['simple', 'light', 'homestyle', 'quick'],
+    quality: 'basic',
+    recipe: {
+      time: '10분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '계란 2개',
+          zh: '鸡蛋 2个',
+          en: 'Eggs 2',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 鸡蛋',
+            cn_tb: '// TODO: taobao search: 鸡蛋'
+          }
+        }
+      ],
+      steps_zh: ['清水煮开调味', '蛋液慢慢倒入', '搅拌成蛋花'],
+      steps_en: ['Boil water and season', 'Slowly pour beaten egg', 'Stir to create egg drops'],
+      tips_zh: '蛋液要慢慢倒，这样蛋花才漂亮。',
+      tips_en: 'Pour egg slowly for beautiful egg drops.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-corn-cheese',
+    ko: '콘치즈',
+    zh: '玉米芝士',
+    en: 'Corn Cheese',
+    category: 'western',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '8000-12000',
+    desc_zh: '玉米配芝士烤制。韩国酒吧人气小食。',
+    desc_en: 'Corn with cheese baked. Popular Korean bar snack.',
+    origin_zh: '90년대부터 호프집에서 인기를 끈 안주.',
+    origin_en: 'Popular bar snack since 1990s in beer halls.',
+    tags: ['bar-food', 'cheesy', 'sweet-salty', 'baked'],
+    quality: 'verified',
+    recipe: {
+      time: '15분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '옥수수 캔 1개',
+          zh: '玉米罐头 1个',
+          en: 'Corn can 1',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 玉米罐头',
+            cn_tb: '// TODO: taobao search: 玉米罐头'
+          }
+        }
+      ],
+      steps_zh: ['玉米沥干炒制', '铺芝士丝', '烤箱烤至金黄'],
+      steps_en: ['Drain and sauté corn', 'Top with shredded cheese', 'Bake until golden'],
+      tips_zh: '一定要用烤箱或平底锅烤到芝士冒泡。',
+      tips_en: 'Must bake in oven or pan until cheese bubbles.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-spam-musubi',
+    ko: '스팸무스비',
+    zh: 'SPAM饭团',
+    en: 'Spam Musubi',
+    category: 'bap',
+    spicy: 0,
+    allergens: ['pork', 'soy'],
+    price: '3000-5000',
+    desc_zh: 'SPAM午餐肉配紫菜包饭。便利店人气商品。',
+    desc_en: 'SPAM luncheon meat with seaweed rice. Popular convenience store item.',
+    origin_zh: '하와이 요리에서 영감을 받은 한국식 변형.',
+    origin_en: 'Korean adaptation inspired by Hawaiian cuisine.',
+    tags: ['convenient', 'portable', 'salty', 'filling'],
+    quality: 'basic',
+    recipe: {
+      time: '15분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '스팸 1캔',
+          zh: 'SPAM 1罐',
+          en: 'SPAM 1 can',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 午餐肉',
+            cn_tb: '// TODO: taobao search: 午餐肉'
+          }
+        }
+      ],
+      steps_zh: ['SPAM切片煎制', '米饭团成形', '紫菜包裹'],
+      steps_en: ['Slice and fry SPAM', 'Shape rice', 'Wrap with seaweed'],
+      tips_zh: 'SPAM要煎到微焦，这样更香。',
+      tips_en: 'Fry SPAM until slightly crispy for better flavor.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-rolled-egg',
+    ko: '계란말이',
+    zh: '蛋卷',
+    en: 'Korean Rolled Egg',
+    category: 'banchan',
+    spicy: 0,
+    allergens: ['egg'],
+    price: '6000-8000',
+    desc_zh: '厚蛋烧卷成筒状。韩式家常蛋料理。',
+    desc_en: 'Thick omelet rolled into cylinder. Korean home-style egg dish.',
+    origin_zh: '일본 다마고야키에서 영감을 받아 한국화한 요리.',
+    origin_en: 'Dish Koreanized from Japanese tamagoyaki inspiration.',
+    tags: ['homestyle', 'fluffy', 'rolled', 'breakfast'],
+    quality: 'verified',
+    recipe: {
+      time: '15분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '계란 4개',
+          zh: '鸡蛋 4个',
+          en: 'Eggs 4',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 鸡蛋',
+            cn_tb: '// TODO: taobao search: 鸡蛋'
+          }
+        }
+      ],
+      steps_zh: ['蛋液调味', '分三次摊蛋皮', '趁热卷成筒状'],
+      steps_en: ['Season beaten eggs', 'Make omelet in 3 layers', 'Roll while hot'],
+      tips_zh: '火候要小，慢慢煎才不会焦。要趁热卷。',
+      tips_en: 'Keep heat low, fry slowly to avoid burning. Roll while hot.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-steamed-egg',
+    ko: '계란찜',
+    zh: '蒸蛋',
+    en: 'Korean Steamed Egg',
+    category: 'banchan',
+    spicy: 0,
+    allergens: ['egg'],
+    price: '6000-8000',
+    desc_zh: '蓬松的蒸蛋羹。韩国家庭必备小菜。',
+    desc_en: 'Fluffy steamed egg custard. Essential Korean home side dish.',
+    origin_zh: '아이들이 좋아하는 대표적인 집밥 반찬.',
+    origin_en: 'Representative home-cooked side dish that children love.',
+    tags: ['fluffy', 'kids-favorite', 'homestyle', 'soft'],
+    quality: 'verified',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '계란 4개',
+          zh: '鸡蛋 4个',
+          en: 'Eggs 4',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 鸡蛋',
+            cn_tb: '// TODO: taobao search: 鸡蛋'
+          }
+        }
+      ],
+      steps_zh: ['蛋液加水调匀', '小火蒸15분', '蓬松出锅'],
+      steps_en: ['Mix eggs with water', 'Steam on low heat 15 min', 'Serve fluffy'],
+      tips_zh: '水和蛋的比例1:1，这样最蓬松。',
+      tips_en: 'Water to egg ratio 1:1 for fluffiest texture.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-chicken-ginseng-soup',
+    ko: '삼계탕',
+    zh: '参鸡汤',
+    en: 'Ginseng Chicken Soup',
+    category: 'guk',
+    spicy: 0,
+    allergens: [],
+    price: '15000-20000',
+    desc_zh: '整鸡炖人参的滋补汤。夏季进补料理。',
+    desc_en: 'Whole chicken soup with ginseng. Summer nourishing dish.',
+    origin_zh: '조선시대부터 내려온 대표적인 보양식.',
+    origin_en: 'Representative nourishing food from Joseon era.',
+    tags: ['nourishing', 'ginseng', 'summer', 'traditional'],
+    quality: 'verified',
+    recipe: {
+      time: '1시간 30분',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '영계 1마리',
+          zh: '嫩鸡 1只',
+          en: 'Young chicken 1',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 嫩鸡',
+            cn_tb: '// TODO: taobao search: 嫩鸡'
+          }
+        }
+      ],
+      steps_zh: ['鸡腹塞糯米人参', '清水炖1小时', '调味即可'],
+      steps_en: ['Stuff chicken with glutinous rice and ginseng', 'Simmer 1 hour', 'Season and serve'],
+      tips_zh: '一定要用嫩鸡，老鸡炖不烂。',
+      tips_en: 'Must use young chicken, old chicken won\'t get tender.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-ox-bone-soup',
+    ko: '설렁탕',
+    zh: '牛骨汤',
+    en: 'Ox Bone Soup',
+    category: 'guk',
+    spicy: 0,
+    allergens: ['beef'],
+    price: '12000-15000',
+    desc_zh: '牛骨熬制的白汤。韩国人的日常汤品。',
+    desc_en: 'White soup made from ox bones. Korean everyday soup.',
+    origin_zh: '조선시대부터 서민들이 즐겨먹던 대중적인 국물 요리.',
+    origin_en: 'Popular soup dish enjoyed by commoners since Joseon era.',
+    tags: ['daily', 'white-broth', 'nourishing', 'popular'],
+    quality: 'verified',
+    recipe: {
+      time: '8시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '사골 2kg',
+          zh: '牛骨 2kg',
+          en: 'Ox bones 2kg',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 牛筒骨',
+            cn_tb: '// TODO: taobao search: 牛筒骨'
+          }
+        }
+      ],
+      steps_zh: ['牛骨焯水去血沫', '清水炖煮8小时', '过筛得清汤'],
+      steps_en: ['Blanch bones to remove blood', 'Simmer 8 hours', 'Strain for clear broth'],
+      tips_zh: '要炖够时间汤才会白，至少8小时。',
+      tips_en: 'Must simmer long enough for white broth, minimum 8 hours.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-spicy-pork-soup',
+    ko: '김치찌개',
+    zh: '辣猪肉汤',
+    en: 'Spicy Pork Soup',
+    category: 'jjigae',
+    spicy: 3,
+    allergens: ['pork'],
+    price: '8000-12000',
+    desc_zh: '猪肉配辣椒的红汤。下饭的经典炖汤。',
+    desc_en: 'Red soup with pork and chili. Classic stew perfect with rice.',
+    origin_zh: '매운 음식을 좋아하는 한국인의 대표적인 찌개.',
+    origin_en: 'Representative stew of spicy food-loving Koreans.',
+    tags: ['spicy', 'red', 'rice-companion', 'popular'],
+    quality: 'basic',
+    recipe: {
+      time: '30분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '돼지고기 300g',
+          zh: '猪肉 300g',
+          en: 'Pork 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 猪肉片',
+            cn_tb: '// TODO: taobao search: 猪肉片'
+          }
+        }
+      ],
+      steps_zh: ['猪肉炒制', '加辣椒粉和水', '炖煮20分钟'],
+      steps_en: ['Stir-fry pork', 'Add chili powder and water', 'Stew 20 minutes'],
+      tips_zh: '辣椒粉要够多才够味。',
+      tips_en: 'Need enough chili powder for proper flavor.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-fish-cake-soup',
+    ko: '어묵탕',
+    zh: '鱼糕汤',
+    en: 'Fish Cake Soup',
+    category: 'guk',
+    spicy: 0,
+    allergens: ['seafood'],
+    price: '8000-10000',
+    desc_zh: '鱼糕配萝卜的清汤。简单清淡的汤品。',
+    desc_en: 'Clear soup with fish cakes and radish. Simple light soup.',
+    origin_zh: '일본 오뎅에서 유래한 한국식 국물 요리.',
+    origin_en: 'Korean soup dish derived from Japanese oden.',
+    tags: ['light', 'clear', 'simple', 'warming'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '어묵 300g',
+          zh: '鱼糕 300g',
+          en: 'Fish cakes 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 韩式鱼糕',
+            cn_tb: '// TODO: taobao search: 韩式鱼糕'
+          }
+        }
+      ],
+      steps_zh: ['昆布汤底煮开', '放鱼糕萝卜', '调味即可'],
+      steps_en: ['Boil kelp broth', 'Add fish cakes and radish', 'Season and serve'],
+      tips_zh: '汤底要清淡，鱼糕本身有咸味。',
+      tips_en: 'Broth should be light, fish cakes already have saltiness.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-spicy-chicken-feet',
+    ko: '매운 닭발',
+    zh: '辣鸡爪',
+    en: 'Spicy Chicken Feet',
+    category: 'alcohol',
+    spicy: 4,
+    allergens: ['soy'],
+    price: '12000-18000',
+    desc_zh: '超辣鸡爪配蔬菜。年轻人最爱的下酒菜。',
+    desc_en: 'Super spicy chicken feet with vegetables. Young people\'s favorite drinking snack.',
+    origin_zh: '90년대부터 대학가에서 인기를 끈 매운 안주.',
+    origin_en: 'Spicy drinking snack popular in university areas since 1990s.',
+    tags: ['super-spicy', 'drinking', 'youth', 'chewy'],
+    quality: 'verified',
+    recipe: {
+      time: '1시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '닭발 1kg',
+          zh: '鸡爪 1kg',
+          en: 'Chicken feet 1kg',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 鸡爪',
+            cn_tb: '// TODO: taobao search: 鸡爪'
+          }
+        }
+      ],
+      steps_zh: ['鸡爪清理干净', '调制超辣酱', '炖煮45분'],
+      steps_en: ['Clean chicken feet thoroughly', 'Prepare super spicy sauce', 'Braise 45 minutes'],
+      tips_zh: '一定要够辣才正宗！配啤酒最好。',
+      tips_en: 'Must be spicy enough to be authentic! Best with beer.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-pork-belly-wrap',
+    ko: '보쌈',
+    zh: '白切肉',
+    en: 'Pork Belly Wrap',
+    category: 'gui',
+    spicy: 0,
+    allergens: ['pork'],
+    price: '20000-30000',
+    desc_zh: '水煮五花肉配生菜包吃。清爽的韩式白切肉。',
+    desc_en: 'Boiled pork belly wrapped in lettuce. Refreshing Korean boiled pork.',
+    origin_zh: '조선시대부터 내려온 전통적인 돼지고기 요리법.',
+    origin_en: 'Traditional pork cooking method from Joseon era.',
+    tags: ['traditional', 'wrapped', 'refreshing', 'social'],
+    quality: 'verified',
+    recipe: {
+      time: '1시간',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '삼겹살 1kg',
+          zh: '五花肉 1kg',
+          en: 'Pork belly 1kg',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 五花肉',
+            cn_tb: '// TODO: taobao search: 五花肉'
+          }
+        }
+      ],
+      steps_zh: ['五花肉加香料煮40分钟', '切片摆盘', '配生菜蘸料'],
+      steps_en: ['Boil pork belly with spices 40 min', 'Slice and plate', 'Serve with lettuce and sauce'],
+      tips_zh: '要煮到筷子能轻松插入才算熟。',
+      tips_en: 'Cook until chopsticks can easily pierce through.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-spicy-rice-cake-soup',
+    ko: '떡국',
+    zh: '年糕汤',
+    en: 'Rice Cake Soup',
+    category: 'guk',
+    spicy: 0,
+    allergens: [],
+    price: '8000-12000',
+    desc_zh: '薄片年糕的清汤。新年必吃的传统汤品。',
+    desc_en: 'Clear soup with sliced rice cakes. Traditional New Year soup.',
+    origin_zh: '설날에 먹으면 한 살 더 먹는다는 전통 음식.',
+    origin_en: 'Traditional food eaten on New Year\'s Day to age one year.',
+    tags: ['new-year', 'traditional', 'symbolic', 'clear'],
+    quality: 'verified',
+    recipe: {
+      time: '30분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '떡국떡 300g',
+          zh: '年糕片 300g',
+          en: 'Sliced rice cakes 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 韩国年糕片',
+            cn_tb: '// TODO: taobao search: 韩国年糕片'
+          }
+        }
+      ],
+      steps_zh: ['清汤煮开', '放年糕片煮5분', '调味撒葱花'],
+      steps_en: ['Boil clear broth', 'Add rice cake slices, cook 5 min', 'Season and garnish with green onion'],
+      tips_zh: '年糕不要煮太久，会烂掉。',
+      tips_en: 'Don\'t cook rice cakes too long or they\'ll fall apart.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-cold-buckwheat-noodles',
+    ko: '물냉면',
+    zh: '水冷面',
+    en: 'Cold Buckwheat Noodles',
+    category: 'myeon',
+    spicy: 0,
+    allergens: ['wheat'],
+    price: '10000-15000',
+    desc_zh: '冰镇荞麦面配清汤。夏季消暑面食。',
+    desc_en: 'Chilled buckwheat noodles in cold broth. Summer cooling noodle dish.',
+    origin_zh: '평양에서 유래한 북한식 냉면.',
+    origin_en: 'North Korean style cold noodles originating from Pyongyang.',
+    tags: ['cold', 'summer', 'buckwheat', 'refreshing'],
+    quality: 'verified',
+    recipe: {
+      time: '1시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '냉면 4인분',
+          zh: '冷면 4人份',
+          en: 'Cold noodles 4 servings',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 荞麦冷面',
+            cn_tb: '// TODO: taobao search: 荞麦冷面'
+          }
+        }
+      ],
+      steps_zh: ['制作冰汤', '面条煮熟过冷水', '配菜装盘'],
+      steps_en: ['Prepare ice-cold broth', 'Cook noodles and rinse with cold water', 'Serve with toppings'],
+      tips_zh: '汤一定要够冰，面条要有韧性。',
+      tips_en: 'Broth must be ice cold, noodles should be chewy.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-spicy-cold-noodles',
+    ko: '비빔냉면',
+    zh: '拌冷面',
+    en: 'Spicy Mixed Cold Noodles',
+    category: 'myeon',
+    spicy: 3,
+    allergens: ['wheat'],
+    price: '10000-15000',
+    desc_zh: '辣椒酱拌冷面。夏季开胃面食。',
+    desc_en: 'Cold noodles mixed with spicy sauce. Summer appetite-stimulating noodle dish.',
+    origin_zh: '물냉면과 함께 대표적인 한국 냉면.',
+    origin_en: 'Representative Korean cold noodles along with mul-naengmyeon.',
+    tags: ['cold', 'spicy', 'summer', 'mixed'],
+    quality: 'verified',
+    recipe: {
+      time: '30분',
       difficulty: 2,
       ingredients: [
         {
@@ -4486,883 +6498,773 @@ export const koreanFoodDB = [
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 荞麦冷面 냉면',
-            cn_tb: '// TODO: taobao search: 荞麦冷面 냉면'
+            cn_jd: '// TODO: jd.com search: 荞麦冷面',
+            cn_tb: '// TODO: taobao search: 荞麦冷面'
           }
         }
       ],
-      steps_zh: ['制作冰汤', '面条煮熟过冷水', '配菜摆盘'],
-      steps_en: ['Prepare ice broth', 'Cook noodles and rinse with cold water', 'Arrange toppings'],
-      tips_zh: '汤一定要够冰，面条要有韧性。',
-      tips_en: 'Broth must be ice cold, noodles must be chewy.'
+      steps_zh: ['调制辣椒酱', '面条过冷水', '拌匀装盘'],
+      steps_en: ['Prepare spicy sauce', 'Rinse noodles with cold water', 'Mix and serve'],
+      tips_zh: '辣椒酱要甜辣平衡，不能太咸。',
+      tips_en: 'Spicy sauce should balance sweet-spicy, not too salty.'
     },
     image: null
   },
 
   {
-    id: 'korean-grilled-beef',
-    ko: '소갈비',
-    zh: '烤牛小排',
-    en: 'Korean Grilled Beef Ribs',
-    category: 'gui',
+    id: 'korean-bean-paste-soup',
+    ko: '된장국',
+    zh: '大酱汤',
+    en: 'Bean Paste Soup',
+    category: 'guk',
     spicy: 0,
-    allergens: ['beef'],
-    price: '30000-40000',
-    desc_zh: '腌制牛小排烤制。韩式烧烤的高级菜品。',
-    desc_en: 'Marinated beef short ribs grilled. Premium Korean BBQ dish.',
-    origin_zh: '고급 한우를 사용한 최고급 구이 요리.',
-    origin_en: 'Premium grilled dish using high-grade Korean beef.',
-    tags: ['premium', 'expensive', 'marinated', 'special'],
+    allergens: ['soy'],
+    price: '6000-8000',
+    desc_zh: '大豆酱制成的基本汤品。韩国人的家常汤。',
+    desc_en: 'Basic soup made with soybean paste. Korean everyday home soup.',
+    origin_zh: '가장 기본적인 한국 국물 요리.',
+    origin_en: 'Most basic Korean soup dish.',
+    tags: ['basic', 'everyday', 'homestyle', 'savory'],
     quality: 'basic',
     recipe: {
-      time: '3시간',
-      difficulty: 3,
+      time: '15분',
+      difficulty: 1,
       ingredients: [
         {
-          ko: '소갈비 1.5kg',
-          zh: '牛小排 1.5kg',
-          en: 'Beef short ribs 1.5kg',
+          ko: '된장 2큰술',
+          zh: '大豆酱 2大勺',
+          en: 'Soybean paste 2 tbsp',
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 牛小排 牛肋条',
-            cn_tb: '// TODO: taobao search: 牛小排 牛肋条'
+            cn_jd: '// TODO: jd.com search: 韩式大豆酱',
+            cn_tb: '// TODO: taobao search: 韩式大豆酱'
           }
         }
       ],
-      steps_zh: ['排骨腌制2小时', '烤制至焦糖化', '配生菜和蒜'],
-      steps_en: ['Marinate ribs 2 hours', 'Grill until caramelized', 'Serve with lettuce and garlic'],
-      tips_zh: '腌制时间要足够，烤制火候要恰当。',
-      tips_en: 'Sufficient marination time needed, proper grilling heat is crucial.'
+      steps_zh: ['汤底煮开', '大豆酱调开加入', '放蔬菜煮5分钟'],
+      steps_en: ['Boil broth', 'Dissolve soybean paste and add', 'Add vegetables and cook 5 min'],
+      tips_zh: '大豆酱要先用汤调开，直接放会结块。',
+      tips_en: 'Must dissolve soybean paste with broth first or it will clump.'
     },
     image: null
   },
 
   {
-    id: 'korean-stew-tofu-kimchi',
-    ko: '김치두부찌개',
-    zh: '泡菜豆腐锅',
-    en: 'Kimchi Tofu Stew',
-    category: 'jjigae',
+    id: 'korean-soybean-sprout-soup',
+    ko: '콩나물국',
+    zh: '豆芽汤',
+    en: 'Soybean Sprout Soup',
+    category: 'guk',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '6000-8000',
+    desc_zh: '豆芽菜清汤。解酒醒胃的汤品。',
+    desc_en: 'Clear soup with soybean sprouts. Hangover-curing stomach-settling soup.',
+    origin_zh: '숙취 해소에 좋다고 알려진 대표적인 해장국.',
+    origin_en: 'Representative hangover soup known to be good for hangover relief.',
+    tags: ['hangover', 'clear', 'refreshing', 'healthy'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '콩나물 300g',
+          zh: '豆芽菜 300g',
+          en: 'Soybean sprouts 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 豆芽菜',
+            cn_tb: '// TODO: taobao search: 豆芽菜'
+          }
+        }
+      ],
+      steps_zh: ['清水煮开', '放豆芽菜煮10분', '调味撒葱花'],
+      steps_en: ['Boil water', 'Add sprouts and cook 10 min', 'Season and garnish with green onion'],
+      tips_zh: '豆芽要煮透去豆腥味。',
+      tips_en: 'Cook sprouts thoroughly to remove beany smell.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-pork-bone-soup',
+    ko: '감자탕',
+    zh: '土豆排骨汤',
+    en: 'Pork Bone Potato Soup',
+    category: 'guk',
     spicy: 2,
+    allergens: ['pork'],
+    price: '15000-20000',
+    desc_zh: '猪脊骨配土豆的浓汤。营养丰富的滋补汤。',
+    desc_en: 'Rich soup with pork spine bones and potatoes. Nutritious nourishing soup.',
+    origin_zh: '한국인이 사랑하는 대표적인 보양식 중 하나.',
+    origin_en: 'One of the representative nourishing foods loved by Koreans.',
+    tags: ['nourishing', 'rich', 'bones', 'hearty'],
+    quality: 'verified',
+    recipe: {
+      time: '2시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '돼지등뼈 2kg',
+          zh: '猪脊骨 2kg',
+          en: 'Pork spine bones 2kg',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 猪脊骨',
+            cn_tb: '// TODO: taobao search: 猪脊骨'
+          }
+        }
+      ],
+      steps_zh: ['猪骨焯水去血沫', '炖煮1.5小时', '加土豆煮30분'],
+      steps_en: ['Blanch bones to remove blood', 'Simmer 1.5 hours', 'Add potatoes and cook 30 min'],
+      tips_zh: '一定要炖够时间，汤才会浓白。',
+      tips_en: 'Must simmer long enough for rich white broth.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-tofu-soup',
+    ko: '두부찌개',
+    zh: '豆腐锅',
+    en: 'Tofu Stew',
+    category: 'jjigae',
+    spicy: 1,
     allergens: ['soy'],
     price: '8000-12000',
-    desc_zh: '泡菜豆腐的辣汤锅。韩国家常炖汤。',
-    desc_en: 'Spicy stew with kimchi and tofu. Korean home-style stew.',
-    origin_zh: '집에서 쉽게 만들 수 있는 대표적인 찌개.',
-    origin_en: 'Representative stew that can be easily made at home.',
-    tags: ['homestyle', 'spicy', 'easy', 'common'],
+    desc_zh: '嫩豆腐配蔬菜的清淡炖锅。健康的素食选择。',
+    desc_en: 'Light stew with soft tofu and vegetables. Healthy vegetarian option.',
+    origin_zh: '식물성 단백질을 위한 건강한 찌개.',
+    origin_en: 'Healthy stew for plant-based protein.',
+    tags: ['vegetarian', 'healthy', 'light', 'protein'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '순두부 1모',
+          zh: '嫩豆腐 1块',
+          en: 'Soft tofu 1 block',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 嫩豆腐',
+            cn_tb: '// TODO: taobao search: 嫩豆腐'
+          }
+        }
+      ],
+      steps_zh: ['汤底煮开', '放豆腐蔬菜', '调味煮10분'],
+      steps_en: ['Boil broth', 'Add tofu and vegetables', 'Season and cook 10 min'],
+      tips_zh: '豆腐要轻柔放入，不要搅拌会碎。',
+      tips_en: 'Add tofu gently, don\'t stir or it will break.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-mushroom-soup',
+    ko: '버섯국',
+    zh: '蘑菇汤',
+    en: 'Mushroom Soup',
+    category: 'guk',
+    spicy: 0,
+    allergens: [],
+    price: '8000-12000',
+    desc_zh: '各种蘑菇制成的鲜美汤品。素食友好。',
+    desc_en: 'Savory soup made with various mushrooms. Vegetarian-friendly.',
+    origin_zh: '산에서 나는 버섯으로 만든 자연 그대로의 국물.',
+    origin_en: 'Natural broth made with mountain mushrooms.',
+    tags: ['umami', 'vegetarian', 'natural', 'healthy'],
     quality: 'basic',
     recipe: {
       time: '25분',
       difficulty: 1,
       ingredients: [
         {
-          ko: '김치 300g',
-          zh: '泡菜 300g',
-          en: 'Kimchi 300g',
+          ko: '버섯 모음 400g',
+          zh: '蘑菇组合 400g',
+          en: 'Mixed mushrooms 400g',
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 韩国泡菜',
-            cn_tb: '// TODO: taobao search: 韩国泡菜'
+            cn_jd: '// TODO: jd.com search: 混合蘑菇',
+            cn_tb: '// TODO: taobao search: 混合蘑菇'
           }
         }
       ],
-      steps_zh: ['泡菜炒出味道', '加水和豆腐煮制', '调味后享用'],
-      steps_en: ['Stir-fry kimchi until fragrant', 'Add water and tofu, simmer', 'Season and serve'],
-      tips_zh: '泡菜要炒香才好吃。',
-      tips_en: 'Kimchi must be stir-fried until fragrant for best taste.'
+      steps_zh: ['蘑菇炒香', '加水煮汤', '调味即可'],
+      steps_en: ['Sauté mushrooms until fragrant', 'Add water to make soup', 'Season and serve'],
+      tips_zh: '蘑菇要先炒香，这样汤更有味道。',
+      tips_en: 'Sauté mushrooms first for more flavorful soup.'
     },
     image: null
   },
 
-  // === FINAL 9 ITEMS TO REACH 50 NEW ADDITIONS ===
-
   {
-    id: 'korean-fermented-skate',
-    ko: '홍어무침',
-    zh: '发酵鳐鱼',
-    en: 'Fermented Skate',
-    category: 'banchan',
-    spicy: 2,
-    allergens: ['seafood'],
-    price: '15000-20000',
-    desc_zh: '发酵鳐鱼配蔬菜。全罗道特色菜。',
-    desc_en: 'Fermented skate with vegetables. Jeolla Province specialty.',
-    origin_zh: '전라남도 흑산도에서 시작된 독특한 발효 음식.',
-    origin_en: 'Unique fermented food originated from Heuksan Island in South Jeolla Province.',
-    tags: ['fermented', 'regional', 'pungent', 'acquired-taste'],
+    id: 'korean-vegetable-pancake',
+    ko: '야채전',
+    zh: '蔬菜煎饼',
+    en: 'Vegetable Pancake',
+    category: 'jeon',
+    spicy: 0,
+    allergens: ['wheat'],
+    price: '8000-12000',
+    desc_zh: '各种蔬菜制成的煎饼。健康的素食选择。',
+    desc_en: 'Pancake made with various vegetables. Healthy vegetarian option.',
+    origin_zh: '야채를 많이 먹기 위한 지혜로운 조리법.',
+    origin_en: 'Wise cooking method to eat lots of vegetables.',
+    tags: ['vegetarian', 'healthy', 'colorful', 'crispy'],
     quality: 'basic',
-    recipe: null, // Complex fermentation process
+    recipe: {
+      time: '30분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '야채 모음 500g',
+          zh: '蔬菜组合 500g',
+          en: 'Mixed vegetables 500g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 蔬菜组合',
+            cn_tb: '// TODO: taobao search: 蔬菜组合'
+          }
+        }
+      ],
+      steps_zh: ['蔬菜切丝', '调制面糊', '煎制成饼'],
+      steps_en: ['Julienne vegetables', 'Prepare batter', 'Pan-fry into pancake'],
+      tips_zh: '蔬菜种类越多颜色越漂亮。',
+      tips_en: 'More vegetable varieties make prettier colors.'
+    },
     image: null
   },
 
   {
-    id: 'korean-acorn-jelly',
-    ko: '도토리묵',
-    zh: '橡子凉粉',
-    en: 'Acorn Jelly',
-    category: 'banchan',
+    id: 'korean-kimchi-pancake',
+    ko: '김치전',
+    zh: '泡菜煎饼',
+    en: 'Kimchi Pancake',
+    category: 'jeon',
+    spicy: 2,
+    allergens: ['wheat'],
+    price: '8000-12000',
+    desc_zh: '发酸泡菜制成的煎饼。下雨天的经典小食。',
+    desc_en: 'Pancake made with sour kimchi. Classic rainy day snack.',
+    origin_zh: '묵은 김치를 활용한 대표적인 요리.',
+    origin_en: 'Representative dish using aged kimchi.',
+    tags: ['fermented', 'spicy', 'rainy-day', 'sour'],
+    quality: 'verified',
+    recipe: {
+      time: '25분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '묵은김치 300g',
+          zh: '发酸泡菜 300g',
+          en: 'Aged kimchi 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 发酸泡菜',
+            cn_tb: '// TODO: taobao search: 发酸泡菜'
+          }
+        }
+      ],
+      steps_zh: ['泡菜切段', '调制面糊', '煎制酥脆'],
+      steps_en: ['Cut kimchi into segments', 'Prepare batter', 'Pan-fry until crispy'],
+      tips_zh: '一定要用发酸的泡菜，新鲜的不够味。',
+      tips_en: 'Must use sour kimchi, fresh kimchi lacks flavor.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-seafood-pancake',
+    ko: '해물파전',
+    zh: '海鲜葱饼',
+    en: 'Seafood Green Onion Pancake',
+    category: 'jeon',
+    spicy: 0,
+    allergens: ['wheat', 'seafood'],
+    price: '12000-18000',
+    desc_zh: '海鲜配大葱的煎饼。酥脆鲜美的下酒菜。',
+    desc_en: 'Pancake with seafood and green onions. Crispy savory drinking snack.',
+    origin_zh: '바다에서 나는 해산물을 활용한 고급 전.',
+    origin_en: 'Premium pancake using seafood from the sea.',
+    tags: ['seafood', 'savory', 'premium', 'crispy'],
+    quality: 'verified',
+    recipe: {
+      time: '35분',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '해물 모음 300g',
+          zh: '海鲜组合 300g',
+          en: 'Mixed seafood 300g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 海鲜组合',
+            cn_tb: '// TODO: taobao search: 海鲜组合'
+          }
+        }
+      ],
+      steps_zh: ['海鲜处理干净', '大葱铺底', '面糊浇上煎制'],
+      steps_en: ['Clean seafood thoroughly', 'Lay green onions as base', 'Pour batter and pan-fry'],
+      tips_zh: '海鲜要新鲜，火候要够大才酥脆。',
+      tips_en: 'Seafood must be fresh, high heat needed for crispiness.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-mung-bean-pancake',
+    ko: '녹두전',
+    zh: '绿豆煎饼',
+    en: 'Mung Bean Pancake',
+    category: 'jeon',
     spicy: 0,
     allergens: [],
-    price: '반찬',
-    desc_zh: '橡子粉制成的凉粉。山区传统食物。',
-    desc_en: 'Jelly made from acorn starch. Traditional mountain food.',
-    origin_zh: '산간지역에서 도토리를 활용한 전통 구황 음식.',
-    origin_en: 'Traditional famine food using acorns in mountainous areas.',
-    tags: ['traditional', 'mountain', 'healthy', 'jelly'],
+    price: '10000-15000',
+    desc_zh: '绿豆磨浆制成的煎饼。传统的素食煎饼。',
+    desc_en: 'Pancake made from ground mung beans. Traditional vegetarian pancake.',
+    origin_zh: '조선시대부터 내려온 전통적인 전 요리.',
+    origin_en: 'Traditional pancake dish from Joseon era.',
+    tags: ['traditional', 'vegetarian', 'protein', 'crispy'],
+    quality: 'basic',
+    recipe: {
+      time: '4시간',
+      difficulty: 4,
+      ingredients: [
+        {
+          ko: '녹두 2컵',
+          zh: '绿豆 2杯',
+          en: 'Mung beans 2 cups',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 绿豆',
+            cn_tb: '// TODO: taobao search: 绿豆'
+          }
+        }
+      ],
+      steps_zh: ['绿豆泡发8小时', '磨成浆', '煎制成饼'],
+      steps_en: ['Soak mung beans 8 hours', 'Grind into batter', 'Pan-fry into pancakes'],
+      tips_zh: '绿豆要泡够时间才好磨，磨得越细越好。',
+      tips_en: 'Soak beans long enough for easy grinding, finer grinding is better.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-sweet-and-sour-pork',
+    ko: '탕수육',
+    zh: '糖醋肉',
+    en: 'Sweet and Sour Pork',
+    category: 'chinese',
+    spicy: 0,
+    allergens: ['wheat', 'pork'],
+    price: '15000-20000',
+    desc_zh: '糖醋口味的炸猪肉。韩式中餐代表料理。',
+    desc_en: 'Sweet and sour fried pork. Representative Korean-Chinese dish.',
+    origin_zh: '중국 요리를 한국인 입맛에 맞게 변형한 요리.',
+    origin_en: 'Chinese dish adapted to Korean taste preferences.',
+    tags: ['sweet-sour', 'fried', 'korean-chinese', 'popular'],
+    quality: 'verified',
+    recipe: {
+      time: '45분',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '돼지고기 500g',
+          zh: '猪肉 500g',
+          en: 'Pork 500g',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 猪里脊肉',
+            cn_tb: '// TODO: taobao search: 猪里脊肉'
+          }
+        }
+      ],
+      steps_zh: ['猪肉切块腌制', '裹粉油炸', '浇糖醋汁'],
+      steps_en: ['Cut pork into chunks and marinate', 'Coat in flour and fry', 'Pour sweet-sour sauce'],
+      tips_zh: '肉要炸两次才酥脆，糖醋汁要现做现浇。',
+      tips_en: 'Double-fry meat for crispiness, pour sauce fresh when serving.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-fried-rice',
+    ko: '볶음밥',
+    zh: '炒饭',
+    en: 'Korean Fried Rice',
+    category: 'bap',
+    spicy: 1,
+    allergens: ['egg'],
+    price: '8000-12000',
+    desc_zh: '各种配菜炒制的米饭。简单实用的家常料理。',
+    desc_en: 'Rice stir-fried with various ingredients. Simple practical home cooking.',
+    origin_zh: '집에 있는 재료를 활용한 대표적인 집밥.',
+    origin_en: 'Representative home cooking using available household ingredients.',
+    tags: ['homestyle', 'practical', 'leftover', 'simple'],
+    quality: 'basic',
+    recipe: {
+      time: '20분',
+      difficulty: 1,
+      ingredients: [
+        {
+          ko: '밥 3공기',
+          zh: '米饭 3碗',
+          en: 'Cooked rice 3 bowls',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 隔夜米饭',
+            cn_tb: '// TODO: taobao search: 隔夜米饭'
+          }
+        }
+      ],
+      steps_zh: ['配菜先炒', '加米饭炒制', '调味装盘'],
+      steps_en: ['Stir-fry ingredients first', 'Add rice and stir-fry', 'Season and serve'],
+      tips_zh: '隔夜米饭炒出来粒粒分明。',
+      tips_en: 'Day-old rice fries with individual grains separated.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-bean-sprout-rice',
+    ko: '콩나물밥',
+    zh: '豆芽饭',
+    en: 'Bean Sprout Rice',
+    category: 'bap',
+    spicy: 1,
+    allergens: ['soy'],
+    price: '8000-12000',
+    desc_zh: '豆芽配米饭一起焖制。营养简单的一锅饭。',
+    desc_en: 'Bean sprouts steamed together with rice. Nutritious simple one-pot rice.',
+    origin_zh: '전라도 지역의 대표적인 향토 음식.',
+    origin_en: 'Representative local food of Jeolla province.',
+    tags: ['regional', 'nutritious', 'one-pot', 'simple'],
+    quality: 'basic',
+    recipe: {
+      time: '40분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '쌀 2컵',
+          zh: '大米 2杯',
+          en: 'Rice 2 cups',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 大米',
+            cn_tb: '// TODO: taobao search: 大米'
+          }
+        }
+      ],
+      steps_zh: ['米和豆芽一起焖', '配蘸料享用'],
+      steps_en: ['Steam rice and bean sprouts together', 'Serve with dipping sauce'],
+      tips_zh: '豆芽不要洗太多遍，保留天然味道。',
+      tips_en: 'Don\'t wash bean sprouts too much, preserve natural flavor.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-pumpkin-rice-cake',
+    ko: '호박떡',
+    zh: '南瓜年糕',
+    en: 'Pumpkin Rice Cake',
+    category: 'dessert',
+    spicy: 0,
+    allergens: [],
+    price: '8000-12000',
+    desc_zh: '南瓜制成的橙色年糕。秋季限定甜品。',
+    desc_en: 'Orange rice cake made with pumpkin. Autumn limited dessert.',
+    origin_zh: '가을철 호박이 많을 때 만드는 계절 떡.',
+    origin_en: 'Seasonal rice cake made during fall pumpkin harvest.',
+    tags: ['seasonal', 'autumn', 'orange', 'natural'],
     quality: 'basic',
     recipe: {
       time: '2시간',
       difficulty: 3,
       ingredients: [
         {
-          ko: '도토리가루 1컵',
-          zh: '橡子粉 1杯',
-          en: 'Acorn starch 1 cup',
+          ko: '단호박 1개',
+          zh: '南瓜 1个',
+          en: 'Sweet pumpkin 1',
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 橡子粉 야생 도토리',
-            cn_tb: '// TODO: taobao search: 橡子粉 야생 도토리'
+            cn_jd: '// TODO: jd.com search: 甜南瓜',
+            cn_tb: '// TODO: taobao search: 甜南瓜'
           }
         }
       ],
-      steps_zh: ['橡子粉加水煮制', '倒入模具冷却', '切块调味'],
-      steps_en: ['Cook acorn starch with water', 'Pour into mold and cool', 'Cut into pieces and season'],
-      tips_zh: '要不断搅拌防止结块。',
-      tips_en: 'Must stir continuously to prevent lumping.'
+      steps_zh: ['南瓜蒸熟打泥', '加糯米粉揉团', '蒸制成年糕'],
+      steps_en: ['Steam pumpkin and puree', 'Mix with glutinous rice flour', 'Steam into rice cake'],
+      tips_zh: '南瓜要选甜的，颜色才好看。',
+      tips_en: 'Choose sweet pumpkin for better color.'
     },
     image: null
   },
 
   {
-    id: 'korean-persimmon-punch',
-    ko: '수정과',
-    zh: '柿子汽水',
-    en: 'Persimmon Punch',
+    id: 'korean-green-tea-ice-cream',
+    ko: '녹차아이스크림',
+    zh: '绿茶冰淇淋',
+    en: 'Green Tea Ice Cream',
+    category: 'dessert',
+    spicy: 0,
+    allergens: ['dairy'],
+    price: '6000-8000',
+    desc_zh: '绿茶口味的冰淇淋。清香的夏季甜品。',
+    desc_en: 'Green tea flavored ice cream. Fragrant summer dessert.',
+    origin_zh: '일본 말차 문화의 영향을 받은 한국식 아이스크림.',
+    origin_en: 'Korean ice cream influenced by Japanese matcha culture.',
+    tags: ['green-tea', 'summer', 'refreshing', 'creamy'],
+    quality: 'basic',
+    recipe: {
+      time: '4시간',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '녹차가루 3큰술',
+          zh: '绿茶粉 3大勺',
+          en: 'Green tea powder 3 tbsp',
+          substitute: null,
+          buyLinks: {
+            kr: '// TODO: coupang affiliate',
+            cn_jd: '// TODO: jd.com search: 绿茶粉',
+            cn_tb: '// TODO: taobao search: 绿茶粉'
+          }
+        }
+      ],
+      steps_zh: ['绿茶粉调匀', '制作冰淇淋液', '冷冻4小时'],
+      steps_en: ['Mix green tea powder evenly', 'Make ice cream base', 'Freeze 4 hours'],
+      tips_zh: '绿茶粉要过筛，不然有颗粒感。',
+      tips_en: 'Sift green tea powder to avoid grittiness.'
+    },
+    image: null
+  },
+
+  {
+    id: 'korean-sweet-rice-balls',
+    ko: '단자',
+    zh: '糯米团子',
+    en: 'Sweet Rice Balls',
     category: 'dessert',
     spicy: 0,
     allergens: [],
-    price: '4000-6000',
-    desc_zh: '肉桂柿子汽水。传统韩式甜饮。',
-    desc_en: 'Cinnamon persimmon punch. Traditional Korean sweet drink.',
-    origin_zh: '궁중에서 마시던 전통 음료. 소화에 도움이 된다.',
-    origin_en: 'Traditional drink consumed in royal court. Helps with digestion.',
-    tags: ['traditional', 'sweet', 'digestive', 'royal'],
+    price: '8000-12000',
+    desc_zh: '糯米制成的甜团子配各种馅料。传统节庆甜品。',
+    desc_en: 'Sweet glutinous rice balls with various fillings. Traditional festive dessert.',
+    origin_zh: '명절이나 특별한 날에 만드는 전통 디저트.',
+    origin_en: 'Traditional dessert made for holidays or special occasions.',
+    tags: ['traditional', 'festive', 'sweet', 'chewy'],
     quality: 'basic',
     recipe: {
-      time: '3시간',
-      difficulty: 2,
+      time: '1시간 30분',
+      difficulty: 3,
       ingredients: [
         {
-          ko: '곶감 10개',
-          zh: '柿饼 10个',
-          en: 'Dried persimmons 10',
+          ko: '찹쌀가루 2컵',
+          zh: '糯米粉 2杯',
+          en: 'Glutinous rice flour 2 cups',
           substitute: null,
           buyLinks: {
             kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 柿饼 曲奇',
-            cn_tb: '// TODO: taobao search: 柿饼 곶감'
+            cn_jd: '// TODO: jd.com search: 糯米粉',
+            cn_tb: '// TODO: taobao search: 糯米粉'
           }
         }
       ],
-      steps_zh: ['柿饼泡水3小时', '加肉桂煮制', '冷却后享用'],
-      steps_en: ['Soak dried persimmons 3 hours', 'Boil with cinnamon', 'Cool and serve'],
-      tips_zh: '要用优质柿饼才香甜。',
-      tips_en: 'Must use high-quality dried persimmons for sweetness.'
+      steps_zh: ['糯米粉和水揉团', '包各种馅料', '蒸制15分钟'],
+      steps_en: ['Mix rice flour with water into dough', 'Wrap with various fillings', 'Steam 15 minutes'],
+      tips_zh: '水要一点点加，太湿会粘手。',
+      tips_en: 'Add water gradually, too wet will stick to hands.'
     },
     image: null
   },
 
+  // === JAPANESE CATEGORY (한국에서 인기 있는 일식) ===
+  
   {
-    id: 'korean-rice-wine-cocktail',
-    ko: '막걸리칵테일',
-    zh: '马格利鸡尾酒',
-    en: 'Makgeolli Cocktail',
-    category: 'alcohol',
+    id: 'korean-style-ramen',
+    ko: '라멘 (한국식)',
+    zh: '拉面 (韩式)',
+    en: 'Korean-style Ramen',
+    category: 'japanese',
+    spicy: 2,
+    allergens: ['gluten', 'soy'],
+    price: '12000-18000',
+    desc_zh: '韩国化的日式拉面，比日本拉面更辣更重口味。',
+    desc_en: 'Korean-adapted Japanese ramen, spicier and more flavorful than original.',
+    origin_zh: '일본 라멘이 한국에서 현지화되어 더 매콤하고 진한 맛으로 발전.',
+    origin_en: 'Japanese ramen localized in Korea to become spicier and richer.',
+    tags: ['japanese-fusion', 'noodles', 'hot', 'popular'],
+    quality: 'verified',
+    recipe: {
+      time: '45분',
+      difficulty: 3,
+      ingredients: [
+        {
+          ko: '라멘 면 1인분',
+          zh: '拉面面条 1人份',
+          en: 'Ramen noodles 1 serving',
+          substitute: null,
+          buyLinks: {
+            kr: '// 쿠팡: 신라면 라멘',
+            cn_jd: '// TODO: 신라면 검색',
+            cn_tb: '// TODO: 辛拉面 검색'
+          }
+        },
+        {
+          ko: '차슈 3-4조각',
+          zh: '叉烧肉 3-4片',
+          en: 'Chashu pork 3-4 slices',
+          substitute: '돼지고기 목살',
+          buyLinks: {
+            kr: '// 쿠팡: 차슈용 돼지고기',
+            cn_jd: '// TODO: 叉烧肉 검색',
+            cn_tb: '// TODO: 叉烧肉 검색'
+          }
+        }
+      ],
+      steps_zh: ['高汤煮沸', '面条煮2-3分钟', '放入叉烧肉和配菜', '撒上海苔丝和葱花'],
+      steps_en: ['Bring broth to boil', 'Cook noodles 2-3 minutes', 'Add chashu and toppings', 'Garnish with seaweed and scallions'],
+      tips_zh: '韩式拉面汤头更浓郁，可以加点韩式辣椒酱增味。',
+      tips_en: 'Korean ramen broth is richer, can add gochujang for extra flavor.'
+    },
+    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop'
+  },
+
+  {
+    id: 'korean-katsu',
+    ko: '돈까스',
+    zh: '炸猪排',
+    en: 'Korean Tonkatsu',
+    category: 'japanese',
     spicy: 0,
-    allergens: [],
+    allergens: ['gluten', 'egg'],
+    price: '10000-15000',
+    desc_zh: '韩式炸猪排，比日式更厚更多汁，配韩式泡菜。',
+    desc_en: 'Korean-style pork cutlet, thicker and juicier than Japanese version, served with kimchi.',
+    origin_zh: '일본 돈까스가 한국에서 더 두껍고 부드럽게 발전한 요리.',
+    origin_en: 'Japanese tonkatsu evolved in Korea to become thicker and more tender.',
+    tags: ['japanese-fusion', 'fried', 'comfort', 'popular'],
+    quality: 'verified',
+    recipe: {
+      time: '30분',
+      difficulty: 2,
+      ingredients: [
+        {
+          ko: '돼지등심 200g',
+          zh: '猪里脊肉 200g',
+          en: 'Pork loin 200g',
+          substitute: null,
+          buyLinks: {
+            kr: '// 쿠팡: 돈까스용 등심',
+            cn_jd: '// TODO: 猪里脊 검색',
+            cn_tb: '// TODO: 猪里脊 검색'
+          }
+        }
+      ],
+      steps_zh: ['猪肉拍打至2cm厚', '裹蛋液和面包糠', '170度油炸3-4分钟', '配韩式泡菜和米饭'],
+      steps_en: ['Pound pork to 2cm thick', 'Coat with egg and breadcrumbs', 'Deep fry at 170°C for 3-4 minutes', 'Serve with kimchi and rice'],
+      tips_zh: '韩式돈까스는 일본식보다 두껍게 만들어 더 촉촉해야 해요.',
+      tips_en: 'Korean tonkatsu should be thicker than Japanese style for more juiciness.'
+    },
+    image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=300&fit=crop'
+  },
+
+  {
+    id: 'korean-udon',
+    ko: '우동',
+    zh: '乌冬面',
+    en: 'Korean Udon',
+    category: 'japanese',
+    spicy: 1,
+    allergens: ['gluten'],
     price: '8000-12000',
-    desc_zh: '马格利调制的现代鸡尾酒。年轻人喜爱。',
-    desc_en: 'Modern cocktail made with makgeolli. Popular among young people.',
-    origin_zh: '전통 막걸리를 현대적으로 재해석한 퓨전 음료.',
-    origin_en: 'Fusion drink reinterpreting traditional makgeolli in modern way.',
-    tags: ['modern', 'fusion', 'trendy', 'alcoholic'],
+    desc_zh: '韩式乌冬面，汤头清淡但配菜丰富。',
+    desc_en: 'Korean-style udon with light broth but rich toppings.',
+    origin_zh: '일본 우동이 한국에서 더 다양한 토핑과 함께 발전.',
+    origin_en: 'Japanese udon evolved in Korea with more diverse toppings.',
+    tags: ['japanese-fusion', 'noodles', 'light', 'comfort'],
     quality: 'basic',
     recipe: {
-      time: '5분',
+      time: '20분',
       difficulty: 1,
       ingredients: [
         {
-          ko: '막걸리 200ml',
-          zh: '马格利 200ml',
-          en: 'Makgeolli 200ml',
+          ko: '우동 면 1인분',
+          zh: '乌冬面条 1人份',
+          en: 'Udon noodles 1 serving',
           substitute: null,
           buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 韩国马格利 막걸리',
-            cn_tb: '// TODO: taobao search: 韩国马格利 막걸리'
+            kr: '// 쿠팡: 냉동 우동',
+            cn_jd: '// TODO: 乌冬面 검색',
+            cn_tb: '// TODO: 乌冬面 검색'
           }
         }
       ],
-      steps_zh: ['马格利加果汁', '调味装饰', '冰块享用'],
-      steps_en: ['Mix makgeolli with fruit juice', 'Season and garnish', 'Serve with ice'],
-      tips_zh: '可以加各种水果调味。',
-      tips_en: 'Can add various fruits for flavoring.'
+      steps_zh: ['煮开清汤', '放入乌冬面煮2分钟', '加入各种配菜', '撒上海苔片'],
+      steps_en: ['Boil clear broth', 'Cook udon noodles 2 minutes', 'Add various toppings', 'Garnish with seaweed'],
+      tips_zh: '우동은 면발이 쫄깃해야 하니까 너무 오래 끓이지 마세요.',
+      tips_en: 'Don\'t overcook udon to maintain chewy texture.'
     },
     image: null
   },
 
   {
-    id: 'korean-temple-food',
-    ko: '사찰음식',
-    zh: '寺院料理',
-    en: 'Korean Temple Food',
-    category: 'western',
-    spicy: 0,
-    allergens: [],
-    price: '20000-30000',
-    desc_zh: '素食寺院料理。健康养生的佛教素食。',
-    desc_en: 'Vegetarian temple cuisine. Healthy Buddhist vegetarian food.',
-    origin_zh: '불교 사찰에서 발달한 정진 요리. 화학조미료를 사용하지 않는다.',
-    origin_en: 'Refined cuisine developed in Buddhist temples. No artificial seasonings used.',
-    tags: ['vegetarian', 'healthy', 'spiritual', 'clean'],
-    quality: 'basic',
-    recipe: null, // Complex traditional preparation
-    image: null
-  },
-
-  {
-    id: 'korean-convenience-meal',
-    ko: '컵밥',
-    zh: '杯装饭',
-    en: 'Cup Rice Meal',
-    category: 'bunsik',
+    id: 'korean-takoyaki',
+    ko: '타코야키',
+    zh: '章鱼烧',
+    en: 'Korean Takoyaki',
+    category: 'japanese',
     spicy: 1,
-    allergens: ['wheat'],
-    price: '3000-5000',
-    desc_zh: '杯装方便米饭。便利店常见快餐。',
-    desc_en: 'Cup instant rice meal. Common convenience store fast food.',
-    origin_zh: '현대 편의점 문화의 산물. 바쁜 현대인을 위한 간편식.',
-    origin_en: 'Product of modern convenience store culture. Simple meal for busy modern people.',
-    tags: ['convenient', 'modern', 'instant', 'portable'],
-    quality: 'basic',
-    recipe: null, // Commercial product
-    image: null
-  },
-
-  {
-    id: 'korean-fusion-pizza',
-    ko: '한국식피자',
-    zh: '韩式披萨',
-    en: 'Korean-style Pizza',
-    category: 'western',
-    spicy: 1,
-    allergens: ['wheat', 'dairy'],
-    price: '15000-25000',
-    desc_zh: '韩式配料的披萨。融合东西方口味。',
-    desc_en: 'Pizza with Korean-style toppings. Fusion of East-West flavors.',
-    origin_zh: '서구 문화와 한국 문화가 융합된 현대 음식.',
-    origin_en: 'Modern food fusing Western and Korean culture.',
-    tags: ['fusion', 'modern', 'cheesy', 'popular'],
+    allergens: ['gluten', 'seafood'],
+    price: '6000-9000',
+    desc_zh: '韩式章鱼烧，比日式更有嚼劲。',
+    desc_en: 'Korean-style takoyaki, chewier than Japanese version.',
+    origin_zh: '일본 타코야키가 한국에서 더 쫄깃하게 변화.',
+    origin_en: 'Japanese takoyaki adapted in Korea to be chewier.',
+    tags: ['japanese-fusion', 'street', 'ball-shaped', 'fun'],
     quality: 'basic',
     recipe: {
-      time: '45분',
-      difficulty: 2,
+      time: '30분',
+      difficulty: 3,
       ingredients: [
         {
-          ko: '피자도우 1장',
-          zh: '披萨面团 1张',
-          en: 'Pizza dough 1',
-          substitute: null,
+          ko: '문어 100g',
+          zh: '章鱼 100g',
+          en: 'Octopus 100g',
+          substitute: '오징어',
           buyLinks: {
-            kr: '// TODO: coupang affiliate',
-            cn_jd: '// TODO: jd.com search: 披萨面团 피자도우',
-            cn_tb: '// TODO: taobao search: 披萨面团 피자도우'
+            kr: '// 쿠팡: 삶은 문어',
+            cn_jd: '// TODO: 章鱼 검색',
+            cn_tb: '// TODO: 章鱼 검색'
           }
         }
       ],
-      steps_zh: ['准备韩式配料', '涂酱铺料', '烤箱烘烤'],
-      steps_en: ['Prepare Korean-style toppings', 'Spread sauce and toppings', 'Bake in oven'],
-      tips_zh: '可以加泡菜、年糕等韩式配料。',
-      tips_en: 'Can add Korean toppings like kimchi and rice cakes.'
+      steps_zh: ['调制面糊', '文어切丁', '用专用模具烤制', '涂章鱼烧酱和撒柴鱼片'],
+      steps_en: ['Make batter', 'Dice octopus', 'Cook in special molds', 'Top with takoyaki sauce and bonito flakes'],
+      tips_zh: '타코야키 팬이 있어야 제대로 된 모양이 나와요.',
+      tips_en: 'Need proper takoyaki pan for the right shape.'
     },
-    image: null
-  },
-
-  {
-    id: 'korean-chicken-beer',
-    ko: '치맥',
-    zh: '炸鸡啤酒',
-    en: 'Chicken and Beer',
-    category: 'alcohol',
-    spicy: 1,
-    allergens: [],
-    price: '20000-30000',
-    desc_zh: '炸鸡配啤酒的完美组合。韩国人最爱。',
-    desc_en: 'Perfect combination of fried chicken and beer. Korean favorite.',
-    origin_zh: '한국의 대표적인 치킨과 맥주 조합 문화.',
-    origin_en: 'Korea\'s representative chicken and beer combination culture.',
-    tags: ['combination', 'popular', 'social', 'evening'],
-    quality: 'basic',
-    recipe: null, // Combination of chicken + beer
-    image: null
-  },
-
-  {
-    id: 'korean-late-night-snack',
-    ko: '야식',
-    zh: '夜宵',
-    en: 'Korean Late Night Snack',
-    category: 'street',
-    spicy: 2,
-    allergens: ['wheat'],
-    price: '8000-15000',
-    desc_zh: '韩式夜宵组合。深夜饿了的完美选择。',
-    desc_en: 'Korean late night snack combination. Perfect choice when hungry at night.',
-    origin_zh: '한국인의 야식 문화. 주로 라면, 치킨, 떡볶이 등을 먹는다.',
-    origin_en: 'Korean late night eating culture. Usually eat ramyeon, chicken, tteokbokki, etc.',
-    tags: ['late-night', 'comfort', 'spicy', 'satisfying'],
-    quality: 'basic',
-    recipe: null, // Combination of various late night foods
-    image: null
-  },
-
-  // === NEW ADDITIONS (2026-03-08): EXPANDING TO 176 ITEMS ===
-  
-  {
-    id: 'oi-muchim',
-    ko: '오이무침',
-    zh: '凉拌黄瓜',
-    en: 'Cucumber Salad',
-    category: 'banchan',
-    spicy: 2,
-    allergens: ['soy', 'sesame'],
-    price: '3000-5000',
-    desc_zh: '爽脆的凉拌黄瓜，清爽开胃，是夏天必备小菜。',
-    desc_en: 'Crispy cucumber salad, refreshing and appetizing, a summer essential side dish.',
-    origin_zh: '한국의 전통 반찬. 오이의 아삭한 식감과 시원한 맛이 특징.',
-    origin_en: 'Traditional Korean side dish. Characterized by cucumber\'s crispy texture and cool taste.',
-    tags: ['refreshing', 'summer', 'healthy', 'quick'],
-    quality: 'verified',
-    recipe: {
-      ingredients: [
-        '오이 2개 (cucumbers 2 pieces)',
-        '굵은 소금 1큰술 (coarse salt 1 tbsp)',
-        '고춧가루 1큰술 (gochugaru 1 tbsp)',
-        '다진 마늘 1작은술 (minced garlic 1 tsp)',
-        '참기름 1큰술 (sesame oil 1 tbsp)',
-        '식초 2큰술 (vinegar 2 tbsp)',
-        '설탕 1작은술 (sugar 1 tsp)',
-        '통깨 (sesame seeds)'
-      ],
-      steps: [
-        '오이를 얇게 어슷썰기 하고 굵은 소금에 절여 20분간 둔다',
-        '오이에서 나온 물기를 꼭 짜낸다',
-        '고춧가루, 다진 마늘, 참기름, 식초, 설탕을 섞어 양념장을 만든다',
-        '오이와 양념장을 잘 버무린다',
-        '통깨를 뿌려 완성'
-      ],
-      cookTime: '30분',
-      servings: '2-3명분',
-      tips: 'Pro tip: 오이는 소금에 절인 후 물기를 충분히 제거해야 아삭한 식감을 유지할 수 있다.'
-    },
-    image: null
-  },
-
-  {
-    id: 'myeongnan-jeot',
-    ko: '명란젓',
-    zh: '明太鱼子酱',
-    en: 'Salted Pollock Roe',
-    category: 'banchan',
-    spicy: 1,
-    allergens: ['fish'],
-    price: '5000-8000',
-    desc_zh: '腌制的明太鱼子，口感Q弹，是下酒好菜。',
-    desc_en: 'Salted pollock roe with chewy texture, great with alcohol.',
-    origin_zh: '부산 지역에서 특히 유명한 젓갈류. 일본에서도 인기가 높다.',
-    origin_en: 'Especially famous fermented seafood from Busan. Also popular in Japan.',
-    tags: ['umami', 'alcohol-pairing', 'luxury', 'traditional'],
-    quality: 'verified',
-    recipe: {
-      ingredients: [
-        '명란 300g (pollock roe 300g)',
-        '청주 3큰술 (sake 3 tbsp)',
-        '참기름 1큰술 (sesame oil 1 tbsp)',
-        '다진 마늘 1작은술 (minced garlic 1 tsp)',
-        '파 1대 (green onion 1 stalk)'
-      ],
-      steps: [
-        '명란의 껍질을 벗겨 알만 분리한다',
-        '청주와 참기름을 넣고 부드럽게 섞는다',
-        '다진 마늘과 파를 넣어 버무린다',
-        '냉장고에서 30분간 숙성시킨다'
-      ],
-      cookTime: '45분',
-      servings: '2-3명분',
-      tips: 'Pro tip: 껍질을 벗길 때 숟가락으로 긁어내면 쉽게 분리된다.'
-    },
-    image: null
-  },
-
-  {
-    id: 'sigeumchi-namul',
-    ko: '시금치나물',
-    zh: '拌菠菜',
-    en: 'Seasoned Spinach',
-    category: 'banchan',
-    spicy: 0,
-    allergens: ['soy', 'sesame'],
-    price: '2000-4000',
-    desc_zh: '营养丰富的拌菠菜，清淡健康的小菜。',
-    desc_en: 'Nutritious seasoned spinach, light and healthy side dish.',
-    origin_zh: '한국의 가장 기본적인 나물 반찬 중 하나.',
-    origin_en: 'One of the most basic vegetable side dishes in Korea.',
-    tags: ['healthy', 'vegetarian', 'iron-rich', 'classic'],
-    quality: 'verified',
-    recipe: {
-      ingredients: [
-        '시금치 1단 (spinach 1 bunch)',
-        '간장 1큰술 (soy sauce 1 tbsp)',
-        '참기름 1큰술 (sesame oil 1 tbsp)',
-        '다진 마늘 1작은술 (minced garlic 1 tsp)',
-        '소금 약간 (salt a pinch)',
-        '통깨 (sesame seeds)'
-      ],
-      steps: [
-        '시금치를 깨끗이 씻어 뿌리 부분을 자른다',
-        '끓는 물에 소금을 넣고 시금치를 30초간 데친다',
-        '찬물에 헹궈 물기를 짜낸다',
-        '간장, 참기름, 다진 마늘을 넣고 버무린다',
-        '통깨를 뿌려 완성'
-      ],
-      cookTime: '15분',
-      servings: '2-3명분',
-      tips: 'Pro tip: 시금치는 데치는 시간이 짧아야 식감과 색이 살아난다.'
-    },
-    image: null
-  },
-
-  {
-    id: 'doraji-namul',
-    ko: '도라지나물',
-    zh: '拌桔梗',
-    en: 'Seasoned Bellflower Root',
-    category: 'banchan',
-    spicy: 1,
-    allergens: ['soy', 'sesame'],
-    price: '3000-5000',
-    desc_zh: '有嚼劲的桔梗根，有清肺功效。',
-    desc_en: 'Chewy bellflower root, good for lung health.',
-    origin_zh: '한국 전통 약재이기도 한 도라지를 나물로 만든 반찬.',
-    origin_en: 'Traditional side dish made from bellflower root, also used as herbal medicine.',
-    tags: ['healthy', 'medicinal', 'chewy', 'traditional'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'kong-namul',
-    ko: '콩나물',
-    zh: '拌豆芽',
-    en: 'Seasoned Bean Sprouts',
-    category: 'banchan',
-    spicy: 1,
-    allergens: ['soy', 'sesame'],
-    price: '2000-4000',
-    desc_zh: '清爽的拌豆芽，是最常见的小菜之一。',
-    desc_en: 'Refreshing seasoned bean sprouts, one of the most common side dishes.',
-    origin_zh: '한국인의 밥상에서 빠질 수 없는 기본 반찬.',
-    origin_en: 'Essential basic side dish that cannot be missing from Korean meals.',
-    tags: ['basic', 'affordable', 'crunchy', 'everyday'],
-    quality: 'verified',
-    recipe: {
-      ingredients: [
-        '콩나물 300g (bean sprouts 300g)',
-        '간장 2큰술 (soy sauce 2 tbsp)',
-        '참기름 1큰술 (sesame oil 1 tbsp)',
-        '다진 마늘 1작은술 (minced garlic 1 tsp)',
-        '파 1대 (green onion 1 stalk)',
-        '소금, 후추 (salt, pepper)'
-      ],
-      steps: [
-        '콩나물을 깨끗이 씻어 꼬리를 제거한다',
-        '끓는 물에 소금을 넣고 콩나물을 2분간 데친다',
-        '찬물에 헹궈 물기를 제거한다',
-        '간장, 참기름, 다진 마늘, 파를 넣고 버무린다',
-        '소금, 후추로 간을 맞춘다'
-      ],
-      cookTime: '15분',
-      servings: '3-4명분',
-      tips: 'Pro tip: 콩나물은 오래 삶으면 아삭한 식감이 없어진다.'
-    },
-    image: null
-  },
-
-  {
-    id: 'mul-kimchi',
-    ko: '물김치',
-    zh: '水萝卜泡菜',
-    en: 'Water Kimchi',
-    category: 'banchan',
-    spicy: 1,
-    allergens: [],
-    price: '4000-6000',
-    desc_zh: '清爽的水萝卜泡菜，夏天开胃菜。',
-    desc_en: 'Refreshing water radish kimchi, summer appetizer.',
-    origin_zh: '여름철 시원한 국물을 즐기는 김치.',
-    origin_en: 'Kimchi with cool broth enjoyed in summer.',
-    tags: ['refreshing', 'summer', 'light', 'probiotic'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'cheese-dakgangjeong',
-    ko: '치즈닭강정',
-    zh: '芝士炸鸡',
-    en: 'Cheese Dakgangjeong',
-    category: 'street',
-    spicy: 2,
-    allergens: ['wheat', 'dairy', 'soy'],
-    price: '8000-12000',
-    desc_zh: '酥脆炸鸡配上浓郁芝士，年轻人的最爱。',
-    desc_en: 'Crispy fried chicken with rich cheese, young people\'s favorite.',
-    origin_zh: '전통 닭강정에 치즈를 더한 현대적 변형.',
-    origin_en: 'Modern variation of traditional dakgangjeong with added cheese.',
-    tags: ['cheesy', 'modern', 'popular', 'social-media'],
-    quality: 'verified',
-    recipe: {
-      ingredients: [
-        '닭봉 500g (chicken wings 500g)',
-        '튀김가루 1컵 (frying powder 1 cup)',
-        '모짜렐라 치즈 100g (mozzarella cheese 100g)',
-        '고추장 2큰술 (gochujang 2 tbsp)',
-        '물엿 2큰술 (corn syrup 2 tbsp)',
-        '마늘 3쪽 (garlic 3 cloves)',
-        '생강 1쪽 (ginger 1 piece)'
-      ],
-      steps: [
-        '닭봉에 튀김가루를 묻혀 170도 기름에 튀긴다',
-        '고추장, 물엿, 다진 마늘, 생강으로 양념장을 만든다',
-        '튀긴 닭봉을 양념장에 버무린다',
-        '치즈를 올려 오븐에서 1분간 녹인다'
-      ],
-      cookTime: '30분',
-      servings: '2-3명분',
-      tips: 'Pro tip: 치즈는 마지막에 올려야 텁텁하지 않고 부드럽다.'
-    },
-    image: null
-  },
-
-  {
-    id: 'hotteok-ice-cream',
-    ko: '호떡아이스크림',
-    zh: '糖饼冰淇淋',
-    en: 'Hotteok Ice Cream',
-    category: 'street',
-    spicy: 0,
-    allergens: ['wheat', 'dairy', 'nuts'],
-    price: '3000-4000',
-    desc_zh: '热糖饼配冰淇淋的神奇组合，冷热交替的新奇体验。',
-    desc_en: 'Amazing combination of hot hotteok with ice cream, a unique hot-cold experience.',
-    origin_zh: '최근 인기를 끌고 있는 퓨전 디저트. 차갑고 따뜻함의 조화.',
-    origin_en: 'Recently popular fusion dessert. Harmony of cold and warm.',
-    tags: ['fusion', 'trendy', 'unique', 'dessert-street'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'korean-waffle',
-    ko: '길거리 와플',
-    zh: '街头华夫饼',
-    en: 'Korean Street Waffle',
-    category: 'street',
-    spicy: 0,
-    allergens: ['wheat', 'dairy', 'eggs'],
-    price: '2000-3000',
-    desc_zh: '香甜的街头华夫饼，有各种口味的馅料。',
-    desc_en: 'Sweet street waffle with various flavored fillings.',
-    origin_zh: '길거리에서 쉽게 찾을 수 있는 인기 간식.',
-    origin_en: 'Popular snack easily found on the streets.',
-    tags: ['sweet', 'portable', 'affordable', 'kids-love'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'korean-corn-dog-variations',
-    ko: '핫도그 바리에이션',
-    zh: '各式热狗',
-    en: 'Korean Corn Dog Variations',
-    category: 'street',
-    spicy: 1,
-    allergens: ['wheat', 'dairy', 'soy'],
-    price: '2500-4500',
-    desc_zh: '各种创新口味的韩式热狗。',
-    desc_en: 'Various innovative Korean-style corn dogs.',
-    origin_zh: '한국에서 독특하게 발달한 다양한 핫도그 메뉴.',
-    origin_en: 'Various hot dog menus uniquely developed in Korea.',
-    tags: ['innovative', 'variety', 'fun', 'instagrammable'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'korean-crepe',
-    ko: '한국식 크레페',
-    zh: '韩式可丽饼',
-    en: 'Korean Crepe',
-    category: 'street',
-    spicy: 0,
-    allergens: ['wheat', 'dairy', 'eggs'],
-    price: '3000-5000',
-    desc_zh: '薄薄的饼皮包着各种馅料的韩식可丽饼。',
-    desc_en: 'Korean crepe with thin wrapper and various fillings.',
-    origin_zh: '길거리에서 즐길 수 있는 달콤한 간식.',
-    origin_en: 'Sweet snack that can be enjoyed on the street.',
-    tags: ['sweet', 'portable', 'customizable', 'date-food'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'korean-blood-sausage',
-    ko: '순대',
-    zh: '血肠',
-    en: 'Korean Blood Sausage',
-    category: 'street',
-    spicy: 0,
-    allergens: ['soy'],
-    price: '5000-8000',
-    desc_zh: '韩式血肠，配酸菜一起吃。',
-    desc_en: 'Korean blood sausage, eaten with pickled vegetables.',
-    origin_zh: '한국의 전통 음식. 돼지 내장에 당면과 야채를 넣어 만든다.',
-    origin_en: 'Traditional Korean food made by stuffing pig intestines with noodles and vegetables.',
-    tags: ['traditional', 'hearty', 'comfort', 'winter'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'bingsu-mango',
-    ko: '망고빙수',
-    zh: '芒果刨冰',
-    en: 'Mango Bingsu',
-    category: 'dessert',
-    spicy: 0,
-    allergens: ['dairy'],
-    price: '8000-12000',
-    desc_zh: '夏季必吃的芒果刨冰，清爽香甜。',
-    desc_en: 'Must-eat mango shaved ice in summer, refreshing and sweet.',
-    origin_zh: '한국 여름 대표 디저트 중 하나. 과일 빙수의 인기 메뉴.',
-    origin_en: 'One of Korea\'s representative summer desserts. Popular fruit bingsu menu.',
-    tags: ['summer', 'tropical', 'refreshing', 'instagram'],
-    quality: 'verified',
-    recipe: {
-      ingredients: [
-        '얼음 4컵 (ice 4 cups)',
-        '연유 3큰술 (condensed milk 3 tbsp)',
-        '망고 2개 (mango 2 pieces)',
-        '바닐라 아이스크림 (vanilla ice cream)',
-        '연유 시럽 (condensed milk syrup)'
-      ],
-      steps: [
-        '망고를 깍뚝썰기로 자른다',
-        '얼음과 연유를 믹서기에 갈아 빙수를 만든다',
-        '그릇에 빙수를 담고 망고를 올린다',
-        '바닐라 아이스크림을 올린다',
-        '연유 시럽을 뿌려 완성'
-      ],
-      cookTime: '15분',
-      servings: '2명분',
-      tips: 'Pro tip: 얼음은 곱게 갈아야 부드러운 식감을 얻을 수 있다.'
-    },
-    image: null
-  },
-
-  {
-    id: 'korean-macaroon',
-    ko: '한국식 마카롱',
-    zh: '韩式马卡龙',
-    en: 'Korean Macaroon',
-    category: 'dessert',
-    spicy: 0,
-    allergens: ['nuts', 'eggs'],
-    price: '2500-4000',
-    desc_zh: '독특口味的韩式马卡龙，有紫薯、绿茶等口味。',
-    desc_en: 'Korean macaroon with unique flavors like sweet potato, green tea.',
-    origin_zh: '프랑스 마카롱을 한국인 입맛에 맞게 변형한 디저트.',
-    origin_en: 'French macaron adapted to Korean taste preferences.',
-    tags: ['elegant', 'gift', 'unique-flavors', 'colorful'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'injeolmi-toast',
-    ko: '인절미 토스트',
-    zh: '年糕粉吐司',
-    en: 'Injeolmi Toast',
-    category: 'dessert',
-    spicy: 0,
-    allergens: ['wheat', 'dairy', 'soy'],
-    price: '4000-6000',
-    desc_zh: '年糕粉撒在吐司上的韩式甜点。',
-    desc_en: 'Korean dessert with rice cake powder sprinkled on toast.',
-    origin_zh: '전통 인절미를 현대적으로 재해석한 카페 메뉴.',
-    origin_en: 'Modern reinterpretation of traditional injeolmi as a cafe menu.',
-    tags: ['traditional-modern', 'nutty', 'cafe-style', 'trending'],
-    quality: 'verified',
-    recipe: {
-      ingredients: [
-        '식빵 2장 (bread slices 2 pieces)',
-        '인절미가루 3큰술 (injeolmi powder 3 tbsp)',
-        '버터 (butter)',
-        '연유 2큰술 (condensed milk 2 tbsp)',
-        '견과류 (nuts)'
-      ],
-      steps: [
-        '식빵을 토스터에 굽는다',
-        '버터를 발라준다',
-        '연유를 고르게 펴 바른다',
-        '인절미가루를 듬뿍 뿌린다',
-        '견과류를 올려 완성'
-      ],
-      cookTime: '10분',
-      servings: '1명분',
-      tips: 'Pro tip: 인절미가루는 토스트가 따뜻할 때 뿌려야 잘 달라붙는다.'
-    },
-    image: null
-  },
-
-  {
-    id: 'bungeoppang-ice-cream',
-    ko: '붕어빵 아이스크림',
-    zh: '鲷鱼烧冰淇淋',
-    en: 'Bungeoppang Ice Cream',
-    category: 'dessert',
-    spicy: 0,
-    allergens: ['wheat', 'dairy'],
-    price: '2500-4000',
-    desc_zh: '鲷鱼烧造型的冰淇淋，可爱又美味。',
-    desc_en: 'Fish-shaped ice cream, cute and delicious.',
-    origin_zh: '전통 붕어빵 모양을 한 아이스크림 디저트.',
-    origin_en: 'Ice cream dessert shaped like traditional bungeoppang.',
-    tags: ['cute', 'nostalgic', 'shape-unique', 'kids-favorite'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'korean-shaved-ice-coffee',
-    ko: '커피빙수',
-    zh: '咖啡刨冰',
-    en: 'Coffee Shaved Ice',
-    category: 'dessert',
-    spicy: 0,
-    allergens: ['dairy'],
-    price: '6000-9000',
-    desc_zh: '咖啡味的刨冰，夏日下午茶的好选择。',
-    desc_en: 'Coffee-flavored shaved ice, great for summer afternoon tea.',
-    origin_zh: '커피와 빙수의 조화로 만든 여름 디저트.',
-    origin_en: 'Summer dessert made with harmony of coffee and shaved ice.',
-    tags: ['caffeinated', 'summer', 'adult-taste', 'afternoon'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  // === ADDITIONAL ITEMS TO REACH 50 NEW ===
-
-  {
-    id: 'seafood-pajeon',
-    ko: '해물파전',
-    zh: '海鲜韭菜饼',
-    en: 'Seafood Scallion Pancake',
-    category: 'jeon',
-    spicy: 1,
-    allergens: ['wheat', 'seafood'],
-    price: '8000-12000',
-    desc_zh: '香脆的海鲜韭菜饼，下雨天的完美搭配。',
-    desc_en: 'Crispy seafood scallion pancake, perfect for rainy days.',
-    origin_zh: '비오는 날의 대표 음식. 파와 해물의 조화.',
-    origin_en: 'Representative food for rainy days. Harmony of scallions and seafood.',
-    tags: ['rainy-day', 'crispy', 'alcohol-pairing', 'comfort'],
-    quality: 'verified',
-    recipe: {
-      ingredients: [
-        '파 3대 (scallions 3 stalks)',
-        '새우 100g (shrimp 100g)',
-        '오징어 100g (squid 100g)',
-        '부침가루 1컵 (pancake flour 1 cup)',
-        '물 1컵 (water 1 cup)',
-        '달걀 1개 (egg 1)',
-        '소금, 후추 (salt, pepper)'
-      ],
-      steps: [
-        '파는 4cm 길이로 자르고 해물은 먹기 좋게 썬다',
-        '부침가루에 물과 달걀을 넣어 반죽을 만든다',
-        '팬에 기름을 두르고 파를 깔아준다',
-        '해물을 올리고 반죽을 부어준다',
-        '앞뒤로 바삭하게 구워낸다'
-      ],
-      cookTime: '20분',
-      servings: '2-3명분',
-      tips: 'Pro tip: 센 불에서 바삭하게 구워야 맛있다.'
-    },
-    image: null
-  },
-
-  {
-    id: 'gamjatang-bone-marrow',
-    ko: '감자탕 뼈다귀',
-    zh: '土豆汤脊骨',
-    en: 'Gamjatang Pork Bone',
-    category: 'guk',
-    spicy: 2,
-    allergens: ['soy'],
-    price: '12000-18000',
-    desc_zh: '浓郁的猪脊骨汤配土豆，营养丰富。',
-    desc_en: 'Rich pork spine soup with potatoes, nutritious.',
-    origin_zh: '한국의 대표적인 보양식 중 하나.',
-    origin_en: 'One of Korea\'s representative nourishing foods.',
-    tags: ['hearty', 'nourishing', 'winter', 'collagen'],
-    quality: 'basic',
-    recipe: null,
-    image: null
-  },
-
-  {
-    id: 'korean-rice-punch',
-    ko: '식혜',
-    zh: '甜米汁',
-    en: 'Korean Rice Punch',
-    category: 'drink',
-    spicy: 0,
-    allergens: [],
-    price: '2000-3000',
-    desc_zh: '传统的甜米汁饮料，帮助消化。',
-    desc_en: 'Traditional sweet rice drink that aids digestion.',
-    origin_zh: '한국의 전통 음료. 엿기름으로 만든 달콤한 음료.',
-    origin_en: 'Traditional Korean beverage made with malt, sweet drink.',
-    tags: ['traditional', 'sweet', 'digestive', 'refreshing'],
-    quality: 'basic',
-    recipe: null,
     image: null
   }
 
 ];
+
+export default koreanFoodDB;

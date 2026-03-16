@@ -220,7 +220,7 @@ export default function PetTab({ lang, setTab }) {
 
       {/* CTA Button */}
       <button onClick={() => setTab && setTab('agency')}
-        className="w-full bg-gradient-to-r from-[#1C1C1E] to-[#2C2C2E] text-center rounded-lg p-4 card-hover btn-press border border-[#111827]/30 shadow-lg">
+        className="w-full bg-gradient-to-r from-[#1C1C1E] to-[#2C2C2E] text-center rounded-lg p-4 card-hover btn-press border border-[#111827]/30 ">
         <span className="text-[#111827] font-bold text-base">
           📋 {lang === 'ko' ? '반려동물 서류 대행 신청' : lang === 'zh' ? '申请宠物文件代办' : 'Request Pet Document Service'}
         </span>
@@ -263,7 +263,7 @@ function TourApiPetSection({ lang }) {
       <div className="grid grid-cols-2 gap-3">
         {items.map((item, i) => (
           <div key={item.contentid || i} onClick={() => setDetailItem(item)}
-            className="rounded-xl overflow-hidden bg-white border border-gray-100 shadow-sm cursor-pointer">
+            className="rounded-xl overflow-hidden bg-white border border-gray-100  cursor-pointer">
             {item.firstimage ? (
               <img src={item.firstimage} alt={item.title} className="w-full h-28 object-cover" loading="lazy" />
             ) : (

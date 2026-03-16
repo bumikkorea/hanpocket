@@ -219,7 +219,7 @@ export default function SOSTab({ lang, profile }) {
         {/* Symptom Cards Grid */}
         <div className="grid grid-cols-1 gap-3">
           {medicalCards.map((symptom) => (
-            <div key={symptom.id} className="bg-white rounded-2xl p-4 border-2 border-red-100 shadow-sm hover:border-red-300 transition-all">
+            <div key={symptom.id} className="bg-white rounded-2xl p-4 border-2 border-red-100  hover:border-red-300 transition-all">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                   <symptom.icon size={20} className="text-red-600" strokeWidth={1} />
@@ -264,7 +264,7 @@ export default function SOSTab({ lang, profile }) {
         {/* Phrase Cards */}
         <div className="grid grid-cols-1 gap-3">
           {emergencyPhrases.map((phrase, index) => (
-            <div key={index} className="bg-white rounded-2xl p-4 border-2 border-red-100 shadow-sm hover:border-red-300 transition-all">
+            <div key={index} className="bg-white rounded-2xl p-4 border-2 border-red-100  hover:border-red-300 transition-all">
               <div className="flex items-center gap-3">
                 <div className="flex-1">
                   <p className="text-3xl font-black text-gray-900 mb-2">{phrase.ko}</p>
@@ -286,7 +286,7 @@ export default function SOSTab({ lang, profile }) {
   }
 
   return (
-    <div className="space-y-4 animate-fade-up">
+    <div className="space-y-4 animate-fade-up px-1 pt-2">
       {/* SOS Button */}
       <button onClick={handleSOS}
         className={`w-full rounded-3xl p-8 text-center transition-all ${
@@ -301,7 +301,7 @@ export default function SOSTab({ lang, profile }) {
       <div className="grid grid-cols-3 gap-3">
         {emergencyNumbers.map(em => (
           <a key={em.number} href={`tel:${em.number}`}
-            className="bg-white rounded-2xl p-5 border-2 border-gray-100 hover:border-red-300 text-center hover:shadow-lg transition-all transform hover:scale-105">
+            className="bg-white rounded-2xl p-5 border-2 border-gray-100 hover:border-red-300 text-center hover: transition-all transform hover:scale-105">
             <div className={`w-12 h-12 ${em.color} rounded-full flex items-center justify-center mx-auto mb-3`}>
               <em.icon size={24} className="text-white" strokeWidth={1} />
             </div>
@@ -334,7 +334,7 @@ export default function SOSTab({ lang, profile }) {
 
       {/* Enhanced Location Section */}
       {sosActive && (
-        <div className="bg-white rounded-2xl p-5 border-2 border-red-200 shadow-sm">
+        <div className="bg-white rounded-2xl p-5 border-2 border-red-200 ">
           <div className="flex items-center gap-2 mb-3">
             <MapPin size={20} className="text-red-600" strokeWidth={1} />
             <h3 className="font-black text-red-700 text-lg">{L(lang, { ko: '현재 위치', zh: '当前位置', en: 'Current Location' })}</h3>
@@ -391,13 +391,13 @@ export default function SOSTab({ lang, profile }) {
       )}
 
       {/* Situation Select */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-2xl p-5 border border-gray-200 ">
         <h3 className="font-black text-gray-900 text-lg mb-3">{L(lang, { ko: '상황 선택', zh: '选择情况', en: 'Select Situation' })}</h3>
         <div className="grid grid-cols-3 gap-2">
           {situations.map(s => (
             <button key={s.id} onClick={() => setSelectedSit(s.id)}
               className={`p-4 rounded-xl text-center transition-all ${
-                selectedSit === s.id ? 'bg-red-600 text-white shadow-lg' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                selectedSit === s.id ? 'bg-red-600 text-white ' : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
               }`}>
               <s.icon size={20} className="mx-auto mb-2" strokeWidth={1} />
               <p className="text-xs font-bold">{L(lang, s.label)}</p>
@@ -408,7 +408,7 @@ export default function SOSTab({ lang, profile }) {
 
       {/* Generated Korean Text */}
       {(sosActive || selectedSit) && (
-        <div className="bg-red-50 rounded-2xl p-5 border-2 border-red-200 shadow-sm">
+        <div className="bg-red-50 rounded-2xl p-5 border-2 border-red-200 ">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-black text-red-800 text-lg">{L(lang, { ko: '한국인에게 보여주세요', zh: '给韩国人看', en: 'Show to Korean person' })}</h3>
             <button onClick={copyAll} className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl text-red-600 border-2 border-red-200 hover:bg-red-50 transition-colors">
@@ -416,7 +416,7 @@ export default function SOSTab({ lang, profile }) {
               <span className="text-sm font-bold">{copied ? L(lang, { ko: '복사됨', zh: '已复制', en: 'Copied' }) : L(lang, { ko: '전체 복사', zh: '全部复制', en: 'Copy All' })}</span>
             </button>
           </div>
-          <div className="bg-white rounded-xl p-5 text-gray-900 text-lg whitespace-pre-line font-medium leading-relaxed shadow-sm">
+          <div className="bg-white rounded-xl p-5 text-gray-900 text-lg whitespace-pre-line font-medium leading-relaxed ">
             {emergencyText}
           </div>
           {sit && (
@@ -434,7 +434,7 @@ export default function SOSTab({ lang, profile }) {
       )}
 
       {/* Nearby Search Links */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-2xl p-5 border border-gray-200 ">
         <h3 className="font-black text-gray-900 text-lg mb-3">{L(lang, { ko: '주변 검색', zh: '附近搜索', en: 'Nearby Search' })}</h3>
         <div className="grid grid-cols-2 gap-2">
           {[
@@ -453,7 +453,7 @@ export default function SOSTab({ lang, profile }) {
       </div>
 
       {/* Embassy Info - Enhanced */}
-      <div className="bg-white rounded-2xl p-5 border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-2xl p-5 border border-gray-200 ">
         <h3 className="font-black text-gray-900 text-lg mb-4">{L(lang, { ko: '중국 대사관/영사관', zh: '中国大使馆/领事馆', en: 'Chinese Embassy/Consulate' })}</h3>
         <div className="space-y-3">
           {embassies.map((em, i) => (

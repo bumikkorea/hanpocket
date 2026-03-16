@@ -126,6 +126,48 @@ VITE_APPLE_CLIENT_ID=com.hanpocket.signin
 - 여행계획 기능 (최대 10개 플랜, 각 10개 목적지)
 - Cloudflare Pages 배포 완료
 - PWA 제거 (서비스워커 충돌 해결)
+- 입국심사 대기시간 (ImmigrationWaitTime) — T1/T2 터미널, 외국인/내국인 레인, 시간대별 평균 폴백
+- 영수증 세금환급 판별기 (TaxRefundChecker) — OCR + 국세청 Tax Free 조회 + VAT 9.09% 환급계산 + 영수증 기록
+- 국적별 여행자 현황 (VisitorHeatmapCard/Full) — 한국관광공사 통계 기반 + 국적/지역별 필터
+- 출국 카운트다운 (DepartureCountdown) — 항공편 조회 + 타임라인 알림 + 체크리스트 + 택시/AREX 딥링크
+- 다음 여행 위시리스트 (WishlistPage/Prompt/Reengagement) — 장소/음식/체험 저장 + 30일 후 재참여 카드
+- 여권 스캔 자동 세팅 (PassportScan) — MRZ 파싱 + 국적별 비자/언어/대사관/팁 자동설정, 로컬 전용
+- 맥락 기반 자동 추천 (SmartRecommendCard) — 시간+날씨+지역 조합 추천 카드, 30분 갱신
+- 출국 타임어택 쇼핑 동선 (DepartureShoppingRoute) — 남은 시간별 최적 쇼핑루트 + 인기 구매 + 본국배송 CTA
+
+### 신규 API 의존성 (키 등록 필요)
+| 환경변수 | 용도 | 등록처 |
+|---------|------|--------|
+| VITE_AIRPORT_API_KEY | 인천공항 입국심사 대기시간 | https://www.airport.kr/ |
+| VITE_CLOVA_OCR_API_KEY | 영수증 OCR | https://www.ncloud.com/product/aiService/ocr |
+| VITE_NTS_API_KEY | 국세청 Tax Free 가맹점 조회 | https://www.data.go.kr |
+| VITE_KTO_API_KEY | 한국관광공사 방문자 통계 | https://datalab.visitkorea.or.kr/ |
+| VITE_FLIGHT_API_KEY | 항공편 상태 조회 | FlightAware or AeroDataBox |
+| VITE_OPENWEATHER_API_KEY | 날씨 기반 추천 | https://openweathermap.org/api |
+| VITE_NAVER_CLIENT_ID | 네이버 Place API (추천 데이터) | https://developers.naver.com/ |
+| VITE_NAVER_CLIENT_SECRET | 네이버 Place API | https://developers.naver.com/ |
+
+### 신규 파일 목록
+- `src/api/immigrationApi.js` — 입국심사 대기시간 API + 시간대별 평균 데이터
+- `src/api/taxRefundApi.js` — Clova OCR + 국세청 Tax Free + 환급 계산
+- `src/api/visitorStatsApi.js` — 한국관광공사 방문자 통계 API
+- `src/api/flightApi.js` — 항공편 상태/게이트/혼잡도 API
+- `src/api/weatherApi.js` — OpenWeatherMap 날씨 API + 계절별 폴백
+- `src/api/smartRecommendApi.js` — 맥락 기반 추천 엔진 (시간+날씨+지역)
+- `src/utils/mrzParser.js` — 여권 MRZ 파싱 + 국적별 비자/대사관/팁 데이터
+- `src/components/ImmigrationWaitTime.jsx` — 홈탭 입국하기 내 대기시간 카드
+- `src/components/TaxRefundChecker.jsx` — 영수증 세금환급 판별 (subPage: taxrefund)
+- `src/components/VisitorHeatmapCard.jsx` — 홈화면 방문자 통계 위젯 카드
+- `src/components/VisitorHeatmapFull.jsx` — 방문자 통계 상세 (subPage: heatmap)
+- `src/components/DepartureCountdown.jsx` — 출국 카운트다운 (subPage: departure)
+- `src/components/WishlistPage.jsx` — 위시리스트 전체 페이지 (subPage: wishlist)
+- `src/components/WishlistPrompt.jsx` — 출국일 위시리스트 프롬프트 모달
+- `src/components/WishlistReengagement.jsx` — 30일 후 재참여 카드 (홈화면용)
+- `src/components/PassportScan.jsx` — 여권 스캔/수동입력 (subPage: passport-scan)
+- `src/components/SmartRecommendCard.jsx` — 맥락 기반 추천 카드 (홈화면 위젯용)
+- `src/components/DepartureShoppingRoute.jsx` — 출국 쇼핑 동선 (subPage: departure-shopping)
+- `src/hooks/useDepartureCountdown.js` — 출국 카운트다운 상태 훅
+- `src/hooks/useWishlist.js` — 위시리스트 CRUD 훅
 
 ### 진행 중
 - 제로페이 가맹점 지오코딩 (우체국 API 1,898건 수집 완료, 카카오 지오코딩 진행 중)
@@ -135,10 +177,10 @@ VITE_APPLE_CLIENT_ID=com.hanpocket.signin
 1. 제로페이 💳 핀 MapTab 통합
 2. 외국인 병원 데이터 연동
 3. 관광안내소(중국어 가능) 데이터 연동
-4. 인천공항 온보딩 화면
-5. 실시간 환율 위젯
-6. 공공와이파이 데이터
-7. Cloudflare Workers 백엔드 API 프록시 배포
+4. 실시간 환율 위젯
+5. 공공와이파이 데이터
+6. Cloudflare Workers 백엔드 API 프록시 배포
+7. 신규 5개 기능 API 키 등록 및 실데이터 연동
 
 ## 완료 알림 (필수!)
 작업이 끝나면 **반드시** 아래 명령어를 실행해서 알림을 보내야 한다:

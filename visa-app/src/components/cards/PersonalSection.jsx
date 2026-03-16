@@ -206,7 +206,7 @@ function HScrollSection({ children }) {
     <div className="relative group">
       {canLeft && (
         <button onClick={() => scroll(-1)}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition-all opacity-0 group-hover:opacity-100">
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white  flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition-all opacity-0 group-hover:opacity-100">
           ‹
         </button>
       )}
@@ -218,7 +218,7 @@ function HScrollSection({ children }) {
       </div>
       {canRight && (
         <button onClick={() => scroll(1)}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white shadow-md flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition-all opacity-0 group-hover:opacity-100">
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-white  flex items-center justify-center text-[#111827] hover:bg-[#F3F4F6] transition-all opacity-0 group-hover:opacity-100">
           ›
         </button>
       )}
@@ -372,7 +372,7 @@ function VoiceTranslatorCard({ lang }) {
           onTouchEnd={(e) => { e.preventDefault(); stopListening() }}
           className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-sm transition-all select-none ${
             isListening === 'zh'
-              ? 'bg-red-500 text-white scale-95 shadow-lg shadow-red-500/30'
+              ? 'bg-red-500 text-white scale-95  shadow-red-500/30'
               : 'bg-red-50 text-red-500 hover:bg-red-100 active:bg-red-500 active:text-white'
           }`}
         >
@@ -386,7 +386,7 @@ function VoiceTranslatorCard({ lang }) {
           onTouchEnd={(e) => { e.preventDefault(); stopListening() }}
           className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl font-bold text-sm transition-all select-none ${
             isListening === 'ko'
-              ? 'bg-blue-500 text-white scale-95 shadow-lg shadow-blue-500/30'
+              ? 'bg-blue-500 text-white scale-95  shadow-blue-500/30'
               : 'bg-blue-50 text-blue-500 hover:bg-blue-100 active:bg-blue-500 active:text-white'
           }`}
         >

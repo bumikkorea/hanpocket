@@ -222,7 +222,7 @@ export default function KoreanTab({ lang }) {
 
       {/* 환영 토스트 */}
       {welcomeToast && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#1A1A1A] text-white text-sm px-6 py-3 rounded-full shadow-lg z-50 animate-pulse">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 bg-[#1A1A1A] text-white text-sm px-6 py-3 rounded-full  z-50 animate-pulse">
           {welcomeToast}
         </div>
       )}

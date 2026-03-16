@@ -1,0 +1,46 @@
+# Board-056: C-Level Meeting — 2026-03-10 02:30
+
+## Phase 1: 직속직원 안건
+
+### [CTO팀] 모듈 import 패턴 혼재 문제
+- 근거지표: 빌드 시 2건의 동적/정적 import 혼재 경고 발생
+- 개선안: LessonScreen.jsx 정적 import를 동적 import로 통일, PocketContent.jsx도 동일 처리
+- 예상 효과: 코드 스플리팅 개선, 번들 사이즈 최적화
+
+### [CTO팀] 대용량 데이터 파일 최적화
+- 근거지표: toiletData.js 409KB, restaurantData.js 219KB로 data 청크가 842.63KB에 달함
+- 개선안: 데이터 lazy loading 및 압축 전략 적용
+- 예상 효과: 초기 로딩 시간 30% 단축, 모바일 네트워크 부담 감소
+
+### [CPO팀] 메인 번들 사이즈 경고
+- 근거지표: index 번들이 743.46KB로 권장 크기(500KB) 초과
+- 개선안: 컴포넌트 lazy loading 확대, manual chunks 설정
+- 예상 효과: Time to Interactive 개선, 사용자 체감 성능 향상
+
+### [CDO팀] 네이버 OAuth 연동 누락
+- 근거지표: App.jsx:404-410에서 handleNaverCallback 함수 호출하나 import 없음
+- 개선안: naverAuth.js 모듈 생성 및 콜백 함수 구현
+- 예상 효과: 네이버 로그인 정상화, 사용자 가입 경로 다양화
+
+### [CSO팀] CSS 변수 정의 검증
+- 근거지표: tailwind.config.js에서 CSS 변수 사용하나 일부 미정의 가능성
+- 개선안: 모든 CSS 변수 정의 상태 점검 및 fallback 추가
+- 예상 효과: 다크모드 및 테마 변경 안정성 확보
+
+## Phase 2: C-Level 심의 결과
+
+### 즉시 반영 (기존 기능 개선)
+- [import 패턴 통일] KoreanGameMain.jsx → LessonScreen 동적 import로 변경 + Suspense 래핑 — ✅수정완료
+- [네이버 OAuth] naverAuth.js 모듈 생성 및 handleNaverCallback import 추가 — ✅수정완료
+
+### 범범뻠 승인 대기 (신규 기능)
+- [PocketContent 패턴] HomeTab.jsx 동적 import vs App.jsx 정적 import 해결 — import 구조 개선 필요
+- [데이터 압축 전략] toiletData.js(409KB), restaurantData.js(219KB) 최적화 — 성능 최적화 필요, ROI 검토 요구
+- [번들 분할 전략] manual chunks 설정으로 744.99KB 메인 번들 분할 — 복잡도 증가 우려, 단계적 접근 검토
+
+## 빌드 결과
+✅ 성공 — LessonScreen import 경고 해결, PocketContent import 경고 1건 남음
+📊 번들 상태: index 744.99KB(+1.53KB), data 842.63KB(변동없음)
+
+## 다음 회의 예정
+2026-03-10 08:30 (6시간 후)

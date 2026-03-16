@@ -1,0 +1,15 @@
+name = "hanpocket-popup-naver"
+main = "popup-naver.js"
+compatibility_date = "2024-09-23"
+
+[[triggers]]
+crons = ["0 0 * * 1,4"]   # 월/목 UTC 00:00 = KST 09:00
+
+[[d1_databases]]
+binding = "POPUPS_DB"
+database_name = "hanpocket-popups"
+database_id = "f76093f1-1abf-42ce-8a69-b392b30f813e"
+
+# API 키 설정:
+# npx wrangler secret put NAVER_CLIENT_ID -c workers/wrangler-popup-naver.toml
+# npx wrangler secret put NAVER_CLIENT_SECRET -c workers/wrangler-popup-naver.toml

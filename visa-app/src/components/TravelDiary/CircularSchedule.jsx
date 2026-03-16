@@ -129,7 +129,7 @@ export default function CircularSchedule({ lang, schedules, onScheduleClick }) {
             width="320" 
             height="320" 
             viewBox="0 0 320 320"
-            className="drop-shadow-sm"
+            className="drop-"
           >
             {/* Background circle */}
             <circle 
@@ -212,7 +212,7 @@ export default function CircularSchedule({ lang, schedules, onScheduleClick }) {
           </svg>
 
           {/* Current time indicator */}
-          <div className="absolute top-2 right-2 bg-white rounded-lg px-2 py-1 shadow-sm border border-[#E5E7EB]">
+          <div className="absolute top-2 right-2 bg-white rounded-lg px-2 py-1  border border-[#E5E7EB]">
             <div className="flex items-center gap-1 text-xs text-[#6B7280]">
               <Clock size={12} />
               <span>{new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })}</span>

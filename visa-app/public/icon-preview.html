@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HanPocket Icon Preview</title>
+
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <!-- Google Fonts: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js" type="module"></script>
+  <!-- Lucide -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #F8F8F8; color: #111; padding: 32px 24px; }
+
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .subtitle { font-size: 13px; color: #888; margin-bottom: 32px; }
+
+    /* Library tabs */
+    .lib-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+    .lib-tab {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid #E0E0E0; background: white; color: #555;
+      transition: all .15s;
+    }
+    .lib-tab.active { background: #111; color: white; border-color: #111; }
+
+    /* Grid */
+    .section { margin-bottom: 40px; }
+    .section-title {
+      font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: #999; margin-bottom: 14px;
+    }
+
+    .icon-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; }
+
+    .icon-card {
+      background: white; border-radius: 14px; border: 1.5px solid #EFEFEF;
+      padding: 16px 8px 12px; display: flex; flex-direction: column; align-items: center;
+      gap: 8px; cursor: pointer; transition: all .15s; position: relative;
+    }
+    .icon-card:hover { border-color: #111; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+    .icon-card.selected { border-color: #111; background: #F5F5F5; }
+    .icon-card .badge {
+      position: absolute; top: 6px; right: 6px; font-size: 9px; font-weight: 700;
+      padding: 2px 5px; border-radius: 4px; background: #111; color: white;
+    }
+
+    .icon-wrap { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; }
+    .icon-wrap svg, .icon-wrap i, .icon-wrap span { font-size: 24px !important; width: 24px !important; height: 24px !important; }
+    .icon-wrap .material-icons-round { font-size: 24px !important; }
+
+    .icon-name { font-size: 10px; color: #888; text-align: center; line-height: 1.3; }
+    .icon-label { font-size: 11px; font-weight: 600; color: #333; text-align: center; }
+
+    /* Selected panel */
+    .selected-panel {
+      position: fixed; bottom: 0; left: 0; right: 0; background: white;
+      border-top: 1.5px solid #E8E8E8; padding: 16px 24px 24px;
+      display: none; z-index: 100;
+    }
+    .selected-panel.show { display: block; }
+    .selected-panel h3 { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+    .selected-list { display: flex; gap: 12px; flex-wrap: wrap; }
+    .selected-item {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 10px 12px; border-radius: 10px; background: #F5F5F5; min-width: 64px;
+    }
+    .selected-item .label { font-size: 10px; color: #555; font-weight: 600; }
+
+    /* Toggle all libs */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 120px repeat(5, 1fr);
+      gap: 1px; background: #E8E8E8; border-radius: 14px; overflow: hidden;
+      margin-bottom: 40px;
+    }
+    .cg-cell {
+      background: white; padding: 12px 8px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+      min-height: 80px;
+    }
+    .cg-cell.header { background: #F5F5F5; font-size: 11px; font-weight: 700; color: #888; letter-spacing: .06em; text-transform: uppercase; }
+    .cg-cell.row-label { background: #FAFAFA; font-size: 12px; font-weight: 600; color: #333; padding-left: 16px; justify-content: center; align-items: flex-start; }
+    .cg-cell .icon-wrap { width: 28px; height: 28px; }
+    .cg-cell .icon-wrap svg { width: 22px !important; height: 22px !important; }
+    .cg-cell .icon-wrap i { font-size: 22px !important; }
+    .cg-cell .icon-wrap .material-icons-round { font-size: 22px !important; }
+    .cg-cell .icon-name { font-size: 9px; color: #aaa; }
+    .cg-cell:hover:not(.header):not(.row-label) { background: #F0F0F0; cursor: pointer; }
+
+    .lib-label { font-size: 10px; font-weight: 700; letter-spacing: .05em; }
+    .lib-lucide { color: #F97316; }
+    .lib-phosphor { color: #8B5CF6; }
+    .lib-tabler { color: #0EA5E9; }
+    .lib-fa { color: #528DD7; }
+    .lib-material { color: #34D399; }
+
+    @media (max-width: 600px) {
+      .compare-grid { grid-template-columns: 80px repeat(5, 1fr); }
+      .cg-cell { padding: 8px 4px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎨 HanPocket Icon Preview</h1>
+  <p class="subtitle">각 라이브러리 아이콘 비교 — 클릭해서 고르기</p>
+
+  <!-- Compare Table -->
+  <p class="section-title">📊 전체 비교 (라이브러리 × 용도)</p>
+  <div class="compare-grid" id="compareGrid">
+    <!-- Header -->
+    <div class="cg-cell header"></div>
+    <div class="cg-cell header"><span class="lib-label lib-lucide">Lucide</span></div>
+    <div class="cg-cell header"><span class="lib-label lib-phosphor">Phosphor</span></div>
+    <div class="cg-cell header"><span class="lib-label lib-tabler">Tabler</span></div>
+    <div class="cg-cell header"><span class="lib-label lib-fa">Font<br>Awesome</span></div>
+    <div class="cg-cell header"><span class="lib-label lib-material">Material</span></div>
+
+    <!-- Row: 입국 -->
+    <div class="cg-cell row-label">✈️ 입국</div>
+    <div class="cg-cell" title="Lucide: PlaneLanding">
+      <div class="icon-wrap"><i data-lucide="plane-landing"></i></div>
+      <span class="icon-name">PlaneLanding</span>
+    </div>
+    <div class="cg-cell" title="Phosphor: AirplaneLanding">
+      <div class="icon-wrap"><i class="ph ph-airplane-landing"></i></div>
+      <span class="icon-name">AirplaneLanding</span>
+    </div>
+    <div class="cg-cell" title="Tabler: plane-arrival">
+      <div class="icon-wrap"><i class="ti ti-plane-arrival"></i></div>
+      <span class="icon-name">plane-arrival</span>
+    </div>
+    <div class="cg-cell" title="FA: plane-arrival">
+      <div class="icon-wrap"><i class="fa-solid fa-plane-arrival"></i></div>
+      <span class="icon-name">plane-arrival</span>
+    </div>
+    <div class="cg-cell" title="Material: flight_land">
+      <div class="icon-wrap"><span class="material-icons-round">flight_land</span></div>
+      <span class="icon-name">flight_land</span>
+    </div>
+
+    <!-- Row: 출국 -->
+    <div class="cg-cell row-label">🛫 출국</div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i data-lucide="plane-takeoff"></i></div>
+      <span class="icon-name">PlaneTakeoff</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ph ph-airplane-takeoff"></i></div>
+      <span class="icon-name">AirplaneTakeoff</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ti ti-plane-departure"></i></div>
+      <span class="icon-name">plane-departure</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="fa-solid fa-plane-departure"></i></div>
+      <span class="icon-name">plane-departure</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><span class="material-icons-round">flight_takeoff</span></div>
+      <span class="icon-name">flight_takeoff</span>
+    </div>
+
+    <!-- Row: 택시 -->
+    <div class="cg-cell row-label">🚕 택시</div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i data-lucide="car-taxi-front"></i></div>
+      <span class="icon-name">CarTaxiFront</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ph ph-taxi"></i></div>
+      <span class="icon-name">Taxi</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ti ti-car"></i></div>
+      <span class="icon-name">car</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="fa-solid fa-taxi"></i></div>
+      <span class="icon-name">taxi</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><span class="material-icons-round">local_taxi</span></div>
+      <span class="icon-name">local_taxi</span>
+    </div>
+
+    <!-- Row: 배달 -->
+    <div class="cg-cell row-label">🍱 배달</div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i data-lucide="bike"></i></div>
+      <span class="icon-name">Bike</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ph ph-motorcycle"></i></div>
+      <span class="icon-name">Motorcycle</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ti ti-motorbike"></i></div>
+      <span class="icon-name">motorbike</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="fa-solid fa-motorcycle"></i></div>
+      <span class="icon-name">motorcycle</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><span class="material-icons-round">delivery_dining</span></div>
+      <span class="icon-name">delivery_dining</span>
+    </div>
+
+    <!-- Row: 환급 -->
+    <div class="cg-cell row-label">💸 환급</div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i data-lucide="receipt"></i></div>
+      <span class="icon-name">Receipt</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ph ph-receipt"></i></div>
+      <span class="icon-name">Receipt</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ti ti-receipt-refund"></i></div>
+      <span class="icon-name">receipt-refund</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="fa-solid fa-receipt"></i></div>
+      <span class="icon-name">receipt</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><span class="material-icons-round">receipt_long</span></div>
+      <span class="icon-name">receipt_long</span>
+    </div>
+
+    <!-- Row: 여행기록 -->
+    <div class="cg-cell row-label">📓 여행기록</div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i data-lucide="book-marked"></i></div>
+      <span class="icon-name">BookMarked</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ph ph-book-bookmark"></i></div>
+      <span class="icon-name">BookBookmark</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ti ti-notebook"></i></div>
+      <span class="icon-name">notebook</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="fa-solid fa-book-open"></i></div>
+      <span class="icon-name">book-open</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><span class="material-icons-round">auto_stories</span></div>
+      <span class="icon-name">auto_stories</span>
+    </div>
+
+    <!-- Row: 병원 -->
+    <div class="cg-cell row-label">🏥 병원</div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i data-lucide="heart-pulse"></i></div>
+      <span class="icon-name">HeartPulse</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ph ph-first-aid-kit"></i></div>
+      <span class="icon-name">FirstAidKit</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ti ti-hospital"></i></div>
+      <span class="icon-name">hospital</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="fa-solid fa-hospital"></i></div>
+      <span class="icon-name">hospital</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><span class="material-icons-round">local_hospital</span></div>
+      <span class="icon-name">local_hospital</span>
+    </div>
+
+    <!-- Row: 더보기 -->
+    <div class="cg-cell row-label">⋯ 더보기</div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i data-lucide="layout-grid"></i></div>
+      <span class="icon-name">LayoutGrid</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ph ph-squares-four"></i></div>
+      <span class="icon-name">SquaresFour</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="ti ti-layout-grid"></i></div>
+      <span class="icon-name">layout-grid</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><i class="fa-solid fa-grip"></i></div>
+      <span class="icon-name">grip</span>
+    </div>
+    <div class="cg-cell">
+      <div class="icon-wrap"><span class="material-icons-round">apps</span></div>
+      <span class="icon-name">apps</span>
+    </div>
+  </div>
+
+  <!-- Phosphor weights showcase -->
+  <p class="section-title" style="margin-top:40px">💜 Phosphor — 두께(Weight) 비교</p>
+  <p style="font-size:12px;color:#999;margin-bottom:16px">같은 아이콘, 6가지 두께 스타일</p>
+  <div class="icon-grid" style="max-width:600px">
+    <div class="icon-card">
+      <div class="icon-wrap"><i class="ph-thin ph-airplane-landing" style="font-size:24px"></i></div>
+      <span class="icon-label">Thin</span>
+      <span class="icon-name">ph-thin</span>
+    </div>
+    <div class="icon-card">
+      <div class="icon-wrap"><i class="ph-light ph-airplane-landing" style="font-size:24px"></i></div>
+      <span class="icon-label">Light</span>
+      <span class="icon-name">ph-light</span>
+    </div>
+    <div class="icon-card">
+      <div class="icon-wrap"><i class="ph ph-airplane-landing" style="font-size:24px"></i></div>
+      <span class="icon-label">Regular</span>
+      <span class="icon-name">ph</span>
+    </div>
+    <div class="icon-card">
+      <div class="icon-wrap"><i class="ph-bold ph-airplane-landing" style="font-size:24px"></i></div>
+      <span class="icon-label">Bold</span>
+      <span class="icon-name">ph-bold</span>
+    </div>
+    <div class="icon-card">
+      <div class="icon-wrap"><i class="ph-fill ph-airplane-landing" style="font-size:24px"></i></div>
+      <span class="icon-label">Fill</span>
+      <span class="icon-name">ph-fill</span>
+    </div>
+    <div class="icon-card">
+      <div class="icon-wrap"><i class="ph-duotone ph-airplane-landing" style="font-size:24px;color:#8B5CF6"></i></div>
+      <span class="icon-label">Duotone</span>
+      <span class="icon-name">ph-duotone</span>
+    </div>
+  </div>
+
+  <!-- App mockup preview -->
+  <p class="section-title" style="margin-top:48px">📱 앱 버튼 프리뷰 — 실제 크기</p>
+  <p style="font-size:12px;color:#999;margin-bottom:16px">탭해서 라이브러리 전환</p>
+
+  <div class="lib-tabs" id="mockLibTabs">
+    <div class="lib-tab active" data-lib="emoji">이모지 (현재)</div>
+    <div class="lib-tab" data-lib="lucide">Lucide</div>
+    <div class="lib-tab" data-lib="phosphor">Phosphor</div>
+    <div class="lib-tab" data-lib="tabler">Tabler</div>
+    <div class="lib-tab" data-lib="fa">Font Awesome</div>
+    <div class="lib-tab" data-lib="material">Material</div>
+  </div>
+
+  <div style="background:white;border-radius:20px;border:1.5px solid #E8E8E8;padding:20px;max-width:380px">
+    <div id="mockGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+    </div>
+  </div>
+
+  <script>
+    // Init Lucide
+    lucide.createIcons();
+
+    const ICONS = {
+      emoji: [
+        { label: '입국', sub: '공항 도착 가이드', icon: '✈️' },
+        { label: '출국', sub: '귀국 준비 체크', icon: '🛫' },
+        { label: '택시', sub: '타는 법 · 요금', icon: '🚕' },
+        { label: '배달', sub: '배민 · 쿠팡이츠', icon: '🍱' },
+        { label: '환급', sub: '영수증 환급 계산', icon: '💸' },
+        { label: '여행기록', sub: '내 코스 정리', icon: '📓' },
+        { label: '병원', sub: '외국인 병원 찾기', icon: '🏥' },
+        { label: '더보기', sub: '모든 서비스', icon: '⋯' },
+      ],
+      lucide: [
+        { label: '입국', sub: '공항 도착 가이드', icon: '<i data-lucide="plane-landing" width="22" height="22"></i>' },
+        { label: '출국', sub: '귀국 준비 체크', icon: '<i data-lucide="plane-takeoff" width="22" height="22"></i>' },
+        { label: '택시', sub: '타는 법 · 요금', icon: '<i data-lucide="car-taxi-front" width="22" height="22"></i>' },
+        { label: '배달', sub: '배민 · 쿠팡이츠', icon: '<i data-lucide="bike" width="22" height="22"></i>' },
+        { label: '환급', sub: '영수증 환급 계산', icon: '<i data-lucide="receipt" width="22" height="22"></i>' },
+        { label: '여행기록', sub: '내 코스 정리', icon: '<i data-lucide="book-marked" width="22" height="22"></i>' },
+        { label: '병원', sub: '외국인 병원 찾기', icon: '<i data-lucide="heart-pulse" width="22" height="22"></i>' },
+        { label: '더보기', sub: '모든 서비스', icon: '<i data-lucide="layout-grid" width="22" height="22"></i>' },
+      ],
+      phosphor: [
+        { label: '입국', sub: '공항 도착 가이드', icon: '<i class="ph ph-airplane-landing" style="font-size:22px"></i>' },
+        { label: '출국', sub: '귀국 준비 체크', icon: '<i class="ph ph-airplane-takeoff" style="font-size:22px"></i>' },
+        { label: '택시', sub: '타는 법 · 요금', icon: '<i class="ph ph-taxi" style="font-size:22px"></i>' },
+        { label: '배달', sub: '배민 · 쿠팡이츠', icon: '<i class="ph ph-motorcycle" style="font-size:22px"></i>' },
+        { label: '환급', sub: '영수증 환급 계산', icon: '<i class="ph ph-receipt" style="font-size:22px"></i>' },
+        { label: '여행기록', sub: '내 코스 정리', icon: '<i class="ph ph-book-bookmark" style="font-size:22px"></i>' },
+        { label: '병원', sub: '외국인 병원 찾기', icon: '<i class="ph ph-first-aid-kit" style="font-size:22px"></i>' },
+        { label: '더보기', sub: '모든 서비스', icon: '<i class="ph ph-squares-four" style="font-size:22px"></i>' },
+      ],
+      tabler: [
+        { label: '입국', sub: '공항 도착 가이드', icon: '<i class="ti ti-plane-arrival" style="font-size:22px"></i>' },
+        { label: '출국', sub: '귀국 준비 체크', icon: '<i class="ti ti-plane-departure" style="font-size:22px"></i>' },
+        { label: '택시', sub: '타는 법 · 요금', icon: '<i class="ti ti-car" style="font-size:22px"></i>' },
+        { label: '배달', sub: '배민 · 쿠팡이츠', icon: '<i class="ti ti-motorbike" style="font-size:22px"></i>' },
+        { label: '환급', sub: '영수증 환급 계산', icon: '<i class="ti ti-receipt-refund" style="font-size:22px"></i>' },
+        { label: '여행기록', sub: '내 코스 정리', icon: '<i class="ti ti-notebook" style="font-size:22px"></i>' },
+        { label: '병원', sub: '외국인 병원 찾기', icon: '<i class="ti ti-hospital" style="font-size:22px"></i>' },
+        { label: '더보기', sub: '모든 서비스', icon: '<i class="ti ti-layout-grid" style="font-size:22px"></i>' },
+      ],
+      fa: [
+        { label: '입국', sub: '공항 도착 가이드', icon: '<i class="fa-solid fa-plane-arrival" style="font-size:20px"></i>' },
+        { label: '출국', sub: '귀국 준비 체크', icon: '<i class="fa-solid fa-plane-departure" style="font-size:20px"></i>' },
+        { label: '택시', sub: '타는 법 · 요금', icon: '<i class="fa-solid fa-taxi" style="font-size:20px"></i>' },
+        { label: '배달', sub: '배민 · 쿠팡이츠', icon: '<i class="fa-solid fa-motorcycle" style="font-size:20px"></i>' },
+        { label: '환급', sub: '영수증 환급 계산', icon: '<i class="fa-solid fa-receipt" style="font-size:20px"></i>' },
+        { label: '여행기록', sub: '내 코스 정리', icon: '<i class="fa-solid fa-book-open" style="font-size:20px"></i>' },
+        { label: '병원', sub: '외국인 병원 찾기', icon: '<i class="fa-solid fa-hospital" style="font-size:20px"></i>' },
+        { label: '더보기', sub: '모든 서비스', icon: '<i class="fa-solid fa-grip" style="font-size:20px"></i>' },
+      ],
+      material: [
+        { label: '입국', sub: '공항 도착 가이드', icon: '<span class="material-icons-round" style="font-size:22px">flight_land</span>' },
+        { label: '출국', sub: '귀국 준비 체크', icon: '<span class="material-icons-round" style="font-size:22px">flight_takeoff</span>' },
+        { label: '택시', sub: '타는 법 · 요금', icon: '<span class="material-icons-round" style="font-size:22px">local_taxi</span>' },
+        { label: '배달', sub: '배민 · 쿠팡이츠', icon: '<span class="material-icons-round" style="font-size:22px">delivery_dining</span>' },
+        { label: '환급', sub: '영수증 환급 계산', icon: '<span class="material-icons-round" style="font-size:22px">receipt_long</span>' },
+        { label: '여행기록', sub: '내 코스 정리', icon: '<span class="material-icons-round" style="font-size:22px">auto_stories</span>' },
+        { label: '병원', sub: '외국인 병원 찾기', icon: '<span class="material-icons-round" style="font-size:22px">local_hospital</span>' },
+        { label: '더보기', sub: '모든 서비스', icon: '<span class="material-icons-round" style="font-size:22px">apps</span>' },
+      ],
+    }
+
+    function renderMock(lib) {
+      const grid = document.getElementById('mockGrid')
+      const items = ICONS[lib]
+      grid.innerHTML = items.map(item => `
+        <div style="
+          display:flex;flex-direction:column;align-items:center;justify-content:center;
+          gap:4px;padding:14px 6px 12px;border-radius:12px;border:1.5px solid #E8E8E8;
+          background:white;cursor:pointer;
+        ">
+          <div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:${lib==='emoji'?'22':'0'}px">
+            ${lib === 'emoji' ? item.icon : item.icon}
+          </div>
+          <span style="font-size:11px;font-weight:700;color:#222;margin-top:2px">${item.label}</span>
+          <span style="font-size:9px;color:#aaa;text-align:center;line-height:1.3">${item.sub}</span>
+        </div>
+      `).join('')
+      // Re-init lucide icons inside the mock
+      if (lib === 'lucide') lucide.createIcons()
+    }
+
+    document.getElementById('mockLibTabs').addEventListener('click', e => {
+      const tab = e.target.closest('.lib-tab')
+      if (!tab) return
+      document.querySelectorAll('.lib-tab').forEach(t => t.classList.remove('active'))
+      tab.classList.add('active')
+      renderMock(tab.dataset.lib)
+    })
+
+    renderMock('emoji')
+  </script>
+
+</body>
+</html>

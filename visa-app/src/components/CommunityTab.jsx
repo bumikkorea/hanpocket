@@ -304,7 +304,7 @@ export default function CommunityTab({ lang, profile }) {
                 <MoreVertical size={16} className="text-[#6B7280]" />
               </button>
               {showMenu === post.id && (
-                <div className="absolute right-0 top-full mt-1 bg-white border border-[#E5E7EB] rounded-xl shadow-lg py-1 z-50 min-w-[120px]">
+                <div className="absolute right-0 top-full mt-1 bg-white border border-[#E5E7EB] rounded-xl  py-1 z-50 min-w-[120px]">
                   <button onClick={() => startEdit(post)} className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[#111827] hover:bg-[#F3F4F6]">
                     <Edit3 size={14} /> {L(lang, { ko: '수정', zh: '编辑', en: 'Edit' })}
                   </button>
@@ -579,7 +579,7 @@ export default function CommunityTab({ lang, profile }) {
             { id: 'marketplace', label: { ko: '중고거래', zh: '二手', en: 'Market' } },
           ].map(t => (
             <button key={t.id} onClick={() => { setSubTab(t.id); setFilterCat(null); setFilterLocation(null) }}
-              className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${subTab === t.id ? 'bg-white text-[#111827] shadow-sm' : 'text-[#6B7280]'}`}>
+              className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${subTab === t.id ? 'bg-white text-[#111827] ' : 'text-[#6B7280]'}`}>
               {L(lang, t.label)}
             </button>
           ))}
@@ -599,7 +599,7 @@ export default function CommunityTab({ lang, profile }) {
               <MapPin size={14} />
             </button>
             {showLocationFilter && (
-              <div className="absolute right-0 top-full mt-1 bg-white border border-[#E5E7EB] rounded-xl shadow-lg py-1 z-50 min-w-[100px]">
+              <div className="absolute right-0 top-full mt-1 bg-white border border-[#E5E7EB] rounded-xl  py-1 z-50 min-w-[100px]">
                 <button onClick={() => { setFilterLocation(null); setShowLocationFilter(false) }} className={`w-full text-left px-3 py-2 text-xs ${!filterLocation ? 'font-bold text-[#111827]' : 'text-[#6B7280]'} hover:bg-[#F3F4F6]`}>
                   {L(lang, { ko: '전체', zh: '全部', en: 'All' })}
                 </button>

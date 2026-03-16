@@ -39,7 +39,7 @@ function Badge({ children, className = '' }) {
 }
 
 function SectionCard({ children, className = '' }) {
-  return <div className={`bg-white border border-[#E5E7EB] shadow-sm rounded-2xl p-4 ${className}`}>{children}</div>
+  return <div className={`bg-white border border-[#E5E7EB]  rounded-2xl p-4 ${className}`}>{children}</div>
 }
 
 export default function JobsTab({ lang }) {
@@ -60,7 +60,7 @@ export default function JobsTab({ lang }) {
           {JOB_CATEGORIES.map(cat => (
             <button key={cat.id} onClick={() => setJobCategory(cat.id)}
               className={`shrink-0 text-xs px-3 py-1.5 rounded-full transition-all ${
-                jobCategory === cat.id ? 'bg-[#D4A574] text-[#1A0A0F] font-semibold' : 'bg-white border border-[#E5E7EB] shadow-sm text-[#6B7280]'
+                jobCategory === cat.id ? 'bg-[#D4A574] text-[#1A0A0F] font-semibold' : 'bg-white border border-[#E5E7EB]  text-[#6B7280]'
               }`}>
               {T(lang, cat.label)}
             </button>

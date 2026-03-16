@@ -288,7 +288,7 @@ export default function TravelDiary({ lang, onBack }) {
               </div>
             ) : (
               trips.map(trip => (
-                <div key={trip.id} className="bg-white rounded-2xl p-4 border border-[#E5E7EB] hover:shadow-md transition-all cursor-pointer" onClick={() => openTrip(trip)}>
+                <div key={trip.id} className="bg-white rounded-2xl p-4 border border-[#E5E7EB] hover: transition-all cursor-pointer" onClick={() => openTrip(trip)}>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <h3 className="font-semibold text-[#111827] mb-1">{L(lang, trip.name)}</h3>
@@ -333,7 +333,7 @@ export default function TravelDiary({ lang, onBack }) {
                   onClick={() => setSelectedDate(date)}
                   className={`px-3 py-2 rounded-xl text-sm font-semibold whitespace-nowrap shrink-0 transition-all ${
                     selectedDate === date 
-                      ? 'bg-[#111827] text-white shadow-md' 
+                      ? 'bg-[#111827] text-white ' 
                       : 'bg-white text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]'
                   }`}
                 >

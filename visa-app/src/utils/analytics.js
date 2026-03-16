@@ -236,6 +236,68 @@ export const trackAppInstall = (action) => {
   })
 }
 
+/**
+ * 환율 체크 이벤트 추적
+ * @param {string} currency_pair - 환율 쌍 ('USD_KRW', 'CNY_KRW' 등)
+ * @param {number} rate - 환율
+ */
+export const trackExchangeRateCheck = (currency_pair, rate = null) => {
+  trackEvent('exchange_rate_check', {
+    currency_pair,
+    rate,
+    event_category: 'feature_usage',
+    event_label: `check_${currency_pair}`
+  })
+}
+
+/**
+ * 날씨 위젯 클릭 이벤트 추적
+ * @param {string} location - 위치 ('Seoul', 'Beijing' 등)
+ * @param {number} temperature - 온도
+ * @param {string} condition - 날씨 상태
+ */
+export const trackWeatherCheck = (location, temperature = null, condition = null) => {
+  trackEvent('weather_check', {
+    location,
+    temperature,
+    weather_condition: condition,
+    event_category: 'feature_usage',
+    event_label: `weather_${location}`
+  })
+}
+
+/**
+ * 계절별 팁 위젯 상호작용 추적
+ * @param {string} season - 계절 ('spring', 'summer', 'autumn', 'winter')
+ * @param {string} action - 액션 ('expand', 'collapse', 'tip_view')
+ * @param {string} tip_category - 팁 카테고리 (선택)
+ */
+export const trackSeasonalTip = (season, action, tip_category = null) => {
+  trackEvent('seasonal_tip_interaction', {
+    season,
+    action,
+    tip_category,
+    event_category: 'feature_usage',
+    event_label: `${season}_${action}`
+  })
+}
+
+/**
+ * 코스 저장 이벤트 추적
+ * @param {string} course_name - 코스 이름
+ * @param {string} course_category - 코스 카테고리
+ * @param {string} action - 액션 ('save', 'unsave', 'view_detail')
+ */
+export const trackCourseInteraction = (course_name, course_category, action) => {
+  trackEvent('course_interaction', {
+    course_name,
+    course_category,
+    action,
+    event_category: 'content_interaction',
+    event_label: `${action}_course`
+  })
+}
+
 export default {
   initGA,
   setConsentMode,
@@ -250,5 +312,9 @@ export default {
   trackNotificationEvent,
   trackLanguageChange,
   trackError,
-  trackAppInstall
+  trackAppInstall,
+  trackExchangeRateCheck,
+  trackWeatherCheck,
+  trackSeasonalTip,
+  trackCourseInteraction
 }

@@ -9,13 +9,15 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Grid3x3, User, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Compass, Wallet, BookOpen, CreditCard } from 'lucide-react'
+import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser } from 'lucide-react'
+import { House, Compass as PhCompass, QrCode, ShoppingBag as PhShoppingBag, User, MapPin as PhMapPin, AirplaneLanding, AirplaneTakeoff, Taxi, Motorcycle, Receipt as PhReceipt, BookBookmark, Hospital, GridFour, Camera as PhCamera, Heart as PhHeart, Lightning, CalendarBlank, ChatCircle, UsersThree, ForkKnife, CreditCard as PhCreditCard, Storefront, MagnifyingGlass } from '@phosphor-icons/react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
 import { generateChatResponse } from './data/chatResponses'
 import { updateLog, dataSources } from './data/updateLog'
 import HomeTab from './components/HomeTab'
+import PopupAdmin from './components/PopupAdmin'
 import { useExchangeRate } from './hooks/useExchangeRate'
 import { pocketCategories, serviceItems, subMenuData, IMPLEMENTED_POCKETS } from './data/pockets'
 import AffiliateTracker from './components/AffiliateTracker'
@@ -59,6 +61,36 @@ const VisitorHeatmapFull = lazy(() => import('./components/VisitorHeatmapFull'))
 const WishlistPage = lazy(() => import('./components/WishlistPage'))
 const PassportScan = lazy(() => import('./components/PassportScan'))
 const DepartureShoppingRoute = lazy(() => import('./components/DepartureShoppingRoute'))
+const TaxiCalculator = lazy(() => import('./components/TaxiCalculator'))
+const SubwayArrival = lazy(() => import('./components/SubwayArrival'))
+const PerformanceSection = lazy(() => import('./components/PerformanceSection'))
+const FlightInfoCard = lazy(() => import('./components/FlightInfoCard'))
+const ShowKorean = lazy(() => import('./components/ShowKorean'))
+const NearMap = lazy(() => import('./components/NearMap'))
+const DiscoverTab = lazy(() => import('./components/DiscoverTab'))
+const MorePage = lazy(() => import('./components/MorePage'))
+// C 섹션 실용 가이드 lazy imports
+const CurrencyCalc = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.CurrencyCalc })))
+const EmergencyNumbers = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.EmergencyNumbers })))
+const BasicKorean = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.BasicKorean })))
+const TransitCardGuide = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.TransitCardGuide })))
+const VoltageGuide = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.VoltageGuide })))
+const TaxFreeGuide = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.TaxFreeGuide })))
+const EtiquetteGuide = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.EtiquetteGuide })))
+const SimGuide = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.SimGuide })))
+const PriceGuide = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.PriceGuide })))
+const AllergyCard = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.AllergyCard })))
+const LostItemGuide = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.LostItemGuide })))
+const HolidayCalendar = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.HolidayCalendar })))
+const WifiHotspot = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.WifiHotspot })))
+const WeatherRecommend = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.WeatherRecommend })))
+const DiscoverSeoulPass = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.DiscoverSeoulPass })))
+const HallyuExperiences = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.HallyuExperiences })))
+const HikingCourses = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.HikingCourses })))
+const TodayEvents = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.TodayEvents })))
+const HallyuCourseMap = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.HallyuCourseMap })))
+const TasteOfSeoul = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.TasteOfSeoul })))
+const KoreanCulture = lazy(() => import('./components/KoreanCulture'))
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -500,6 +532,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
 
   // 관리자 모드 (state는 AppInner에서 관리, props로 받음)
   const [showAdminPanel, setShowAdminPanel] = useState(false)
+  const [showPopupAdmin, setShowPopupAdmin] = useState(false)
   const [showAdminPwModal, setShowAdminPwModal] = useState(false)
   const [adminPw, setAdminPw] = useState('')
   const [adminPwError, setAdminPwError] = useState(false)
@@ -733,7 +766,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   }
 
   return (
-    <div className="min-h-screen p-4 pb-20 font-['Inter']" style={{ backgroundColor: '#FFFFFF' }}>
+    <div className="min-h-screen p-4 pb-32 font-['Inter']" style={{ backgroundColor: '#FFFFFF' }}>
       {/* 메인 프로필 카드 */}
       <div className="rounded-2xl p-6 border border-[#E5E7EB]" style={{ backgroundColor: '#FFFFFF' }}>
         {/* 프로필 헤더 */}
@@ -752,7 +785,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
               )}
             </div>
             <div className="absolute bottom-0 right-0 w-7 h-7 bg-gradient-to-b from-[#2D5A3D] to-[#1A3A28] rounded-full flex items-center justify-center border-2 border-white">
-              <span className="text-white text-xs">📷</span>
+              <PhCamera size={14} weight="light" className="text-white" />
             </div>
             <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
           </div>
@@ -849,47 +882,47 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
           <div className="grid grid-cols-3 gap-3">
             {/* 방문 기록 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">📍</span>
+              <PhMapPin size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '방문\n기록' : lang === 'zh' ? '访问\n记录' : 'Visit\nHistory'}</span>
             </button>
             {/* 저장한 찜 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">❤️</span>
+              <PhHeart size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '저장한\n찜' : lang === 'zh' ? '保存的\n喜欢' : 'Saved\nLikes'}</span>
             </button>
             {/* 여행 다이어리 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">📷</span>
+              <BookBookmark size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '여행\n다이어리' : lang === 'zh' ? '旅行\n日记' : 'Travel\nDiary'}</span>
             </button>
             {/* 최근 활동 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">🔥</span>
+              <Lightning size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '최근\n활동' : lang === 'zh' ? '最近\n活动' : 'Recent\nActivity'}</span>
             </button>
             {/* 다음 여행 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">📅</span>
+              <CalendarBlank size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '다음\n여행' : lang === 'zh' ? '下次\n旅行' : 'Next\nTrip'}</span>
             </button>
             {/* 피드백/문의 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">💬</span>
+              <ChatCircle size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '피드백\n/문의' : lang === 'zh' ? '反馈\n/询问' : 'Feedback\n/Support'}</span>
             </button>
             {/* 친구 초대 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">👥</span>
+              <UsersThree size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '친구\n초대' : lang === 'zh' ? '邀请\n朋友' : 'Invite\nFriends'}</span>
             </button>
             {/* 식이 제한 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">🍽️</span>
+              <ForkKnife size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '식이\n제한' : lang === 'zh' ? '饮食\n限制' : 'Diet\nPrefs'}</span>
             </button>
             {/* 결제 수단 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <span className="text-2xl mb-1">💳</span>
+              <PhCreditCard size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '결제\n수단' : lang === 'zh' ? '支付\n方式' : 'Payment\nMethod'}</span>
             </button>
           </div>
@@ -969,6 +1002,11 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                 </div>
               ))}
             </div>
+
+            {/* 팝업 관리 */}
+            <button onClick={() => setShowPopupAdmin(true)} className="w-full text-left text-sm font-medium text-[#111827] bg-[#F3F4F6] rounded-xl px-4 py-3 mt-4 flex items-center gap-2">
+              📌 팝업 스토어 관리
+            </button>
 
             {/* 관리자 모드 해제 */}
             <button onClick={handleAdminLogout} className="w-full text-center text-xs text-red-500 mt-4 py-2">
@@ -1097,6 +1135,9 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         </div>
       )}
 
+      {/* 팝업 관리자 페이지 */}
+      {showPopupAdmin && <PopupAdmin onClose={() => setShowPopupAdmin(false)} />}
+
       {/* 관리자 비밀번호 모달 */}
       {showAdminPwModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -1135,7 +1176,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
       {/* 토스트 메시지 */}
       {showToast && (
         <div
-          className="fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-[#111827] text-white px-6 py-3 rounded-full text-sm font-medium  z-50"
+          className="fixed bottom-36 left-1/2 transform -translate-x-1/2 bg-[#111827] text-white px-6 py-3 rounded-full text-sm font-medium z-50"
           style={{ animation: 'fadeInOut 1.5s ease-in-out' }}
         >
           {toastMsg || (lang === 'ko' ? '비자 만료 알림이 설정되었습니다' : lang === 'zh' ? '已设置签证到期提醒' : 'Visa expiry alerts set')}
@@ -1452,9 +1493,9 @@ function AppShortcut({ name, description, deepLink, webUrl, domain }) {
 }
 
 function AppInner() {
-  // Splash screen → Landing page → Home
+  // Splash screen → Home (LandingPage 제거)
   const [showSplash, setShowSplash] = useState(true)
-  const [showLanding, setShowLanding] = useState(true)
+  const [showLanding, setShowLanding] = useState(false)
 
   const [lang, setLang] = useState(() => {
     const saved = localStorage.getItem('hp_lang')
@@ -1482,6 +1523,7 @@ function AppInner() {
   const s = t[lang]
 
   // 관리자 모드 — 항상 사용자 모드로 시작 (보안)
+  const [locationBarDismissed, setLocationBarDismissed] = useState(() => localStorage.getItem('loc_bar_dismissed') === '1')
   const [adminMode, setAdminMode] = useState(false)
   const [adminView, setAdminView] = useState(false)
 
@@ -1617,6 +1659,41 @@ function AppInner() {
     trackPageView('App Start', window.location.href, 'onboarding')
   }, [])
 
+  // 상태 선언 (useEffect보다 먼저)
+  const [showLangMenu, setShowLangMenu] = useState(false)
+  const langMenuRef = useRef(null)
+  const [subPage, setSubPage] = useState(null)
+  const [deepLink, setDeepLink] = useState(null) // { tab, itemId, itemData }
+  const scrollPositions = useRef({}) // { tabId: { y: number, timestamp: number } }
+
+  // A3: 언어 드롭다운 외부 클릭 닫기
+  useEffect(() => {
+    if (!showLangMenu) return
+    const handler = (e) => { if (langMenuRef.current && !langMenuRef.current.contains(e.target)) setShowLangMenu(false) }
+    document.addEventListener('pointerdown', handler)
+    return () => document.removeEventListener('pointerdown', handler)
+  }, [showLangMenu])
+
+  // A10: 안드로이드 뒤로가기 처리 — History API popstate
+  useEffect(() => {
+    const handlePopState = (e) => {
+      // subPage가 있으면 subPage 닫기
+      if (subPage) { setSubPage(null); return }
+      // home이 아니면 홈으로
+      if (tab !== 'home') { handleTabChange('home'); return }
+      // 메뉴가 열려있으면 닫기
+      if (menuOpen) { setMenuOpen(false); return }
+    }
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [tab, subPage, menuOpen])
+
+  // 탭/서브페이지 변경 시 history.pushState
+  useEffect(() => {
+    const state = { tab, subPage }
+    window.history.pushState(state, '', '')
+  }, [tab, subPage])
+
   // 언어 변경 추적
   const prevLangRef = useRef(lang)
   useEffect(() => {
@@ -1666,10 +1743,6 @@ function AppInner() {
     }
   }
 
-  const [subPage, setSubPage] = useState(null)
-  const [deepLink, setDeepLink] = useState(null) // { tab, itemId, itemData }
-  const scrollPositions = useRef({}) // { tabId: { y: number, timestamp: number } }
-
   // OAuth 리다이렉트 중이면 온보딩 대신 로딩 표시 (콜백 처리 대기)
   const hasOAuthCode = new URLSearchParams(window.location.search).get('code')
   if (!profile && hasOAuthCode) {
@@ -1699,10 +1772,11 @@ function AppInner() {
   }
 
   const bottomTabs = [
-    { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
-    { id: 'tools', icon: CreditCard, label: { ko: '도구', zh: '工具', en: 'Tools' } },
-    { id: 'profile', icon: User, label: { ko: '내정보', zh: '我的', en: 'Profile' } },
+    { id: 'home', icon: House, label: { ko: '홈', zh: '首页', en: 'Home' } },
+    { id: 'near-map', icon: PhMapPin, label: { ko: '지도', zh: '地图', en: 'Map' } },
+    { id: 'scan', icon: QrCode, label: { ko: '스캔', zh: '扫描', en: 'Scan' }, fab: true },
+    { id: 'discover', icon: MagnifyingGlass, label: { ko: '발견', zh: '发现', en: 'Discover' } },
+    { id: 'more', icon: GridFour, label: { ko: '더보기', zh: '更多', en: 'More' } },
   ]
 
   // Check if a service item has been migrated to pocket categories
@@ -1860,7 +1934,7 @@ function AppInner() {
   }
 
   return (
-    <div className="min-h-screen pb-20" style={{ backgroundColor: '#FFFFFF' }}>
+    <div className="min-h-screen pb-32" style={{ backgroundColor: '#FFFFFF' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
@@ -1977,36 +2051,74 @@ function AppInner() {
         </div>
       )}
 
-      {/* Top Bar — scrolls with content (not sticky) */}
-      <div className="relative z-10" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #E5E7EB' }}>
+      {/* Top Bar — sticky, always on top */}
+      <div className="sticky top-0 z-[1000]" style={{ backgroundColor: '#FAF7F5', borderBottom: '1px solid #EDE8E3' }}>
         <div className="px-4 pt-2 pb-1">
           <div className="flex items-center">
             {/* 좌측: 햄버거 메뉴 (메인) 또는 뒤로가기 (서브) */}
+            {/* #24 터치 영역 44x44px 보장 */}
             <div className="flex items-center gap-1 w-16">
               {subPage ? (
-                <button onClick={() => { setSubPage(null) }} className="text-[#5F6368] p-1">
+                <button onClick={() => {
+                  const homeOriginPages = ['near-map', 'show-korean', 'korean-culture', 'flight-info']
+                  setSubPage(null)
+                  if (homeOriginPages.includes(subPage)) setTab('home')
+                }} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
                   <ChevronLeft size={24} />
                 </button>
               ) : tab !== 'home' ? (
-                <button onClick={() => { setTab('home'); setSubPage(null) }} className="text-[#5F6368] p-1">
+                <button onClick={() => { setTab('home'); setSubPage(null) }} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
                   <ChevronLeft size={24} />
                 </button>
               ) : (
-                <button onClick={() => setShowAppMenu(true)} className="text-[#5F6368] p-2 -ml-2">
+                <button onClick={() => setShowAppMenu(!showAppMenu)} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
                   <Menu size={22} />
                 </button>
               )}
             </div>
 
-            {/* 중앙 로고 */}
-            <div className="flex-1 flex justify-center">
+            {/* 중앙 로고 — #21 탭하면 홈으로 */}
+            <button className="flex-1 flex justify-center" onClick={() => { handleTabChange('home'); setSubPage(null); window.scrollTo(0,0) }}>
               <Logo />
-            </div>
+            </button>
 
-            {/* 우측: 언어설정 */}
-            <div className="flex items-center justify-end gap-2.5 w-20">
-              <button onClick={() => { const next = nextLang(lang); setLang(next); localStorage.setItem('hp_lang', next) }} className="text-[#5F6368] p-1">
-                <Globe size={20} />
+            {/* 우측: 언어 + 프로필 */}
+            <div className="flex items-center justify-end gap-1 w-20">
+              <div className="relative" ref={langMenuRef}>
+                <button onClick={() => setShowLangMenu(!showLangMenu)} className="text-[#5F6368] p-1">
+                  <Globe size={20} />
+                </button>
+                {showLangMenu && (
+                  <div className="absolute right-0 top-9 bg-white rounded-[10px] border border-[#E5E7EB] py-1 z-50 min-w-[120px]"
+                    style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.12)' }}>
+                    {[
+                      { code: 'zh', label: '简体中文', flag: '🇨🇳' },
+                      { code: 'ko', label: '한국어', flag: '🇰🇷' },
+                      { code: 'en', label: 'English', flag: '🇺🇸' },
+                    ].map(l => (
+                      <button key={l.code}
+                        onClick={() => { setLang(l.code); localStorage.setItem('hp_lang', l.code); setShowLangMenu(false) }}
+                        className={`w-full px-3 py-2 text-left text-[13px] flex items-center gap-2 ${lang === l.code ? 'font-bold text-[#1A1A1A] bg-[#F3F4F6]' : 'text-[#555]'}`}>
+                        <span>{l.flag}</span>
+                        <span>{l.label}</span>
+                        {lang === l.code && <span className="ml-auto text-[#C4725A]">✓</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button onClick={() => {
+                if (!profile) {
+                  // #23 비회원 → 온보딩/퀵 퀴즈 유도
+                  handleTabChange('profile')
+                  setSubPage('quick-quiz')
+                } else {
+                  // #23 회원 → 프로필 (취향/위시리스트)
+                  handleTabChange('profile')
+                  setSubPage(null)
+                }
+              }} className="p-1 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                <LucideUser size={20} strokeWidth={tab === 'profile' ? 2 : 1.5} className={tab === 'profile' ? 'text-[#111827]' : 'text-[#5F6368]'} />
               </button>
             </div>
           </div>
@@ -2196,9 +2308,66 @@ function AppInner() {
             <DepartureShoppingRoute lang={lang} profile={safeProfile} />
           </Suspense>
         )}
+        {subPage==='flight-info' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <FlightInfoCard lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
+          </Suspense>
+        )}
+        {subPage==='taxi' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <TaxiCalculator lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='subway' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <SubwayArrival lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='performance' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <PerformanceSection lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='show-korean' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ShowKorean lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
+          </Suspense>
+        )}
+        {subPage==='near-map' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <NearMap lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
+          </Suspense>
+        )}
+        {subPage==='korean-culture' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <KoreanCulture lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
+          </Suspense>
+        )}
+
+        {/* C 섹션 실용 가이드 (#51~#70) */}
+        {subPage === 'currency' && <Suspense fallback={<LoadingSpinner />}><CurrencyCalc lang={lang} /></Suspense>}
+        {subPage === 'emergency-numbers' && <Suspense fallback={<LoadingSpinner />}><EmergencyNumbers lang={lang} /></Suspense>}
+        {subPage === 'basic-korean' && <Suspense fallback={<LoadingSpinner />}><BasicKorean lang={lang} /></Suspense>}
+        {subPage === 'transit-card' && <Suspense fallback={<LoadingSpinner />}><TransitCardGuide lang={lang} /></Suspense>}
+        {subPage === 'voltage' && <Suspense fallback={<LoadingSpinner />}><VoltageGuide lang={lang} /></Suspense>}
+        {subPage === 'tax-free' && <Suspense fallback={<LoadingSpinner />}><TaxFreeGuide lang={lang} /></Suspense>}
+        {subPage === 'etiquette' && <Suspense fallback={<LoadingSpinner />}><EtiquetteGuide lang={lang} /></Suspense>}
+        {subPage === 'sim-guide' && <Suspense fallback={<LoadingSpinner />}><SimGuide lang={lang} /></Suspense>}
+        {subPage === 'price-guide' && <Suspense fallback={<LoadingSpinner />}><PriceGuide lang={lang} /></Suspense>}
+        {subPage === 'allergy-card' && <Suspense fallback={<LoadingSpinner />}><AllergyCard lang={lang} /></Suspense>}
+        {subPage === 'lost-item' && <Suspense fallback={<LoadingSpinner />}><LostItemGuide lang={lang} /></Suspense>}
+        {subPage === 'holiday' && <Suspense fallback={<LoadingSpinner />}><HolidayCalendar lang={lang} /></Suspense>}
+        {subPage === 'wifi' && <Suspense fallback={<LoadingSpinner />}><WifiHotspot lang={lang} /></Suspense>}
+        {subPage === 'weather-recommend' && <Suspense fallback={<LoadingSpinner />}><WeatherRecommend lang={lang} /></Suspense>}
+        {subPage === 'discover-pass' && <Suspense fallback={<LoadingSpinner />}><DiscoverSeoulPass lang={lang} /></Suspense>}
+        {subPage === 'hallyu-exp' && <Suspense fallback={<LoadingSpinner />}><HallyuExperiences lang={lang} /></Suspense>}
+        {subPage === 'hiking' && <Suspense fallback={<LoadingSpinner />}><HikingCourses lang={lang} /></Suspense>}
+        {subPage === 'today-events' && <Suspense fallback={<LoadingSpinner />}><TodayEvents lang={lang} /></Suspense>}
+        {subPage === 'hallyu-course' && <Suspense fallback={<LoadingSpinner />}><HallyuCourseMap lang={lang} /></Suspense>}
+        {subPage === 'taste-seoul' && <Suspense fallback={<LoadingSpinner />}><TasteOfSeoul lang={lang} /></Suspense>}
 
         {/* Pocket catch-all — 전용 탭이 없는 pocket ID는 PocketContent로 렌더링 */}
-        {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet','wishlist','taxrefund','departure','heatmap','passport-scan','departure-shopping'].includes(subPage) && (
+        {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet','wishlist','taxrefund','departure','heatmap','passport-scan','departure-shopping','taxi','subway','performance','flight-info','show-korean','near-map','korean-culture'].includes(subPage) && (
           <PocketContent pocketId={subPage} lang={lang} setTab={(t) => setSubPage(t)} />
         )}
         </div>
@@ -2229,11 +2398,26 @@ function AppInner() {
             </Suspense>
           </div>
         )}
-        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRateData} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet','taxrefund','departure','heatmap','wishlist','passport-scan','departure-shopping'].includes(t)) { setTab('tools'); setSubPage(t) } else { setTab(t) }}} />}
+        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRateData} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet','taxrefund','departure','heatmap','wishlist','passport-scan','departure-shopping','flight-info','show-korean','near-map','korean-culture'].includes(t)) { setTab('tools'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
+        {(tab==='popup' || tab==='near-map') && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <NearMap lang={lang} onBack={() => { setTab('home') }} />
+          </Suspense>
+        )}
+        {tab==='discover' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <DiscoverTab lang={lang} setTab={handleTabChange} setSubPage={setSubPage} />
+          </Suspense>
+        )}
+        {tab==='more' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <MorePage lang={lang} setTab={handleTabChange} setSubPage={setSubPage} />
+          </Suspense>
+        )}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} adminMode={adminMode} setAdminMode={setAdminMode} setAdminView={setAdminView} />}
         <div className="mt-12 mb-6 px-4 text-center text-[11px] text-[#9CA3AF]">
-          <p>© 2026 HanPocket. All rights reserved.</p>
+          <p>© 2026 NEAR. All rights reserved.</p>
         </div>
       </div>
       {/* 검색 모달 */}
@@ -2400,7 +2584,6 @@ function AppInner() {
               <p className="text-xs font-semibold mb-4" style={{ color: '#6B7280' }}>{L(lang, { ko: '홈 화면의 위젯을 설정할 수 있습니다.', zh: '可以设置首页的小组件。', en: 'Configure widgets on the home screen.' })}</p>
               <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                 {[
-                  { key: 'weather', label: { ko: '날씨', zh: '天气', en: 'Weather' } },
                   { key: 'exchange', label: { ko: '환율', zh: '汇率', en: 'Exchange' } },
                   { key: 'clock', label: { ko: '한국 시간', zh: '韩国时间', en: 'Korea Time' } },
                   { key: 'emergency', label: { ko: '긴급 연락처', zh: '紧急联系', en: 'Emergency' } },
@@ -2480,27 +2663,59 @@ function AppInner() {
         </div>
       </>
 
-      {/* Pine-style Bottom Navigation */}
+      {/* Location Context Bar */}
+      {!locationBarDismissed && (
+      <div className="fixed left-0 right-0 z-50 safe-bottom"
+        style={{ bottom: '64px' }}
+        onClick={() => { setLocationBarDismissed(true); localStorage.setItem('loc_bar_dismissed', '1') }}>
+        <div className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-full bg-[#1A1A1A]/90 backdrop-blur-md cursor-pointer">
+          <MapPin size={14} className="text-[#C4725A] flex-shrink-0" />
+          <span className="text-[11px] text-white/90 truncate flex-1">
+            {lang === 'ko' ? '한국에서 사용 가능한 서비스를 보고 있습니다' : lang === 'zh' ? '正在查看韩国可用的服务' : 'Viewing services available in Korea'}
+          </span>
+          <span className="text-[13px] flex-shrink-0">🇰🇷</span>
+          <X size={14} className="text-white/50 flex-shrink-0" />
+        </div>
+      </div>
+      )}
+
+      {/* Bottom Navigation with Center FAB */}
       <div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom"
         style={{
-          backgroundColor: '#FFFFFF',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderTop: 'none',
-          height: '56px',
+          backgroundColor: '#FAF7F5',
+          borderTop: '1px solid #EDE8E3',
+          height: '64px',
         }}>
-        <div className="flex items-center justify-around h-full">
+        <div className="flex items-end justify-around h-full pb-1.5 relative">
           {bottomTabs.map(item => {
             const active = tab === item.id
+            if (item.fab) {
+              return (
+                <button key={item.id} onClick={() => handleTabChange(item.id)}
+                  aria-label={item.label[lang]}
+                  className="flex flex-col items-center justify-center -mt-5 relative">
+                  <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center shadow-lg"
+                    style={{ background: '#111111' }}>
+                    <item.icon size={24} weight="light" className="text-white" />
+                  </div>
+                  <span className="text-[10px] mt-0.5 font-medium" style={{ color: active ? '#111111' : '#9CA3AF' }}>
+                    {item.label[lang]}
+                  </span>
+                </button>
+              )
+            }
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
                 aria-label={t[lang].accessibility?.[`${item.id}Tab`] || `${item.label[lang]} tab`}
-                className="flex flex-col items-center justify-center gap-0.5 py-1 relative transition-all duration-200">
-                <div className="p-1.5 rounded-xl transition-all duration-200">
-                  <item.icon size={active ? 24 : 22} strokeWidth={active ? 2.2 : 1.5} style={{ color: active ? '#4B5563' : '#9CA3AF' }} />
+                className="flex flex-col items-center justify-center gap-0.5 py-1 relative transition-all duration-200 min-w-[56px]">
+                <div className="p-1 rounded-xl transition-all duration-200">
+                  <item.icon size={active ? 24 : 22} weight={active ? 'regular' : 'light'} style={{ color: active ? '#111111' : '#9CA3AF' }} />
                 </div>
-                {item.id === 'profile' && adminMode && (
-                  <span className="absolute top-0 right-1 w-2 h-2 bg-red-500 rounded-full" />
+                <span className="text-[10px] font-medium" style={{ color: active ? '#111111' : '#9CA3AF' }}>
+                  {item.label[lang]}
+                </span>
+                {item.id === 'popup' && adminMode && (
+                  <span className="absolute top-0 right-2 w-2 h-2 bg-red-500 rounded-full" />
                 )}
               </button>
             )

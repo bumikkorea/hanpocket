@@ -87,26 +87,8 @@ export default function OnboardingFlow({ onComplete, lang, setLang }) {
   const [step, setStep] = useState('login')
   const [nationality, setNationality] = useState(null)
   const [currentVisa, setCurrentVisa] = useState(null)
-  const [exchangeRates, setExchangeRates] = useState(null)
   const s = t[lang]
 
-  // 환율 로드 (CNY, HKD, TWD, MOP)
-  useEffect(() => {
-    Promise.all([
-      fetch('https://api.exchangerate-api.com/v4/latest/CNY').then(r => r.json()),
-      fetch('https://api.exchangerate-api.com/v4/latest/HKD').then(r => r.json()),
-      fetch('https://api.exchangerate-api.com/v4/latest/TWD').then(r => r.json()),
-      fetch('https://api.exchangerate-api.com/v4/latest/MOP').then(r => r.json()),
-    ]).then(([cny, hkd, twd, mop]) => {
-      setExchangeRates({
-        CNY: cny.rates?.KRW ? Math.round(cny.rates.KRW * 100) / 100 : null,
-        HKD: hkd.rates?.KRW ? Math.round(hkd.rates.KRW * 100) / 100 : null,
-        TWD: twd.rates?.KRW ? Math.round(twd.rates.KRW * 100) / 100 : null,
-        MOP: mop.rates?.KRW ? Math.round(mop.rates.KRW * 100) / 100 : null,
-        _date: cny.date || null,
-      })
-    }).catch(() => {})
-  }, [])
 
   // 스플래시 1초 후 로그인 화면으로 자동 전환
   useEffect(() => {

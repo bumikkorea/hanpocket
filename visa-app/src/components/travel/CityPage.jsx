@@ -97,7 +97,7 @@ export default function CityPage({ city, lang, onBack, onAreaClick, onSpotClick 
                   <button
                     key={area.id}
                     onClick={() => onAreaClick?.(area)}
-                    className="group relative h-[120px] rounded-xl overflow-hidden bg-[#F9FAFB] hover:shadow-md transition-all duration-200"
+                    className="group relative h-[120px] rounded-xl overflow-hidden bg-[#F9FAFB] hover: transition-all duration-200"
                   >
                     <img 
                       src={area.image} 

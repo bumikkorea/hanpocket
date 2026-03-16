@@ -16,7 +16,7 @@ const SimGuide = lazy(() => import('./guides/SimGuide'))
 const TaxRefundGuide = lazy(() => import('./guides/TaxRefundGuide'))
 const DutyFreeGuide = lazy(() => import('./guides/DutyFreeGuide'))
 
-const SECTIONS = []
+
 
 const AIRPORTS = [
   { code: 'ICN', name: { ko: '인천국제공항', zh: '仁川国际机场', en: 'Incheon Intl Airport' }, terminals: 'T1, T2', toCity: [
@@ -199,9 +199,15 @@ const CITIES = [
 ]
 
 const TRANSPORT = [
+  { name: { ko: '교통카드 비교', zh: '交通卡对比', en: 'Transport Card Comparison' }, icon: CreditCard, isComparison: true, info: [
+    { ko: '💳 T-money: 기본형 (₩2,500), 편의점에서 구매/충전', zh: '💳 T-money：基础版（₩2,500），便利店购买/充值', en: '💳 T-money: Basic (₩2,500), buy/recharge at convenience stores' },
+    { ko: '💎 WOWPASS: 선불카드 (₩3,900), 공항에서 구매, 해외카드처럼 사용', zh: '💎 WOWPASS：预付卡（₩3,900），机场购买，可当海外银行卡使用', en: '💎 WOWPASS: Prepaid card (₩3,900), buy at airport, use like foreign card' },
+    { ko: '📱 모바일: 삼성페이/구글페이/애플페이 등록 (안드로이드만 지하철)', zh: '📱 移动支付：三星/谷歌/苹果支付注册（仅安卓可用于地铁）', en: '📱 Mobile: Samsung/Google/Apple Pay registration (Android only for subway)' },
+    { ko: '🏆 추천: 단기여행 → T-money / 쇼핑많이 → WOWPASS / 안드로이드폰 → 모바일', zh: '🏆 推荐：短期旅游→T-money / 购物较多→WOWPASS / 安卓手机→移动支付', en: '🏆 Recommended: Short trip → T-money / Shopping → WOWPASS / Android → Mobile' },
+  ]},
   { name: 'T-money', icon: CreditCard, info: [
     { ko: '편의점(CU/GS25/세븐일레븐)에서 구매 가능', zh: '可在便利店（CU/GS25/7-Eleven）购买', en: 'Buy at convenience stores (CU/GS25/7-Eleven)' },
-    { ko: '카드 가격: ₩2,500 (충전 별도)', zh: '卡价：₩2,500（充值另付）', en: 'Card: ₩2,500 (top-up separate)' },
+    { ko: '카드 가격: ₩2,500 (충전 별도)', zh: '卡价：₩2,500（충值另付）', en: 'Card: ₩2,500 (top-up separate)' },
     { ko: '지하철, 버스, 택시, 편의점 결제 가능', zh: '可用于地铁、公交、出租车、便利店支付', en: 'Works on subway, bus, taxi, convenience stores' },
     { ko: '환불: 편의점에서 잔액 환불 (수수료 ₩500)', zh: '退款：可在便利店退还余额（手续费₩500）', en: 'Refund: at convenience stores (₩500 fee)' },
   ]},
@@ -782,48 +788,6 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
         </Suspense>
       )}
 
-      {/* Cities — 클룩 스타일 도시 카드 */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-[#111827] px-4">
-          {L(lang, { ko: '도시별 여행', zh: '按城市旅游', en: 'Travel by City' })}
-        </h2>
-        <div className="space-y-3 px-4">
-          {TRAVEL_CITIES.map(city => (
-            <button
-              key={city.id}
-              onClick={() => setSelectedCity(city)}
-              className="w-full rounded-[6px] overflow-hidden border border-[#E5E7EB] bg-white hover:shadow-md transition-all duration-200 active:scale-[0.98]"
-            >
-              <div className="relative h-[140px]">
-                <img
-                  src={city.image}
-                  alt={L(lang, city.name)}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/30" />
-                <div className="absolute bottom-3 left-3 right-3">
-                  <h3 className="text-white font-bold text-lg">
-                    {L(lang, city.name)}
-                  </h3>
-                  <p className="text-white/90 text-sm line-clamp-2">
-                    {L(lang, city.description)}
-                  </p>
-                </div>
-              </div>
-              <div className="p-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-[#6B7280]">
-                    {city.areas?.length || 0}{L(lang, { ko: '개 지역', zh: '个地区', en: ' areas' })} · 
-                    {city.spots?.length || 0}{L(lang, { ko: '개 장소', zh: '个地点', en: ' spots' })}
-                  </span>
-                  <ChevronRight size={16} className="text-[#9CA3AF]" />
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Guide overlays */}
       {activeGuide && (
         <Suspense fallback={null}>
@@ -1027,7 +991,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* ─── 입국카드 시각 재현 ─── */}
-            <div className="bg-gradient-to-b from-[#F0F4FF] to-[#F8FAFC] border-2 border-[#B8C9E8] rounded-[6px] overflow-hidden shadow-sm">
+            <div className="bg-gradient-to-b from-[#F0F4FF] to-[#F8FAFC] border-2 border-[#B8C9E8] rounded-[6px] overflow-hidden ">
               {/* 카드 상단 헤더 — 공식 카드 스타일 */}
               <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2563EB] px-4 py-3 text-center">
                 <p className="text-[9px] font-bold text-blue-200 tracking-[0.2em]">REPUBLIC OF KOREA</p>
@@ -1359,7 +1323,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
                   selectedCategory === cat.id 
-                    ? 'bg-[#111827] text-white shadow-md' 
+                    ? 'bg-[#111827] text-white ' 
                     : 'bg-[#FAFAF8] text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]'
                 }`}>
                 {L(lang, cat.name)}
@@ -1370,7 +1334,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
           {/* Spot cards */}
           <div className="grid gap-4">
             {filteredSpots.map(spot => (
-              <div key={spot.id} className={`${card} hover:shadow-lg transition-all duration-200`}>
+              <div key={spot.id} className={`${card} hover: transition-all duration-200`}>
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h3 className="text-sm font-bold text-[#111827] mb-1 leading-tight">{L(lang, spot.name)}</h3>

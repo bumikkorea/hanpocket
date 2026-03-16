@@ -554,7 +554,7 @@ function TourApiFoodSection({ lang }) {
           <div
             key={item.contentid || i}
             onClick={() => setDetailItem(item)}
-            className="min-w-[180px] max-w-[180px] rounded-[6px] overflow-hidden bg-white border border-gray-100 shadow-sm cursor-pointer"
+            className="min-w-[180px] max-w-[180px] rounded-[6px] overflow-hidden bg-white border border-gray-100  cursor-pointer"
           >
             {item.firstimage ? (
               <img src={item.firstimage} alt={item.title} className="w-full h-28 object-cover" loading="lazy" />

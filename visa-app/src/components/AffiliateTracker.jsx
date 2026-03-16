@@ -51,7 +51,7 @@ const AffiliateTracker = () => {
 
   return (
     <div 
-      className="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg p-4 border border-gray-200 max-w-sm z-50"
+      className="fixed bottom-4 right-4 bg-white  rounded-lg p-4 border border-gray-200 max-w-sm z-50"
       style={{ fontSize: '12px' }}
     >
       <div className="flex justify-between items-center mb-2">

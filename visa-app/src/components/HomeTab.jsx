@@ -1085,14 +1085,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── Quick Action 4×2 그리드 ─── */}
       <div className="mt-3 mb-10 px-5">
-        <p className="typo-whisper mb-3">QUICK ACCESS</p>
         <div className="grid grid-cols-4 gap-3">
           {[
             { icon: AirplaneLanding, label: { ko: '입국', zh: '入境', en: 'Arrival' }, color: '#C4725A', onClick: () => setArrivalPopup(true) },
             { icon: AirplaneTakeoff, label: { ko: '출국', zh: '出境', en: 'Depart' }, color: '#C4725A', onClick: () => setDeparturePopup(true) },
-            { icon: PhMapPin, label: { ko: '지도', zh: '地图', en: 'Map' }, color: '#D4956B', onClick: () => setTab('near-map') },
             { icon: ChatCircleText, label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#8B6F5C', onClick: () => setTab('show-korean') },
-            { icon: FirstAidKit, label: { ko: '긴급', zh: '紧急', en: 'SOS' }, color: '#C62828', onClick: () => setTab('sos') },
             { icon: PhGlobe, label: { ko: '한국문화', zh: '韩国文化', en: 'Culture' }, color: '#B8860B', onClick: () => setTab('korean-culture') },
             { icon: Plus, label: { ko: '더보기', zh: '更多', en: 'More' }, color: '#888', onClick: () => setTab('more') },
           ].map(({ icon: Icon, label, color, onClick }) => (
@@ -1109,11 +1106,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       </div>
 
-      {/* ─── 어디 가요? 섹션 헤더 ─── */}
-      <div className="px-5 mb-4">
-        <p className="typo-whisper mb-1">WHERE TO GO</p>
-        <p className="typo-title">{L(lang, { ko: '어디 가요?', zh: '去哪里？', en: 'Where to go?' })}</p>
-      </div>
+
 
       {/* ─── #30 이번 주 인기 팝업 TOP 5 ─── */}
       {(() => {
@@ -1221,7 +1214,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
             {/* ── 진행 중 팝업 ── */}
             <div className="px-5 mb-3">
-              <p className="typo-whisper mb-1">NOW OPEN</p>
               <div className="flex items-center justify-between">
                 <h2 className="typo-title">
                   {L(lang, { ko: '진행 중 팝업', zh: '进行中快闪店', en: 'Active Popups' })}
@@ -1248,7 +1240,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             {upcomingPopups.length > 0 && (
               <>
                 <div className="px-5 mb-3">
-                  <p className="typo-whisper mb-1">COMING SOON</p>
                   <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <h2 className="typo-title">

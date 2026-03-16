@@ -1860,7 +1860,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
 
-      {/* ─── 입국하기 플로우 (3단계 경로바) ─── */}
+      {/* ─── 입국하기 플로우 (카드 리스트) ─── */}
       {showArrivalFlow && arrivalStep === 'menu' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
           <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
@@ -1869,101 +1869,32 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               {L(lang, { ko: '입국하기', zh: '入境', en: 'Arrival' })}
             </h2>
           </div>
-
-          {/* 경로바 — 3단계 */}
-          <div className="px-6 pt-3 pb-2">
-            <div className="relative flex items-center justify-between">
-              {/* 연결선 */}
-              <div className="absolute top-3 left-[16%] right-[16%] h-[2px] bg-[#E5E7EB]" />
-              <div className="absolute top-3 left-[16%] h-[2px] bg-[#1A1A1A] transition-all duration-300" style={{
-                width: arrivalPhase === 'entry' ? '0%' : arrivalPhase === 'move' ? '34%' : '68%'
-              }} />
-              {ARRIVAL_PHASES.map((p, i) => (
-                <button key={p.id} onClick={() => setArrivalPhase(p.id)} className="flex flex-col items-center z-10" style={{ width: '33%' }}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-colors ${
-                    arrivalPhase === p.id ? 'bg-[#1A1A1A] text-white' : 'bg-[#E5E7EB] text-[#999]'
-                  }`}>{i + 1}</div>
-                  <span className={`text-[10px] mt-1.5 text-center leading-tight ${
-                    arrivalPhase === p.id ? 'text-[#1A1A1A] font-bold' : 'text-[#999]'
-                  }`}>{L(lang, p.label)}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* 단계별 기능 목록 */}
-          <div className="p-4">
-            {arrivalPhase === 'entry' && (
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { id: 'immigration-wait', icon: Clock, color: '#C4725A', label: { ko: '입국심사\n대기시간', zh: '入境审查\n等候时间', en: 'Immigration\nWait Time' } },
-                  { id: 'immigration', icon: Note, color: '#C4725A', label: { ko: '입국신고서\n작성법', zh: '入境申报卡\n填写方法', en: 'Arrival Card\nHow-to' } },
-                  { id: 'sim-exchange', icon: Phone, color: '#D4956B', label: { ko: 'SIM카드\n& 환전', zh: 'SIM卡\n& 换钱', en: 'SIM Card\n& Exchange' } },
-                  { id: 'nav-pet', icon: PawPrint, color: '#B8860B', label: { ko: '펫 입국\n가이드', zh: '宠物入境\n指南', en: 'Pet Entry\nGuide' }, guide: 'pet' },
-                  { id: 'airport-facilities', icon: Building, color: '#7A8B6F', label: { ko: '공항\n시설 정보', zh: '机场\n设施信息', en: 'Airport\nFacilities' } },
-                  { id: 'dietary-card-guide', icon: ForkKnife, color: '#8B6F5C', label: { ko: '못먹는 음식\n등록', zh: '不能吃的\n食物登记', en: 'Dietary\nRestrictions' }, guide: 'dietary-card' },
-                  { id: 'airport-lounge', icon: CoffeeBean, color: '#6B8DAD', label: { ko: '공항\n라운지', zh: '机场\n休息室', en: 'Airport\nLounge' }, subPage: 'flight-info' },
-                ].map(item => {
-                  const IconComponent = item.icon
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
-                        else if (item.subPage) { setTab(item.subPage); setShowArrivalFlow(false) }
-                        else { setArrivalStep(item.id) }
-                      }}
-                      className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"
-                      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
-                    >
-                      <IconComponent size={26} color={item.color} weight="duotone" />
-                      <span className="typo-caption text-center leading-tight whitespace-pre-line" style={{ color: '#555' }}>{L(lang, item.label)}</span>
-                    </button>
-                  )
-                })}
-              </div>
-            )}
-
-            {arrivalPhase === 'move' && (
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { id: 'transport-bus', icon: '🚌', label: { ko: '버스\n타는 법', zh: '坐公交车', en: 'How to\nRide Bus' } },
-                  { id: 'transport-subway', icon: '🚇', label: { ko: '지하철\n타는 법', zh: '坐地铁', en: 'How to\nRide Subway' } },
-                  { id: 'transport-arex', icon: '🚄', label: { ko: 'AREX\n공항철도', zh: 'AREX\n机场铁路', en: 'AREX\nAirport Rail' } },
-                  { id: 'transport-taxi', icon: '🚕', label: { ko: '택시\n타는 법', zh: '坐出租车', en: 'How to\nRide Taxi' } },
-                  { id: 'transport-navi', icon: '🗺', label: { ko: '길찾기', zh: '导航', en: 'Navigation' } },
-                ].map(item => (
-                  <button
-                    key={item.id}
-                    onClick={() => setArrivalStep(item.id)}
-                    className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"
-                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
-                  >
-                    <span className="text-[22px]">{item.icon}</span>
-                    <span className="typo-caption text-center leading-tight whitespace-pre-line" style={{ color: '#555' }}>{L(lang, item.label)}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {arrivalPhase === 'hotel' && (
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { id: 'hotel-checkin', icon: '🔑', label: { ko: '체크인\n한국어 카드', zh: '入住\n韩语卡片', en: 'Check-in\nKorean Card' } },
-                  { id: 'hotel-nearby', icon: '🏪', label: { ko: '숙소 주변\n살펴보기', zh: '查看\n住宿周边', en: 'Explore\nNearby' } },
-                ].map(item => (
-                  <button
-                    key={item.id}
-                    onClick={() => setArrivalStep(item.id)}
-                    className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"
-                    style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
-                  >
-                    <span className="text-[22px]">{item.icon}</span>
-                    <span className="typo-caption text-center leading-tight whitespace-pre-line" style={{ color: '#555' }}>{L(lang, item.label)}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+          <div className="p-4 flex flex-col gap-3">
+            {[
+              { id: 'immigration-wait', label: { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' }, sub: { ko: '실시간 대기 현황', zh: '实时等候情况', en: 'Real-time wait status' } },
+              { id: 'immigration', label: { ko: '입국신고서 작성법', zh: '入境申报卡填写方法', en: 'Arrival Card How-to' }, sub: { ko: '빠르게 작성하는 법', zh: '快速填写方法', en: 'How to fill out quickly' } },
+              { id: 'sim-exchange', label: { ko: 'SIM카드 & 환전', zh: 'SIM卡 & 换钱', en: 'SIM Card & Exchange' }, sub: { ko: '공항에서 바로 해결', zh: '在机场立即解决', en: 'Get it done at the airport' } },
+              { id: 'nav-pet', label: { ko: '펫 입국 가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' }, sub: { ko: '반려동물 검역 절차', zh: '宠物检疫流程', en: 'Pet quarantine process' }, guide: 'pet' },
+              { id: 'airport-facilities', label: { ko: '공항 시설 정보', zh: '机场设施信息', en: 'Airport Facilities' }, sub: { ko: '라운지, 짐 보관, 편의시설', zh: '休息室、寄存、便利设施', en: 'Lounge, storage, amenities' } },
+              { id: 'dietary-card-guide', label: { ko: '못먹는 음식 등록', zh: '不能吃的食物登记', en: 'Dietary Restrictions' }, sub: { ko: '알레르기·종교·채식 카드', zh: '过敏·宗教·素食卡', en: 'Allergy, religious, vegan card' }, guide: 'dietary-card' },
+              { id: 'transport-arex', label: { ko: '공항 → 서울 이동', zh: '机场 → 首尔交通', en: 'Airport → Seoul' }, sub: { ko: 'AREX, 리무진, 택시 비교', zh: 'AREX、大巴、出租车对比', en: 'AREX, limousine, taxi comparison' }, tab: 'travel' },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
+                  else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
+                  else { setArrivalStep(item.id) }
+                }}
+                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                  <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                </div>
+                <ChevronRight size={18} color="#999" />
+              </button>
+            ))}
           </div>
         </div>
       )}

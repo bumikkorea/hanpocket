@@ -388,9 +388,9 @@ export default function NearMap({ lang }) {
 
   return (
     <div className="px-1 pt-2 pb-4 animate-fade-up">
-      {/* ─── 3.1 레이어 탭 (편의시설/팝업/시티투어) ─── */}
-      <div className="mb-2">
-        <div className="flex gap-1 bg-[#F3F4F6] rounded-[10px] p-0.5">
+      {/* ─── 3.1 레이어 탭 + Magic Pill (같은 줄) ─── */}
+      <div className="mb-2 flex items-center gap-2">
+        <div className="flex gap-1 bg-[#F3F4F6] rounded-[10px] p-0.5 flex-1">
           {LAYER_TABS.map(lt => (
             <button key={lt.id} onClick={() => switchLayer(lt.id)}
               className={`flex-1 py-2 rounded-[8px] text-[12px] font-semibold transition-all ${
@@ -401,14 +401,12 @@ export default function NearMap({ lang }) {
             </button>
           ))}
         </div>
+        <MagicPillSelector
+          areas={QUICK_AREAS}
+          lang={lang}
+          onSelect={(area) => moveToArea(area)}
+        />
       </div>
-
-      {/* ─── 3.1 Magic Pill Selector ─── */}
-      <MagicPillSelector
-        areas={QUICK_AREAS}
-        lang={lang}
-        onSelect={(area) => moveToArea(area)}
-      />
 
       {/* ─── 퀵서치 레이어 — 1터치로 주변 찾기 ─── */}
       {activeLayer === 'quick' && (

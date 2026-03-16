@@ -29,6 +29,17 @@ const TEXTS = {
   scanAnother: { ko: '다른 영수증 스캔', zh: '扫描其他收据', en: 'Scan Another', ja: '別のレシートをスキャン' },
   globalTaxFree: { ko: 'Global Tax Free 앱', zh: 'Global Tax Free App', en: 'Global Tax Free App', ja: 'Global Tax Free アプリ' },
   easyTaxRefund: { ko: 'Easy Tax Refund 앱', zh: 'Easy Tax Refund App', en: 'Easy Tax Refund App', ja: 'Easy Tax Refund アプリ' },
+  ktReward: { ko: 'KT Tourist Reward', zh: 'KT Tourist Reward', en: 'KT Tourist Reward', ja: 'KT Tourist Reward' },
+  refundOperators: { ko: '환급 사업자', zh: '退税运营商', en: 'Refund Operators', ja: '還付事業者' },
+  instantRefund: { ko: '즉시환급', zh: '即时退税', en: 'Instant Refund', ja: '即時還付' },
+  airportRefund: { ko: '공항환급', zh: '机场退税', en: 'Airport Refund', ja: '空港還付' },
+  downtownRefund: { ko: '시내환급', zh: '市内退税', en: 'Downtown Refund', ja: '市内還付' },
+  refundMethods: { ko: '환급 방법 3가지', zh: '3种退税方式', en: '3 Refund Methods', ja: '3つの還付方法' },
+  instantDesc: { ko: '매장에서 바로 세금 차감 (₩50만 이하, 연 ₩250만 한도)', zh: '在商店直接扣除税金（₩50万以下，年度限额₩250万）', en: 'Tax deducted at store (under ₩500K, annual limit ₩2.5M)', ja: '店舗で即時税控除（₩50万以下、年間₩250万限度）' },
+  airportDesc: { ko: '출국 시 공항 키오스크/카운터에서 환급', zh: '出境时在机场自助机/柜台退税', en: 'Refund at airport kiosk/counter when departing', ja: '出国時に空港キオスク/カウンターで還付' },
+  downtownDesc: { ko: '명동·동대문 등 시내 환급 창구', zh: '明洞·东大门等市内退税窗口', en: 'Downtown refund counters in Myeongdong, Dongdaemun, etc.', ja: '明洞・東大門などの市内還付窓口' },
+  tip: { ko: '💡 팁', zh: '💡 小贴士', en: '💡 Tip', ja: '💡 ヒント' },
+  instantTip: { ko: '₩50만 이하 구매는 즉시환급이 가장 편해요! 매장에서 여권만 보여주세요.', zh: '₩50万以下购物，即时退税最方便！在商店出示护照即可。', en: 'For purchases under ₩500K, instant refund is easiest! Just show your passport at the store.', ja: '₩50万以下の購入は即時還付が最も便利！店舗でパスポートを見せるだけ。' },
 }
 
 const STORAGE_KEY = 'hp_tax_receipts'
@@ -245,36 +256,98 @@ export default function TaxRefundChecker({ lang, profile }) {
         )}
       </div>
 
-      {/* How to get refund + CTA */}
+      {/* Instant refund tip */}
+      <div className="mx-4 p-3 rounded-xl bg-amber-50 border border-amber-200">
+        <p className="text-xs font-semibold text-amber-800">{L(lang, TEXTS.tip)}</p>
+        <p className="text-xs text-amber-700 mt-1">{L(lang, TEXTS.instantTip)}</p>
+      </div>
+
+      {/* 3 Refund Methods */}
       <div className="mx-4 p-4 rounded-xl border border-[#E5E7EB] space-y-3">
         <h3 className="text-sm font-bold text-[#111827] flex items-center gap-2">
           <AlertCircle size={14} />
-          {L(lang, TEXTS.howToRefund)}
+          {L(lang, TEXTS.refundMethods)}
         </h3>
-        <div className="space-y-2 text-xs text-[#6B7280]">
-          <p>{L(lang, { ko: '1. ₩15,000 이상 구매 시 환급 가능', zh: '1. 购买₩15,000以上可退税', en: '1. Purchases ₩15,000+ are eligible', ja: '1. ₩15,000以上の購入が対象' })}</p>
-          <p>{L(lang, { ko: '2. 출국 시 공항 세관에서 영수증 제시', zh: '2. 出境时在机场海关出示收据', en: '2. Show receipts at airport customs when departing', ja: '2. 出国時に空港の税関でレシートを提示' })}</p>
-          <p>{L(lang, { ko: '3. Tax Free 키오스크 또는 카운터에서 환급', zh: '3. 在Tax Free自助机或柜台退税', en: '3. Get refund at Tax Free kiosk or counter', ja: '3. Tax Freeキオスクまたはカウンターで還付' })}</p>
+
+        {/* Method 1: Instant */}
+        <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-100">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-200 px-2 py-0.5 rounded-full">1</span>
+            <span className="text-xs font-bold text-emerald-800">{L(lang, TEXTS.instantRefund)}</span>
+            <span className="text-[10px] text-emerald-600 bg-emerald-100 px-1.5 py-0.5 rounded ml-auto">⚡ {L(lang, { ko: '가장 편리', zh: '最方便', en: 'Easiest', ja: '最も便利' })}</span>
+          </div>
+          <p className="text-[11px] text-emerald-700">{L(lang, TEXTS.instantDesc)}</p>
         </div>
-        <div className="flex gap-2 pt-1">
-          <a
-            href="https://apps.apple.com/kr/app/global-tax-free/id1141552845"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-blue-50 text-blue-700 text-xs font-medium"
-          >
-            <ExternalLink size={12} />
-            {L(lang, TEXTS.globalTaxFree)}
+
+        {/* Method 2: Airport */}
+        <div className="p-3 rounded-lg bg-blue-50 border border-blue-100">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-bold text-blue-700 bg-blue-200 px-2 py-0.5 rounded-full">2</span>
+            <span className="text-xs font-bold text-blue-800">{L(lang, TEXTS.airportRefund)}</span>
+          </div>
+          <p className="text-[11px] text-blue-700">{L(lang, TEXTS.airportDesc)}</p>
+        </div>
+
+        {/* Method 3: Downtown */}
+        <div className="p-3 rounded-lg bg-purple-50 border border-purple-100">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-bold text-purple-700 bg-purple-200 px-2 py-0.5 rounded-full">3</span>
+            <span className="text-xs font-bold text-purple-800">{L(lang, TEXTS.downtownRefund)}</span>
+          </div>
+          <p className="text-[11px] text-purple-700">{L(lang, TEXTS.downtownDesc)}</p>
+        </div>
+
+        {/* Basic steps */}
+        <div className="space-y-1.5 text-xs text-[#6B7280] pt-1 border-t border-[#E5E7EB]">
+          <p>{L(lang, { ko: '✓ ₩15,000 이상 구매 + Tax Free 가맹점', zh: '✓ 购买₩15,000以上 + Tax Free加盟店', en: '✓ Purchase ₩15,000+ at Tax Free merchant', ja: '✓ ₩15,000以上購入 + Tax Free加盟店' })}</p>
+          <p>{L(lang, { ko: '✓ 구매일로부터 3개월 이내 출국', zh: '✓ 购买日起3个月内出境', en: '✓ Depart within 3 months of purchase', ja: '✓ 購入日から3ヶ月以内に出国' })}</p>
+          <p>{L(lang, { ko: '✓ 여권 필수 (구매 시 + 환급 시)', zh: '✓ 必须携带护照（购买时+退税时）', en: '✓ Passport required (at purchase + refund)', ja: '✓ パスポート必須（購入時+還付時）' })}</p>
+        </div>
+      </div>
+
+      {/* Refund operators */}
+      <div className="mx-4 p-4 rounded-xl border border-[#E5E7EB] space-y-3">
+        <h3 className="text-sm font-bold text-[#111827]">{L(lang, TEXTS.refundOperators)}</h3>
+        <p className="text-[11px] text-[#9CA3AF]">{L(lang, { ko: '환급액은 관세청 고시 요율표로 동일합니다. 영수증의 사업자를 확인하세요.', zh: '退税金额按海关公示费率统一。请确认收据上的运营商。', en: 'Refund amounts are identical (set by Korea Customs). Check the operator on your receipt.', ja: '還付額は関税庁告示の料率表で統一。レシートの事業者を確認。' })}</p>
+
+        <div className="grid grid-cols-3 gap-2">
+          {/* Global Tax Free */}
+          <a href="https://apps.apple.com/kr/app/global-tax-free/id1141552845" target="_blank" rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white text-[10px] font-bold">GTF</div>
+            <span className="text-[10px] font-medium text-blue-800 text-center leading-tight">Global<br/>Tax Free</span>
+            <span className="text-[9px] text-blue-500">🥇 {L(lang, { ko: '1위', zh: '第1', en: '#1', ja: '1位' })}</span>
           </a>
-          <a
-            href="https://apps.apple.com/kr/app/easy-tax-refund/id994757554"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg bg-purple-50 text-purple-700 text-xs font-medium"
-          >
-            <ExternalLink size={12} />
-            {L(lang, TEXTS.easyTaxRefund)}
+
+          {/* KT Tourist Reward */}
+          <a href="https://apps.apple.com/kr/app/kt-tourist-reward/id1493aborting" target="_blank" rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-red-50 hover:bg-red-100 transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center text-white text-[10px] font-bold">KT</div>
+            <span className="text-[10px] font-medium text-red-800 text-center leading-tight">KT Tourist<br/>Reward</span>
+            <span className="text-[9px] text-red-500">🥈 {L(lang, { ko: '2위', zh: '第2', en: '#2', ja: '2位' })}</span>
           </a>
+
+          {/* Easy Tax Refund */}
+          <a href="https://apps.apple.com/kr/app/easy-tax-refund/id994757554" target="_blank" rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1.5 p-3 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white text-[10px] font-bold">ETR</div>
+            <span className="text-[10px] font-medium text-purple-800 text-center leading-tight">Easy Tax<br/>Refund</span>
+            <span className="text-[9px] text-purple-500">🥉 {L(lang, { ko: '3위', zh: '第3', en: '#3', ja: '3位' })}</span>
+          </a>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {/* EB Tax Free */}
+          <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">
+            <div className="w-6 h-6 rounded bg-gray-500 flex items-center justify-center text-white text-[9px] font-bold shrink-0">EB</div>
+            <span className="text-[10px] font-medium text-[#374151]">EB Tax Free</span>
+          </div>
+
+          {/* CubeRefund */}
+          <div className="flex items-center gap-2 p-2.5 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB]">
+            <div className="w-6 h-6 rounded bg-teal-500 flex items-center justify-center text-white text-[9px] font-bold shrink-0">CR</div>
+            <span className="text-[10px] font-medium text-[#374151]">CubeRefund</span>
+          </div>
         </div>
       </div>
     </div>

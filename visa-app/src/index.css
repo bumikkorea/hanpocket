@@ -2,6 +2,33 @@
 
 @import "tailwindcss";
 
+/* ─── GPU 가속 스크롤 최적화 ─── */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 모든 overflow-auto/scroll 요소에 GPU 가속 */
+[class*="overflow-x-auto"],
+[class*="overflow-y-auto"],
+[class*="overflow-x-scroll"],
+[class*="overflow-y-scroll"] {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* 고정 위치 오버레이 최적화 */
+.fixed {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+}
+
+/* 스크롤바 숨기기 크로스브라우저 */
+.scrollbar-hide::-webkit-scrollbar,
+[style*="scrollbarWidth: none"]::-webkit-scrollbar {
+  display: none;
+}
+
 :root {
   --bg: #FAFAF7;              /* 따뜻한 오프화이트 (래플스 벽면) */
   --bg-secondary: #F5F1EB;    /* 크림색 배경 */

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from 'react'
 import { ChevronLeft, ChevronRight, Plus, Pencil, Bell, BellRing } from 'lucide-react'
 import { AirplaneLanding, AirplaneTakeoff, MapPin as PhMapPin, ChatCircleText, CoffeeBean, FirstAidKit, Globe as PhGlobe, Clock, Note, Phone, ForkKnife, Building, PawPrint } from '@phosphor-icons/react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
@@ -892,23 +892,23 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   // DB 팝업 데이터
   const { active: dbActive, upcoming: dbUpcoming, loading: popupLoading } = usePopupStores({ district: popupDistrict })
 
-  const distFiltered = (() => {
+  const distFiltered = useMemo(() => {
     const list = popupDistrict === 'all' ? POPUP_STORES : POPUP_STORES.filter(p => p.district === popupDistrict)
     return [...list].sort((a, b) => {
       const ai = DISTRICT_ORDER.indexOf(a.district)
       const bi = DISTRICT_ORDER.indexOf(b.district)
       return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
     })
-  })()
+  }, [popupDistrict])
   // DB 데이터 우선, 없으면 정적 데이터 fallback
-  const activePopups   = dbActive.length   > 0 ? dbActive   : distFiltered.filter(isOpenToday)
-  const upcomingPopups = dbUpcoming.length > 0 ? dbUpcoming : distFiltered.filter(p => {
+  const activePopups   = useMemo(() => dbActive.length   > 0 ? dbActive   : distFiltered.filter(isOpenToday), [dbActive, distFiltered])
+  const upcomingPopups = useMemo(() => dbUpcoming.length > 0 ? dbUpcoming : distFiltered.filter(p => {
     const now = new Date(); const start = new Date(p.period.start)
     const twoWeeks = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000)
     return start > now && start <= twoWeeks
-  })
+  }), [dbUpcoming, distFiltered])
   // 하위호환 (기존 코드에서 사용)
-  const filteredPopups = distFiltered.filter(isActiveOrUpcoming)
+  const filteredPopups = useMemo(() => distFiltered.filter(isActiveOrUpcoming), [distFiltered])
   const [selectedPopup, setSelectedPopup] = useState(null)
 
   // 알림 권한 상태
@@ -1011,7 +1011,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
   return (
     <div
       className="pt-6 pb-24"
-      style={{ backgroundColor: '#FFFFFF' }}
+      style={{ backgroundColor: '#FFFFFF', transform: 'translateZ(0)', willChange: 'transform' }}
     >
     <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
       {/* ─── 상단 정보 바 ─── */}

@@ -1091,7 +1091,6 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             { icon: AirplaneTakeoff, label: { ko: '출국', zh: '出境', en: 'Depart' }, color: '#C4725A', onClick: () => setDeparturePopup(true) },
             { icon: ChatCircleText, label: { ko: '한국어', zh: '韩语', en: 'Korean' }, color: '#8B6F5C', onClick: () => setTab('show-korean') },
             { icon: PhGlobe, label: { ko: '한국문화', zh: '韩国文化', en: 'Culture' }, color: '#B8860B', onClick: () => setTab('korean-culture') },
-            { icon: Plus, label: { ko: '더보기', zh: '更多', en: 'More' }, color: '#888', onClick: () => setTab('more') },
           ].map(({ icon: Icon, label, color, onClick }) => (
             <button
               key={L(lang, label)}

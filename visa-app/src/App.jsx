@@ -9,7 +9,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Home, Grid3x3, User, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Compass, Wallet, BookOpen, CreditCard } from 'lucide-react'
+import { MessageCircle, X, Home, Grid3x3, User, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Compass, Wallet, BookOpen, CreditCard, MapPin } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -59,6 +59,7 @@ const VisitorHeatmapFull = lazy(() => import('./components/VisitorHeatmapFull'))
 const WishlistPage = lazy(() => import('./components/WishlistPage'))
 const PassportScan = lazy(() => import('./components/PassportScan'))
 const DepartureShoppingRoute = lazy(() => import('./components/DepartureShoppingRoute'))
+const MapTab = lazy(() => import('./components/MapTab'))
 function L(lang, data) {
   if (typeof data === 'string') return data
   return data?.[lang] || data?.en || data?.zh || data?.ko || ''
@@ -1466,7 +1467,7 @@ function AppInner() {
   })
   const [profile, setProfile] = useState(() => loadProfile())
   const [showNotice, setShowNotice] = useState(false)
-  const [tab, setTab] = useState('home')
+  const [tab, setTab] = useState('map')
   const [view, setView] = useState('home')
   const [selCat, setSelCat] = useState(null)
   const [selVisa, setSelVisa] = useState(null)
@@ -1699,10 +1700,9 @@ function AppInner() {
   }
 
   const bottomTabs = [
-    { id: 'home', icon: Home, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'course', icon: Compass, label: { ko: '코스', zh: '路线', en: 'Course' } },
-    { id: 'tools', icon: CreditCard, label: { ko: '도구', zh: '工具', en: 'Tools' } },
-    { id: 'profile', icon: User, label: { ko: '내정보', zh: '我的', en: 'Profile' } },
+    { id: 'home',    icon: Compass, label: { ko: '탐험', zh: '探险', en: 'Explore' } },
+    { id: 'map',     icon: MapPin,  label: { ko: '지도', zh: '地图', en: 'Map' } },
+    { id: 'profile', icon: User,    label: { ko: '마이', zh: '我的', en: 'My' } },
   ]
 
   // Check if a service item has been migrated to pocket categories
@@ -2046,7 +2046,7 @@ function AppInner() {
       {adminMode && <div className="h-[36px]" />}
 
       {/* Content — full width, no side padding (tabs handle their own padding) */}
-      <div className="pt-0 pb-14 tab-enter" key={`${tab}-${subPage || ''}`}>
+      <div className={tab === 'map' ? 'tab-enter' : 'pt-0 pb-14 tab-enter'} key={`${tab}-${subPage || ''}`}>
         {/* Push notification banner — disabled for now */}
         {/* Service grid - pockets.js 데이터 기반 */}
         {tab==='service' && !subPage && (
@@ -2209,6 +2209,11 @@ function AppInner() {
               <CourseTab lang={lang} adminView={adminView} deepLink={deepLink?.tab === 'course' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
             </Suspense>
           </div>
+        )}
+        {tab==='map' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <MapTab lang={lang} />
+          </Suspense>
         )}
         {tab==='search' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>

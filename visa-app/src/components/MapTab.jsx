@@ -1,2001 +1,566 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { MapPin, Search, Filter, Navigation, Info, ArrowUpDown, Route, X, ExternalLink, Globe } from 'lucide-react'
-import { translateBrandName, smartTranslate } from '../data/brandMapping.js'
+import { Search, Navigation, Info } from 'lucide-react'
 import { Capacitor } from '@capacitor/core'
 import { Geolocation } from '@capacitor/geolocation'
+import {
+  POI_DATA,
+  POI_CATEGORIES,
+  isNewPOI,
+  calcDistance,
+  formatDistance,
+} from '../data/poiData'
 
-// 네이티브 or 브라우저 위치 가져오기 통합 함수
+// ─── GPS 헬퍼 ────────────────────────────────────────────────────
 const getPosition = async (options = {}) => {
-  // Capacitor 네이티브 환경이면 네이티브 GPS 사용
   if (Capacitor.isNativePlatform()) {
     const perm = await Geolocation.checkPermissions()
     if (perm.location === 'denied') {
-      const requested = await Geolocation.requestPermissions()
-      if (requested.location === 'denied') {
-        throw { code: 1, message: 'Permission denied' }
-      }
+      const req = await Geolocation.requestPermissions()
+      if (req.location === 'denied') throw { code: 1, message: 'Permission denied' }
     }
-    const pos = await Geolocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: options.timeout || 15000,
-      ...options
-    })
-    return pos
+    return Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 15000, ...options })
   }
-  // 웹 브라우저 fallback
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) =>
     navigator.geolocation.getCurrentPosition(resolve, reject, {
       enableHighAccuracy: true,
-      timeout: options.timeout || 15000,
+      timeout: 15000,
       maximumAge: 0,
-      ...options
+      ...options,
     })
-  })
+  )
 }
 
-// 네이티브 watchPosition 래퍼
-const watchPositionCompat = (successCb, errorCb, options = {}) => {
-  if (Capacitor.isNativePlatform()) {
-    let callbackId = null
-    Geolocation.watchPosition(
-      { enableHighAccuracy: true, timeout: 15000, ...options },
-      (position, err) => {
-        if (err) {
-          errorCb(err)
-        } else if (position) {
-          successCb(position)
-        }
-      }
-    ).then(id => { callbackId = id })
-    // clearWatch 함수 반환
-    return () => {
-      if (callbackId !== null) {
-        Geolocation.clearWatch({ id: callbackId })
-      }
+// ─── KakaoMap 로더 ───────────────────────────────────────────────
+const loadKakaoMap = () => {
+  return new Promise((resolve, reject) => {
+    if (window.kakao && window.kakao.maps) {
+      window.kakao.maps.load(() => resolve(window.kakao))
+      return
     }
-  }
-  // 웹 브라우저 fallback
-  const id = navigator.geolocation.watchPosition(successCb, errorCb, {
-    enableHighAccuracy: true,
-    timeout: 15000,
-    maximumAge: 0,
-    ...options
+    const key = import.meta.env.VITE_KAKAO_MAP_API_KEY
+    const script = document.createElement('script')
+    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${key}&autoload=false&libraries=services`
+    script.onload = () => window.kakao.maps.load(() => resolve(window.kakao))
+    script.onerror = reject
+    document.head.appendChild(script)
   })
-  return () => navigator.geolocation.clearWatch(id)
 }
 
-export default function MapTab({ lang }) {
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [map, setMap] = useState(null)
-  const [markers, setMarkers] = useState([])
-  const [selectedMarker, setSelectedMarker] = useState(null)
-  const [userLocation, setUserLocation] = useState(null)
+// ─── 카테고리 칩 설정 ─────────────────────────────────────────────
+const CHIPS = [
+  { id: 'popup',   zh: '快闪店', ko: '팝업', en: 'Pop-up' },
+  { id: 'food',    zh: '美食',   ko: '맛집', en: 'Food' },
+  { id: 'fashion', zh: '时尚',   ko: '패션', en: 'Fashion' },
+  { id: 'cafe',    zh: '咖啡',   ko: '카페', en: 'Cafe' },
+  { id: 'utility', zh: '便利',   ko: '편의', en: 'Utility' },
+]
+
+// ─── 핀 SVG HTML 생성 ─────────────────────────────────────────────
+function makePinHTML(category, isNew = false) {
+  const cat = POI_CATEGORIES[category]
+  if (!cat) return ''
+  const color = cat.color
+  const letter = cat.letter
+
+  const badge = isNew
+    ? `<div style="position:absolute;top:-6px;right:-6px;background:#E24B4A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:4px;line-height:14px;white-space:nowrap;z-index:1;">NEW</div>`
+    : ''
+
+  return `
+    <div style="position:relative;width:36px;height:42px;cursor:pointer;">
+      ${badge}
+      <div style="
+        width:28px;height:28px;
+        background:${color};
+        border:2px solid #fff;
+        border-radius:50% 50% 50% 0;
+        transform:rotate(-45deg);
+        position:absolute;top:0;left:4px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.25);
+        display:flex;align-items:center;justify-content:center;
+      ">
+        <span style="
+          transform:rotate(45deg);
+          color:#fff;font-size:11px;font-weight:700;
+          font-family:'Inter',sans-serif;
+          line-height:1;
+        ">${letter}</span>
+      </div>
+    </div>
+  `
+}
+
+// ─── 선택된 핀 HTML (크게) ───────────────────────────────────────
+function makeActivePinHTML(category, isNew = false) {
+  const cat = POI_CATEGORIES[category]
+  if (!cat) return ''
+  const color = cat.color
+  const letter = cat.letter
+
+  const badge = isNew
+    ? `<div style="position:absolute;top:-8px;right:-8px;background:#E24B4A;color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:4px;line-height:14px;white-space:nowrap;z-index:1;">NEW</div>`
+    : ''
+
+  return `
+    <div style="position:relative;width:44px;height:52px;cursor:pointer;">
+      ${badge}
+      <div style="
+        width:36px;height:36px;
+        background:${color};
+        border:3px solid #fff;
+        border-radius:50% 50% 50% 0;
+        transform:rotate(-45deg);
+        position:absolute;top:0;left:4px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.35);
+        display:flex;align-items:center;justify-content:center;
+      ">
+        <span style="
+          transform:rotate(45deg);
+          color:#fff;font-size:14px;font-weight:700;
+          font-family:'Inter',sans-serif;
+          line-height:1;
+        ">${letter}</span>
+      </div>
+    </div>
+  `
+}
+
+// ─── 내 위치 마커 HTML ────────────────────────────────────────────
+const USER_LOCATION_HTML = `
+  <div style="
+    width:14px;height:14px;
+    background:#378ADD;
+    border:3px solid #fff;
+    border-radius:50%;
+    box-shadow:0 0 0 4px rgba(55,138,221,0.25);
+  "></div>
+`
+
+// ─── 포맷 헬퍼 ───────────────────────────────────────────────────
+function formatTime(timeStr) {
+  if (!timeStr) return ''
+  const [h, m] = timeStr.split(':')
+  return `${h}:${m}`
+}
+
+function formatDateRange(start, end) {
+  if (!start) return ''
+  const s = start.replace(/-/g, '.').slice(5) // MM.DD
+  if (!end) return s
+  const e = end.replace(/-/g, '.').slice(5)
+  return `${s} ~ ${e}`
+}
+
+// ─── 바텀시트 스켈레톤 ────────────────────────────────────────────
+function SkeletonCard() {
+  return (
+    <div className="flex gap-3 animate-pulse">
+      <div className="w-16 h-16 rounded-[10px] bg-gray-200 flex-shrink-0" />
+      <div className="flex-1 space-y-2 pt-1">
+        <div className="h-3 bg-gray-200 rounded w-3/4" />
+        <div className="h-2.5 bg-gray-200 rounded w-1/2" />
+        <div className="h-2 bg-gray-200 rounded w-2/3" />
+      </div>
+    </div>
+  )
+}
+
+// ─── 메인 컴포넌트 ────────────────────────────────────────────────
+export default function MapTab({ lang = 'zh' }) {
+  const mapContainerRef = useRef(null)
+  const mapInstanceRef = useRef(null)
+  const overlaysRef = useRef([]) // 현재 렌더된 핀 overlay 목록
+  const userOverlayRef = useRef(null)
+
   const [mapReady, setMapReady] = useState(false)
-  const [locatingUser, setLocatingUser] = useState(false)
-  const [locationAccuracy, setLocationAccuracy] = useState(null)
-  const userMarkerRef = useRef(null)
-  const watchIdRef = useRef(null)
-  const [currentTheme, setCurrentTheme] = useState('hanpocket')
+  const [userLocation, setUserLocation] = useState(null) // { lat, lng }
+  const [selectedCategory, setSelectedCategory] = useState('popup') // 기본: 快闪店
+  const [selectedPOI, setSelectedPOI] = useState(null)
+  const [nearestPOI, setNearestPOI] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState([])
-  const [showSearchResults, setShowSearchResults] = useState(false)
-  const [geocoder, setGeocoder] = useState(null)
-  const [clusterer, setClusterer] = useState(null)
-  const [showRoutePanel, setShowRoutePanel] = useState(false)
-  const [startLocation, setStartLocation] = useState('')
-  const [endLocation, setEndLocation] = useState('')
-  const [startCoords, setStartCoords] = useState(null)
-  const [endCoords, setEndCoords] = useState(null)
-  const [startResults, setStartResults] = useState([])
-  const [endResults, setEndResults] = useState([])
-  const [showStartResults, setShowStartResults] = useState(false)
-  const [showEndResults, setShowEndResults] = useState(false)
-  const [showKakaoWebView, setShowKakaoWebView] = useState(false)
-  const [kakaoWebViewQuery, setKakaoWebViewQuery] = useState('')
-  const [isSearching, setIsSearching] = useState(false)  // 검색 중 상태
-  const mapRef = useRef(null)
-  const searchTimeoutRef = useRef(null)
-  const startSearchTimeoutRef = useRef(null)
-  const endSearchTimeoutRef = useRef(null)
-
-  // 🗺️ 여행계획 관련 상태
-  const [showTripPlanner, setShowTripPlanner] = useState(false)
-  const [tripPlans, setTripPlans] = useState([])
-  const [currentTripPlan, setCurrentTripPlan] = useState(null)
-  const [editingTripIndex, setEditingTripIndex] = useState(-1)
-  const [newDestinationQuery, setNewDestinationQuery] = useState('')
-  const [destinationSearchResults, setDestinationSearchResults] = useState([])
-  const [showDestinationResults, setShowDestinationResults] = useState(false)
-
-  const L = (data) => {
-    if (typeof data === 'string') return data
-    return data?.[lang] || data?.ko || ''
-  }
-
-  // 🗺️ 여행계획 관련 함수들
-  const loadTripPlans = useCallback(() => {
-    try {
-      const stored = localStorage.getItem('hanpocket_trip_plans')
-      if (stored) {
-        const plans = JSON.parse(stored)
-        setTripPlans(Array.isArray(plans) ? plans : [])
+  // 카테고리 필터 + 최대 7개 표시 (거리순 + sort_priority)
+  const getVisiblePOIs = useCallback(
+    (category, userLat, userLng) => {
+      const filtered = POI_DATA.filter((p) => p.category === category)
+      if (!userLat || !userLng) {
+        return filtered
+          .sort((a, b) => b.sort_priority - a.sort_priority)
+          .slice(0, 7)
       }
-    } catch (error) {
-      console.error('여행계획 로드 실패:', error)
-      setTripPlans([])
-    }
-  }, [])
-
-  const saveTripPlans = useCallback((plans) => {
-    try {
-      localStorage.setItem('hanpocket_trip_plans', JSON.stringify(plans))
-      setTripPlans(plans)
-    } catch (error) {
-      console.error('여행계획 저장 실패:', error)
-    }
-  }, [])
-
-  const createNewTripPlan = () => {
-    const newPlan = {
-      id: Date.now(),
-      name: L({ ko: '새 여행계획', zh: '新旅行计划', en: 'New Trip Plan' }),
-      destinations: [],
-      createdAt: new Date().toISOString()
-    }
-    setCurrentTripPlan(newPlan)
-    setEditingTripIndex(-1) // -1은 새 계획
-  }
-
-  const saveTripPlan = () => {
-    if (!currentTripPlan) return
-    
-    let updatedPlans = [...tripPlans]
-    
-    if (editingTripIndex === -1) {
-      // 새 계획 추가 (최대 10개)
-      if (updatedPlans.length >= 10) {
-        alert(L({ ko: '최대 10개의 여행계획만 저장할 수 있습니다', zh: '最多只能保存10个旅行计划', en: 'Maximum 10 trip plans allowed' }))
-        return
-      }
-      updatedPlans.unshift(currentTripPlan)
-    } else {
-      // 기존 계획 수정
-      updatedPlans[editingTripIndex] = currentTripPlan
-    }
-    
-    saveTripPlans(updatedPlans)
-    setCurrentTripPlan(null)
-    setEditingTripIndex(-1)
-  }
-
-  const deleteTripPlan = (index) => {
-    const updatedPlans = tripPlans.filter((_, i) => i !== index)
-    saveTripPlans(updatedPlans)
-  }
-
-  const addDestination = (place) => {
-    if (!currentTripPlan) return
-    
-    if (currentTripPlan.destinations.length >= 10) {
-      alert(L({ ko: '한 계획당 최대 10개의 목적지만 추가할 수 있습니다', zh: '每个计划最多只能添加10个目的地', en: 'Maximum 10 destinations per plan' }))
-      return
-    }
-    
-    const destination = {
-      id: Date.now(),
-      name: place.name || place.place_name,
-      address: place.address || place.address_name,
-      lat: parseFloat(place.y || place.lat),
-      lng: parseFloat(place.x || place.lng),
-      phone: place.phone,
-      category: place.category
-    }
-    
-    setCurrentTripPlan(prev => ({
-      ...prev,
-      destinations: [...prev.destinations, destination]
-    }))
-    
-    setNewDestinationQuery('')
-    setShowDestinationResults(false)
-  }
-
-  const removeDestination = (destinationId) => {
-    if (!currentTripPlan) return
-    
-    setCurrentTripPlan(prev => ({
-      ...prev,
-      destinations: prev.destinations.filter(d => d.id !== destinationId)
-    }))
-  }
-
-  const searchDestinations = (query) => {
-    if (!query || query.length < 2 || !geocoder) return
-    
-    geocoder.addressSearch(query, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const places = result.slice(0, 5).map(place => ({
-          id: place.address_name,
-          name: place.address_name,
-          address: place.address_name,
-          x: place.x,
-          y: place.y,
-          type: 'address'
+      return filtered
+        .map((p) => ({
+          ...p,
+          _dist: calcDistance(userLat, userLng, p.lat, p.lng),
         }))
-        setDestinationSearchResults(places)
-        setShowDestinationResults(true)
-      }
-    })
-
-    const ps = new window.kakao.maps.services.Places()
-    ps.keywordSearch(query, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const places = result.slice(0, 5).map(place => ({
-          id: place.id,
-          name: place.place_name,
-          address: place.address_name,
-          x: place.x,
-          y: place.y,
-          phone: place.phone,
-          category: place.category_name,
-          type: 'place'
-        }))
-        setDestinationSearchResults(prev => [...prev, ...places])
-        setShowDestinationResults(true)
-      }
-    })
-  }
-
-  const startNavigation = (plan) => {
-    if (!plan.destinations || plan.destinations.length === 0) {
-      alert(L({ ko: '목적지가 없습니다', zh: '没有目的地', en: 'No destinations' }))
-      return
-    }
-
-    // 카카오맵 길찾기 URL 생성 (경유지 포함)
-    const destinations = plan.destinations.slice(0, 10) // 최대 10개
-    const firstDest = destinations[0]
-    
-    if (destinations.length === 1) {
-      // 목적지가 1개인 경우
-      const url = `https://map.kakao.com/link/to/${encodeURIComponent(firstDest.name)},${firstDest.lat},${firstDest.lng}`
-      window.open(url, '_blank')
-    } else {
-      // 다중 경유지가 있는 경우 - 카카오맵 길찾기로 연결
-      const params = new URLSearchParams()
-      params.set('destination', `${firstDest.name},${firstDest.lat},${firstDest.lng}`)
-      
-      // 경유지 추가 (2번째부터)
-      if (destinations.length > 1) {
-        const waypoints = destinations.slice(1, 6).map(dest => `${dest.name},${dest.lat},${dest.lng}`).join('|')
-        params.set('waypoints', waypoints)
-      }
-      
-      const url = `https://map.kakao.com/link/route?${params.toString()}`
-      window.open(url, '_blank')
-    }
-  }
-
-  // 여행계획 로드 (컴포넌트 마운트 시)
-  useEffect(() => {
-    loadTripPlans()
-  }, [loadTripPlans])
-
-  // 샘플 마커 데이터
-  const sampleMarkers = [
-    {
-      id: 'restaurant_1',
-      category: 'restaurant',
-      name: { ko: '명동교자', zh: '明洞饺子', en: 'Myeongdong Gyoza' },
-      description: { ko: '중국인이 좋아하는 만두집', zh: '中国人喜爱的饺子店', en: 'Chinese-style dumpling restaurant' },
-      lat: 37.5665,
-      lng: 126.9780,
-      chineseSupport: true,
-      priceRange: '₩10,000-15,000'
-    },
-    {
-      id: 'restaurant_2', 
-      category: 'restaurant',
-      name: { ko: '하동관', zh: '河东馆', en: 'Hadongkwan' },
-      description: { ko: '전통 한국 냉면', zh: '传统韩式冷面', en: 'Traditional Korean cold noodles' },
-      lat: 37.5665,
-      lng: 126.9750,
-      chineseSupport: false,
-      priceRange: '₩12,000-18,000'
-    },
-    {
-      id: 'medical_1',
-      category: 'medical', 
-      name: { ko: '서울아산병원', zh: '首尔峨山医院', en: 'Asan Medical Center' },
-      description: { ko: '중국어 통역 서비스', zh: '提供中文翻译服务', en: 'Chinese interpretation service' },
-      lat: 37.5262,
-      lng: 127.1076,
-      chineseSupport: true,
-      specialty: { ko: '종합병원', zh: '综合医院', en: 'General Hospital' }
-    },
-    {
-      id: 'transport_1',
-      category: 'transport',
-      name: { ko: '명동역', zh: '明洞站', en: 'Myeongdong Station' },
-      description: { ko: '지하철 4호선', zh: '地铁4号线', en: 'Subway Line 4' },
-      lat: 37.5636,
-      lng: 126.9794,
-      lines: ['4호선']
-    },
-    {
-      id: 'shopping_1', 
-      category: 'shopping',
-      name: { ko: '롯데면세점 명동점', zh: '乐天免税店明洞店', en: 'Lotte Duty Free Myeongdong' },
-      description: { ko: '중국 관광객 할인', zh: '中国游客折扣', en: 'Discount for Chinese tourists' },
-      lat: 37.5659,
-      lng: 126.9781,
-      chineseSupport: true,
-      discount: '5-15%'
-    },
-    {
-      id: 'tourism_1',
-      category: 'tourism', 
-      name: { ko: '경복궁', zh: '景福宫', en: 'Gyeongbokgung Palace' },
-      description: { ko: '조선시대 정궁', zh: '朝鲜王朝正宫', en: 'Main royal palace of Joseon Dynasty' },
-      lat: 37.5796,
-      lng: 126.9770,
-      chineseSupport: true,
-      ticketPrice: { ko: '성인 3,000원', zh: '成人3,000韩元', en: 'Adult ₩3,000' }
-    }
-  ]
-
-  // 카카오맵 API 동적 로드 (라이브러리 포함)
-  const loadKakaoMapAPI = () => {
-    return new Promise((resolve, reject) => {
-      if (window.kakao && window.kakao.maps) {
-        resolve(window.kakao)
-        return
-      }
-
-      const apiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY
-      if (!apiKey) {
-        console.warn('카카오맵 API 키가 설정되지 않았습니다. 데모 모드로 실행합니다.')
-        reject(new Error('API 키가 필요합니다'))
-        return
-      }
-
-      // 카카오맵 로드 전 언어 설정
-      const currentLang = getCurrentLanguage()
-      const originalLang = document.documentElement.lang
-      document.documentElement.lang = currentLang
-
-      const script = document.createElement('script')
-      script.type = 'text/javascript'
-      // services, clusterer 라이브러리 추가 + 언어 파라미터 시도
-      const langParam = currentLang !== 'ko' ? `&hl=${currentLang}` : ''
-      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&libraries=services,clusterer&autoload=false${langParam}`
-      script.onload = () => {
-        window.kakao.maps.load(() => {
-          // 원래 언어로 복원
-          document.documentElement.lang = originalLang
-          resolve(window.kakao)
+        .sort((a, b) => {
+          const priorityDiff = b.sort_priority - a.sort_priority
+          if (Math.abs(priorityDiff) >= 3) return -priorityDiff
+          return a._dist - b._dist
         })
-      }
-      script.onerror = () => reject(new Error('카카오맵 API 로드 실패'))
-      document.head.appendChild(script)
-    })
-  }
+        .slice(0, 7)
+    },
+    []
+  )
 
   // 지도 초기화
   useEffect(() => {
-    const initMap = async () => {
+    let destroyed = false
+    async function init() {
       try {
-        await loadKakaoMapAPI()
-        if (!mapRef.current) return
-
-        // 서울 중심으로 지도 초기화
-        const container = mapRef.current
-        const options = {
-          center: new window.kakao.maps.LatLng(37.5665, 126.9780), // 명동
-          level: 3 // 확대 레벨 (1~14)
-        }
-
-        const kakaoMap = new window.kakao.maps.Map(container, options)
-        setMap(kakaoMap)
+        await loadKakaoMap()
+        if (destroyed || !mapContainerRef.current) return
+        const kakao = window.kakao
+        // 서울 중심 기본 좌표
+        const center = new kakao.maps.LatLng(37.5448, 127.0557) // 성수동
+        const map = new kakao.maps.Map(mapContainerRef.current, {
+          center,
+          level: 5,
+        })
+        mapInstanceRef.current = map
         setMapReady(true)
+        setLoading(false)
+      } catch (err) {
+        console.error('KakaoMap 초기화 실패:', err)
+        setLoading(false)
+      }
+    }
+    init()
+    return () => {
+      destroyed = true
+    }
+  }, [])
 
-        // 줌 컨트롤 추가
-        const zoomControl = new window.kakao.maps.ZoomControl()
-        kakaoMap.addControl(zoomControl, window.kakao.maps.ControlPosition.RIGHT)
-
-        // Services 라이브러리 - 주소 검색용
-        const geoCoderInstance = new window.kakao.maps.services.Geocoder()
-        setGeocoder(geoCoderInstance)
-
-        // Clusterer 라이브러리 - 마커 클러스터링
-        const clustererInstance = new window.kakao.maps.MarkerClusterer({
-          map: kakaoMap,
-          averageCenter: true,  // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-          minLevel: 10         // 클러스터 할 최소 지도 레벨
+  // GPS 요청 (지도 준비 후)
+  useEffect(() => {
+    if (!mapReady) return
+    async function locate() {
+      try {
+        const pos = await getPosition()
+        const lat = pos.coords?.latitude ?? pos.coords?.lat
+        const lng = pos.coords?.longitude ?? pos.coords?.lng
+        if (!lat || !lng) return
+        setUserLocation({ lat, lng })
+        const kakao = window.kakao
+        const map = mapInstanceRef.current
+        if (!map) return
+        const latlng = new kakao.maps.LatLng(lat, lng)
+        map.setCenter(latlng)
+        // 내 위치 마커
+        if (userOverlayRef.current) userOverlayRef.current.setMap(null)
+        const overlay = new kakao.maps.CustomOverlay({
+          position: latlng,
+          content: USER_LOCATION_HTML,
+          zIndex: 10,
         })
-        setClusterer(clustererInstance)
-
-        // 사용자 위치 가져오기 (네이티브 GPS 우선)
-        getPosition({ timeout: 10000 }).then((position) => {
-          const userPos = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          }
-          setUserLocation(userPos)
-
-          // 한국 내 위치인 경우 지도 중심 이동
-          if (userPos.lat > 33 && userPos.lat < 39 && userPos.lng > 125 && userPos.lng < 132) {
-            const moveLatLng = new window.kakao.maps.LatLng(userPos.lat, userPos.lng)
-            kakaoMap.setCenter(moveLatLng)
-
-            // 기존 마커 제거
-            if (userMarkerRef.current) {
-              userMarkerRef.current.setMap(null)
-            }
-            // 사용자 위치 마커
-            const userMarker = new window.kakao.maps.Marker({
-              position: moveLatLng,
-              image: new window.kakao.maps.MarkerImage(
-                'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                    <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
-                  </svg>
-                `),
-                new window.kakao.maps.Size(20, 20)
-              )
-            })
-            userMarker.setMap(kakaoMap)
-            userMarkerRef.current = userMarker
-          }
-        }).catch((error) => console.log('위치 정보를 가져올 수 없습니다:', error))
-
-      } catch (error) {
-        console.error('지도 초기화 실패:', error)
-        setMapReady(false)
+        overlay.setMap(map)
+        userOverlayRef.current = overlay
+      } catch (err) {
+        console.warn('GPS 실패:', err)
       }
     }
+    locate()
+  }, [mapReady])
 
-    initMap()
-  }, [])
-
-  // 컴포넌트 언마운트 시 타이머 클리어
+  // 카테고리 변경 시 핀 렌더링
   useEffect(() => {
-    return () => {
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current)
-      }
-      if (startSearchTimeoutRef.current) {
-        clearTimeout(startSearchTimeoutRef.current)
-      }
-      if (endSearchTimeoutRef.current) {
-        clearTimeout(endSearchTimeoutRef.current)
-      }
-      // watchPosition 정리
-      if (watchIdRef.current) {
-        watchIdRef.current()
-        watchIdRef.current = null
-      }
-    }
-  }, [])
+    if (!mapReady || !mapInstanceRef.current) return
+    const map = mapInstanceRef.current
+    const kakao = window.kakao
 
-  // 지도 크기 재조정 (화면 크기 변경 시)
-  useEffect(() => {
-    const handleResize = () => {
-      if (map && window.kakao) {
-        // 약간의 지연 후 크기 재조정
-        setTimeout(() => {
-          map.relayout()
-        }, 100)
-      }
-    }
+    // 기존 핀 제거
+    overlaysRef.current.forEach((o) => o.setMap(null))
+    overlaysRef.current = []
 
-    window.addEventListener('resize', handleResize)
-    window.addEventListener('orientationchange', handleResize)
-    
-    // 초기 로드 시에도 크기 조정
-    if (map) {
-      setTimeout(() => map.relayout(), 100)
-    }
+    const pois = getVisiblePOIs(
+      selectedCategory,
+      userLocation?.lat,
+      userLocation?.lng
+    )
 
-    return () => {
-      window.removeEventListener('resize', handleResize)
-      window.removeEventListener('orientationchange', handleResize)
-    }
-  }, [map])
+    if (pois.length === 0) return
 
-  // 스타일 패널 토글 시 지도 크기 재조정
-  useEffect(() => {
-    if (map && mapReady) {
+    // 핀 추가
+    const newOverlays = pois.map((poi) => {
+      const pos = new kakao.maps.LatLng(poi.lat, poi.lng)
+      const isActive = selectedPOI?.id === poi.id
+      const html = isActive ? makeActivePinHTML(poi.category, isNewPOI(poi)) : makePinHTML(poi.category, isNewPOI(poi))
+      const overlay = new kakao.maps.CustomOverlay({
+        position: pos,
+        content: html,
+        zIndex: isActive ? 20 : 15,
+        yAnchor: 1.15,
+      })
+      overlay.setMap(map)
+
+      // 클릭 이벤트 — DOM 이벤트로 처리
       setTimeout(() => {
-        map.relayout()
-      }, 300) // 애니메이션 완료 후 크기 재조정
-    }
-  }, [map, mapReady])
-
-  // 검색 결과 외부 클릭 시 닫기
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.target.closest('.search-container')) {
-        setShowSearchResults(false)
-      }
-      if (!event.target.closest('.route-search-start')) {
-        setShowStartResults(false)
-      }
-      if (!event.target.closest('.route-search-end')) {
-        setShowEndResults(false)
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
-
-  // 마커 렌더링 (클러스터링 포함)
-  useEffect(() => {
-    if (!map || !mapReady || !window.kakao || !clusterer) return
-
-    // 기존 마커 제거
-    markers.forEach(marker => marker.setMap(null))
-    clusterer.clear() // 클러스터러에서 모든 마커 제거
-
-    // 카테고리 필터링
-    const filteredMarkers = selectedCategory === 'all' 
-      ? sampleMarkers 
-      : sampleMarkers.filter(marker => marker.category === selectedCategory)
-
-    // 새 마커 생성
-    const newMarkers = filteredMarkers.map(markerData => {
-      const position = new window.kakao.maps.LatLng(markerData.lat, markerData.lng)
-      
-      // 커스텀 마커 이미지
-      const markerImage = new window.kakao.maps.MarkerImage(
-        getCategoryMarkerImage(markerData.category),
-        new window.kakao.maps.Size(30, 30)
-      )
-
-      const marker = new window.kakao.maps.Marker({
-        position: position,
-        image: markerImage
-      })
-
-      // 마커 클릭 이벤트
-      window.kakao.maps.event.addListener(marker, 'click', () => {
-        setSelectedMarker(markerData)
-      })
-
-      return marker
-    })
-
-    // 마커들을 클러스터러에 추가
-    if (newMarkers.length > 0) {
-      clusterer.addMarkers(newMarkers)
-    }
-
-    setMarkers(newMarkers)
-  }, [map, selectedCategory, mapReady, clusterer])
-
-  // 지도 이동 시 제로페이/화장실 마커 자동 갱신
-  useEffect(() => {
-    if (!map || !mapReady || !window.kakao) return
-
-    const handleIdle = () => {
-      if (selectedCategory === 'zeropay' || selectedCategory === 'toilet') {
-        searchByCategory(selectedCategory)
-      }
-    }
-
-    window.kakao.maps.event.addListener(map, 'idle', handleIdle)
-    return () => {
-      window.kakao.maps.event.removeListener(map, 'idle', handleIdle)
-    }
-  }, [map, mapReady, selectedCategory])
-
-  // 카테고리별 마커 이미지 생성
-  const getCategoryMarkerImage = (category) => {
-    const iconMap = {
-      restaurant: { emoji: '🍜', color: '#FF6B6B' },
-      medical: { emoji: '🏥', color: '#4ECDC4' },
-      transport: { emoji: '🚇', color: '#45B7D1' },
-      shopping: { emoji: '🛍️', color: '#96CEB4' },
-      tourism: { emoji: '🏛️', color: '#FECA57' },
-      zeropay: { emoji: '💳', color: '#7C3AED' }
-    }
-    
-    const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#111827' }
-    
-    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-      <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" width="30" height="30">
-        <circle cx="15" cy="15" r="15" fill="${color}" stroke="white" stroke-width="2"/>
-        <text x="15" y="20" text-anchor="middle" font-size="14">${emoji}</text>
-      </svg>
-    `)
-  }
-
-  // 장소 검색 함수
-  const searchPlace = async (query) => {
-    if (!geocoder || !query.trim()) return
-
-    setIsSearching(true)  // 검색 시작
-    setSearchResults([]) // 기존 검색 결과 초기화
-
-    // 🧠 스마트 통합 번역 적용 (전체 DB)
-    const translatedQuery = await smartTranslate(query.trim())
-    console.log(`🔄 스마트 번역: "${query}" → "${translatedQuery}"`)
-
-    // 주소로 검색
-    geocoder.addressSearch(translatedQuery, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const results = result.map(place => ({
-          id: `address_${place.x}_${place.y}`,
-          name: place.address_name,
-          x: place.x,
-          y: place.y,
-          type: 'address'
-        }))
-        setSearchResults(prev => [...prev, ...results])
-        setShowSearchResults(true)
-      }
-      setIsSearching(false)  // 검색 완료
-    })
-
-    // 키워드로 장소 검색 (Places 서비스)
-    const ps = new window.kakao.maps.services.Places()
-    ps.keywordSearch(translatedQuery, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const results = result.slice(0, 5).map(place => ({
-          id: place.id,
-          name: place.place_name,
-          address: place.address_name,
-          x: place.x,
-          y: place.y,
-          phone: place.phone,
-          category: place.category_name,
-          type: 'place'
-        }))
-        setSearchResults(prev => [...prev, ...results])
-        setShowSearchResults(true)
-      }
-      setIsSearching(false)  // 검색 완료
-    })
-  }
-
-  // 검색 결과 선택
-  const selectSearchResult = (result) => {
-    if (!map) return
-
-    const moveLatLng = new window.kakao.maps.LatLng(result.y, result.x)
-    map.setCenter(moveLatLng)
-    map.setLevel(3) // 확대
-
-    // 검색 결과 마커 추가
-    const marker = new window.kakao.maps.Marker({
-      position: moveLatLng,
-      map: map
-    })
-
-    // 검색 결과를 selectedMarker로 설정 (정보 패널 표시용)
-    setSelectedMarker({
-      id: result.id,
-      category: 'search',
-      name: { ko: result.name, zh: result.name, en: result.name },
-      description: { ko: result.address || '검색 결과', zh: result.address || '搜索结果', en: result.address || 'Search Result' },
-      lat: parseFloat(result.y),
-      lng: parseFloat(result.x),
-      phone: result.phone,
-      categoryName: result.category
-    })
-
-    setShowSearchResults(false)
-    setSearchQuery('')
-  }
-
-  // 카카오맵 크게보기 URL 생성
-  const getKakaoMapUrl = (marker) => {
-    const name = encodeURIComponent(L(marker.name))
-    return `https://map.kakao.com/link/map/${name},${marker.lat},${marker.lng}`
-  }
-
-  // 카카오맵 길찾기 URL 생성
-  const getKakaoDirectionUrl = (marker) => {
-    const name = encodeURIComponent(L(marker.name))
-    return `https://map.kakao.com/link/to/${name},${marker.lat},${marker.lng}`
-  }
-
-  // 출발지/도착지 스마트 검색
-  const searchLocation = async (query, isStart = true) => {
-    if (!geocoder || !query.trim()) return
-
-    const setResults = isStart ? setStartResults : setEndResults
-    const setShowResults = isStart ? setShowStartResults : setShowEndResults
-
-    setResults([]) // 기존 검색 결과 초기화
-
-    // 🧠 스마트 통합 번역 적용 (전체 DB)
-    const translatedQuery = await smartTranslate(query.trim())
-    console.log(`🔄 네비게이션 번역: "${query}" → "${translatedQuery}"`)
-
-    // 주소로 검색
-    geocoder.addressSearch(translatedQuery, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const results = result.map(place => ({
-          id: `address_${place.x}_${place.y}`,
-          name: place.address_name,
-          x: place.x,
-          y: place.y,
-          type: 'address'
-        }))
-        setResults(prev => [...prev, ...results])
-        setShowResults(true)
-      }
-    })
-
-    // 키워드로 장소 검색
-    const ps = new window.kakao.maps.services.Places()
-    ps.keywordSearch(translatedQuery, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const results = result.slice(0, 5).map(place => ({
-          id: place.id,
-          name: place.place_name,
-          address: place.address_name,
-          x: place.x,
-          y: place.y,
-          phone: place.phone,
-          category: place.category_name,
-          type: 'place'
-        }))
-        setResults(prev => [...prev, ...results])
-        setShowResults(true)
-      }
-    })
-  }
-
-  // 출발지/도착지 선택
-  const selectLocation = (result, isStart = true) => {
-    const setLocation = isStart ? setStartLocation : setEndLocation
-    const setCoords = isStart ? setStartCoords : setEndCoords
-    const setShowResults = isStart ? setShowStartResults : setShowEndResults
-
-    setLocation(result.name)
-    setCoords({ x: result.x, y: result.y })
-    setShowResults(false)
-
-    // 지도 이동 + 마커 + 장소정보 표시 (메인 검색과 동일)
-    if (map) {
-      const moveLatLng = new window.kakao.maps.LatLng(result.y, result.x)
-      map.setCenter(moveLatLng)
-      map.setLevel(3)
-
-      new window.kakao.maps.Marker({
-        position: moveLatLng,
-        map: map
-      })
-
-      setSelectedMarker({
-        id: result.id,
-        category: 'search',
-        name: { ko: result.name, zh: result.name, en: result.name },
-        description: { ko: result.address || (isStart ? '출발지' : '도착지'), zh: result.address || (isStart ? '出发地' : '目的地'), en: result.address || (isStart ? 'Departure' : 'Destination') },
-        lat: parseFloat(result.y),
-        lng: parseFloat(result.x),
-        phone: result.phone,
-        categoryName: result.category
-      })
-    }
-  }
-
-  // 출발지/도착지 위치 바꾸기
-  const switchLocations = () => {
-    const temp = startLocation
-    const tempCoords = startCoords
-    setStartLocation(endLocation)
-    setStartCoords(endCoords)
-    setEndLocation(temp)
-    setEndCoords(tempCoords)
-  }
-
-  // 좌표로 카카오맵 길찾기 URL 열기
-  const openNavigationUrl = (sName, sCoords, eName, eCoords) => {
-    const startName = encodeURIComponent(sName)
-    const endName = encodeURIComponent(eName)
-
-    // 모바일에서 카카오맵 앱 딥링크 시도
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
-    if (isMobile) {
-      const appUrl = `kakaomap://route?sp=${sCoords.y},${sCoords.x}&ep=${eCoords.y},${eCoords.x}&by=CAR`
-      window.location.href = appUrl
-      // 앱이 없으면 웹으로 fallback (1.5초 후)
-      setTimeout(() => {
-        const webUrl = `https://map.kakao.com/link/from/${startName},${sCoords.y},${sCoords.x}/to/${endName},${eCoords.y},${eCoords.x}`
-        window.open(webUrl, '_blank')
-      }, 1500)
-      return
-    }
-
-    // PC/웹에서는 카카오맵 웹 링크
-    const navigationUrl = `https://map.kakao.com/link/from/${startName},${sCoords.y},${sCoords.x}/to/${endName},${eCoords.y},${eCoords.x}`
-    window.open(navigationUrl, '_blank')
-  }
-
-  // 장소명으로 좌표 자동 검색 (Promise)
-  const resolveCoords = (query) => {
-    return new Promise((resolve) => {
-      if (!geocoder || !query.trim()) {
-        resolve(null)
-        return
-      }
-
-      const ps = new window.kakao.maps.services.Places()
-      // 키워드 검색 우선 (장소명에 더 적합)
-      ps.keywordSearch(query.trim(), (result, status) => {
-        if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
-          resolve({ x: result[0].x, y: result[0].y })
-          return
+        const el = overlay.getContent()
+        if (el && el.addEventListener) {
+          el.addEventListener('click', () => setSelectedPOI(poi))
         }
-        // 키워드 검색 실패 시 주소 검색
-        geocoder.addressSearch(query.trim(), (addrResult, addrStatus) => {
-          if (addrStatus === window.kakao.maps.services.Status.OK && addrResult.length > 0) {
-            resolve({ x: addrResult[0].x, y: addrResult[0].y })
-          } else {
-            resolve(null)
-          }
-        })
-      })
+      }, 100)
+
+      return overlay
     })
-  }
 
-  // 카카오맵 길찾기 실행
-  const startRouteNavigation = async () => {
-    if (!startLocation || !endLocation) {
-      alert(L({
-        ko: '출발지와 도착지를 모두 입력해주세요.',
-        zh: '请输入出发地和目的地。',
-        en: 'Please enter both start and destination.'
-      }))
-      return
-    }
+    overlaysRef.current = newOverlays
 
-    let finalStartCoords = startCoords
-    let finalEndCoords = endCoords
+    // nearest POI 계산
+    if (pois.length > 0) setNearestPOI(pois[0])
+  }, [mapReady, selectedCategory, userLocation, getVisiblePOIs]) // selectedPOI 제외 (무한루프 방지)
 
-    // 좌표가 없으면 자동으로 검색해서 찾기
-    if (!finalStartCoords) {
-      finalStartCoords = await resolveCoords(startLocation)
-    }
-    if (!finalEndCoords) {
-      finalEndCoords = await resolveCoords(endLocation)
-    }
+  // selectedPOI 변경 시 핀 갱신 (active 크기 변경)
+  useEffect(() => {
+    if (!mapReady || !mapInstanceRef.current) return
+    const map = mapInstanceRef.current
+    const kakao = window.kakao
 
-    if (!finalStartCoords || !finalEndCoords) {
-      alert(L({
-        ko: '출발지 또는 도착지를 찾을 수 없습니다. 다른 검색어를 입력해주세요.',
-        zh: '无法找到出发地或目的地，请输入其他搜索词。',
-        en: 'Could not find start or destination. Please try different search terms.'
-      }))
-      return
-    }
+    overlaysRef.current.forEach((o) => o.setMap(null))
+    overlaysRef.current = []
 
-    // 좌표 저장 (다음 번 검색 시 재사용)
-    if (!startCoords) setStartCoords(finalStartCoords)
-    if (!endCoords) setEndCoords(finalEndCoords)
+    const pois = getVisiblePOIs(
+      selectedCategory,
+      userLocation?.lat,
+      userLocation?.lng
+    )
 
-    openNavigationUrl(startLocation, finalStartCoords, endLocation, finalEndCoords)
-  }
-
-  // 현재 앱 언어 감지 함수
-  const getCurrentLanguage = () => {
-    // HanPocket 앱의 언어 설정 확인 (localStorage)
-    const savedLang = localStorage.getItem('hanpocket-language')
-    if (savedLang) return savedLang
-    
-    // URL에서 언어 파라미터 확인
-    const urlParams = new URLSearchParams(window.location.search)
-    const urlLang = urlParams.get('lang')
-    if (urlLang && ['ko', 'zh', 'en'].includes(urlLang)) return urlLang
-    
-    // 브라우저 언어 감지
-    const browserLang = navigator.language || navigator.userLanguage
-    if (browserLang.startsWith('zh')) return 'zh'
-    if (browserLang.startsWith('en')) return 'en'
-    return 'ko'  // 기본값
-  }
-
-  // 카카오맵 웹뷰에서 검색 (언어 설정 포함)
-  const openKakaoWebView = (query) => {
-    setKakaoWebViewQuery(query)
-    setShowKakaoWebView(true)
-  }
-
-  // 현재 앱 언어에 맞는 카카오맵 웹뷰 URL 생성
-  const getKakaoMapWebViewUrl = (query) => {
-    const baseUrl = 'https://map.kakao.com'
-    const params = new URLSearchParams({
-      q: query
+    const newOverlays = pois.map((poi) => {
+      const pos = new kakao.maps.LatLng(poi.lat, poi.lng)
+      const isActive = selectedPOI?.id === poi.id
+      const html = isActive
+        ? makeActivePinHTML(poi.category, isNewPOI(poi))
+        : makePinHTML(poi.category, isNewPOI(poi))
+      const overlay = new kakao.maps.CustomOverlay({
+        position: pos,
+        content: html,
+        zIndex: isActive ? 20 : 15,
+        yAnchor: 1.15,
+      })
+      overlay.setMap(map)
+      setTimeout(() => {
+        const el = overlay.getContent()
+        if (el && el.addEventListener) {
+          el.addEventListener('click', () => setSelectedPOI(poi))
+        }
+      }, 100)
+      return overlay
     })
-    
-    // 앱 언어 설정에 따른 파라미터 추가
-    const currentLang = getCurrentLanguage()
-    if (currentLang === 'en') {
-      params.append('hl', 'en')  // 영어 인터페이스
-      params.append('region', 'KR')  // 한국 지역 데이터
-    } else if (currentLang === 'zh') {
-      params.append('hl', 'zh-CN')  // 중국어 인터페이스
-      params.append('region', 'KR')  // 한국 지역 데이터
-    }
-    // 한국어는 기본값이므로 파라미터 추가하지 않음
-    
-    return `${baseUrl}?${params.toString()}`
+
+    overlaysRef.current = newOverlays
+  }, [selectedPOI]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 카카오맵 길찾기
+  const openNavigation = (poi) => {
+    const url = `https://map.kakao.com/link/to/${encodeURIComponent(poi.name_ko)},${poi.lat},${poi.lng}`
+    window.open(url, '_blank')
   }
 
+  // 표시할 POI 정보 (선택 > nearest)
+  const displayPOI = selectedPOI || nearestPOI
 
-
-  // 웹뷰 닫기
-  const closeKakaoWebView = () => {
-    setShowKakaoWebView(false)
-    setKakaoWebViewQuery('')
+  // 언어 헬퍼
+  const L = (poi, field) => {
+    if (!poi) return ''
+    const key = `${field}_${lang}`
+    if (poi[key]) return poi[key]
+    return poi[`${field}_ko`] || poi[`${field}_zh`] || ''
   }
-  // 언어별 최소 글자수 검사 함수
-  const getMinimumSearchLength = (query) => {
-    // 한글 감지 (자음/모음/완성형 한글)
-    if (/[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(query)) {
-      return 2  // 한글: 2글자
-    }
-    
-    // 중국어 감지 (중국어 유니코드 범위)
-    if (/[u4e00-u9fff]/.test(query)) {
-      return 2  // 중국어: 2글자
-    }
-    
-    // 영어 감지 (라틴 문자)
-    if (/[a-zA-Z]/.test(query)) {
-      return 4  // 영어: 4글자
-    }
-    
-    // 기타 언어: 기본값 3글자
-    return 3
-  }
-
-  // 실시간 자동완성 검색 (Debounced)
-  const debouncedSearch = useCallback((query) => {
-    // 이전 타이머 클리어
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current)
-    }
-
-    // 언어별 최소 글자수 확인
-    const minLength = getMinimumSearchLength(query)
-    if (!query || query.length < minLength) {
-      setSearchResults([])
-      setShowSearchResults(false)
-      setIsSearching(false)
-      return
-    }
-
-    // 800ms 후 검색 실행 (API 사용량 최적화)
-    searchTimeoutRef.current = setTimeout(() => {
-      searchPlace(query)
-    }, 800)
-  }, [searchPlace])
-
-  // 검색어 변경 핸들러
-  const handleSearchQueryChange = (newQuery) => {
-    setSearchQuery(newQuery)
-    debouncedSearch(newQuery) // 실시간 자동완성
-  }
-
-  // 출발지 실시간 자동완성 검색 (Debounced)
-  const debouncedStartSearch = useCallback((query) => {
-    if (startSearchTimeoutRef.current) {
-      clearTimeout(startSearchTimeoutRef.current)
-    }
-
-    // 언어별 최소 글자수 확인
-    const minLength = getMinimumSearchLength(query)
-    if (!query || query.length < minLength) {
-      setStartResults([])
-      setShowStartResults(false)
-      return
-    }
-
-    startSearchTimeoutRef.current = setTimeout(() => {
-      searchLocation(query, true)
-    }, 800)
-  }, [searchLocation])
-  const debouncedEndSearch = useCallback((query) => {
-    if (endSearchTimeoutRef.current) {
-      clearTimeout(endSearchTimeoutRef.current)
-    }
-
-    // 언어별 최소 글자수 확인
-    const minLength = getMinimumSearchLength(query)
-    if (!query || query.length < minLength) {
-      setEndResults([])
-      setShowEndResults(false)
-      return
-    }
-
-    endSearchTimeoutRef.current = setTimeout(() => {
-      searchLocation(query, false)
-    }, 800)
-  }, [searchLocation])
-
-  // 출발지 검색어 변경 핸들러
-  const handleStartLocationChange = (newQuery) => {
-    setStartLocation(newQuery)
-    setStartCoords(null) // 텍스트 변경 시 이전 좌표 초기화
-    debouncedStartSearch(newQuery)
-  }
-
-  // 도착지 검색어 변경 핸들러
-  const handleEndLocationChange = (newQuery) => {
-    setEndLocation(newQuery)
-    setEndCoords(null) // 텍스트 변경 시 이전 좌표 초기화
-    debouncedEndSearch(newQuery)
-  }
-
-  // 카카오 카테고리 검색
-  const searchByCategory = (categoryId) => {
-    setSelectedCategory(categoryId)
-    
-    if (categoryId === 'all') {
-      // 전체 카테고리는 기존 마커들 표시
-      return
-    }
-
-    const category = mapCategories.find(cat => cat.id === categoryId)
-    if (!category) return
-
-    // 제로페이 카테고리 처리
-    if (category.isZeropay) {
-      if (!map) return
-      markers.forEach(marker => marker.setMap(null))
-      if (clusterer) clusterer.clear()
-      setMarkers([])
-      import('../data/zeropay/zeropayData.js').then(({ zeropayStores }) => {
-        if (!zeropayStores || zeropayStores.length === 0) return
-        const bounds = map.getBounds()
-        const sw = bounds.getSouthWest()
-        const ne = bounds.getNorthEast()
-        const visible = zeropayStores.filter(s =>
-          s.lat && s.lng &&
-          s.lat >= sw.getLat() && s.lat <= ne.getLat() &&
-          s.lng >= sw.getLng() && s.lng <= ne.getLng()
-        ).slice(0, 100)
-
-        const markerImg = new window.kakao.maps.MarkerImage(
-          'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-            <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" width="30" height="30">
-              <circle cx="15" cy="15" r="15" fill="#7C3AED" stroke="white" stroke-width="2"/>
-              <text x="15" y="20" text-anchor="middle" font-size="14">💳</text>
-            </svg>
-          `),
-          new window.kakao.maps.Size(30, 30)
-        )
-
-        const newMarkers = []
-        visible.forEach(s => {
-          const position = new window.kakao.maps.LatLng(s.lat, s.lng)
-          const marker = new window.kakao.maps.Marker({ position, map, image: markerImg })
-          window.kakao.maps.event.addListener(marker, 'click', () => {
-            map.setCenter(position)
-            setSelectedMarker({
-              id: `zeropay-${s.lat}-${s.lng}`,
-              name: { ko: s.name, zh: s.name, en: s.name },
-              description: { ko: s.address, zh: s.address, en: s.address },
-              lat: s.lat, lng: s.lng,
-              category: 'zeropay',
-              phone: s.phone || null,
-              categoryName: s.biz_type || L({ ko: '제로페이 가맹점', zh: 'ZeroPay商户', en: 'ZeroPay Store' })
-            })
-          })
-          newMarkers.push(marker)
-        })
-        setMarkers(newMarkers)
-      })
-      return
-    }
-
-    // 화장실 카테고리 처리
-    if (category.isToilet) {
-      if (!map) return
-      markers.forEach(marker => marker.setMap(null))
-      setMarkers([])
-      import('../data/toiletData.js').then(({ SEOUL_TOILETS }) => {
-        const bounds = map.getBounds()
-        const sw = bounds.getSouthWest()
-        const ne = bounds.getNorthEast()
-        const visible = SEOUL_TOILETS.filter(t =>
-          t.lat >= sw.getLat() && t.lat <= ne.getLat() &&
-          t.lng >= sw.getLng() && t.lng <= ne.getLng()
-        ).slice(0, 100) // 성능을 위해 최대 100개
-
-        const newMarkers = []
-        visible.forEach(t => {
-          const position = new window.kakao.maps.LatLng(t.lat, t.lng)
-          const marker = new window.kakao.maps.Marker({ position, map })
-          window.kakao.maps.event.addListener(marker, 'click', () => {
-            map.setCenter(position)
-            const features = [
-              t.d === 'Y' ? '♿ ' + L({ ko: '장애인용', zh: '无障碍', en: 'Accessible' }) : '',
-              t.dp === 'Y' ? '👶 ' + L({ ko: '기저귀교환대', zh: '换尿台', en: 'Diaper' }) : '',
-              t.cc === 'Y' ? '📹 CCTV' : '',
-              t.bl === 'Y' ? '🔔 ' + L({ ko: '비상벨', zh: '紧急铃', en: 'Emergency Bell' }) : '',
-            ].filter(Boolean).join(' · ')
-            setSelectedMarker({
-              id: `toilet-${t.lat}-${t.lng}`,
-              name: { ko: t.n, zh: t.n, en: t.n },
-              description: { ko: `${t.a}\n🕐 ${t.h || '정보없음'}\n${features}`, zh: `${t.a}\n🕐 ${t.h || '暂无信息'}\n${features}`, en: `${t.a}\n🕐 ${t.h || 'N/A'}\n${features}` },
-              lat: t.lat, lng: t.lng,
-              category: 'toilet',
-              phone: t.p,
-            })
-          })
-          newMarkers.push(marker)
-        })
-        setMarkers(newMarkers)
-      })
-      return
-    }
-
-    // TourAPI 카테고리 처리
-    if (category.tourApiType) {
-      if (!map) return
-      markers.forEach(marker => marker.setMap(null))
-      setMarkers([])
-      const center = map.getCenter()
-      import('../api/tourApi').then(({ getLocationBasedList }) => {
-        getLocationBasedList({
-          mapX: center.getLng(), mapY: center.getLat(),
-          radius: 10000, contentTypeId: category.tourApiType, numOfRows: 30,
-        }).then(result => {
-          const newMarkers = []
-          ;(result.items || []).forEach(item => {
-            if (!item.mapx || !item.mapy) return
-            const position = new window.kakao.maps.LatLng(parseFloat(item.mapy), parseFloat(item.mapx))
-            const marker = new window.kakao.maps.Marker({ position, map })
-            window.kakao.maps.event.addListener(marker, 'click', () => {
-              map.setCenter(position)
-              setSelectedMarker({
-                id: item.contentid,
-                name: { ko: item.title, zh: item.title, en: item.title },
-                description: { ko: item.addr1 || '', zh: item.addr1 || '', en: item.addr1 || '' },
-                lat: parseFloat(item.mapy),
-                lng: parseFloat(item.mapx),
-                category: categoryId,
-                phone: item.tel,
-                image: item.firstimage,
-                tourApiItem: item,
-              })
-            })
-            newMarkers.push(marker)
-          })
-          setMarkers(newMarkers)
-        })
-      })
-      return
-    }
-
-    if (!category.kakaoCode) return
-
-    if (!map) return
-
-    // 기존 마커 제거
-    markers.forEach(marker => marker.setMap(null))
-    setMarkers([])
-
-    const ps = new window.kakao.maps.services.Places()
-    const center = map.getCenter()
-    
-    ps.categorySearch(category.kakaoCode, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const newMarkers = []
-        
-        result.forEach((place, index) => {
-          const position = new window.kakao.maps.LatLng(place.y, place.x)
-          const marker = new window.kakao.maps.Marker({
-            position: position,
-            map: map
-          })
-
-          // 마커 클릭 이벤트
-          window.kakao.maps.event.addListener(marker, 'click', () => {
-            // 클릭한 마커 위치로 지도 중심 이동
-            map.setCenter(position)
-
-            setSelectedMarker({
-              id: place.id,
-              name: { ko: place.place_name, zh: place.place_name, en: place.place_name },
-              description: { ko: place.address_name, zh: place.address_name, en: place.address_name },
-              lat: parseFloat(place.y),
-              lng: parseFloat(place.x),
-              category: categoryId,
-              phone: place.phone,
-              categoryName: place.category_name,
-              url: place.place_url
-            })
-          })
-
-          newMarkers.push(marker)
-        })
-        
-        setMarkers(newMarkers)
-      }
-    }, {
-      location: center,
-      radius: 1000, // 1km 반경
-      sort: window.kakao.maps.services.SortBy.DISTANCE
-    })
-  }
-
-  // 지도 테마 (카카오맵은 기본 스타일만 제공)
-  const mapThemes = [
-    {
-      id: 'normal',
-      name: { ko: '기본', zh: '默认', en: 'Normal' },
-      color: '#4285F4',
-      description: { ko: '카카오맵 기본 스타일', zh: '카카오맵默认样式', en: 'KakaoMap Default Style' },
-      mapType: window.kakao?.maps?.MapTypeId?.ROADMAP
-    }
-  ]
-
-  // 테마 변경 함수
-  const changeMapTheme = (themeId) => {
-    if (!map || !window.kakao) return
-    
-    const theme = mapThemes.find(t => t.id === themeId)
-    if (!theme || !theme.mapType) return
-    
-    setCurrentTheme(themeId)
-    map.setMapTypeId(theme.mapType)
-    setShowStylePanel(false)
-  }
-
-  // 지도 카테고리
-  // 카카오맵 순정 카테고리 (categorySearch API 코드 기반)
-  const mapCategories = [
-    { 
-      id: 'all', 
-      name: { ko: '전체', zh: '全部', en: 'All' },
-      color: '#111827',
-      kakaoCode: null
-    },
-    { 
-      id: 'restaurant', 
-      name: { ko: '음식점', zh: '餐厅', en: 'Restaurant' },
-      color: '#FF6B6B',
-      kakaoCode: 'FD6'
-    },
-    { 
-      id: 'cafe', 
-      name: { ko: '카페', zh: '咖啡店', en: 'Cafe' },
-      color: '#FFA726',
-      kakaoCode: 'CE7'
-    },
-    { 
-      id: 'convenience', 
-      name: { ko: '편의점', zh: '便利店', en: 'Conv Store' },
-      color: '#42A5F5',
-      kakaoCode: 'CS2'
-    },
-    { 
-      id: 'gas', 
-      name: { ko: '주유소', zh: '加油站', en: 'Gas' },
-      color: '#66BB6A',
-      kakaoCode: 'OL7'
-    },
-    { 
-      id: 'hospital', 
-      name: { ko: '병원', zh: '医院', en: 'Hospital' },
-      color: '#EF5350',
-      kakaoCode: 'HP8'
-    },
-    { 
-      id: 'pharmacy', 
-      name: { ko: '약국', zh: '药店', en: 'Pharmacy' },
-      color: '#AB47BC',
-      kakaoCode: 'PM9'
-    },
-    { 
-      id: 'bank', 
-      name: { ko: '은행', zh: '银行', en: 'Bank' },
-      color: '#26A69A',
-      kakaoCode: 'BK9'
-    },
-    { 
-      id: 'mart', 
-      name: { ko: '마트', zh: '超市', en: 'Mart' },
-      color: '#FF7043',
-      kakaoCode: 'MT1'
-    },
-    {
-      id: 'toilet',
-      name: { ko: '화장실', zh: '洗手间', en: 'Toilet' },
-      color: '#8D6E63',
-      kakaoCode: null,
-      isToilet: true
-    },
-    {
-      id: 'tour_spot',
-      name: { ko: '관광지', zh: '景点', en: 'Attractions' },
-      color: '#7C4DFF',
-      kakaoCode: null,
-      tourApiType: 76
-    },
-    {
-      id: 'tour_festival',
-      name: { ko: '축제', zh: '庆典', en: 'Festivals' },
-      color: '#FF4081',
-      kakaoCode: null,
-      tourApiType: 85
-    },
-    {
-      id: 'tour_stay',
-      name: { ko: '숙박', zh: '住宿', en: 'Stay' },
-      color: '#00BCD4',
-      kakaoCode: null,
-      tourApiType: 80
-    },
-    {
-      id: 'zeropay',
-      name: { ko: '제로페이', zh: 'ZeroPay', en: 'ZeroPay' },
-      color: '#7C3AED',
-      kakaoCode: null,
-      isZeropay: true
-    }
-  ]
 
   return (
-    <div className="bg-white" style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
-      {/* 검색 헤더 */}
-      <div className="bg-white sticky top-0 z-40 shadow-sm">
-        <div className="px-3 py-2.5 flex items-center gap-2">
-          {/* 검색 입력창 */}
-          <div className="flex-1 relative search-container">
-            <div className="flex items-center bg-gray-100 rounded-xl px-3 py-2">
-              <Search size={16} className="text-gray-400 shrink-0" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => handleSearchQueryChange(e.target.value)}
-                onKeyPress={(e) => { if (e.key === "Enter") searchPlace(searchQuery) }}
-                placeholder={L({ ko: "장소, 주소 검색", zh: "搜索地点、地址", en: "Search places" })}
-                className="flex-1 bg-transparent outline-none text-sm ml-2 placeholder-gray-400"
-              />
-              {searchQuery && (
-                <button onClick={() => { handleSearchQueryChange(''); setShowSearchResults(false) }} className="p-0.5">
-                  <X size={14} className="text-gray-400" />
-                </button>
-              )}
-            </div>
+    <div className="relative w-full h-full" style={{ height: '100dvh' }}>
+      {/* ── 지도 영역 ─────────────────────────────── */}
+      <div
+        ref={mapContainerRef}
+        className="absolute inset-0"
+        style={{ zIndex: 0 }}
+      />
 
-            {/* 검색 결과 드롭다운 */}
-            {(showSearchResults || isSearching) && (
-              isSearching ? (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-50">
-                  <div className="px-3 py-3 text-center flex items-center justify-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent" />
-                    <span className="text-sm text-gray-400">{L({ ko: "검색 중...", zh: "搜索中...", en: "Searching..." })}</span>
-                  </div>
-                </div>
-              ) : searchResults.length > 0 ? (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg max-h-60 overflow-y-auto z-50">
-                  {searchResults.map((result) => (
-                    <button key={result.id} onClick={() => selectSearchResult(result)}
-                      className="w-full px-3 py-2.5 text-left hover:bg-gray-50 border-b border-gray-50 last:border-0">
-                      <div className="font-medium text-sm text-gray-900">{result.name}</div>
-                      {result.address && <div className="text-xs text-gray-400 mt-0.5">{result.address}</div>}
-                      {result.category && <div className="text-[10px] text-blue-500 mt-0.5">{result.category}</div>}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl shadow-lg z-50">
-                  <div className="px-3 py-4 text-center text-sm text-gray-400">
-                    {L({ ko: "검색 결과가 없습니다", zh: "没有搜索结果", en: "No results" })}
-                  </div>
-                </div>
-              )
-            )}
-          </div>
-
-
-        </div>
-      </div>
-
-      {/* 카테고리 탭 — 지도 밖 고정, 침범 안 함 */}
-      <div className="bg-white border-b border-gray-100 z-30 relative">
-        <div className="px-4 py-2">
-          <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
-            {mapCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => searchByCategory(category.id)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full border transition-all text-xs ${
-                  selectedCategory === category.id
-                    ? 'bg-gray-900 text-white border-gray-900'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-                }`}
-              >
-                <span className="font-medium">{L(category.name)}</span>
-              </button>
-            ))}
-            
-            {/* 내 여행계획 버튼 */}
-            <button
-              onClick={() => setShowTripPlanner(true)}
-              className="flex-shrink-0 px-3 py-1.5 rounded-full border transition-all text-xs bg-blue-500 text-white border-blue-500 hover:bg-blue-600"
-            >
-              <span className="font-medium">🗺️ {L({ ko: '내 여행계획', zh: '我的旅行计划', en: 'My Trip Plans' })}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 지도 영역 */}
-      <div className="relative flex-1 bg-gray-50" style={{ flex: 1, minHeight: 0 }}>
-        {/* 카카오 지도 컨테이너 */}
-        <div 
-          ref={mapRef}
-          className="w-full h-full"
-        />
-
-
-
-        {/* 현재위치 버튼 */}
-        <button
-          onClick={() => {
-            if (!map || locatingUser) return
-            if (!navigator.geolocation && !Capacitor.isNativePlatform()) {
-              alert(L({
-                ko: '이 브라우저에서는 위치 서비스를 지원하지 않습니다.',
-                zh: '此浏览器不支持位置服务。',
-                en: 'Geolocation is not supported by this browser.'
-              }))
-              return
-            }
-
-            // 이전 watch 정리
-            if (watchIdRef.current) {
-              watchIdRef.current()
-              watchIdRef.current = null
-            }
-
-            setLocatingUser(true)
-            setLocationAccuracy(null)
-            let settled = false
-
-            const updateLocation = (position) => {
-              const lat = position.coords.latitude
-              const lng = position.coords.longitude
-              const accuracy = position.coords.accuracy // 미터 단위
-              const moveLatLng = new window.kakao.maps.LatLng(lat, lng)
-
-              map.setCenter(moveLatLng)
-              if (!settled) {
-                map.setLevel(3)
-              }
-              setUserLocation({ lat, lng })
-              setLocationAccuracy(Math.round(accuracy))
-
-              // 기존 내 위치 마커 제거 후 새로 추가
-              if (userMarkerRef.current) {
-                userMarkerRef.current.setMap(null)
-              }
-              const marker = new window.kakao.maps.Marker({
-                position: moveLatLng,
-                map: map,
-                image: new window.kakao.maps.MarkerImage(
-                  'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                      <circle cx="12" cy="12" r="8" fill="#4285F4" stroke="white" stroke-width="3"/>
-                    </svg>
-                  `),
-                  new window.kakao.maps.Size(24, 24)
-                )
-              })
-              userMarkerRef.current = marker
-
-              // GPS 정확도 50m 이내면 충분히 정확 → watch 중단
-              if (accuracy <= 50) {
-                if (watchIdRef.current) {
-                  watchIdRef.current()
-                  watchIdRef.current = null
-                }
-                setLocatingUser(false)
-              }
-              settled = true
-            }
-
-            const handleError = (error) => {
-              if (watchIdRef.current) {
-                watchIdRef.current()
-                watchIdRef.current = null
-              }
-              setLocatingUser(false)
-              let msg
-              if (error.code === 1) {
-                msg = L({
-                  ko: '위치 권한이 거부되었습니다. 브라우저 설정에서 위치 권한을 허용해주세요.',
-                  zh: '位置权限被拒绝。请在浏览器设置中允许位置权限。',
-                  en: 'Location permission denied. Please allow location access in browser settings.'
-                })
-              } else if (error.code === 2) {
-                msg = L({
-                  ko: '위치 정보를 사용할 수 없습니다. GPS를 확인해주세요.',
-                  zh: '无法获取位置信息。请检查GPS。',
-                  en: 'Location unavailable. Please check your GPS.'
-                })
-              } else {
-                msg = L({
-                  ko: '위치 요청 시간이 초과되었습니다. 다시 시도해주세요.',
-                  zh: '位置请求超时。请重试。',
-                  en: 'Location request timed out. Please try again.'
-                })
-              }
-              alert(msg)
-            }
-
-            // watchPosition으로 GPS 정확도가 높아질 때까지 위치 업데이트 (네이티브 GPS 우선)
-            watchIdRef.current = watchPositionCompat(
-              updateLocation,
-              handleError,
-              { enableHighAccuracy: true, timeout: 15000 }
-            )
-
-            // 최대 15초 후 자동 중단 (GPS 못 잡아도 마지막 결과 사용)
-            setTimeout(() => {
-              if (watchIdRef.current) {
-                watchIdRef.current()
-                watchIdRef.current = null
-                setLocatingUser(false)
-              }
-            }, 15000)
+      {/* ── 검색바 오버레이 ──────────────────────── */}
+      <div
+        className="absolute left-4 right-4 z-10"
+        style={{ top: 'calc(env(safe-area-inset-top, 0px) + 12px)' }}
+      >
+        <div
+          className="flex items-center gap-2 bg-white px-4 py-3"
+          style={{
+            borderRadius: 12,
+            boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
           }}
-          className={`absolute top-[130px] right-[6px] z-40 w-9 h-9 bg-white rounded shadow-md flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-300 ${locatingUser ? 'animate-pulse' : ''}`}
-          title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
         >
-          {locatingUser
-            ? <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            : <Navigation size={18} className="text-blue-500" />
-          }
-        </button>
-        {/* 위치 정확도 표시 */}
-        {locationAccuracy && (
-          <div className="absolute top-16 left-3 z-40 bg-white/90 rounded-full px-2 py-0.5 shadow text-xs text-gray-500 border border-gray-100">
-            ±{locationAccuracy}m
-          </div>
-        )}
+          <Search size={16} className="text-gray-400 flex-shrink-0" />
+          <input
+            type="text"
+            readOnly
+            placeholder="搜索弹窗店、美食、地点..."
+            className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent cursor-pointer"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          />
+        </div>
+      </div>
 
-        {/* 마커 상세 정보 패널 */}
-        {selectedMarker && (
-          <div className="absolute bottom-16 left-3 right-3 z-50 bg-white rounded-xl shadow-xl px-3 py-2.5">
-            {/* 헤더: 이름 + 닫기 */}
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-gray-900 text-[13px] leading-tight">{L(selectedMarker.name)}</h3>
-                <p className="text-gray-500 text-[11px] leading-tight mt-0.5 line-clamp-2">{L(selectedMarker.description)}</p>
-              </div>
-              <button onClick={() => setSelectedMarker(null)} className="p-0.5 hover:bg-gray-100 rounded shrink-0 mt-0.5">
-                <X size={14} className="text-gray-400" />
-              </button>
-            </div>
+      {/* ── 카테고리 칩 ──────────────────────────── */}
+      <div
+        className="absolute left-0 right-0 z-10 overflow-x-auto flex gap-2 px-4 no-scrollbar"
+        style={{
+          top: 'calc(env(safe-area-inset-top, 0px) + 70px)',
+          scrollbarWidth: 'none',
+        }}
+      >
+        {CHIPS.map((chip) => {
+          const active = selectedCategory === chip.id
+          return (
+            <button
+              key={chip.id}
+              onClick={() => {
+                setSelectedCategory(chip.id)
+                setSelectedPOI(null)
+              }}
+              className="flex-shrink-0 px-4 py-1.5 text-sm font-medium transition-all"
+              style={{
+                borderRadius: 999,
+                background: active ? '#111827' : '#fff',
+                color: active ? '#fff' : '#9CA3AF',
+                border: active ? '1.5px solid #111827' : '1.5px solid #E5E7EB',
+                fontSize: 13,
+              }}
+            >
+              {chip.zh}
+            </button>
+          )
+        })}
+      </div>
 
-            {/* 부가 정보 (한 줄로 압축) */}
-            <div className="flex flex-wrap gap-x-3 gap-y-0 mt-1 text-[11px] text-gray-500">
-              {selectedMarker.chineseSupport && <span className="text-red-500">🇨🇳</span>}
-              {selectedMarker.phone && <span>📞 {selectedMarker.phone}</span>}
-              {selectedMarker.priceRange && <span>💰 {selectedMarker.priceRange}</span>}
-              {selectedMarker.categoryName && <span>🏷️ {selectedMarker.categoryName}</span>}
-            </div>
+      {/* ── 바텀시트 ──────────────────────────────── */}
+      {/* bottom: 56px = 하단 탭바 높이 위에 위치 */}
+      <div
+        className="absolute left-0 right-0 bg-white z-20"
+        style={{
+          bottom: 56,
+          borderRadius: '16px 16px 0 0',
+          boxShadow: '0 -2px 16px rgba(0,0,0,0.10)',
+          minHeight: 120,
+        }}
+      >
+        {/* Handle bar */}
+        <div className="flex justify-center pt-2.5 pb-1">
+          <div
+            style={{
+              width: 36,
+              height: 4,
+              borderRadius: 2,
+              background: '#E5E7EB',
+            }}
+          />
+        </div>
 
-            {/* 길찾기 영역 */}
-            <div className="mt-2 pt-2 border-t border-gray-100">
-              {!showRoutePanel ? (
-                <button
-                  onClick={() => {
-                    setEndLocation(L(selectedMarker.name))
-                    setEndCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
-                    setShowRoutePanel(true)
-                  }}
-                  className="w-full py-2 text-[13px] font-medium text-white bg-gray-900 rounded-lg"
-                >
-                  {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
-                </button>
-              ) : (
-                <div className="space-y-1.5">
-                  {/* 출발지 */}
-                  <div className="relative">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0" />
-                      <input
-                        type="text"
-                        value={startLocation}
-                        onChange={(e) => handleStartLocationChange(e.target.value)}
-                        placeholder={L({ ko: "출발지", zh: "出发地", en: "Start" })}
-                        className="flex-1 px-2.5 py-1.5 text-[13px] bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
-                      />
-                    </div>
-                    {showStartResults && startResults.length > 0 && (
-                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-28 overflow-y-auto z-50">
-                        {startResults.map(r => (
-                          <button key={r.id} onClick={() => selectLocation(r, true)}
-                            className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 text-[11px] border-b border-gray-50 last:border-0">
-                            <div className="font-medium">{r.name}</div>
-                            {r.address && <div className="text-gray-400">{r.address}</div>}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  {/* 도착지 */}
-                  <div className="relative">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
-                      <input
-                        type="text"
-                        value={endLocation}
-                        onChange={(e) => handleEndLocationChange(e.target.value)}
-                        placeholder={L({ ko: "도착지", zh: "目的地", en: "Destination" })}
-                        className="flex-1 px-2.5 py-1.5 text-[13px] bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
-                      />
-                    </div>
-                    {showEndResults && endResults.length > 0 && (
-                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-28 overflow-y-auto z-50">
-                        {endResults.map(r => (
-                          <button key={r.id} onClick={() => selectLocation(r, false)}
-                            className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 text-[11px] border-b border-gray-50 last:border-0">
-                            <div className="font-medium">{r.name}</div>
-                            {r.address && <div className="text-gray-400">{r.address}</div>}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  {/* Go + 닫기 */}
-                  <div className="flex gap-2">
-                    <button onClick={startRouteNavigation}
-                      className="flex-1 py-1.5 text-[13px] font-medium text-white bg-blue-500 rounded-lg">
-                      Go
-                    </button>
-                    <button onClick={() => { setShowRoutePanel(false); setShowStartResults(false); setShowEndResults(false) }}
-                      className="px-3 py-1.5 text-gray-500 bg-gray-100 rounded-lg">
-                      <X size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
+        {/* 카드 내용 */}
+        <div className="px-4 pb-4 pt-2">
+          {loading ? (
+            <SkeletonCard />
+          ) : displayPOI ? (
+            <POICard
+              poi={displayPOI}
+              lang={lang}
+              L={L}
+              onNavigate={() => openNavigation(displayPOI)}
+              onDetail={() => setSelectedPOI(displayPOI)}
+              userLocation={userLocation}
+            />
+          ) : (
+            <div className="text-center text-sm text-gray-400 py-4">
+              暂无附近地点
             </div>
-          </div>
-        )}
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
 
-        {/* API 키 없을 때 메시지 */}
-        {!mapReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 mx-auto bg-yellow-200 rounded-full flex items-center justify-center">
-                <Info size={24} className="text-yellow-600" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-gray-700">
-                  {L({ ko: '카카오맵 API 키 필요', zh: '需要카카오맵API密钥', en: 'KakaoMap API Key Required' })}
-                </h3>
-                <p className="text-sm text-gray-500 max-w-xs mx-auto">
-                  {L({ 
-                    ko: 'Kakao Developers에서 Maps API 키를 발급받으세요. 일 30만회 무료!',
-                    zh: '请从Kakao Developers获取Maps API密钥。每日30万次免费！',
-                    en: 'Get Maps API key from Kakao Developers. 300K requests/day free!'
-                  })}
-                </p>
-                <div className="text-xs text-blue-600">
-                  https://developers.kakao.com
-                </div>
-              </div>
-            </div>
+// ─── POI 카드 컴포넌트 ────────────────────────────────────────────
+function POICard({ poi, lang, L, onNavigate, onDetail, userLocation }) {
+  const catInfo = POI_CATEGORIES[poi.category]
+  const dist =
+    userLocation
+      ? formatDistance(calcDistance(userLocation.lat, userLocation.lng, poi.lat, poi.lng))
+      : null
+  const dateStr = formatDateRange(poi.start_date, poi.end_date)
+  const timeStr =
+    poi.open_time ? `${formatTime(poi.open_time)}~${formatTime(poi.close_time)}` : ''
+
+  const name = poi[`name_${lang}`] || poi.name_zh || poi.name_ko
+  const address = poi[`address_${lang}`] || poi.address_zh || poi.address_ko
+
+  return (
+    <div className="flex gap-3 items-start">
+      {/* 이미지 */}
+      <div
+        className="flex-shrink-0 bg-gray-100 overflow-hidden"
+        style={{ width: 64, height: 64, borderRadius: 10 }}
+      >
+        {poi.image_url ? (
+          <img
+            src={poi.image_url}
+            alt={name}
+            className="w-full h-full object-cover"
+            onError={(e) => { e.target.style.display = 'none' }}
+          />
+        ) : (
+          <div
+            className="w-full h-full flex items-center justify-center text-xl font-bold"
+            style={{ background: catInfo?.color || '#eee', color: '#fff' }}
+          >
+            {catInfo?.letter}
           </div>
         )}
       </div>
 
-      {/* 카카오맵 웹뷰 모달 */}
-      {showKakaoWebView && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white w-full h-full max-w-lg max-h-[90vh] rounded-lg flex flex-col">
-            {/* 웹뷰 헤더 */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <div className="flex items-center space-x-2">
-                <Globe size={20} className="text-blue-500" />
-                <h3 className="text-lg font-semibold">
-                  {L({ ko: '카카오맵 검색', zh: 'Kakao地图搜索', en: 'Kakao Map Search' })}
-                </h3>
-              </div>
-              <button
-                onClick={closeKakaoWebView}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* 검색어 표시 */}
-            <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
-              <div className="flex items-center space-x-2">
-                <Search size={16} className="text-gray-500" />
-                <span className="text-sm text-gray-700">
-                  {L({ ko: '검색어', zh: '搜索词', en: 'Query' })}: <strong>{kakaoWebViewQuery}</strong>
-                </span>
-              </div>
-            </div>
-
-            {/* 카카오맵 iframe */}
-            <div className="flex-1 relative">
-              <iframe
-                src={getKakaoMapWebViewUrl(kakaoWebViewQuery)}
-                className="w-full h-full border-0"
-                title="Kakao Map Search"
-                allowFullScreen
-                loading="lazy"
-              />
-            </div>
-
-            {/* 웹뷰 푸터 */}
-            <div className="p-4 border-t border-gray-200 bg-gray-50">
-              <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-500">
-                  {L({ 
-                    ko: '카카오맵 순정 검색 결과', 
-                    zh: 'Kakao地图原生搜索结果', 
-                    en: 'Native Kakao Map Results' 
-                  })}
-                </div>
-                <button
-                  onClick={() => window.open(getKakaoMapWebViewUrl(kakaoWebViewQuery), '_blank')}
-                  className="flex items-center space-x-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                >
-                  <ExternalLink size={14} />
-                  <span>{L({ ko: '새 창', zh: '新窗口', en: 'New Tab' })}</span>
-                </button>
-              </div>
-            </div>
-          </div>
+      {/* 텍스트 */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5 mb-0.5">
+          {isNewPOI(poi) && (
+            <span
+              className="text-white font-bold flex-shrink-0"
+              style={{ background: '#E24B4A', fontSize: 8, padding: '1px 5px', borderRadius: 4 }}
+            >
+              NEW
+            </span>
+          )}
+          <span className="text-[13px] font-bold text-gray-900 truncate">{name}</span>
         </div>
-      )}
+        <p className="text-[11px] text-gray-500 truncate">
+          {address}
+          {dist && <span className="text-gray-400"> · {dist}</span>}
+        </p>
+        {(dateStr || timeStr) && (
+          <p className="text-[10px] text-gray-400 mt-0.5">
+            {dateStr}
+            {dateStr && timeStr ? ' · ' : ''}
+            {timeStr}
+          </p>
+        )}
 
-      {/* 🗺️ 여행계획 모달 */}
-      {showTripPlanner && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg max-h-[90vh] rounded-lg flex flex-col overflow-hidden">
-            {/* 헤더 */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold">
-                🗺️ {L({ ko: '내 여행계획', zh: '我的旅行计划', en: 'My Trip Plans' })}
-              </h2>
-              <button
-                onClick={() => {
-                  setShowTripPlanner(false)
-                  setCurrentTripPlan(null)
-                  setEditingTripIndex(-1)
-                }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            {/* 콘텐츠 */}
-            <div className="flex-1 overflow-y-auto">
-              {currentTripPlan ? (
-                // 여행계획 편집 모드
-                <div className="p-4 space-y-4">
-                  {/* 계획명 입력 */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      {L({ ko: '계획명', zh: '计划名称', en: 'Plan Name' })}
-                    </label>
-                    <input
-                      type="text"
-                      value={currentTripPlan.name}
-                      onChange={(e) => setCurrentTripPlan(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder={L({ ko: '여행계획 이름을 입력하세요', zh: '请输入旅行计划名称', en: 'Enter plan name' })}
-                    />
-                  </div>
-
-                  {/* 목적지 목록 */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      {L({ ko: '목적지', zh: '目的地', en: 'Destinations' })} ({currentTripPlan.destinations.length}/10)
-                    </label>
-                    
-                    {currentTripPlan.destinations.length > 0 ? (
-                      <div className="space-y-2 mb-3">
-                        {currentTripPlan.destinations.map((dest, index) => (
-                          <div key={dest.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                            <span className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-medium">
-                              {index + 1}
-                            </span>
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium text-sm truncate">{dest.name}</div>
-                              <div className="text-xs text-gray-500 truncate">{dest.address}</div>
-                            </div>
-                            <button
-                              onClick={() => removeDestination(dest.id)}
-                              className="p-1 text-red-500 hover:bg-red-50 rounded-full"
-                            >
-                              <X size={16} />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-gray-500">
-                        <MapPin size={32} className="mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">{L({ ko: '목적지를 추가해보세요', zh: '请添加目的地', en: 'Add destinations' })}</p>
-                      </div>
-                    )}
-
-                    {/* 목적지 추가 */}
-                    {currentTripPlan.destinations.length < 10 && (
-                      <div className="relative">
-                        <input
-                          type="text"
-                          value={newDestinationQuery}
-                          onChange={(e) => {
-                            setNewDestinationQuery(e.target.value)
-                            if (e.target.value.length > 1) {
-                              searchDestinations(e.target.value)
-                            } else {
-                              setShowDestinationResults(false)
-                            }
-                          }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          placeholder={L({ ko: '목적지를 검색하세요', zh: '搜索目的地', en: 'Search destinations' })}
-                        />
-                        
-                        {showDestinationResults && destinationSearchResults.length > 0 && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto z-10">
-                            {destinationSearchResults.map((result) => (
-                              <button
-                                key={result.id}
-                                onClick={() => addDestination(result)}
-                                className="w-full px-3 py-2.5 text-left hover:bg-gray-50 border-b border-gray-100 last:border-0"
-                              >
-                                <div className="font-medium text-sm">{result.name}</div>
-                                <div className="text-xs text-gray-500">{result.address}</div>
-                                {result.category && <div className="text-xs text-blue-500">{result.category}</div>}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 저장/취소 버튼 */}
-                  <div className="flex gap-3 pt-4 border-t">
-                    <button
-                      onClick={() => {
-                        setCurrentTripPlan(null)
-                        setEditingTripIndex(-1)
-                      }}
-                      className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
-                    >
-                      {L({ ko: '취소', zh: '取消', en: 'Cancel' })}
-                    </button>
-                    <button
-                      onClick={saveTripPlan}
-                      disabled={!currentTripPlan.name.trim() || currentTripPlan.destinations.length === 0}
-                      className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {L({ ko: '저장', zh: '保存', en: 'Save' })}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                // 여행계획 목록 모드
-                <div className="p-4">
-                  {tripPlans.length > 0 ? (
-                    <div className="space-y-3">
-                      {tripPlans.map((plan, index) => (
-                        <div key={plan.id} className="border border-gray-200 rounded-lg p-4">
-                          <div className="flex items-start justify-between mb-2">
-                            <div className="flex-1">
-                              <h3 className="font-medium text-sm">{plan.name}</h3>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {L({ ko: '목적지', zh: '目的地', en: 'Destinations' })}: {plan.destinations.length}개
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                {new Date(plan.createdAt).toLocaleDateString()}
-                              </p>
-                            </div>
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => {
-                                  setCurrentTripPlan(plan)
-                                  setEditingTripIndex(index)
-                                }}
-                                className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-full"
-                                title={L({ ko: '편집', zh: '编辑', en: 'Edit' })}
-                              >
-                                <Route size={16} />
-                              </button>
-                              <button
-                                onClick={() => {
-                                  if (confirm(L({ ko: '이 여행계획을 삭제하시겠습니까?', zh: '确定要删除此旅行计划吗？', en: 'Delete this trip plan?' }))) {
-                                    deleteTripPlan(index)
-                                  }
-                                }}
-                                className="p-1.5 text-red-500 hover:bg-red-50 rounded-full"
-                                title={L({ ko: '삭제', zh: '删除', en: 'Delete' })}
-                              >
-                                <X size={16} />
-                              </button>
-                            </div>
-                          </div>
-                          
-                          {plan.destinations.length > 0 && (
-                            <div className="mb-3">
-                              <div className="flex flex-wrap gap-1">
-                                {plan.destinations.slice(0, 3).map((dest, i) => (
-                                  <span key={dest.id} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-                                    {i + 1}. {dest.name.length > 10 ? dest.name.substring(0, 10) + '...' : dest.name}
-                                  </span>
-                                ))}
-                                {plan.destinations.length > 3 && (
-                                  <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-                                    +{plan.destinations.length - 3}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          
-                          <button
-                            onClick={() => startNavigation(plan)}
-                            disabled={plan.destinations.length === 0}
-                            className="w-full px-3 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                          >
-                            <Navigation size={16} />
-                            {L({ ko: '카카오맵으로 길찾기', zh: 'Kakao地图导航', en: 'Navigate with KakaoMap' })}
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Route size={48} className="mx-auto mb-4 text-gray-300" />
-                      <h3 className="text-lg font-medium text-gray-700 mb-2">
-                        {L({ ko: '저장된 여행계획이 없습니다', zh: '没有保存的旅行计划', en: 'No saved trip plans' })}
-                      </h3>
-                      <p className="text-sm text-gray-500 mb-6">
-                        {L({ ko: '새 여행계획을 만들어보세요', zh: '创建新的旅行计划', en: 'Create a new trip plan' })}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* 새 계획 만들기 버튼 */}
-                  {tripPlans.length < 10 && (
-                    <button
-                      onClick={createNewTripPlan}
-                      className="w-full mt-4 px-4 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2"
-                    >
-                      <Route size={18} />
-                      {L({ ko: '새 여행계획 만들기', zh: '创建新旅行计划', en: 'Create New Trip Plan' })}
-                    </button>
-                  )}
-                  
-                  {tripPlans.length >= 10 && (
-                    <p className="text-center text-xs text-gray-500 mt-4">
-                      {L({ ko: '최대 10개의 여행계획을 저장할 수 있습니다', zh: '最多可保存10个旅行计划', en: 'Maximum 10 trip plans allowed' })}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+        {/* CTA 버튼 */}
+        <div className="flex gap-2 mt-2.5">
+          <button
+            onClick={onNavigate}
+            className="flex items-center gap-1 px-3 py-1.5 text-white text-[12px] font-semibold rounded-lg flex-shrink-0"
+            style={{ background: '#111827', borderRadius: 8 }}
+          >
+            <Navigation size={12} />
+            导航
+          </button>
+          <button
+            onClick={onDetail}
+            className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-semibold rounded-lg border border-gray-200 text-gray-700 flex-shrink-0"
+            style={{ borderRadius: 8 }}
+          >
+            <Info size={12} />
+            详情
+          </button>
         </div>
-      )}
-
+      </div>
     </div>
   )
 }

@@ -260,11 +260,11 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
   }
 
   return (
-    <div className="pb-24 animate-fade-up">
+    <div className="pb-0 animate-fade-up">
       {/* 검색바 — 고정 상단 */}
-      <div className="sticky top-0 z-20 bg-[#FAF7F5] px-4 pt-3 pb-2">
+      <div className="sticky top-0 z-20 bg-white px-4 pt-3 pb-2">
         <div className="relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)]" />
           <input
             ref={searchRef}
             type="text"
@@ -272,13 +272,13 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
             onChange={e => handleSearch(e.target.value)}
             onFocus={() => !query && setShowTrending(true)}
             placeholder={L(lang, { ko: '맛집, 카페, K-POP, 명동...', zh: '搜索美食、咖啡、K-POP、明洞...', en: 'Search food, cafe, K-POP, Myeongdong...' })}
-            className="w-full pl-10 pr-10 py-3 rounded-[14px] bg-white text-[14px] text-[#1A1A1A] placeholder:text-[#BCBCBC] outline-none"
-            style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
+            className="w-full pl-10 pr-10 py-3 rounded-[20px] bg-white text-[14px] text-[var(--y2k-text)] placeholder:text-[var(--y2k-text-sub)] outline-none focus:ring-2 focus:ring-[var(--y2k-lavender)]/30"
+            style={{ boxShadow: '0 4px 16px rgba(255,133,179,0.08)' }}
           />
           {query && (
             <button onClick={() => { setQuery(''); setShowTrending(true); setResults(FALLBACK_ITEMS); setActiveCategory(null) }}
               className="absolute right-3 top-1/2 -translate-y-1/2 p-1">
-              <X size={16} className="text-[#9CA3AF]" />
+              <X size={16} className="text-[var(--y2k-text-sub)]" />
             </button>
           )}
         </div>
@@ -291,10 +291,9 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
             const isActive = activeCategory === cat.id
             return (
               <button key={cat.id} onClick={() => handleCategoryClick(cat)}
-                className="flex flex-col items-center gap-1 py-2.5 rounded-[12px] transition-all active:scale-95"
-                style={{ background: isActive ? '#111827' : '#FFF', boxShadow: isActive ? 'none' : '0 1px 3px rgba(0,0,0,0.04)' }}>
-                <span className="text-[20px]">{cat.emoji}</span>
-                <span className="text-[11px] font-medium" style={{ color: isActive ? '#FFF' : '#555' }}>
+                className="flex items-center justify-center py-2 rounded-full transition-all active:scale-95"
+                style={{ background: isActive ? 'linear-gradient(135deg, var(--y2k-pink), var(--y2k-lavender))' : '#FFF', boxShadow: isActive ? '0 4px 16px rgba(255,133,179,0.2)' : '0 4px 16px rgba(255,133,179,0.08)' }}>
+                <span className="text-[11px] font-medium" style={{ color: isActive ? '#FFF' : 'var(--y2k-text-sub)' }}>
                   {L(lang, cat.label)}
                 </span>
               </button>
@@ -306,13 +305,13 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
       {/* 인기 검색어 — 검색창 포커스 시 */}
       {showTrending && !query && (
         <div className="px-4 pt-3">
-          <p className="text-[12px] font-bold text-[#374151] mb-2">
+          <p className="text-[12px] font-bold text-[var(--y2k-text)] mb-2">
             🔥 {L(lang, { ko: '지금 인기 검색어', zh: '热门搜索', en: 'Trending Searches' })}
           </p>
           <div className="flex flex-wrap gap-2">
             {TRENDING.map((t, i) => (
               <button key={i} onClick={() => handleTrendingClick(t)}
-                className="px-3 py-1.5 rounded-full bg-white text-[12px] text-[#555] font-medium active:bg-[#F3F4F6] transition-colors"
+                className="px-3 py-1.5 rounded-full bg-white text-[12px] text-[var(--y2k-text-sub)] font-medium active:bg-[var(--y2k-bg)] transition-colors"
                 style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
                 {L(lang, t)}
               </button>
@@ -330,7 +329,7 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
         ) : (
           <>
             {total > 0 && !showTrending && (
-              <p className="text-[11px] text-[#9CA3AF] mb-2">
+              <p className="text-[11px] text-[var(--y2k-text-sub)] mb-2">
                 {L(lang, { ko: `${total}건의 결과`, zh: `共${total}条结果`, en: `${total} results` })}
               </p>
             )}
@@ -338,11 +337,13 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
             {/* 이미지 그리드 (2열) */}
             <div className="grid grid-cols-2 gap-2.5">
               {results.map(item => (
-                <div key={item.id} className="bg-white rounded-[12px] overflow-hidden active:scale-[0.98] transition-transform"
-                  style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+                <div key={item.id} className="bg-white rounded-[20px] overflow-hidden active:scale-95 transition-all hover:-translate-y-1"
+                  style={{ boxShadow: '0 4px 20px rgba(255,133,179,0.08)' }}
+                  onMouseEnter={e => e.currentTarget.style.boxShadow = '0 8px 32px rgba(255,133,179,0.15)'}
+                  onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 20px rgba(255,133,179,0.08)'}>
                   {/* 이미지 */}
                   <button onClick={() => handleItemClick(item)} className="w-full text-left">
-                    <div className="w-full aspect-[4/3] bg-[#F3F4F6] relative overflow-hidden">
+                    <div className="w-full aspect-[4/3] bg-[var(--y2k-bg)] relative overflow-hidden">
                       {item.image ? (
                         <img src={item.image} alt={item.title} className="w-full h-full object-cover"
                           onError={e => { e.target.style.display = 'none' }}
@@ -351,15 +352,15 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
                         <div className="w-full h-full flex items-center justify-center text-3xl opacity-30">📷</div>
                       )}
                       {item.category && (
-                        <span className="absolute top-2 left-2 text-[9px] bg-black/60 text-white px-1.5 py-0.5 rounded-full">
+                        <span className="absolute top-2 left-2 text-[10px] bg-black/70 text-white px-1.5 py-0.5 rounded-full font-medium shadow-sm">
                           {item.category}
                         </span>
                       )}
                     </div>
                     <div className="p-2.5">
-                      <p className="text-[13px] font-bold text-[#1A1A1A] line-clamp-1">{item.title}</p>
+                      <p className="text-[13px] font-bold text-[var(--y2k-text)] line-clamp-1">{item.title}</p>
                       {item.tags?.length > 0 && (
-                        <p className="text-[10px] text-[#9CA3AF] mt-0.5 line-clamp-1">
+                        <p className="text-[11px] text-[var(--y2k-text-sub)] mt-0.5 line-clamp-1 font-medium">
                           {item.tags.map(t => `#${t}`).join(' ')}
                         </p>
                       )}
@@ -368,7 +369,7 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
                   {/* 지도 버튼 */}
                   <div className="px-2.5 pb-2">
                     <button onClick={() => handleViewOnMap(item)}
-                      className="w-full flex items-center justify-center gap-1 py-1.5 rounded-lg bg-[#FEE500] text-[10px] font-bold text-[#111827] active:scale-95 transition-transform">
+                      className="w-full flex items-center justify-center gap-1 py-1.5 rounded-lg bg-[#FEE500] text-[10px] font-bold text-[var(--y2k-text)] active:scale-95 transition-transform">
                       <MapPin size={12} /> {L(lang, { ko: '지도', zh: '地图', en: 'Map' })}
                     </button>
                   </div>
@@ -380,8 +381,8 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
             {results.length < total && results.length > 0 && (
               <button onClick={handleLoadMore}
                 disabled={loading}
-                className="w-full mt-4 py-3 rounded-[12px] bg-white text-[13px] font-medium text-[#555] active:bg-[#F3F4F6] transition-colors"
-                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+                className="w-full mt-4 py-3 rounded-[20px] bg-white text-[13px] font-medium text-[var(--y2k-text-sub)] active:bg-[var(--y2k-bg)] transition-colors"
+                style={{ boxShadow: '0 4px 16px rgba(255,133,179,0.08)' }}>
                 {loading ? '...' : L(lang, { ko: '더보기', zh: '加载更多', en: 'Load More' })}
               </button>
             )}
@@ -392,7 +393,7 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
       {/* Visit Seoul 아카이브 원본 링크 */}
       <div className="px-4 mt-4">
         <a href="https://archive.visitseoul.net" target="_blank" rel="noreferrer"
-          className="flex items-center justify-center gap-1.5 py-2.5 rounded-[10px] bg-[#F3F4F6] text-[11px] text-[#6B7280] font-medium">
+          className="flex items-center justify-center gap-1.5 py-2.5 rounded-full bg-[var(--y2k-bg)] text-[11px] text-[var(--y2k-text-sub)] font-medium">
           <ExternalLink size={12} />
           {L(lang, { ko: 'Visit Seoul 아카이브에서 더 보기', zh: '在Visit Seoul存档查看更多', en: 'Browse Visit Seoul Archive' })}
         </a>

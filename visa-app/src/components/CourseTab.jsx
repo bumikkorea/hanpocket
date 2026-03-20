@@ -234,11 +234,11 @@ function CourseMap({ stops, lang }) {
   }, [stops])
 
   return (
-    <div className="relative rounded-[6px] overflow-hidden border border-[#E5E7EB]" style={{ height: 280 }}>
+    <div className="relative rounded-[20px] overflow-hidden border border-[var(--y2k-border)]" style={{ height: 280 }}>
       <div ref={mapRef} className="w-full h-full" />
       {!mapReady && (
-        <div className="absolute inset-0 bg-[#F5F5F5] flex items-center justify-center">
-          <span className="text-xs text-[#9CA3AF]">Loading map...</span>
+        <div className="absolute inset-0 bg-[var(--y2k-bg)] flex items-center justify-center">
+          <span className="text-xs text-[var(--y2k-text-sub)]">Loading map...</span>
         </div>
       )}
     </div>
@@ -317,15 +317,15 @@ function NaverCourseMap({ stops, lang, onSwitchToKakao }) {
 
   if (mapError) {
     return (
-      <div className="rounded-[6px] border border-[#E5E7EB] bg-[#F9FAFB] flex flex-col items-center justify-center gap-3" style={{ height: 280 }}>
+      <div className="rounded-[20px] border border-[var(--y2k-border)] bg-[var(--y2k-bg)] flex flex-col items-center justify-center gap-3" style={{ height: 280 }}>
         <span className="text-3xl">🗺️</span>
-        <p className="text-xs text-[#6B7280] text-center px-6 leading-relaxed whitespace-pre-line">
+        <p className="text-xs text-[var(--y2k-text-sub)] text-center px-6 leading-relaxed whitespace-pre-line">
           {L(lang, { ko: '네이버 지도를 불러올 수 없어요.\n카카오 지도로 확인해 보세요.', zh: 'Naver地图加载失败。\n请使用Kakao地图查看。', en: 'Naver Maps unavailable.\nPlease use Kakao Maps instead.' })}
         </p>
         {onSwitchToKakao && (
           <button
             onClick={onSwitchToKakao}
-            className="text-xs font-bold px-4 py-2 rounded-[6px] bg-[#FEE500] text-[#111827] active:scale-95 transition-transform"
+            className="text-xs font-bold px-4 py-2 rounded-[20px] bg-[#FEE500] text-[var(--y2k-text)] active:scale-95 transition-transform"
           >
             {L(lang, { ko: '카카오 지도로 보기', zh: '使用Kakao地图', en: 'Use Kakao Maps' })}
           </button>
@@ -335,12 +335,12 @@ function NaverCourseMap({ stops, lang, onSwitchToKakao }) {
   }
 
   return (
-    <div className="relative rounded-[6px] overflow-hidden border border-[#E5E7EB]" style={{ height: 280 }}>
+    <div className="relative rounded-[20px] overflow-hidden border border-[var(--y2k-border)]" style={{ height: 280 }}>
       <div ref={mapRef} className="w-full h-full" />
       {!mapReady && (
-        <div className="absolute inset-0 bg-[#F5F5F5] flex items-center justify-center gap-2">
+        <div className="absolute inset-0 bg-[var(--y2k-bg)] flex items-center justify-center gap-2">
           <span className="animate-spin w-4 h-4 border-2 border-[#03C75A] border-t-transparent rounded-full" />
-          <span className="text-xs text-[#9CA3AF]">Naver Maps...</span>
+          <span className="text-xs text-[var(--y2k-text-sub)]">Naver Maps...</span>
         </div>
       )}
       {/* Naver Maps branding */}
@@ -357,15 +357,15 @@ function NaverCourseMap({ stops, lang, onSwitchToKakao }) {
 function MapProviderToggle({ provider, onChange, lang }) {
   return (
     <div className="flex items-center justify-end gap-1 mb-2">
-      <span className="text-[10px] text-[#9CA3AF]">
+      <span className="text-[10px] text-[var(--y2k-text-sub)]">
         {L(lang, { ko: '지도', zh: '地图', en: 'Map' })}
       </span>
       <button
         onClick={() => onChange('kakao')}
         className={`text-[11px] font-bold px-2 py-0.5 rounded-l-[6px] border transition-colors ${
           provider === 'kakao'
-            ? 'bg-[#FEE500] text-[#111827] border-[#FEE500]'
-            : 'bg-white text-[#9CA3AF] border-[#E5E7EB]'
+            ? 'bg-[#FEE500] text-[var(--y2k-text)] border-[#FEE500]'
+            : 'bg-white text-[var(--y2k-text-sub)] border-[var(--y2k-border)]'
         }`}
       >K</button>
       <button
@@ -373,7 +373,7 @@ function MapProviderToggle({ provider, onChange, lang }) {
         className={`text-[11px] font-bold px-2 py-0.5 rounded-r-[6px] border-t border-b border-r transition-colors ${
           provider === 'naver'
             ? 'bg-[#03C75A] text-white border-[#03C75A]'
-            : 'bg-white text-[#9CA3AF] border-[#E5E7EB]'
+            : 'bg-white text-[var(--y2k-text-sub)] border-[var(--y2k-border)]'
         }`}
       >N</button>
     </div>
@@ -575,23 +575,23 @@ function OnboardingQuiz({ lang, onComplete }) {
   }
 
   return (
-    <div className="bg-white rounded-[6px] border border-[#E5E7EB] overflow-hidden">
+    <div className="bg-white rounded-[20px] border border-[var(--y2k-border)] overflow-hidden">
       {/* Progress */}
       <div className="px-4 pt-4 pb-1">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[10px] text-[#9CA3AF] font-medium">{step + 1} / {total}</span>
-          <span className="text-[10px] text-[#9CA3AF]">{Math.round(((step + 1) / total) * 100)}%</span>
+          <span className="text-[10px] text-[var(--y2k-text-sub)] font-medium">{step + 1} / {total}</span>
+          <span className="text-[10px] text-[var(--y2k-text-sub)]">{Math.round(((step + 1) / total) * 100)}%</span>
         </div>
         <div className="h-1 bg-[#F3F4F6] rounded-full overflow-hidden">
           <div
-            className="h-full bg-[#111827] rounded-full transition-all duration-300"
+            className="h-full bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] rounded-full transition-all duration-300"
             style={{ width: `${((step + 1) / total) * 100}%` }}
           />
         </div>
       </div>
 
       <div className="px-4 pt-3 pb-4">
-        <h3 className="text-sm font-bold text-[#111827] mb-3 leading-snug">{L(lang, q.q)}</h3>
+        <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-3 leading-snug">{L(lang, q.q)}</h3>
 
         {/* Binary A/B options — large tap cards */}
         {!q.multi && (
@@ -602,20 +602,20 @@ function OnboardingQuiz({ lang, onComplete }) {
                 <button
                   key={opt.id}
                   onClick={() => selectAnswer(q.id, opt.id)}
-                  className={`w-full text-left p-3.5 rounded-[8px] border-2 transition-all active:scale-[0.98] ${
+                  className={`w-full text-left p-3.5 rounded-[8px] border-2 transition-all active:scale-95 ${
                     selected
-                      ? 'bg-[#111827] border-[#111827]'
-                      : 'bg-white border-[#E5E7EB] active:border-[#111827]'
+                      ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] border-[var(--y2k-pink)]'
+                      : 'bg-white border-[var(--y2k-border)] active:border-[var(--y2k-pink)]'
                   }`}
                 >
                   <div className="flex items-start gap-3">
                     <span className="text-xl shrink-0 mt-0.5">{opt.emoji}</span>
                     <div className="flex-1 min-w-0">
-                      <p className={`text-xs font-bold leading-tight ${selected ? 'text-white' : 'text-[#111827]'}`}>
+                      <p className={`text-xs font-bold leading-tight ${selected ? 'text-white' : 'text-[var(--y2k-text)]'}`}>
                         {L(lang, opt.title)}
                       </p>
                       {opt.desc && (
-                        <p className={`text-[11px] mt-0.5 leading-relaxed ${selected ? 'text-white/70' : 'text-[#6B7280]'}`}>
+                        <p className={`text-[11px] mt-0.5 leading-relaxed ${selected ? 'text-white/70' : 'text-[var(--y2k-text-sub)]'}`}>
                           {L(lang, opt.desc)}
                         </p>
                       )}
@@ -637,12 +637,12 @@ function OnboardingQuiz({ lang, onComplete }) {
                 <button
                   key={opt.id}
                   onClick={() => selectAnswer(q.id, opt.id)}
-                  className={`p-3.5 rounded-[8px] border-2 text-center transition-all active:scale-[0.98] ${
-                    selected ? 'bg-[#111827] border-[#111827]' : 'bg-white border-[#E5E7EB]'
+                  className={`p-3.5 rounded-[8px] border-2 text-center transition-all active:scale-95 ${
+                    selected ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] border-[var(--y2k-pink)]' : 'bg-white border-[var(--y2k-border)]'
                   }`}
                 >
                   <div className="text-2xl mb-1">{opt.emoji}</div>
-                  <p className={`text-xs font-semibold ${selected ? 'text-white' : 'text-[#111827]'}`}>
+                  <p className={`text-xs font-semibold ${selected ? 'text-white' : 'text-[var(--y2k-text)]'}`}>
                     {L(lang, opt.title)}
                   </p>
                 </button>
@@ -656,7 +656,7 @@ function OnboardingQuiz({ lang, onComplete }) {
           {step > 0 && (
             <button
               onClick={() => setStep(step - 1)}
-              className="px-4 py-2 rounded-[6px] text-xs font-medium text-[#6B7280] border border-[#E5E7EB] active:bg-[#F5F5F5]"
+              className="px-4 py-2 rounded-[20px] text-xs font-medium text-[var(--y2k-text-sub)] border border-[var(--y2k-border)] active:bg-[var(--y2k-bg)]"
             >
               {L(lang, { ko: '이전', zh: '上一步', en: 'Back' })}
             </button>
@@ -666,7 +666,7 @@ function OnboardingQuiz({ lang, onComplete }) {
             <button
               onClick={handleNext}
               disabled={!canNext}
-              className="flex-1 py-2 rounded-[6px] text-xs font-semibold bg-[#111827] text-white disabled:bg-[#D1D5DB] disabled:text-[#9CA3AF] active:bg-gray-800 transition-colors"
+              className="flex-1 py-2 rounded-[20px] text-xs font-semibold bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white disabled:bg-[var(--y2k-border)] disabled:text-[var(--y2k-text-sub)] active:scale-95 transition-colors"
             >
               {step < total - 1
                 ? L(lang, { ko: '다음', zh: '下一步', en: 'Next' })
@@ -688,38 +688,38 @@ function CourseCard({ course, lang, onPress, isBestForYou }) {
   return (
     <button
       onClick={onPress}
-      className="w-full bg-white rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform"
+      className="w-full bg-white rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-95 transition-transform"
     >
       <div className="flex items-start gap-3">
-        <div className="w-10 h-10 rounded-[6px] bg-[#F5F5F5] flex items-center justify-center shrink-0">
-          <MapPin size={18} className="text-[#111827]" />
+        <div className="w-10 h-10 rounded-[20px] bg-[var(--y2k-bg)] flex items-center justify-center shrink-0">
+          <MapPin size={18} className="text-[var(--y2k-text)]" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <p className="font-bold text-sm text-[#111827] leading-tight truncate">{L(lang, course.name)}</p>
+            <p className="font-bold text-sm text-[var(--y2k-text)] leading-tight truncate">{L(lang, course.name)}</p>
             {isBestForYou && (
-              <span className="inline-flex items-center gap-0.5 bg-[#111827] text-white text-[10px] font-medium px-1.5 py-0.5 rounded-[6px] shrink-0">
+              <span className="inline-flex items-center gap-0.5 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-[10px] font-medium px-1.5 py-0.5 rounded-[20px] shrink-0">
                 <Sparkles size={10} />
                 {L(lang, { ko: '추천', zh: '推荐', en: 'For you' })}
               </span>
             )}
           </div>
-          <p className="text-xs text-[#6B7280] mt-0.5 line-clamp-1">{L(lang, course.description)}</p>
+          <p className="text-xs text-[var(--y2k-text-sub)] mt-0.5 line-clamp-1">{L(lang, course.description)}</p>
           <div className="flex items-center gap-1 mt-2 flex-wrap">
             {course.stops.map((s, i) => (
               <span key={i} className="flex items-center gap-1">
-                <span className="w-4 h-4 rounded-full bg-[#111827] text-white text-[8px] font-bold flex items-center justify-center shrink-0">{PIN_LABELS[i]}</span>
+                <span className="w-4 h-4 rounded-full bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-[8px] font-bold flex items-center justify-center shrink-0">{PIN_LABELS[i]}</span>
                 <span className="text-[10px] text-[#374151] font-medium">{L(lang, s.name)}</span>
-                {i < course.stops.length - 1 && <ArrowRight size={10} className="text-[#9CA3AF] mx-0.5" />}
+                {i < course.stops.length - 1 && <ArrowRight size={10} className="text-[var(--y2k-text-sub)] mx-0.5" />}
               </span>
             ))}
           </div>
           <div className="flex items-center gap-3 mt-2">
-            <span className="flex items-center gap-1 text-[10px] text-[#9CA3AF]">
+            <span className="flex items-center gap-1 text-[10px] text-[var(--y2k-text-sub)]">
               <Clock size={10} /> {course.duration}
             </span>
-            <span className="text-[10px] text-[#9CA3AF]">{L(lang, DIFF_LABEL[course.difficulty] || {})}</span>
-            <span className="text-[10px] text-[#9CA3AF]">{L(lang, course.estimatedCost)}</span>
+            <span className="text-[10px] text-[var(--y2k-text-sub)]">{L(lang, DIFF_LABEL[course.difficulty] || {})}</span>
+            <span className="text-[10px] text-[var(--y2k-text-sub)]">{L(lang, course.estimatedCost)}</span>
           </div>
         </div>
       </div>
@@ -740,15 +740,15 @@ function ShareCard({ course, lang, onClose }) {
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-6" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className="w-full max-w-sm">
-        <div className="bg-white rounded-[6px] p-6 border border-[#E5E7EB]">
+        <div className="bg-white rounded-[20px] p-6 border border-[var(--y2k-border)]">
           <p className="text-xs font-bold tracking-widest text-gray-400 mb-4">HANPOCKET</p>
-          <h2 className="text-xl font-bold text-[#111827] mb-4">
+          <h2 className="text-xl font-bold text-[var(--y2k-text)] mb-4">
             {isRecommended ? L(lang, course.name) : course.name}
           </h2>
           <div className="space-y-2 mb-4">
             {(course.stops || []).map((stop, i) => (
               <div key={i} className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded-full bg-[#111827] text-white text-[10px] flex items-center justify-center font-bold shrink-0">{PIN_LABELS[i]}</span>
+                <span className="w-5 h-5 rounded-full bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-[10px] flex items-center justify-center font-bold shrink-0">{PIN_LABELS[i]}</span>
                 <span className="text-sm text-[#374151]">{stopLabel(stop)}</span>
               </div>
             ))}
@@ -765,7 +765,7 @@ function ShareCard({ course, lang, onClose }) {
         <p className="text-center text-xs text-white/80 mt-3">
           {L(lang, { ko: '스크린샷을 찍어 공유하세요', zh: '截图分享吧', en: 'Take a screenshot to share' })}
         </p>
-        <button onClick={onClose} className="w-full mt-2 bg-white rounded-[6px] py-3 text-sm font-medium text-[#111827]">
+        <button onClick={onClose} className="w-full mt-2 bg-white rounded-[20px] py-3 text-sm font-medium text-[var(--y2k-text)]">
           {L(lang, { ko: '닫기', zh: '关闭', en: 'Close' })}
         </button>
       </div>
@@ -784,20 +784,20 @@ function PhraseCard({ type, stopName, lang, onClose }) {
     <div className="fixed inset-0 z-50 flex flex-col justify-end" onClick={onClose}>
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
       <div className="relative bg-white rounded-t-[16px] max-h-[60vh] flex flex-col max-w-[480px] mx-auto w-full" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--y2k-border)]">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-sm text-[#111827]">{stopName}</span>
-            {STOP_TYPE_LABEL[type] && <span className="text-[10px] bg-[#F3F4F6] text-[#6B7280] px-1.5 py-px rounded-[4px]">{L(lang, STOP_TYPE_LABEL[type])}</span>}
+            <span className="font-bold text-sm text-[var(--y2k-text)]">{stopName}</span>
+            {STOP_TYPE_LABEL[type] && <span className="text-[10px] bg-[#F3F4F6] text-[var(--y2k-text-sub)] px-1.5 py-px rounded-[4px]">{L(lang, STOP_TYPE_LABEL[type])}</span>}
           </div>
-          <button onClick={onClose} className="p-1"><X size={18} className="text-[#9CA3AF]" /></button>
+          <button onClick={onClose} className="p-1"><X size={18} className="text-[var(--y2k-text-sub)]" /></button>
         </div>
         <div className="flex-1 overflow-y-auto">
           {phrases.map((p, i) => (
             <div key={i} className="px-4 py-3 border-b border-[#F3F4F6] last:border-0">
-              <p className="text-[16px] font-bold text-[#111827]">{p.ko}</p>
-              <p className="text-[12px] text-[#9CA3AF] italic mt-0.5">{p.pr}</p>
+              <p className="text-[16px] font-bold text-[var(--y2k-text)]">{p.ko}</p>
+              <p className="text-[12px] text-[var(--y2k-text-sub)] italic mt-0.5">{p.pr}</p>
               <p className="text-[14px] text-[#374151] mt-1">{p.zh}</p>
-              <p className="text-[12px] text-[#9CA3AF] mt-0.5">{p.en}</p>
+              <p className="text-[12px] text-[var(--y2k-text-sub)] mt-0.5">{p.en}</p>
             </div>
           ))}
         </div>
@@ -857,17 +857,17 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
   return (
     <div className="h-full flex flex-col max-w-[480px] mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
-        <button onClick={onBack} className="p-1"><ChevronLeft size={20} className="text-[#111827]" /></button>
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--y2k-border)]">
+        <button onClick={onBack} className="p-1"><ChevronLeft size={20} className="text-[var(--y2k-text)]" /></button>
         <div className="flex-1 min-w-0">
-          <p className="font-bold text-sm text-[#111827] truncate">
+          <p className="font-bold text-sm text-[var(--y2k-text)] truncate">
             {isRecommended ? L(lang, course.name) : course.name}
           </p>
           {isRecommended && course.name?.en && lang !== 'en' && (
-            <p className="text-[11px] text-[#9CA3AF] truncate">{course.name.en}</p>
+            <p className="text-[11px] text-[var(--y2k-text-sub)] truncate">{course.name.en}</p>
           )}
         </div>
-        <button className="text-[11px] text-[#111827] font-semibold border border-[#111827] rounded-[6px] px-3 py-1 shrink-0">
+        <button className="text-[11px] text-[var(--y2k-text)] font-semibold border border-[var(--y2k-pink)] rounded-[20px] px-3 py-1 shrink-0">
           {L(lang, { ko: '실시간', zh: '实时', en: 'Live' })}
         </button>
       </div>
@@ -886,12 +886,12 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
 
         {/* Start time picker */}
         <div className="flex items-center gap-2 px-4 mt-4 mb-3">
-          <Clock size={14} className="text-[#9CA3AF]" />
-          <span className="text-xs text-[#6B7280]">{L(lang, { ko: '시작시간', zh: '开始时间', en: 'Start time' })}</span>
+          <Clock size={14} className="text-[var(--y2k-text-sub)]" />
+          <span className="text-xs text-[var(--y2k-text-sub)]">{L(lang, { ko: '시작시간', zh: '开始时间', en: 'Start time' })}</span>
           <select
             value={startHour}
             onChange={e => setStartHour(Number(e.target.value))}
-            className="text-sm font-bold text-[#111827] bg-[#F5F5F5] rounded-[6px] px-2 py-1 outline-none"
+            className="text-sm font-bold text-[var(--y2k-text)] bg-[var(--y2k-bg)] rounded-[20px] px-2 py-1 outline-none"
           >
             {Array.from({ length: 17 }, (_, i) => i + 6).map(h => (
               <option key={h} value={h}>{String(h).padStart(2, '0')}:00</option>
@@ -923,7 +923,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                 <div className="flex gap-2.5">
                   <div className="flex flex-col items-center">
                     <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-[#111827] shrink-0"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-[var(--y2k-text)] shrink-0"
                       style={{ backgroundColor: STOP_TYPE_BG[stop.type] || '#F3F4F6' }}
                     >
                       {label}
@@ -934,9 +934,9 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                   <div className="flex-1 pb-2 min-w-0">
                     {/* Time + type + duration — single line */}
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[13px] font-bold text-[#111827]">{stop.startTime || `${hh}:${mm}`}</span>
+                      <span className="text-[13px] font-bold text-[var(--y2k-text)]">{stop.startTime || `${hh}:${mm}`}</span>
                       {STOP_TYPE_LABEL[stop.type] && (
-                        <span className="text-[10px] bg-[#F3F4F6] text-[#6B7280] px-1.5 py-px rounded-[4px]">
+                        <span className="text-[10px] bg-[#F3F4F6] text-[var(--y2k-text-sub)] px-1.5 py-px rounded-[4px]">
                           {L(lang, STOP_TYPE_LABEL[stop.type])}
                         </span>
                       )}
@@ -944,13 +944,13 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                     </div>
 
                     {/* Name */}
-                    <p className="font-bold text-[14px] text-[#111827] mt-0.5 leading-tight">{isRecommended ? L(lang, stop.name) : stop.name}</p>
+                    <p className="font-bold text-[14px] text-[var(--y2k-text)] mt-0.5 leading-tight">{isRecommended ? L(lang, stop.name) : stop.name}</p>
 
                     {/* Ratings inline */}
                     {(stop.naverRating || stop.hpRating) && (
                       <div className="flex items-center gap-2 mt-0.5 text-[10px]">
-                        {stop.naverRating && <span className="text-[#9CA3AF]"><Star size={9} className="inline text-[#F59E0B]" /> {stop.naverRating}</span>}
-                        {stop.hpRating && <span className="text-[#9CA3AF]"><Sparkles size={9} className="inline" /> {stop.hpRating}</span>}
+                        {stop.naverRating && <span className="text-[var(--y2k-text-sub)]"><Star size={9} className="inline text-[#F59E0B]" /> {stop.naverRating}</span>}
+                        {stop.hpRating && <span className="text-[var(--y2k-text-sub)]"><Sparkles size={9} className="inline" /> {stop.hpRating}</span>}
                       </div>
                     )}
 
@@ -963,19 +963,19 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                             window.open(`https://map.kakao.com/link/to/${name},${stop.lat},${stop.lng}`, '_blank')
                           }
                         }}
-                        className="flex items-center gap-1 bg-[#111827] text-white text-[10px] font-semibold px-2.5 py-1 rounded-[5px] active:scale-95"
+                        className="flex items-center gap-1 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-[10px] font-semibold px-2.5 py-1 rounded-[5px] active:scale-95"
                       >
                         <Navigation size={10} />
                         {L(lang, { ko: '길찾기', zh: '导航', en: 'Nav' })}
                       </button>
                       <button
                         onClick={() => setPhraseCard({ type: stop.type || 'default', name: isRecommended ? L(lang, stop.name) : stop.name })}
-                        className="flex items-center gap-1 bg-white border border-[#E5E7EB] text-[#111827] text-[10px] font-semibold px-2.5 py-1 rounded-[5px] active:scale-95"
+                        className="flex items-center gap-1 bg-white border border-[var(--y2k-border)] text-[var(--y2k-text)] text-[10px] font-semibold px-2.5 py-1 rounded-[5px] active:scale-95"
                       >
                         {L(lang, { ko: '회화카드', zh: '会话卡', en: 'Phrase' })}
                       </button>
                       {stop.tip && (
-                        <span className="text-[10px] text-[#9CA3AF] ml-1 truncate flex-1">
+                        <span className="text-[10px] text-[var(--y2k-text-sub)] ml-1 truncate flex-1">
                           {isRecommended ? L(lang, stop.tip) : stop.tip}
                         </span>
                       )}
@@ -1008,7 +1008,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                       <div className="flex-1 py-1.5">
                         <div className="flex items-center gap-3 text-[10px]">
                           {MODE_DISPLAY.map(m => (
-                            <span key={m.key} className="text-[#6B7280] whitespace-nowrap">
+                            <span key={m.key} className="text-[var(--y2k-text-sub)] whitespace-nowrap">
                               {m.icon} {modes[m.key].minMinutes && modes[m.key].maxMinutes && modes[m.key].minMinutes !== modes[m.key].maxMinutes ? `${modes[m.key].minMinutes}~${modes[m.key].maxMinutes}` : modes[m.key].minutes}{L(lang, { ko: '분', zh: '分', en: 'm' })}
                             </span>
                           ))}
@@ -1033,20 +1033,20 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
         {course.tags && (
           <div className="flex flex-wrap gap-1.5 px-4 pb-4">
             {course.tags.map((tag, i) => (
-              <span key={i} className="text-[10px] text-[#6B7280] bg-[#F5F5F5] px-2 py-0.5 rounded-[6px]">#{tag}</span>
+              <span key={i} className="text-[10px] text-[var(--y2k-text-sub)] bg-[var(--y2k-bg)] px-2 py-0.5 rounded-[20px]">#{tag}</span>
             ))}
           </div>
         )}
       </div>
 
       {/* Bottom buttons */}
-      <div className="px-4 py-3 border-t border-[#E5E7EB] space-y-2">
+      <div className="px-4 py-3 border-t border-[var(--y2k-border)] space-y-2">
         {isRecommended && (
           <button
             onClick={onSave}
             disabled={isSaved}
-            className={`w-full py-2.5 rounded-[6px] text-sm font-semibold transition-colors ${
-              isSaved ? 'bg-[#F5F5F5] text-[#9CA3AF]' : 'bg-[#111827] text-white active:bg-gray-800'
+            className={`w-full py-2.5 rounded-[20px] text-sm font-semibold transition-colors ${
+              isSaved ? 'bg-[var(--y2k-bg)] text-[var(--y2k-text-sub)]' : 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white active:scale-95'
             }`}
           >
             {isSaved
@@ -1070,7 +1070,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
           </button>
           <div className="w-px h-6 bg-[#E5E7EB]" />
           <button onClick={() => setShowShareCard(true)} className="w-10 h-10 rounded-full bg-[#F3F4F6] flex items-center justify-center active:scale-90 transition-transform" title="Share">
-            <Share2 size={16} className="text-[#6B7280]" />
+            <Share2 size={16} className="text-[var(--y2k-text-sub)]" />
           </button>
         </div>
       </div>
@@ -1364,9 +1364,9 @@ function CreateCourse({ lang, onBack, onSave }) {
 
   return (
     <div className="h-full flex flex-col max-w-[480px] mx-auto">
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
-        <button onClick={onBack} className="p-1"><ChevronLeft size={20} className="text-[#111827]" /></button>
-        <p className="font-bold text-sm text-[#111827]">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--y2k-border)]">
+        <button onClick={onBack} className="p-1"><ChevronLeft size={20} className="text-[var(--y2k-text)]" /></button>
+        <p className="font-bold text-sm text-[var(--y2k-text)]">
           {L(lang, { ko: '새 코스 만들기', zh: '创建新路线', en: 'Create New Course' })}
         </p>
       </div>
@@ -1377,7 +1377,7 @@ function CreateCourse({ lang, onBack, onSave }) {
           type="text" value={name} onChange={e => setName(e.target.value)} maxLength={50}
           data-name-input
           placeholder={L(lang, { ko: 'Trip name (Day 1, Day 2, ...)', zh: 'Trip name (Day 1, Day 2, ...)', en: 'Trip name (Day 1, Day 2, ...)' })}
-          className="w-full bg-[#F5F5F5] rounded-[6px] px-3 py-2.5 text-sm text-[#111827] outline-none placeholder:text-[#9CA3AF]"
+          className="w-full bg-[var(--y2k-bg)] rounded-[20px] px-3 py-2.5 text-sm text-[var(--y2k-text)] outline-none placeholder:text-[var(--y2k-text-sub)]"
           style={{ transition: 'box-shadow 0.3s ease' }}
         />
 
@@ -1391,12 +1391,12 @@ function CreateCourse({ lang, onBack, onSave }) {
             }
           </>
         ) : stopsWithCoords.length === 1 ? (
-          <div className="rounded-[6px] border border-[#E5E7EB] bg-[#F0F7F4] flex items-center justify-center" style={{ height: 120 }}>
+          <div className="rounded-[20px] border border-[var(--y2k-border)] bg-[#F0F7F4] flex items-center justify-center" style={{ height: 120 }}>
             <p className="text-xs text-[#2D5A3D]">📍 {stopsWithCoords[0].name} {L(lang, { ko: '— 다음 장소를 추가하세요', zh: '— 请添加下一个地点', en: '— add next place' })}</p>
           </div>
         ) : (
-          <div className="rounded-[6px] border border-[#E5E7EB] bg-[#F9FAFB] flex items-center justify-center" style={{ height: 100 }}>
-            <p className="text-xs text-[#9CA3AF]">{L(lang, { ko: '출발지를 먼저 선택하세요', zh: '请先选择出发地', en: 'Select your starting point' })}</p>
+          <div className="rounded-[20px] border border-[var(--y2k-border)] bg-[var(--y2k-bg)] flex items-center justify-center" style={{ height: 100 }}>
+            <p className="text-xs text-[var(--y2k-text-sub)]">{L(lang, { ko: '출발지를 먼저 선택하세요', zh: '请先选择出发地', en: 'Select your starting point' })}</p>
           </div>
         )}
 
@@ -1412,29 +1412,29 @@ function CreateCourse({ lang, onBack, onSave }) {
                 {/* Confirmed stop card */}
                 {stop.confirmed ? (
                   <div
-                    className={`rounded-[6px] p-3 border transition-colors ${isActive ? 'border-[#2D5A3D] bg-[#F0F7F4]' : 'border-[#E5E7EB] bg-white'}`}
+                    className={`rounded-[20px] p-3 border transition-colors ${isActive ? 'border-[#2D5A3D] bg-[#F0F7F4]' : 'border-[var(--y2k-border)] bg-white'}`}
                     onClick={() => setActiveIdx(i)}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-[#111827] text-white text-[9px] font-bold flex items-center justify-center shrink-0">
+                      <span className="w-6 h-6 rounded-full bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-[9px] font-bold flex items-center justify-center shrink-0">
                         {stopLabel(i)}
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-[#111827] truncate">{stop.name}</p>
+                        <p className="text-sm font-medium text-[var(--y2k-text)] truncate">{stop.name}</p>
                         {stop.address && stop.address !== stop.name && (
-                          <p className="text-[10px] text-[#9CA3AF] truncate">{stop.address}</p>
+                          <p className="text-[10px] text-[var(--y2k-text-sub)] truncate">{stop.address}</p>
                         )}
                       </div>
                       <div className="flex items-center gap-1">
-                        <button onClick={(e) => { e.stopPropagation(); moveStop(i, -1) }} disabled={i === 0} className="text-[#9CA3AF] disabled:opacity-20 p-0.5"><ChevronUp size={12} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); moveStop(i, 1) }} disabled={i === stops.length - 1} className="text-[#9CA3AF] disabled:opacity-20 p-0.5"><ChevronDown size={12} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); removeStop(i) }} className="text-[#9CA3AF] hover:text-red-500 p-0.5"><Trash2 size={12} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); moveStop(i, -1) }} disabled={i === 0} className="text-[var(--y2k-text-sub)] disabled:opacity-20 p-0.5"><ChevronUp size={12} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); moveStop(i, 1) }} disabled={i === stops.length - 1} className="text-[var(--y2k-text-sub)] disabled:opacity-20 p-0.5"><ChevronDown size={12} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); removeStop(i) }} className="text-[var(--y2k-text-sub)] hover:text-red-500 p-0.5"><Trash2 size={12} /></button>
                       </div>
                     </div>
                   </div>
                 ) : (
                   /* Active search input for unconfirmed stop */
-                  <div className="rounded-[6px] p-3 border-2 border-dashed border-[#2D5A3D] bg-[#F0F7F4]">
+                  <div className="rounded-[20px] p-3 border-2 border-dashed border-[#2D5A3D] bg-[#F0F7F4]">
                     <div className="flex items-center gap-2 mb-2">
                       <span className="w-6 h-6 rounded-full bg-[#2D5A3D] text-white text-[9px] font-bold flex items-center justify-center shrink-0">
                         {i === 0 ? (L(lang, { ko: '출발', zh: '出发', en: 'Start' })) : '+'}
@@ -1452,7 +1452,7 @@ function CreateCourse({ lang, onBack, onSave }) {
                       <button
                         onClick={handleGPS}
                         disabled={gpsLoading}
-                        className="w-full mb-2 py-2.5 rounded-[6px] bg-[#111827] text-white text-xs font-medium flex items-center justify-center gap-1.5 active:bg-gray-800 disabled:opacity-50"
+                        className="w-full mb-2 py-2.5 rounded-[20px] bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-xs font-medium flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
                       >
                         {gpsLoading ? (
                           <span className="animate-spin w-3 h-3 border border-white border-t-transparent rounded-full" />
@@ -1466,13 +1466,13 @@ function CreateCourse({ lang, onBack, onSave }) {
 
                     {/* Search input */}
                     <div className="relative">
-                      <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+                      <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)]" />
                       <input
                         type="text"
                         value={searchQuery}
                         onChange={e => handleSearch(e.target.value)}
                         placeholder={L(lang, { ko: '장소명, 주소, 상호명 검색', zh: '搜索地名、地址、商号', en: 'Search place, address, name' })}
-                        className="w-full pl-8 pr-3 py-2.5 bg-white rounded-[6px] text-sm text-[#111827] outline-none border border-[#E5E7EB] placeholder:text-[#9CA3AF] focus:border-[#2D5A3D]"
+                        className="w-full pl-8 pr-3 py-2.5 bg-white rounded-[20px] text-sm text-[var(--y2k-text)] outline-none border border-[var(--y2k-border)] placeholder:text-[var(--y2k-text-sub)] focus:border-[#2D5A3D]"
                         autoFocus={i > 0}
                       />
                       {searching && <span className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin w-3 h-3 border border-[#9CA3AF] border-t-transparent rounded-full" />}
@@ -1480,27 +1480,27 @@ function CreateCourse({ lang, onBack, onSave }) {
 
                     {/* Search results */}
                     {searchResults.length > 0 && (
-                      <div className="mt-1 bg-white rounded-[6px] border border-[#E5E7EB] overflow-hidden max-h-48 overflow-y-auto">
+                      <div className="mt-1 bg-white rounded-[20px] border border-[var(--y2k-border)] overflow-hidden max-h-48 overflow-y-auto">
                         {searchResults.map((r, ri) => (
                           <button
                             key={ri}
                             onClick={() => selectResult(r)}
-                            className="w-full text-left px-3 py-2.5 border-b border-[#F5F5F5] last:border-0 active:bg-[#F5F5F5] transition-colors"
+                            className="w-full text-left px-3 py-2.5 border-b border-[#F5F5F5] last:border-0 active:bg-[var(--y2k-bg)] transition-colors"
                           >
                             {r.source === 'local' ? (
                               <>
-                                <p className="text-sm font-medium text-[#111827]">
+                                <p className="text-sm font-medium text-[var(--y2k-text)]">
                                   {r.inputLang === 'ja' ? (r.nameJa || r.nameZh) : r.nameZh}
                                   <span className="text-[#2D5A3D] text-xs ml-1.5 font-medium">→ {r.koName}</span>
                                 </p>
-                                <p className="text-[10px] text-[#6B7280] mt-0.5">
+                                <p className="text-[10px] text-[var(--y2k-text-sub)] mt-0.5">
                                   {r.nameEn}
                                 </p>
                               </>
                             ) : (
-                              <p className="text-sm font-medium text-[#111827]">{r.name}</p>
+                              <p className="text-sm font-medium text-[var(--y2k-text)]">{r.name}</p>
                             )}
-                            <p className="text-[10px] text-[#9CA3AF] mt-0.5">{r.address}{r.category ? ` · ${r.category}` : ''}</p>
+                            <p className="text-[10px] text-[var(--y2k-text-sub)] mt-0.5">{r.address}{r.category ? ` · ${r.category}` : ''}</p>
                           </button>
                         ))}
                       </div>
@@ -1534,11 +1534,11 @@ function CreateCourse({ lang, onBack, onSave }) {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 text-[10px]">
                             {MODE_DISPLAY.map(m => (
-                              <span key={m.key} className="text-[#6B7280] whitespace-nowrap">
+                              <span key={m.key} className="text-[var(--y2k-text-sub)] whitespace-nowrap">
                                 {m.icon} {modes[m.key].minMinutes && modes[m.key].maxMinutes && modes[m.key].minMinutes !== modes[m.key].maxMinutes ? `${modes[m.key].minMinutes}~${modes[m.key].maxMinutes}` : modes[m.key].minutes}{L(lang, { ko: '분', zh: '분', en: 'm' })}
                               </span>
                             ))}
-                            <span className="text-[#9CA3AF]">({modes.km}km)</span>
+                            <span className="text-[var(--y2k-text-sub)]">({modes.km}km)</span>
                           </div>
                           <div className="flex items-center gap-2 mt-0.5 ml-8">
                             {MAP_LINKS2.filter(l => l.url).map((l, idx) => (
@@ -1566,17 +1566,17 @@ function CreateCourse({ lang, onBack, onSave }) {
         {stops.length < 10 && stops[stops.length - 1]?.confirmed && (
           <button
             onClick={() => { setStops([...stops, { name: '', lat: 0, lng: 0, confirmed: false }]); setActiveIdx(stops.length) }}
-            className="w-full py-2 rounded-[6px] border border-dashed border-[#D1D5DB] text-xs text-[#6B7280] font-medium flex items-center justify-center gap-1 active:bg-[#F5F5F5]"
+            className="w-full py-2 rounded-[20px] border border-dashed border-[#D1D5DB] text-xs text-[var(--y2k-text-sub)] font-medium flex items-center justify-center gap-1 active:bg-[var(--y2k-bg)]"
           >
             <Plus size={14} /> {L(lang, { ko: '경유지 추가', zh: '添加经停点', en: 'Add Stop' })}
           </button>
         )}
       </div>
 
-      <div className="px-4 py-3 border-t border-[#E5E7EB]">
+      <div className="px-4 py-3 border-t border-[var(--y2k-border)]">
         <button onClick={handleSave}
           disabled={!name.trim() || confirmedCount < 2}
-          className="w-full py-2.5 rounded-[6px] text-sm font-semibold bg-[#111827] text-white disabled:bg-[#D1D5DB] disabled:text-[#9CA3AF] active:bg-gray-800 transition-colors"
+          className="w-full py-2.5 rounded-[20px] text-sm font-semibold bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white disabled:bg-[var(--y2k-border)] disabled:text-[var(--y2k-text-sub)] active:scale-95 transition-colors"
         >
           {L(lang, { ko: '저장', zh: '保存', en: 'Save' })}
           {confirmedCount >= 2 && <span className="ml-1 text-xs opacity-70">({confirmedCount}{L(lang, { ko: '곳', zh: '处', en: ' stops' })})</span>}
@@ -1596,9 +1596,9 @@ function UserPopupCard({ popup, lang, onDelete }) {
   return (
     <div className="flex items-start gap-3">
       {popup.image ? (
-        <img src={popup.image} alt="" className="w-14 h-14 rounded-[6px] object-cover shrink-0 bg-[#F3F4F6]" />
+        <img src={popup.image} alt="" className="w-14 h-14 rounded-[20px] object-cover shrink-0 bg-[#F3F4F6]" />
       ) : (
-        <div className="w-14 h-14 rounded-[6px] shrink-0 flex items-center justify-center text-2xl" style={{ backgroundColor: (info.color || '#E5E7EB') + '20' }}>
+        <div className="w-14 h-14 rounded-[20px] shrink-0 flex items-center justify-center text-2xl" style={{ backgroundColor: (info.color || '#E5E7EB') + '20' }}>
           {info.icon}
         </div>
       )}
@@ -1607,20 +1607,20 @@ function UserPopupCard({ popup, lang, onDelete }) {
           <div className="min-w-0">
             <p className="text-[11px] font-semibold" style={{ color: info.color }}>{popup.brand || info.name}</p>
             <p className="text-[13px] font-semibold text-[#1A1A1A] leading-snug truncate">{popup.title || popup.brand || L(lang, { ko: '팝업스토어', zh: '快闪店', en: 'Popup Store' })}</p>
-            {popup.address && <p className="text-[11px] text-[#9CA3AF] mt-0.5 truncate">{popup.address}</p>}
+            {popup.address && <p className="text-[11px] text-[var(--y2k-text-sub)] mt-0.5 truncate">{popup.address}</p>}
           </div>
           <div className="flex flex-col items-end gap-1 shrink-0">
-            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] ${closing ? 'bg-[#FEF2F2] text-[#EF4444]' : 'bg-[#F3F4F6] text-[#6B7280]'}`}>{dday}</span>
+            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] ${closing ? 'bg-[#FEF2F2] text-[#EF4444]' : 'bg-[#F3F4F6] text-[var(--y2k-text-sub)]'}`}>{dday}</span>
             <button onClick={() => onDelete(popup.id)} className="p-0.5 text-[#D1D5DB] hover:text-[#EF4444]"><X size={13} /></button>
           </div>
         </div>
         <div className="flex items-center gap-1.5 mt-1.5">
-          <span className="text-[10px] text-[#9CA3AF]">{info.icon} {info.name}</span>
+          <span className="text-[10px] text-[var(--y2k-text-sub)]">{info.icon} {info.name}</span>
           {popup.tags?.slice(0, 2).map(t => (
-            <span key={t} className="text-[10px] bg-[#F3F4F6] text-[#6B7280] px-1.5 py-0.5 rounded-[4px]">#{t}</span>
+            <span key={t} className="text-[10px] bg-[#F3F4F6] text-[var(--y2k-text-sub)] px-1.5 py-0.5 rounded-[4px]">#{t}</span>
           ))}
           {popup.sourceUrl && (
-            <a href={popup.sourceUrl} target="_blank" rel="noreferrer" className="ml-auto text-[#9CA3AF]">
+            <a href={popup.sourceUrl} target="_blank" rel="noreferrer" className="ml-auto text-[var(--y2k-text-sub)]">
               <ExternalLink size={11} />
             </a>
           )}
@@ -1774,10 +1774,10 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
   return (
     <section className="mt-6 mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-bold text-[#111827]">
+        <h2 className="text-base font-bold text-[var(--y2k-text)]">
           {L(lang, { ko: '서울 에디토리얼', zh: '首尔专题', en: 'Seoul Editorial' })}
         </h2>
-        <span className="text-[10px] text-[#9CA3AF] font-medium">
+        <span className="text-[10px] text-[var(--y2k-text-sub)] font-medium">
           {L(lang, { ko: '작가가 직접 쓴 지역 가이드', zh: '作者亲笔撰写的地区指南', en: 'Written by local authors' })}
         </span>
       </div>
@@ -1787,28 +1787,28 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
           const isOpen = expanded === col.id
           const isSaved = savedIds.includes(col.id)
           return (
-            <div key={col.id} className="bg-white rounded-[12px] border border-[#E5E7EB] overflow-hidden">
+            <div key={col.id} className="bg-white rounded-[12px] border border-[var(--y2k-border)] overflow-hidden">
               {/* Header — always visible */}
               <button
                 data-editorial={col.id}
-                className="w-full text-left p-4 active:bg-[#F9FAFB] transition-colors"
+                className="w-full text-left p-4 active:bg-[var(--y2k-bg)] transition-colors"
                 onClick={() => setExpanded(isOpen ? null : col.id)}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-[10px] font-bold text-[#6B7280] bg-[#F5F5F5] px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] font-bold text-[var(--y2k-text-sub)] bg-[var(--y2k-bg)] px-2 py-0.5 rounded-full">
                         {L(lang, col.area)}
                       </span>
-                      <span className="text-[10px] text-[#9CA3AF]">
+                      <span className="text-[10px] text-[var(--y2k-text-sub)]">
                         {L(lang, col.tag)}
                       </span>
                     </div>
-                    <p className="text-sm font-bold text-[#111827] leading-snug line-clamp-2">
+                    <p className="text-sm font-bold text-[var(--y2k-text)] leading-snug line-clamp-2">
                       {L(lang, col.title)}
                     </p>
                     {!isOpen && (
-                      <p className="text-[11px] text-[#9CA3AF] mt-1.5 line-clamp-1">
+                      <p className="text-[11px] text-[var(--y2k-text-sub)] mt-1.5 line-clamp-1">
                         {L(lang, col.excerpt)}
                       </p>
                     )}
@@ -1816,7 +1816,7 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
                   <div className="shrink-0 mt-0.5">
                     <ChevronDown
                       size={16}
-                      className={`text-[#9CA3AF] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                      className={`text-[var(--y2k-text-sub)] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                     />
                   </div>
                 </div>
@@ -1827,8 +1827,8 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
                 <div className="px-4 pb-4">
                   {/* Read time + excerpt */}
                   <div className="flex items-center gap-1.5 mb-3">
-                    <Clock size={11} className="text-[#9CA3AF]" />
-                    <span className="text-[10px] text-[#9CA3AF]">
+                    <Clock size={11} className="text-[var(--y2k-text-sub)]" />
+                    <span className="text-[10px] text-[var(--y2k-text-sub)]">
                       {L(lang, { ko: '읽는 시간', zh: '阅读时间', en: 'Read time' })} {L(lang, col.readTime)}
                     </span>
                   </div>
@@ -1844,18 +1844,18 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
                   )}
 
                   {/* Key stops preview */}
-                  <div className="bg-[#F9FAFB] rounded-[8px] p-3 mb-4">
-                    <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">
+                  <div className="bg-[var(--y2k-bg)] rounded-[8px] p-3 mb-4">
+                    <p className="text-[10px] font-bold text-[var(--y2k-text-sub)] uppercase tracking-wider mb-2">
                       {L(lang, { ko: '이 코스의 핵심 스팟', zh: '路线核心景点', en: 'Key Spots' })}
                     </p>
                     <div className="space-y-1.5">
                       {col.stops.map((s, i) => (
                         <div key={i} className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-white bg-[#111827] w-4 h-4 rounded-full flex items-center justify-center shrink-0">
+                          <span className="text-[10px] font-bold text-white bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] w-4 h-4 rounded-full flex items-center justify-center shrink-0">
                             {String.fromCharCode(65 + i)}
                           </span>
                           <span className="text-[11px] text-[#374151] font-medium">{L(lang, s.name)}</span>
-                          <span className="text-[10px] text-[#9CA3AF] ml-auto">{s.duration}min</span>
+                          <span className="text-[10px] text-[var(--y2k-text-sub)] ml-auto">{s.duration}min</span>
                         </div>
                       ))}
                     </div>
@@ -1867,8 +1867,8 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
                       onClick={() => onSave(col.id)}
                       className={`flex items-center gap-1.5 px-3 py-2 rounded-[8px] text-xs font-semibold border transition-all ${
                         isSaved
-                          ? 'bg-[#111827] text-white border-[#111827]'
-                          : 'bg-white text-[#374151] border-[#E5E7EB] active:border-[#111827]'
+                          ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white border-[var(--y2k-pink)]'
+                          : 'bg-white text-[#374151] border-[var(--y2k-border)] active:border-[var(--y2k-pink)]'
                       }`}
                     >
                       {isSaved ? (
@@ -1879,7 +1879,7 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
                     </button>
                     <button
                       onClick={() => onCreateCourse(col)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[#F5F5F5] text-[#111827] text-xs font-semibold rounded-[8px] active:bg-[#E5E7EB] transition-colors"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[var(--y2k-bg)] text-[var(--y2k-text)] text-xs font-semibold rounded-[8px] active:bg-[#E5E7EB] transition-colors"
                     >
                       <Compass size={13} />
                       {L(lang, { ko: '이 코스 만들기', zh: '生成此路线', en: 'Create this course' })}
@@ -2028,11 +2028,11 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
       {/* A) My Courses — horizontal scroll */}
       <section className="mb-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-bold text-[#111827]">
+          <h2 className="text-base font-bold text-[var(--y2k-text)]">
             {L(lang, { ko: '내 코스', zh: '我的路线', en: 'My Courses' })}
           </h2>
           <button onClick={() => setView('create')}
-            className="flex items-center gap-1 text-xs font-semibold text-[#111827] bg-[#F5F5F5] px-3 py-1.5 rounded-[6px] active:bg-[#E5E7EB] transition-colors"
+            className="flex items-center gap-1 text-xs font-semibold text-[var(--y2k-text)] bg-[var(--y2k-bg)] px-3 py-1.5 rounded-[20px] active:bg-[#E5E7EB] transition-colors"
           >
             <Plus size={14} />
             {L(lang, { ko: '만들기', zh: '创建', en: 'Create' })}
@@ -2040,9 +2040,9 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
         </div>
 
         {myCourses.length === 0 ? (
-          <div className="bg-[#F9FAFB] rounded-[6px] border border-dashed border-[#E5E7EB] p-6 text-center">
+          <div className="bg-[var(--y2k-bg)] rounded-[20px] border border-dashed border-[var(--y2k-border)] p-6 text-center">
             <MapPin size={24} className="mx-auto text-[#D1D5DB] mb-2" />
-            <p className="text-xs text-[#9CA3AF]">
+            <p className="text-xs text-[var(--y2k-text-sub)]">
               {L(lang, { ko: '저장된 코스가 없습니다. 추천 코스로 시작해보세요', zh: '暂无保存的路线。从推荐路线开始吧', en: 'No saved courses yet. Start with a recommended one' })}
             </p>
           </div>
@@ -2052,19 +2052,19 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
               <div key={course.id} className="relative shrink-0 w-40">
                 <button
                   onClick={() => { setSelectedCourse(course); setView('detail') }}
-                  className="w-full bg-white rounded-[6px] border border-[#E5E7EB] p-3 text-left active:scale-[0.98] transition-transform"
+                  className="w-full bg-white rounded-[20px] border border-[var(--y2k-border)] p-3 text-left active:scale-95 transition-transform"
                 >
-                  <p className="font-bold text-xs text-[#111827] truncate">{course.name}</p>
-                  <p className="text-[10px] text-[#9CA3AF] mt-1.5">
+                  <p className="font-bold text-xs text-[var(--y2k-text)] truncate">{course.name}</p>
+                  <p className="text-[10px] text-[var(--y2k-text-sub)] mt-1.5">
                     {course.stops?.length || 0} {L(lang, { ko: '곳', zh: '处', en: 'stops' })}
                     {course.duration ? ` · ${course.duration}` : ''}
                   </p>
                 </button>
                 <button
                   onClick={() => deleteMyCourse(course.id)}
-                  className="absolute top-1.5 right-1.5 w-5 h-5 bg-[#F5F5F5] rounded-full flex items-center justify-center hover:bg-[#E5E7EB]"
+                  className="absolute top-1.5 right-1.5 w-5 h-5 bg-[var(--y2k-bg)] rounded-full flex items-center justify-center hover:bg-[#E5E7EB]"
                 >
-                  <X size={10} className="text-[#9CA3AF]" />
+                  <X size={10} className="text-[var(--y2k-text-sub)]" />
                 </button>
               </div>
             ))}
@@ -2072,65 +2072,17 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
         )}
       </section>
 
-      {/* D) 내가 추가한 팝업 (샤오홍슈/인스타/페이스북 링크) */}
-      <section className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-bold text-[#111827]">
-            {L(lang, { ko: '내가 추가한 팝업', zh: '我收藏的快闪店', en: 'My Saved Popups' })}
-          </h2>
-          <button
-            onClick={() => { setShowAddPopup(true); setPastedUrl(''); setParsedData(null); setEditFields({}) }}
-            className="flex items-center gap-1 px-2.5 py-1 bg-[#111827] text-white text-xs font-semibold rounded-[6px]"
-          >
-            <Plus size={12} />
-            {L(lang, { ko: 'URL 추가', zh: '添加链接', en: 'Add URL' })}
-          </button>
-        </div>
 
-        {userPopups.length === 0 ? (
-          <div className="bg-[#F9FAFB] rounded-[8px] border border-dashed border-[#E5E7EB] p-5 text-center">
-            <Link size={20} className="mx-auto text-[#D1D5DB] mb-2" />
-            <p className="text-xs text-[#9CA3AF] leading-relaxed">
-              {L(lang, {
-                ko: '샤오홍슈, 인스타그램, 페이스북 URL을 붙여넣어\n팝업 정보를 저장하세요',
-                zh: '粘贴小红书、Instagram、Facebook链接\n即可保存快闪店信息',
-                en: 'Paste a Xiaohongshu, Instagram, or Facebook\nURL to save popup info',
-              })}
-            </p>
-            <div className="flex items-center justify-center gap-2 mt-3">
-              {['📕 小红书', '📸 Instagram', '👥 Facebook'].map(p => (
-                <span key={p} className="text-[10px] text-[#9CA3AF] bg-white border border-[#E5E7EB] px-2 py-0.5 rounded-full">{p}</span>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {userPopups.filter(p => isActiveOrUpcoming(p)).map(popup => (
-              <UserPopupCard key={popup.id} popup={popup} lang={lang} onDelete={removePopup} />
-            ))}
-            {userPopups.filter(p => !isActiveOrUpcoming(p)).length > 0 && (
-              <details className="text-xs text-[#9CA3AF] cursor-pointer">
-                <summary className="py-1">{L(lang, { ko: '종료된 팝업 보기', zh: '查看已结束的快闪店', en: 'View ended popups' })}</summary>
-                <div className="space-y-2 mt-2">
-                  {userPopups.filter(p => !isActiveOrUpcoming(p)).map(popup => (
-                    <UserPopupCard key={popup.id} popup={popup} lang={lang} onDelete={removePopup} />
-                  ))}
-                </div>
-              </details>
-            )}
-          </div>
-        )}
-      </section>
 
       {/* B) Onboarding Quiz */}
       {(!courseProfile || showQuiz) && (
         <section className="mb-6">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-bold text-[#111827]">
+            <h2 className="text-base font-bold text-[var(--y2k-text)]">
               {L(lang, { ko: '맞춤 추천', zh: '个性推荐', en: 'Personalize' })}
             </h2>
             {showQuiz && courseProfile && (
-              <button onClick={() => setShowQuiz(false)} className="text-xs text-[#9CA3AF]">
+              <button onClick={() => setShowQuiz(false)} className="text-xs text-[var(--y2k-text-sub)]">
                 {L(lang, { ko: '취소', zh: '取消', en: 'Cancel' })}
               </button>
             )}
@@ -2142,12 +2094,12 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
       {courseProfile && !showQuiz && (
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Sparkles size={14} className="text-[#111827]" />
-            <span className="text-xs font-medium text-[#6B7280]">
+            <Sparkles size={14} className="text-[var(--y2k-text)]" />
+            <span className="text-xs font-medium text-[var(--y2k-text-sub)]">
               {L(lang, { ko: '맞춤 추천 활성화됨', zh: '个性推荐已开启', en: 'Personalized recommendations on' })}
             </span>
           </div>
-          <button onClick={() => setShowQuiz(true)} className="text-xs text-[#9CA3AF] underline">
+          <button onClick={() => setShowQuiz(true)} className="text-xs text-[var(--y2k-text-sub)] underline">
             {L(lang, { ko: '다시하기', zh: '重新测试', en: 'Retake' })}
           </button>
         </div>
@@ -2155,7 +2107,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
 
       {/* C) Recommended Courses */}
       <section>
-        <h2 className="text-base font-bold text-[#111827] mb-3">
+        <h2 className="text-base font-bold text-[var(--y2k-text)] mb-3">
           {L(lang, { ko: '추천 코스', zh: '推荐路线', en: 'Recommended' })}
         </h2>
 
@@ -2164,8 +2116,8 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
             <button
               key={cat.id}
               onClick={() => setFilter(cat.id)}
-              className={`shrink-0 px-3 py-1.5 rounded-[6px] text-xs font-semibold transition-colors ${
-                filter === cat.id ? 'bg-[#111827] text-white' : 'bg-[#F5F5F5] text-[#6B7280] active:bg-[#E5E7EB]'
+              className={`shrink-0 px-3 py-1.5 rounded-[20px] text-xs font-semibold transition-colors ${
+                filter === cat.id ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white' : 'bg-[var(--y2k-bg)] text-[var(--y2k-text-sub)] active:bg-[#E5E7EB]'
               }`}
             >
               {L(lang, cat.name)}
@@ -2194,17 +2146,17 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
         <div className="fixed inset-0 z-[70] bg-black/50 flex items-end" onClick={(e) => { if (e.target === e.currentTarget) setColumnCoursePrompt(null) }}>
           <div className="bg-white rounded-t-[20px] w-full max-w-[480px] mx-auto p-6 pb-10">
             <div className="w-8 h-1 bg-[#E5E7EB] rounded-full mx-auto mb-5" />
-            <p className="text-sm font-bold text-[#111827] mb-1">
+            <p className="text-sm font-bold text-[var(--y2k-text)] mb-1">
               {L(lang, {
                 ko: `"${L(lang, columnCoursePrompt.column.title)}" 칼럼 기반으로`,
                 zh: `根据「${L(lang, columnCoursePrompt.column.title)}」专栏`,
                 en: `Based on "${L(lang, columnCoursePrompt.column.title)}"`,
               })}
             </p>
-            <p className="text-base font-bold text-[#111827] mb-4">
+            <p className="text-base font-bold text-[var(--y2k-text)] mb-4">
               {L(lang, { ko: '근처 추천 코스를 만들까요?', zh: '为您生成附近推荐路线？', en: 'Create a nearby course for you?' })}
             </p>
-            <p className="text-xs text-[#6B7280] mb-6 leading-relaxed">
+            <p className="text-xs text-[var(--y2k-text-sub)] mb-6 leading-relaxed">
               {L(lang, {
                 ko: `${L(lang, columnCoursePrompt.column.area)} 지역의 핵심 스팟들을 이어 맞춤 코스를 저장합니다.`,
                 zh: `将${L(lang, columnCoursePrompt.column.area)}地区的精华景点连成专属路线并保存。`,
@@ -2213,7 +2165,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
             </p>
             <div className="flex gap-3">
               <button onClick={() => setColumnCoursePrompt(null)}
-                className="flex-1 py-3 border border-[#E5E7EB] text-sm font-semibold text-[#374151] rounded-[10px]">
+                className="flex-1 py-3 border border-[var(--y2k-border)] text-sm font-semibold text-[#374151] rounded-[10px]">
                 {L(lang, { ko: '취소', zh: '取消', en: 'Cancel' })}
               </button>
               <button
@@ -2238,7 +2190,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                   saveMyCourses([newCourse, ...myCourses])
                   setColumnCoursePrompt(null)
                 }}
-                className="flex-1 py-3 bg-[#111827] text-white text-sm font-semibold rounded-[10px]">
+                className="flex-1 py-3 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-sm font-semibold rounded-[10px]">
                 {L(lang, { ko: '코스 만들기', zh: '生成路线', en: 'Create Course' })}
               </button>
             </div>
@@ -2251,15 +2203,15 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
         <div className="fixed inset-0 z-[60] bg-black/50 flex items-end" onClick={(e) => { if (e.target === e.currentTarget) setShowAddPopup(false) }}>
           <div className="bg-white rounded-t-[16px] w-full max-w-[480px] mx-auto p-5 pb-8 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-[#111827]">
+              <h3 className="text-base font-bold text-[var(--y2k-text)]">
                 {L(lang, { ko: '팝업 URL 추가', zh: '添加快闪店链接', en: 'Add Popup URL' })}
               </h3>
-              <button onClick={() => setShowAddPopup(false)} className="p-1 text-[#9CA3AF]"><X size={18} /></button>
+              <button onClick={() => setShowAddPopup(false)} className="p-1 text-[var(--y2k-text-sub)]"><X size={18} /></button>
             </div>
 
             {!parsedData ? (
               <>
-                <p className="text-xs text-[#6B7280] mb-3 leading-relaxed">
+                <p className="text-xs text-[var(--y2k-text-sub)] mb-3 leading-relaxed">
                   {L(lang, {
                     ko: '샤오홍슈(小红书), 인스타그램, 페이스북에서 팝업스토어 게시물 URL을 복사해서 붙여넣으세요.',
                     zh: '从小红书、Instagram、Facebook复制快闪店帖子链接并粘贴到下面。',
@@ -2272,7 +2224,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                     value={pastedUrl}
                     onChange={e => setPastedUrl(e.target.value)}
                     placeholder="https://www.xiaohongshu.com/... 또는 instagram.com/..."
-                    className="flex-1 text-sm border border-[#E5E7EB] rounded-[8px] px-3 py-2.5 outline-none focus:border-[#111827]"
+                    className="flex-1 text-sm border border-[var(--y2k-border)] rounded-[8px] px-3 py-2.5 outline-none focus:border-[var(--y2k-pink)]"
                     autoFocus
                   />
                 </div>
@@ -2290,7 +2242,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                     })
                   }}
                   disabled={parsing || !pastedUrl.trim()}
-                  className="w-full py-3 bg-[#111827] text-white text-sm font-semibold rounded-[8px] disabled:opacity-40 flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-sm font-semibold rounded-[8px] disabled:opacity-40 flex items-center justify-center gap-2"
                 >
                   {parsing ? <><Loader size={14} className="animate-spin" />{L(lang, { ko: '분석 중...', zh: '分析中...', en: 'Analyzing...' })}</> : L(lang, { ko: '분석하기', zh: '分析链接', en: 'Analyze' })}
                 </button>
@@ -2307,7 +2259,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
 
                 <div className="space-y-3">
                   <div>
-                    <label className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+                    <label className="text-[11px] font-semibold text-[var(--y2k-text-sub)] uppercase tracking-wide">
                       {L(lang, { ko: '브랜드명', zh: '品牌名', en: 'Brand' })}
                     </label>
                     <input
@@ -2315,11 +2267,11 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                       value={editFields.brand || ''}
                       onChange={e => setEditFields(p => ({ ...p, brand: e.target.value }))}
                       placeholder={L(lang, { ko: '예: Nike, 올리브영', zh: '例：Nike, Olive Young', en: 'e.g. Nike, Olive Young' })}
-                      className="w-full mt-1 text-sm border border-[#E5E7EB] rounded-[8px] px-3 py-2 outline-none focus:border-[#111827]"
+                      className="w-full mt-1 text-sm border border-[var(--y2k-border)] rounded-[8px] px-3 py-2 outline-none focus:border-[var(--y2k-pink)]"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+                    <label className="text-[11px] font-semibold text-[var(--y2k-text-sub)] uppercase tracking-wide">
                       {L(lang, { ko: '팝업 이름', zh: '活动名称', en: 'Event Title' })}
                     </label>
                     <input
@@ -2327,11 +2279,11 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                       value={editFields.title || ''}
                       onChange={e => setEditFields(p => ({ ...p, title: e.target.value }))}
                       placeholder={L(lang, { ko: '예: 나이키 에어맥스 팝업', zh: '例：Nike Air Max快闪', en: 'e.g. Nike Air Max Popup' })}
-                      className="w-full mt-1 text-sm border border-[#E5E7EB] rounded-[8px] px-3 py-2 outline-none focus:border-[#111827]"
+                      className="w-full mt-1 text-sm border border-[var(--y2k-border)] rounded-[8px] px-3 py-2 outline-none focus:border-[var(--y2k-pink)]"
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">
+                    <label className="text-[11px] font-semibold text-[var(--y2k-text-sub)] uppercase tracking-wide">
                       {L(lang, { ko: '주소', zh: '地址', en: 'Address' })}
                     </label>
                     <input
@@ -2339,23 +2291,23 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                       value={editFields.address || ''}
                       onChange={e => setEditFields(p => ({ ...p, address: e.target.value }))}
                       placeholder={L(lang, { ko: '예: 서울 성동구 연무장길 83', zh: '例：首尔城东区연무장길83', en: 'e.g. 83 Yeonmujang-gil' })}
-                      className="w-full mt-1 text-sm border border-[#E5E7EB] rounded-[8px] px-3 py-2 outline-none focus:border-[#111827]"
+                      className="w-full mt-1 text-sm border border-[var(--y2k-border)] rounded-[8px] px-3 py-2 outline-none focus:border-[var(--y2k-pink)]"
                     />
                   </div>
                   <div className="flex gap-2">
                     <div className="flex-1">
-                      <label className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">{L(lang, { ko: '시작일', zh: '开始日期', en: 'Start' })}</label>
-                      <input type="date" value={editFields.startDate || ''} onChange={e => setEditFields(p => ({ ...p, startDate: e.target.value }))} className="w-full mt-1 text-sm border border-[#E5E7EB] rounded-[8px] px-3 py-2 outline-none focus:border-[#111827]" />
+                      <label className="text-[11px] font-semibold text-[var(--y2k-text-sub)] uppercase tracking-wide">{L(lang, { ko: '시작일', zh: '开始日期', en: 'Start' })}</label>
+                      <input type="date" value={editFields.startDate || ''} onChange={e => setEditFields(p => ({ ...p, startDate: e.target.value }))} className="w-full mt-1 text-sm border border-[var(--y2k-border)] rounded-[8px] px-3 py-2 outline-none focus:border-[var(--y2k-pink)]" />
                     </div>
                     <div className="flex-1">
-                      <label className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide">{L(lang, { ko: '종료일', zh: '结束日期', en: 'End' })}</label>
-                      <input type="date" value={editFields.endDate || ''} onChange={e => setEditFields(p => ({ ...p, endDate: e.target.value }))} className="w-full mt-1 text-sm border border-[#E5E7EB] rounded-[8px] px-3 py-2 outline-none focus:border-[#111827]" />
+                      <label className="text-[11px] font-semibold text-[var(--y2k-text-sub)] uppercase tracking-wide">{L(lang, { ko: '종료일', zh: '结束日期', en: 'End' })}</label>
+                      <input type="date" value={editFields.endDate || ''} onChange={e => setEditFields(p => ({ ...p, endDate: e.target.value }))} className="w-full mt-1 text-sm border border-[var(--y2k-border)] rounded-[8px] px-3 py-2 outline-none focus:border-[var(--y2k-pink)]" />
                     </div>
                   </div>
                 </div>
 
                 <div className="flex gap-2 mt-5">
-                  <button onClick={() => setParsedData(null)} className="flex-1 py-2.5 border border-[#E5E7EB] text-sm font-semibold text-[#374151] rounded-[8px]">
+                  <button onClick={() => setParsedData(null)} className="flex-1 py-2.5 border border-[var(--y2k-border)] text-sm font-semibold text-[#374151] rounded-[8px]">
                     {L(lang, { ko: '다시 입력', zh: '重新输入', en: 'Re-enter' })}
                   </button>
                   <button
@@ -2369,7 +2321,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                       setShowAddPopup(false)
                     }}
                     disabled={!editFields.brand && !editFields.title}
-                    className="flex-1 py-2.5 bg-[#111827] text-white text-sm font-semibold rounded-[8px] disabled:opacity-40"
+                    className="flex-1 py-2.5 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-sm font-semibold rounded-[8px] disabled:opacity-40"
                   >
                     {L(lang, { ko: '저장', zh: '保存', en: 'Save' })}
                   </button>
@@ -2382,7 +2334,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
 
       {/* E) Suggested Itineraries */}
       <section className="mt-6">
-        <h2 className="text-base font-bold text-[#111827] mb-3">
+        <h2 className="text-base font-bold text-[var(--y2k-text)] mb-3">
           {L(lang, { ko: '추천 일정', zh: '推荐行程', en: 'Suggested Itineraries' })}
         </h2>
         <div className="space-y-3">
@@ -2409,12 +2361,12 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
               { day: 7, plan: { ko: '제주 → 성산일출봉 → 협재해변', zh: '济州→城山日出峰→挟才海滩', en: 'Jeju → Seongsan → Hyeopjae Beach' } },
             ]},
           ].map((it, i) => (
-            <div key={i} className="bg-white rounded-[6px] border border-[#E5E7EB] p-4">
-              <h3 className="text-sm font-bold text-[#111827] mb-3">{L(lang, it.name)}</h3>
+            <div key={i} className="bg-white rounded-[20px] border border-[var(--y2k-border)] p-4">
+              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-3">{L(lang, it.name)}</h3>
               <div className="space-y-2">
                 {it.days.map(d => (
                   <div key={d.day} className="flex items-start gap-2">
-                    <span className="text-[10px] font-bold text-white bg-[#111827] w-7 h-5 rounded-[6px] flex items-center justify-center shrink-0">D{d.day}</span>
+                    <span className="text-[10px] font-bold text-white bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] w-7 h-5 rounded-[20px] flex items-center justify-center shrink-0">D{d.day}</span>
                     <p className="text-xs text-[#374151]">{L(lang, d.plan)}</p>
                   </div>
                 ))}

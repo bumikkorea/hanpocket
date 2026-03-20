@@ -1,5 +1,6 @@
 // DB에서 팝업 목록을 가져오고 HomeTab/NearMap 공통 형식으로 정규화
 import { useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase.js'
 
 const API = 'https://hanpocket-popup-store.bumik-korea.workers.dev/api/popups'
 
@@ -93,4 +94,96 @@ export function usePopupMap() {
   }, [])
 
   return { pins, loading }
+}
+
+// Supabase 팝업 row → NearMap 내부 형식으로 정규화
+function normalizeSupabasePin(row) {
+  return {
+    id: row.id,
+    category: row.category || 'popup',
+    name_zh: row.name_zh || '',
+    name_ko: row.name_ko || row.name_zh || '',
+    name_en: row.name_en || '',
+    lat: parseFloat(row.lat),
+    lng: parseFloat(row.lng),
+    address_zh: row.address_zh || '',
+    address_ko: row.address_ko || '',
+    image_url: row.image_url || '',
+    is_temporary: row.is_temporary !== false,
+    start_date: row.start_date || '',
+    end_date: row.end_date || '',
+    open_time: row.open_time ? String(row.open_time).slice(0, 5) : '10:00',
+    close_time: row.close_time ? String(row.close_time).slice(0, 5) : '20:00',
+    tags: [],
+    has_reservation: row.has_reservation || false,
+    has_alipay: row.has_alipay || false,
+    has_wechat_pay: row.has_wechat_pay || false,
+    wait_minutes: null,
+    created_at: row.created_at || '',
+    view_count_7d: row.view_count_7d || 0,
+    sort_priority: row.cn_score || 0,
+  }
+}
+
+// NearMap용 핀 훅 — Supabase 우선, POI_DATA fallback
+export function useNearPins() {
+  const [pins, setPins] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [userPos, setUserPos] = useState(null)
+
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+
+    const loadPins = async () => {
+      const { POI_DATA } = await import('../data/poiData.js')
+
+      let rawData = POI_DATA
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('popups')
+          .select('*, brands(name_zh, name_ko, name_en, brand_level)')
+          .or(`is_temporary.eq.false,end_date.gte.${today}`)
+          .order('cn_score', { ascending: false })
+        if (!fetchError && data?.length) {
+          rawData = data.map(normalizeSupabasePin)
+        }
+      } catch {
+        setError('DB 연결 실패, 로컬 데이터 사용 중')
+      }
+
+      const applyDist = (lat, lng) => {
+        const withDist = rawData
+          .map(p => ({ ...p, distance: haversine(lat, lng, p.lat, p.lng) }))
+          .sort((a, b) => a.distance - b.distance)
+        setPins(withDist)
+        setLoading(false)
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => { setUserPos({ lat: pos.coords.latitude, lng: pos.coords.longitude }); applyDist(pos.coords.latitude, pos.coords.longitude) },
+          ()  => applyDist(37.5446, 127.0560),
+        )
+      } else {
+        applyDist(37.5446, 127.0560)
+      }
+    }
+
+    loadPins().catch(err => {
+      setError(err?.message || '데이터 로드 실패')
+      setLoading(false)
+    })
+  }, [])
+
+  return { pins, loading, error, userPos }
+}
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371000
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }

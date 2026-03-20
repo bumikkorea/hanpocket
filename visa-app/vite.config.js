@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import { resolve } from 'path'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -35,6 +36,10 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      input: {
+        main:  resolve(__dirname, 'index.html'),
+        admin: resolve(__dirname, 'admin.html'),
+      },
       output: {
         manualChunks: (id) => {
           // Vendor chunks: 외부 라이브러리들을 기능별로 분리

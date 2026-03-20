@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { calculateRefund, EXCHANGE_RATES } from '../api/taxRefundApi'
+import AirportTaxRefundLocations from './AirportTaxRefundLocations'
 
 function L(lang, d) {
   if (typeof d === 'string') return d
@@ -107,6 +108,11 @@ export default function TaxRefundChecker({ lang, profile }) {
             </div>
           </div>
         )}
+      </div>
+
+      {/* 공항 환급 창구 위치 안내 */}
+      <div className="my-6 border-t border-[#E5E7EB]">
+        <AirportTaxRefundLocations lang={lang} profile={profile} />
       </div>
     </div>
   )

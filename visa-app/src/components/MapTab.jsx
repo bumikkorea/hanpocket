@@ -1455,7 +1455,7 @@ export default function MapTab({ lang }) {
         <div className="px-3 py-2.5 flex items-center gap-2">
           {/* 검색 입력창 */}
           <div className="flex-1 relative search-container">
-            <div className="flex items-center bg-gray-100 rounded-xl px-3 py-2">
+            <div className="flex items-center bg-[var(--y2k-bg)] rounded-[20px] px-3 py-2">
               <Search size={16} className="text-gray-400 shrink-0" />
               <input
                 type="text"
@@ -1475,17 +1475,17 @@ export default function MapTab({ lang }) {
             {/* 검색 결과 드롭다운 */}
             {(showSearchResults || isSearching) && (
               isSearching ? (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl  z-50">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[var(--y2k-border)] rounded-[20px]  z-50">
                   <div className="px-3 py-3 text-center flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent" />
                     <span className="text-sm text-gray-400">{L({ ko: "검색 중...", zh: "搜索中...", en: "Searching..." })}</span>
                   </div>
                 </div>
               ) : searchResults.length > 0 ? (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl  max-h-60 overflow-y-auto z-50">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[var(--y2k-border)] rounded-[20px]  max-h-60 overflow-y-auto z-50">
                   {searchResults.map((result) => (
                     <button key={result.id} onClick={() => selectSearchResult(result)}
-                      className="w-full px-3 py-2.5 text-left hover:bg-gray-50 border-b border-gray-50 last:border-0">
+                      className="w-full px-3 py-2.5 text-left hover:bg-[var(--y2k-surface)] border-b border-gray-50 last:border-0">
                       <div className="font-medium text-sm text-gray-900">{result.name}</div>
                       {result.address && <div className="text-xs text-gray-400 mt-0.5">{result.address}</div>}
                       {result.category && <div className="text-[10px] text-blue-500 mt-0.5">{result.category}</div>}
@@ -1493,7 +1493,7 @@ export default function MapTab({ lang }) {
                   ))}
                 </div>
               ) : (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-100 rounded-xl  z-50">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[var(--y2k-border)] rounded-[20px]  z-50">
                   <div className="px-3 py-4 text-center text-sm text-gray-400">
                     {L({ ko: "검색 결과가 없습니다", zh: "没有搜索结果", en: "No results" })}
                   </div>
@@ -1507,7 +1507,7 @@ export default function MapTab({ lang }) {
       </div>
 
       {/* 카테고리 탭 — 지도 밖 고정, 침범 안 함 */}
-      <div className="bg-white border-b border-gray-100 z-30 relative">
+      <div className="bg-white border-b border-[var(--y2k-border)] z-30 relative">
         <div className="px-4 py-2">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (
@@ -1516,8 +1516,8 @@ export default function MapTab({ lang }) {
                 onClick={() => searchByCategory(category.id)}
                 className={`flex-shrink-0 px-3 py-1.5 rounded-full border transition-all text-xs ${
                   selectedCategory === category.id
-                    ? 'bg-gray-900 text-white border-gray-900'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white border-gray-900'
+                    : 'bg-white text-gray-600 border-[var(--y2k-border)] hover:border-gray-300'
                 }`}
               >
                 <span className="font-medium">{L(category.name)}</span>
@@ -1537,7 +1537,7 @@ export default function MapTab({ lang }) {
 
       {/* 🚌 시티투어 노선 서브필터 — city_tour_bus 선택 시에만 표시 */}
       {selectedCategory === 'city_tour_bus' && (
-        <div className="bg-white border-b border-gray-100 z-30 relative">
+        <div className="bg-white border-b border-[var(--y2k-border)] z-30 relative">
           <div className="px-4 py-1.5">
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
               <span className="text-[10px] text-gray-400 flex-shrink-0 mr-1">🚌</span>
@@ -1558,7 +1558,7 @@ export default function MapTab({ lang }) {
                   className={`flex-shrink-0 px-2.5 py-1 rounded-full border transition-all text-[11px] font-medium ${
                     selectedBusRoute === route.id
                       ? 'text-white border-transparent'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+                      : 'bg-white text-[var(--y2k-text-sub)] border-[var(--y2k-border)] hover:border-gray-300'
                   }`}
                   style={selectedBusRoute === route.id ? { backgroundColor: route.color, borderColor: route.color } : {}}
                 >
@@ -1571,7 +1571,7 @@ export default function MapTab({ lang }) {
       )}
 
       {/* 지도 영역 */}
-      <div className="relative flex-1 bg-gray-50" style={{ flex: 1, minHeight: 0 }}>
+      <div className="relative flex-1 bg-[var(--y2k-surface)]" style={{ flex: 1, minHeight: 0 }}>
         {/* 카카오 지도 컨테이너 */}
         <div
           ref={mapRef}
@@ -1690,7 +1690,7 @@ export default function MapTab({ lang }) {
               }
             }, 15000)
           }}
-          className={`absolute top-[130px] right-[6px] z-40 w-9 h-9 bg-white rounded  flex items-center justify-center hover:bg-gray-50 active:bg-gray-100 transition-colors border border-gray-300 ${locatingUser ? 'animate-pulse' : ''}`}
+          className={`absolute top-[130px] right-[6px] z-40 w-9 h-9 bg-white rounded  flex items-center justify-center hover:bg-[var(--y2k-surface)] active:bg-[var(--y2k-bg)] transition-colors border border-gray-300 ${locatingUser ? 'animate-pulse' : ''}`}
           title={L({ ko: '내 위치', zh: '我的位置', en: 'My Location' })}
         >
           {locatingUser
@@ -1700,27 +1700,27 @@ export default function MapTab({ lang }) {
         </button>
         {/* 위치 정확도 표시 */}
         {locationAccuracy && (
-          <div className="absolute top-16 left-3 z-40 bg-white/90 rounded-full px-2 py-0.5 shadow text-xs text-gray-500 border border-gray-100">
+          <div className="absolute top-16 left-3 z-40 bg-white/90 rounded-full px-2 py-0.5 shadow text-xs text-[var(--y2k-text-sub)] border border-[var(--y2k-border)]">
             ±{locationAccuracy}m
           </div>
         )}
 
         {/* 마커 상세 정보 패널 */}
         {selectedMarker && (
-          <div className="absolute bottom-16 left-3 right-3 z-50 bg-white rounded-xl shadow-xl px-3 py-2.5">
+          <div className="absolute bottom-16 left-3 right-3 z-50 bg-white rounded-[20px] shadow-xl px-3 py-2.5">
             {/* 헤더: 이름 + 닫기 */}
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-gray-900 text-[13px] leading-tight">{L(selectedMarker.name)}</h3>
-                <p className="text-gray-500 text-[11px] leading-tight mt-0.5 line-clamp-2">{L(selectedMarker.description)}</p>
+                <p className="text-[var(--y2k-text-sub)] text-[11px] leading-tight mt-0.5 line-clamp-2">{L(selectedMarker.description)}</p>
               </div>
-              <button onClick={() => setSelectedMarker(null)} className="p-0.5 hover:bg-gray-100 rounded shrink-0 mt-0.5">
+              <button onClick={() => setSelectedMarker(null)} className="p-0.5 hover:bg-[var(--y2k-bg)] rounded shrink-0 mt-0.5">
                 <X size={14} className="text-gray-400" />
               </button>
             </div>
 
             {/* 부가 정보 (한 줄로 압축) */}
-            <div className="flex flex-wrap gap-x-3 gap-y-0 mt-1 text-[11px] text-gray-500">
+            <div className="flex flex-wrap gap-x-3 gap-y-0 mt-1 text-[11px] text-[var(--y2k-text-sub)]">
               {selectedMarker.chineseSupport && <span className="text-red-500">🇨🇳</span>}
               {selectedMarker.phone && <span>📞 {selectedMarker.phone}</span>}
               {selectedMarker.priceRange && <span>💰 {selectedMarker.priceRange}</span>}
@@ -1728,7 +1728,7 @@ export default function MapTab({ lang }) {
             </div>
 
             {/* 길찾기 영역 */}
-            <div className="mt-2 pt-2 border-t border-gray-100">
+            <div className="mt-2 pt-2 border-t border-[var(--y2k-border)]">
               {!showRoutePanel ? (
                 <button
                   onClick={() => {
@@ -1736,7 +1736,7 @@ export default function MapTab({ lang }) {
                     setEndCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
                     setShowRoutePanel(true)
                   }}
-                  className="w-full py-2 text-[13px] font-medium text-white bg-gray-900 rounded-lg"
+                  className="w-full py-2 text-[13px] font-medium text-white bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] rounded-[20px]"
                 >
                   {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
                 </button>
@@ -1751,14 +1751,14 @@ export default function MapTab({ lang }) {
                         value={startLocation}
                         onChange={(e) => handleStartLocationChange(e.target.value)}
                         placeholder={L({ ko: "출발지", zh: "出发地", en: "Start" })}
-                        className="flex-1 px-2.5 py-1.5 text-[13px] bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
+                        className="flex-1 px-2.5 py-1.5 text-[13px] bg-[var(--y2k-bg)] rounded-[20px] outline-none focus:bg-[var(--y2k-surface)] focus:ring-1 focus:ring-[var(--y2k-lavender)]/30"
                       />
                     </div>
                     {showStartResults && startResults.length > 0 && (
-                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg  max-h-28 overflow-y-auto z-50">
+                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-[var(--y2k-border)] rounded-[20px]  max-h-28 overflow-y-auto z-50">
                         {startResults.map(r => (
                           <button key={r.id} onClick={() => selectLocation(r, true)}
-                            className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 text-[11px] border-b border-gray-50 last:border-0">
+                            className="w-full px-2.5 py-1.5 text-left hover:bg-[var(--y2k-surface)] text-[11px] border-b border-gray-50 last:border-0">
                             <div className="font-medium">{r.name}</div>
                             {r.address && <div className="text-gray-400">{r.address}</div>}
                           </button>
@@ -1775,14 +1775,14 @@ export default function MapTab({ lang }) {
                         value={endLocation}
                         onChange={(e) => handleEndLocationChange(e.target.value)}
                         placeholder={L({ ko: "도착지", zh: "目的地", en: "Destination" })}
-                        className="flex-1 px-2.5 py-1.5 text-[13px] bg-gray-100 rounded-lg outline-none focus:bg-gray-50 focus:ring-1 focus:ring-gray-300"
+                        className="flex-1 px-2.5 py-1.5 text-[13px] bg-[var(--y2k-bg)] rounded-[20px] outline-none focus:bg-[var(--y2k-surface)] focus:ring-1 focus:ring-[var(--y2k-lavender)]/30"
                       />
                     </div>
                     {showEndResults && endResults.length > 0 && (
-                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-gray-200 rounded-lg  max-h-28 overflow-y-auto z-50">
+                      <div className="absolute bottom-full left-5 right-0 mb-1 bg-white border border-[var(--y2k-border)] rounded-[20px]  max-h-28 overflow-y-auto z-50">
                         {endResults.map(r => (
                           <button key={r.id} onClick={() => selectLocation(r, false)}
-                            className="w-full px-2.5 py-1.5 text-left hover:bg-gray-50 text-[11px] border-b border-gray-50 last:border-0">
+                            className="w-full px-2.5 py-1.5 text-left hover:bg-[var(--y2k-surface)] text-[11px] border-b border-gray-50 last:border-0">
                             <div className="font-medium">{r.name}</div>
                             {r.address && <div className="text-gray-400">{r.address}</div>}
                           </button>
@@ -1793,11 +1793,11 @@ export default function MapTab({ lang }) {
                   {/* Go + 닫기 */}
                   <div className="flex gap-2">
                     <button onClick={startRouteNavigation}
-                      className="flex-1 py-1.5 text-[13px] font-medium text-white bg-blue-500 rounded-lg">
+                      className="flex-1 py-1.5 text-[13px] font-medium text-white bg-blue-500 rounded-[20px]">
                       Go
                     </button>
                     <button onClick={() => { setShowRoutePanel(false); setShowStartResults(false); setShowEndResults(false) }}
-                      className="px-3 py-1.5 text-gray-500 bg-gray-100 rounded-lg">
+                      className="px-3 py-1.5 text-[var(--y2k-text-sub)] bg-[var(--y2k-bg)] rounded-[20px]">
                       <X size={14} />
                     </button>
                   </div>
@@ -1809,7 +1809,7 @@ export default function MapTab({ lang }) {
 
         {/* API 키 없을 때 메시지 */}
         {!mapReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--y2k-surface)]">
             <div className="text-center space-y-4">
               <div className="w-16 h-16 mx-auto bg-yellow-200 rounded-full flex items-center justify-center">
                 <Info size={24} className="text-yellow-600" />
@@ -1818,7 +1818,7 @@ export default function MapTab({ lang }) {
                 <h3 className="text-lg font-semibold text-gray-700">
                   {L({ ko: '카카오맵 API 키 필요', zh: '需要카카오맵API密钥', en: 'KakaoMap API Key Required' })}
                 </h3>
-                <p className="text-sm text-gray-500 max-w-xs mx-auto">
+                <p className="text-sm text-[var(--y2k-text-sub)] max-w-xs mx-auto">
                   {L({ 
                     ko: 'Kakao Developers에서 Maps API 키를 발급받으세요. 일 30만회 무료!',
                     zh: '请从Kakao Developers获取Maps API密钥。每日30万次免费！',
@@ -1837,9 +1837,9 @@ export default function MapTab({ lang }) {
       {/* 카카오맵 웹뷰 모달 */}
       {showKakaoWebView && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white w-full h-full max-w-lg max-h-[90vh] rounded-lg flex flex-col">
+          <div className="bg-white w-full h-full max-w-lg max-h-[90vh] rounded-[20px] flex flex-col">
             {/* 웹뷰 헤더 */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--y2k-border)]">
               <div className="flex items-center space-x-2">
                 <Globe size={20} className="text-blue-500" />
                 <h3 className="text-lg font-semibold">
@@ -1848,16 +1848,16 @@ export default function MapTab({ lang }) {
               </div>
               <button
                 onClick={closeKakaoWebView}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-[var(--y2k-bg)] rounded-[20px] transition-colors"
               >
                 <X size={20} />
               </button>
             </div>
 
             {/* 검색어 표시 */}
-            <div className="px-4 py-2 bg-gray-50 border-b border-gray-200">
+            <div className="px-4 py-2 bg-[var(--y2k-surface)] border-b border-[var(--y2k-border)]">
               <div className="flex items-center space-x-2">
-                <Search size={16} className="text-gray-500" />
+                <Search size={16} className="text-[var(--y2k-text-sub)]" />
                 <span className="text-sm text-gray-700">
                   {L({ ko: '검색어', zh: '搜索词', en: 'Query' })}: <strong>{kakaoWebViewQuery}</strong>
                 </span>
@@ -1876,9 +1876,9 @@ export default function MapTab({ lang }) {
             </div>
 
             {/* 웹뷰 푸터 */}
-            <div className="p-4 border-t border-gray-200 bg-gray-50">
+            <div className="p-4 border-t border-[var(--y2k-border)] bg-[var(--y2k-surface)]">
               <div className="flex items-center justify-between">
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-[var(--y2k-text-sub)]">
                   {L({ 
                     ko: '카카오맵 순정 검색 결과', 
                     zh: 'Kakao地图原生搜索结果', 
@@ -1887,7 +1887,7 @@ export default function MapTab({ lang }) {
                 </div>
                 <button
                   onClick={() => window.open(getKakaoMapWebViewUrl(kakaoWebViewQuery), '_blank')}
-                  className="flex items-center space-x-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  className="flex items-center space-x-1 px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-[20px] transition-colors"
                 >
                   <ExternalLink size={14} />
                   <span>{L({ ko: '새 창', zh: '新窗口', en: 'New Tab' })}</span>
@@ -1901,9 +1901,9 @@ export default function MapTab({ lang }) {
       {/* 🗺️ 여행계획 모달 */}
       {showTripPlanner && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg max-h-[90vh] rounded-lg flex flex-col overflow-hidden">
+          <div className="bg-white w-full max-w-lg max-h-[90vh] rounded-[20px] flex flex-col overflow-hidden">
             {/* 헤더 */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between p-4 border-b border-[var(--y2k-border)]">
               <h2 className="text-lg font-semibold">
                 🗺️ {L({ ko: '내 여행계획', zh: '我的旅行计划', en: 'My Trip Plans' })}
               </h2>
@@ -1913,7 +1913,7 @@ export default function MapTab({ lang }) {
                   setCurrentTripPlan(null)
                   setEditingTripIndex(-1)
                 }}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-[var(--y2k-bg)] rounded-[20px] transition-colors"
               >
                 <X size={20} />
               </button>
@@ -1933,7 +1933,7 @@ export default function MapTab({ lang }) {
                       type="text"
                       value={currentTripPlan.name}
                       onChange={(e) => setCurrentTripPlan(prev => ({ ...prev, name: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder={L({ ko: '여행계획 이름을 입력하세요', zh: '请输入旅行计划名称', en: 'Enter plan name' })}
                     />
                   </div>
@@ -1947,13 +1947,13 @@ export default function MapTab({ lang }) {
                     {currentTripPlan.destinations.length > 0 ? (
                       <div className="space-y-2 mb-3">
                         {currentTripPlan.destinations.map((dest, index) => (
-                          <div key={dest.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                          <div key={dest.id} className="flex items-center gap-3 p-3 bg-[var(--y2k-surface)] rounded-[20px]">
                             <span className="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-medium">
                               {index + 1}
                             </span>
                             <div className="flex-1 min-w-0">
                               <div className="font-medium text-sm truncate">{dest.name}</div>
-                              <div className="text-xs text-gray-500 truncate">{dest.address}</div>
+                              <div className="text-xs text-[var(--y2k-text-sub)] truncate">{dest.address}</div>
                             </div>
                             <button
                               onClick={() => removeDestination(dest.id)}
@@ -1965,7 +1965,7 @@ export default function MapTab({ lang }) {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8 text-gray-500">
+                      <div className="text-center py-8 text-[var(--y2k-text-sub)]">
                         <MapPin size={32} className="mx-auto mb-2 opacity-50" />
                         <p className="text-sm">{L({ ko: '목적지를 추가해보세요', zh: '请添加目的地', en: 'Add destinations' })}</p>
                       </div>
@@ -1985,20 +1985,20 @@ export default function MapTab({ lang }) {
                               setShowDestinationResults(false)
                             }
                           }}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-[20px] focus:outline-none focus:ring-2 focus:ring-blue-500"
                           placeholder={L({ ko: '목적지를 검색하세요', zh: '搜索目的地', en: 'Search destinations' })}
                         />
                         
                         {showDestinationResults && destinationSearchResults.length > 0 && (
-                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg  max-h-60 overflow-y-auto z-10">
+                          <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-[var(--y2k-border)] rounded-[20px]  max-h-60 overflow-y-auto z-10">
                             {destinationSearchResults.map((result) => (
                               <button
                                 key={result.id}
                                 onClick={() => addDestination(result)}
-                                className="w-full px-3 py-2.5 text-left hover:bg-gray-50 border-b border-gray-100 last:border-0"
+                                className="w-full px-3 py-2.5 text-left hover:bg-[var(--y2k-surface)] border-b border-[var(--y2k-border)] last:border-0"
                               >
                                 <div className="font-medium text-sm">{result.name}</div>
-                                <div className="text-xs text-gray-500">{result.address}</div>
+                                <div className="text-xs text-[var(--y2k-text-sub)]">{result.address}</div>
                                 {result.category && <div className="text-xs text-blue-500">{result.category}</div>}
                               </button>
                             ))}
@@ -2015,14 +2015,14 @@ export default function MapTab({ lang }) {
                         setCurrentTripPlan(null)
                         setEditingTripIndex(-1)
                       }}
-                      className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-[20px] hover:bg-[var(--y2k-surface)]"
                     >
                       {L({ ko: '취소', zh: '取消', en: 'Cancel' })}
                     </button>
                     <button
                       onClick={saveTripPlan}
                       disabled={!currentTripPlan.name.trim() || currentTripPlan.destinations.length === 0}
-                      className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-[20px] hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {L({ ko: '저장', zh: '保存', en: 'Save' })}
                     </button>
@@ -2034,11 +2034,11 @@ export default function MapTab({ lang }) {
                   {tripPlans.length > 0 ? (
                     <div className="space-y-3">
                       {tripPlans.map((plan, index) => (
-                        <div key={plan.id} className="border border-gray-200 rounded-lg p-4">
+                        <div key={plan.id} className="border border-[var(--y2k-border)] rounded-[20px] p-4">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex-1">
                               <h3 className="font-medium text-sm">{plan.name}</h3>
-                              <p className="text-xs text-gray-500 mt-1">
+                              <p className="text-xs text-[var(--y2k-text-sub)] mt-1">
                                 {L({ ko: '목적지', zh: '目的地', en: 'Destinations' })}: {plan.destinations.length}개
                               </p>
                               <p className="text-xs text-gray-400">
@@ -2074,12 +2074,12 @@ export default function MapTab({ lang }) {
                             <div className="mb-3">
                               <div className="flex flex-wrap gap-1">
                                 {plan.destinations.slice(0, 3).map((dest, i) => (
-                                  <span key={dest.id} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                                  <span key={dest.id} className="text-xs bg-[var(--y2k-bg)] px-2 py-1 rounded-full">
                                     {i + 1}. {dest.name.length > 10 ? dest.name.substring(0, 10) + '...' : dest.name}
                                   </span>
                                 ))}
                                 {plan.destinations.length > 3 && (
-                                  <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                                  <span className="text-xs bg-[var(--y2k-bg)] px-2 py-1 rounded-full">
                                     +{plan.destinations.length - 3}
                                   </span>
                                 )}
@@ -2090,7 +2090,7 @@ export default function MapTab({ lang }) {
                           <button
                             onClick={() => startNavigation(plan)}
                             disabled={plan.destinations.length === 0}
-                            className="w-full px-3 py-2 bg-green-500 text-white text-sm font-medium rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            className="w-full px-3 py-2 bg-green-500 text-white text-sm font-medium rounded-[20px] hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                           >
                             <Navigation size={16} />
                             {L({ ko: '카카오맵으로 길찾기', zh: 'Kakao地图导航', en: 'Navigate with KakaoMap' })}
@@ -2104,7 +2104,7 @@ export default function MapTab({ lang }) {
                       <h3 className="text-lg font-medium text-gray-700 mb-2">
                         {L({ ko: '저장된 여행계획이 없습니다', zh: '没有保存的旅行计划', en: 'No saved trip plans' })}
                       </h3>
-                      <p className="text-sm text-gray-500 mb-6">
+                      <p className="text-sm text-[var(--y2k-text-sub)] mb-6">
                         {L({ ko: '새 여행계획을 만들어보세요', zh: '创建新的旅行计划', en: 'Create a new trip plan' })}
                       </p>
                     </div>
@@ -2114,7 +2114,7 @@ export default function MapTab({ lang }) {
                   {tripPlans.length < 10 && (
                     <button
                       onClick={createNewTripPlan}
-                      className="w-full mt-4 px-4 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2"
+                      className="w-full mt-4 px-4 py-3 bg-blue-500 text-white font-medium rounded-[20px] hover:bg-blue-600 flex items-center justify-center gap-2"
                     >
                       <Route size={18} />
                       {L({ ko: '새 여행계획 만들기', zh: '创建新旅行计划', en: 'Create New Trip Plan' })}
@@ -2122,7 +2122,7 @@ export default function MapTab({ lang }) {
                   )}
                   
                   {tripPlans.length >= 10 && (
-                    <p className="text-center text-xs text-gray-500 mt-4">
+                    <p className="text-center text-xs text-[var(--y2k-text-sub)] mt-4">
                       {L({ ko: '최대 10개의 여행계획을 저장할 수 있습니다', zh: '最多可保存10个旅行计划', en: 'Maximum 10 trip plans allowed' })}
                     </p>
                   )}

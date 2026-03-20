@@ -150,13 +150,13 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
         ].map(t => (
           <button
             key={t.id}
-            onClick={() => { 
+            onClick={() => {
               setTab(t.id)
               setSelectedSi('')
               setSelectedGu('')
               setSelectedDong('')
               setShown(PAGE_SIZE)
-              
+
               // 맛집 탭 전환 이벤트 추적
               trackEvent('restaurant_tab_switch', {
                 tab: t.id,
@@ -164,10 +164,10 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
                 event_label: `switch_to_${t.id}`
               })
             }}
-            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all active:scale-95 ${
               tab === t.id
-                ? 'bg-[#111827] text-white'
-                : 'bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]'
+                ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white shadow-lg'
+                : 'bg-white text-[var(--y2k-text-sub)] hover:bg-[var(--y2k-bg)] border border-[var(--y2k-border)]'
             }`}
           >
             {L(lang, t.label)}
@@ -177,22 +177,22 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
 
       {/* Search */}
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)]" />
         <input
           type="text"
           value={search}
-          onChange={e => { 
+          onChange={e => {
             const value = e.target.value
             setSearch(value)
             setShown(PAGE_SIZE)
-            
+
             // 검색 이벤트 추적 (3글자 이상일 때만)
             if (value.trim().length >= 3) {
               trackSearch(value.trim(), 'restaurant', 0) // results_count는 나중에 업데이트됨
             }
           }}
           placeholder={lang === 'ko' ? '레스토랑 검색...' : lang === 'zh' ? '搜索餐厅...' : 'Search restaurants...'}
-          className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border border-[#E5E7EB] rounded-[6px] outline-none focus:border-[#111827] hover:border-[#9CA3AF] transition-colors text-[#111827] placeholder:text-[#9CA3AF]"
+          className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border-2 border-transparent rounded-2xl outline-none focus:border-[var(--y2k-lavender)] focus:ring-2 focus:ring-[#C4B5FD]/30 hover:border-[var(--y2k-border)] transition-all text-[var(--y2k-text)] placeholder:text-[var(--y2k-text-sub)]"
         />
       </div>
 
@@ -219,14 +219,14 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
                 })
               }
             }}
-            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-[6px] px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
+            className="appearance-none text-xs bg-white border border-[var(--y2k-border)] rounded-full px-3 py-2 pr-7 text-[var(--y2k-text)] outline-none hover:border-[var(--y2k-lavender)] focus:border-[var(--y2k-pink)] focus:ring-2 focus:ring-[#FF85B3]/20 transition-all"
           >
             <option value="">{lang === 'ko' ? '시/도 전체' : lang === 'zh' ? '全部省市' : 'All Regions'}</option>
             {Object.keys(LOCATION_HIERARCHY).map(si => (
               <option key={si} value={si}>{si}</option>
             ))}
           </select>
-          <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
+          <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)] pointer-events-none" />
         </div>
 
         {/* 구/군 (Level 2) */}
@@ -251,14 +251,14 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
                   })
                 }
               }}
-              className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-[6px] px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
+              className="appearance-none text-xs bg-white border border-[var(--y2k-border)] rounded-full px-3 py-2 pr-7 text-[var(--y2k-text)] outline-none hover:border-[var(--y2k-lavender)] focus:border-[var(--y2k-pink)] focus:ring-2 focus:ring-[#FF85B3]/20 transition-all"
             >
               <option value="">{lang === 'ko' ? '구/군 전체' : lang === 'zh' ? '全部区县' : 'All Districts'}</option>
               {gusForSi.map(gu => (
                 <option key={gu} value={gu}>{gu}</option>
               ))}
             </select>
-            <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
+            <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)] pointer-events-none" />
           </div>
         )}
 
@@ -284,14 +284,14 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
                   })
                 }
               }}
-              className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-[6px] px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
+              className="appearance-none text-xs bg-white border border-[var(--y2k-border)] rounded-full px-3 py-2 pr-7 text-[var(--y2k-text)] outline-none hover:border-[var(--y2k-lavender)] focus:border-[var(--y2k-pink)] focus:ring-2 focus:ring-[#FF85B3]/20 transition-all"
             >
               <option value="">{lang === 'ko' ? '동/읍/면 전체' : lang === 'zh' ? '全部街道' : 'All Areas'}</option>
               {dongsForGu.map(dong => (
                 <option key={dong} value={dong}>{dong}</option>
               ))}
             </select>
-            <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
+            <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)] pointer-events-none" />
           </div>
         )}
 
@@ -300,13 +300,13 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
           <select
             value={cuisine}
             onChange={e => { setCuisine(e.target.value); setShown(PAGE_SIZE) }}
-            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-[6px] px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
+            className="appearance-none text-xs bg-white border border-[var(--y2k-border)] rounded-full px-3 py-2 pr-7 text-[var(--y2k-text)] outline-none hover:border-[var(--y2k-lavender)] focus:border-[var(--y2k-pink)] focus:ring-2 focus:ring-[#FF85B3]/20 transition-all"
           >
             {FOOD_CATEGORIES.map(c => (
               <option key={c.id} value={c.id}>{L(lang, c.label)}</option>
             ))}
           </select>
-          <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" />
+          <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)] pointer-events-none" />
         </div>
 
         {/* Sort */}
@@ -314,7 +314,7 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value)}
-            className="appearance-none text-xs bg-white border border-[#E5E7EB] rounded-[6px] px-3 py-2 pr-7 text-[#111827] outline-none hover:border-[#9CA3AF] focus:border-[#111827] transition-colors"
+            className="appearance-none text-xs bg-white border border-[var(--y2k-border)] rounded-full px-3 py-2 pr-7 text-[var(--y2k-text)] outline-none hover:border-[var(--y2k-lavender)] focus:border-[var(--y2k-pink)] focus:ring-2 focus:ring-[#FF85B3]/20 transition-all"
           >
             <option value="name">{lang === 'ko' ? '이름순' : lang === 'zh' ? '按名称' : 'By Name'}</option>
             <option value="location">{lang === 'ko' ? '지역순' : lang === 'zh' ? '按地区' : 'By Location'}</option>
@@ -332,7 +332,7 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
       {/* Cards */}
       <div className="space-y-3">
         {visible.map(r => (
-          <div key={r.id} className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow cursor-pointer active:scale-[0.99] transition-transform" onClick={() => setDetailRestaurant(r)}>
+          <div key={r.id} className="bg-white rounded-[20px] p-5 border border-[var(--y2k-border)] shadow-[0_4px_20px_rgba(255,133,179,0.08)] hover:shadow-[0_8px_32px_rgba(255,133,179,0.15)] hover:-translate-y-0.5 cursor-pointer active:scale-[0.98] transition-all" onClick={() => setDetailRestaurant(r)}>
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -370,7 +370,7 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
       {hasMore && (
         <button
           onClick={() => setShown(s => s + PAGE_SIZE)}
-          className="w-full py-3 text-sm font-semibold text-[#111827] bg-[#F3F4F6] hover:bg-[#E5E7EB] rounded-[6px] transition-colors"
+          className="w-full py-3 text-sm font-semibold text-[var(--y2k-text)] bg-white hover:bg-gradient-to-r hover:from-[var(--y2k-pink)] hover:to-[var(--y2k-lavender)] hover:text-white rounded-full border border-[var(--y2k-border)] transition-all active:scale-95 shadow-[0_2px_12px_rgba(255,133,179,0.08)]"
         >
           {lang === 'ko' ? '더보기' : lang === 'zh' ? '加载更多' : 'Load More'} ({filtered.length - shown}{lang === 'ko' ? '개 남음' : lang === 'zh' ? ' 剩余' : ' remaining'})
         </button>
@@ -399,8 +399,8 @@ function RestaurantDetailModal({ restaurant: r, lang, onClose }) {
   const cuisineLabel = FOOD_CATEGORIES.find(c => c.id === r.cuisine)?.label
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50" onClick={onClose}>
-      <div className="absolute inset-x-0 bottom-0 max-h-[90vh] bg-white rounded-t-[6px] overflow-y-auto animate-slide-up" onClick={e => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onClose}>
+      <div className="absolute inset-x-0 bottom-0 max-h-[90vh] bg-[var(--y2k-surface)] rounded-t-[20px] overflow-y-auto animate-slide-up shadow-[0_-8px_32px_rgba(255,133,179,0.15)]" onClick={e => e.stopPropagation()}>
         {/* 이미지 영역 */}
         {r.images?.length > 0 && (
           <div className="relative">
@@ -427,7 +427,7 @@ function RestaurantDetailModal({ restaurant: r, lang, onClose }) {
           {/* 이름 + 뱃지 */}
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-lg font-bold text-[#111827]">{L(lang, r.name)}</h2>
+              <h2 className="text-lg font-bold text-[var(--y2k-text)]">{L(lang, r.name)}</h2>
               {awardInfo && r.award !== 'blueribbon' && awardInfo.stars > 0 && (
                 <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
                   {Array.from({ length: awardInfo.stars }, (_, i) => (
@@ -470,15 +470,15 @@ function RestaurantDetailModal({ restaurant: r, lang, onClose }) {
           <div className="flex gap-2">
             {r.naverMapUrl && (
               <a href={r.naverMapUrl} target="_blank" rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-white bg-[#111827] rounded-[6px]">
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] rounded-full active:scale-95 transition-all shadow-[0_4px_16px_rgba(255,133,179,0.2)]">
                 <Navigation size={14} />
                 {lang === 'ko' ? '길찾기' : lang === 'zh' ? '导航' : 'Directions'}
               </a>
             )}
             {r.catchTableUrl && (
               <a href={r.catchTableUrl} target="_blank" rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-[#111827] bg-[#F3F4F6] rounded-[6px]">
-                {lang === 'ko' ? '예약하기' : lang === 'zh' ? '预约' : 'Reserve'}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-[var(--y2k-text)] bg-white border border-[var(--y2k-border)] rounded-full active:scale-95 transition-all">
+                {lang === 'ko' ? '예약하기' : lang === 'zh' ? '预약' : 'Reserve'}
               </a>
             )}
           </div>

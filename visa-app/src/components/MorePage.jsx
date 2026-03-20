@@ -8,6 +8,20 @@ function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d
 
 const SECTIONS = [
   {
+    title: { ko: '입국 & 출국하기', zh: '入境 & 出境', en: 'Arrival & Departure' },
+    emoji: '✈️',
+    items: [
+      { id: 'arr-wait',     emoji: '⏱️', label: { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' }, sub: 'immigration-wait' },
+      { id: 'arr-card',     emoji: '📋', label: { ko: '입국신고서 작성법', zh: '入境申报卡填写方法', en: 'Arrival Card Guide' }, sub: 'arrival-card' },
+      { id: 'arr-sim',      emoji: '📱', label: { ko: 'SIM카드 & 환전', zh: 'SIM卡 & 换钱', en: 'SIM & Exchange' }, sub: 'sim-guide' },
+      { id: 'arr-passport', emoji: '🛂', label: { ko: '여권 스캔', zh: '护照扫描', en: 'Passport Scan' }, sub: 'passport-scan' },
+      { id: 'dep-count',    emoji: '⏳', label: { ko: '출국 카운트다운', zh: '出境倒计时', en: 'Departure Countdown' }, sub: 'departure' },
+      { id: 'dep-tax',      emoji: '🧾', label: { ko: '세금환급 안내', zh: '退税指南', en: 'Tax Refund Guide' }, sub: 'taxrefund' },
+      { id: 'dep-shop',     emoji: '🛍️', label: { ko: '출국 쇼핑 동선', zh: '出境购物路线', en: 'Departure Shopping Route' }, sub: 'departure-shopping' },
+      { id: 'dep-duty',     emoji: '🔖', label: { ko: '면세 한도 안내', zh: '免税限额指南', en: 'Duty-Free Limits' }, sub: 'tax-free' },
+    ]
+  },
+  {
     title: { ko: '통역 & 번역', zh: '口译 & 翻译', en: 'Translation' },
     emoji: '🗣️',
     items: [
@@ -24,6 +38,7 @@ const SECTIONS = [
       { id: 'tool-taxrefund', emoji: '🧾', label: { ko: '세금환급 계산기', zh: '退税计算器', en: 'Tax Refund Calculator' }, sub: 'taxrefund' },
       { id: 'tool-learn',    emoji: '📚', label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' }, tool: 'learn' },
       { id: 'tool-taxi',     emoji: '🚕', label: { ko: '택시 요금 계산', zh: '出租车费用', en: 'Taxi Calculator' }, tab: 'taxi-calc' },
+      { id: 'tool-course',   emoji: '🗺️', label: { ko: '팝업 코스 탐색', zh: '快闪路线探索', en: 'Popup Course Map' }, tab: 'near-map' },
     ]
   },
   {
@@ -74,15 +89,6 @@ const SECTIONS = [
       { id: 'sos-allergy',  emoji: '⚠️', label: { ko: '알레르기 카드', zh: '过敏卡', en: 'Allergy Card' }, sub: 'allergy-card' },
     ]
   },
-  {
-    title: { ko: '설정', zh: '设置', en: 'Settings' },
-    emoji: '⚙️',
-    items: [
-      { id: 'set-lang',  emoji: '🌐', label: { ko: '언어', zh: '语言', en: 'Language' } },
-      { id: 'set-cache', emoji: '🗑️', label: { ko: '캐시 삭제', zh: '清除缓存', en: 'Clear Cache' } },
-      { id: 'set-about', emoji: '📄', label: { ko: 'NEAR 소개', zh: '关于NEAR', en: 'About NEAR' } },
-    ]
-  },
 ]
 
 export default function MorePage({ lang, setTab, setSubPage }) {
@@ -112,15 +118,11 @@ export default function MorePage({ lang, setTab, setSubPage }) {
   }
 
   return (
-    <div className="px-4 pt-3 pb-24 animate-fade-up">
-      <p className="text-[22px] font-bold text-[#1A1A1A] mb-4">
-        {L(lang, { ko: '더보기', zh: '更多', en: 'More' })}
-      </p>
-
+    <div className="px-4 pt-3 pb-0 animate-fade-up">
       {SECTIONS.map(section => (
         <div key={section.emoji} className="mb-5">
           <p className="text-[13px] font-bold text-[#374151] mb-2">
-            {section.emoji} {L(lang, section.title)}
+            {L(lang, section.title)}
           </p>
           <div className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
             {section.items.map((item, i) => (
@@ -141,7 +143,7 @@ export default function MorePage({ lang, setTab, setSubPage }) {
       ))}
 
       {/* NEAR 버전 정보 */}
-      <div className="text-center mt-6 mb-4">
+      <div className="text-center mt-4 mb-0">
         <p className="text-[11px] text-[#BCBCBC]">NEAR v1.0.0</p>
         <p className="text-[10px] text-[#D1D5DB] mt-1">到韩国，只需NEAR</p>
       </div>

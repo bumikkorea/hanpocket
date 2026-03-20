@@ -198,18 +198,18 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
       </div>
 
       {/* 인기 상품 섹션 */}
-      <div className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
-        <h2 className="text-sm font-bold text-[#111827] mb-3 flex items-center gap-2">
-          <Star size={16} className="text-amber-500" />
+      <div className="bg-white rounded-[20px] p-5 border border-[var(--y2k-border)] shadow-[0_4px_20px_rgba(255,133,179,0.08)]">
+        <h2 className="text-sm font-bold text-[var(--y2k-text)] mb-3 flex items-center gap-2">
+          <Star size={16} className="text-amber-500" style={{filter: 'drop-shadow(0 0 4px rgba(245, 158, 11, 0.3))'}} />
           {L(lang, { ko: '인기 쇼핑 아이템', zh: '热门购物商品', en: 'Popular Shopping Items' })}
         </h2>
         <div className="grid grid-cols-2 gap-3">
           {POPULAR_ITEMS.map((item, i) => (
-            <div key={i} className="bg-[#FAFAF8] rounded-[6px] p-3">
-              <h3 className="text-xs font-bold text-[#111827]">{L(lang, item.name)}</h3>
-              <p className="text-xs text-amber-600 font-semibold mt-1">{item.price}</p>
-              <p className="text-[10px] text-[#6B7280] mt-1 leading-relaxed">{L(lang, item.description)}</p>
-              <p className="text-[9px] text-[#9CA3AF] mt-1">{L(lang, { ko: `추천 장소: ${item.bestPlace}`, zh: `推荐地点: ${item.bestPlace}`, en: `Best Place: ${item.bestPlace}` })}</p>
+            <div key={i} className="bg-[var(--y2k-bg)] rounded-[12px] p-3 border border-[var(--y2k-border)]">
+              <h3 className="text-xs font-bold text-[var(--y2k-text)]">{L(lang, item.name)}</h3>
+              <p className="text-xs text-amber-600 font-semibold mt-1 bg-gradient-to-r from-[#E8E8E8] to-[#F5F5F5] px-2 py-0.5 rounded-full inline-block">{item.price}</p>
+              <p className="text-[10px] text-[var(--y2k-text-sub)] mt-1 leading-relaxed">{L(lang, item.description)}</p>
+              <p className="text-[9px] text-[var(--y2k-text-sub)] mt-1">{L(lang, { ko: `추천 장소: ${item.bestPlace}`, zh: `推荐地点: ${item.bestPlace}`, en: `Best Place: ${item.bestPlace}` })}</p>
             </div>
           ))}
         </div>
@@ -217,13 +217,13 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
 
       {/* 검색 */}
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)]" />
         <input
           type="text"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           placeholder={L(lang, { ko: '상점, 브랜드, 상품 검색...', zh: '搜索商店、品牌、商品...', en: 'Search stores, brands, products...' })}
-          className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-[#E5E7EB] rounded-[6px] outline-none focus:border-[#111827] text-[#111827] placeholder:text-[#9CA3AF]"
+          className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border-2 border-transparent rounded-2xl outline-none focus:border-[var(--y2k-lavender)] focus:ring-2 focus:ring-[#C4B5FD]/30 hover:border-[var(--y2k-border)] transition-all text-[var(--y2k-text)] placeholder:text-[var(--y2k-text-sub)]"
         />
       </div>
 
@@ -235,10 +235,10 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
             <button
               key={s.id}
               onClick={() => setSection(s.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all shrink-0 active:scale-95 ${
                 section === s.id
-                  ? 'bg-[#111827] text-white'
-                  : 'bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]'
+                  ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white shadow-lg'
+                  : 'bg-white text-[var(--y2k-text-sub)] hover:bg-[var(--y2k-bg)] border border-[var(--y2k-border)]'
               }`}
             >
               <Icon size={14} />
@@ -252,7 +252,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
       {section === 'deals' && (
         <div className="space-y-3">
           {/* 다음 세일 카운트다운 */}
-          <div className="bg-gradient-to-r from-[#DC2626] to-[#F97316] rounded-[6px] p-4 text-white">
+          <div className="bg-gradient-to-r from-[#DC2626] to-[#F97316] rounded-[20px] p-4 text-white shadow-[0_4px_20px_rgba(220,38,38,0.2)]">
             <div className="flex items-center gap-2 mb-1">
               <Calendar size={16} />
               <span className="text-xs font-semibold opacity-90">{L(lang, { ko: '다음 세일', zh: '下次促销', en: 'Next Sale' })}</span>
@@ -272,7 +272,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
           </h2>
           <div className="space-y-2">
             {OLIVEYOUNG_SALES.map((sale, i) => (
-              <div key={i} className="bg-white rounded-[6px] border border-[#E5E7EB] p-3">
+              <div key={i} className="bg-white rounded-[20px] border border-[var(--y2k-border)] p-3 shadow-[0_2px_12px_rgba(255,133,179,0.06)] hover:shadow-[0_4px_20px_rgba(255,133,179,0.12)] hover:-translate-y-0.5 transition-all">
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-sm font-bold text-[#1A1A1A]">{sale.name}</p>
@@ -292,7 +292,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
           </h2>
           <div className="space-y-2">
             {SHOPPING_EVENTS.map((event, i) => (
-              <div key={i} className="bg-white rounded-[6px] border border-[#E5E7EB] p-3">
+              <div key={i} className="bg-white rounded-[20px] border border-[var(--y2k-border)] p-3 shadow-[0_2px_12px_rgba(255,133,179,0.06)] hover:shadow-[0_4px_20px_rgba(255,133,179,0.12)] hover:-translate-y-0.5 transition-all">
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-sm font-bold text-[#1A1A1A]">{event.name}</p>
@@ -312,7 +312,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
         <div className="space-y-3">
           <h2 className="text-sm font-bold text-[#111827]">{L(lang, { ko: '주요 면세점', zh: '主要免税店', en: 'Major Duty Free Shops' })}</h2>
           {DUTY_FREE_SHOPS.map(shop => (
-            <div key={shop.id} className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
+            <div key={shop.id} className="bg-white rounded-[20px] p-5 border border-[var(--y2k-border)] shadow-[0_4px_20px_rgba(255,133,179,0.08)] hover:shadow-[0_8px_32px_rgba(255,133,179,0.15)] hover:-translate-y-0.5 transition-all">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="text-sm font-bold text-[#111827]">{L(lang, shop.name)}</h3>
@@ -362,7 +362,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
         <div className="space-y-3">
           <h2 className="text-sm font-bold text-[#111827]">{L(lang, { ko: '쇼핑 지역 가이드', zh: '购物区域指南', en: 'Shopping Districts Guide' })}</h2>
           {SHOPPING_DISTRICTS.map(district => (
-            <div key={district.id} className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
+            <div key={district.id} className="bg-white rounded-[20px] p-5 border border-[var(--y2k-border)] shadow-[0_4px_20px_rgba(255,133,179,0.08)] hover:shadow-[0_8px_32px_rgba(255,133,179,0.15)] hover:-translate-y-0.5 transition-all">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <h3 className="text-sm font-bold text-[#111827]">{L(lang, district.name)}</h3>
@@ -393,7 +393,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
         <div className="space-y-3">
           <h2 className="text-sm font-bold text-[#111827]">{L(lang, { ko: '온라인 쇼핑몰', zh: '在线购物商城', en: 'Online Shopping Platforms' })}</h2>
           {ONLINE_PLATFORMS.map((platform, i) => (
-            <div key={i} className="bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow">
+            <div key={i} className="bg-white rounded-[20px] p-5 border border-[var(--y2k-border)] shadow-[0_4px_20px_rgba(255,133,179,0.08)] hover:shadow-[0_8px_32px_rgba(255,133,179,0.15)] hover:-translate-y-0.5 transition-all">
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="text-sm font-bold text-[#111827]">{L(lang, platform.name)}</h3>
@@ -466,7 +466,7 @@ export default function ShoppingTab({ lang, setTab, deepLink, onDeepLinkConsumed
             </div>
           </div>
 
-          <div className="bg-amber-50 border border-amber-200 rounded-[6px] p-5">
+          <div className="bg-amber-50 border border-amber-200 rounded-[20px] p-5 shadow-[0_2px_12px_rgba(245,158,11,0.08)]">
             <h3 className="text-sm font-bold text-amber-800 mb-2">{L(lang, { ko: '쇼핑 꿀팁', zh: '购物秘籍', en: 'Shopping Tips' })}</h3>
             <div className="text-xs space-y-1 text-amber-700">
               <p>• {L(lang, { ko: '면세점은 출국 3시간 전까지 픽업 가능', zh: '免税店可在出境前3小时内取货', en: 'Duty-free pickup available until 3 hours before departure' })}</p>
@@ -530,7 +530,7 @@ function TourApiShoppingSection({ lang }) {
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
         {items.map((item, i) => (
           <div key={item.contentid || i} onClick={() => setDetailItem(item)}
-            className="min-w-[180px] max-w-[180px] rounded-[6px] overflow-hidden bg-white border border-gray-100  cursor-pointer">
+            className="min-w-[180px] max-w-[180px] rounded-[20px] overflow-hidden bg-white border border-[var(--y2k-border)] shadow-[0_2px_12px_rgba(255,133,179,0.06)] hover:shadow-[0_4px_20px_rgba(255,133,179,0.12)] hover:-translate-y-0.5 cursor-pointer transition-all active:scale-98">
             {item.firstimage ? (
               <img src={item.firstimage} alt={item.title} className="w-full h-28 object-cover" loading="lazy" />
             ) : (

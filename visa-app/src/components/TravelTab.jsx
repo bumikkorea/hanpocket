@@ -451,7 +451,7 @@ const PET_HOTLINES = [
   { name: { zh: '仁川机场动物检疫', ko: '인천공항 동물검역' }, tel: '032-740-2660', desc: { zh: '入境检疫现场咨询', ko: '입국 검역 현장 문의' } },
 ]
 
-const card = "bg-white rounded-[6px] p-5 border border-[#E5E7EB] card-glow"
+const card = "bg-white rounded-[20px] p-5 border border-[var(--y2k-border)] shadow-[0_4px_20px_rgba(255,133,179,0.08)] hover:shadow-[0_8px_32px_rgba(255,133,179,0.15)] hover:-translate-y-0.5 transition-all duration-200"
 
 // 개인화 추천을 위한 사용자 관심사 추적
 function getUserInterests() {
@@ -502,11 +502,11 @@ function TaxiGuide({ lang, card }) {
     <div className="space-y-3">
       {/* Header */}
       <div className={card}>
-        <h3 className="text-sm font-bold text-[#111827] flex items-center gap-2 mb-2">
+        <h3 className="text-sm font-bold text-[var(--y2k-text)] flex items-center gap-2 mb-2">
           <Car size={16} />
           {L(lang, { ko: '🚕 택시 완전 가이드', zh: '🚕 出租车完全指南', en: '🚕 Complete Taxi Guide' })}
         </h3>
-        <div className="bg-blue-50 border border-blue-200 rounded-[6px] p-2.5 mb-3">
+        <div className="bg-blue-50 border border-blue-200 rounded-[20px] p-2.5 mb-3">
           <p className="text-xs text-blue-700 font-medium">
             {L(lang, {
               ko: '💡 한국번호 없어도 택시 이용 가능! 길에서 잡거나, 국제택시 전화 예약하세요.',
@@ -520,12 +520,12 @@ function TaxiGuide({ lang, card }) {
         <div className="space-y-2">
           {TAXI_TYPES.map((t, i) => (
             <div key={i} className="flex items-start gap-2 text-xs">
-              <span className="bg-gray-100 text-[#111827] font-bold px-1.5 py-0.5 rounded shrink-0">
+              <span className="bg-[var(--y2k-surface)] text-[var(--y2k-text)] font-bold px-1.5 py-0.5 rounded shrink-0">
                 {typeof t.base === 'string' ? t.base : L(lang, t.base)}
               </span>
               <div>
-                <span className="font-semibold text-[#111827]">{L(lang, t.type)}</span>
-                <p className="text-[#6B7280]">{L(lang, t.note)}</p>
+                <span className="font-semibold text-[var(--y2k-text)]">{L(lang, t.type)}</span>
+                <p className="text-[var(--y2k-text-sub)]">{L(lang, t.note)}</p>
               </div>
             </div>
           ))}
@@ -534,7 +534,7 @@ function TaxiGuide({ lang, card }) {
 
       {/* Fare Info */}
       <div className={card}>
-        <h4 className="text-xs font-bold text-[#111827] mb-2">
+        <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2">
           {L(lang, { ko: '💰 요금 안내', zh: '💰 费用说明', en: '💰 Fare Info' })}
         </h4>
         <div className="space-y-1 text-xs text-[#374151]">
@@ -547,7 +547,7 @@ function TaxiGuide({ lang, card }) {
 
       {/* How to catch */}
       <div className={card}>
-        <h4 className="text-xs font-bold text-[#111827] mb-2">
+        <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2">
           {L(lang, { ko: '🙋 택시 잡는 법', zh: '🙋 怎么打车', en: '🙋 How to Catch a Taxi' })}
         </h4>
         <div className="space-y-1 text-xs text-[#374151]">
@@ -559,16 +559,16 @@ function TaxiGuide({ lang, card }) {
 
       {/* Hotlines */}
       <div className={card}>
-        <h4 className="text-xs font-bold text-[#111827] mb-2">
+        <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2">
           {L(lang, { ko: '📞 전화번호 (바로 전화 가능)', zh: '📞 电话号码（可直接拨打）', en: '📞 Hotlines (tap to call)' })}
         </h4>
         <div className="space-y-2">
           {TAXI_HOTLINES.map((h, i) => (
-            <a key={i} href={`tel:${h.tel}`} className="flex items-center gap-2 p-2 bg-gray-50 rounded-[6px] active:bg-gray-100">
+            <a key={i} href={`tel:${h.tel}`} className="flex items-center gap-2 p-2 bg-[var(--y2k-bg)] rounded-[20px] active:bg-[var(--y2k-surface)]">
               <Phone size={14} className="text-green-600 shrink-0" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-[#111827]">{L(lang, h.name)}</p>
-                <p className="text-[10px] text-[#6B7280]">{L(lang, h.desc)}</p>
+                <p className="text-xs font-semibold text-[var(--y2k-text)]">{L(lang, h.name)}</p>
+                <p className="text-[10px] text-[var(--y2k-text-sub)]">{L(lang, h.desc)}</p>
               </div>
               <span className="text-xs font-bold text-green-600 shrink-0">{h.tel}</span>
             </a>
@@ -578,21 +578,21 @@ function TaxiGuide({ lang, card }) {
 
       {/* Show Driver Card - Phrases */}
       <div className={card}>
-        <h4 className="text-xs font-bold text-[#111827] mb-2 flex items-center gap-1.5">
+        <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2 flex items-center gap-1.5">
           <MessageSquare size={14} />
           {L(lang, { ko: '🗣️ 기사에게 보여주세요', zh: '🗣️ 给司机看', en: '🗣️ Show the Driver' })}
         </h4>
         <div className="space-y-1.5">
           {SHOW_DRIVER_PHRASES.map((p, i) => (
             <button key={i} onClick={() => copyText(p.korean, i)}
-              className="w-full flex items-center gap-2 p-2 bg-gray-50 rounded-[6px] text-left active:bg-gray-100">
+              className="w-full flex items-center gap-2 p-2 bg-[var(--y2k-bg)] rounded-[20px] text-left active:bg-[var(--y2k-surface)]">
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] text-[#9CA3AF]">{L(lang, p.situation)}</p>
-                <p className="text-base font-bold text-[#111827]">{p.korean}</p>
+                <p className="text-[10px] text-[var(--y2k-text-sub)]">{L(lang, p.situation)}</p>
+                <p className="text-base font-bold text-[var(--y2k-text)]">{p.korean}</p>
               </div>
               {copiedIdx === i
                 ? <Check size={14} className="text-green-500 shrink-0" />
-                : <Copy size={14} className="text-[#9CA3AF] shrink-0" />}
+                : <Copy size={14} className="text-[var(--y2k-text-sub)] shrink-0" />}
             </button>
           ))}
         </div>
@@ -600,10 +600,10 @@ function TaxiGuide({ lang, card }) {
 
       {/* Destination Card Generator */}
       <div className={card}>
-        <h4 className="text-xs font-bold text-[#111827] mb-2">
+        <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2">
           {L(lang, { ko: '📍 목적지 카드 만들기', zh: '📍 生成目的地卡片', en: '📍 Make Destination Card' })}
         </h4>
-        <p className="text-[10px] text-[#6B7280] mb-2">
+        <p className="text-[10px] text-[var(--y2k-text-sub)] mb-2">
           {L(lang, {
             ko: '목적지를 입력하면 큰 글씨 카드를 만들어 기사에게 보여줄 수 있어요',
             zh: '输入目的地，生成大字卡片给司机看',
@@ -616,12 +616,12 @@ function TaxiGuide({ lang, card }) {
             value={driverCardDest}
             onChange={e => setDriverCardDest(e.target.value)}
             placeholder={L(lang, { ko: '목적지 입력 (한국어/중국어/영어)', zh: '输入目的地（韩语/中文/英语）', en: 'Enter destination' })}
-            className="flex-1 text-sm border border-gray-200 rounded-[6px] px-3 py-2 focus:outline-none focus:border-[#111827]"
+            className="flex-1 text-sm border border-[var(--y2k-border)] rounded-[20px] px-3 py-2 focus:outline-none focus:outline-none focus:ring-2 focus:ring-[var(--y2k-lavender)]/30 focus:border-[var(--y2k-lavender)]"
           />
           <button
             onClick={() => setShowDriverCard(true)}
             disabled={!driverCardDest.trim()}
-            className="px-3 py-2 bg-[#111827] text-white text-xs font-bold rounded-[6px] disabled:opacity-30"
+            className="px-3 py-2 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-xs font-bold rounded-[20px] disabled:opacity-30"
           >
             {L(lang, { ko: '생성', zh: '生成', en: 'Create' })}
           </button>
@@ -629,19 +629,19 @@ function TaxiGuide({ lang, card }) {
 
         {/* Driver Card Display */}
         {showDriverCard && driverCardDest.trim() && (
-          <div className="bg-yellow-50 border-2 border-yellow-400 rounded-[6px] p-6 text-center">
+          <div className="bg-yellow-50 border-2 border-yellow-400 rounded-[20px] p-6 text-center">
             <p className="text-[10px] text-yellow-600 mb-2">
               {L(lang, { ko: '👇 이 화면을 기사에게 보여주세요', zh: '👇 请把这个画面给司机看', en: '👇 Show this screen to the driver' })}
             </p>
-            <p className="text-2xl font-black text-[#111827] mb-2">{driverCardDest}</p>
-            <p className="text-lg font-bold text-[#111827]">여기로 가주세요</p>
-            <p className="text-sm text-[#6B7280]">请去这里 / Please go here</p>
+            <p className="text-2xl font-black text-[var(--y2k-text)] mb-2">{driverCardDest}</p>
+            <p className="text-lg font-bold text-[var(--y2k-text)]">여기로 가주세요</p>
+            <p className="text-sm text-[var(--y2k-text-sub)]">请去这里 / Please go here</p>
           </div>
         )}
       </div>
 
       {/* Safety Tips */}
-      <div className="bg-red-50 border border-red-200 rounded-[6px] p-3">
+      <div className="bg-red-50 border border-red-200 rounded-[20px] p-3">
         <h4 className="text-xs font-bold text-red-700 mb-1.5">
           {L(lang, { ko: '⚠️ 안전 수칙', zh: '⚠️ 安全须知', en: '⚠️ Safety Tips' })}
         </h4>
@@ -693,7 +693,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
     return (
       <Suspense fallback={
         <div className="flex items-center justify-center p-8">
-          <div className="w-8 h-8 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-[var(--y2k-border)] rounded-full border-t-[var(--y2k-pink)] animate-spin"></div>
         </div>
       }>
         <TravelDiary lang={lang} onBack={() => setShowDiary(false)} />
@@ -722,7 +722,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
     return (
       <Suspense fallback={
         <div className="flex items-center justify-center p-8">
-          <div className="w-8 h-8 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin"></div>
+          <div className="w-8 h-8 border-4 border-[var(--y2k-border)] rounded-full border-t-[var(--y2k-pink)] animate-spin"></div>
         </div>
       }>
         <CityPage
@@ -740,7 +740,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
   return (
     <div className="space-y-4">
       {/* Travel Diary button */}
-      <div className="bg-gradient-to-r from-[#111827] to-[#374151] rounded-[6px] p-4 text-white">
+      <div className="bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] rounded-[20px] p-4 text-white shadow-[0_4px_20px_rgba(255,133,179,0.2)]">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-lg mb-1">
@@ -756,7 +756,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
           </div>
           <button 
             onClick={() => setShowDiary(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-[6px] font-semibold hover:bg-opacity-30 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-[20px] font-semibold hover:bg-opacity-30 transition-all"
           >
             <BookOpen size={16} />
             {L(lang, { ko: '열기', zh: '打开', en: 'Open' })}
@@ -767,7 +767,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
       {/* Section nav removed — discover is now the default view */}
 
       {/* TourAPI spots — default view */}
-      <Suspense fallback={<div className="flex justify-center py-8"><div className="w-8 h-8 border-4 border-gray-200 rounded-full border-t-blue-500 animate-spin" /></div>}>
+      <Suspense fallback={<div className="flex justify-center py-8"><div className="w-8 h-8 border-4 border-[var(--y2k-border)] rounded-full border-t-[var(--y2k-pink)] animate-spin" /></div>}>
         <TourSpotSection
           lang={lang}
           darkMode={false}
@@ -803,7 +803,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
         <div className="space-y-4">
           {/* 출입국 가이드 4종 */}
           <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--y2k-text-sub)] mb-3">
               {L(lang, { ko: '출입국 필수 가이드', zh: '出入境必读指南', en: 'Essential Guides' })}
             </h3>
             <div className="grid grid-cols-2 gap-2">
@@ -814,10 +814,10 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                 { id: 'duty-free', emoji: '🧳', name: { ko: '면세 & 액체류', zh: '免税 & 液体', en: 'Duty-Free & Liquids' }, desc: { ko: '압수 방지 체크리스트', zh: '防没收清单', en: 'Avoid confiscation' } },
               ].map(g => (
                 <button key={g.id} onClick={() => setActiveGuide(g.id)}
-                  className="bg-white rounded-[6px] p-4 border border-[#E5E7EB] text-left transition-all duration-200 active:scale-[0.98] hover:border-[#D1D5DB]">
+                  className="bg-white rounded-[20px] p-4 border border-[var(--y2k-border)] text-left transition-all duration-200 active:scale-95 hover:border-[#D1D5DB]">
                   <span className="text-2xl mb-2 block">{g.emoji}</span>
-                  <p className="text-sm font-bold text-[#111827] mb-0.5">{L(lang, g.name)}</p>
-                  <p className="text-[11px] text-[#6B7280]">{L(lang, g.desc)}</p>
+                  <p className="text-sm font-bold text-[var(--y2k-text)] mb-0.5">{L(lang, g.name)}</p>
+                  <p className="text-[11px] text-[var(--y2k-text-sub)]">{L(lang, g.desc)}</p>
                 </button>
               ))}
             </div>
@@ -826,15 +826,15 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
           {/* Airports */}
           {AIRPORTS.map(ap => (
             <div key={ap.code} className={card}>
-              <h3 className="text-sm font-bold text-[#111827] mb-1">{L(lang, ap.name)} ({ap.code})</h3>
-              <p className="text-xs text-[#9CA3AF] mb-3">{lang === 'ko' ? '터미널' : lang === 'zh' ? '航站楼' : 'Terminals'}: {ap.terminals}</p>
+              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-1">{L(lang, ap.name)} ({ap.code})</h3>
+              <p className="text-xs text-[var(--y2k-text-sub)] mb-3">{lang === 'ko' ? '터미널' : lang === 'zh' ? '航站楼' : 'Terminals'}: {ap.terminals}</p>
               <div className="space-y-2">
                 {ap.toCity.map((t, i) => (
                   <div key={i} className="flex items-center gap-2 text-xs">
-                    <Navigation size={12} className="text-[#9CA3AF] shrink-0" />
-                    <span className="font-semibold text-[#111827]">{L(lang, t.method)}</span>
-                    <span className="text-[#6B7280]">{t.time}</span>
-                    <span className="font-bold text-[#111827] ml-auto">{t.price}</span>
+                    <Navigation size={12} className="text-[var(--y2k-text-sub)] shrink-0" />
+                    <span className="font-semibold text-[var(--y2k-text)]">{L(lang, t.method)}</span>
+                    <span className="text-[var(--y2k-text-sub)]">{t.time}</span>
+                    <span className="font-bold text-[var(--y2k-text)] ml-auto">{t.price}</span>
                   </div>
                 ))}
               </div>
@@ -842,17 +842,17 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
           ))}
 
           {/* ✈️ 실시간 항공편 조회 */}
-          <Suspense fallback={<div className="flex justify-center py-4"><div className="w-6 h-6 border-2 border-gray-200 rounded-full border-t-[#111827] animate-spin" /></div>}>
+          <Suspense fallback={<div className="flex justify-center py-4"><div className="w-6 h-6 border-2 border-[var(--y2k-border)] rounded-full border-t-[var(--y2k-pink)] animate-spin" /></div>}>
             <FlightSearchCard lang={lang} />
           </Suspense>
 
           {/* Immigration steps */}
           <div className={card}>
-            <h3 className="text-sm font-bold text-[#111827] mb-3">{L(lang, { ko: '입국 심사 절차', zh: '入境审查流程', en: 'Immigration Process' })}</h3>
+            <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-3">{L(lang, { ko: '입국 심사 절차', zh: '入境审查流程', en: 'Immigration Process' })}</h3>
             <div className="space-y-2">
               {IMMIGRATION_STEPS.map((step, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="text-xs font-bold text-white bg-[#111827] w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                  <span className="text-xs font-bold text-white bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
                   <p className="text-xs text-[#374151]">{L(lang, step)}</p>
                 </div>
               ))}
@@ -861,15 +861,15 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
 
           {/* Customs */}
           <div className={card}>
-            <h3 className="text-sm font-bold text-[#111827] mb-3 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-3 flex items-center gap-2">
               <Shield size={14} />
               {L(lang, { ko: '면세 한도', zh: '免税限额', en: 'Duty-Free Limits' })}
             </h3>
             <div className="space-y-2">
               {CUSTOMS.map((c, i) => (
                 <div key={i} className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#111827]">{L(lang, c.item)}</span>
-                  <span className="text-[#6B7280]">{L(lang, c.limit)}</span>
+                  <span className="font-semibold text-[var(--y2k-text)]">{L(lang, c.item)}</span>
+                  <span className="text-[var(--y2k-text-sub)]">{L(lang, c.limit)}</span>
                 </div>
               ))}
             </div>
@@ -879,14 +879,14 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
           <div className={card}>
             {/* 섹션 헤더 */}
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-8 h-8 rounded-[6px] bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-[20px] bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
                 <Smartphone size={16} className="text-white" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#111827]">
+                <h3 className="text-sm font-bold text-[var(--y2k-text)]">
                   {L(lang, { ko: 'SIM카드 / eSIM 구매 가이드', zh: '手机卡/eSIM购买指南', en: 'SIM Card / eSIM Guide' })}
                 </h3>
-                <p className="text-[10px] text-[#9CA3AF]">
+                <p className="text-[10px] text-[var(--y2k-text-sub)]">
                   {L(lang, { ko: '한국 도착 후 가장 먼저 필요한 것 = 인터넷!', zh: '到韩国后最先需要的 = 上网！', en: 'First thing you need in Korea = Internet!' })}
                 </p>
               </div>
@@ -897,7 +897,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
               {SIM_OPTIONS.map(opt => {
                 const Icon = opt.icon
                 return (
-                  <div key={opt.id} className={`relative rounded-[6px] border p-3 ${opt.recommended ? 'border-emerald-300 bg-emerald-50/50' : 'border-[#E5E7EB] bg-[#FAFAFA]'}`}>
+                  <div key={opt.id} className={`relative rounded-[20px] border p-3 ${opt.recommended ? 'border-emerald-300 bg-emerald-50/50' : 'border-[var(--y2k-border)] bg-[var(--y2k-surface)]'}`}>
                     {opt.recommended && (
                       <div className="absolute -top-2.5 right-3 px-2 py-0.5 bg-emerald-500 text-white text-[9px] font-bold rounded-full flex items-center gap-0.5">
                         <ThumbsUp size={9} />
@@ -905,15 +905,15 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                       </div>
                     )}
                     <div className="flex items-start gap-2.5">
-                      <div className="w-9 h-9 rounded-[6px] flex items-center justify-center shrink-0" style={{ backgroundColor: opt.color + '15' }}>
+                      <div className="w-9 h-9 rounded-[20px] flex items-center justify-center shrink-0" style={{ backgroundColor: opt.color + '15' }}>
                         <Icon size={18} style={{ color: opt.color }} />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-0.5">
-                          <h4 className="text-xs font-bold text-[#111827]">{L(lang, opt.name)}</h4>
+                          <h4 className="text-xs font-bold text-[var(--y2k-text)]">{L(lang, opt.name)}</h4>
                           <span className="text-xs font-bold" style={{ color: opt.color }}>{opt.price}</span>
                         </div>
-                        <p className="text-[10px] text-[#6B7280] mb-1">
+                        <p className="text-[10px] text-[var(--y2k-text-sub)] mb-1">
                           <MapPin size={10} className="inline mr-0.5 -mt-0.5" />
                           {L(lang, opt.where)}
                         </p>
@@ -927,15 +927,15 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
 
             {/* 추천 eSIM 서비스 */}
             <div className="mt-4">
-              <h4 className="text-xs font-bold text-[#111827] mb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2 flex items-center gap-1.5">
                 <Signal size={13} className="text-emerald-500" />
                 {L(lang, { ko: '추천 eSIM 서비스', zh: '推荐eSIM服务', en: 'Recommended eSIM Services' })}
               </h4>
               <div className="grid grid-cols-3 gap-2">
                 {ESIM_SERVICES.map(svc => (
-                  <div key={svc.name} className="bg-[#F3F4F6] rounded-[6px] p-2.5 text-center">
-                    <p className="text-xs font-bold text-[#111827] mb-0.5">{svc.name}</p>
-                    <p className="text-[9px] text-[#6B7280] leading-tight">{L(lang, svc.desc)}</p>
+                  <div key={svc.name} className="bg-[var(--y2k-bg)] rounded-[20px] p-2.5 text-center">
+                    <p className="text-xs font-bold text-[var(--y2k-text)] mb-0.5">{svc.name}</p>
+                    <p className="text-[9px] text-[var(--y2k-text-sub)] leading-tight">{L(lang, svc.desc)}</p>
                   </div>
                 ))}
               </div>
@@ -943,12 +943,12 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
 
             {/* 주의사항 */}
             <div className="mt-4 space-y-1.5">
-              <h4 className="text-xs font-bold text-[#111827] mb-1 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-1 flex items-center gap-1.5">
                 <AlertTriangle size={13} className="text-amber-500" />
                 {L(lang, { ko: '꼭 알아두세요', zh: '必须知道', en: 'Important Notes' })}
               </h4>
               {SIM_TIPS.map((tip, i) => (
-                <div key={i} className={`flex items-start gap-2 rounded-[6px] px-3 py-2 ${tip.type === 'warn' ? 'bg-amber-50 border border-amber-200' : 'bg-blue-50 border border-blue-200'}`}>
+                <div key={i} className={`flex items-start gap-2 rounded-[20px] px-3 py-2 ${tip.type === 'warn' ? 'bg-amber-50 border border-amber-200' : 'bg-blue-50 border border-blue-200'}`}>
                   {tip.type === 'warn'
                     ? <CircleAlert size={13} className="text-amber-500 shrink-0 mt-0.5" />
                     : <CircleCheck size={13} className="text-blue-500 shrink-0 mt-0.5" />
@@ -965,21 +965,21 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
           <div className={card}>
             {/* 섹션 헤더 */}
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-8 h-8 rounded-[6px] bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-[20px] bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
                 <FileText size={16} className="text-white" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#111827]">
+                <h3 className="text-sm font-bold text-[var(--y2k-text)]">
                   {L(lang, { ko: '입국카드 작성법', zh: '入境卡填写指南', en: 'Arrival Card Guide' })}
                 </h3>
-                <p className="text-[10px] text-[#9CA3AF]">
+                <p className="text-[10px] text-[var(--y2k-text-sub)]">
                   {L(lang, { ko: '기내에서 나눠주는 입국카드를 미리 작성하세요', zh: '请在飞机上提前填写入境卡', en: 'Fill out the arrival card on the plane' })}
                 </p>
               </div>
             </div>
 
             {/* 핵심 규칙 배너 */}
-            <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-[6px] px-3 py-2 mb-4">
+            <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-[20px] px-3 py-2 mb-4">
               <PenLine size={14} className="text-amber-600 shrink-0" />
               <p className="text-[11px] text-amber-700 font-medium">
                 {L(lang, {
@@ -991,7 +991,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* ─── 입국카드 시각 재현 ─── */}
-            <div className="bg-gradient-to-b from-[#F0F4FF] to-[#F8FAFC] border-2 border-[#B8C9E8] rounded-[6px] overflow-hidden ">
+            <div className="bg-gradient-to-b from-[#F0F4FF] to-[#F8FAFC] border-2 border-[#B8C9E8] rounded-[20px] overflow-hidden ">
               {/* 카드 상단 헤더 — 공식 카드 스타일 */}
               <div className="bg-gradient-to-r from-[#1E3A5F] to-[#2563EB] px-4 py-3 text-center">
                 <p className="text-[9px] font-bold text-blue-200 tracking-[0.2em]">REPUBLIC OF KOREA</p>
@@ -1023,7 +1023,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                           </span>
                         </div>
                         {/* 힌트 */}
-                        <p className="text-[9px] text-[#9CA3AF] mt-0.5 leading-tight pl-0.5">
+                        <p className="text-[9px] text-[var(--y2k-text-sub)] mt-0.5 leading-tight pl-0.5">
                           {L(lang, field.hint)}
                         </p>
                       </div>
@@ -1034,7 +1034,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* ─── 자주 하는 실수 TOP 5 ─── */}
-            <div className="mt-4 bg-red-50 border border-red-200 rounded-[6px] p-3">
+            <div className="mt-4 bg-red-50 border border-red-200 rounded-[20px] p-3">
               <h4 className="text-[11px] font-bold text-red-700 mb-2 flex items-center gap-1.5">
                 <CircleAlert size={13} className="text-red-500" />
                 {L(lang, { ko: '자주 하는 실수 TOP 5', zh: '常见错误 TOP 5', en: 'Top 5 Common Mistakes' })}
@@ -1050,7 +1050,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* ─── 작성 팁 ─── */}
-            <div className="mt-3 bg-blue-50 border border-blue-200 rounded-[6px] p-3">
+            <div className="mt-3 bg-blue-50 border border-blue-200 rounded-[20px] p-3">
               <h4 className="text-[11px] font-bold text-blue-700 mb-2 flex items-center gap-1.5">
                 <Info size={13} className="text-blue-500" />
                 {L(lang, { ko: '작성 팁', zh: '填写提示', en: 'Tips' })}
@@ -1066,11 +1066,11 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
 
           {/* 🐾 반려동물 한국 반입 가이드 */}
           <div className={card}>
-            <h3 className="text-sm font-bold text-[#111827] mb-1 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-1 flex items-center gap-2">
               <PawPrint size={16} />
               {L(lang, { ko: '반려동물 한국 반입 가이드', zh: '携带宠物入境韩国完全指南', en: 'Pet Import Complete Guide' })}
             </h3>
-            <p className="text-[10px] text-[#9CA3AF] mb-4">
+            <p className="text-[10px] text-[var(--y2k-text-sub)] mb-4">
               {L(lang, { ko: '강아지·고양이를 데리고 한국에 입국하는 전체 절차', zh: '带狗狗·猫咪入境韩国的完整流程', en: 'Full process for bringing dogs/cats to Korea' })}
             </p>
 
@@ -1093,9 +1093,9 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                   >
                     <div>
                       <span className="text-xs font-bold" style={{ color: step.color }}>{L(lang, step.phase)}</span>
-                      {step.sub && <span className="text-[10px] text-[#9CA3AF] ml-1">{L(lang, step.sub)}</span>}
+                      {step.sub && <span className="text-[10px] text-[var(--y2k-text-sub)] ml-1">{L(lang, step.sub)}</span>}
                     </div>
-                    <ChevronDown size={14} className="text-[#9CA3AF] shrink-0 transition-transform" style={{ transform: expandedPetStep === si ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                    <ChevronDown size={14} className="text-[var(--y2k-text-sub)] shrink-0 transition-transform" style={{ transform: expandedPetStep === si ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                   </button>
                   {/* 펼쳐진 항목 */}
                   {expandedPetStep === si && (
@@ -1113,15 +1113,15 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* ✈️ 항공사 기내 반입 정책 */}
-            <div className="mt-4 pt-3 border-t border-[#E5E7EB]">
-              <h4 className="text-xs font-bold text-[#111827] mb-2 flex items-center gap-1.5">
+            <div className="mt-4 pt-3 border-t border-[var(--y2k-border)]">
+              <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2 flex items-center gap-1.5">
                 <Plane size={13} />
                 {L(lang, { ko: '항공사 기내 반입 정책', zh: '航空公司客舱携带政策', en: 'Airline Cabin Pet Policy' })}
               </h4>
-              <div className="overflow-hidden rounded-[6px] border border-[#E5E7EB]">
+              <div className="overflow-hidden rounded-[20px] border border-[var(--y2k-border)]">
                 <table className="w-full text-[10px]">
                   <thead>
-                    <tr className="bg-[#F9FAFB] text-[#6B7280]">
+                    <tr className="bg-[var(--y2k-bg)] text-[var(--y2k-text-sub)]">
                       <th className="text-left py-1.5 px-2 font-medium">{L(lang, { ko: '항공사', zh: '航空公司', en: 'Airline' })}</th>
                       <th className="text-center py-1.5 px-1 font-medium">{L(lang, { ko: '기내', zh: '客舱', en: 'Cabin' })}</th>
                       <th className="text-center py-1.5 px-1 font-medium">{L(lang, { ko: '무게', zh: '重量', en: 'Weight' })}</th>
@@ -1130,11 +1130,11 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                   </thead>
                   <tbody>
                     {PET_AIRLINE_TABLE.map((row, i) => (
-                      <tr key={i} className="border-t border-[#E5E7EB]">
-                        <td className="py-1.5 px-2 font-semibold text-[#111827]">{L(lang, row.airline)}</td>
+                      <tr key={i} className="border-t border-[var(--y2k-border)]">
+                        <td className="py-1.5 px-2 font-semibold text-[var(--y2k-text)]">{L(lang, row.airline)}</td>
                         <td className="py-1.5 px-1 text-center">{row.cabin ? '✅' : '❌'}</td>
-                        <td className="py-1.5 px-1 text-center text-[#6B7280]">{row.weight}</td>
-                        <td className="py-1.5 px-2 text-[#6B7280]">{L(lang, row.note)}</td>
+                        <td className="py-1.5 px-1 text-center text-[var(--y2k-text-sub)]">{row.weight}</td>
+                        <td className="py-1.5 px-2 text-[var(--y2k-text-sub)]">{L(lang, row.note)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1147,15 +1147,15 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* 🚆 한국 내 이동 팁 */}
-            <div className="mt-4 pt-3 border-t border-[#E5E7EB]">
-              <h4 className="text-xs font-bold text-[#111827] mb-2 flex items-center gap-1.5">
+            <div className="mt-4 pt-3 border-t border-[var(--y2k-border)]">
+              <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2 flex items-center gap-1.5">
                 <Train size={13} />
                 {L(lang, { ko: '한국 내 이동 팁', zh: '韩国境内出行Tips', en: 'Korea Travel Tips' })}
               </h4>
               <div className="space-y-1.5">
                 {PET_KOREA_TIPS.map((tip, i) => (
                   <div key={i} className="flex items-start gap-1.5 text-xs text-[#374151]">
-                    <span className="text-[#9CA3AF] mt-0.5 shrink-0">•</span>
+                    <span className="text-[var(--y2k-text-sub)] mt-0.5 shrink-0">•</span>
                     <span>{L(lang, tip)}</span>
                   </div>
                 ))}
@@ -1163,15 +1163,15 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* 💰 비용 예상 */}
-            <div className="mt-4 pt-3 border-t border-[#E5E7EB]">
-              <h4 className="text-xs font-bold text-[#111827] mb-2 flex items-center gap-1.5">
+            <div className="mt-4 pt-3 border-t border-[var(--y2k-border)]">
+              <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2 flex items-center gap-1.5">
                 <DollarSign size={13} />
                 {L(lang, { ko: '비용 예상', zh: '费用估算', en: 'Cost Estimates' })}
               </h4>
-              <div className="overflow-hidden rounded-[6px] border border-[#E5E7EB]">
+              <div className="overflow-hidden rounded-[20px] border border-[var(--y2k-border)]">
                 <table className="w-full text-[10px]">
                   <thead>
-                    <tr className="bg-[#F9FAFB] text-[#6B7280]">
+                    <tr className="bg-[var(--y2k-bg)] text-[var(--y2k-text-sub)]">
                       <th className="text-left py-1.5 px-2 font-medium">{L(lang, { ko: '항목', zh: '项目', en: 'Item' })}</th>
                       <th className="text-right py-1.5 px-2 font-medium">CNY</th>
                       <th className="text-right py-1.5 px-2 font-medium">KRW</th>
@@ -1179,10 +1179,10 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                   </thead>
                   <tbody>
                     {PET_COSTS.map((row, i) => (
-                      <tr key={i} className="border-t border-[#E5E7EB]">
-                        <td className="py-1.5 px-2 text-[#111827] font-medium">{L(lang, row.item)}</td>
-                        <td className="py-1.5 px-2 text-right text-[#6B7280]">{row.cny}</td>
-                        <td className="py-1.5 px-2 text-right text-[#6B7280]">{row.krw}</td>
+                      <tr key={i} className="border-t border-[var(--y2k-border)]">
+                        <td className="py-1.5 px-2 text-[var(--y2k-text)] font-medium">{L(lang, row.item)}</td>
+                        <td className="py-1.5 px-2 text-right text-[var(--y2k-text-sub)]">{row.cny}</td>
+                        <td className="py-1.5 px-2 text-right text-[var(--y2k-text-sub)]">{row.krw}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1191,13 +1191,13 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* 📞 핫라인 */}
-            <div className="mt-4 pt-3 border-t border-[#E5E7EB] space-y-2">
+            <div className="mt-4 pt-3 border-t border-[var(--y2k-border)] space-y-2">
               {PET_HOTLINES.map((h, i) => (
-                <a key={i} href={`tel:${h.tel}`} className="flex items-center gap-2 p-2.5 bg-[#F9FAFB] rounded-[6px] active:bg-gray-100">
+                <a key={i} href={`tel:${h.tel}`} className="flex items-center gap-2 p-2.5 bg-[var(--y2k-bg)] rounded-[20px] active:bg-[var(--y2k-surface)]">
                   <Phone size={14} className="text-green-600 shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-[#111827]">{L(lang, h.name)}</p>
-                    <p className="text-[10px] text-[#6B7280]">{L(lang, h.desc)}</p>
+                    <p className="text-xs font-semibold text-[var(--y2k-text)]">{L(lang, h.name)}</p>
+                    <p className="text-[10px] text-[var(--y2k-text-sub)]">{L(lang, h.desc)}</p>
                   </div>
                   <span className="text-xs font-bold text-green-600 shrink-0">{h.tel}</span>
                 </a>
@@ -1205,8 +1205,8 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* ⚠️ 면책 + 출처 */}
-            <div className="mt-4 pt-3 border-t border-[#E5E7EB]">
-              <p className="text-[10px] text-[#9CA3AF] flex items-start gap-1">
+            <div className="mt-4 pt-3 border-t border-[var(--y2k-border)]">
+              <p className="text-[10px] text-[var(--y2k-text-sub)] flex items-start gap-1">
                 <AlertTriangle size={10} className="shrink-0 mt-0.5" />
                 {L(lang, { ko: '규정은 변경될 수 있습니다. 반드시 공식 사이트에서 최신 정보를 확인하세요.', zh: '规定可能会变更，请务必确认官方最新信息。', en: 'Regulations may change. Please check official sites for the latest info.' })}
               </p>
@@ -1230,7 +1230,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             <div
               key={city.id}
               onClick={() => setSelectedCity(city)}
-              className="rounded-[6px] overflow-hidden border border-[#E5E7EB] bg-white cursor-pointer transition-transform active:scale-[0.98]"
+              className="rounded-[20px] overflow-hidden border border-[var(--y2k-border)] bg-white cursor-pointer transition-transform active:scale-95"
             >
               <div className="relative h-[140px]">
                 <img
@@ -1242,7 +1242,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                 {city.comingSoon && (
-                  <span className="absolute top-2.5 right-2.5 text-[10px] px-2 py-0.5 bg-white/90 rounded-full font-semibold text-[#6B7280]">
+                  <span className="absolute top-2.5 right-2.5 text-[10px] px-2 py-0.5 bg-white/90 rounded-full font-semibold text-[var(--y2k-text-sub)]">
                     Coming Soon
                   </span>
                 )}
@@ -1273,14 +1273,14 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             const Icon = t.icon
             return (
               <div key={i} className={card}>
-                <h3 className="text-sm font-bold text-[#111827] mb-2 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2 flex items-center gap-2">
                   <Icon size={16} />
                   {typeof t.name === 'string' ? t.name : L(lang, t.name)}
                 </h3>
                 <div className="space-y-1.5">
                   {t.info.map((info, j) => (
                     <p key={j} className="text-xs text-[#374151] flex items-start gap-1.5">
-                      <span className="text-[#9CA3AF] mt-0.5 shrink-0">-</span>
+                      <span className="text-[var(--y2k-text-sub)] mt-0.5 shrink-0">-</span>
                       {L(lang, info)}
                     </p>
                   ))}
@@ -1298,11 +1298,11 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
         <div className="space-y-4">
           {ITINERARIES.map((it, i) => (
             <div key={i} className={card}>
-              <h3 className="text-sm font-bold text-[#111827] mb-3">{L(lang, it.name)}</h3>
+              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-3">{L(lang, it.name)}</h3>
               <div className="space-y-2">
                 {it.days.map(d => (
                   <div key={d.day} className="flex items-start gap-2">
-                    <span className="text-[10px] font-bold text-white bg-[#111827] w-7 h-5 rounded-full flex items-center justify-center shrink-0">D{d.day}</span>
+                    <span className="text-[10px] font-bold text-white bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] w-7 h-5 rounded-full flex items-center justify-center shrink-0">D{d.day}</span>
                     <p className="text-xs text-[#374151]">{L(lang, d.plan)}</p>
                   </div>
                 ))}
@@ -1323,8 +1323,8 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                 onClick={() => setSelectedCategory(cat.id)}
                 className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
                   selectedCategory === cat.id 
-                    ? 'bg-[#111827] text-white ' 
-                    : 'bg-[#FAFAF8] text-[#6B7280] hover:bg-[#F3F4F6] border border-[#E5E7EB]'
+                    ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white ' 
+                    : 'bg-[rgba(255,255,255,0.6)] backdrop-blur-sm text-[var(--y2k-text-sub)] hover:bg-[var(--y2k-bg)] border border-[var(--y2k-border)]'
                 }`}>
                 {L(lang, cat.name)}
               </button>
@@ -1337,8 +1337,8 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
               <div key={spot.id} className={`${card} hover: transition-all duration-200`}>
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <h3 className="text-sm font-bold text-[#111827] mb-1 leading-tight">{L(lang, spot.name)}</h3>
-                    <div className="flex items-center gap-1 text-xs text-[#6B7280] mb-2">
+                    <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-1 leading-tight">{L(lang, spot.name)}</h3>
+                    <div className="flex items-center gap-1 text-xs text-[var(--y2k-text-sub)] mb-2">
                       <MapPin size={12} className="shrink-0" />
                       <span>{L(lang, spot.location)}</span>
                     </div>
@@ -1348,7 +1348,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                     className={`p-1.5 rounded-full transition-all ${
                       favorites.includes(spot.id)
                         ? 'text-red-500 bg-red-50 hover:bg-red-100'
-                        : 'text-[#9CA3AF] hover:text-red-500 hover:bg-red-50'
+                        : 'text-[var(--y2k-text-sub)] hover:text-red-500 hover:bg-red-50'
                     }`}>
                     <Heart size={16} className={favorites.includes(spot.id) ? 'fill-current' : ''} />
                   </button>
@@ -1359,25 +1359,25 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
                 <div className="flex items-center justify-between">
                   <div className="flex flex-wrap gap-1.5">
                     {spot.tags.map((tag, i) => (
-                      <span key={i} className="text-[10px] px-2 py-0.5 bg-[#F3F4F6] rounded-full text-[#6B7280] font-medium">
+                      <span key={i} className="text-[10px] px-2 py-0.5 bg-[var(--y2k-bg)] rounded-full text-[var(--y2k-text-sub)] font-medium">
                         #{tag}
                       </span>
                     ))}
                   </div>
-                  <span className="text-xs font-bold text-[#111827]">{spot.price}</span>
+                  <span className="text-xs font-bold text-[var(--y2k-text)]">{spot.price}</span>
                 </div>
                 
                 {/* Rating/interest indicator */}
                 <div className="flex items-center gap-1 mt-3 pt-3 border-t border-[#F3F4F6]">
                   <Star size={12} className="text-amber-400 fill-current" />
-                  <span className="text-xs text-[#6B7280]">
+                  <span className="text-xs text-[var(--y2k-text-sub)]">
                     {L(lang, { 
                       ko: '추천도 높음', 
                       zh: '推荐度高', 
                       en: 'Highly recommended' 
                     })}
                   </span>
-                  <div className="ml-auto flex items-center gap-1 text-xs text-[#9CA3AF]">
+                  <div className="ml-auto flex items-center gap-1 text-xs text-[var(--y2k-text-sub)]">
                     <Users size={12} />
                     <span>{Math.floor(Math.random() * 50) + 20}</span>
                   </div>
@@ -1387,7 +1387,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
           </div>
 
           {filteredSpots.length === 0 && (
-            <div className="text-center py-8 text-[#9CA3AF]">
+            <div className="text-center py-8 text-[var(--y2k-text-sub)]">
               <Filter size={24} className="mx-auto mb-2 opacity-50" />
               <p className="text-sm">
                 {L(lang, { 
@@ -1401,8 +1401,8 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
 
           {/* Category info */}
           {selectedCategory !== 'all' && (
-            <div className="bg-[#FAFAF8] border border-[#E5E7EB] rounded-[6px] p-4">
-              <p className="text-xs text-[#6B7280] leading-relaxed">
+            <div className="bg-[rgba(255,255,255,0.6)] backdrop-blur-sm border border-[var(--y2k-border)] rounded-[20px] p-4">
+              <p className="text-xs text-[var(--y2k-text-sub)] leading-relaxed">
                 {selectedCategory === 'cafe' && L(lang, { 
                   ko: '서울의 독특한 카페 문화를 체험해보세요. 로스터리부터 독립서점 카페까지 다양한 공간이 기다립니다.', 
                   zh: '体验首尔独特的咖啡文化。从烘焙咖啡厅到独立书店咖啡厅，各种空间等待着您。', 
@@ -1436,16 +1436,16 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
         <div className="space-y-3">
           {/* 退税指南 Tax Refund */}
           <div className={card}>
-            <h3 className="text-sm font-bold text-[#111827] mb-1 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-1 flex items-center gap-2">
               <Receipt size={16} className="text-[#059669]" />
               {L(lang, { ko: '세금환급 가이드', zh: '退税指南', en: 'Tax Refund Guide' })}
             </h3>
-            <p className="text-[10px] text-[#9CA3AF] mb-3">
+            <p className="text-[10px] text-[var(--y2k-text-sub)] mb-3">
               {L(lang, { ko: '외국인 관광객 부가세 환급 방법', zh: '外国游客增值税退税方法', en: 'VAT refund for foreign tourists' })}
             </p>
 
             {/* 退税条件 */}
-            <div className="bg-[#F0FDF4] rounded-[6px] p-3 mb-3">
+            <div className="bg-[#F0FDF4] rounded-[20px] p-3 mb-3">
               <h4 className="text-xs font-bold text-[#059669] mb-2 flex items-center gap-1">
                 <CircleCheck size={13} />
                 {L(lang, { ko: '환급 조건', zh: '退税条件', en: 'Eligibility' })}
@@ -1461,71 +1461,71 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             {/* 3가지 退税方式 — 아코디언 */}
             <div className="space-y-2 mb-3">
               {/* 即时退税 */}
-              <div className="border border-[#E5E7EB] rounded-[6px] overflow-hidden">
+              <div className="border border-[var(--y2k-border)] rounded-[20px] overflow-hidden">
                 <button className="w-full text-left flex items-center justify-between p-3" onClick={() => setTaxRefundOpen(taxRefundOpen === 'instant' ? null : 'instant')}>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-[#059669] flex items-center justify-center text-white text-[10px] font-bold">1</div>
                     <div>
-                      <span className="text-xs font-bold text-[#111827]">{L(lang, { ko: '즉시환급', zh: '即时退税', en: 'Instant Refund' })}</span>
+                      <span className="text-xs font-bold text-[var(--y2k-text)]">{L(lang, { ko: '즉시환급', zh: '即时退税', en: 'Instant Refund' })}</span>
                       <span className="text-[10px] text-[#059669] ml-1.5 font-semibold">{L(lang, { ko: '가장 편리!', zh: '最方便！', en: 'Easiest!' })}</span>
                     </div>
                   </div>
-                  <ChevronDown size={14} className="text-[#9CA3AF] transition-transform" style={{ transform: taxRefundOpen === 'instant' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                  <ChevronDown size={14} className="text-[var(--y2k-text-sub)] transition-transform" style={{ transform: taxRefundOpen === 'instant' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                 </button>
                 {taxRefundOpen === 'instant' && (
                   <div className="px-3 pb-3 space-y-1.5 text-xs text-[#374151]">
                     <p>📍 {L(lang, { ko: '매장 결제 시 바로 세금 차감', zh: '结账时直接扣除税款', en: 'Tax deducted at checkout' })}</p>
                     <p>💳 {L(lang, { ko: '여권 제시 → 세금 제외 금액만 결제', zh: '出示护照→只付扣税后的金额', en: 'Show passport → pay tax-excluded price' })}</p>
-                    <div className="bg-[#FEF3C7] rounded-[6px] p-2 mt-1">
+                    <div className="bg-[#FEF3C7] rounded-[20px] p-2 mt-1">
                       <p className="text-[10px] text-[#92400E]">⚠️ {L(lang, { ko: '한도: 1회 ₩500,000 / 연간 ₩2,500,000', zh: '限额：单次₩500,000 / 年度₩2,500,000', en: 'Limit: ₩500,000/time, ₩2,500,000/year' })}</p>
                     </div>
-                    <p className="text-[10px] text-[#6B7280]">💡 {L(lang, { ko: '올리브영, 다이소, 롯데마트 등 대부분 대형매장 가능', zh: 'Olive Young、大创、乐天超市等大部分大型商店可用', en: 'Available at Olive Young, Daiso, Lotte Mart, etc.' })}</p>
+                    <p className="text-[10px] text-[var(--y2k-text-sub)]">💡 {L(lang, { ko: '올리브영, 다이소, 롯데마트 등 대부분 대형매장 가능', zh: 'Olive Young、大创、乐天超市等大部分大型商店可用', en: 'Available at Olive Young, Daiso, Lotte Mart, etc.' })}</p>
                   </div>
                 )}
               </div>
 
               {/* 市内退税 */}
-              <div className="border border-[#E5E7EB] rounded-[6px] overflow-hidden">
+              <div className="border border-[var(--y2k-border)] rounded-[20px] overflow-hidden">
                 <button className="w-full text-left flex items-center justify-between p-3" onClick={() => setTaxRefundOpen(taxRefundOpen === 'downtown' ? null : 'downtown')}>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-[#2563EB] flex items-center justify-center text-white text-[10px] font-bold">2</div>
                     <div>
-                      <span className="text-xs font-bold text-[#111827]">{L(lang, { ko: '시내 환급', zh: '市内退税', en: 'Downtown Refund' })}</span>
+                      <span className="text-xs font-bold text-[var(--y2k-text)]">{L(lang, { ko: '시내 환급', zh: '市内退税', en: 'Downtown Refund' })}</span>
                     </div>
                   </div>
-                  <ChevronDown size={14} className="text-[#9CA3AF] transition-transform" style={{ transform: taxRefundOpen === 'downtown' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                  <ChevronDown size={14} className="text-[var(--y2k-text-sub)] transition-transform" style={{ transform: taxRefundOpen === 'downtown' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                 </button>
                 {taxRefundOpen === 'downtown' && (
                   <div className="px-3 pb-3 space-y-1.5 text-xs text-[#374151]">
                     <p>📍 {L(lang, { ko: '명동 등 시내 환급 카운터 방문', zh: '前往明洞等市内退税柜台', en: 'Visit downtown refund counters (e.g. Myeongdong)' })}</p>
                     <p>📄 {L(lang, { ko: '영수증 + 여권 제시 → 현금 즉시 환급', zh: '出示小票+护照→现金即时退还', en: 'Show receipt + passport → cash refund on the spot' })}</p>
-                    <p className="text-[10px] text-[#6B7280]">💡 {L(lang, { ko: '출국 시 세관 도장 확인 필요 (미확인 시 카드 청구)', zh: '出境时需海关盖章确认（未确认则信用卡扣款）', en: 'Must get customs stamp at departure (or card will be charged)' })}</p>
+                    <p className="text-[10px] text-[var(--y2k-text-sub)]">💡 {L(lang, { ko: '출국 시 세관 도장 확인 필요 (미확인 시 카드 청구)', zh: '出境时需海关盖章确认（未确认则信用卡扣款）', en: 'Must get customs stamp at departure (or card will be charged)' })}</p>
                   </div>
                 )}
               </div>
 
               {/* 机场退税 */}
-              <div className="border border-[#E5E7EB] rounded-[6px] overflow-hidden">
+              <div className="border border-[var(--y2k-border)] rounded-[20px] overflow-hidden">
                 <button className="w-full text-left flex items-center justify-between p-3" onClick={() => setTaxRefundOpen(taxRefundOpen === 'airport' ? null : 'airport')}>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-[#7C3AED] flex items-center justify-center text-white text-[10px] font-bold">3</div>
                     <div>
-                      <span className="text-xs font-bold text-[#111827]">{L(lang, { ko: '공항 환급', zh: '机场退税', en: 'Airport Refund' })}</span>
+                      <span className="text-xs font-bold text-[var(--y2k-text)]">{L(lang, { ko: '공항 환급', zh: '机场退税', en: 'Airport Refund' })}</span>
                       <span className="text-[10px] text-[#7C3AED] ml-1.5 font-semibold">{L(lang, { ko: '금액 무제한', zh: '金额无上限', en: 'No limit' })}</span>
                     </div>
                   </div>
-                  <ChevronDown size={14} className="text-[#9CA3AF] transition-transform" style={{ transform: taxRefundOpen === 'airport' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                  <ChevronDown size={14} className="text-[var(--y2k-text-sub)] transition-transform" style={{ transform: taxRefundOpen === 'airport' ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                 </button>
                 {taxRefundOpen === 'airport' && (
                   <div className="px-3 pb-3 space-y-1.5 text-xs text-[#374151]">
                     <p className="font-semibold">{L(lang, { ko: '📋 인천공항 환급 절차:', zh: '📋 仁川机场退税流程：', en: '📋 Incheon Airport refund process:' })}</p>
-                    <div className="bg-[#F3F4F6] rounded-[6px] p-2.5 space-y-1">
+                    <div className="bg-[var(--y2k-bg)] rounded-[20px] p-2.5 space-y-1">
                       <p>① {L(lang, { ko: '물품 + 영수증 준비', zh: '准备商品+小票', en: 'Prepare items + receipts' })}</p>
                       <p>② {L(lang, { ko: '3층 출국장 세관 신고대 → 도장 받기', zh: '3楼出境大厅海关申报台→盖章', en: '3F departure hall customs desk → get stamp' })}</p>
                       <p>③ {L(lang, { ko: '보안 검색 통과', zh: '过安检', en: 'Pass security check' })}</p>
                       <p>④ {L(lang, { ko: '면세구역 내 환급 카운터에서 수령', zh: '在免税区退税柜台领取', en: 'Collect at refund counter in duty-free zone' })}</p>
                     </div>
-                    <div className="bg-[#FEF2F2] rounded-[6px] p-2 mt-1">
+                    <div className="bg-[#FEF2F2] rounded-[20px] p-2 mt-1">
                       <p className="text-[10px] text-[#991B1B] font-semibold">🚨 {L(lang, { ko: '₩750,000 초과 시 세관 도장 필수!', zh: '超过₩750,000必须海关盖章！', en: 'Customs stamp required if over ₩750,000!' })}</p>
                       <p className="text-[10px] text-[#991B1B]">⚠️ {L(lang, { ko: '위탁 수하물 보내기 전에 도장 먼저!', zh: '托运行李前先盖章！', en: 'Get stamp BEFORE checking luggage!' })}</p>
                     </div>
@@ -1537,30 +1537,30 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
 
           {/* 免税限额 Duty-Free Allowance */}
           <div className={card}>
-            <h3 className="text-sm font-bold text-[#111827] mb-1 flex items-center gap-2">
+            <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-1 flex items-center gap-2">
               <BadgePercent size={16} className="text-[#2563EB]" />
               {L(lang, { ko: '면세 한도', zh: '免税限额', en: 'Duty-Free Allowance' })}
             </h3>
-            <p className="text-[10px] text-[#9CA3AF] mb-3">
+            <p className="text-[10px] text-[var(--y2k-text-sub)] mb-3">
               {L(lang, { ko: '입국 시 면세 반입 허용량', zh: '入境时免税携带限额', en: 'Duty-free limits when entering' })}
             </p>
 
             {/* 韩国入境 */}
             <div className="mb-3">
-              <h4 className="text-xs font-bold text-[#111827] mb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2 flex items-center gap-1.5">
                 🇰🇷 {L(lang, { ko: '한국 입국 면세 한도', zh: '韩国入境免税限额', en: 'Korea Entry Duty-Free Limits' })}
               </h4>
-              <div className="bg-[#F3F4F6] rounded-[6px] p-3 space-y-2">
+              <div className="bg-[var(--y2k-bg)] rounded-[20px] p-3 space-y-2">
                 <div className="flex justify-between text-xs">
-                  <span className="text-[#6B7280]">{L(lang, { ko: '기본 면세', zh: '基本免税额', en: 'Basic Allowance' })}</span>
-                  <span className="font-bold text-[#111827]">US$800</span>
+                  <span className="text-[var(--y2k-text-sub)]">{L(lang, { ko: '기본 면세', zh: '基本免税额', en: 'Basic Allowance' })}</span>
+                  <span className="font-bold text-[var(--y2k-text)]">US$800</span>
                 </div>
-                <div className="border-t border-[#E5E7EB] pt-2 space-y-1.5 text-xs text-[#374151]">
+                <div className="border-t border-[var(--y2k-border)] pt-2 space-y-1.5 text-xs text-[#374151]">
                   <p>🚬 {L(lang, { ko: '담배 200개비 (1보루)', zh: '香烟200支（1条）', en: 'Cigarettes: 200 sticks (1 carton)' })}</p>
                   <p>🍷 {L(lang, { ko: '주류 2병 (2L, US$400 이하)', zh: '酒类2瓶（2L，400美元以下）', en: 'Alcohol: 2 bottles (2L, under $400)' })}</p>
                   <p>💐 {L(lang, { ko: '향수 100ml', zh: '香水100ml', en: 'Perfume: 100ml' })}</p>
                 </div>
-                <div className="border-t border-[#E5E7EB] pt-2 space-y-1 text-[10px]">
+                <div className="border-t border-[var(--y2k-border)] pt-2 space-y-1 text-[10px]">
                   <p className="text-[#059669]">✅ {L(lang, { ko: '자진 신고 시 30% 세액 감면', zh: '主动申报可减免30%税款', en: '30% tax reduction for voluntary declaration' })}</p>
                   <p className="text-[#DC2626]">❌ {L(lang, { ko: '미신고 적발 시 40% 가산세 부과', zh: '未申报被查处加征40%税款', en: '40% penalty for undeclared items' })}</p>
                 </div>
@@ -1569,15 +1569,15 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
 
             {/* 中国回国 */}
             <div className="mb-3">
-              <h4 className="text-xs font-bold text-[#111827] mb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold text-[var(--y2k-text)] mb-2 flex items-center gap-1.5">
                 🇨🇳 {L(lang, { ko: '중국 귀국 면세 한도', zh: '中国回国免税限额', en: 'China Return Duty-Free Limits' })}
               </h4>
-              <div className="bg-[#F3F4F6] rounded-[6px] p-3 space-y-2">
+              <div className="bg-[var(--y2k-bg)] rounded-[20px] p-3 space-y-2">
                 <div className="flex justify-between text-xs">
-                  <span className="text-[#6B7280]">{L(lang, { ko: '기본 면세', zh: '基本免税额', en: 'Basic Allowance' })}</span>
-                  <span className="font-bold text-[#111827]">¥5,000</span>
+                  <span className="text-[var(--y2k-text-sub)]">{L(lang, { ko: '기본 면세', zh: '基本免税额', en: 'Basic Allowance' })}</span>
+                  <span className="font-bold text-[var(--y2k-text)]">¥5,000</span>
                 </div>
-                <div className="border-t border-[#E5E7EB] pt-2 space-y-1.5 text-xs text-[#374151]">
+                <div className="border-t border-[var(--y2k-border)] pt-2 space-y-1.5 text-xs text-[#374151]">
                   <p>🍷 {L(lang, { ko: '주류 1.5L (알코올 12도 이상)', zh: '酒类1.5L（12度以上）', en: 'Alcohol: 1.5L (12%+ ABV)' })}</p>
                   <p>🚬 {L(lang, { ko: '담배 400개비 (2보루)', zh: '香烟400支（2条）', en: 'Cigarettes: 400 sticks (2 cartons)' })}</p>
                 </div>
@@ -1585,7 +1585,7 @@ export default function TravelTab({ lang, setTab, profile, adminView = false }) 
             </div>
 
             {/* 免责声明 */}
-            <div className="bg-[#FEF3C7] rounded-[6px] p-2.5 flex items-start gap-2">
+            <div className="bg-[#FEF3C7] rounded-[20px] p-2.5 flex items-start gap-2">
               <AlertTriangle size={14} className="text-[#D97706] shrink-0 mt-0.5" />
               <p className="text-[10px] text-[#92400E]">
                 {L(lang, {

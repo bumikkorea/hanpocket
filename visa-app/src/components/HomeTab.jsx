@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from 'react'
+import React, { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from 'react'
 import { ChevronLeft, ChevronRight, Plus, Pencil, Bell, BellRing } from 'lucide-react'
 import { AirplaneLanding, AirplaneTakeoff, MapPin as PhMapPin, ChatCircleText, CoffeeBean, FirstAidKit, Globe as PhGlobe, Clock, Note, Phone, ForkKnife, Building, PawPrint } from '@phosphor-icons/react'
 import { RECOMMENDED_COURSES } from '../data/recommendedCourses'
@@ -230,7 +230,7 @@ const SCENE_PHRASES = [
 // v2 (저장용 — 누드 각색): arrival #2E6FA3 / departure #2A7A54 / taxi #8A6E00 / food #B03030
 // v3 (저장용 — 누드 배경 + 로고색 #C4725A 텍스트 통일): arrival #D6E9F8 / departure #C8E6D8 / taxi #FAF0C0 / food #F8D0D0
 // v4 (현재 — 흰색 배경 + 검은 텍스트, 세금환급 카드와 통일)
-const LOGO_COLOR = '#C4725A'
+const LOGO_COLOR = 'var(--y2k-pink)'
 const QUICK_CARD_COLORS = {
   arrival:  { bg: '#FFFFFF', text: '#1A1A1A' },
   departure:{ bg: '#FFFFFF', text: '#1A1A1A' },
@@ -523,10 +523,10 @@ function HolidayCalendar({ lang }) {
           <button
             key={code}
             onClick={() => toggleCountry(code)}
-            className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-[6px] transition-all ${
+            className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-[20px] transition-all ${
               countries.includes(code)
                 ? 'bg-[#111827] text-white'
-                : 'bg-[#F3F4F6] text-[#9CA3AF]'
+                : 'bg-[var(--y2k-bg)] text-[#9CA3AF]'
             }`}
           >
             <span>{info.flag}</span>
@@ -542,7 +542,7 @@ function HolidayCalendar({ lang }) {
       {/* 월 네비게이션: ◀ 2026년 3월 ▶ */}
       <div className="flex items-center justify-between mb-3">
         <button onClick={() => setViewMonth(m => Math.max(0, m - 1))} disabled={viewMonth === 0}
-          className={`p-1 rounded-[6px] ${viewMonth === 0 ? 'text-[#D1D5DB]' : 'text-[#1A1A1A] hover:bg-[#F3F4F6] active:bg-[#E5E7EB]'}`}>
+          className={`p-1 rounded-[20px] ${viewMonth === 0 ? 'text-[var(--y2k-border)]' : 'text-[var(--y2k-text)] hover:bg-[var(--y2k-bg)] active:bg-[var(--y2k-border)]'}`}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
         <button onClick={() => setViewMonth(today.getMonth())}
@@ -551,13 +551,13 @@ function HolidayCalendar({ lang }) {
           {isCurrentMonth && <span className="ml-1 text-[10px] font-normal text-[#2D5A3D]">●</span>}
         </button>
         <button onClick={() => setViewMonth(m => Math.min(11, m + 1))} disabled={viewMonth === 11}
-          className={`p-1 rounded-[6px] ${viewMonth === 11 ? 'text-[#D1D5DB]' : 'text-[#1A1A1A] hover:bg-[#F3F4F6] active:bg-[#E5E7EB]'}`}>
+          className={`p-1 rounded-[20px] ${viewMonth === 11 ? 'text-[var(--y2k-border)]' : 'text-[var(--y2k-text)] hover:bg-[var(--y2k-bg)] active:bg-[var(--y2k-border)]'}`}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
 
       {/* 캘린더 */}
-      <div className="rounded-[6px] border border-[#E5E7EB] p-3 mb-3">
+      <div className="rounded-[20px] border border-[var(--y2k-border)] p-3 mb-3">
         <div className="grid grid-cols-7 gap-0 text-center mb-1">
           {dayLabels[lang]?.map((d, i) => (
             <span key={i} className={`text-[10px] font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-[#999]'}`}>{d}</span>
@@ -573,7 +573,7 @@ function HolidayCalendar({ lang }) {
             const dayOfWeek = (firstDay + d - 1) % 7
             return (
               <div key={i} className="flex flex-col items-center">
-                <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : hasHoliday ? 'text-red-500 font-bold' : hasSpecial ? 'text-blue-500 font-medium' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[#666]'}`}>
+                <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : hasHoliday ? 'text-red-500 font-bold' : hasSpecial ? 'text-blue-500 font-medium' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[var(--y2k-text-sub)]'}`}>
                   {d}
                 </span>
                 {hc && (
@@ -606,11 +606,11 @@ function HolidayCalendar({ lang }) {
             else if (startDiff === 0) dday = L(lang, { ko: '오늘', zh: '今天', en: 'Today' })
             else if (endDiff !== null && endDiff >= 0) dday = L(lang, { ko: '진행중', zh: '进行中', en: 'Ongoing' })
             return (
-              <div key={i} className={`flex items-center justify-between py-2 px-3 rounded-[6px] ${isSpecial ? 'bg-[#F0F4FF]' : 'bg-[#F9FAFB]'}`}>
+              <div key={i} className={`flex items-center justify-between py-2 px-3 rounded-[20px] ${isSpecial ? 'bg-[#F0F4FF]' : 'bg-[var(--y2k-bg)]'}`}>
                 <div className="flex items-center gap-2">
                   <span className="text-[13px]">{COUNTRY_LABELS[h.country]?.flag}</span>
                   <div>
-                    <span className={`text-sm ${isSpecial ? 'font-medium text-[#4B5563]' : 'font-semibold text-[#1A1A1A]'}`}>{L(lang, h.name)}</span>
+                    <span className={`text-sm ${isSpecial ? 'font-medium text-[#4B5563]' : 'font-semibold text-[var(--y2k-text)]'}`}>{L(lang, h.name)}</span>
                     <span className="text-xs text-[#999] ml-2">{dateLabel}</span>
                   </div>
                 </div>
@@ -656,12 +656,12 @@ function PromoBanner({ banners, lang }) {
   }
 
   return (
-    <div className="mb-8 relative">
+    <div className="mb-4 relative">
       <div ref={scrollRef} onScroll={handleScroll} className="flex overflow-x-auto snap-x snap-mandatory" style={{ scrollbarWidth: 'none' }}>
         {banners.map((b, i) => (
           <button key={i} onClick={b.onClick}
             className="snap-start flex-shrink-0 w-full px-4">
-            <div className="rounded-[6px] p-5 h-[140px] flex flex-col justify-end relative overflow-hidden "
+            <div className="rounded-[20px] p-5 h-[140px] flex flex-col justify-end relative overflow-hidden "
               style={{ backgroundColor: b.bg }}>
               <span className="text-3xl absolute top-4 right-4">{b.emoji}</span>
               <h3 className="text-white font-bold text-base leading-tight">{L(lang, b.title)}</h3>
@@ -680,7 +680,7 @@ function PromoBanner({ banners, lang }) {
 // ── 추천 섹션 컴포넌트 ──
 function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
   return (
-    <div className="mb-10 px-5">
+    <div className="mb-5 px-5">
       <div className="flex items-center justify-between mb-1">
         <h2 className="typo-title">{L(lang, title)}</h2>
         {onViewAll && (
@@ -692,8 +692,8 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
       <p className="typo-caption mb-4">{L(lang, subtitle)}</p>
       <div className="grid grid-cols-2 gap-3">
         {items.map((item, i) => (
-          <button key={i} onClick={item.onClick} className="text-left active:scale-[0.97] transition-transform">
-            <div className="aspect-[3/2] rounded-[14px] overflow-hidden mb-2.5 bg-[#F3F4F6]" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+          <button key={i} onClick={item.onClick} className="text-left active:scale-95 transition-transform">
+            <div className="aspect-[3/2] rounded-[14px] overflow-hidden mb-2.5 bg-[var(--y2k-bg)]" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
               {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />}
             </div>
             <p className="text-[14px] font-semibold leading-tight line-clamp-1" style={{ color: 'var(--dark)' }}>
@@ -703,7 +703,7 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
             {item.tags && (
               <div className="flex flex-wrap gap-1 mt-1">
                 {item.tags.map((tag, j) => (
-                  <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-[#F3F4F6] text-[#666]">{tag}</span>
+                  <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--y2k-bg)] text-[var(--y2k-text-sub)]">{tag}</span>
                 ))}
               </div>
             )}
@@ -711,7 +711,7 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
             {item.review && (
               <div className="mt-1.5 flex items-start gap-1">
                 <span className="text-[10px] text-[#2D5A3D] font-medium shrink-0">💬</span>
-                <p className="text-[10px] text-[#666] leading-tight line-clamp-2 italic">"{item.review}"</p>
+                <p className="text-[10px] text-[var(--y2k-text-sub)] leading-tight line-clamp-2 italic">"{item.review}"</p>
               </div>
             )}
           </button>
@@ -734,7 +734,7 @@ function BrandScrollSection({ lang }) {
   ]
 
   return (
-    <div className="mb-10">
+    <div className="mb-5">
       <div className="mb-4 px-5">
         <p className="typo-whisper mb-1">BRANDS</p>
         <h2 className="typo-title">
@@ -747,11 +747,11 @@ function BrandScrollSection({ lang }) {
             className="snap-start flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
             style={{ width: 80 }}
           >
-            <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden  border border-[#E5E7EB]"
+            <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden  border border-[var(--y2k-border)]"
               style={{ backgroundColor: b.color }}>
               {b.logoUrl ? <img src={b.logoUrl} alt="" className="w-8 h-8 object-contain" onError={e => { e.target.style.display='none'; e.target.parentElement.innerText = L(lang, b.name).charAt(0) }} /> : L(lang, b.name).charAt(0)}
             </div>
-            <span className="text-[11px] font-medium text-[#1A1A1A] text-center leading-tight">{L(lang, b.name)}</span>
+            <span className="text-[11px] font-medium text-[var(--y2k-text)] text-center leading-tight">{L(lang, b.name)}</span>
             <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#DC2626] text-white font-medium">{L(lang, b.discount)}</span>
           </a>
         ))}
@@ -878,6 +878,18 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
   // 팝업/핫플 공유 지역 필터 + 핫플 카테고리
   const [popupDistrict, setPopupDistrict] = useState('all')
+  const [heroIdx, setHeroIdx] = useState(0)
+  useEffect(() => {
+    const t = setInterval(() => setHeroIdx(i => (i + 1) % 10), 7000)
+    return () => clearInterval(t)
+  }, [])
+  
+  // 드래그앤드랍 상태
+  const [draggedIndex, setDraggedIndex] = useState(null)
+  const [dragOverIndex, setDragOverIndex] = useState(null)
+  const [savedCourses, setSavedCourses] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('hp_saved_courses') || '[]') } catch { return [] }
+  })
   const [spotCategory, setSpotCategory] = useState('cafe')
   const [savedColumnIds, setSavedColumnIds] = useState(() => {
     try { return JSON.parse(localStorage.getItem('hp_editorial_saved') || '[]') } catch { return [] }
@@ -1010,7 +1022,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
   return (
     <div
-      className="pt-6 pb-24"
+      className="pt-6 pb-0"
       style={{ backgroundColor: '#FFFFFF', transform: 'translateZ(0)', willChange: 'transform' }}
     >
     <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
@@ -1044,7 +1056,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 ¥1 = ₩{Math.round(cnyRate)}
               </span>
               {showExchangePopover && (
-                <div className="absolute left-0 bg-white rounded-[10px] border border-[#E5E7EB] p-3 z-20" style={{ top: 22, minWidth: 170, boxShadow: '0 4px 20px rgba(0,0,0,0.10)' }}>
+                <div className="absolute left-0 bg-white rounded-[10px] border border-[var(--y2k-border)] p-3 z-20" style={{ top: 22, minWidth: 170, boxShadow: '0 4px 20px rgba(0,0,0,0.10)' }}>
                   <p className="text-[10px] mb-2" style={{ color: '#999' }}>{L(lang, { ko: '빠른 환산', zh: '快速换算', en: 'Quick Convert' })}</p>
                   {[10000, 50000, 100000].map(won => (
                     <div key={won} className="flex justify-between text-xs py-1" style={{ color: '#1A1A1A' }}>
@@ -1083,12 +1095,64 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </button>
       </div>
 
+      {/* ─── 서울 히어로 배너 (서울관광재단 아카이브) ─── */}
+      {(() => {
+        const HERO_IMAGES = [
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2023/01//a4300f12b2154478b8f29965c4eb6e4d.jpg', caption: { ko: '경복궁', zh: '景福宫', en: 'Gyeongbokgung' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2025/08//79e4dcad147a42b2ab9729fdd8a9fdde.jpg', caption: { ko: '한강 야경', zh: '汉江夜景', en: 'Han River Night' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2021/05//47b4c8680fe6409e9fd5177f04e4c85f.jpg', caption: { ko: '남산타워', zh: '南山塔', en: 'Namsan Tower' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2022/07//ed577ddc95ef4cc5a1074742dc27f4fd.jpg', caption: { ko: '북촌 한옥마을', zh: '北村韩屋村', en: 'Bukchon Hanok' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2021/05//91d85bb96b3648b29132efce488d73a5.jpg', caption: { ko: '서울의 봄', zh: '首尔之春', en: 'Seoul Spring' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2023/12//2a04b135fe524988ae7e4153cc84aedc.jpg', caption: { ko: '잠실 롯데월드', zh: '蚕室乐天世界', en: 'Lotte World' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2023/11//b707289646a64551821a6026c914ebde.jpg', caption: { ko: '동대문 DDP', zh: '东大门DDP', en: 'Dongdaemun DDP' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2022/11//f7144dac2144442db51785b8c4d65785.jpg', caption: { ko: '덕수궁', zh: '德寿宫', en: 'Deoksugung' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2020/12//img_migration_0531.jpg', caption: { ko: '롯데타워', zh: '乐天塔', en: 'Lotte Tower' } },
+          { src: 'https://archive.visitseoul.net/upload/encoding/image/2020/12//img_migration_2000.jpg', caption: { ko: '인사동', zh: '仁寺洞', en: 'Insadong' } },
+        ]
+        const hero = HERO_IMAGES[heroIdx]
+        const goPrev = () => setHeroIdx(i => (i - 1 + HERO_IMAGES.length) % HERO_IMAGES.length)
+        const goNext = () => setHeroIdx(i => (i + 1) % HERO_IMAGES.length)
+        // 터치 스와이프
+        const touchStart = useRef(null)
+        const handleTouchStart = (e) => { touchStart.current = e.touches[0].clientX }
+        const handleTouchEnd = (e) => {
+          if (touchStart.current === null) return
+          const diff = touchStart.current - e.changedTouches[0].clientX
+          if (Math.abs(diff) > 40) { diff > 0 ? goNext() : goPrev() }
+          touchStart.current = null
+        }
+        return (
+          <div className="mx-4 mb-4 rounded-[14px] overflow-hidden relative" style={{ height: 160 }}
+            onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+            <img key={heroIdx} src={hero.src} alt="" className="absolute inset-0 w-full h-full object-cover animate-fade-in" loading="eager" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+            {/* 좌우 화살표 */}
+            <button onClick={goPrev} className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform">
+              <ChevronLeft size={18} className="text-white" />
+            </button>
+            <button onClick={goNext} className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-black/20 backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform">
+              <ChevronRight size={18} className="text-white" />
+            </button>
+            <div className="absolute bottom-3 left-4 right-4 flex items-end justify-between">
+              <p className="text-white text-[18px] font-bold leading-tight">{L(lang, hero.caption)}</p>
+              <p className="text-white/60 text-[10px] font-medium">© Seoul Tourism Archive</p>
+            </div>
+            {/* 인디케이터 */}
+            <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1">
+              {HERO_IMAGES.map((_, i) => (
+                <div key={i} className="rounded-full transition-all duration-300" style={{ width: i === heroIdx ? 12 : 4, height: 4, backgroundColor: i === heroIdx ? '#fff' : 'rgba(255,255,255,0.4)' }} />
+              ))}
+            </div>
+          </div>
+        )
+      })()}
+
       {/* ─── Quick Action 4×2 그리드 ─── */}
-      <div className="mt-3 mb-10 px-5">
+      <div className="mt-2 mb-4 px-5">
         <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: AirplaneLanding, label: { ko: '입국', zh: '入境', en: 'Arrival' }, color: '#C4725A', onClick: () => setArrivalPopup(true) },
-            { icon: AirplaneTakeoff, label: { ko: '출국', zh: '出境', en: 'Depart' }, color: '#C4725A', onClick: () => setDeparturePopup(true) },
+            { icon: AirplaneLanding, label: { ko: '입국', zh: '入境', en: 'Arrival' }, color: 'var(--y2k-pink)', onClick: () => { setArrivalPhase('entry'); setArrivalStep('menu'); setShowArrivalFlow(true) } },
+            { icon: AirplaneTakeoff, label: { ko: '출국', zh: '出境', en: 'Depart' }, color: 'var(--y2k-pink)', onClick: () => { setArrivalStep('departure'); setShowArrivalFlow(true) } },
             { icon: PhGlobe, label: { ko: '한국어·문화', zh: '韩语·文化', en: 'Korean & Culture' }, color: '#8B6F5C', onClick: () => setTab('korean-culture') },
           ].map(({ icon: Icon, label, color, onClick }) => (
             <button
@@ -1108,25 +1172,48 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
       {/* ─── 여행 다이어리 (내 코스) ─── */}
       {(() => {
-        const saved = (() => { try { return JSON.parse(localStorage.getItem('hp_saved_courses') || '[]') } catch { return [] } })()
+        const saved = savedCourses
+        
+        // 드래그앤드랍으로 코스 순서 변경
+        const reorderCourses = (fromIndex, toIndex) => {
+          const newOrder = [...saved]
+          const [movedItem] = newOrder.splice(fromIndex, 1)
+          newOrder.splice(toIndex, 0, movedItem)
+          localStorage.setItem('hp_saved_courses', JSON.stringify(newOrder))
+          setSavedCourses(newOrder)
+        }
+        
+        const handleDragStart = (e, index) => {
+          setDraggedIndex(index)
+          e.dataTransfer.effectAllowed = 'move'
+          e.dataTransfer.setData('text/html', '')
+        }
+        
+        const handleDragOver = (e, index) => {
+          e.preventDefault()
+          e.dataTransfer.dropEffect = 'move'
+          setDragOverIndex(index)
+        }
+        
+        const handleDrop = (e, dropIndex) => {
+          e.preventDefault()
+          if (draggedIndex !== null && draggedIndex !== dropIndex) {
+            reorderCourses(draggedIndex, dropIndex)
+          }
+          setDraggedIndex(null)
+          setDragOverIndex(null)
+        }
+        
+        const handleDragEnd = () => {
+          setDraggedIndex(null)
+          setDragOverIndex(null)
+        }
+        
         return (
-          <div className="mb-8 px-4">
-            <div className="rounded-[16px] bg-white p-5" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.06)' }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-[20px]">📔</span>
-                  <h2 className="text-[15px] font-bold text-[#1A1A1A]">{L(lang, { ko: '내 여행 다이어리', zh: '我的旅行日记', en: 'My Travel Diary' })}</h2>
-                </div>
-                <button
-                  onClick={() => setTab('course')}
-                  className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#F5F5F5] text-[#666] active:bg-[#E5E7EB] transition-colors"
-                >
-                  {L(lang, { ko: '전체보기', zh: '查看全部', en: 'View All' })}
-                </button>
-              </div>
-
+          <div className="mb-4 px-5">
+            <div className="rounded-[16px] bg-white py-5 px-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
               {saved.length === 0 ? (
-                <div className="text-center py-6">
+                <div className="text-center">
                   <p className="text-[13px] text-[#999] mb-3">{L(lang, { ko: '아직 저장한 코스가 없어요', zh: '还没有保存的路线', en: 'No saved courses yet' })}</p>
                   <button
                     onClick={() => setTab('course')}
@@ -1138,19 +1225,43 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 </div>
               ) : (
                 <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1" style={{ scrollbarWidth: 'none' }}>
-                  {saved.slice(0, 5).map(course => (
-                    <button
-                      key={course.id}
-                      onClick={() => setTab('course')}
-                      className="shrink-0 w-36 bg-[#FAFAFA] rounded-[10px] border border-[#F0F0F0] p-3 text-left active:scale-[0.97] transition-transform"
-                    >
-                      <p className="font-bold text-[12px] text-[#1A1A1A] truncate">{course.name}</p>
-                      <p className="text-[10px] text-[#999] mt-1">
-                        {course.stops?.length || 0} {L(lang, { ko: '곳', zh: '处', en: 'stops' })}
-                        {course.duration ? ` · ${course.duration}` : ''}
-                      </p>
-                    </button>
-                  ))}
+                  {saved.slice(0, 5).map((course, index) => {
+                    const isDragging = draggedIndex === index
+                    const isDragOver = dragOverIndex === index
+                    return (
+                      <div
+                        key={course.id}
+                        draggable={saved.length > 1}
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDrop={(e) => handleDrop(e, index)}
+                        onDragEnd={handleDragEnd}
+                        className={`shrink-0 w-36 rounded-[10px] border p-3 text-left transition-all duration-200 ${
+                          isDragging 
+                            ? 'opacity-50 scale-95 rotate-2 bg-[#F0F0F0] border-[#C0C0C0]' 
+                            : isDragOver
+                            ? 'bg-[#E3F2FD] border-[#2196F3] shadow-md scale-105'
+                            : 'bg-[#FAFAFA] border-[#F0F0F0] active:scale-95'
+                        } ${saved.length > 1 ? 'cursor-move' : 'cursor-pointer'}`}
+                        onClick={() => !isDragging && setTab('course')}
+                      >
+                        <div className="flex items-start justify-between mb-1">
+                          <p className="font-bold text-[12px] text-[var(--y2k-text)] truncate flex-1">{course.name}</p>
+                          {saved.length > 1 && (
+                            <div className="flex flex-col gap-0.5 ml-1">
+                              <div className="w-1 h-1 rounded-full bg-[#999]" />
+                              <div className="w-1 h-1 rounded-full bg-[#999]" />
+                              <div className="w-1 h-1 rounded-full bg-[#999]" />
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-[10px] text-[#999] mt-1">
+                          {course.stops?.length || 0} {L(lang, { ko: '곳', zh: '处', en: 'stops' })}
+                          {course.duration ? ` · ${course.duration}` : ''}
+                        </p>
+                      </div>
+                    )
+                  })}
                   <button
                     onClick={() => setTab('course')}
                     className="shrink-0 w-36 rounded-[10px] border border-dashed border-[#D1D5DB] p-3 flex flex-col items-center justify-center gap-1 active:bg-[#F9F9F9] transition-colors"
@@ -1165,47 +1276,74 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         )
       })()}
 
-      {/* ─── #30 이번 주 인기 팝업 TOP 5 ─── */}
-      {(() => {
+      {/* ─── #30 이번 주 인기 팝업 TOP 5 (숨김 처리) ─── */}
+      {false && (() => {
         const top5 = [...(activePopups.length > 0 ? activePopups : POPUP_STORES.filter(isOpenToday))]
           .filter(p => p.hot || (p.isClosingSoon))
           .sort((a, b) => (a.daysLeft ?? 99) - (b.daysLeft ?? 99))
           .slice(0, 5)
         if (top5.length === 0) return null
+        const scrollRef = React.createRef()
+        const scrollRight = () => scrollRef.current?.scrollBy({ left: 160, behavior: 'smooth' })
         return (
-          <div className="mb-6 px-4">
-            <p className="text-[15px] font-bold text-[#1A1A1A] mb-3">
-              🔥 {L(lang, { ko: '이번 주 인기 팝업 TOP 5', zh: '本周热门快闪 TOP 5', en: 'This Week\'s Top 5 Popups' })}
-            </p>
-            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-              {top5.map((p, i) => {
-                const title = L(lang, p.title) || p.brand
-                const closingSoon = p.isClosingSoon ?? isClosingSoon(p)
-                return (
-                  <button key={p.id}
-                    onClick={() => setSelectedPopup(p)}
-                    className="flex-shrink-0 w-[140px] rounded-[14px] overflow-hidden text-left active:scale-95 transition-transform relative"
-                    style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-                    <div className="h-[90px] relative" style={{ background: p.color || '#F3F4F6' }}>
-                      {p.image && <img src={p.image} alt="" className="w-full h-full object-cover" loading="lazy" />}
-                      <span className="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">#{i + 1}</span>
-                      {closingSoon && <span className="absolute top-1.5 right-1.5 bg-[#DC2626] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">D-{p.daysLeft ?? getDdayLabel(p, 'en')}</span>}
-                    </div>
-                    <div className="p-2 bg-white">
-                      <p className="text-[11px] font-semibold text-[#111827] truncate">{title}</p>
-                      <p className="text-[9px] text-[#9CA3AF] truncate mt-0.5">{p.venue_name || L(lang, p.address)}</p>
-                    </div>
-                  </button>
-                )
-              })}
+          <div className="mb-4 px-4">
+            <div className="flex items-center justify-between mb-2.5">
+              <h2 className="text-base font-bold text-[#111827]">
+                {L(lang, { ko: '이번 주 인기 팝업 TOP 5', zh: '本周热门快闪 TOP 5', en: 'This Week\'s Top 5 Popups' })}
+              </h2>
+              <button
+                onClick={() => setTab('near-map')}
+                className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#F5F5F5] text-[var(--y2k-text-sub)] active:bg-[var(--y2k-border)] transition-colors"
+              >
+                {L(lang, { ko: '팝업 더보기', zh: '查看更多', en: 'View More' })}
+              </button>
+            </div>
+            <div className="relative">
+              <div ref={scrollRef} className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+                {top5.map((p, i) => {
+                  const title = L(lang, p.title) || p.brand
+                  const closingSoon = p.isClosingSoon ?? isClosingSoon(p)
+                  return (
+                    <button key={p.id}
+                      onClick={() => setSelectedPopup(p)}
+                      className="flex-shrink-0 w-[140px] rounded-[14px] overflow-hidden text-left active:scale-95 transition-transform relative"
+                      style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+                      <div className="h-[90px] relative" style={{ background: p.color || '#F3F4F6' }}>
+                        {p.image && <img src={p.image} alt="" className="w-full h-full object-cover" loading="lazy" />}
+                        <span className="absolute top-1.5 left-1.5 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">#{i + 1}</span>
+                        {closingSoon && <span className="absolute top-1.5 right-1.5 bg-[#DC2626] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full animate-pulse shadow-sm">D-{p.daysLeft ?? getDdayLabel(p, 'en')}</span>}
+                      </div>
+                      <div className="p-2 bg-white">
+                        <p className="text-[11px] font-semibold text-[#111827] truncate">{title}</p>
+                        <p className="text-[10px] text-[#6B7280] truncate mt-0.5 font-medium">{p.venue_name || L(lang, p.address)}</p>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+              {/* 우측 스크롤 화살표 */}
+              <button
+                onClick={scrollRight}
+                className="absolute right-0 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 shadow flex items-center justify-center z-10"
+                style={{ border: '1px solid #E5E7EB' }}
+              >
+                <ChevronRight size={16} className="text-[var(--y2k-text-sub)]" />
+              </button>
             </div>
           </div>
         )
       })()}
 
-      {/* ─── 팝업스토어 큐레이션 ─── */}
+      {/* ─── 서울 에디토리얼 ─── */}
+      <div className="mb-4 px-5">
+        <EditorialColumns lang={lang} savedIds={savedColumnIds} onSave={saveColumnInterest} onCreateCourse={() => setTab('course')} />
+      </div>
+
+      {/* ─── 팝업스토어 큐레이션 (지역필터만 유지, 카드섹션 제거) ─── */}
       {(() => {
         const districtLabel = { ko: { seongsu: '성수', gangnam: '강남/압구정', hannam: '한남/이태원', hongdae: '홍대/연남동', myeongdong: '명동/을지로', yeouido: '여의도/한강', other: '기타' }, zh: { seongsu: '圣水', gangnam: '江南/狎鸥亭', hannam: '汉南/梨泰院', hongdae: '弘大/延南洞', myeongdong: '明洞/乙支路', yeouido: '汝矣岛/汉江', other: '其他' }, en: { seongsu: 'Seongsu', gangnam: 'Gangnam', hannam: 'Hannam', hongdae: 'Hongdae', myeongdong: 'Myeongdong', yeouido: 'Yeouido', other: 'Other' } }
+        return null
+        // 아래는 비활성 (진행중/예정 팝업 섹션 제거)
         const PopupCard = ({ popup, showOpenBadge }) => {
           // DB 데이터와 정적 데이터 모두 지원
           const dday = popup.daysLeft !== undefined
@@ -1222,7 +1360,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={popup.id}
               onClick={() => setSelectedPopup(popup)}
-              className="snap-start flex-shrink-0 rounded-[16px] overflow-hidden active:scale-[0.97] transition-all duration-150 bg-white text-left"
+              className="snap-start flex-shrink-0 rounded-[16px] overflow-hidden active:scale-95 transition-all duration-150 bg-white text-left"
               style={{ width: 200, boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}
             >
               <div className="relative h-[150px]" style={{ background: popup.color || '#F3F4F6' }}>
@@ -1252,7 +1390,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           )
         }
         return (
-          <div className="mb-10">
+          <div className="mb-5">
             {/* ── 지역 필터 ── */}
             <div className="px-5 flex gap-2 mb-5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
               {DISTRICTS.map(d => (
@@ -1276,13 +1414,13 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               </div>
             </div>
             {activePopups.length === 0 ? (
-              <div className="mx-4 rounded-[8px] border border-[#E5E7EB] p-5 text-center mb-6">
+              <div className="mx-4 rounded-[20px] border border-[var(--y2k-border)] p-5 text-center mb-3">
                 <p className="text-[13px] text-[#999]">
                   {L(lang, { ko: '현재 운영 중인 팝업이 없습니다', zh: '目前没有运营中的快闪店', en: 'No popups open right now' })}
                 </p>
               </div>
             ) : (
-              <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-pl-4 mb-6" style={{ scrollbarWidth: 'none' }}>
+              <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scroll-pl-4 mb-3" style={{ scrollbarWidth: 'none' }}>
                 {activePopups.map((popup, i) => <div key={popup.id} className="stagger-item" style={{ animationDelay: `${i * 0.06}s` }}><PopupCard popup={popup} showOpenBadge={false} /></div>)}
                 <div className="flex-shrink-0 w-4" />
               </div>
@@ -1391,7 +1529,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   >
                     {getDdayLabel(p, lang)}
                   </span>
-                  <span className="text-[13px] text-[#666]">
+                  <span className="text-[13px] text-[var(--y2k-text-sub)]">
                     {p.period.start.slice(5).replace('-', '/')} ~ {p.period.end.slice(5).replace('-', '/')}
                   </span>
                 </div>
@@ -1399,10 +1537,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 {/* 위치 */}
                 <div className="mb-4">
                   <p className="text-[11px] text-[#999] mb-1">{L(lang, { ko: '위치', zh: '地点', en: 'Location' })}</p>
-                  <p className="text-[14px] font-medium text-[#1A1A1A]">
+                  <p className="text-[14px] font-medium text-[var(--y2k-text)]">
                     {distLabel[lang]?.[p.district] || p.district}
                   </p>
-                  <p className="text-[13px] text-[#666] mt-0.5">
+                  <p className="text-[13px] text-[var(--y2k-text-sub)] mt-0.5">
                     {typeof p.address === 'object' ? L(lang, p.address) : p.address}
                   </p>
                 </div>
@@ -1411,7 +1549,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 {p.tags && (
                   <div className="flex flex-wrap gap-1.5 mb-5">
                     {(p.tags[lang] || p.tags.ko || []).map((tag, i) => (
-                      <span key={i} className="text-[12px] px-2.5 py-1 rounded-full bg-[#F3F4F6] text-[#444]">
+                      <span key={i} className="text-[12px] px-2.5 py-1 rounded-full bg-[var(--y2k-bg)] text-[#444]">
                         #{tag}
                       </span>
                     ))}
@@ -1423,7 +1561,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   {p.kakaoMapUrl && (
                     <button
                       onClick={() => window.open(p.kakaoMapUrl, '_blank')}
-                      className="flex-1 py-3 rounded-[8px] font-bold text-[14px] text-[#1A1A1A] active:scale-[0.97] transition-transform"
+                      className="flex-1 py-3 rounded-[20px] font-bold text-[14px] text-[var(--y2k-text)] active:scale-95 transition-transform"
                       style={{ backgroundColor: '#FEE500' }}
                     >
                       {L(lang, { ko: '카카오맵으로 보기', zh: '用카카오地图查看', en: 'Open in KakaoMap' })}
@@ -1432,7 +1570,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   {p.naverMapUrl && (
                     <button
                       onClick={() => window.open(p.naverMapUrl, '_blank')}
-                      className="flex-1 py-3 rounded-[8px] font-bold text-[14px] text-white active:scale-[0.97] transition-transform"
+                      className="flex-1 py-3 rounded-[20px] font-bold text-[14px] text-white active:scale-95 transition-transform"
                       style={{ backgroundColor: '#03C75A' }}
                     >
                       {L(lang, { ko: '네이버지도', zh: 'Naver地图', en: 'NaverMap' })}
@@ -1444,7 +1582,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                         const q = typeof p.address === 'object' ? (p.address.ko || p.address.zh) : p.address
                         window.open(`kakaomap://search?q=${encodeURIComponent(q || L(lang, p.title))}`, '_blank')
                       }}
-                      className="flex-1 py-3 rounded-[8px] font-bold text-[14px] text-[#1A1A1A] active:scale-[0.97] transition-transform"
+                      className="flex-1 py-3 rounded-[20px] font-bold text-[14px] text-[var(--y2k-text)] active:scale-95 transition-transform"
                       style={{ backgroundColor: '#FEE500' }}
                     >
                       {L(lang, { ko: '지도에서 찾기', zh: '在地图中查找', en: 'Find on Map' })}
@@ -1456,7 +1594,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 {p.sourceUrl && (
                   <button
                     onClick={() => window.open(p.sourceUrl, '_blank')}
-                    className="mt-3 w-full py-2.5 rounded-[8px] text-[13px] text-[#666] border border-[#E5E7EB] active:scale-[0.97] transition-transform"
+                    className="mt-3 w-full py-2.5 rounded-[20px] text-[13px] text-[var(--y2k-text-sub)] border border-[var(--y2k-border)] active:scale-95 transition-transform"
                   >
                     {L(lang, { ko: '원본 보기', zh: '查看原文', en: 'View Source' })}
                   </button>
@@ -1467,249 +1605,39 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         )
       })()}
 
-      {/* ─── 광고 배너 #1 ─── */}
-      <div className="mb-8 px-4">
-        <div
-          className="rounded-[12px] overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform"
-          style={{ height: 100, background: 'linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%)', border: '1px solid #E5E7EB' }}
-          onClick={() => { trackEvent('ad_click', { slot: 'home_1' }) }}
-        >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-[11px] tracking-widest uppercase" style={{ color: '#BCBCBC' }}>AD</span>
-          </div>
-        </div>
-      </div>
 
-      {/* ─── 서울 에디토리얼 ─── */}
-      <div className="mb-10 px-5">
-        <EditorialColumns lang={lang} savedIds={savedColumnIds} onSave={saveColumnInterest} onCreateCourse={() => setTab('course')} />
-      </div>
 
-      {/* ─── 핫플/편의/Wi-Fi 섹션 ─── */}
-      {(() => {
-        // 네이버지도 오픈 (편의점/화장실)
-        const openNaverMap = (query) => {
-          const distTerms = { seongsu: '성수동', gangnam: '강남', hannam: '한남이태원', hongdae: '홍대', myeongdong: '명동', yeouido: '여의도' }
-          const distTerm = popupDistrict !== 'all' ? distTerms[popupDistrict] + ' ' : ''
-          const url = `https://map.naver.com/v5/search/${encodeURIComponent(distTerm + query)}`
-          window.open(url, '_blank')
-        }
 
-        // 스팟 카드 필터
-        const filtered = SPOTS.filter(s =>
-          s.category === spotCategory &&
-          (popupDistrict === 'all' || s.district === popupDistrict)
-        ).sort((a, b) => {
-          const ai = DISTRICT_ORDER.indexOf(a.district)
-          const bi = DISTRICT_ORDER.indexOf(b.district)
-          return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
-        })
 
-        // Wi-Fi 데이터
-        const wifiList = popupDistrict === 'all'
-          ? Object.values(WIFI_SPOTS).flat()
-          : (WIFI_SPOTS[popupDistrict] || [])
 
-        return (
-          <div className="mb-10">
-            {/* ── 알림 토스트 ── */}
-            {notifToast && (
-              <div className="fixed top-16 left-1/2 -translate-x-1/2 z-[500] px-4 py-2 rounded-full text-[12px] font-semibold text-white shadow-lg animate-fade-in"
-                style={{ backgroundColor: notifToast === 'granted' ? '#2D5A3D' : notifToast === 'denied' ? '#FF3B30' : '#666' }}>
-                {notifToast === 'granted' && L(lang, { ko: '✅ 알림이 설정되었습니다', zh: '✅ 通知已开启', en: '✅ Notifications enabled' })}
-                {notifToast === 'denied' && L(lang, { ko: '⛔ 설정 > 알림에서 허용해 주세요', zh: '⛔ 请在设置>通知中允许', en: '⛔ Enable in Settings > Notifications' })}
-                {notifToast === 'unsupported' && L(lang, { ko: '📵 이 브라우저는 알림을 지원하지 않습니다', zh: '📵 此浏览器不支持通知', en: '📵 Notifications not supported' })}
-              </div>
-            )}
 
-            {/* 카테고리 탭 */}
-            <div className="px-4 flex gap-2 mb-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-              {SPOT_CATEGORIES.map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => {
-                    setSpotCategory(cat.id)
-                    if (cat.mapQuery) openNaverMap(cat.mapQuery[lang] || cat.mapQuery.ko)
-                  }}
-                  className="flex-shrink-0 px-3 py-1 rounded-full text-[12px] font-medium transition-all duration-150"
-                  style={{
-                    backgroundColor: spotCategory === cat.id ? '#1A1A1A' : '#F3F4F6',
-                    color: spotCategory === cat.id ? '#FFFFFF' : '#666666',
-                    transform: spotCategory === cat.id ? 'scale(1.1)' : 'scale(1)',
-                  }}
-                >
-                  {L(lang, cat.label)}
-                </button>
-              ))}
-            </div>
 
-            {/* ── Wi-Fi 정보 ── */}
-            {spotCategory === 'wifi' && (
-              <div className="px-4 space-y-2">
-                {wifiList.length === 0 ? (
-                  <p className="text-[13px]" style={{ color: '#999' }}>{L(lang, { ko: '해당 지역 Wi-Fi 정보가 없습니다', zh: '该地区无Wi-Fi信息', en: 'No WiFi info for this area' })}</p>
-                ) : wifiList.map((w, i) => (
-                  <div key={i} className="rounded-[10px] border border-[#E5E7EB] bg-white p-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-bold mb-0.5 line-clamp-1" style={{ color: '#1A1A1A' }}>{L(lang, w.place)}</p>
-                        <p className="text-[11px] font-mono mb-1" style={{ color: '#3B82F6' }}>📶 {w.ssid}</p>
-                        <p className="text-[11px]" style={{ color: '#666' }}>{L(lang, w.note)}</p>
-                      </div>
-                      <span className="flex-shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: '#F0FDF4', color: '#2D5A3D' }}>
-                        {L(lang, w.provider)}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* ── 네이버지도 랜딩 (편의점/화장실/배터리) ── */}
-            {['convenience', 'restroom', 'battery'].includes(spotCategory) && (() => {
-              const cat = SPOT_CATEGORIES.find(c => c.id === spotCategory)
-              const query = cat?.mapQuery?.[lang] || cat?.mapQuery?.ko || ''
-              const META = {
-                convenience: { emoji: '🏪', ko: '편의점', zh: '便利店', en: 'convenience stores' },
-                restroom:    { emoji: '🚹🚺', ko: '화장실', zh: '洗手间', en: 'restrooms' },
-                battery:     { emoji: '🔋', ko: '보조배터리 대여', zh: '充电宝租借', en: 'battery rentals' },
-              }
-              const m = META[spotCategory]
-              return (
-                <div className="px-4">
-                  <button
-                    onClick={() => openNaverMap(query)}
-                    className="w-full flex items-center justify-center gap-3 py-5 rounded-[14px] active:scale-[0.98] transition-all duration-150"
-                    style={{ border: '2px solid #1A1A1A', background: '#fff' }}
-                  >
-                    <span style={{ fontSize: 24 }}>{m.emoji}</span>
-                    <div className="text-left">
-                      <p className="text-[14px] font-bold" style={{ color: '#1A1A1A' }}>
-                        {L(lang, { ko: `근처 ${m.ko} 검색`, zh: `搜索附近${m.zh}`, en: `Find nearby ${m.en}` })}
-                      </p>
-                      <p className="text-[11px]" style={{ color: '#999' }}>
-                        {L(lang, { ko: '네이버지도 앱으로 연결', zh: '跳转至Naver地图', en: 'Opens in Naver Map' })}
-                      </p>
-                    </div>
-                  </button>
-                  {spotCategory === 'battery' && (
-                    <p className="text-[10px] text-center mt-2" style={{ color: '#AAAAAA' }}>
-                      {L(lang, { ko: '짠배터리 · 보충 · 쿠배터리 등 대여 기기 검색', zh: '搜索各品牌充电宝租借机', en: 'Finds rental kiosks near you' })}
-                    </p>
-                  )}
-                </div>
-              )
-            })()}
-
-            {/* ── 카드 목록 (카페/음식/쇼핑) — 지역별 그룹 + 큰 카드 ── */}
-            {!['wifi', 'convenience', 'restroom', 'battery'].includes(spotCategory) && (() => {
-              if (filtered.length === 0) return (
-                <p className="px-4 text-[13px]" style={{ color: '#999' }}>
-                  {L(lang, { ko: '해당 지역의 핫플이 없어요', zh: '该地区暂无推荐', en: 'No spots in this area yet' })}
-                </p>
-              )
-              // 지역별 그룹화
-              const districtNames = {
-                seongsu: { ko: '성수', zh: '圣水', en: 'Seongsu' },
-                gangnam: { ko: '강남/압구정', zh: '江南/狎鸥亭', en: 'Gangnam' },
-                hannam:  { ko: '한남/이태원', zh: '汉南/梨泰院', en: 'Hannam' },
-                hongdae: { ko: '홍대/연남', zh: '弘大/延南', en: 'Hongdae' },
-                myeongdong: { ko: '명동/을지로', zh: '明洞/乙支路', en: 'Myeongdong' },
-                yeouido: { ko: '여의도/한강', zh: '汝矣岛/汉江', en: 'Yeouido' },
-              }
-              const groups = {}
-              filtered.forEach(s => {
-                if (!groups[s.district]) groups[s.district] = []
-                groups[s.district].push(s)
-              })
-              const orderedDistricts = ['seongsu','gangnam','hannam','hongdae','myeongdong','yeouido']
-                .filter(d => groups[d])
-              return (
-                <div className="space-y-5">
-                  {orderedDistricts.map(district => (
-                    <div key={district}>
-                      <p className="px-4 text-[11px] font-semibold tracking-wider uppercase mb-2" style={{ color: '#AAAAAA' }}>
-                        {L(lang, districtNames[district] || { ko: district })}
-                      </p>
-                      <div className="pl-4 pr-0 flex gap-3 overflow-x-auto pb-1 snap-x scroll-pl-4" style={{ scrollbarWidth: 'none' }}>
-                        {groups[district].map(spot => (
-                          <button
-                            key={spot.id}
-                            onClick={() => window.open(spot.naverMap, '_blank')}
-                            className="flex-shrink-0 text-left active:scale-[0.97] transition-all duration-150 snap-start rounded-[10px] overflow-hidden border border-[#E8E8E8]"
-                            style={{ width: 155 }}
-                          >
-                            <div className="relative" style={{ height: 110 }}>
-                              <img
-                                src={spot.image}
-                                alt=""
-                                className="absolute inset-0 w-full h-full object-cover"
-                                loading="lazy"
-                                onError={e => { e.target.parentElement.style.background = '#F3F4F6' }}
-                              />
-                              {spot.hot && (
-                                <div className="absolute top-2 left-2 bg-[#FF3B30] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">HOT</div>
-                              )}
-                            </div>
-                            <div className="p-2.5 bg-white">
-                              <p className="text-[12px] font-bold leading-tight line-clamp-1" style={{ color: '#1A1A1A' }}>
-                                {L(lang, spot.name)}
-                              </p>
-                              <p className="text-[10px] mt-0.5" style={{ color: '#AAAAAA' }}>
-                                {L(lang, spot.category === 'cafe' ? { ko: '카페', zh: '咖啡', en: 'Cafe' } : spot.category === 'food' ? { ko: '맛집', zh: '美食', en: 'Food' } : { ko: '쇼핑', zh: '购물', en: 'Shop' })}
-                              </p>
-                            </div>
-                          </button>
-                        ))}
-                        <div className="flex-shrink-0 w-4" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )
-            })()}
-          </div>
-        )
-      })()}
-
-      {/* ─── 광고 배너 #2 ─── */}
-      <div className="mb-8 px-4">
-        <div
-          className="rounded-[12px] overflow-hidden relative cursor-pointer active:scale-[0.98] transition-transform"
-          style={{ height: 100, background: 'linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%)', border: '1px solid #E5E7EB' }}
-          onClick={() => { trackEvent('ad_click', { slot: 'home_2' }) }}
-        >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-[11px] tracking-widest uppercase" style={{ color: '#BCBCBC' }}>AD</span>
-          </div>
-        </div>
-      </div>
 
       {/* ─── 가이드 오버레이 ─── */}
       {overlay && !POCKET_IDS.includes(overlay) && (
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
           {overlay === 'map-guide' && (
             <GuideLayout title={{ ko: '한국 지도 앱', zh: '韩国地图APP', en: 'Korea Map Apps' }} lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }}>
-              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
-                <h3 className="font-bold text-[#1A1A1A] mb-2">📍 KakaoMap ({L(lang, { ko: '카카오맵', zh: '카카오地图', en: 'KakaoMap' })})</h3>
+              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
+                <h3 className="font-bold text-[var(--y2k-text)] mb-2">📍 KakaoMap ({L(lang, { ko: '카카오맵', zh: '카카오地图', en: 'KakaoMap' })})</h3>
                 <p className="text-sm text-[#666666] leading-relaxed mb-3">
                   {L(lang, { ko: '한국에서 가장 많이 쓰는 지도 앱. 길찾기, 대중교통, 맛집, 카페 검색까지 모두 가능합니다. 반드시 설치하세요!', zh: '韩国使用最多的地图APP。找路、公交、美食、咖啡厅搜索全都可以。必须安装！', en: 'The most used map app in Korea. Navigation, transit, restaurants, cafes — all in one. Must install!' })}
                 </p>
                 <div className="flex gap-2">
-                  <a href="https://apps.apple.com/app/id304608425" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[6px] bg-[#FEE500] text-[#1A1A1A] text-sm font-bold active:scale-95 transition-transform">
+                  <a href="https://apps.apple.com/app/id304608425" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[20px] bg-[#FEE500] text-[var(--y2k-text)] text-sm font-bold active:scale-95 transition-transform">
                     App Store
                   </a>
-                  <a href="https://play.google.com/store/apps/details?id=net.daum.android.map" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[6px] bg-[#FEE500] text-[#1A1A1A] text-sm font-bold active:scale-95 transition-transform">
+                  <a href="https://play.google.com/store/apps/details?id=net.daum.android.map" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[20px] bg-[#FEE500] text-[var(--y2k-text)] text-sm font-bold active:scale-95 transition-transform">
                     Google Play
                   </a>
                 </div>
               </div>
-              <div className="p-4 rounded-[6px] border border-[#E5E7EB] bg-[#F9FAFB]">
-                <h3 className="font-bold text-[#1A1A1A] mb-2">🗺️ {L(lang, { ko: '바이두 지도도 사용 가능!', zh: '百度地图也可以用！', en: 'Baidu Maps also works!' })}</h3>
+              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)] bg-[var(--y2k-bg)]">
+                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🗺️ {L(lang, { ko: '바이두 지도도 사용 가능!', zh: '百度地图也可以用！', en: 'Baidu Maps also works!' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed mb-3">
                   {L(lang, { ko: '바이두 지도(百度地图)도 한국에서 사용 가능합니다. 중국어로 검색할 수 있어 편리합니다.', zh: '百度地图也可以在韩国使用。可以用中文搜索，很方便。', en: 'Baidu Maps also works in Korea. Convenient for searching in Chinese.' })}
                 </p>
-                <a href="https://map.baidu.com" target="_blank" rel="noopener noreferrer" className="block text-center py-2.5 rounded-[6px] bg-[#3385FF] text-white text-sm font-bold active:scale-95 transition-transform">
+                <a href="https://map.baidu.com" target="_blank" rel="noopener noreferrer" className="block text-center py-2.5 rounded-[20px] bg-[#3385FF] text-white text-sm font-bold active:scale-95 transition-transform">
                   {L(lang, { ko: '바이두 지도 열기', zh: '打开百度地图', en: 'Open Baidu Maps' })}
                 </a>
               </div>
@@ -1722,31 +1650,31 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('traveling') }}
               tip={{ ko: '💡 T-money 잔액은 편의점에서 환불 가능 (카드 반납 시 잔액 - 수수료 500원)', zh: '💡 T-money余额可在便利店退款（退卡时退余额 - 手续费500韩元）', en: '💡 T-money balance is refundable at convenience stores (balance minus ₩500 fee)' }}
             >
-              <div className="p-4 rounded-[6px] bg-red-50 border border-red-200">
+              <div className="p-4 rounded-[20px] bg-red-50 border border-red-200">
                 <p className="text-sm font-bold text-red-700 leading-relaxed">
                   {L(lang, { ko: '⚠️ 한국 버스 대부분은 현금을 받지 않습니다. 교통카드 없이는 버스를 탈 수 없어요! 반드시 교통카드를 먼저 구매하세요.', zh: '⚠️ 韩国大部分公交不收现金！没有交通卡无法乘坐公交！请务必先购买交通卡。', en: "⚠️ Most Korean buses don't accept cash. You can't ride without a transit card! Buy one first." })}
                 </p>
               </div>
-              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
-                <h3 className="font-bold text-[#1A1A1A] mb-2">🎫 T-money / Cash Bee</h3>
+              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
+                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🎫 T-money / Cash Bee</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, { ko: '편의점(CU, GS25, 세븐일레븐)에서 2,500원에 구매. 충전 후 버스·지하철·택시 모두 사용 가능.', zh: '在便利店(CU、GS25、7-11)花2500韩元购买T-money卡，充值后公交、地铁、出租车都能用。', en: 'Buy at convenience stores (CU, GS25, 7-Eleven) for ₩2,500. After charging, use on buses, subway, and taxis.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
-                <h3 className="font-bold text-[#1A1A1A] mb-2">🚇 {L(lang, { ko: '지하철 1회권', zh: '地铁单程票', en: 'Single Journey Ticket' })}</h3>
+              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
+                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🚇 {L(lang, { ko: '지하철 1회권', zh: '地铁单程票', en: 'Single Journey Ticket' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, { ko: '지하철역 자동발매기에서 구매. 보증금 500원 포함. 하차 후 보증금 환불기에서 500원 돌려받기.', zh: '在地铁站自动售票机购买一次性交通卡。含500韩元押金，下车后在退款机取回。', en: 'Buy at subway station ticket machines. Includes ₩500 deposit. Get the deposit back at refund machines after exiting.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
-                <h3 className="font-bold text-[#1A1A1A] mb-2">🚌 {L(lang, { ko: '버스 이용법', zh: '乘公交方法', en: 'How to Ride Buses' })}</h3>
+              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
+                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🚌 {L(lang, { ko: '버스 이용법', zh: '乘公交方法', en: 'How to Ride Buses' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, { ko: '앞문 탑승 → T-money 태그 → 하차 시 뒷문에서 태그.', zh: '前门上车→刷T-money→下车时后门再刷。', en: 'Board at front door → tap T-money → tap again at rear door when exiting.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
-                <h3 className="font-bold text-[#1A1A1A] mb-2">🔄 {L(lang, { ko: '환승 꿀팁', zh: '换乘小贴士', en: 'Transfer Tips' })}</h3>
+              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
+                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🔄 {L(lang, { ko: '환승 꿀팁', zh: '换乘小贴士', en: 'Transfer Tips' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, {
                     ko: '버스/지하철 하차 후 30분 이내에 다른 노선 이용 시 환승 적용!\n→ 두 번째 교통수단의 기본요금이 무료\n→ 단, 거리 추가금은 발생할 수 있음',
@@ -1755,8 +1683,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   }).split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}
                 </p>
               </div>
-              <div className="p-4 rounded-[6px] border border-[#E5E7EB]">
-                <h3 className="font-bold text-[#1A1A1A] mb-2">💳 {L(lang, { ko: '교통카드 충전', zh: '交通卡充值', en: 'Transit Card Top-up' })}</h3>
+              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
+                <h3 className="font-bold text-[var(--y2k-text)] mb-2">💳 {L(lang, { ko: '교통카드 충전', zh: '交通卡充值', en: 'Transit Card Top-up' })}</h3>
                 <p className="text-sm text-[#666666] leading-relaxed">
                   {L(lang, { ko: '편의점 또는 지하철역 충전기에서 가능. 1,000원 단위로 충전할 수 있습니다.', zh: '在便利店或地铁站充值机充值。可以按1000韩元为单位充值。', en: 'Available at convenience stores or subway station machines. Can top up in ₩1,000 increments.' })}
                 </p>
@@ -1772,7 +1700,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {overlay === 'kids' && <KidsGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
           {overlay === 'pet' && (
             <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-              <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB] px-4 py-3 flex items-center gap-3">
+              <div className="sticky top-0 z-10 bg-white border-b border-[var(--y2k-border)] px-4 py-3 flex items-center gap-3">
                 <button onClick={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} className="p-1"><ChevronLeft size={20} color="#1A1A1A" /></button>
                 <h2 className="typo-title" style={{ fontSize: 16 }}>{L(lang, { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' })}</h2>
               </div>
@@ -1786,12 +1714,12 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 통역&번역 허브 오버레이 — TranslatorTab 임베드 ─── */}
       {overlay === 'interpret-hub' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
+          <div className="sticky top-0 z-10 bg-white border-b border-[var(--y2k-border)]">
             <div className="flex items-center gap-3 px-4 py-3">
               <button onClick={() => setOverlay(null)} className="p-1">
                 <ChevronLeft size={24} />
               </button>
-              <h1 className="text-lg font-bold text-[#1A1A1A]">
+              <h1 className="text-lg font-bold text-[var(--y2k-text)]">
                 {L(lang, { ko: '통역&번역', zh: '口译&翻译', en: 'Interpret & Translate' })}
               </h1>
             </div>
@@ -1810,12 +1738,12 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {overlay && POCKET_IDS.includes(overlay) && (
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
           <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-            <div className="sticky top-0 z-10 bg-white border-b border-[#E5E7EB]">
+            <div className="sticky top-0 z-10 bg-white border-b border-[var(--y2k-border)]">
               <div className="flex items-center gap-3 px-4 py-3">
                 <button onClick={() => setOverlay(null)} className="p-1">
                   <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-lg font-bold text-[#1A1A1A]">
+                <h1 className="text-lg font-bold text-[var(--y2k-text)]">
                   {L(lang, SCENE_PHRASES.find(s => s.pocket === overlay)?.scene || { ko: '', zh: '', en: '' })}
                 </h1>
               </div>
@@ -1829,7 +1757,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {showTzPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.3)' }} onClick={() => setShowTzPicker(false)}>
           <div
-            className="rounded-[6px] mx-6 w-full max-w-sm overflow-hidden"
+            className="rounded-[20px] mx-6 w-full max-w-sm overflow-hidden"
             style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}
             onClick={e => e.stopPropagation()}
           >
@@ -1859,16 +1787,16 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                           : [...prev, tz.id]
                       )
                     }}
-                    className="w-full flex items-center justify-between px-3 py-3 rounded-[6px] active:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between px-3 py-3 rounded-[20px] active:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] font-mono text-[#9CA3AF] w-5">{tz.code}</span>
-                      <span className="text-sm text-[#1A1A1A]">{L(lang, tz.name)}</span>
+                      <span className="text-sm text-[var(--y2k-text)]">{L(lang, tz.name)}</span>
                       <span className="text-xs text-[#999]">{tz.abbr} {currentTime}</span>
                       {(() => { const dd = getDayDiffLabel(tz.offset); return dd ? <span className="text-[10px] text-[#F59E0B] font-medium">{dd}</span> : null })()}
                     </div>
                     <div
-                      className="w-5 h-5 rounded-[6px] flex items-center justify-center"
+                      className="w-5 h-5 rounded-[20px] flex items-center justify-center"
                       style={{
                         border: checked ? 'none' : '1.5px solid #D1D5DB',
                         backgroundColor: checked ? '#3B82F6' : 'transparent',
@@ -1887,7 +1815,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   refreshTimezones()
                   setShowTzPicker(false)
                 }}
-                className="w-full py-2.5 rounded-[6px] text-sm font-medium text-white active:scale-[0.98] transition-transform"
+                className="w-full py-2.5 rounded-[20px] text-sm font-medium text-white active:scale-[0.98] transition-transform"
                 style={{ backgroundColor: '#3B82F6' }}
               >
                 {L(lang, { ko: '확인', zh: '确认', en: 'Confirm' })}
@@ -1897,28 +1825,14 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
 
-      {/* ─── 입국/출국 환영/이별 팝업 ─── */}
-      {arrivalPopup && (
-        <div className="fixed top-[52px] inset-x-0 bottom-0 z-[200] bg-white flex flex-col items-center justify-center animate-fade-in">
-          <p className="text-lg font-bold text-[#1A1A1A] mb-6 text-center px-8" style={{ whiteSpace: 'pre-line' }}>
-            {L(lang, { ko: '반가워요.\n한국 혹시 처음이신가요?', zh: '欢迎！\n这是您第一次来韩国吗？', en: 'Welcome!\nIs this your first time in Korea?' })}
-          </p>
-        </div>
-      )}
-      {departurePopup && (
-        <div className="fixed top-[52px] inset-x-0 bottom-0 z-[200] bg-white flex flex-col items-center justify-center animate-fade-in">
-          <p className="text-lg font-bold text-[#1A1A1A] mb-6 text-center px-8" style={{ whiteSpace: 'pre-line' }}>
-            {L(lang, { ko: '벌써 돌아가세요?\n아쉽지만 다음을 기약해요!', zh: '这么快就要走了？\n虽然不舍，但下次再见！', en: 'Leaving already?\nSee you next time!' })}
-          </p>
-        </div>
-      )}
+
 
       {/* ─── 입국하기 플로우 (카드 리스트) ─── */}
       {showArrivalFlow && arrivalStep === 'menu' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
               {L(lang, { ko: '입국하기', zh: '入境', en: 'Arrival' })}
             </h2>
           </div>
@@ -1939,10 +1853,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
                   else { setArrivalStep(item.id) }
                 }}
-                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, item.label)}</p>
                   <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
                 </div>
                 <ChevronRight size={18} color="#999" />
@@ -1955,9 +1869,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 입국심사 대기시간 상세 */}
       {showArrivalFlow && arrivalStep === 'immigration-wait' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
               {L(lang, { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' })}
             </h2>
           </div>
@@ -1973,29 +1887,29 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 입국신고서 — 선택 화면 */}
       {showArrivalFlow && arrivalStep === 'immigration' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
               {L(lang, { ko: '입국신고서 작성', zh: '入境申报卡填写', en: 'Arrival Card' })}
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-3">
             <button
               onClick={() => setArrivalStep('immigration-electronic')}
-              className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '전자 입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
+                <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '전자 입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
                 <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: '온라인으로 미리 작성, 실물 카드 불필요', zh: '在线提前填写，无需纸质卡', en: 'Fill online in advance, no physical card needed' })}</p>
               </div>
               <ChevronRight size={18} color="#999" />
             </button>
             <button
               onClick={() => { setOverlay('arrival-card'); setShowArrivalFlow(false) }}
-              className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '실물 입국카드 작성법', zh: '纸质入境卡填写方法', en: 'Physical Arrival Card Guide' })}</p>
+                <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '실물 입국카드 작성법', zh: '纸质入境卡填写方法', en: 'Physical Arrival Card Guide' })}</p>
                 <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: '비행기 안에서 받는 종이 카드 작성 가이드', zh: '飞机上发的纸质卡填写指南', en: 'Guide to filling the paper card from the plane' })}</p>
               </div>
               <ChevronRight size={18} color="#999" />
@@ -2007,15 +1921,15 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 전자 입국신고서 상세 */}
       {showArrivalFlow && arrivalStep === 'immigration-electronic' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
             <button onClick={() => setArrivalStep('immigration')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
               {L(lang, { ko: '전자 입국신고서', zh: '电子入境卡', en: 'Electronic Arrival Card' })}
             </h2>
           </div>
           <div className="p-4">
-            <div className="rounded-[6px] bg-[#F0F4FF] p-5">
-              <p className="text-[15px] font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
+            <div className="rounded-[20px] bg-[#F0F4FF] p-5">
+              <p className="text-[15px] font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
               <p className="text-xs text-[#666666] leading-relaxed mb-4">
                 {L(lang, { ko: '한국 입국 전 온라인으로 미리 작성할 수 있습니다.\n건강상태, 세관신고를 한번에!\n실물 카드를 안 써도 됩니다.', zh: '入韩前可在线提前填写。\n健康状态、海关申报一次搞定！\n不需要纸质卡。', en: 'Fill out online before entering Korea.\nHealth & customs declaration in one go!\nNo physical card needed.' })}
               </p>
@@ -2024,7 +1938,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   href="https://ciq.korea.go.kr/coview/board/homeland/linkView.do"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 rounded-[6px] text-center text-sm font-bold text-white bg-[#3B5BDB] active:scale-[0.97] transition-transform"
+                  className="flex-1 py-3 rounded-[20px] text-center text-sm font-bold text-white bg-[#3B5BDB] active:scale-95 transition-transform"
                 >
                   {L(lang, { ko: 'Q-CODE 바로가기', zh: 'Q-CODE 前往', en: 'Go to Q-CODE' })}
                 </a>
@@ -2032,7 +1946,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   href="https://www.k-eta.go.kr/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 rounded-[6px] text-center text-sm font-bold text-[#1A1A1A] bg-white border border-[#E5E7EB] active:scale-[0.97] transition-transform"
+                  className="flex-1 py-3 rounded-[20px] text-center text-sm font-bold text-[var(--y2k-text)] bg-white border border-[var(--y2k-border)] active:scale-95 transition-transform"
                 >
                   {L(lang, { ko: 'K-ETA (비자면제국)', zh: 'K-ETA（免签国）', en: 'K-ETA (Visa-free)' })}
                 </a>
@@ -2045,19 +1959,19 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 택시/대중교통 상세 */}
       {showArrivalFlow && arrivalStep === 'transport' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto animate-fade-in">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
               {L(lang, { ko: '🚕 택시 / 대중교통', zh: '🚕 出租车 / 公共交通', en: '🚕 Taxi / Transit' })}
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-4">
             {/* 택시 섹션 */}
             <div>
-              <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '🚕 택시 탈래요', zh: '🚕 坐出租车', en: '🚕 Take a Taxi' })}</h3>
+              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '🚕 택시 탈래요', zh: '🚕 坐出租车', en: '🚕 Take a Taxi' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '공항에서 택시 바로 잡기', zh: '机场直接打车', en: 'Get a taxi at the airport' })}</p>
+                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '공항에서 택시 바로 잡기', zh: '机场直接打车', en: 'Get a taxi at the airport' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '인천공항: 1층 도착 후 8번/4번 게이트 → 택시 승강장. 일반택시 ₩65,000~80,000 (서울 기준).\n김포공항: 1층 출구 → 택시 승강장. 일반택시 ₩20,000~35,000 (서울 기준).\n카드 결제 가능, 기본요금 ₩4,800.',
@@ -2066,14 +1980,14 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'RIDE 앱 사용하기', zh: '使用RIDE APP', en: 'Use RIDE App' })}</p>
+                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: 'RIDE 앱 사용하기', zh: '使用RIDE APP', en: 'Use RIDE App' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, { ko: '한국 번호 없어도 돼요! I·RIDE 앱으로 외국인도 택시 호출 가능.', zh: '不需要韩国手机号！用I·RIDE APP外国人也能叫车。', en: 'No Korean number needed! Foreigners can call taxis with the I·RIDE app.' })}
                   </p>
                   <div className="flex gap-2 mt-3">
-                    <a href="https://apps.apple.com/app/id1596453498" target="_blank" rel="noopener noreferrer" className="rounded-[6px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">iOS</a>
-                    <a href="https://play.google.com/store/apps/details?id=com.iride.passenger" target="_blank" rel="noopener noreferrer" className="rounded-[6px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">Android</a>
+                    <a href="https://apps.apple.com/app/id1596453498" target="_blank" rel="noopener noreferrer" className="rounded-[20px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">iOS</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.iride.passenger" target="_blank" rel="noopener noreferrer" className="rounded-[20px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">Android</a>
                   </div>
                 </div>
               </div>
@@ -2081,10 +1995,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
             {/* 대중교통 섹션 */}
             <div>
-              <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '🚇 대중교통 이용할래요', zh: '🚇 坐公共交通', en: '🚇 Public Transit' })}</h3>
+              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '🚇 대중교통 이용할래요', zh: '🚇 坐公共交通', en: '🚇 Public Transit' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'AREX (공항철도)', zh: 'AREX（机场铁路）', en: 'AREX (Airport Railroad)' })}</p>
+                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: 'AREX (공항철도)', zh: 'AREX（机场铁路）', en: 'AREX (Airport Railroad)' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '인천공항 → 서울역 직통 43분 ₩11,000 / 일반열차 66분 ₩4,750.\n지하 교통센터(B1)에서 탑승.',
@@ -2093,8 +2007,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '일회용 교통카드 구매', zh: '购买一次性交通卡', en: 'Single-use Transit Card' })}</p>
+                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '일회용 교통카드 구매', zh: '购买一次性交通卡', en: 'Single-use Transit Card' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '지하철역 자동발매기에서 구매. 보증금 ₩500 포함, 하차 후 환불기에서 돌려받기.',
@@ -2103,8 +2017,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: 'T-money 카드 구매', zh: '购买T-money卡', en: 'Buy T-money Card' })}</p>
+                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: 'T-money 카드 구매', zh: '购买T-money卡', en: 'Buy T-money Card' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '편의점(CU, GS25, 세븐일레븐)에서 ₩2,500에 구매. 충전 후 버스·지하철·택시 모두 사용.',
@@ -2122,18 +2036,18 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* SIM & 환전 상세 */}
       {showArrivalFlow && arrivalStep === 'sim-exchange' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto animate-fade-in">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
               {L(lang, { ko: '💱 SIM카드 & 환전', zh: '💱 SIM卡 & 换钱', en: '💱 SIM & Exchange' })}
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-4">
             {/* SIM 섹션 */}
             <div>
-              <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '📱 한국 SIM카드 구매', zh: '📱 购买韩国SIM卡', en: '📱 Buy a Korean SIM' })}</h3>
+              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '📱 한국 SIM카드 구매', zh: '📱 购买韩国SIM卡', en: '📱 Buy a Korean SIM' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
+                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
                   <p className="text-xs text-[#666666] leading-relaxed">
                     {L(lang, {
                       ko: '인천공항 1층에 KT, SKT, LG U+ 로밍센터. eSIM이면 온라인으로도 구매 가능 (Airalo, eSIM Korea 등)',
@@ -2143,7 +2057,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   </p>
                   <button
                     onClick={() => { setOverlay('sim'); setShowArrivalFlow(false) }}
-                    className="mt-3 rounded-[6px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 w-full text-center active:scale-[0.98] transition-transform"
+                    className="mt-3 rounded-[20px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 w-full text-center active:scale-[0.98] transition-transform"
                   >
                     {L(lang, { ko: '자세히 보기', zh: '查看详情', en: 'View Details' })}
                   </button>
@@ -2153,10 +2067,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
             {/* 환전 섹션 */}
             <div>
-              <h3 className="text-sm font-bold text-[#1A1A1A] mb-2">{L(lang, { ko: '💱 환전할래요', zh: '💱 换钱', en: '💱 Exchange Money' })}</h3>
+              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '💱 환전할래요', zh: '💱 换钱', en: '💱 Exchange Money' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '공항 환전소', zh: '机场换钱所', en: 'Airport Exchange' })}</p>
+                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '공항 환전소', zh: '机场换钱所', en: 'Airport Exchange' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '인천공항 도착층(1층) 곳곳에 환전소 (우리은행, 하나은행, KB국민은행). 소액만 환전 추천 (수수료 높음).',
@@ -2165,8 +2079,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-[6px] border border-[#E5E7EB] p-4">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, { ko: '도심 환전소 (더 저렴!)', zh: '市区换钱所（更划算！）', en: 'Downtown Exchange (Cheaper!)' })}</p>
+                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '도심 환전소 (더 저렴!)', zh: '市区换钱所（更划算！）', en: 'Downtown Exchange (Cheaper!)' })}</p>
                   <p className="text-xs text-[#666666] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '명동 사설환전소(대사관 앞), MONEYBOX(명동/홍대) 추천. 공항 대비 1~3% 유리.\n위치: MONEYBOX 명동점 — 서울특별시 중구 명동2가 (카카오맵에서 "MONEYBOX 명동" 검색)',
@@ -2184,9 +2098,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 여행 중 플로우 ─── */}
       {showArrivalFlow && arrivalStep === 'traveling' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
               {L(lang, { ko: '여행 중', zh: '旅行中', en: 'Traveling' })}
             </h2>
           </div>
@@ -2208,10 +2122,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
                   else { setTab(item.tab); setShowArrivalFlow(false) }
                 }}
-                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, item.label)}</p>
                   <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
                 </div>
                 <ChevronRight size={18} color="#999" />
@@ -2224,9 +2138,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 출국준비 플로우 ─── */}
       {showArrivalFlow && arrivalStep === 'departure' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[#E5E7EB]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[#1A1A1A] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
               {L(lang, { ko: '출국준비', zh: '出境准备', en: 'Departure Prep' })}
             </h2>
           </div>
@@ -2243,10 +2157,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
                   else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
                 }}
-                className="rounded-[6px] border border-[#E5E7EB] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[#1A1A1A]">{L(lang, item.label)}</p>
+                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, item.label)}</p>
                   <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
                 </div>
                 <ChevronRight size={18} color="#999" />
@@ -2256,16 +2170,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         </div>
       )}
 
-      {/* ─── 플로팅 SOS 버튼 ─── */}
-      {isVisible('emergency') && (
-        <button
-          onClick={() => setOverlay('emergency')}
-          className="fixed bottom-20 right-4 z-40 w-9 h-9 rounded-full bg-[#DC2626] text-white flex items-center justify-center active:scale-95 transition-transform"
-          style={{ boxShadow: '0 2px 8px rgba(220,38,38,0.3)' }}
-        >
-          <span className="text-[10px] font-bold">SOS</span>
-        </button>
-      )}
+
 
       {/* ─── 토스트 ─── */}
       {toast && (
@@ -2281,7 +2186,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           <div className="absolute inset-0 bg-black/30" />
           <div className="relative w-full max-w-[480px] bg-white rounded-t-[20px] p-5 pb-8 animate-slide-up" onClick={e => e.stopPropagation()}>
             <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-[#D1D5DB]" /></div>
-            <p className="text-[15px] font-bold text-[#1A1A1A] mb-1">🔔 {L(lang, { ko: '팝업 알림 설정', zh: '快闪通知设置', en: 'Popup Notifications' })}</p>
+            <p className="text-[15px] font-bold text-[var(--y2k-text)] mb-1">🔔 {L(lang, { ko: '팝업 알림 설정', zh: '快闪通知设置', en: 'Popup Notifications' })}</p>
             <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '관심 카테고리의 새 팝업을 알려드려요', zh: '新快闪开幕时通知您', en: 'Get notified for new popups' })}</p>
             <div className="flex flex-wrap gap-2">
               {[
@@ -2304,7 +2209,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               })}
             </div>
             <button onClick={() => setShowSubSheet(false)}
-              className="mt-5 w-full py-3 rounded-[12px] bg-[#111827] text-white text-[13px] font-bold active:scale-95 transition-transform">
+              className="mt-5 w-full py-3 rounded-[20px] bg-[#111827] text-white text-[13px] font-bold active:scale-95 transition-transform">
               {L(lang, { ko: '저장', zh: '保存', en: 'Save' })}
             </button>
           </div>

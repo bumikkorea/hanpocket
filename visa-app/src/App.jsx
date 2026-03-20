@@ -9,7 +9,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser } from 'lucide-react'
+import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser, ArrowUp } from 'lucide-react'
 import { House, Compass as PhCompass, QrCode, ShoppingBag as PhShoppingBag, User, MapPin as PhMapPin, AirplaneLanding, AirplaneTakeoff, Taxi, Motorcycle, Receipt as PhReceipt, BookBookmark, Hospital, GridFour, Camera as PhCamera, Heart as PhHeart, Lightning, CalendarBlank, ChatCircle, UsersThree, ForkKnife, CreditCard as PhCreditCard, Storefront, MagnifyingGlass } from '@phosphor-icons/react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
@@ -61,6 +61,7 @@ const VisitorHeatmapFull = lazy(() => import('./components/VisitorHeatmapFull'))
 const WishlistPage = lazy(() => import('./components/WishlistPage'))
 const PassportScan = lazy(() => import('./components/PassportScan'))
 const DepartureShoppingRoute = lazy(() => import('./components/DepartureShoppingRoute'))
+const ReservationTab = lazy(() => import('./components/reservation/ReservationTab'))
 const TaxiCalculator = lazy(() => import('./components/TaxiCalculator'))
 const SubwayArrival = lazy(() => import('./components/SubwayArrival'))
 const PerformanceSection = lazy(() => import('./components/PerformanceSection'))
@@ -68,7 +69,10 @@ const FlightInfoCard = lazy(() => import('./components/FlightInfoCard'))
 const ShowKorean = lazy(() => import('./components/ShowKorean'))
 const NearMap = lazy(() => import('./components/NearMap'))
 const DiscoverTab = lazy(() => import('./components/DiscoverTab'))
+const BookingView = lazy(() => import('./components/BookingView'))
 const MorePage = lazy(() => import('./components/MorePage'))
+const ImmigrationWaitTime = lazy(() => import('./components/ImmigrationWaitTime'))
+const ArrivalCardGuide = lazy(() => import('./components/guides/ArrivalCardGuide'))
 // C 섹션 실용 가이드 lazy imports
 const CurrencyCalc = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.CurrencyCalc })))
 const EmergencyNumbers = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.EmergencyNumbers })))
@@ -1511,7 +1515,7 @@ function AppInner() {
   })
   const [profile, setProfile] = useState(() => loadProfile())
   const [showNotice, setShowNotice] = useState(false)
-  const [tab, setTab] = useState('home')
+  const [tab, setTab] = useState('near-map')
   const [view, setView] = useState('home')
   const [selCat, setSelCat] = useState(null)
   const [selVisa, setSelVisa] = useState(null)
@@ -1522,6 +1526,10 @@ function AppInner() {
   const [hoveredTab, setHoveredTab] = useState(null)
   const [menuOpen, setMenuOpen] = useState(false)
   const [showAppMenu, setShowAppMenu] = useState(false)
+  const [bottomBarVisible, setBottomBarVisible] = useState(true)
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const lastScrollY = useRef(0)
+  const scrollTimeout = useRef(null)
   const [widgetSettings, setWidgetSettings] = useState(() => { try { return JSON.parse(localStorage.getItem('hanpocket_widgets') || '{}') } catch { return {} } })
   const { isDark, toggleDarkMode } = useDarkMode()
   const s = t[lang]
@@ -1678,6 +1686,31 @@ function AppInner() {
     return () => document.removeEventListener('pointerdown', handler)
   }, [showLangMenu])
 
+  // 스크롤 시 하단탭 숨김/표시
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY
+      const delta = currentY - lastScrollY.current
+      // 스크롤 방향 감지 (10px 이상 움직였을 때만)
+      if (Math.abs(delta) > 10) {
+        setBottomBarVisible(delta < 0) // 위로 스크롤 = 보임, 아래로 스크롤 = 숨김
+      }
+      // 맨 위면 항상 보임
+      if (currentY <= 10) setBottomBarVisible(true)
+      // 300px 이상 스크롤하면 맨위로 버튼 표시
+      setShowScrollTop(currentY > 300)
+      lastScrollY.current = currentY
+      // 스크롤 멈추면 2초 후 다시 보임
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current)
+      scrollTimeout.current = setTimeout(() => setBottomBarVisible(true), 2000)
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (scrollTimeout.current) clearTimeout(scrollTimeout.current)
+    }
+  }, [])
+
   // A10: 안드로이드 뒤로가기 처리 — History API popstate
   useEffect(() => {
     const handlePopState = (e) => {
@@ -1776,11 +1809,10 @@ function AppInner() {
   }
 
   const bottomTabs = [
-    { id: 'home', icon: House, label: { ko: '홈', zh: '首页', en: 'Home' } },
-    { id: 'near-map', icon: PhMapPin, label: { ko: '지도', zh: '地图', en: 'Map' } },
-    { id: 'scan', icon: QrCode, label: { ko: '스캔', zh: '扫描', en: 'Scan' }, fab: true },
-    { id: 'discover', icon: MagnifyingGlass, label: { ko: '발견', zh: '发现', en: 'Discover' } },
-    { id: 'more', icon: GridFour, label: { ko: '더보기', zh: '更多', en: 'More' } },
+    { id: 'discover',  icon: MagnifyingGlass, label: { ko: '탐험',   zh: '探险', en: 'Discover' } },
+    { id: 'near-map',  icon: PhMapPin,        label: { ko: '지도',   zh: '地图', en: 'Map'      } },
+    { id: 'booking',   icon: CalendarBlank,   label: { ko: '예약',   zh: '预约', en: 'Book'     } },
+    { id: 'my',        icon: User,            label: { ko: '내 정보', zh: '我的', en: 'My'       } },
   ]
 
   // Check if a service item has been migrated to pocket categories
@@ -2056,7 +2088,7 @@ function AppInner() {
       )}
 
       {/* Top Bar — sticky, always on top */}
-      <div className="sticky top-0 z-[1000]" style={{ backgroundColor: '#FAF7F5', borderBottom: '1px solid #EDE8E3' }}>
+      <div className="sticky top-0 z-[1000]" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #F0F0F0' }}>
         <div className="px-4 pt-2 pb-1">
           <div className="flex items-center">
             {/* 좌측: 햄버거 메뉴 (메인) 또는 뒤로가기 (서브) */}
@@ -2162,7 +2194,7 @@ function AppInner() {
       {adminMode && <div className="h-[36px]" />}
 
       {/* Content — full width, no side padding (tabs handle their own padding) */}
-      <div className="pt-0 pb-14 tab-enter" key={`${tab}-${subPage || ''}`}>
+      <div className="pt-0 pb-2 tab-enter" key={`${tab}-${subPage || ''}`}>
         {/* Push notification banner — disabled for now */}
         {/* Service grid - pockets.js 데이터 기반 */}
         {tab==='service' && !subPage && (
@@ -2373,9 +2405,11 @@ function AppInner() {
         {subPage === 'seoul-stay' && <Suspense fallback={<LoadingSpinner />}><SeoulStay lang={lang} /></Suspense>}
         {subPage === 'culture-lounge' && <Suspense fallback={<LoadingSpinner />}><CultureLounge lang={lang} /></Suspense>}
         {subPage === 'sos-language' && <Suspense fallback={<LoadingSpinner />}><SOSLanguageCard lang={lang} /></Suspense>}
+        {subPage === 'immigration-wait' && <Suspense fallback={<LoadingSpinner />}><ImmigrationWaitTime lang={lang} /></Suspense>}
+        {subPage === 'arrival-card' && <Suspense fallback={<LoadingSpinner />}><ArrivalCardGuide lang={lang} onClose={() => setSubPage(null)} /></Suspense>}
 
         {/* Pocket catch-all — 전용 탭이 없는 pocket ID는 PocketContent로 렌더링 */}
-        {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet','wishlist','taxrefund','departure','heatmap','passport-scan','departure-shopping','taxi','subway','performance','flight-info','show-korean','near-map','korean-culture'].includes(subPage) && (
+        {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet','wishlist','taxrefund','departure','heatmap','passport-scan','departure-shopping','taxi','subway','performance','flight-info','show-korean','near-map','korean-culture','immigration-wait','arrival-card'].includes(subPage) && (
           <PocketContent pocketId={subPage} lang={lang} setTab={(t) => setSubPage(t)} />
         )}
         </div>
@@ -2423,10 +2457,31 @@ function AppInner() {
             <MorePage lang={lang} setTab={handleTabChange} setSubPage={setSubPage} />
           </Suspense>
         )}
+        {tab==='my' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <MorePage lang={lang} setTab={handleTabChange} setSubPage={(sp) => {
+              if (sp === 'reservation') { setSubPage('my-reservations') }
+              else { setSubPage(sp) }
+            }} />
+          </Suspense>
+        )}
+        {tab==='booking' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <BookingView lang={lang} onGoToMyTab={() => handleTabChange('my')} onGoToMapTab={() => handleTabChange('near-map')} />
+          </Suspense>
+        )}
+        {tab==='reservation' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ReservationTab lang={lang} adminView={adminView} profile={safeProfile} />
+          </Suspense>
+        )}
+        {subPage==='my-reservations' && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <ReservationTab lang={lang} adminView={adminView} profile={safeProfile} onBack={() => { setSubPage(null); setTab('my') }} />
+          </Suspense>
+        )}
         {tab==='profile' && !subPage && <ProfileTab profile={profile} setProfile={setProfile} lang={lang} onResetPushDismiss={() => setPushDismissed(false)} isDark={isDark} toggleDarkMode={toggleDarkMode} adminMode={adminMode} setAdminMode={setAdminMode} setAdminView={setAdminView} />}
-        <div className="mt-12 mb-6 px-4 text-center text-[11px] text-[#9CA3AF]">
-          <p>© 2026 NEAR. All rights reserved.</p>
-        </div>
+
       </div>
       {/* 검색 모달 */}
       {showSearch && (
@@ -2630,8 +2685,8 @@ function AppInner() {
 
       {/* Location Context Bar */}
       {!locationBarDismissed && (
-      <div className="fixed left-0 right-0 z-50 safe-bottom"
-        style={{ bottom: '64px' }}
+      <div className="fixed left-0 right-0 z-50 safe-bottom transition-transform duration-300"
+        style={{ bottom: '64px', transform: bottomBarVisible ? 'translateY(0)' : 'translateY(calc(100% + 64px))' }}
         onClick={() => { setLocationBarDismissed(true); localStorage.setItem('loc_bar_dismissed', '1') }}>
         <div className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-full bg-[#1A1A1A]/90 backdrop-blur-md cursor-pointer">
           <MapPin size={14} className="text-[#C4725A] flex-shrink-0" />
@@ -2644,44 +2699,43 @@ function AppInner() {
       </div>
       )}
 
-      {/* Bottom Navigation with Center FAB */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 safe-bottom"
+      {/* Scroll to Top Button */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        className="fixed z-50 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-all duration-300"
         style={{
-          backgroundColor: '#FAF7F5',
-          borderTop: '1px solid #EDE8E3',
-          height: '64px',
+          right: '16px',
+          bottom: bottomBarVisible ? '80px' : '20px',
+          backgroundColor: '#FFFFFF',
+          border: '1px solid #E5E7EB',
+          opacity: showScrollTop ? 1 : 0,
+          pointerEvents: showScrollTop ? 'auto' : 'none',
+          transform: showScrollTop ? 'scale(1)' : 'scale(0.8)',
+        }}
+        aria-label="Scroll to top"
+      >
+        <ArrowUp size={18} className="text-[#374151]" />
+      </button>
+
+      {/* Bottom Navigation — 4탭: 探险/地图/预约/我的 */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white transition-transform duration-300"
+        style={{
+          borderTop: '1px solid #F0F0F0',
+          height: '56px',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+          transform: bottomBarVisible ? 'translateY(0)' : 'translateY(100%)',
         }}>
-        <div className="flex items-end justify-around h-full pb-1.5 relative">
+        <div className="flex items-center justify-around h-full">
           {bottomTabs.map(item => {
             const active = tab === item.id
-            if (item.fab) {
-              return (
-                <button key={item.id} onClick={() => handleTabChange(item.id)}
-                  aria-label={item.label[lang]}
-                  className="flex flex-col items-center justify-center -mt-5 relative">
-                  <div className="w-[52px] h-[52px] rounded-full flex items-center justify-center shadow-lg"
-                    style={{ background: '#111111' }}>
-                    <item.icon size={24} weight="light" className="text-white" />
-                  </div>
-                  <span className="text-[10px] mt-0.5 font-medium" style={{ color: active ? '#111111' : '#9CA3AF' }}>
-                    {item.label[lang]}
-                  </span>
-                </button>
-              )
-            }
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
-                aria-label={t[lang].accessibility?.[`${item.id}Tab`] || `${item.label[lang]} tab`}
-                className="flex flex-col items-center justify-center gap-0.5 py-1 relative transition-all duration-200 min-w-[56px]">
-                <div className="p-1 rounded-xl transition-all duration-200">
-                  <item.icon size={active ? 24 : 22} weight={active ? 'regular' : 'light'} style={{ color: active ? '#111111' : '#9CA3AF' }} />
-                </div>
-                <span className="text-[10px] font-medium" style={{ color: active ? '#111111' : '#9CA3AF' }}>
+                aria-label={`${item.label[lang]} tab`}
+                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
+                <item.icon size={22} weight={active ? 'fill' : 'regular'} style={{ color: active ? '#C4725A' : '#999999', transition: 'color 0.2s' }} />
+                <span style={{ fontSize: 10, fontWeight: 500, color: active ? '#C4725A' : '#999999', transition: 'color 0.2s', letterSpacing: '-0.2px' }}>
                   {item.label[lang]}
                 </span>
-                {item.id === 'popup' && adminMode && (
-                  <span className="absolute top-0 right-2 w-2 h-2 bg-red-500 rounded-full" />
-                )}
               </button>
             )
           })}

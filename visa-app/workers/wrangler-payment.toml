@@ -1,0 +1,17 @@
+name = "hanpocket-payment-proxy"
+main = "payment-proxy.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+ANTOM_SANDBOX = "true"
+DEBUG = "false"
+WORKER_DOMAIN = "hanpocket-payment-proxy.workers.dev"
+
+# Secrets (set via: npx wrangler secret put SECRET_NAME -c workers/wrangler-payment.toml)
+# ANTOM_CLIENT_ID     — Antom 가맹점 Client ID
+# ANTOM_PRIVATE_KEY   — RSA 개인키 (PEM)
+# ANTOM_PUBLIC_KEY    — Antom 공개키 (PEM, 콜백 서명 검증용)
+
+[[kv_namespaces]]
+binding = "KV"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

@@ -1,5 +1,6 @@
-import { CheckCircle, XCircle, MoreVertical } from 'lucide-react'
+import { CheckCircle, XCircle, MoreVertical, Download, QrCode } from 'lucide-react'
 import { useState } from 'react'
+import QRCode from 'qrcode'
 
 export default function AdminsTab() {
   const [admins] = useState([
@@ -8,6 +9,45 @@ export default function AdminsTab() {
     { id: 3, name: '박준호', email: 'admin3@example.com', hotel: '강남이비스', status: 'pending', joined: '2026-03-18' },
     { id: 4, name: '이순신', email: 'admin4@example.com', hotel: '서울시청호텔', status: 'approved', joined: '2026-02-20' },
   ])
+
+  const [qrModal, setQrModal] = useState(null)
+
+  const generateQRCode = async (adminId, adminName) => {
+    try {
+      const qrUrl = `${window.location.origin}/admin.html?a=${adminId}`
+      const qrDataUrl = await QRCode.toDataURL(qrUrl, {
+        width: 300,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF',
+        },
+      })
+      setQrModal({ adminId, adminName, qrUrl, qrDataUrl })
+    } catch (error) {
+      alert('QR 코드 생성 실패: ' + error.message)
+    }
+  }
+
+  const downloadQRCode = async (adminId, adminName) => {
+    try {
+      const canvas = await QRCode.toCanvas(document.createElement('canvas'), `${window.location.origin}/admin.html?a=${adminId}`, {
+        width: 300,
+        margin: 2,
+      })
+      const link = document.createElement('a')
+      link.href = canvas.toDataURL('image/png')
+      link.download = `admin-qr-${adminId}-${adminName}.png`
+      link.click()
+    } catch (error) {
+      alert('QR 코드 다운로드 실패: ' + error.message)
+    }
+  }
+
+  const copyQRLink = (qrUrl) => {
+    navigator.clipboard.writeText(qrUrl)
+    alert('링크가 복사되었습니다.')
+  }
 
   return (
     <div className="space-y-4">
@@ -52,7 +92,14 @@ export default function AdminsTab() {
                       </div>
                     )}
                   </td>
-                  <td className="px-6 py-3 text-right">
+                  <td className="px-6 py-3 text-right flex gap-1 justify-end">
+                    <button
+                      onClick={() => generateQRCode(admin.id, admin.name)}
+                      className="p-2 hover:bg-blue-100 rounded-lg transition-colors text-blue-600"
+                      title="QR 코드 생성"
+                    >
+                      <QrCode size={18} />
+                    </button>
                     <button className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
                       <MoreVertical size={18} className="text-gray-600" />
                     </button>
@@ -63,6 +110,50 @@ export default function AdminsTab() {
           </table>
         </div>
       </div>
+
+      {/* QR Code Modal */}
+      {qrModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6 space-y-4">
+            <div className="text-center">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">{qrModal.adminName}</h3>
+              <p className="text-sm text-gray-500 mb-4">점주 관리자 QR 코드</p>
+            </div>
+
+            <div className="flex justify-center bg-gray-50 p-4 rounded-lg">
+              <img src={qrModal.qrDataUrl} alt="QR Code" className="w-64 h-64" />
+            </div>
+
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <p className="text-xs text-gray-500 mb-1">QR 링크</p>
+              <p className="text-xs text-gray-700 break-all font-mono">{qrModal.qrUrl}</p>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => copyQRLink(qrModal.qrUrl)}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+              >
+                링크 복사
+              </button>
+              <button
+                onClick={() => downloadQRCode(qrModal.adminId, qrModal.adminName)}
+                className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm flex items-center justify-center gap-2"
+              >
+                <Download size={16} />
+                다운로드
+              </button>
+            </div>
+
+            <button
+              onClick={() => setQrModal(null)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

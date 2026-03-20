@@ -139,8 +139,6 @@ export function useNearPins() {
       const { POI_DATA } = await import('../data/poiData.js')
 
       let rawData = POI_DATA
-      console.log('🗺️ useNearPins: Loading pins... (today:', today, ')')
-
       try {
         const { data, error: fetchError } = await supabase
           .from('popups')
@@ -148,27 +146,14 @@ export function useNearPins() {
           .or(`is_temporary.eq.false,end_date.gte.${today}`)
           .order('cn_score', { ascending: false })
 
-        console.log('🗺️ Supabase response:', {
-          dataCount: data?.length,
-          fetchError,
-          data: data?.slice(0, 2)
-        })
-
         if (fetchError) {
-          console.error('❌ Supabase error:', fetchError)
           setError(`DB 에러: ${fetchError.message}`)
         } else if (data?.length) {
-          console.log('✅ Loaded', data.length, 'popups from Supabase')
           rawData = data.map(normalizeSupabasePin)
-        } else {
-          console.warn('⚠️ No popups in Supabase, using POI_DATA')
         }
       } catch (err) {
-        console.error('❌ Supabase connection failed:', err)
         setError('DB 연결 실패, 로컬 데이터 사용 중')
       }
-
-      console.log('🗺️ Using', rawData.length, 'pins total')
 
       const applyDist = (lat, lng) => {
         const withDist = rawData

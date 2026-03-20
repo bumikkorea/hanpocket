@@ -523,10 +523,10 @@ function HolidayCalendar({ lang }) {
           <button
             key={code}
             onClick={() => toggleCountry(code)}
-            className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-[20px] transition-all ${
+            className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-[var(--radius-pill)] transition-all ${
               countries.includes(code)
                 ? 'bg-[#111827] text-white'
-                : 'bg-[var(--y2k-bg)] text-[#9CA3AF]'
+                : 'bg-[var(--surface)] text-[#9CA3AF]'
             }`}
           >
             <span>{info.flag}</span>
@@ -542,7 +542,7 @@ function HolidayCalendar({ lang }) {
       {/* 월 네비게이션: ◀ 2026년 3월 ▶ */}
       <div className="flex items-center justify-between mb-3">
         <button onClick={() => setViewMonth(m => Math.max(0, m - 1))} disabled={viewMonth === 0}
-          className={`p-1 rounded-[20px] ${viewMonth === 0 ? 'text-[var(--y2k-border)]' : 'text-[var(--y2k-text)] hover:bg-[var(--y2k-bg)] active:bg-[var(--y2k-border)]'}`}>
+          className={`p-1 rounded-[var(--radius-pill)] ${viewMonth === 0 ? 'text-[var(--y2k-border)]' : 'text-[var(--text-primary)] hover:bg-[var(--surface)] active:bg-[var(--y2k-border)]'}`}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M15 18l-6-6 6-6"/></svg>
         </button>
         <button onClick={() => setViewMonth(today.getMonth())}
@@ -551,13 +551,13 @@ function HolidayCalendar({ lang }) {
           {isCurrentMonth && <span className="ml-1 text-[10px] font-normal text-[#2D5A3D]">●</span>}
         </button>
         <button onClick={() => setViewMonth(m => Math.min(11, m + 1))} disabled={viewMonth === 11}
-          className={`p-1 rounded-[20px] ${viewMonth === 11 ? 'text-[var(--y2k-border)]' : 'text-[var(--y2k-text)] hover:bg-[var(--y2k-bg)] active:bg-[var(--y2k-border)]'}`}>
+          className={`p-1 rounded-[var(--radius-pill)] ${viewMonth === 11 ? 'text-[var(--y2k-border)]' : 'text-[var(--text-primary)] hover:bg-[var(--surface)] active:bg-[var(--y2k-border)]'}`}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
 
       {/* 캘린더 */}
-      <div className="rounded-[20px] border border-[var(--y2k-border)] p-3 mb-3">
+      <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-3 mb-3">
         <div className="grid grid-cols-7 gap-0 text-center mb-1">
           {dayLabels[lang]?.map((d, i) => (
             <span key={i} className={`text-[10px] font-medium ${i === 0 ? 'text-red-400' : i === 6 ? 'text-blue-400' : 'text-[#999]'}`}>{d}</span>
@@ -573,7 +573,7 @@ function HolidayCalendar({ lang }) {
             const dayOfWeek = (firstDay + d - 1) % 7
             return (
               <div key={i} className="flex flex-col items-center">
-                <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : hasHoliday ? 'text-red-500 font-bold' : hasSpecial ? 'text-blue-500 font-medium' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[var(--y2k-text-sub)]'}`}>
+                <span className={`text-[11px] py-1 rounded-full w-7 ${isToday ? 'bg-[#1A1A1A] text-white font-bold' : hasHoliday ? 'text-red-500 font-bold' : hasSpecial ? 'text-blue-500 font-medium' : dayOfWeek === 0 ? 'text-red-300' : dayOfWeek === 6 ? 'text-blue-300' : 'text-[var(--text-secondary)]'}`}>
                   {d}
                 </span>
                 {hc && (
@@ -606,11 +606,11 @@ function HolidayCalendar({ lang }) {
             else if (startDiff === 0) dday = L(lang, { ko: '오늘', zh: '今天', en: 'Today' })
             else if (endDiff !== null && endDiff >= 0) dday = L(lang, { ko: '진행중', zh: '进行中', en: 'Ongoing' })
             return (
-              <div key={i} className={`flex items-center justify-between py-2 px-3 rounded-[20px] ${isSpecial ? 'bg-[#F0F4FF]' : 'bg-[var(--y2k-bg)]'}`}>
+              <div key={i} className={`flex items-center justify-between py-2 px-3 rounded-[var(--radius-pill)] ${isSpecial ? 'bg-[#F0F4FF]' : 'bg-[var(--surface)]'}`}>
                 <div className="flex items-center gap-2">
                   <span className="text-[13px]">{COUNTRY_LABELS[h.country]?.flag}</span>
                   <div>
-                    <span className={`text-sm ${isSpecial ? 'font-medium text-[#4B5563]' : 'font-semibold text-[var(--y2k-text)]'}`}>{L(lang, h.name)}</span>
+                    <span className={`text-sm ${isSpecial ? 'font-medium text-[#4B5563]' : 'font-semibold text-[var(--text-primary)]'}`}>{L(lang, h.name)}</span>
                     <span className="text-xs text-[#999] ml-2">{dateLabel}</span>
                   </div>
                 </div>
@@ -661,7 +661,7 @@ function PromoBanner({ banners, lang }) {
         {banners.map((b, i) => (
           <button key={i} onClick={b.onClick}
             className="snap-start flex-shrink-0 w-full px-4">
-            <div className="rounded-[20px] p-5 h-[140px] flex flex-col justify-end relative overflow-hidden "
+            <div className="rounded-[var(--radius-pill)] p-5 h-[140px] flex flex-col justify-end relative overflow-hidden "
               style={{ backgroundColor: b.bg }}>
               <span className="text-3xl absolute top-4 right-4">{b.emoji}</span>
               <h3 className="text-white font-bold text-base leading-tight">{L(lang, b.title)}</h3>
@@ -693,7 +693,7 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
       <div className="grid grid-cols-2 gap-3">
         {items.map((item, i) => (
           <button key={i} onClick={item.onClick} className="text-left active:scale-95 transition-transform">
-            <div className="aspect-[3/2] rounded-[14px] overflow-hidden mb-2.5 bg-[var(--y2k-bg)]" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
+            <div className="aspect-[3/2] rounded-[var(--radius-btn)] overflow-hidden mb-2.5 bg-[var(--surface)]" style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.05)' }}>
               {item.image && <img src={item.image} alt="" className="w-full h-full object-cover" loading="lazy" onError={e => { e.target.style.display = 'none' }} />}
             </div>
             <p className="text-[14px] font-semibold leading-tight line-clamp-1" style={{ color: 'var(--dark)' }}>
@@ -703,7 +703,7 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
             {item.tags && (
               <div className="flex flex-wrap gap-1 mt-1">
                 {item.tags.map((tag, j) => (
-                  <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--y2k-bg)] text-[var(--y2k-text-sub)]">{tag}</span>
+                  <span key={j} className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--surface)] text-[var(--text-secondary)]">{tag}</span>
                 ))}
               </div>
             )}
@@ -711,7 +711,7 @@ function RecommendSection({ title, subtitle, items, lang, onViewAll }) {
             {item.review && (
               <div className="mt-1.5 flex items-start gap-1">
                 <span className="text-[10px] text-[#2D5A3D] font-medium shrink-0">💬</span>
-                <p className="text-[10px] text-[var(--y2k-text-sub)] leading-tight line-clamp-2 italic">"{item.review}"</p>
+                <p className="text-[10px] text-[var(--text-secondary)] leading-tight line-clamp-2 italic">"{item.review}"</p>
               </div>
             )}
           </button>
@@ -747,11 +747,11 @@ function BrandScrollSection({ lang }) {
             className="snap-start flex-shrink-0 flex flex-col items-center gap-1.5 active:scale-[0.95] transition-transform"
             style={{ width: 80 }}
           >
-            <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden  border border-[var(--y2k-border)]"
+            <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden  border border-[var(--border)]"
               style={{ backgroundColor: b.color }}>
               {b.logoUrl ? <img src={b.logoUrl} alt="" className="w-8 h-8 object-contain" onError={e => { e.target.style.display='none'; e.target.parentElement.innerText = L(lang, b.name).charAt(0) }} /> : L(lang, b.name).charAt(0)}
             </div>
-            <span className="text-[11px] font-medium text-[var(--y2k-text)] text-center leading-tight">{L(lang, b.name)}</span>
+            <span className="text-[11px] font-medium text-[var(--text-primary)] text-center leading-tight">{L(lang, b.name)}</span>
             <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#DC2626] text-white font-medium">{L(lang, b.discount)}</span>
           </a>
         ))}
@@ -1056,8 +1056,8 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 ¥1 = ₩{Math.round(cnyRate)}
               </span>
               {showExchangePopover && (
-                <div className="absolute left-0 bg-white rounded-[10px] border border-[var(--y2k-border)] p-3 z-20" style={{ top: 22, minWidth: 170, boxShadow: '0 4px 20px rgba(0,0,0,0.10)' }}>
-                  <p className="text-[10px] mb-2" style={{ color: '#999' }}>{L(lang, { ko: '빠른 환산', zh: '快速换算', en: 'Quick Convert' })}</p>
+                <div className="absolute left-0 bg-white rounded-[10px] border border-[var(--border)] p-3 z-20" style={{ top: 22, minWidth: 170, boxShadow: '0 4px 20px rgba(0,0,0,0.10)' }}>
+                  <p className="text-[10px] mb-2" style={{ color: 'var(--text-muted)' }}>{L(lang, { ko: '빠른 환산', zh: '快速换算', en: 'Quick Convert' })}</p>
                   {[10000, 50000, 100000].map(won => (
                     <div key={won} className="flex justify-between text-xs py-1" style={{ color: '#1A1A1A' }}>
                       <span>₩{won.toLocaleString()}</span>
@@ -1122,7 +1122,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           touchStart.current = null
         }
         return (
-          <div className="mx-4 mb-4 rounded-[14px] overflow-hidden relative" style={{ height: 160 }}
+          <div className="mx-5 mb-4 rounded-[var(--radius-btn)] overflow-hidden relative" style={{ height: 160 }}
             onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
             <img key={heroIdx} src={hero.src} alt="" className="absolute inset-0 w-full h-full object-cover animate-fade-in" loading="eager" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -1158,11 +1158,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={L(lang, label)}
               onClick={onClick}
-              className="flex flex-col items-center justify-center gap-2 py-5 rounded-[16px] bg-white active:scale-[0.96] transition-all duration-150"
-              style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+              className="flex flex-col items-center justify-center gap-2 py-5 rounded-[var(--radius-card)] bg-white active:scale-[0.96] transition-all duration-150"
+              style={{ boxShadow: 'var(--shadow-card)' }}
             >
               <Icon size={26} weight="light" style={{ color }} />
-              <span className="typo-caption" style={{ color: '#555' }}>{L(lang, label)}</span>
+              <span className="typo-caption" style={{ color: 'var(--text-secondary)' }}>{L(lang, label)}</span>
             </button>
           ))}
         </div>
@@ -1211,14 +1211,14 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         
         return (
           <div className="mb-4 px-5">
-            <div className="rounded-[16px] bg-white py-5 px-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+            <div className="rounded-[var(--radius-card)] bg-white py-5 px-4" style={{ boxShadow: 'var(--shadow-card)' }}>
               {saved.length === 0 ? (
                 <div className="text-center">
-                  <p className="text-[13px] text-[#999] mb-3">{L(lang, { ko: '아직 저장한 코스가 없어요', zh: '还没有保存的路线', en: 'No saved courses yet' })}</p>
+                  <p className="text-[13px] text-[var(--text-muted)] mb-3">{L(lang, { ko: '아직 저장한 코스가 없어요', zh: '还没有保存的路线', en: 'No saved courses yet' })}</p>
                   <button
                     onClick={() => setTab('course')}
                     className="text-[12px] font-semibold px-4 py-2 rounded-full text-white active:scale-95 transition-transform"
-                    style={{ backgroundColor: '#1A1A1A' }}
+                    style={{ backgroundColor: 'var(--text-primary)' }}
                   >
                     {L(lang, { ko: '추천 코스 둘러보기', zh: '浏览推荐路线', en: 'Browse Courses' })}
                   </button>
@@ -1236,26 +1236,26 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                         onDragOver={(e) => handleDragOver(e, index)}
                         onDrop={(e) => handleDrop(e, index)}
                         onDragEnd={handleDragEnd}
-                        className={`shrink-0 w-36 rounded-[10px] border p-3 text-left transition-all duration-200 ${
-                          isDragging 
-                            ? 'opacity-50 scale-95 rotate-2 bg-[#F0F0F0] border-[#C0C0C0]' 
+                        className={`shrink-0 w-36 rounded-[var(--radius-btn)] border p-3 text-left transition-all duration-200 ${
+                          isDragging
+                            ? 'opacity-50 scale-95 rotate-2 bg-[var(--border)] border-[#C0C0C0]'
                             : isDragOver
                             ? 'bg-[#E3F2FD] border-[#2196F3] shadow-md scale-105'
-                            : 'bg-[#FAFAFA] border-[#F0F0F0] active:scale-95'
+                            : 'bg-[var(--surface)] border-[var(--border)] active:scale-95'
                         } ${saved.length > 1 ? 'cursor-move' : 'cursor-pointer'}`}
                         onClick={() => !isDragging && setTab('course')}
                       >
                         <div className="flex items-start justify-between mb-1">
-                          <p className="font-bold text-[12px] text-[var(--y2k-text)] truncate flex-1">{course.name}</p>
+                          <p className="font-bold text-[12px] text-[var(--text-primary)] truncate flex-1">{course.name}</p>
                           {saved.length > 1 && (
                             <div className="flex flex-col gap-0.5 ml-1">
-                              <div className="w-1 h-1 rounded-full bg-[#999]" />
-                              <div className="w-1 h-1 rounded-full bg-[#999]" />
-                              <div className="w-1 h-1 rounded-full bg-[#999]" />
+                              <div className="w-1 h-1 rounded-full bg-[var(--text-muted)]" />
+                              <div className="w-1 h-1 rounded-full bg-[var(--text-muted)]" />
+                              <div className="w-1 h-1 rounded-full bg-[var(--text-muted)]" />
                             </div>
                           )}
                         </div>
-                        <p className="text-[10px] text-[#999] mt-1">
+                        <p className="text-[10px] text-[var(--text-muted)] mt-1">
                           {course.stops?.length || 0} {L(lang, { ko: '곳', zh: '处', en: 'stops' })}
                           {course.duration ? ` · ${course.duration}` : ''}
                         </p>
@@ -1264,10 +1264,10 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   })}
                   <button
                     onClick={() => setTab('course')}
-                    className="shrink-0 w-36 rounded-[10px] border border-dashed border-[#D1D5DB] p-3 flex flex-col items-center justify-center gap-1 active:bg-[#F9F9F9] transition-colors"
+                    className="shrink-0 w-36 rounded-[var(--radius-btn)] border border-dashed border-[var(--border)] p-3 flex flex-col items-center justify-center gap-1 active:bg-[var(--surface)] transition-colors"
                   >
-                    <Plus size={16} className="text-[#999]" />
-                    <span className="text-[11px] text-[#999]">{L(lang, { ko: '코스 만들기', zh: '创建路线', en: 'Create Course' })}</span>
+                    <Plus size={16} className="text-[var(--text-muted)]" />
+                    <span className="text-[11px] text-[var(--text-muted)]">{L(lang, { ko: '코스 만들기', zh: '创建路线', en: 'Create Course' })}</span>
                   </button>
                 </div>
               )}
@@ -1293,7 +1293,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               </h2>
               <button
                 onClick={() => setTab('near-map')}
-                className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#F5F5F5] text-[var(--y2k-text-sub)] active:bg-[var(--y2k-border)] transition-colors"
+                className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#F5F5F5] text-[var(--text-secondary)] active:bg-[var(--y2k-border)] transition-colors"
               >
                 {L(lang, { ko: '팝업 더보기', zh: '查看更多', en: 'View More' })}
               </button>
@@ -1306,7 +1306,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   return (
                     <button key={p.id}
                       onClick={() => setSelectedPopup(p)}
-                      className="flex-shrink-0 w-[140px] rounded-[14px] overflow-hidden text-left active:scale-95 transition-transform relative"
+                      className="flex-shrink-0 w-[140px] rounded-[var(--radius-btn)] overflow-hidden text-left active:scale-95 transition-transform relative"
                       style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
                       <div className="h-[90px] relative" style={{ background: p.color || '#F3F4F6' }}>
                         {p.image && <img src={p.image} alt="" className="w-full h-full object-cover" loading="lazy" />}
@@ -1327,7 +1327,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 className="absolute right-0 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 shadow flex items-center justify-center z-10"
                 style={{ border: '1px solid #E5E7EB' }}
               >
-                <ChevronRight size={16} className="text-[var(--y2k-text-sub)]" />
+                <ChevronRight size={16} className="text-[var(--text-secondary)]" />
               </button>
             </div>
           </div>
@@ -1414,7 +1414,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               </div>
             </div>
             {activePopups.length === 0 ? (
-              <div className="mx-4 rounded-[20px] border border-[var(--y2k-border)] p-5 text-center mb-3">
+              <div className="mx-4 rounded-[var(--radius-pill)] border border-[var(--border)] p-5 text-center mb-3">
                 <p className="text-[13px] text-[#999]">
                   {L(lang, { ko: '현재 운영 중인 팝업이 없습니다', zh: '目前没有运营中的快闪店', en: 'No popups open right now' })}
                 </p>
@@ -1529,18 +1529,18 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   >
                     {getDdayLabel(p, lang)}
                   </span>
-                  <span className="text-[13px] text-[var(--y2k-text-sub)]">
+                  <span className="text-[13px] text-[var(--text-secondary)]">
                     {p.period.start.slice(5).replace('-', '/')} ~ {p.period.end.slice(5).replace('-', '/')}
                   </span>
                 </div>
 
                 {/* 위치 */}
                 <div className="mb-4">
-                  <p className="text-[11px] text-[#999] mb-1">{L(lang, { ko: '위치', zh: '地点', en: 'Location' })}</p>
-                  <p className="text-[14px] font-medium text-[var(--y2k-text)]">
+                  <p className="text-[11px] text-[var(--text-muted)] mb-1">{L(lang, { ko: '위치', zh: '地点', en: 'Location' })}</p>
+                  <p className="text-[14px] font-medium text-[var(--text-primary)]">
                     {distLabel[lang]?.[p.district] || p.district}
                   </p>
-                  <p className="text-[13px] text-[var(--y2k-text-sub)] mt-0.5">
+                  <p className="text-[13px] text-[var(--text-secondary)] mt-0.5">
                     {typeof p.address === 'object' ? L(lang, p.address) : p.address}
                   </p>
                 </div>
@@ -1549,7 +1549,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 {p.tags && (
                   <div className="flex flex-wrap gap-1.5 mb-5">
                     {(p.tags[lang] || p.tags.ko || []).map((tag, i) => (
-                      <span key={i} className="text-[12px] px-2.5 py-1 rounded-full bg-[var(--y2k-bg)] text-[#444]">
+                      <span key={i} className="text-[12px] px-2.5 py-1 rounded-full bg-[var(--surface)] text-[#444]">
                         #{tag}
                       </span>
                     ))}
@@ -1561,7 +1561,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   {p.kakaoMapUrl && (
                     <button
                       onClick={() => window.open(p.kakaoMapUrl, '_blank')}
-                      className="flex-1 py-3 rounded-[20px] font-bold text-[14px] text-[var(--y2k-text)] active:scale-95 transition-transform"
+                      className="flex-1 py-3 rounded-[var(--radius-pill)] font-bold text-[14px] text-[var(--text-primary)] active:scale-95 transition-transform"
                       style={{ backgroundColor: '#FEE500' }}
                     >
                       {L(lang, { ko: '카카오맵으로 보기', zh: '用카카오地图查看', en: 'Open in KakaoMap' })}
@@ -1570,7 +1570,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   {p.naverMapUrl && (
                     <button
                       onClick={() => window.open(p.naverMapUrl, '_blank')}
-                      className="flex-1 py-3 rounded-[20px] font-bold text-[14px] text-white active:scale-95 transition-transform"
+                      className="flex-1 py-3 rounded-[var(--radius-pill)] font-bold text-[14px] text-white active:scale-95 transition-transform"
                       style={{ backgroundColor: '#03C75A' }}
                     >
                       {L(lang, { ko: '네이버지도', zh: 'Naver地图', en: 'NaverMap' })}
@@ -1582,7 +1582,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                         const q = typeof p.address === 'object' ? (p.address.ko || p.address.zh) : p.address
                         window.open(`kakaomap://search?q=${encodeURIComponent(q || L(lang, p.title))}`, '_blank')
                       }}
-                      className="flex-1 py-3 rounded-[20px] font-bold text-[14px] text-[var(--y2k-text)] active:scale-95 transition-transform"
+                      className="flex-1 py-3 rounded-[var(--radius-pill)] font-bold text-[14px] text-[var(--text-primary)] active:scale-95 transition-transform"
                       style={{ backgroundColor: '#FEE500' }}
                     >
                       {L(lang, { ko: '지도에서 찾기', zh: '在地图中查找', en: 'Find on Map' })}
@@ -1594,7 +1594,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                 {p.sourceUrl && (
                   <button
                     onClick={() => window.open(p.sourceUrl, '_blank')}
-                    className="mt-3 w-full py-2.5 rounded-[20px] text-[13px] text-[var(--y2k-text-sub)] border border-[var(--y2k-border)] active:scale-95 transition-transform"
+                    className="mt-3 w-full py-2.5 rounded-[var(--radius-pill)] text-[13px] text-[var(--text-secondary)] border border-[var(--border)] active:scale-95 transition-transform"
                   >
                     {L(lang, { ko: '원본 보기', zh: '查看原文', en: 'View Source' })}
                   </button>
@@ -1618,26 +1618,26 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
           {overlay === 'map-guide' && (
             <GuideLayout title={{ ko: '한국 지도 앱', zh: '韩国地图APP', en: 'Korea Map Apps' }} lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }}>
-              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
-                <h3 className="font-bold text-[var(--y2k-text)] mb-2">📍 KakaoMap ({L(lang, { ko: '카카오맵', zh: '카카오地图', en: 'KakaoMap' })})</h3>
-                <p className="text-sm text-[#666666] leading-relaxed mb-3">
+              <div className="p-4 rounded-[var(--radius-pill)] border border-[var(--border)]">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">📍 KakaoMap ({L(lang, { ko: '카카오맵', zh: '카카오地图', en: 'KakaoMap' })})</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
                   {L(lang, { ko: '한국에서 가장 많이 쓰는 지도 앱. 길찾기, 대중교통, 맛집, 카페 검색까지 모두 가능합니다. 반드시 설치하세요!', zh: '韩国使用最多的地图APP。找路、公交、美食、咖啡厅搜索全都可以。必须安装！', en: 'The most used map app in Korea. Navigation, transit, restaurants, cafes — all in one. Must install!' })}
                 </p>
                 <div className="flex gap-2">
-                  <a href="https://apps.apple.com/app/id304608425" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[20px] bg-[#FEE500] text-[var(--y2k-text)] text-sm font-bold active:scale-95 transition-transform">
+                  <a href="https://apps.apple.com/app/id304608425" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[var(--radius-pill)] bg-[#FEE500] text-[var(--text-primary)] text-sm font-bold active:scale-95 transition-transform">
                     App Store
                   </a>
-                  <a href="https://play.google.com/store/apps/details?id=net.daum.android.map" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[20px] bg-[#FEE500] text-[var(--y2k-text)] text-sm font-bold active:scale-95 transition-transform">
+                  <a href="https://play.google.com/store/apps/details?id=net.daum.android.map" target="_blank" rel="noopener noreferrer" className="flex-1 text-center py-2.5 rounded-[var(--radius-pill)] bg-[#FEE500] text-[var(--text-primary)] text-sm font-bold active:scale-95 transition-transform">
                     Google Play
                   </a>
                 </div>
               </div>
-              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)] bg-[var(--y2k-bg)]">
-                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🗺️ {L(lang, { ko: '바이두 지도도 사용 가능!', zh: '百度地图也可以用！', en: 'Baidu Maps also works!' })}</h3>
-                <p className="text-sm text-[#666666] leading-relaxed mb-3">
+              <div className="p-4 rounded-[var(--radius-pill)] border border-[var(--border)] bg-[var(--surface)]">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">🗺️ {L(lang, { ko: '바이두 지도도 사용 가능!', zh: '百度地图也可以用！', en: 'Baidu Maps also works!' })}</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-3">
                   {L(lang, { ko: '바이두 지도(百度地图)도 한국에서 사용 가능합니다. 중국어로 검색할 수 있어 편리합니다.', zh: '百度地图也可以在韩国使用。可以用中文搜索，很方便。', en: 'Baidu Maps also works in Korea. Convenient for searching in Chinese.' })}
                 </p>
-                <a href="https://map.baidu.com" target="_blank" rel="noopener noreferrer" className="block text-center py-2.5 rounded-[20px] bg-[#3385FF] text-white text-sm font-bold active:scale-95 transition-transform">
+                <a href="https://map.baidu.com" target="_blank" rel="noopener noreferrer" className="block text-center py-2.5 rounded-[var(--radius-pill)] bg-[#3385FF] text-white text-sm font-bold active:scale-95 transition-transform">
                   {L(lang, { ko: '바이두 지도 열기', zh: '打开百度地图', en: 'Open Baidu Maps' })}
                 </a>
               </div>
@@ -1650,32 +1650,32 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('traveling') }}
               tip={{ ko: '💡 T-money 잔액은 편의점에서 환불 가능 (카드 반납 시 잔액 - 수수료 500원)', zh: '💡 T-money余额可在便利店退款（退卡时退余额 - 手续费500韩元）', en: '💡 T-money balance is refundable at convenience stores (balance minus ₩500 fee)' }}
             >
-              <div className="p-4 rounded-[20px] bg-red-50 border border-red-200">
+              <div className="p-4 rounded-[var(--radius-pill)] bg-red-50 border border-red-200">
                 <p className="text-sm font-bold text-red-700 leading-relaxed">
                   {L(lang, { ko: '⚠️ 한국 버스 대부분은 현금을 받지 않습니다. 교통카드 없이는 버스를 탈 수 없어요! 반드시 교통카드를 먼저 구매하세요.', zh: '⚠️ 韩国大部分公交不收现金！没有交通卡无法乘坐公交！请务必先购买交通卡。', en: "⚠️ Most Korean buses don't accept cash. You can't ride without a transit card! Buy one first." })}
                 </p>
               </div>
-              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
-                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🎫 T-money / Cash Bee</h3>
-                <p className="text-sm text-[#666666] leading-relaxed">
+              <div className="p-4 rounded-[var(--radius-pill)] border border-[var(--border)]">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">🎫 T-money / Cash Bee</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                   {L(lang, { ko: '편의점(CU, GS25, 세븐일레븐)에서 2,500원에 구매. 충전 후 버스·지하철·택시 모두 사용 가능.', zh: '在便利店(CU、GS25、7-11)花2500韩元购买T-money卡，充值后公交、地铁、出租车都能用。', en: 'Buy at convenience stores (CU, GS25, 7-Eleven) for ₩2,500. After charging, use on buses, subway, and taxis.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
-                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🚇 {L(lang, { ko: '지하철 1회권', zh: '地铁单程票', en: 'Single Journey Ticket' })}</h3>
-                <p className="text-sm text-[#666666] leading-relaxed">
+              <div className="p-4 rounded-[var(--radius-pill)] border border-[var(--border)]">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">🚇 {L(lang, { ko: '지하철 1회권', zh: '地铁单程票', en: 'Single Journey Ticket' })}</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                   {L(lang, { ko: '지하철역 자동발매기에서 구매. 보증금 500원 포함. 하차 후 보증금 환불기에서 500원 돌려받기.', zh: '在地铁站自动售票机购买一次性交通卡。含500韩元押金，下车后在退款机取回。', en: 'Buy at subway station ticket machines. Includes ₩500 deposit. Get the deposit back at refund machines after exiting.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
-                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🚌 {L(lang, { ko: '버스 이용법', zh: '乘公交方法', en: 'How to Ride Buses' })}</h3>
-                <p className="text-sm text-[#666666] leading-relaxed">
+              <div className="p-4 rounded-[var(--radius-pill)] border border-[var(--border)]">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">🚌 {L(lang, { ko: '버스 이용법', zh: '乘公交方法', en: 'How to Ride Buses' })}</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                   {L(lang, { ko: '앞문 탑승 → T-money 태그 → 하차 시 뒷문에서 태그.', zh: '前门上车→刷T-money→下车时后门再刷。', en: 'Board at front door → tap T-money → tap again at rear door when exiting.' })}
                 </p>
               </div>
-              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
-                <h3 className="font-bold text-[var(--y2k-text)] mb-2">🔄 {L(lang, { ko: '환승 꿀팁', zh: '换乘小贴士', en: 'Transfer Tips' })}</h3>
-                <p className="text-sm text-[#666666] leading-relaxed">
+              <div className="p-4 rounded-[var(--radius-pill)] border border-[var(--border)]">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">🔄 {L(lang, { ko: '환승 꿀팁', zh: '换乘小贴士', en: 'Transfer Tips' })}</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                   {L(lang, {
                     ko: '버스/지하철 하차 후 30분 이내에 다른 노선 이용 시 환승 적용!\n→ 두 번째 교통수단의 기본요금이 무료\n→ 단, 거리 추가금은 발생할 수 있음',
                     zh: '下车后30分钟内换乘其他线路，换乘免费！\n→ 第二次乘车的基本费用免费\n→ 但可能产生距离附加费',
@@ -1683,9 +1683,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   }).split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}
                 </p>
               </div>
-              <div className="p-4 rounded-[20px] border border-[var(--y2k-border)]">
-                <h3 className="font-bold text-[var(--y2k-text)] mb-2">💳 {L(lang, { ko: '교통카드 충전', zh: '交通卡充值', en: 'Transit Card Top-up' })}</h3>
-                <p className="text-sm text-[#666666] leading-relaxed">
+              <div className="p-4 rounded-[var(--radius-pill)] border border-[var(--border)]">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">💳 {L(lang, { ko: '교통카드 충전', zh: '交通卡充值', en: 'Transit Card Top-up' })}</h3>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                   {L(lang, { ko: '편의점 또는 지하철역 충전기에서 가능. 1,000원 단위로 충전할 수 있습니다.', zh: '在便利店或地铁站充值机充值。可以按1000韩元为单位充值。', en: 'Available at convenience stores or subway station machines. Can top up in ₩1,000 increments.' })}
                 </p>
               </div>
@@ -1700,7 +1700,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           {overlay === 'kids' && <KidsGuide lang={lang} onClose={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} />}
           {overlay === 'pet' && (
             <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-              <div className="sticky top-0 z-10 bg-white border-b border-[var(--y2k-border)] px-4 py-3 flex items-center gap-3">
+              <div className="sticky top-0 z-10 bg-white border-b border-[var(--border)] px-4 py-3 flex items-center gap-3">
                 <button onClick={() => { setOverlay(null); setShowArrivalFlow(true); setArrivalStep('menu') }} className="p-1"><ChevronLeft size={20} color="#1A1A1A" /></button>
                 <h2 className="typo-title" style={{ fontSize: 16 }}>{L(lang, { ko: '펫 입국가이드', zh: '宠物入境指南', en: 'Pet Entry Guide' })}</h2>
               </div>
@@ -1714,12 +1714,12 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 통역&번역 허브 오버레이 — TranslatorTab 임베드 ─── */}
       {overlay === 'interpret-hub' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 z-10 bg-white border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 z-10 bg-white border-b border-[var(--border)]">
             <div className="flex items-center gap-3 px-4 py-3">
               <button onClick={() => setOverlay(null)} className="p-1">
                 <ChevronLeft size={24} />
               </button>
-              <h1 className="text-lg font-bold text-[var(--y2k-text)]">
+              <h1 className="text-lg font-bold text-[var(--text-primary)]">
                 {L(lang, { ko: '통역&번역', zh: '口译&翻译', en: 'Interpret & Translate' })}
               </h1>
             </div>
@@ -1738,12 +1738,12 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {overlay && POCKET_IDS.includes(overlay) && (
         <Suspense fallback={<div className="fixed inset-0 z-50 bg-white flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-gray-300 border-t-black rounded-full" /></div>}>
           <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-            <div className="sticky top-0 z-10 bg-white border-b border-[var(--y2k-border)]">
+            <div className="sticky top-0 z-10 bg-white border-b border-[var(--border)]">
               <div className="flex items-center gap-3 px-4 py-3">
                 <button onClick={() => setOverlay(null)} className="p-1">
                   <ChevronLeft size={24} />
                 </button>
-                <h1 className="text-lg font-bold text-[var(--y2k-text)]">
+                <h1 className="text-lg font-bold text-[var(--text-primary)]">
                   {L(lang, SCENE_PHRASES.find(s => s.pocket === overlay)?.scene || { ko: '', zh: '', en: '' })}
                 </h1>
               </div>
@@ -1757,18 +1757,18 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {showTzPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: 'rgba(0,0,0,0.3)' }} onClick={() => setShowTzPicker(false)}>
           <div
-            className="rounded-[20px] mx-6 w-full max-w-sm overflow-hidden"
-            style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB' }}
+            className="rounded-[var(--radius-pill)] mx-6 w-full max-w-sm overflow-hidden"
+            style={{ backgroundColor: 'var(--bg)', border: '1px solid var(--border)' }}
             onClick={e => e.stopPropagation()}
           >
             <div className="px-5 pt-4 pb-2 flex items-center justify-between">
-              <h3 className="text-sm font-bold" style={{ color: '#1A1A1A' }}>
+              <h3 className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
                 {L(lang, { ko: '시간대 추가', zh: '添加时区', en: 'Add Timezone' })}
               </h3>
               <button
                 onClick={() => { setTzSelection([]); }}
                 className="text-xs"
-                style={{ color: '#999999' }}
+                style={{ color: 'var(--text-muted)' }}
               >
                 {L(lang, { ko: '전체 해제', zh: '全部取消', en: 'Clear all' })}
               </button>
@@ -1787,16 +1787,16 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                           : [...prev, tz.id]
                       )
                     }}
-                    className="w-full flex items-center justify-between px-3 py-3 rounded-[20px] active:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between px-3 py-3 rounded-[var(--radius-pill)] active:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono text-[#9CA3AF] w-5">{tz.code}</span>
-                      <span className="text-sm text-[var(--y2k-text)]">{L(lang, tz.name)}</span>
-                      <span className="text-xs text-[#999]">{tz.abbr} {currentTime}</span>
+                      <span className="text-[11px] font-mono text-[var(--text-muted)] w-5">{tz.code}</span>
+                      <span className="text-sm text-[var(--text-primary)]">{L(lang, tz.name)}</span>
+                      <span className="text-xs text-[var(--text-muted)]">{tz.abbr} {currentTime}</span>
                       {(() => { const dd = getDayDiffLabel(tz.offset); return dd ? <span className="text-[10px] text-[#F59E0B] font-medium">{dd}</span> : null })()}
                     </div>
                     <div
-                      className="w-5 h-5 rounded-[20px] flex items-center justify-center"
+                      className="w-5 h-5 rounded-[var(--radius-pill)] flex items-center justify-center"
                       style={{
                         border: checked ? 'none' : '1.5px solid #D1D5DB',
                         backgroundColor: checked ? '#3B82F6' : 'transparent',
@@ -1815,7 +1815,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   refreshTimezones()
                   setShowTzPicker(false)
                 }}
-                className="w-full py-2.5 rounded-[20px] text-sm font-medium text-white active:scale-[0.98] transition-transform"
+                className="w-full py-2.5 rounded-[var(--radius-pill)] text-sm font-medium text-white active:scale-[0.98] transition-transform"
                 style={{ backgroundColor: '#3B82F6' }}
               >
                 {L(lang, { ko: '확인', zh: '确认', en: 'Confirm' })}
@@ -1830,9 +1830,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 입국하기 플로우 (카드 리스트) ─── */}
       {showArrivalFlow && arrivalStep === 'menu' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--border)]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--text-primary)] pr-7">
               {L(lang, { ko: '입국하기', zh: '入境', en: 'Arrival' })}
             </h2>
           </div>
@@ -1853,11 +1853,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
                   else { setArrivalStep(item.id) }
                 }}
-                className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, item.label)}</p>
-                  <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, item.label)}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{L(lang, item.sub)}</p>
                 </div>
                 <ChevronRight size={18} color="#999" />
               </button>
@@ -1869,9 +1869,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 입국심사 대기시간 상세 */}
       {showArrivalFlow && arrivalStep === 'immigration-wait' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--border)]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--text-primary)] pr-7">
               {L(lang, { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' })}
             </h2>
           </div>
@@ -1887,30 +1887,30 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 입국신고서 — 선택 화면 */}
       {showArrivalFlow && arrivalStep === 'immigration' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--border)]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--text-primary)] pr-7">
               {L(lang, { ko: '입국신고서 작성', zh: '入境申报卡填写', en: 'Arrival Card' })}
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-3">
             <button
               onClick={() => setArrivalStep('immigration-electronic')}
-              className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '전자 입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
-                <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: '온라인으로 미리 작성, 실물 카드 불필요', zh: '在线提前填写，无需纸质卡', en: 'Fill online in advance, no physical card needed' })}</p>
+                <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: '전자 입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{L(lang, { ko: '온라인으로 미리 작성, 실물 카드 불필요', zh: '在线提前填写，无需纸质卡', en: 'Fill online in advance, no physical card needed' })}</p>
               </div>
               <ChevronRight size={18} color="#999" />
             </button>
             <button
               onClick={() => { setOverlay('arrival-card'); setShowArrivalFlow(false) }}
-              className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+              className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
             >
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '실물 입국카드 작성법', zh: '纸质入境卡填写方法', en: 'Physical Arrival Card Guide' })}</p>
-                <p className="text-xs text-[#666666] mt-0.5">{L(lang, { ko: '비행기 안에서 받는 종이 카드 작성 가이드', zh: '飞机上发的纸质卡填写指南', en: 'Guide to filling the paper card from the plane' })}</p>
+                <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: '실물 입국카드 작성법', zh: '纸质入境卡填写方法', en: 'Physical Arrival Card Guide' })}</p>
+                <p className="text-xs text-[var(--text-secondary)] mt-0.5">{L(lang, { ko: '비행기 안에서 받는 종이 카드 작성 가이드', zh: '飞机上发的纸质卡填写指南', en: 'Guide to filling the paper card from the plane' })}</p>
               </div>
               <ChevronRight size={18} color="#999" />
             </button>
@@ -1921,16 +1921,16 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 전자 입국신고서 상세 */}
       {showArrivalFlow && arrivalStep === 'immigration-electronic' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--border)]">
             <button onClick={() => setArrivalStep('immigration')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--text-primary)] pr-7">
               {L(lang, { ko: '전자 입국신고서', zh: '电子入境卡', en: 'Electronic Arrival Card' })}
             </h2>
           </div>
           <div className="p-4">
-            <div className="rounded-[20px] bg-[#F0F4FF] p-5">
-              <p className="text-[15px] font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
-              <p className="text-xs text-[#666666] leading-relaxed mb-4">
+            <div className="rounded-[var(--radius-pill)] bg-[#F0F4FF] p-5">
+              <p className="text-[15px] font-bold text-[var(--text-primary)] mb-2">{L(lang, { ko: '전자입국신고서 (Q-CODE)', zh: '电子入境卡 (Q-CODE)', en: 'Electronic Arrival Card (Q-CODE)' })}</p>
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed mb-4">
                 {L(lang, { ko: '한국 입국 전 온라인으로 미리 작성할 수 있습니다.\n건강상태, 세관신고를 한번에!\n실물 카드를 안 써도 됩니다.', zh: '入韩前可在线提前填写。\n健康状态、海关申报一次搞定！\n不需要纸质卡。', en: 'Fill out online before entering Korea.\nHealth & customs declaration in one go!\nNo physical card needed.' })}
               </p>
               <div className="flex gap-2">
@@ -1938,7 +1938,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   href="https://ciq.korea.go.kr/coview/board/homeland/linkView.do"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 rounded-[20px] text-center text-sm font-bold text-white bg-[#3B5BDB] active:scale-95 transition-transform"
+                  className="flex-1 py-3 rounded-[var(--radius-pill)] text-center text-sm font-bold text-white bg-[#3B5BDB] active:scale-95 transition-transform"
                 >
                   {L(lang, { ko: 'Q-CODE 바로가기', zh: 'Q-CODE 前往', en: 'Go to Q-CODE' })}
                 </a>
@@ -1946,7 +1946,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   href="https://www.k-eta.go.kr/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 rounded-[20px] text-center text-sm font-bold text-[var(--y2k-text)] bg-white border border-[var(--y2k-border)] active:scale-95 transition-transform"
+                  className="flex-1 py-3 rounded-[var(--radius-pill)] text-center text-sm font-bold text-[var(--text-primary)] bg-white border border-[var(--border)] active:scale-95 transition-transform"
                 >
                   {L(lang, { ko: 'K-ETA (비자면제국)', zh: 'K-ETA（免签国）', en: 'K-ETA (Visa-free)' })}
                 </a>
@@ -1959,20 +1959,20 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* 택시/대중교통 상세 */}
       {showArrivalFlow && arrivalStep === 'transport' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto animate-fade-in">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--border)]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--text-primary)] pr-7">
               {L(lang, { ko: '🚕 택시 / 대중교통', zh: '🚕 出租车 / 公共交通', en: '🚕 Taxi / Transit' })}
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-4">
             {/* 택시 섹션 */}
             <div>
-              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '🚕 택시 탈래요', zh: '🚕 坐出租车', en: '🚕 Take a Taxi' })}</h3>
+              <h3 className="text-sm font-bold text-[var(--text-primary)] mb-2">{L(lang, { ko: '🚕 택시 탈래요', zh: '🚕 坐出租车', en: '🚕 Take a Taxi' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '공항에서 택시 바로 잡기', zh: '机场直接打车', en: 'Get a taxi at the airport' })}</p>
-                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4">
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: '공항에서 택시 바로 잡기', zh: '机场直接打车', en: 'Get a taxi at the airport' })}</p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '인천공항: 1층 도착 후 8번/4번 게이트 → 택시 승강장. 일반택시 ₩65,000~80,000 (서울 기준).\n김포공항: 1층 출구 → 택시 승강장. 일반택시 ₩20,000~35,000 (서울 기준).\n카드 결제 가능, 기본요금 ₩4,800.',
                       zh: '仁川机场：1层到达后8号/4号门 → 出租车站。普通出租车 ₩65,000~80,000（首尔方向）。\n金浦机场：1层出口 → 出租车站。普通出租车 ₩20,000~35,000（首尔方向）。\n可刷卡，起步价 ₩4,800。',
@@ -1980,14 +1980,14 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: 'RIDE 앱 사용하기', zh: '使用RIDE APP', en: 'Use RIDE App' })}</p>
-                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4">
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: 'RIDE 앱 사용하기', zh: '使用RIDE APP', en: 'Use RIDE App' })}</p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mt-1">
                     {L(lang, { ko: '한국 번호 없어도 돼요! I·RIDE 앱으로 외국인도 택시 호출 가능.', zh: '不需要韩国手机号！用I·RIDE APP外国人也能叫车。', en: 'No Korean number needed! Foreigners can call taxis with the I·RIDE app.' })}
                   </p>
                   <div className="flex gap-2 mt-3">
-                    <a href="https://apps.apple.com/app/id1596453498" target="_blank" rel="noopener noreferrer" className="rounded-[20px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">iOS</a>
-                    <a href="https://play.google.com/store/apps/details?id=com.iride.passenger" target="_blank" rel="noopener noreferrer" className="rounded-[20px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">Android</a>
+                    <a href="https://apps.apple.com/app/id1596453498" target="_blank" rel="noopener noreferrer" className="rounded-[var(--radius-pill)] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">iOS</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.iride.passenger" target="_blank" rel="noopener noreferrer" className="rounded-[var(--radius-pill)] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 text-center flex-1">Android</a>
                   </div>
                 </div>
               </div>
@@ -1995,11 +1995,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
             {/* 대중교통 섹션 */}
             <div>
-              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '🚇 대중교통 이용할래요', zh: '🚇 坐公共交通', en: '🚇 Public Transit' })}</h3>
+              <h3 className="text-sm font-bold text-[var(--text-primary)] mb-2">{L(lang, { ko: '🚇 대중교통 이용할래요', zh: '🚇 坐公共交通', en: '🚇 Public Transit' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: 'AREX (공항철도)', zh: 'AREX（机场铁路）', en: 'AREX (Airport Railroad)' })}</p>
-                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4">
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: 'AREX (공항철도)', zh: 'AREX（机场铁路）', en: 'AREX (Airport Railroad)' })}</p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '인천공항 → 서울역 직통 43분 ₩11,000 / 일반열차 66분 ₩4,750.\n지하 교통센터(B1)에서 탑승.',
                       zh: '仁川机场 → 首尔站 直达43分钟 ₩11,000 / 普通列车66分钟 ₩4,750。\n地下交通中心(B1)乘车。',
@@ -2007,9 +2007,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '일회용 교통카드 구매', zh: '购买一次性交通卡', en: 'Single-use Transit Card' })}</p>
-                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4">
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: '일회용 교통카드 구매', zh: '购买一次性交通卡', en: 'Single-use Transit Card' })}</p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '지하철역 자동발매기에서 구매. 보증금 ₩500 포함, 하차 후 환불기에서 돌려받기.',
                       zh: '地铁站自动售票机购买。含₩500押金，下车后在退款机退还。',
@@ -2017,9 +2017,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: 'T-money 카드 구매', zh: '购买T-money卡', en: 'Buy T-money Card' })}</p>
-                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4">
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: 'T-money 카드 구매', zh: '购买T-money卡', en: 'Buy T-money Card' })}</p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '편의점(CU, GS25, 세븐일레븐)에서 ₩2,500에 구매. 충전 후 버스·지하철·택시 모두 사용.',
                       zh: '便利店（CU、GS25、7-11）₩2,500购买。充值后公交·地铁·出租车都能用。',
@@ -2036,19 +2036,19 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* SIM & 환전 상세 */}
       {showArrivalFlow && arrivalStep === 'sim-exchange' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto animate-fade-in">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--border)]">
             <button onClick={() => setArrivalStep('menu')} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--text-primary)] pr-7">
               {L(lang, { ko: '💱 SIM카드 & 환전', zh: '💱 SIM卡 & 换钱', en: '💱 SIM & Exchange' })}
             </h2>
           </div>
           <div className="p-4 flex flex-col gap-4">
             {/* SIM 섹션 */}
             <div>
-              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '📱 한국 SIM카드 구매', zh: '📱 购买韩国SIM卡', en: '📱 Buy a Korean SIM' })}</h3>
+              <h3 className="text-sm font-bold text-[var(--text-primary)] mb-2">{L(lang, { ko: '📱 한국 SIM카드 구매', zh: '📱 购买韩国SIM卡', en: '📱 Buy a Korean SIM' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
-                  <p className="text-xs text-[#666666] leading-relaxed">
+                <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4">
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                     {L(lang, {
                       ko: '인천공항 1층에 KT, SKT, LG U+ 로밍센터. eSIM이면 온라인으로도 구매 가능 (Airalo, eSIM Korea 등)',
                       zh: '仁川机场1层有KT、SKT、LG U+漫游中心。eSIM可在线购买（Airalo、eSIM Korea等）',
@@ -2057,7 +2057,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   </p>
                   <button
                     onClick={() => { setOverlay('sim'); setShowArrivalFlow(false) }}
-                    className="mt-3 rounded-[20px] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 w-full text-center active:scale-[0.98] transition-transform"
+                    className="mt-3 rounded-[var(--radius-pill)] bg-[#2D5A3D] text-white text-sm font-medium py-2.5 px-4 w-full text-center active:scale-[0.98] transition-transform"
                   >
                     {L(lang, { ko: '자세히 보기', zh: '查看详情', en: 'View Details' })}
                   </button>
@@ -2067,11 +2067,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
 
             {/* 환전 섹션 */}
             <div>
-              <h3 className="text-sm font-bold text-[var(--y2k-text)] mb-2">{L(lang, { ko: '💱 환전할래요', zh: '💱 换钱', en: '💱 Exchange Money' })}</h3>
+              <h3 className="text-sm font-bold text-[var(--text-primary)] mb-2">{L(lang, { ko: '💱 환전할래요', zh: '💱 换钱', en: '💱 Exchange Money' })}</h3>
               <div className="flex flex-col gap-3">
-                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '공항 환전소', zh: '机场换钱所', en: 'Airport Exchange' })}</p>
-                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4">
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: '공항 환전소', zh: '机场换钱所', en: 'Airport Exchange' })}</p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '인천공항 도착층(1층) 곳곳에 환전소 (우리은행, 하나은행, KB국민은행). 소액만 환전 추천 (수수료 높음).',
                       zh: '仁川机场到达层（1层）各处有换钱所（友利银行、韩亚银行、KB国民银行）。建议少量兑换（手续费高）。',
@@ -2079,9 +2079,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                     })}
                   </p>
                 </div>
-                <div className="rounded-[20px] border border-[var(--y2k-border)] p-4">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, { ko: '도심 환전소 (더 저렴!)', zh: '市区换钱所（更划算！）', en: 'Downtown Exchange (Cheaper!)' })}</p>
-                  <p className="text-xs text-[#666666] leading-relaxed mt-1">
+                <div className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4">
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, { ko: '도심 환전소 (더 저렴!)', zh: '市区换钱所（更划算！）', en: 'Downtown Exchange (Cheaper!)' })}</p>
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed mt-1">
                     {L(lang, {
                       ko: '명동 사설환전소(대사관 앞), MONEYBOX(명동/홍대) 추천. 공항 대비 1~3% 유리.\n위치: MONEYBOX 명동점 — 서울특별시 중구 명동2가 (카카오맵에서 "MONEYBOX 명동" 검색)',
                       zh: '推荐明洞私人换钱所（大使馆前）、MONEYBOX（明洞/弘大）。比机场优惠1~3%。\n位置：MONEYBOX明洞店 — 首尔市中区明洞2街（在KakaoMap搜索"MONEYBOX 명동"）',
@@ -2098,9 +2098,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 여행 중 플로우 ─── */}
       {showArrivalFlow && arrivalStep === 'traveling' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--border)]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--text-primary)] pr-7">
               {L(lang, { ko: '여행 중', zh: '旅行中', en: 'Traveling' })}
             </h2>
           </div>
@@ -2122,11 +2122,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
                   else { setTab(item.tab); setShowArrivalFlow(false) }
                 }}
-                className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, item.label)}</p>
-                  <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, item.label)}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{L(lang, item.sub)}</p>
                 </div>
                 <ChevronRight size={18} color="#999" />
               </button>
@@ -2138,9 +2138,9 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
       {/* ─── 출국준비 플로우 ─── */}
       {showArrivalFlow && arrivalStep === 'departure' && (
         <div className="fixed top-[52px] inset-x-0 bottom-0 z-50 bg-white overflow-y-auto">
-          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--y2k-border)]">
+          <div className="sticky top-0 bg-white z-10 flex items-center px-4 py-3 border-b border-[var(--border)]">
             <button onClick={() => setShowArrivalFlow(false)} className="p-1"><ChevronLeft size={22} color="#1A1A1A" /></button>
-            <h2 className="flex-1 text-center text-sm font-bold text-[var(--y2k-text)] pr-7">
+            <h2 className="flex-1 text-center text-sm font-bold text-[var(--text-primary)] pr-7">
               {L(lang, { ko: '출국준비', zh: '出境准备', en: 'Departure Prep' })}
             </h2>
           </div>
@@ -2157,11 +2157,11 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
                   if (item.guide) { setOverlay(item.guide); setShowArrivalFlow(false) }
                   else if (item.tab) { setTab(item.tab); setShowArrivalFlow(false) }
                 }}
-                className="rounded-[20px] border border-[var(--y2k-border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
+                className="rounded-[var(--radius-pill)] border border-[var(--border)] p-4 text-left active:scale-[0.98] transition-transform flex items-center gap-3"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-[var(--y2k-text)]">{L(lang, item.label)}</p>
-                  <p className="text-xs text-[#666666] mt-0.5">{L(lang, item.sub)}</p>
+                  <p className="text-sm font-bold text-[var(--text-primary)]">{L(lang, item.label)}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{L(lang, item.sub)}</p>
                 </div>
                 <ChevronRight size={18} color="#999" />
               </button>
@@ -2186,7 +2186,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
           <div className="absolute inset-0 bg-black/30" />
           <div className="relative w-full max-w-[480px] bg-white rounded-t-[20px] p-5 pb-8 animate-slide-up" onClick={e => e.stopPropagation()}>
             <div className="flex justify-center mb-3"><div className="w-10 h-1 rounded-full bg-[#D1D5DB]" /></div>
-            <p className="text-[15px] font-bold text-[var(--y2k-text)] mb-1">🔔 {L(lang, { ko: '팝업 알림 설정', zh: '快闪通知设置', en: 'Popup Notifications' })}</p>
+            <p className="text-[15px] font-bold text-[var(--text-primary)] mb-1">🔔 {L(lang, { ko: '팝업 알림 설정', zh: '快闪通知设置', en: 'Popup Notifications' })}</p>
             <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '관심 카테고리의 새 팝업을 알려드려요', zh: '新快闪开幕时通知您', en: 'Get notified for new popups' })}</p>
             <div className="flex flex-wrap gap-2">
               {[
@@ -2209,7 +2209,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
               })}
             </div>
             <button onClick={() => setShowSubSheet(false)}
-              className="mt-5 w-full py-3 rounded-[20px] bg-[#111827] text-white text-[13px] font-bold active:scale-95 transition-transform">
+              className="mt-5 w-full py-3 rounded-[var(--radius-pill)] bg-[#111827] text-white text-[13px] font-bold active:scale-95 transition-transform">
               {L(lang, { ko: '저장', zh: '保存', en: 'Save' })}
             </button>
           </div>

@@ -1,6 +1,61 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Pretendard:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Pretendard:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
 
 @import "tailwindcss";
+
+/* ─── NEAR Design System — 토스/미단/소홍서 스타일 ─── */
+:root {
+  /* Brand Colors */
+  --primary: #C4725A;
+  --primary-light: #FDF8F6;
+  --primary-dark: #A85D48;
+
+  /* Semantic Colors */
+  --price: #FF3B30;
+  --success: #34C759;
+  --warning: #FF9500;
+  --info: #007AFF;
+
+  /* Text Hierarchy */
+  --text-primary: #1A1A1A;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --text-hint: #CCCCCC;
+
+  /* Backgrounds */
+  --bg: #FFFFFF;
+  --surface: #F7F7F7;
+  --card: #FFFFFF;
+  --border: #F0F0F0;
+
+  /* Border Radius — 2025 Trend */
+  --radius-card: 16px;
+  --radius-btn: 14px;
+  --radius-chip: 20px;
+  --radius-pill: 24px;
+
+  /* Shadows — Minimal */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-pressed: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  /* Spacing — 토스 수준으로 넉넉 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 20px;
+  --spacing-2xl: 32px;
+}
+
+.dark {
+  --text-primary: #FFFFFF;
+  --text-secondary: #CCCCCC;
+  --text-muted: #999999;
+  --bg: #1A1A1A;
+  --surface: #262626;
+  --card: #1A1A1A;
+  --border: #333333;
+}
 
 /* ─── Y2K Animations ─── */
 

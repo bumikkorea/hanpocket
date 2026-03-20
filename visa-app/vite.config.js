@@ -39,6 +39,7 @@ export default defineConfig({
       input: {
         main:  resolve(__dirname, 'index.html'),
         admin: resolve(__dirname, 'admin.html'),
+        hotel: resolve(__dirname, 'hotel.html'),
       },
       output: {
         manualChunks: (id) => {

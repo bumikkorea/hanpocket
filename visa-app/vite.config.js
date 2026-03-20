@@ -37,9 +37,10 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main:  resolve(__dirname, 'index.html'),
-        admin: resolve(__dirname, 'admin.html'),
-        hotel: resolve(__dirname, 'hotel.html'),
+        main:      resolve(__dirname, 'index.html'),
+        admin:     resolve(__dirname, 'admin.html'),
+        hotel:     resolve(__dirname, 'hotel.html'),
+        superadmin: resolve(__dirname, 'superadmin.html'),
       },
       output: {
         manualChunks: (id) => {

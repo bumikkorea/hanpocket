@@ -4,7 +4,20 @@ import { supabase } from '../lib/supabase'
 
 // ── 상수 ──────────────────────────────────────────────────────
 const ADMIN_KEY = 'near_admin_auth'
-const ADMIN_PW  = 'near2026'
+
+/**
+ * SHA-256으로 비밀번호 해싱
+ * @param {string} password - 평문 비밀번호
+ * @returns {Promise<string>} - 해시값 (hex)
+ */
+async function hashPassword(password) {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password)
+  const hash = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+}
 
 // 폴백 매장 목록 (Supabase 로드 실패 시)
 const FALLBACK_SHOPS = [
@@ -67,14 +80,22 @@ function LoginScreen({ onLogin }) {
       })
   }, [])
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
-    if (pw === ADMIN_PW) {
-      const shop = shops.find(s => s.id === shopId)
-      onLogin(shop)
-    } else {
-      setError('비밀번호가 올바르지 않습니다.')
-      setPw('')
+    try {
+      const inputHash = await hashPassword(pw)
+      const expectedHash = import.meta.env.VITE_ADMIN_PASSWORD_HASH
+
+      if (inputHash === expectedHash) {
+        const shop = shops.find(s => s.id === shopId)
+        onLogin(shop)
+      } else {
+        setError('비밀번호가 올바르지 않습니다.')
+        setPw('')
+      }
+    } catch (err) {
+      setError('인증 처리 중 오류가 발생했습니다.')
+      console.error('Password hash error:', err)
     }
   }
 

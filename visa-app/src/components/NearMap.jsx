@@ -277,10 +277,24 @@ export default function NearMap({ lang = 'zh' }) {
   }, [])
 
   const today = new Date().toISOString().slice(0, 10)
-  const filteredPins = allPins.filter(p =>
-    p.category === activeCategory &&
-    !(p.is_temporary && p.end_date && p.end_date < today)  // 종료된 팝업 핀 숨김
-  )
+  const filteredPins = allPins.filter(p => {
+    const match = p.category === activeCategory &&
+      !(p.is_temporary && p.end_date && p.end_date < today)
+    if (!match && p.category !== activeCategory && allPins.length > 0) {
+      if (Math.random() < 0.1) console.log(`🗺️ Filter out pin: ${p.id} category=${p.category} (looking for ${activeCategory})`)
+    }
+    return match
+  })
+
+  // 초기 로드 시 카테고리별 핀 개수 확인
+  if (allPins.length > 0) {
+    const grouped = {}
+    allPins.forEach(p => {
+      if (!grouped[p.category]) grouped[p.category] = 0
+      grouped[p.category]++
+    })
+    if (Math.random() < 0.01) console.log('🗺️ All pins by category:', grouped)
+  }
   const isExpanded = !!activePopup
 
   // ── 북마크 토글 ──
@@ -394,10 +408,16 @@ export default function NearMap({ lang = 'zh' }) {
     if (activeCourseId) return  // 코스 모드: 코스 핀이 대신 렌더됨
 
     const map = mapInstance.current
+    console.log(`🗺️ NearMap render pins: activeCategory=${activeCategory}, filteredPins=${filteredPins.length}, allPins=${allPins.length}`)
+
     const inBounds = getPinsInBounds(filteredPins, map)
+    console.log(`🗺️ Pins in bounds: ${inBounds.length}/${filteredPins.length}`)
+
     const visible = inBounds
       .sort((a, b) => (a.distance || 0) - (b.distance || 0) || b.sort_priority - a.sort_priority)
       .slice(0, 7)
+
+    console.log(`🗺️ Creating ${visible.length} overlays with cat=${visible.map(p => p.category).join(',')}`)
 
     overlaysRef.current = visible.map(poi => {
       const el = document.createElement('div')
@@ -409,7 +429,9 @@ export default function NearMap({ lang = 'zh' }) {
       el.addEventListener('click', () => selectPin(poi))
       return { overlay, el, poi }
     })
-  }, [mapReady, filteredPins, selectPin, activeCourseId, mapMoveStamp])
+
+    console.log(`✅ Rendered ${overlaysRef.current.length} pin overlays`)
+  }, [mapReady, filteredPins, selectPin, activeCourseId, mapMoveStamp, activeCategory])
 
   // ── 코스 핀 + 폴리라인 ──
   useEffect(() => {

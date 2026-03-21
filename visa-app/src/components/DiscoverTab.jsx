@@ -3,7 +3,7 @@
  * 중국 여성 관광객이 1~3터치로 원하는 장소를 찾는 핵심 탭
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Search, X, MapPin, ExternalLink, ChevronRight } from 'lucide-react'
+import { Search, X, MapPin, ExternalLink, ChevronRight, Scissors, Utensils, ShoppingBag, Coffee, Car, Heart, Train, ShoppingCart, Smartphone, MoreHorizontal } from 'lucide-react'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -156,6 +156,30 @@ const ZH_TO_KO = {
   '热门': '인기', '推荐': '추천', '附近': '근처',
 }
 
+// ─── 美团 스타일 카테고리 그리드 (10개) ───
+const MEITU_CATEGORIES = [
+  { id: 'beauty',   icon: Scissors,      bg: '#FFEEF0', color: '#E57373', zh: '美容',  ko: '미용',  en: 'Beauty',   searchTerm: { zh: '美妆', ko: '뷰티', en: 'beauty' },    archiveCat: '7' },
+  { id: 'food',     icon: Utensils,      bg: '#FFF3E0', color: '#FF9800', zh: '美食',  ko: '맛집',  en: 'Food',     searchTerm: { zh: '美食', ko: '맛집', en: 'food' },      archiveCat: '2' },
+  { id: 'popup',    icon: ShoppingBag,   bg: '#F3E5F5', color: '#9C27B0', zh: '快闪店',ko: '팝업',  en: 'Popup',    searchTerm: { zh: '快闪店', ko: '팝업', en: 'popup' },  archiveCat: null },
+  { id: 'cafe',     icon: Coffee,        bg: '#EFEBE9', color: '#795548', zh: '咖啡',  ko: '카페',  en: 'Cafe',     searchTerm: { zh: '咖啡厅', ko: '카페', en: 'cafe' },    archiveCat: '14' },
+  { id: 'taxi',     icon: Car,           bg: '#FFF8E1', color: '#F57F17', zh: '出租车',ko: '택시',  en: 'Taxi',     searchTerm: null, archiveCat: null, tab: 'near-map' },
+  { id: 'medical',  icon: Heart,         bg: '#E8F5E9', color: '#4CAF50', zh: '医疗',  ko: '의료',  en: 'Medical',  searchTerm: { zh: '医院', ko: '병원', en: 'hospital' }, archiveCat: '8' },
+  { id: 'ktx',      icon: Train,         bg: '#E3F2FD', color: '#2196F3', zh: 'KTX',   ko: 'KTX',   en: 'KTX',      searchTerm: { zh: '地铁', ko: '지하철', en: 'metro' },  archiveCat: null },
+  { id: 'shopping', icon: ShoppingCart,  bg: '#FCE4EC', color: '#E91E63', zh: '购物',  ko: '쇼핑',  en: 'Shopping', searchTerm: { zh: '购物', ko: '쇼핑', en: 'shopping' },  archiveCat: '1' },
+  { id: 'simcard',  icon: Smartphone,    bg: '#E0F7FA', color: '#00BCD4', zh: '电话卡',ko: 'SIM',   en: 'SIM',      searchTerm: null, archiveCat: null, sub: 'sim-guide' },
+  { id: 'more',     icon: MoreHorizontal,bg: '#F7F7F7', color: '#999999', zh: '更多',  ko: '더보기',en: 'More',     searchTerm: null, archiveCat: null },
+]
+
+// ─── 小红书 스타일 피드 고정 데이터 ───
+const FEED_DATA = [
+  { id: 'fd1', title: '韩国烫染一站式，效果绝了',      location: '圣水洞',  status: null,       likes: '328',  gradient: 'linear-gradient(160deg,#FFEEF0,#FFD6DC)' },
+  { id: 'fd2', title: 'GENTLE MONSTER 限时快闪',       location: null,      status: 'D-5 结束', likes: '892',  gradient: 'linear-gradient(160deg,#F3E5F5,#E1BEE7)' },
+  { id: 'fd3', title: '本地人都去的弘大烤肉店',        location: '弘大',    status: null,       likes: '1.2k', gradient: 'linear-gradient(160deg,#FFF3E0,#FFE0B2)' },
+  { id: 'fd4', title: '江南皮肤管理，中文OK',          location: null,      status: '需预约',   likes: '567',  gradient: 'linear-gradient(160deg,#E8F5E9,#C8E6C9)' },
+  { id: 'fd5', title: 'BLACKPINK周边快闪',             location: '明洞',    status: null,       likes: '2.1k', gradient: 'linear-gradient(160deg,#FCE4EC,#F8BBD9)' },
+  { id: 'fd6', title: '首尔最火的拍照咖啡厅',          location: '圣水',    status: null,       likes: '445',  gradient: 'linear-gradient(160deg,#EFEBE9,#D7CCC8)' },
+]
+
 function zhToKo(query) {
   if (!query) return query
   let result = query
@@ -259,145 +283,183 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
     window.open(`https://map.kakao.com/link/search/${encodeURIComponent(searchName)}`, '_blank')
   }
 
+  const handleMeituClick = (cat) => {
+    if (cat.tab && setTab) { setTab(cat.tab); return }
+    if (cat.sub && setSubPage) { setSubPage(cat.sub); return }
+    if (!cat.searchTerm) return
+    setActiveCategory(cat.id)
+    setQuery('')
+    setShowTrending(false)
+    loadContent(L(lang, cat.searchTerm), cat.archiveCat)
+  }
+
   return (
-    <div className="pb-0 animate-fade-up">
-      {/* 검색바 — 고정 상단 */}
-      <div className="sticky top-0 z-20 bg-white px-4 pt-3 pb-2">
-        <div className="relative">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)]" />
+    <div style={{ paddingBottom: 0 }}>
+      {/* ─── 검색바 — 고정 상단 ─── */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 20, background: 'white', padding: '12px 20px 10px' }}>
+        <div style={{ position: 'relative' }}>
+          <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input
             ref={searchRef}
             type="text"
             value={query}
             onChange={e => handleSearch(e.target.value)}
             onFocus={() => !query && setShowTrending(true)}
-            placeholder={L(lang, { ko: '맛집, 카페, K-POP, 명동...', zh: '搜索美食、咖啡、K-POP、明洞...', en: 'Search food, cafe, K-POP, Myeongdong...' })}
-            className="w-full pl-10 pr-10 py-3 rounded-[20px] bg-white text-[14px] text-[var(--y2k-text)] placeholder:text-[var(--y2k-text-sub)] outline-none focus:ring-2 focus:ring-[var(--y2k-lavender)]/30"
-            style={{ boxShadow: '0 4px 16px rgba(255,133,179,0.08)' }}
+            placeholder={L(lang, { ko: '맛집, 카페, K-POP, 명동...', zh: '搜索美食、咖啡、K-POP、明洞...', en: 'Search food, cafe, K-POP...' })}
+            style={{
+              width: '100%', padding: '10px 36px', borderRadius: 'var(--radius-pill)',
+              background: 'var(--surface)', border: 'none', outline: 'none',
+              fontSize: 14, color: 'var(--text-primary)', boxSizing: 'border-box',
+            }}
           />
           {query && (
             <button onClick={() => { setQuery(''); setShowTrending(true); setResults(FALLBACK_ITEMS); setActiveCategory(null) }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1">
-              <X size={16} className="text-[var(--y2k-text-sub)]" />
+              style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+              <X size={14} color="var(--text-muted)" />
             </button>
           )}
         </div>
       </div>
 
-      {/* 1터치 카테고리 그리드 */}
-      <div className="px-4 pt-2 pb-1">
-        <div className="grid grid-cols-4 gap-2">
-          {QUICK_CATEGORIES.map(cat => {
-            const isActive = activeCategory === cat.id
-            return (
-              <button key={cat.id} onClick={() => handleCategoryClick(cat)}
-                className="flex items-center justify-center py-2 rounded-full transition-all active:scale-95"
-                style={{ background: isActive ? 'linear-gradient(135deg, var(--y2k-pink), var(--y2k-lavender))' : '#FFF', boxShadow: isActive ? '0 4px 16px rgba(255,133,179,0.2)' : '0 4px 16px rgba(255,133,179,0.08)' }}>
-                <span className="text-[11px] font-medium" style={{ color: isActive ? '#FFF' : 'var(--y2k-text-sub)' }}>
-                  {L(lang, cat.label)}
-                </span>
-              </button>
-            )
-          })}
+      {/* ─── 히어로 배너 ─── */}
+      {showTrending && !query && (
+        <div style={{ margin: '4px 20px 0', height: 160, borderRadius: 'var(--radius-card)', background: 'linear-gradient(135deg, #C4725A, #E8956F)', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden', position: 'relative' }}>
+          <div style={{ position: 'absolute', right: -20, top: -20, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+          <div style={{ fontSize: 22, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>首尔弹窗情报站</div>
+          <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>发现最新限时快闪店 · 美食 · 美容</div>
         </div>
+      )}
+
+      {/* ─── 美团 스타일 카테고리 그리드 ─── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 4, padding: '0 20px', margin: '20px 0 24px' }}>
+        {MEITU_CATEGORIES.map(cat => {
+          const isActive = activeCategory === cat.id
+          const Icon = cat.icon
+          return (
+            <button key={cat.id} onClick={() => handleMeituClick(cat)}
+              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, padding: '12px 4px', cursor: 'pointer', borderRadius: 12, background: isActive ? 'var(--surface)' : 'transparent', border: 'none', transition: 'all 0.15s' }}
+              onMouseDown={e => e.currentTarget.style.transform = 'scale(0.95)'}
+              onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
+              onTouchStart={e => e.currentTarget.style.transform = 'scale(0.95)'}
+              onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <div style={{ width: 44, height: 44, borderRadius: 14, background: cat.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon size={20} color={cat.color} />
+              </div>
+              <span style={{ fontSize: 11, color: 'var(--text-secondary)', fontWeight: 500, textAlign: 'center', lineHeight: 1.2 }}>
+                {L(lang, { zh: cat.zh, ko: cat.ko, en: cat.en })}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
-      {/* 인기 검색어 — 검색창 포커스 시 */}
+      {/* ─── 인기 검색어 (검색창 포커스 시) ─── */}
       {showTrending && !query && (
-        <div className="px-4 pt-3">
-          <p className="text-[12px] font-bold text-[var(--y2k-text)] mb-2">
-            🔥 {L(lang, { ko: '지금 인기 검색어', zh: '热门搜索', en: 'Trending Searches' })}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {TRENDING.map((t, i) => (
-              <button key={i} onClick={() => handleTrendingClick(t)}
-                className="px-3 py-1.5 rounded-full bg-white text-[12px] text-[var(--y2k-text-sub)] font-medium active:bg-[var(--y2k-bg)] transition-colors"
-                style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-                {L(lang, t)}
+        <div style={{ padding: '0 20px', marginBottom: 20 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {TRENDING.map((tr, i) => (
+              <button key={i} onClick={() => handleTrendingClick(tr)}
+                style={{ padding: '6px 14px', borderRadius: 'var(--radius-pill)', background: 'var(--surface)', border: 'none', fontSize: 12, color: 'var(--text-secondary)', fontWeight: 500, cursor: 'pointer' }}>
+                {L(lang, tr)}
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* 검색 결과 / 콘텐츠 그리드 */}
-      <div className="px-4 pt-3">
-        {loading && results.length === 0 ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#C4725A] rounded-full" />
-          </div>
-        ) : (
-          <>
-            {total > 0 && !showTrending && (
-              <p className="text-[11px] text-[var(--y2k-text-sub)] mb-2">
-                {L(lang, { ko: `${total}건의 결과`, zh: `共${total}条结果`, en: `${total} results` })}
-              </p>
-            )}
-
-            {/* 이미지 그리드 (2열) */}
-            <div className="grid grid-cols-2 gap-2.5">
-              {results.map(item => (
-                <div key={item.id} className="bg-white rounded-[20px] overflow-hidden active:scale-95 transition-all hover:-translate-y-1"
-                  style={{ boxShadow: '0 4px 20px rgba(255,133,179,0.08)' }}
-                  onMouseEnter={e => e.currentTarget.style.boxShadow = '0 8px 32px rgba(255,133,179,0.15)'}
-                  onMouseLeave={e => e.currentTarget.style.boxShadow = '0 4px 20px rgba(255,133,179,0.08)'}>
-                  {/* 이미지 */}
-                  <button onClick={() => handleItemClick(item)} className="w-full text-left">
-                    <div className="w-full aspect-[4/3] bg-[var(--y2k-bg)] relative overflow-hidden">
-                      {item.image ? (
-                        <img src={item.image} alt={item.title} className="w-full h-full object-cover"
-                          onError={e => { e.target.style.display = 'none' }}
-                          loading="lazy" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-3xl opacity-30">📷</div>
-                      )}
-                      {item.category && (
-                        <span className="absolute top-2 left-2 text-[10px] bg-black/70 text-white px-1.5 py-0.5 rounded-full font-medium shadow-sm">
-                          {item.category}
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-2.5">
-                      <p className="text-[13px] font-bold text-[var(--y2k-text)] line-clamp-1">{item.title}</p>
-                      {item.tags?.length > 0 && (
-                        <p className="text-[11px] text-[var(--y2k-text-sub)] mt-0.5 line-clamp-1 font-medium">
-                          {item.tags.map(t => `#${t}`).join(' ')}
-                        </p>
-                      )}
-                    </div>
-                  </button>
-                  {/* 지도 버튼 */}
-                  <div className="px-2.5 pb-2">
-                    <button onClick={() => handleViewOnMap(item)}
-                      className="w-full flex items-center justify-center gap-1 py-1.5 rounded-lg bg-[#FEE500] text-[10px] font-bold text-[var(--y2k-text)] active:scale-95 transition-transform">
-                      <MapPin size={12} /> {L(lang, { ko: '지도', zh: '地图', en: 'Map' })}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* 더보기 */}
-            {results.length < total && results.length > 0 && (
-              <button onClick={handleLoadMore}
-                disabled={loading}
-                className="w-full mt-4 py-3 rounded-[20px] bg-white text-[13px] font-medium text-[var(--y2k-text-sub)] active:bg-[var(--y2k-bg)] transition-colors"
-                style={{ boxShadow: '0 4px 16px rgba(255,133,179,0.08)' }}>
-                {loading ? '...' : L(lang, { ko: '더보기', zh: '加载更多', en: 'Load More' })}
-              </button>
-            )}
-          </>
-        )}
-      </div>
-
-      {/* Visit Seoul 아카이브 원본 링크 */}
-      <div className="px-4 mt-4">
+      {/* ─── 섹션 헤더 ─── */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px', marginBottom: 12 }}>
+        <span style={{ fontSize: 17, fontWeight: 600, color: 'var(--text-primary)' }}>
+          {showTrending && !query
+            ? L(lang, { ko: '인기 추천', zh: '热门推荐', en: 'Trending' })
+            : total > 0 ? L(lang, { ko: `${total}건`, zh: `共${total}条`, en: `${total} results` })
+            : L(lang, { ko: '검색 결과', zh: '搜索结果', en: 'Results' })}
+        </span>
         <a href="https://archive.visitseoul.net" target="_blank" rel="noreferrer"
-          className="flex items-center justify-center gap-1.5 py-2.5 rounded-full bg-[var(--y2k-bg)] text-[11px] text-[var(--y2k-text-sub)] font-medium">
-          <ExternalLink size={12} />
-          {L(lang, { ko: 'Visit Seoul 아카이브에서 더 보기', zh: '在Visit Seoul存档查看更多', en: 'Browse Visit Seoul Archive' })}
+          style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 2 }}>
+          {L(lang, { ko: '더 보기', zh: '查看更多', en: 'More' })} <ChevronRight size={14} />
         </a>
       </div>
+
+      {/* ─── 피드 그리드 (小红书 스타일 2열) ─── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, padding: '0 20px 20px' }}>
+        {loading && results.length === 0 ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', background: 'var(--surface)' }}>
+              <div style={{ width: '100%', aspectRatio: '3/4' }} />
+              <div style={{ padding: '10px 12px 14px' }}>
+                <div style={{ height: 12, background: 'var(--border)', borderRadius: 6, marginBottom: 6 }} />
+                <div style={{ height: 10, background: 'var(--border)', borderRadius: 6, width: '60%' }} />
+              </div>
+            </div>
+          ))
+        ) : (showTrending && !query ? FEED_DATA : results).map((item, idx) => {
+          const isFeed = 'gradient' in item
+          return (
+            <div
+              key={item.id}
+              onClick={() => !isFeed && handleItemClick(item)}
+              style={{
+                borderRadius: 'var(--radius-card)', overflow: 'hidden',
+                background: 'var(--card)', boxShadow: 'var(--shadow-card)',
+                cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s',
+                animation: `fadeUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both`,
+                animationDelay: `${idx * 0.05}s`,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-hover)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = 'var(--shadow-card)' }}
+              onMouseDown={e => e.currentTarget.style.transform = 'scale(0.97)'}
+              onMouseUp={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = 'var(--shadow-hover)' }}
+            >
+              {/* 이미지 영역 */}
+              <div style={{ width: '100%', aspectRatio: '3/4', background: isFeed ? item.gradient : (item.image ? 'none' : 'var(--surface)'), position: 'relative', overflow: 'hidden' }}>
+                {!isFeed && item.image && (
+                  <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    onError={e => { e.target.style.display = 'none' }} loading="lazy" />
+                )}
+                {/* 우상단 하트 */}
+                <button
+                  onClick={e => e.stopPropagation()}
+                  style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.3)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Heart size={14} color="white" />
+                </button>
+                {/* 좌하단 태그 */}
+                {(isFeed ? item.location || item.status : item.category) && (
+                  <span style={{ position: 'absolute', bottom: 8, left: 8, padding: '3px 8px', borderRadius: 8, background: 'rgba(0,0,0,0.5)', color: 'white', fontSize: 11, backdropFilter: 'blur(4px)' }}>
+                    {isFeed ? (item.status || item.location) : item.category}
+                  </span>
+                )}
+              </div>
+              {/* 텍스트 영역 */}
+              <div style={{ padding: '10px 12px 14px' }}>
+                <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.4, color: 'var(--text-primary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {item.title}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                    {isFeed ? item.location || 'NEAR' : (item.tags?.[0] ? `#${item.tags[0]}` : 'NEAR')}
+                  </span>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
+                    <Heart size={12} /> {isFeed ? item.likes : ''}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* 더보기 */}
+      {!showTrending && results.length < total && results.length > 0 && (
+        <div style={{ padding: '0 20px 20px' }}>
+          <button onClick={handleLoadMore} disabled={loading}
+            className="btn btn-outline"
+            style={{ width: '100%' }}>
+            {loading ? '...' : L(lang, { ko: '더보기', zh: '加载更多', en: 'Load More' })}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

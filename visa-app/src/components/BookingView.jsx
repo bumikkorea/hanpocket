@@ -2,6 +2,7 @@
 // 매장 리스트 → 서비스 선택 → 날짜/시간 → 결제 확인 → 완료
 import { useState, useMemo, useEffect } from 'react'
 import { ArrowLeft, CalendarBlank, Clock, Users, CheckCircle, CaretRight, X } from '@phosphor-icons/react'
+import { Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 // ─── 브랜드 컬러 ───
@@ -308,13 +309,13 @@ function ShopCard({ shop, lang, onBook }) {
 }
 
 // ─── Step 1: 서비스 선택 ───
-function StepService({ shop, services, servicesLoading, lang, onSelect, onBack }) {
+function StepService({ shop, services, servicesLoading, lang, onSelect, onBack, noHeader }) {
   const [selected, setSelected] = useState(null)
   const nameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
   const shopNameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <StepHeader title={L(lang, LABEL.step1_title)} subtitle={shop[shopNameKey]} onBack={onBack} />
+      {!noHeader && <StepHeader title={L(lang, LABEL.step1_title)} subtitle={shop[shopNameKey]} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 20px' }}>
         {servicesLoading ? (
           <div style={{ textAlign: 'center', paddingTop: 60, color: 'var(--text-muted)', fontSize: 15 }}>加载中...</div>
@@ -348,7 +349,7 @@ function StepService({ shop, services, servicesLoading, lang, onSelect, onBack }
 }
 
 // ─── Step 2: 날짜/시간/인원 ───
-function StepDateTime({ shop, service, lang, onConfirm, onBack }) {
+function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
   const days = useMemo(() => getNext7Days(), [])
   const [selDate, setSelDate] = useState(days[0].date)
   const [selTime, setSelTime] = useState(null)
@@ -365,7 +366,7 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack }) {
   const shopNameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <StepHeader title={L(lang, LABEL.step2_title)} subtitle={shop[shopNameKey]} onBack={onBack} />
+      {!noHeader && <StepHeader title={L(lang, LABEL.step2_title)} subtitle={shop[shopNameKey]} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 20px' }}>
         {/* 날짜 선택 */}
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{lang === 'ko' ? '날짜' : lang === 'zh' ? '选择日期' : 'Date'}</div>
@@ -414,7 +415,7 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack }) {
 }
 
 // ─── Step 3: 확인 + 결제 ───
-function StepConfirm({ shop, service, dateTime, lang, onPay, onBack }) {
+function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader }) {
   const [showNote, setShowNote] = useState(false)
   const deposit = Math.round(service.price_krw * 0.3)
   const depositCny = krwToCny(deposit)
@@ -443,7 +444,7 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack }) {
   }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <StepHeader title={L(lang, LABEL.step3_title)} subtitle={shop[shopNameKey]} onBack={onBack} />
+      {!noHeader && <StepHeader title={L(lang, LABEL.step3_title)} subtitle={shop[shopNameKey]} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px' }}>
         {/* 예약 요약 */}
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-card)', padding: '20px', marginBottom: 16, border: '1px solid var(--border)' }}>
@@ -671,6 +672,46 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
   )
 }
 
+// ─── 스텝 인디케이터 ───
+const STEP_LABELS = {
+  ko: ['서비스', '시간', '확인'],
+  zh: ['选服务', '选时间', '确认'],
+  en: ['Service', 'Time', 'Confirm'],
+}
+function StepIndicator({ currentStep, lang }) {
+  const labels = STEP_LABELS[lang] || STEP_LABELS.zh
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', padding: '0 20px', marginBottom: 24 }}>
+      {[1, 2, 3].map((step, i) => {
+        const done = step < currentStep
+        const active = step === currentStep
+        return (
+          <div key={step} style={{ display: 'flex', alignItems: 'center', flex: i < 2 ? 1 : 'none' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <div style={{
+                width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: done || active ? BRAND : 'var(--surface)',
+                color: done || active ? 'white' : 'var(--text-hint)',
+                fontSize: 13, fontWeight: 700,
+                boxShadow: active ? `0 0 0 4px rgba(196,114,90,0.2)` : 'none',
+                transition: 'all 0.2s',
+              }}>
+                {done ? <Check size={14} /> : step}
+              </div>
+              <span style={{ fontSize: 12, fontWeight: active ? 600 : 400, color: active ? BRAND : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                {labels[i]}
+              </span>
+            </div>
+            {i < 2 && (
+              <div style={{ flex: 1, height: 2, margin: '0 8px', marginBottom: 20, background: done ? BRAND : 'var(--border)', transition: 'background 0.2s' }} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 // ─── 메인 BookingView ───
 export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
   const [screen, setScreen] = useState('list')
@@ -721,9 +762,14 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
         <>
           {/* 헤더 */}
           <div style={{ padding: '20px 20px 16px', background: 'white', borderBottom: '1px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>{L(lang, LABEL.title)}</h1>
+            <div>
+              <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{L(lang, LABEL.title)}</h1>
+              <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '4px 0 0' }}>
+                {lang === 'zh' ? '选择服务 · 日期 · 时间' : lang === 'ko' ? '서비스 · 날짜 · 시간 선택' : 'Select service · date · time'}
+              </p>
+            </div>
             <button onClick={() => setScreen('my-bookings')}
-              style={{ fontSize: 13, fontWeight: 600, color: BRAND, background: BRAND_LIGHT, border: 'none', borderRadius: 'var(--radius-btn)', padding: '7px 14px', cursor: 'pointer' }}>
+              style={{ fontSize: 13, fontWeight: 600, color: BRAND, background: BRAND_LIGHT, border: 'none', borderRadius: 'var(--radius-btn)', padding: '7px 14px', cursor: 'pointer', flexShrink: 0 }}>
               {lang === 'zh' ? '我的预约' : lang === 'ko' ? '내 예약' : 'My Bookings'}
             </button>
           </div>
@@ -755,15 +801,27 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
       )}
 
       {screen === 'step1' && selectedShop && (
-        <StepService shop={selectedShop} services={currentServices} servicesLoading={servicesLoading} lang={lang} onSelect={handleServiceSelect} onBack={() => setScreen('list')} />
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <StepHeader title={L(lang, LABEL.step1_title)} subtitle={selectedShop[lang === 'ko' ? 'name_ko' : 'name_zh']} onBack={() => setScreen('list')} />
+          <div style={{ padding: '20px 0 8px' }}><StepIndicator currentStep={1} lang={lang} /></div>
+          <StepService shop={selectedShop} services={currentServices} servicesLoading={servicesLoading} lang={lang} onSelect={handleServiceSelect} onBack={() => setScreen('list')} noHeader />
+        </div>
       )}
 
       {screen === 'step2' && selectedShop && selectedService && (
-        <StepDateTime shop={selectedShop} service={selectedService} lang={lang} onConfirm={handleDateTimeConfirm} onBack={() => setScreen('step1')} />
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <StepHeader title={L(lang, LABEL.step2_title)} subtitle={selectedShop[lang === 'ko' ? 'name_ko' : 'name_zh']} onBack={() => setScreen('step1')} />
+          <div style={{ padding: '20px 0 8px' }}><StepIndicator currentStep={2} lang={lang} /></div>
+          <StepDateTime shop={selectedShop} service={selectedService} lang={lang} onConfirm={handleDateTimeConfirm} onBack={() => setScreen('step1')} noHeader />
+        </div>
       )}
 
       {screen === 'step3' && selectedShop && selectedService && selectedDateTime && (
-        <StepConfirm shop={selectedShop} service={selectedService} dateTime={selectedDateTime} lang={lang} onPay={handlePay} onBack={() => setScreen('step2')} />
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <StepHeader title={lang === 'zh' ? '确认预约' : lang === 'ko' ? '예약 확인' : 'Confirm'} subtitle={selectedShop[lang === 'ko' ? 'name_ko' : 'name_zh']} onBack={() => setScreen('step2')} />
+          <div style={{ padding: '20px 0 8px' }}><StepIndicator currentStep={3} lang={lang} /></div>
+          <StepConfirm shop={selectedShop} service={selectedService} dateTime={selectedDateTime} lang={lang} onPay={handlePay} onBack={() => setScreen('step2')} noHeader />
+        </div>
       )}
 
       {screen === 'done' && doneBooking && (

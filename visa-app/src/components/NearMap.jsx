@@ -14,6 +14,7 @@ const IS_DEV = import.meta.env.DEV
 
 // ─── 카테고리 칩 ───
 const CATEGORY_CHIPS = [
+  { id: 'all',     key: 'cat_all'     },
   { id: 'popup',   key: 'cat_popup'   },
   { id: 'food',    key: 'cat_food'    },
   { id: 'fashion', key: 'cat_fashion' },
@@ -106,7 +107,8 @@ const PIN_ICONS = {
   food:    `<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 2v20" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v-4" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
   fashion: `<circle cx="6" cy="6" r="3" fill="none" stroke="white" stroke-width="2"/><circle cx="6" cy="18" r="3" fill="none" stroke="white" stroke-width="2"/><line x1="20" y1="4" x2="8.12" y2="15.88" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="14.47" y1="14.48" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="8.12" y1="8.12" x2="12" y2="12" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
   cafe:    `<path d="M17 8h1a4 4 0 1 1 0 8h-1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="6" y1="2" x2="6" y2="4" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="2" x2="10" y2="4" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="14" y1="2" x2="14" y2="4" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
-  utility: `<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 22v-4a3 3 0 0 0-6 0v4" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.25 13h19.5" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
+  utility:     `<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 22v-4a3 3 0 0 0-6 0v4" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.25 13h19.5" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
+  convenience: `<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 22v-4a3 3 0 0 0-6 0v4" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.25 13h19.5" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
 }
 
 // ─── 원형 핀 HTML (40px circle + triangle tail + SVG icon) ───
@@ -260,7 +262,7 @@ export default function NearMap() {
   const touchStartY = useRef(0)
 
   const [mapReady, setMapReady] = useState(false)
-  const [activeCategory, setActiveCategory] = useState('popup')
+  const [activeCategory, setActiveCategory] = useState('all')
   const [activePopup, setActivePopup] = useState(null)
   const [navPoi, setNavPoi] = useState(null)
   const [bilingual, setBilingual] = useState(false)
@@ -296,10 +298,16 @@ export default function NearMap() {
     const notExpired = !(p.is_temporary && p.end_date && p.end_date < today)
     if (!notExpired) return false
 
-    // "快闪店" (popup): 임시 팝업 전체 표시 (모든 카테고리)
-    if (activeCategory === 'popup') return true
+    // 전체
+    if (activeCategory === 'all') return true
 
-    // 나머지 카테고리: 정확히 매칭
+    // 快闪店: is_temporary=true 인 것만
+    if (activeCategory === 'popup') return p.is_temporary === true
+
+    // 편의(utility) 칩 → DB의 'convenience' 카테고리
+    if (activeCategory === 'utility') return p.category === 'convenience'
+
+    // 나머지 (food, cafe, fashion): category 직접 매칭
     return p.category === activeCategory
   })
   const isExpanded = !!activePopup

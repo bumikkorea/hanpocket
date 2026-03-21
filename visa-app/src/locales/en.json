@@ -1,6 +1,7 @@
 {
   "search_placeholder": "Search popups, food, places...",
 
+  "cat_all":     "All",
   "cat_popup":   "Pop-up",
   "cat_food":    "Food",
   "cat_fashion": "Fashion",

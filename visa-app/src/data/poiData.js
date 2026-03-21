@@ -1,13 +1,14 @@
 // POI 데이터 — NEAR 앱 지도 핀 시드 데이터
-// 카테고리: popup / food / fashion / cafe / utility
+// 카테고리: popup / food / fashion / cafe / utility / convenience
 // 기준일: 2026-03-19 | 출처: 보도자료/언론 기사 확인 데이터 전용
 
 export const CATEGORY_CONFIG = {
-  popup:   { color: '#C4725A', label: '快闪店', letter: 'P' },
-  food:    { color: '#FF9500', label: '美食',   letter: 'F' },
-  fashion: { color: '#FF6B8A', label: '时尚',   letter: 'S' },
-  cafe:    { color: '#8B6F47', label: '咖啡',   letter: 'C' },
-  utility: { color: '#007AFF', label: '便利',   letter: 'U' },
+  popup:       { color: '#C4725A', label: '快闪店', letter: 'P' },
+  food:        { color: '#FF9500', label: '美食',   letter: 'F' },
+  fashion:     { color: '#FF6B8A', label: '时尚',   letter: 'S' },
+  cafe:        { color: '#8B6F47', label: '咖啡',   letter: 'C' },
+  utility:     { color: '#007AFF', label: '便利',   letter: 'U' },
+  convenience: { color: '#007AFF', label: '便利',   letter: 'U' },  // DB category alias
 }
 
 export const POI_DATA = [

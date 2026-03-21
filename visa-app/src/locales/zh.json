@@ -221,5 +221,15 @@
   "feed.3.title": "本地人都去的弘大烤肉店",
   "feed.4.title": "江南皮肤管理，中文OK",
   "feed.5.title": "BLACKPINK周边快闪",
-  "feed.6.title": "首尔最火的拍照咖啡厅"
+  "feed.6.title": "首尔最火的拍照咖啡厅",
+
+  "feed.tag.seongsu": "圣水洞",
+  "feed.tag.dday": "D-5 结束",
+  "feed.1.location": "圣水洞",
+  "feed.2.status": "D-5 结束",
+  "feed.3.location": "弘大",
+  "feed.4.status": "需预约",
+  "feed.5.location": "明洞",
+  "feed.6.location": "圣水",
+  "map.banner": "正在查看韩国可用的服务"
 }

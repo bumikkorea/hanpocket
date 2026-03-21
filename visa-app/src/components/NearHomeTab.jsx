@@ -40,12 +40,12 @@ const MEITU_CATEGORIES = [
 
 // ─── 小红书 스타일 피드 고정 데이터 ───
 const FEED_DATA = [
-  { id: 'fd1', title: '韩国烫染一站式，效果绝了',   location: '圣水洞', status: null,       likes: '328',  gradient: 'linear-gradient(160deg,#FFEEF0,#FFD6DC)' },
-  { id: 'fd2', title: 'GENTLE MONSTER 限时快闪',    location: null,     status: 'D-5 结束', likes: '892',  gradient: 'linear-gradient(160deg,#F3E5F5,#E1BEE7)' },
-  { id: 'fd3', title: '本地人都去的弘大烤肉店',     location: '弘大',   status: null,       likes: '1.2k', gradient: 'linear-gradient(160deg,#FFF3E0,#FFE0B2)' },
-  { id: 'fd4', title: '江南皮肤管理，中文OK',       location: null,     status: '需预约',   likes: '567',  gradient: 'linear-gradient(160deg,#E8F5E9,#C8E6C9)' },
-  { id: 'fd5', title: 'BLACKPINK周边快闪',          location: '明洞',   status: null,       likes: '2.1k', gradient: 'linear-gradient(160deg,#FCE4EC,#F8BBD9)' },
-  { id: 'fd6', title: '首尔最火的拍照咖啡厅',       location: '圣水',   status: null,       likes: '445',  gradient: 'linear-gradient(160deg,#EFEBE9,#D7CCC8)' },
+  { id: 'fd1', titleKey: 'feed.1.title', locationKey: 'feed.1.location', statusKey: null,          likes: '328',  gradient: 'linear-gradient(160deg,#FFEEF0,#FFD6DC)' },
+  { id: 'fd2', titleKey: 'feed.2.title', locationKey: null,              statusKey: 'feed.2.status', likes: '892',  gradient: 'linear-gradient(160deg,#F3E5F5,#E1BEE7)' },
+  { id: 'fd3', titleKey: 'feed.3.title', locationKey: 'feed.3.location', statusKey: null,          likes: '1.2k', gradient: 'linear-gradient(160deg,#FFF3E0,#FFE0B2)' },
+  { id: 'fd4', titleKey: 'feed.4.title', locationKey: null,              statusKey: 'feed.4.status', likes: '567',  gradient: 'linear-gradient(160deg,#E8F5E9,#C8E6C9)' },
+  { id: 'fd5', titleKey: 'feed.5.title', locationKey: 'feed.5.location', statusKey: null,          likes: '2.1k', gradient: 'linear-gradient(160deg,#FCE4EC,#F8BBD9)' },
+  { id: 'fd6', titleKey: 'feed.6.title', locationKey: 'feed.6.location', statusKey: null,          likes: '445',  gradient: 'linear-gradient(160deg,#EFEBE9,#D7CCC8)' },
 ]
 
 // ─── 폴백 데이터 ───
@@ -315,20 +315,20 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                     style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.3)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Heart size={14} color="white" />
                   </button>
-                  {(isFeed ? item.location || item.status : item.category) && (
+                  {(isFeed ? (item.locationKey || item.statusKey) : item.category) && (
                     <span style={{ position: 'absolute', bottom: 8, left: 8, padding: '3px 8px', borderRadius: 8, background: 'rgba(0,0,0,0.5)', color: 'white', fontSize: 11, backdropFilter: 'blur(4px)' }}>
-                      {isFeed ? (item.status || item.location) : item.category}
+                      {isFeed ? (item.statusKey ? t(item.statusKey) : (item.locationKey ? t(item.locationKey) : null)) : item.category}
                     </span>
                   )}
                 </div>
                 {/* 텍스트 */}
                 <div style={{ padding: '10px 12px 14px' }}>
                   <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.4, color: 'var(--text-primary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                    {item.title}
+                    {isFeed ? t(item.titleKey) : item.title}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
                     <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                      {isFeed ? (item.location || 'NEAR') : (item.tags?.[0] ? `#${item.tags[0]}` : 'NEAR')}
+                      {isFeed ? (item.locationKey ? t(item.locationKey) : (item.statusKey ? t(item.statusKey) : 'NEAR')) : (item.tags?.[0] ? `#${item.tags[0]}` : 'NEAR')}
                     </span>
                     <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
                       <Heart size={12} /> {isFeed ? item.likes : ''}

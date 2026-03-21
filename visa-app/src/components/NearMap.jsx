@@ -6,7 +6,8 @@ import TaxiCardView from './TaxiCardView.jsx'
 import { CATEGORY_CONFIG } from '../data/poiData'
 import { COURSE_DATA } from '../data/courseData.js'
 import { supabase } from '../lib/supabase'
-import { t } from '../locales/index.js'
+import { t, tLang } from '../locales/index.js'
+import { useLanguage } from '../i18n/index.jsx'
 import NavScreen from './NavScreen.jsx'
 
 const IS_DEV = import.meta.env.DEV
@@ -250,6 +251,7 @@ function DevBilingualToggle({ active, onToggle }) {
 
 // ─── 메인 컴포넌트 ───
 export default function NearMap({ lang = 'zh' }) {
+  const { lang: uiLang } = useLanguage()
   const mapRef = useRef(null)
   const mapInstance = useRef(null)
   const overlaysRef = useRef([])        // { overlay, el, poi }[]

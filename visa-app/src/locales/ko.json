@@ -221,5 +221,15 @@
   "feed.3.title": "현지인이 가는 홍대 고기집",
   "feed.4.title": "강남 피부관리, 중국어 OK",
   "feed.5.title": "BLACKPINK 굿즈 팝업",
-  "feed.6.title": "서울에서 가장 핫한 사진 카페"
+  "feed.6.title": "서울에서 가장 핫한 사진 카페",
+
+  "feed.tag.seongsu": "성수동",
+  "feed.tag.dday": "D-5 마감",
+  "feed.1.location": "성수동",
+  "feed.2.status": "D-5 마감",
+  "feed.3.location": "홍대",
+  "feed.4.status": "예약 필요",
+  "feed.5.location": "명동",
+  "feed.6.location": "성수",
+  "map.banner": "한국에서 이용 가능한 서비스를 보고 있습니다"
 }

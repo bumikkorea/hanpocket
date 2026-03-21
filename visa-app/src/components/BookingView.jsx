@@ -5,6 +5,8 @@ import { ArrowLeft, CalendarBlank, Clock, Users, CheckCircle, CaretRight, X } fr
 import { Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useToast } from './Toast'
+import { useLanguage } from '../i18n/index.jsx'
+import { tLang } from '../locales/index.js'
 
 // ─── 브랜드 컬러 ───
 const BRAND = '#C4725A'
@@ -319,7 +321,7 @@ function StepService({ shop, services, servicesLoading, lang, onSelect, onBack, 
       {!noHeader && <StepHeader title={L(lang, LABEL.step1_title)} subtitle={shop[shopNameKey]} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 20px' }}>
         {servicesLoading ? (
-          <div style={{ textAlign: 'center', paddingTop: 60, color: 'var(--text-muted)', fontSize: 15 }}>加载中...</div>
+          <div style={{ textAlign: 'center', paddingTop: 60, color: 'var(--text-muted)', fontSize: 15 }}>{tLang('booking.loading', lang)}</div>
         ) : services.map(svc => (
           <button key={svc.id} onClick={() => setSelected(svc)}
             style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '16px 16px', marginBottom: 12, background: selected?.id === svc.id ? BRAND_LIGHT : 'white', border: selected?.id === svc.id ? `1.5px solid ${BRAND}` : '1px solid var(--border)', borderRadius: 'var(--radius-card)', cursor: 'pointer', gap: 12, textAlign: 'left', transition: 'all 0.15s' }}>
@@ -606,7 +608,7 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--surface)' }}>
       <StepHeader
-        title={lang === 'zh' ? '我的预约' : lang === 'ko' ? '내 예약' : 'My Bookings'}
+        title={tLang('booking.myTitle', lang)}
         onBack={onBack}
       />
       {/* 필터 탭 */}
@@ -716,6 +718,7 @@ function StepIndicator({ currentStep, lang }) {
 // ─── 메인 BookingView ───
 export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
   const { showToast } = useToast()
+  const { t } = useLanguage()
   const [screen, setScreen] = useState('list')
   const [selectedShop, setSelectedShop] = useState(null)
   const [selectedService, setSelectedService] = useState(null)
@@ -766,14 +769,14 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
           {/* 헤더 */}
           <div style={{ padding: '20px 20px 16px', background: 'white', borderBottom: '1px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
-              <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{L(lang, LABEL.title)}</h1>
+              <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{t('booking.title')}</h1>
               <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '4px 0 0' }}>
-                {lang === 'zh' ? '选择服务 · 日期 · 时间' : lang === 'ko' ? '서비스 · 날짜 · 시간 선택' : 'Select service · date · time'}
+                {t('booking.subtitle')}
               </p>
             </div>
             <button onClick={() => setScreen('my-bookings')}
               style={{ fontSize: 13, fontWeight: 600, color: BRAND, background: BRAND_LIGHT, border: 'none', borderRadius: 'var(--radius-btn)', padding: '7px 14px', cursor: 'pointer', flexShrink: 0 }}>
-              {lang === 'zh' ? '我的预约' : lang === 'ko' ? '내 예약' : 'My Bookings'}
+              {t('booking.myBookings')}
             </button>
           </div>
           {/* 매장 리스트 */}
@@ -793,9 +796,9 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
             ) : shops.length === 0 ? (
               <div style={{ textAlign: 'center', paddingTop: 80 }}>
                 <CalendarBlank size={40} style={{ color: 'var(--text-hint)', marginBottom: 12 }} />
-                <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>{L(lang, LABEL.empty_shops)}</p>
+                <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>{t('booking.empty')}</p>
                 <button onClick={onGoToMapTab} style={{ padding: '10px 24px', borderRadius: 'var(--radius-btn)', background: BRAND, color: 'white', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
-                  {L(lang, LABEL.empty_go)}
+                  {t('booking.emptyGo')}
                 </button>
               </div>
             ) : (

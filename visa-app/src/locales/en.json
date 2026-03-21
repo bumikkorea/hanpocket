@@ -208,5 +208,15 @@
   "feed.3.title": "The Hongdae BBQ locals love",
   "feed.4.title": "Gangnam skin care, Chinese OK",
   "feed.5.title": "BLACKPINK merch pop-up",
-  "feed.6.title": "Seoul's hottest photo cafe"
+  "feed.6.title": "Seoul's hottest photo cafe",
+
+  "feed.tag.seongsu": "Seongsu",
+  "feed.tag.dday": "D-5 Ending",
+  "feed.1.location": "Seongsu",
+  "feed.2.status": "D-5 Ending",
+  "feed.3.location": "Hongdae",
+  "feed.4.status": "Booking needed",
+  "feed.5.location": "Myeongdong",
+  "feed.6.location": "Seongsu",
+  "map.banner": "Viewing services available in Korea"
 }

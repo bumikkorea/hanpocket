@@ -492,7 +492,7 @@ export default function NearMap({ lang = 'zh' }) {
   }
 
   return (
-    <div style={{ position: 'relative', height: 'calc(100dvh - 116px)', overflow: 'hidden', background: '#F7F8FA' }}>
+    <div style={{ position: 'relative', height: 'calc(100dvh - 116px)', overflow: 'hidden', background: 'var(--surface)' }}>
 
       {/* ─── 카카오맵 ─── */}
       <div
@@ -523,8 +523,8 @@ export default function NearMap({ lang = 'zh' }) {
           display: 'flex', alignItems: 'center',
           padding: '0 12px', height: 44, gap: 8,
         }}>
-          <MagnifyingGlass size={18} color="#999" weight="bold" />
-          <span style={{ fontSize: 14, color: '#9CA3AF' }}>
+          <MagnifyingGlass size={18} color="var(--text-muted)" weight="bold" />
+          <span style={{ fontSize: 15, color: 'var(--text-muted)' }}>
             {t('search_placeholder', bilingual)}
           </span>
         </div>
@@ -542,7 +542,7 @@ export default function NearMap({ lang = 'zh' }) {
       <div style={{
         position: 'absolute', top: 70, left: 0, right: IS_DEV ? 56 : 0, zIndex: 9,
         display: 'flex', gap: 8, overflowX: 'auto',
-        padding: '0 16px', scrollbarWidth: 'none',
+        padding: '0 20px', scrollbarWidth: 'none',
       }}>
         {CATEGORY_CHIPS.map(chip => {
           const active = activeCategory === chip.id && !courseMode
@@ -552,9 +552,9 @@ export default function NearMap({ lang = 'zh' }) {
               onClick={() => { setActiveCategory(chip.id); closeSheet(); exitCourseMode() }}
               style={{
                 flexShrink: 0,
-                background: active ? '#1A1A1A' : 'white',
-                color: active ? 'white' : '#888',
-                border: active ? 'none' : '1px solid #DDD',
+                background: active ? 'var(--text-primary)' : 'white',
+                color: active ? 'white' : 'var(--text-muted)',
+                border: active ? 'none' : '1px solid var(--border)',
                 borderRadius: 100, padding: '6px 14px',
                 fontSize: 13, fontWeight: 600,
                 boxShadow: active ? '0 2px 8px rgba(0,0,0,0.2)' : '0 1px 4px rgba(0,0,0,0.08)',
@@ -571,8 +571,8 @@ export default function NearMap({ lang = 'zh' }) {
           style={{
             flexShrink: 0,
             background: courseMode ? '#DC2626' : 'white',
-            color: courseMode ? 'white' : '#888',
-            border: courseMode ? 'none' : '1px solid #DDD',
+            color: courseMode ? 'white' : 'var(--text-muted)',
+            border: courseMode ? 'none' : '1px solid var(--border)',
             borderRadius: 100, padding: '6px 14px',
             fontSize: 13, fontWeight: 600,
             boxShadow: courseMode ? '0 2px 8px rgba(220,38,38,0.3)' : '0 1px 4px rgba(0,0,0,0.08)',
@@ -632,32 +632,32 @@ export default function NearMap({ lang = 'zh' }) {
             {/* 핸들바 + 我的 버튼 */}
             <div style={{ display: 'flex', alignItems: 'center', padding: '10px 16px 6px' }}>
               <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                <div style={{ width: 36, height: 4, borderRadius: 2, background: '#D1D5DB' }} />
+                <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--text-hint)' }} />
               </div>
               <button
                 onClick={() => setShowMyPanel(true)}
-                style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
+                style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
               >
                 {t('my_panel', bilingual)} ›
               </button>
             </div>
 
             {pinsError ? (
-              <div style={{ padding: '16px', textAlign: 'center' }}>
-                <div style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 10 }}>{t('net_error', bilingual)}</div>
+              <div style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 12 }}>{t('net_error', bilingual)}</div>
                 <button
                   onClick={() => window.location.reload()}
-                  style={{ fontSize: 12, fontWeight: 700, color: 'white', background: '#1A1A1A', border: 'none', borderRadius: 8, padding: '8px 20px', cursor: 'pointer' }}
+                  style={{ fontSize: 13, fontWeight: 700, color: 'white', background: 'var(--text-primary)', border: 'none', borderRadius: 8, padding: '8px 20px', cursor: 'pointer' }}
                 >{t('retry', bilingual)}</button>
               </div>
             ) : pinsLoading ? (
-              <div style={{ padding: '8px 16px 20px' }}>
+              <div style={{ padding: '8px 20px 20px' }}>
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                  <div style={{ width: 64, height: 64, borderRadius: 10, background: '#F3F4F6' }} />
+                  <div style={{ width: 64, height: 64, borderRadius: 10, background: 'var(--surface)' }} />
                   <div style={{ flex: 1 }}>
-                    <div style={{ height: 14, background: '#F3F4F6', borderRadius: 6, marginBottom: 6, width: '70%' }} />
-                    <div style={{ height: 11, background: '#F3F4F6', borderRadius: 6, marginBottom: 4, width: '50%' }} />
-                    <div style={{ height: 10, background: '#F3F4F6', borderRadius: 6, width: '40%' }} />
+                    <div style={{ height: 14, background: 'var(--surface)', borderRadius: 6, marginBottom: 6, width: '70%' }} />
+                    <div style={{ height: 11, background: 'var(--surface)', borderRadius: 6, marginBottom: 4, width: '50%' }} />
+                    <div style={{ height: 10, background: 'var(--surface)', borderRadius: 6, width: '40%' }} />
                   </div>
                 </div>
               </div>
@@ -792,20 +792,20 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
   return (
     <div style={{ paddingBottom: 32 }}>
       {/* 핸들바 + 닫기 */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '10px 16px 6px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '10px 20px 6px' }}>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#D1D5DB' }} />
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--text-hint)' }} />
         </div>
         <button
           onClick={onClose}
-          style={{ color: '#9CA3AF', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}
+          style={{ color: 'var(--text-muted)', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}
         >
           ✕
         </button>
       </div>
 
       {/* Hero image */}
-      <div style={{ margin: '0 16px 14px', height: 140, borderRadius: 12, overflow: 'hidden', background: '#F3F4F6' }}>
+      <div style={{ margin: '0 20px 16px', height: 140, borderRadius: 12, overflow: 'hidden', background: 'var(--surface)' }}>
         {poi.image_url ? (
           <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
@@ -815,10 +815,10 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
         )}
       </div>
 
-      <div style={{ padding: '0 16px' }}>
+      <div style={{ padding: '0 20px' }}>
         {/* 제목 + NEW 뱃지 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+          <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {poi.name_zh || poi.name_ko}
           </h2>
           {isNewPoi(poi.created_at) && (
@@ -829,7 +829,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
         </div>
 
         {/* 서브타이틀 */}
-        <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 12 }}>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 14 }}>
           {t('subtitle_city', bilingual)} · {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
         </p>
 
@@ -846,7 +846,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
           {poi.is_temporary && poi.start_date && poi.end_date && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 14 }}>📅</span>
-              <span style={{ fontSize: 12, color: '#374151' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>
                 {poi.start_date} – {poi.end_date}
               </span>
             </div>
@@ -856,7 +856,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
           {poi.open_time && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 14 }}>⏰</span>
-              <span style={{ fontSize: 12, color: '#374151' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>
                 {poi.open_time}–{poi.close_time}
               </span>
               {status === 'open' && (
@@ -881,7 +881,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
           {poi.wait_minutes != null && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 14 }}>⏳</span>
-              <span style={{ fontSize: 12, color: '#374151' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>
                 {t('wait_prefix', bilingual)}{poi.wait_minutes}{t('wait_suffix', bilingual)}
               </span>
             </div>
@@ -938,10 +938,10 @@ function CompactSheetCard({ poi, bilingual, onExpand }) {
   return (
     <button
       onClick={onExpand}
-      style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '4px 16px 20px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+      style={{ display: 'flex', gap: 14, alignItems: 'center', padding: '4px 20px 20px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
     >
       {/* 썸네일 */}
-      <div style={{ width: 64, height: 64, borderRadius: 10, overflow: 'hidden', flexShrink: 0, background: '#F3F4F6' }}>
+      <div style={{ width: 64, height: 64, borderRadius: 12, overflow: 'hidden', flexShrink: 0, background: 'var(--surface)' }}>
         {poi.image_url ? (
           <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
@@ -954,7 +954,7 @@ function CompactSheetCard({ poi, bilingual, onExpand }) {
       {/* 텍스트 */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {poi.name_zh || poi.name_ko}
           </span>
           {isNewPoi(poi.created_at) && (
@@ -963,7 +963,7 @@ function CompactSheetCard({ poi, bilingual, onExpand }) {
             </span>
           )}
         </div>
-        <p style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
         </p>
         {tags.length > 0 ? (
@@ -974,7 +974,7 @@ function CompactSheetCard({ poi, bilingual, onExpand }) {
       </div>
 
       {/* 화살표 힌트 */}
-      <span style={{ color: '#D1D5DB', fontSize: 16, flexShrink: 0 }}>›</span>
+      <span style={{ color: 'var(--text-hint)', fontSize: 16, flexShrink: 0 }}>›</span>
     </button>
   )
 }
@@ -1023,17 +1023,17 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
     return (
       <button
         onClick={() => handleSelect(poi)}
-        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid #F3F4F6' }}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid var(--border)' }}
       >
-        <span style={{ width: 32, height: 32, borderRadius: '50%', background: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, color: 'white', fontWeight: 700, flexShrink: 0 }}>
+        <span style={{ width: 36, height: 36, borderRadius: '50%', background: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'white', fontWeight: 700, flexShrink: 0 }}>
           {cfg.letter}
         </span>
         <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
-          <div style={{ fontSize: 14, fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.name_zh || poi.name_ko}</div>
-          <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.address_zh}</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.name_zh || poi.name_ko}</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.address_zh}</div>
         </div>
-        {rank != null && <span style={{ fontSize: 11, color: '#9CA3AF', flexShrink: 0 }}>#{rank + 1}</span>}
-        {rank == null && <span style={{ fontSize: 11, color: '#9CA3AF', flexShrink: 0 }}>{distLabel(poi)}</span>}
+        {rank != null && <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>#{rank + 1}</span>}
+        {rank == null && <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>{distLabel(poi)}</span>}
       </button>
     )
   }
@@ -1041,41 +1041,41 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: 'white', display: 'flex', flexDirection: 'column' }}>
       {/* 검색 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid #F3F4F6', flexShrink: 0 }}>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#374151', display: 'flex' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 20px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
           <ArrowLeft size={22} weight="bold" />
         </button>
-        <div style={{ flex: 1, background: '#F9FAFB', borderRadius: 10, display: 'flex', alignItems: 'center', padding: '0 12px', height: 40, gap: 8 }}>
-          <MagnifyingGlass size={16} color="#9CA3AF" weight="bold" />
+        <div style={{ flex: 1, background: 'var(--surface)', borderRadius: 12, display: 'flex', alignItems: 'center', padding: '0 14px', height: 44, gap: 8 }}>
+          <MagnifyingGlass size={17} color="var(--text-muted)" weight="bold" />
           <input
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={t('search_placeholder', bilingual)}
-            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 14, color: '#111827' }}
+            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: 'var(--text-primary)' }}
           />
           {query && (
-            <button onClick={() => setQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9CA3AF', padding: 0, fontSize: 16, lineHeight: 1 }}>✕</button>
+            <button onClick={() => setQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, fontSize: 16, lineHeight: 1 }}>✕</button>
           )}
         </div>
       </div>
 
       {/* 결과 영역 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 48px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 48px' }}>
         {query.trim() === '' ? (
           <>
             {recent.length > 0 && (
-              <div style={{ paddingTop: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#374151' }}>{t('search_recent', bilingual)}</span>
+              <div style={{ paddingTop: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{t('search_recent', bilingual)}</span>
                   <button
                     onClick={() => { setRecent([]); localStorage.removeItem('near_searches') }}
-                    style={{ fontSize: 12, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer' }}
+                    style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
                   >{t('search_clear', bilingual)}</button>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
                   {recent.map((r, i) => (
-                    <button key={i} onClick={() => setQuery(r)} style={{ background: '#F3F4F6', border: 'none', borderRadius: 100, padding: '6px 14px', fontSize: 13, color: '#374151', cursor: 'pointer' }}>
+                    <button key={i} onClick={() => setQuery(r)} style={{ background: 'var(--surface)', border: 'none', borderRadius: 100, padding: '6px 14px', fontSize: 13, color: 'var(--text-primary)', cursor: 'pointer' }}>
                       {r}
                     </button>
                   ))}
@@ -1083,7 +1083,7 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
               </div>
             )}
             <div style={{ paddingTop: 20 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#374151', marginBottom: 8 }}>🔥 {t('search_hot', bilingual)}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>🔥 {t('search_hot', bilingual)}</div>
               {hotPins.map((poi, i) => <PoiRow key={poi.id} poi={poi} rank={i} />)}
             </div>
           </>
@@ -1094,10 +1094,10 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
         ) : (
           <div style={{ paddingTop: 32, textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#111827', marginBottom: 4 }}>{t('search_no_result', bilingual)}</div>
-            <div style={{ fontSize: 13, color: '#9CA3AF', marginBottom: 24 }}>"{query}"</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{t('search_no_result', bilingual)}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>"{query}"</div>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#374151', marginBottom: 8 }}>🔥 {t('nearby_hot', bilingual)}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>🔥 {t('nearby_hot', bilingual)}</div>
               {hotPins.slice(0, 3).map((poi, i) => <PoiRow key={poi.id} poi={poi} rank={i} />)}
             </div>
           </div>
@@ -1130,27 +1130,27 @@ function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 30, background: 'white', display: 'flex', flexDirection: 'column' }}>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 16px 12px', borderBottom: '1px solid #F3F4F6', flexShrink: 0 }}>
-        <span style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>{t('list_title', bilingual)}</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px 14px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+        <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{t('list_title', bilingual)}</span>
         <button
           onClick={onBack}
-          style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#F3F4F6', border: 'none', borderRadius: 100, padding: '6px 14px', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: '#374151' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'var(--surface)', border: 'none', borderRadius: 100, padding: '7px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'var(--text-primary)' }}
         >
           {t('list_back_map', bilingual)}
         </button>
       </div>
       {/* 정렬 칩 */}
-      <div style={{ display: 'flex', gap: 8, padding: '10px 16px', overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0, borderBottom: '1px solid #F3F4F6' }}>
+      <div style={{ display: 'flex', gap: 8, padding: '10px 20px', overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0, borderBottom: '1px solid var(--border)' }}>
         {SORTS.map(s => (
           <button
             key={s.id}
             onClick={() => onSortChange(s.id)}
             style={{
               flexShrink: 0,
-              background: listSort === s.id ? '#1A1A1A' : '#F3F4F6',
-              color: listSort === s.id ? 'white' : '#374151',
-              border: 'none', borderRadius: 100, padding: '6px 14px',
-              fontSize: 12, fontWeight: 600, cursor: 'pointer',
+              background: listSort === s.id ? 'var(--text-primary)' : 'var(--surface)',
+              color: listSort === s.id ? 'white' : 'var(--text-primary)',
+              border: 'none', borderRadius: 100, padding: '6px 16px',
+              fontSize: 13, fontWeight: 600, cursor: 'pointer',
             }}
           >
             {t(s.key, bilingual)}
@@ -1158,7 +1158,7 @@ function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack
         ))}
       </div>
       {/* 카드 리스트 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 48px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 48px' }}>
         {sorted.map((poi) => {
           const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
           const tags = calcTags(poi, bilingual)
@@ -1166,17 +1166,17 @@ function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack
             <button
               key={poi.id}
               onClick={() => onSelectPoi(poi)}
-              style={{ width: '100%', display: 'flex', gap: 12, alignItems: 'center', padding: '12px 0', background: 'none', border: 'none', borderBottom: '1px solid #F9FAFB', cursor: 'pointer', textAlign: 'left' }}
+              style={{ width: '100%', display: 'flex', gap: 14, alignItems: 'center', padding: '14px 0', background: 'none', border: 'none', borderBottom: '1px solid var(--border)', cursor: 'pointer', textAlign: 'left' }}
             >
-              <div style={{ width: 56, height: 56, borderRadius: 10, overflow: 'hidden', flexShrink: 0, background: '#F3F4F6' }}>
+              <div style={{ width: 60, height: 60, borderRadius: 12, overflow: 'hidden', flexShrink: 0, background: 'var(--surface)' }}>
                 {poi.image_url
                   ? <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   : <div style={{ width: '100%', height: '100%', background: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 18, fontWeight: 700 }}>{cfg.letter}</div>
                 }
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#111827', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{poi.name_zh || poi.name_ko}</div>
-                <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{poi.name_zh || poi.name_ko}</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {poi.address_zh}{distLabel(poi) ? ` · ${distLabel(poi)}` : ''}
                 </div>
                 {tags.length > 0 && (
@@ -1197,30 +1197,30 @@ function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack
 function CourseSelectorSheet({ courses, bilingual, onSelectCourse, onExit }) {
   return (
     <div style={{ paddingBottom: 24 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px 10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#D1D5DB' }} />
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--text-hint)' }} />
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px 12px' }}>
-        <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{t('course_select', bilingual)}</span>
-        <button onClick={onExit} style={{ fontSize: 12, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer' }}>{t('course_exit', bilingual)}</button>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 14px' }}>
+        <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{t('course_select', bilingual)}</span>
+        <button onClick={onExit} style={{ fontSize: 13, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>{t('course_exit', bilingual)}</button>
       </div>
-      <div style={{ padding: '0 16px' }}>
+      <div style={{ padding: '0 20px' }}>
         {(courses || []).map(course => (
           <button
             key={course.id}
             onClick={() => onSelectCourse(course.id)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', background: '#F9FAFB', border: '1px solid #F3F4F6', borderRadius: 12, marginBottom: 8, cursor: 'pointer', textAlign: 'left' }}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', marginBottom: 10, cursor: 'pointer', textAlign: 'left' }}
           >
             <div style={{ width: 40, height: 40, borderRadius: 10, background: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ fontSize: 18 }}>🗺</span>
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#111827', marginBottom: 2 }}>{course.title_zh}</div>
-              <div style={{ fontSize: 11, color: '#9CA3AF' }}>{course.description_zh} · {course.estimated_hours}{t('course_hours', bilingual)}</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>{course.title_zh}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{course.description_zh} · {course.estimated_hours}{t('course_hours', bilingual)}</div>
             </div>
-            <span style={{ color: '#D1D5DB', fontSize: 16 }}>›</span>
+            <span style={{ color: 'var(--text-hint)', fontSize: 16 }}>›</span>
           </button>
         ))}
       </div>
@@ -1236,15 +1236,15 @@ function CourseStopList({ course, allPins, bilingual, onSelectPoi, onNavigatePoi
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 10px', flexShrink: 0, borderBottom: '1px solid #F3F4F6' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 10px', flexShrink: 0, borderBottom: '1px solid var(--border)' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ fontSize: 8, background: '#DC2626', color: 'white', borderRadius: 4, padding: '2px 6px', fontWeight: 700 }}>
               {t('course_mode', bilingual)}
             </span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>{course.title_zh}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{course.title_zh}</span>
           </div>
-          <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
             {course.description_zh} · {course.estimated_hours}{t('course_hours', bilingual)}
           </div>
         </div>
@@ -1263,7 +1263,7 @@ function CourseStopList({ course, allPins, bilingual, onSelectPoi, onNavigatePoi
                 {idx + 1}
               </div>
               {/* 썸네일 */}
-              <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: '#F3F4F6' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: 'var(--surface)' }}>
                 {poi.image_url
                   ? <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                   : <div style={{ width: '100%', height: '100%', background: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 16, fontWeight: 700 }}>{cfg.letter}</div>
@@ -1274,8 +1274,8 @@ function CourseStopList({ course, allPins, bilingual, onSelectPoi, onNavigatePoi
                 onClick={() => onSelectPoi(poi)}
                 style={{ flex: 1, textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: 0, minWidth: 0 }}
               >
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{poi.name_zh || poi.name_ko}</div>
-                <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>{distLabel(poi) || poi.address_zh}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{poi.name_zh || poi.name_ko}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{distLabel(poi) || poi.address_zh}</div>
               </button>
               {/* 导航 버튼 */}
               <button
@@ -1340,25 +1340,25 @@ function ReservationSheet({ poi, bilingual, onClose }) {
     return (
       <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
         <div style={{ fontSize: 52 }}>✅</div>
-        <div style={{ fontSize: 18, fontWeight: 700, color: '#111827' }}>{t('reserve_success', bilingual)}</div>
-        <div style={{ fontSize: 13, color: '#9CA3AF' }}>{poi.name_zh} · {selDate} {selTime} · {count}{t('res_people', bilingual)}</div>
+        <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{t('reserve_success', bilingual)}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{poi.name_zh} · {selDate} {selTime} · {count}{t('res_people', bilingual)}</div>
       </div>
     )
   }
 
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: 'white', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid #F3F4F6', flexShrink: 0 }}>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#374151', display: 'flex' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
           <ArrowLeft size={22} weight="bold" />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>{poi.name_zh} · {t('reserve', bilingual)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{poi.name_zh} · {t('reserve', bilingual)}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px 48px' }}>
         {/* 날짜 */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#374151', marginBottom: 10 }}>{t('reserve_date', bilingual)}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{t('reserve_date', bilingual)}</div>
           <div style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: 4 }}>
             {dates.map(d => {
               const dt = new Date(d); const active = selDate === d
@@ -1378,7 +1378,7 @@ function ReservationSheet({ poi, bilingual, onClose }) {
 
         {/* 시간 */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#374151', marginBottom: 10 }}>{t('reserve_time', bilingual)}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{t('reserve_time', bilingual)}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {timeSlots.map(slot => (
               <button key={slot} onClick={() => setSelTime(slot)} style={{
@@ -1394,12 +1394,12 @@ function ReservationSheet({ poi, bilingual, onClose }) {
 
         {/* 인원 */}
         <div style={{ marginBottom: 32 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: '#374151', marginBottom: 10 }}>{t('reserve_people', bilingual)}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{t('reserve_people', bilingual)}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <button onClick={() => setCount(c => Math.max(1, c - 1))} style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
             <span style={{ fontSize: 20, fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{count}</span>
             <button onClick={() => setCount(c => Math.min(6, c + 1))} style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-            <span style={{ fontSize: 13, color: '#9CA3AF' }}>{count} {t('res_people', bilingual)}</span>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{count} {t('res_people', bilingual)}</span>
           </div>
         </div>
 
@@ -1494,15 +1494,15 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: 'white', display: 'flex', flexDirection: 'column' }}>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid #F3F4F6', flexShrink: 0 }}>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#374151', display: 'flex' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
           <ArrowLeft size={22} weight="bold" />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>{t('my_panel', bilingual)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{t('my_panel', bilingual)}</span>
       </div>
 
       {/* 섹션 탭 */}
-      <div style={{ display: 'flex', borderBottom: '1px solid #F3F4F6', flexShrink: 0 }}>
+      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
         {SECTIONS.map(s => (
           <button key={s.id} onClick={() => setActiveSection(s.id)} style={{
             flex: 1, padding: '10px 4px', fontSize: 12, fontWeight: 600,
@@ -1532,7 +1532,7 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
             {filteredBookings.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '48px 0' }}>
                 <div style={{ fontSize: 32, marginBottom: 12 }}>📅</div>
-                <div style={{ fontSize: 14, color: '#9CA3AF', marginBottom: 16 }}>还没有预约记录</div>
+                <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 16 }}>还没有预约记录</div>
               </div>
             ) : (
               <div style={{ paddingTop: 4 }}>
@@ -1540,15 +1540,15 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
                   <div key={res.id} style={{ padding: '12px 0', borderBottom: '1px solid #F9FAFB' }}>
                     <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                       {/* 아이콘 */}
-                      <div style={{ width: 40, height: 40, borderRadius: 8, background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 18 }}>📅</div>
+                      <div style={{ width: 40, height: 40, borderRadius: 8, background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 18 }}>📅</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {res.shopName || res.poi_name}
                         </div>
                         {res.service && res.service !== '-' && (
                           <div style={{ fontSize: 11, color: '#6B7280', marginTop: 1 }}>{res.service}</div>
                         )}
-                        <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 2 }}>
+                        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
                           {res.date} {res.time}
                           {res.guests && ` · ${res.guests}人`}
                         </div>
@@ -1561,17 +1561,17 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
                         <StatusBadge status={res.status} />
                         {(res.status === 'upcoming' || res.status === 'confirmed') && isCancellable(res) && (
-                          <button onClick={() => cancelBooking(res.id)} style={{ fontSize: 10, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 2 }}>
+                          <button onClick={() => cancelBooking(res.id)} style={{ fontSize: 10, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 2 }}>
                             取消预约
                           </button>
                         )}
                         {(res.status === 'upcoming' || res.status === 'confirmed') && !isCancellable(res) && (
-                          <span style={{ fontSize: 9, color: '#D1D5DB' }}>不可取消</span>
+                          <span style={{ fontSize: 9, color: 'var(--text-hint)' }}>不可取消</span>
                         )}
                       </div>
                     </div>
                     {res.id && res.id.startsWith('NEAR-') && (
-                      <div style={{ marginTop: 6, fontSize: 10, color: '#D1D5DB', letterSpacing: '0.3px' }}>{res.id}</div>
+                      <div style={{ marginTop: 6, fontSize: 10, color: 'var(--text-hint)', letterSpacing: '0.3px' }}>{res.id}</div>
                     )}
                   </div>
                 ))}
@@ -1584,7 +1584,7 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
           bookmarkedPois.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 0' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>🔖</div>
-              <div style={{ fontSize: 14, color: '#9CA3AF' }}>{t('bookmark_empty', bilingual)}</div>
+              <div style={{ fontSize: 14, color: 'var(--text-muted)' }}>{t('bookmark_empty', bilingual)}</div>
             </div>
           ) : (
             <div style={{ paddingTop: 12 }}>
@@ -1592,17 +1592,17 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
                 const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
                 return (
                   <button key={poi.id} onClick={() => { onSelectPoi(poi); onClose() }} style={{ width: '100%', display: 'flex', gap: 12, alignItems: 'center', padding: '12px 0', background: 'none', border: 'none', borderBottom: '1px solid #F9FAFB', cursor: 'pointer', textAlign: 'left' }}>
-                    <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: '#F3F4F6' }}>
+                    <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: 'var(--surface)' }}>
                       {poi.image_url
                         ? <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         : <div style={{ width: '100%', height: '100%', background: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 16, fontWeight: 700 }}>{cfg.letter}</div>
                       }
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.name_zh}</div>
-                      <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>{poi.address_zh}</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.name_zh}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{poi.address_zh}</div>
                     </div>
-                    <span style={{ color: '#D1D5DB', fontSize: 16, flexShrink: 0 }}>›</span>
+                    <span style={{ color: 'var(--text-hint)', fontSize: 16, flexShrink: 0 }}>›</span>
                   </button>
                 )
               })}
@@ -1613,12 +1613,12 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
         {activeSection === 'language' && (
           <div style={{ paddingTop: 16 }}>
             {LANGS.map(lang => (
-              <button key={lang.code} onClick={() => { setLocalLang(lang.code); localStorage.setItem('near_lang', lang.code) }} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', background: 'none', border: 'none', borderBottom: '1px solid #F3F4F6', cursor: 'pointer', textAlign: 'left' }}>
-                <span style={{ fontSize: 14, color: '#111827', fontWeight: localLang === lang.code ? 700 : 400 }}>{lang.label}</span>
+              <button key={lang.code} onClick={() => { setLocalLang(lang.code); localStorage.setItem('near_lang', lang.code) }} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', background: 'none', border: 'none', borderBottom: '1px solid var(--border)', cursor: 'pointer', textAlign: 'left' }}>
+                <span style={{ fontSize: 14, color: 'var(--text-primary)', fontWeight: localLang === lang.code ? 700 : 400 }}>{lang.label}</span>
                 {localLang === lang.code && <span style={{ fontSize: 16, color: '#1A1A1A', fontWeight: 700 }}>✓</span>}
               </button>
             ))}
-            <p style={{ fontSize: 11, color: '#9CA3AF', marginTop: 16, lineHeight: 1.6 }}>
+            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 16, lineHeight: 1.6 }}>
               语言设置将在下次启动时生效。
             </p>
           </div>
@@ -1632,7 +1632,7 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
 function NearbyHotFallback({ pins, bilingual, onSelect }) {
   return (
     <div style={{ padding: '4px 16px 20px' }}>
-      <p style={{ fontSize: 11, fontWeight: 700, color: '#9CA3AF', marginBottom: 10, letterSpacing: '0.02em' }}>
+      <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 10, letterSpacing: '0.02em' }}>
         🔥 {t('nearby_hot', bilingual)}
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -1645,7 +1645,7 @@ function NearbyHotFallback({ pins, bilingual, onSelect }) {
               onClick={() => onSelect(poi)}
               style={{ display: 'flex', gap: 10, alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textAlign: 'left' }}
             >
-              <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: '#F3F4F6' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: 'var(--surface)' }}>
                 {poi.image_url ? (
                   <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 ) : (
@@ -1655,7 +1655,7 @@ function NearbyHotFallback({ pins, bilingual, onSelect }) {
                 )}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3 }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3 }}>
                   {poi.name_zh || poi.name_ko}
                 </p>
                 <div style={{ display: 'flex', gap: 4 }}>

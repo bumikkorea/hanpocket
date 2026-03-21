@@ -288,19 +288,19 @@ function ShopCard({ shop, lang, onBook }) {
   const catKey = lang === 'ko' ? 'category_ko' : 'category_zh'
   const locKey = lang === 'ko' ? 'location_ko' : 'location_zh'
   return (
-    <div style={{ background: 'white', borderRadius: 12, boxShadow: '0 1px 3px rgba(0,0,0,0.08)', padding: '14px 14px', display: 'flex', gap: 12, alignItems: 'flex-start', border: '1px solid #F5F5F5' }}>
+    <div style={{ background: 'white', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)', padding: '20px', display: 'flex', gap: 14, alignItems: 'flex-start', border: '1px solid var(--border)' }}>
       {/* 이미지/아이콘 */}
-      <div style={{ width: 56, height: 56, borderRadius: 10, background: shop.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <div style={{ width: 56, height: 56, borderRadius: 12, background: shop.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
         <span style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>{shop.letter}</span>
       </div>
       {/* 정보 */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A', marginBottom: 2 }}>{shop[nameKey]}</div>
-        <div style={{ fontSize: 11, color: BRAND, fontWeight: 600, marginBottom: 3 }}>{shop[catKey]}</div>
-        <div style={{ fontSize: 11, color: '#9CA3AF' }}>{shop[locKey]}</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{shop[nameKey]}</div>
+        <div style={{ fontSize: 13, color: BRAND, fontWeight: 600, marginBottom: 4 }}>{shop[catKey]}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{shop[locKey]}</div>
       </div>
       {/* 예약 버튼 */}
-      <button onClick={() => onBook(shop)} style={{ flexShrink: 0, background: BRAND_LIGHT, border: 'none', borderRadius: 8, padding: '8px 12px', fontSize: 12, fontWeight: 700, color: BRAND, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 2 }}>
+      <button onClick={() => onBook(shop)} style={{ flexShrink: 0, background: BRAND_LIGHT, border: 'none', borderRadius: 'var(--radius-btn)', padding: '8px 14px', fontSize: 13, fontWeight: 700, color: BRAND, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 2 }}>
         {L(lang, LABEL.book_btn)}
       </button>
     </div>
@@ -315,29 +315,29 @@ function StepService({ shop, services, servicesLoading, lang, onSelect, onBack }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <StepHeader title={L(lang, LABEL.step1_title)} subtitle={shop[shopNameKey]} onBack={onBack} />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px 16px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 20px' }}>
         {servicesLoading ? (
-          <div style={{ textAlign: 'center', paddingTop: 60, color: '#9CA3AF', fontSize: 14 }}>加载中...</div>
+          <div style={{ textAlign: 'center', paddingTop: 60, color: 'var(--text-muted)', fontSize: 15 }}>加载中...</div>
         ) : services.map(svc => (
           <button key={svc.id} onClick={() => setSelected(svc)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '14px 14px', marginBottom: 10, background: selected?.id === svc.id ? BRAND_LIGHT : 'white', border: selected?.id === svc.id ? `1.5px solid ${BRAND}` : '1px solid #F0F0F0', borderRadius: 12, cursor: 'pointer', gap: 12, textAlign: 'left', transition: 'all 0.15s' }}>
+            style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '16px 16px', marginBottom: 12, background: selected?.id === svc.id ? BRAND_LIGHT : 'white', border: selected?.id === svc.id ? `1.5px solid ${BRAND}` : '1px solid var(--border)', borderRadius: 'var(--radius-card)', cursor: 'pointer', gap: 12, textAlign: 'left', transition: 'all 0.15s' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A', marginBottom: 3 }}>{svc[nameKey]}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{svc[nameKey]}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 11, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: 3 }}>
-                  <Clock size={11} /> {svc.duration_min}{L(lang, LABEL.min)}
+                <span style={{ fontSize: 13, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
+                  <Clock size={12} /> {svc.duration_min}{L(lang, LABEL.min)}
                 </span>
               </div>
             </div>
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <div style={{ fontSize: 15, fontWeight: 800, color: '#1A1A1A' }}>{L(lang, LABEL.krw)}{svc.price_krw.toLocaleString()}</div>
-              <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>≈ {L(lang, LABEL.cny)}{krwToCny(svc.price_krw)}</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>{L(lang, LABEL.krw)}{svc.price_krw.toLocaleString()}</div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>≈ {L(lang, LABEL.cny)}{krwToCny(svc.price_krw)}</div>
             </div>
             {selected?.id === svc.id && <CheckCircle size={20} weight="fill" style={{ color: BRAND, flexShrink: 0 }} />}
           </button>
         ))}
       </div>
-      <div style={{ padding: '12px 16px', background: 'white', borderTop: '1px solid #F5F5F5' }}>
+      <div style={{ padding: '12px 20px', background: 'white', borderTop: '1px solid var(--border)' }}>
         <button disabled={!selected} onClick={() => onSelect(selected)}
           style={{ width: '100%', height: 50, borderRadius: 14, background: selected ? BRAND : '#E5E7EB', color: 'white', fontSize: 16, fontWeight: 700, border: 'none', cursor: selected ? 'pointer' : 'not-allowed', transition: 'background 0.2s' }}>
           {L(lang, LABEL.next)}
@@ -366,44 +366,44 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <StepHeader title={L(lang, LABEL.step2_title)} subtitle={shop[shopNameKey]} onBack={onBack} />
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px 16px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 20px' }}>
         {/* 날짜 선택 */}
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#374151', marginBottom: 8 }}>{lang === 'ko' ? '날짜' : lang === 'zh' ? '选择日期' : 'Date'}</div>
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 16 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{lang === 'ko' ? '날짜' : lang === 'zh' ? '选择日期' : 'Date'}</div>
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 20 }}>
           {days.map(d => (
             <button key={d.date} onClick={() => { setSelDate(d.date); setSelTime(null) }}
-              style={{ flexShrink: 0, minWidth: 48, padding: '8px 4px', borderRadius: 12, border: selDate === d.date ? `1.5px solid ${BRAND}` : '1px solid #E5E7EB', background: selDate === d.date ? BRAND : 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, transition: 'all 0.15s' }}>
-              <span style={{ fontSize: 9, fontWeight: 600, color: selDate === d.date ? 'rgba(255,255,255,0.8)' : '#9CA3AF' }}>{getDayLabel(d.dow)}</span>
-              <span style={{ fontSize: 16, fontWeight: 800, color: selDate === d.date ? 'white' : '#1A1A1A' }}>{d.day}</span>
+              style={{ flexShrink: 0, minWidth: 48, padding: '8px 4px', borderRadius: 12, border: selDate === d.date ? `1.5px solid ${BRAND}` : '1px solid var(--border)', background: selDate === d.date ? BRAND : 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, transition: 'all 0.15s' }}>
+              <span style={{ fontSize: 10, fontWeight: 600, color: selDate === d.date ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)' }}>{getDayLabel(d.dow)}</span>
+              <span style={{ fontSize: 16, fontWeight: 800, color: selDate === d.date ? 'white' : 'var(--text-primary)' }}>{d.day}</span>
             </button>
           ))}
         </div>
         {/* 시간 슬롯 */}
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#374151', marginBottom: 8 }}>{lang === 'ko' ? '시간' : lang === 'zh' ? '选择时间' : 'Time'}</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 20 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{lang === 'ko' ? '시간' : lang === 'zh' ? '选择时间' : 'Time'}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 24 }}>
           {slots.map(slot => {
             const unavail = shop.unavailable_slots.includes(slot)
             const active = selTime === slot
             return (
               <button key={slot} disabled={unavail} onClick={() => setSelTime(slot)}
-                style={{ padding: '9px 4px', borderRadius: 10, fontSize: 12, fontWeight: 600, border: active ? `1.5px solid ${BRAND}` : '1px solid #E5E7EB', background: unavail ? '#F9FAFB' : active ? BRAND : 'white', color: unavail ? '#D1D5DB' : active ? 'white' : '#374151', cursor: unavail ? 'not-allowed' : 'pointer', textDecoration: unavail ? 'line-through' : 'none', transition: 'all 0.15s' }}>
+                style={{ padding: '10px 4px', borderRadius: 10, fontSize: 13, fontWeight: 600, border: active ? `1.5px solid ${BRAND}` : '1px solid var(--border)', background: unavail ? 'var(--surface)' : active ? BRAND : 'white', color: unavail ? 'var(--text-hint)' : active ? 'white' : 'var(--text-primary)', cursor: unavail ? 'not-allowed' : 'pointer', textDecoration: unavail ? 'line-through' : 'none', transition: 'all 0.15s' }}>
                 {slot}
               </button>
             )
           })}
         </div>
         {/* 인원 */}
-        <div style={{ fontSize: 12, fontWeight: 700, color: '#374151', marginBottom: 10 }}>{L(lang, LABEL.guests)}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>{L(lang, LABEL.guests)}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 4 }}>
           <button onClick={() => setGuests(g => Math.max(1, g - 1))}
-            style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#374151' }}>−</button>
+            style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid var(--border)', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--text-primary)' }}>−</button>
           <span style={{ fontSize: 20, fontWeight: 800, minWidth: 24, textAlign: 'center' }}>{guests}</span>
           <button onClick={() => setGuests(g => Math.min(10, g + 1))}
-            style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#374151' }}>+</button>
-          <span style={{ fontSize: 13, color: '#9CA3AF' }}>{guests}{L(lang, LABEL.people_unit)}</span>
+            style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid var(--border)', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--text-primary)' }}>+</button>
+          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{guests}{L(lang, LABEL.people_unit)}</span>
         </div>
       </div>
-      <div style={{ padding: '12px 16px', background: 'white', borderTop: '1px solid #F5F5F5' }}>
+      <div style={{ padding: '12px 20px', background: 'white', borderTop: '1px solid var(--border)' }}>
         <button disabled={!selTime} onClick={() => onConfirm({ date: selDate, time: selTime, guests })}
           style={{ width: '100%', height: 50, borderRadius: 14, background: selTime ? BRAND : '#E5E7EB', color: 'white', fontSize: 16, fontWeight: 700, border: 'none', cursor: selTime ? 'pointer' : 'not-allowed', transition: 'background 0.2s' }}>
           {L(lang, LABEL.next)}
@@ -446,18 +446,18 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack }) {
       <StepHeader title={L(lang, LABEL.step3_title)} subtitle={shop[shopNameKey]} onBack={onBack} />
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px' }}>
         {/* 예약 요약 */}
-        <div style={{ background: '#FAFAFA', borderRadius: 14, padding: '16px', marginBottom: 16, border: '1px solid #F0F0F0' }}>
+        <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-card)', padding: '20px', marginBottom: 16, border: '1px solid var(--border)' }}>
           <Row label={lang === 'ko' ? '매장' : lang === 'zh' ? '门店' : 'Shop'} value={shop[shopNameKey]} />
           <Row label={lang === 'ko' ? '서비스' : lang === 'zh' ? '服务' : 'Service'} value={service[svcNameKey]} />
           <Row label={lang === 'ko' ? '날짜' : lang === 'zh' ? '日期' : 'Date'} value={dateTime.date} />
           <Row label={lang === 'ko' ? '시간' : lang === 'zh' ? '时间' : 'Time'} value={dateTime.time} />
           <Row label={L(lang, LABEL.guests)} value={`${dateTime.guests}${L(lang, LABEL.people_unit)}`} />
-          <div style={{ borderTop: '1px solid #E5E7EB', margin: '12px 0 8px' }} />
+          <div style={{ borderTop: '1px solid var(--border)', margin: '12px 0 8px' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#374151' }}>{L(lang, LABEL.deposit_abbr)}</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{L(lang, LABEL.deposit_abbr)}</span>
             <div style={{ textAlign: 'right' }}>
               <span style={{ fontSize: 16, fontWeight: 800, color: BRAND }}>₩{deposit.toLocaleString()}</span>
-              <span style={{ fontSize: 11, color: '#9CA3AF', marginLeft: 6 }}>≈ ¥{depositCny}</span>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 6 }}>≈ ¥{depositCny}</span>
             </div>
           </div>
         </div>
@@ -483,7 +483,7 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack }) {
         </button>
       </div>
       <div style={{ padding: '8px 16px 12px', textAlign: 'center' }}>
-        <p style={{ fontSize: 11, color: '#9CA3AF', margin: 0, lineHeight: 1.5 }}>{L(lang, LABEL.cancel_policy)}</p>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>{L(lang, LABEL.cancel_policy)}</p>
       </div>
     </div>
   )
@@ -496,10 +496,10 @@ function ConfirmDone({ booking, lang, onGoMy, onGoMap }) {
       <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
         <CheckCircle size={44} weight="fill" style={{ color: '#16A34A' }} />
       </div>
-      <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1A1A1A', margin: '0 0 8px' }}>{L(lang, LABEL.confirm_ok)}</h2>
-      <p style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 4 }}>{L(lang, LABEL.booking_no)}</p>
+      <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px' }}>{L(lang, LABEL.confirm_ok)}</h2>
+      <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>{L(lang, LABEL.booking_no)}</p>
       <p style={{ fontSize: 16, fontWeight: 700, color: BRAND, marginBottom: 24, letterSpacing: '0.5px' }}>{booking.id}</p>
-      <div style={{ background: '#FAFAFA', borderRadius: 14, padding: '14px 20px', width: '100%', marginBottom: 24, border: '1px solid #F0F0F0', textAlign: 'left' }}>
+      <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-card)', padding: '20px', width: '100%', marginBottom: 24, border: '1px solid var(--border)', textAlign: 'left' }}>
         <Row label={lang === 'ko' ? '매장' : lang === 'zh' ? '门店' : 'Shop'} value={booking.shopName} />
         <Row label={lang === 'ko' ? '서비스' : lang === 'zh' ? '服务' : 'Service'} value={booking.service} />
         <Row label={lang === 'ko' ? '일시' : lang === 'zh' ? '日期时间' : 'DateTime'} value={`${booking.date} ${booking.time}`} />
@@ -510,7 +510,7 @@ function ConfirmDone({ booking, lang, onGoMy, onGoMap }) {
         {L(lang, LABEL.go_my)}
       </button>
       <button onClick={onGoMap}
-        style={{ width: '100%', height: 50, borderRadius: 14, background: 'white', color: '#374151', fontSize: 15, fontWeight: 600, border: '1.5px solid #E5E7EB', cursor: 'pointer' }}>
+        style={{ width: '100%', height: 50, borderRadius: 'var(--radius-btn)', background: 'white', color: 'var(--text-primary)', fontSize: 15, fontWeight: 600, border: '1.5px solid var(--border)', cursor: 'pointer' }}>
         {L(lang, LABEL.go_map)}
       </button>
     </div>
@@ -520,13 +520,13 @@ function ConfirmDone({ booking, lang, onGoMy, onGoMap }) {
 // ─── 공통 헤더 ───
 function StepHeader({ title, subtitle, onBack }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px 10px', borderBottom: '1px solid #F5F5F5', background: 'white', flexShrink: 0 }}>
-      <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#374151', display: 'flex', borderRadius: 8 }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 20px 12px', borderBottom: '1px solid var(--border)', background: 'white', flexShrink: 0 }}>
+      <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex', borderRadius: 8 }}>
         <ArrowLeft size={22} weight="bold" />
       </button>
       <div>
-        <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{title}</div>
-        {subtitle && <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>{subtitle}</div>}
+        <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{title}</div>
+        {subtitle && <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{subtitle}</div>}
       </div>
     </div>
   )
@@ -536,8 +536,8 @@ function StepHeader({ title, subtitle, onBack }) {
 function Row({ label, value }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '5px 0' }}>
-      <span style={{ fontSize: 12, color: '#9CA3AF', flexShrink: 0, marginRight: 8 }}>{label}</span>
-      <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', textAlign: 'right' }}>{value}</span>
+      <span style={{ fontSize: 13, color: 'var(--text-muted)', flexShrink: 0, marginRight: 8 }}>{label}</span>
+      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', textAlign: 'right' }}>{value}</span>
     </div>
   )
 }
@@ -600,66 +600,66 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#F8F9FA' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--surface)' }}>
       <StepHeader
         title={lang === 'zh' ? '我的预约' : lang === 'ko' ? '내 예약' : 'My Bookings'}
         onBack={onBack}
       />
       {/* 필터 탭 */}
-      <div style={{ display: 'flex', gap: 6, padding: '12px 16px 8px', background: 'white', borderBottom: '1px solid #F0F0F0' }}>
+      <div style={{ display: 'flex', gap: 6, padding: '12px 20px 10px', background: 'white', borderBottom: '1px solid var(--border)' }}>
         {FILTERS.map(f => (
           <button key={f.id} onClick={() => setFilter(f.id)}
-            style={{ padding: '5px 14px', borderRadius: 20, fontSize: 12, fontWeight: 600, background: filter === f.id ? '#1A1A1A' : '#F3F4F6', color: filter === f.id ? 'white' : '#6B7280', border: 'none', cursor: 'pointer', transition: 'all 0.15s' }}>
+            style={{ padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600, background: filter === f.id ? 'var(--text-primary)' : 'var(--surface)', color: filter === f.id ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.15s' }}>
             {L(lang, f.label)}
           </button>
         ))}
       </div>
       {/* 예약 리스트 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', paddingTop: 60 }}>
-            <CalendarBlank size={40} style={{ color: '#D1D5DB', marginBottom: 12 }} />
-            <p style={{ fontSize: 14, color: '#9CA3AF', marginBottom: 16 }}>
+            <CalendarBlank size={40} style={{ color: 'var(--text-hint)', marginBottom: 12 }} />
+            <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>
               {lang === 'zh' ? '还没有预约记录' : lang === 'ko' ? '예약 내역이 없습니다' : 'No bookings yet'}
             </p>
             <button onClick={onBack}
-              style={{ padding: '10px 24px', borderRadius: 12, background: BRAND, color: 'white', border: 'none', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+              style={{ padding: '10px 24px', borderRadius: 'var(--radius-btn)', background: BRAND, color: 'white', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
               {lang === 'zh' ? '去预约 →' : lang === 'ko' ? '예약하러 가기 →' : 'Book now →'}
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {filtered.map(b => (
-              <div key={b.id} style={{ background: 'white', borderRadius: 14, padding: '14px', border: '1px solid #F0F0F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+              <div key={b.id} style={{ background: 'white', borderRadius: 'var(--radius-card)', padding: '20px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-card)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                   <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A', marginBottom: 2 }}>{b.shopName}</div>
-                    <div style={{ fontSize: 12, color: '#6B7280' }}>{b.service}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{b.shopName}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{b.service}</div>
                   </div>
                   <StatusBadge status={b.status} />
                 </div>
-                <div style={{ display: 'flex', gap: 16, fontSize: 12, color: '#9CA3AF', marginBottom: 8 }}>
+                <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-muted)', marginBottom: 10 }}>
                   <span>📅 {b.date}</span>
                   <span>⏰ {b.time}</span>
                   <span>👥 {b.guests}{lang === 'zh' ? '人' : lang === 'ko' ? '명' : ''}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 8, borderTop: '1px solid #F5F5F5' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, borderTop: '1px solid var(--border)' }}>
                   <div>
-                    <span style={{ fontSize: 11, color: '#9CA3AF' }}>{lang === 'zh' ? '保证金' : lang === 'ko' ? '보증금' : 'Deposit'}: </span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: BRAND }}>₩{b.deposit?.toLocaleString()}</span>
-                    <span style={{ fontSize: 11, color: '#9CA3AF', marginLeft: 4 }}>≈¥{b.depositCny}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{lang === 'zh' ? '保证金' : lang === 'ko' ? '보증금' : 'Deposit'}: </span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: BRAND }}>₩{b.deposit?.toLocaleString()}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 4 }}>≈¥{b.depositCny}</span>
                   </div>
                   {(b.status === 'confirmed' || b.status === 'upcoming') && isCancellable(b) && (
                     <button onClick={() => cancelBooking(b)}
-                      style={{ fontSize: 11, color: '#EF4444', background: '#FEF2F2', border: 'none', borderRadius: 8, padding: '4px 10px', cursor: 'pointer', fontWeight: 600 }}>
+                      style={{ fontSize: 13, color: '#EF4444', background: '#FEF2F2', border: 'none', borderRadius: 8, padding: '5px 12px', cursor: 'pointer', fontWeight: 600 }}>
                       {lang === 'zh' ? '取消预约' : lang === 'ko' ? '취소' : 'Cancel'}
                     </button>
                   )}
                   {(b.status === 'confirmed' || b.status === 'upcoming') && !isCancellable(b) && (
-                    <span style={{ fontSize: 10, color: '#D1D5DB' }}>{lang === 'zh' ? '不可取消' : lang === 'ko' ? '취소불가' : 'N/A'}</span>
+                    <span style={{ fontSize: 11, color: 'var(--text-hint)' }}>{lang === 'zh' ? '不可取消' : lang === 'ko' ? '취소불가' : 'N/A'}</span>
                   )}
                 </div>
-                <div style={{ fontSize: 10, color: '#E5E7EB', marginTop: 6, letterSpacing: '0.3px' }}>{b.id}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-hint)', marginTop: 8, letterSpacing: '0.3px' }}>{b.id}</div>
               </div>
             ))}
           </div>
@@ -714,26 +714,26 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#F8F9FA', fontFamily: 'Inter, "Noto Sans SC", sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--surface)', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
       {screen === 'list' && (
         <>
           {/* 헤더 */}
-          <div style={{ padding: '16px 16px 12px', background: 'white', borderBottom: '1px solid #F0F0F0', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: '#1A1A1A', margin: 0 }}>{L(lang, LABEL.title)}</h1>
+          <div style={{ padding: '20px 20px 16px', background: 'white', borderBottom: '1px solid var(--border)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>{L(lang, LABEL.title)}</h1>
             <button onClick={() => setScreen('my-bookings')}
-              style={{ fontSize: 12, fontWeight: 600, color: BRAND, background: BRAND_LIGHT, border: 'none', borderRadius: 8, padding: '6px 12px', cursor: 'pointer' }}>
+              style={{ fontSize: 13, fontWeight: 600, color: BRAND, background: BRAND_LIGHT, border: 'none', borderRadius: 'var(--radius-btn)', padding: '7px 14px', cursor: 'pointer' }}>
               {lang === 'zh' ? '我的预约' : lang === 'ko' ? '내 예약' : 'My Bookings'}
             </button>
           </div>
           {/* 매장 리스트 */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px' }}>
+          <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px' }}>
             {shopsLoading ? (
-              <div style={{ textAlign: 'center', paddingTop: 80, color: '#9CA3AF', fontSize: 14 }}>加载中...</div>
+              <div style={{ textAlign: 'center', paddingTop: 80, color: 'var(--text-muted)', fontSize: 15 }}>加载中...</div>
             ) : shops.length === 0 ? (
               <div style={{ textAlign: 'center', paddingTop: 80 }}>
-                <CalendarBlank size={40} style={{ color: '#D1D5DB', marginBottom: 12 }} />
-                <p style={{ fontSize: 14, color: '#9CA3AF', marginBottom: 16 }}>{L(lang, LABEL.empty_shops)}</p>
-                <button onClick={onGoToMapTab} style={{ padding: '10px 24px', borderRadius: 12, background: BRAND, color: 'white', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
+                <CalendarBlank size={40} style={{ color: 'var(--text-hint)', marginBottom: 12 }} />
+                <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>{L(lang, LABEL.empty_shops)}</p>
+                <button onClick={onGoToMapTab} style={{ padding: '10px 24px', borderRadius: 'var(--radius-btn)', background: BRAND, color: 'white', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
                   {L(lang, LABEL.empty_go)}
                 </button>
               </div>

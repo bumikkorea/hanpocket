@@ -118,24 +118,24 @@ export default function MorePage({ lang, setTab, setSubPage }) {
   }
 
   return (
-    <div className="px-4 pt-3 pb-0 animate-fade-up">
+    <div className="px-5 pt-4 pb-0 animate-fade-up">
       {SECTIONS.map(section => (
-        <div key={section.emoji} className="mb-5">
-          <p className="text-[13px] font-bold text-[#374151] mb-2">
+        <div key={section.emoji} className="mb-8">
+          <p className="text-[17px] font-semibold text-[var(--text-primary)] mb-3">
             {L(lang, section.title)}
           </p>
-          <div className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+          <div className="bg-white rounded-[16px] overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
             {section.items.map((item, i) => (
               <button key={item.id}
                 onClick={() => handleItemClick(item)}
-                className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-[#F9FAFB] transition-colors"
-                style={i > 0 ? { borderTop: '1px solid #F3F4F6' } : {}}>
-                <span className="text-[16px]">{item.emoji}</span>
+                className="w-full flex items-center gap-3 px-5 py-4 text-left active:bg-[var(--surface)] transition-colors"
+                style={i > 0 ? { borderTop: '1px solid var(--border)' } : {}}>
+                <span className="text-[18px]">{item.emoji}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-medium text-[#1A1A1A]">{L(lang, item.label)}</p>
-                  {item.detail && <p className="text-[11px] text-[#9CA3AF] mt-0.5">{typeof item.detail === 'string' ? item.detail : L(lang, item.detail)}</p>}
+                  <p className="text-[15px] font-medium text-[var(--text-primary)]">{L(lang, item.label)}</p>
+                  {item.detail && <p className="text-[13px] text-[var(--text-muted)] mt-0.5">{typeof item.detail === 'string' ? item.detail : L(lang, item.detail)}</p>}
                 </div>
-                <ChevronRight size={16} className="text-[#D1D5DB] shrink-0" />
+                <ChevronRight size={16} className="text-[var(--text-hint)] shrink-0" />
               </button>
             ))}
           </div>
@@ -143,9 +143,9 @@ export default function MorePage({ lang, setTab, setSubPage }) {
       ))}
 
       {/* NEAR 버전 정보 */}
-      <div className="text-center mt-4 mb-0">
-        <p className="text-[11px] text-[#BCBCBC]">NEAR v1.0.0</p>
-        <p className="text-[10px] text-[#D1D5DB] mt-1">到韩国，只需NEAR</p>
+      <div className="text-center mt-8 mb-0">
+        <p className="text-[11px] text-[var(--text-hint)]">NEAR v1.0.0</p>
+        <p className="text-[11px] text-[var(--text-hint)] mt-1">到韩国，只需NEAR</p>
       </div>
     </div>
   )

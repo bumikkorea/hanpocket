@@ -337,7 +337,7 @@
 
 body {
   margin: 0;
-  font-family: 'Pretendard', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-family: 'Noto Sans SC', 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

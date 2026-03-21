@@ -254,10 +254,10 @@ function generateTimeSlots(openTime, closeTime) {
   return slots
 }
 
-function getNext7Days() {
+function getNext31Days() {
   const days = []
   const DAY_NAMES = { zh: ['日','一','二','三','四','五','六'], ko: ['일','월','화','수','목','금','토'], en: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] }
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 31; i++) {
     const d = new Date()
     d.setDate(d.getDate() + i)
     days.push({
@@ -265,6 +265,7 @@ function getNext7Days() {
       day: d.getDate(),
       weekday: DAY_NAMES,
       dow: d.getDay(),
+      isToday: i === 0,
     })
   }
   return days
@@ -353,7 +354,7 @@ function StepService({ shop, services, servicesLoading, lang, onSelect, onBack, 
 
 // ─── Step 2: 날짜/시간/인원 ───
 function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
-  const days = useMemo(() => getNext7Days(), [])
+  const days = useMemo(() => getNext31Days(), [])
   const [selDate, setSelDate] = useState(days[0].date)
   const [selTime, setSelTime] = useState(null)
   const [guests, setGuests] = useState(1)
@@ -374,13 +375,19 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
         {/* 날짜 선택 */}
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{lang === 'ko' ? '날짜' : lang === 'zh' ? '选择日期' : 'Date'}</div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 20 }}>
-          {days.map(d => (
-            <button key={d.date} onClick={() => { setSelDate(d.date); setSelTime(null) }}
-              style={{ flexShrink: 0, minWidth: 48, padding: '8px 4px', borderRadius: 12, border: selDate === d.date ? `1.5px solid ${BRAND}` : '1px solid var(--border)', background: selDate === d.date ? BRAND : 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, transition: 'all 0.15s' }}>
-              <span style={{ fontSize: 10, fontWeight: 600, color: selDate === d.date ? 'rgba(255,255,255,0.8)' : 'var(--text-muted)' }}>{getDayLabel(d.dow)}</span>
-              <span style={{ fontSize: 16, fontWeight: 800, color: selDate === d.date ? 'white' : 'var(--text-primary)' }}>{d.day}</span>
-            </button>
-          ))}
+          {days.map(d => {
+            const isActive = selDate === d.date
+            const isWeekend = d.dow === 0 || d.dow === 6
+            const dateColor = isActive ? 'white' : isWeekend ? 'var(--primary)' : 'var(--text-primary)'
+            const dayLabelColor = isActive ? 'rgba(255,255,255,0.8)' : isWeekend ? 'var(--primary)' : 'var(--text-muted)'
+            return (
+              <button key={d.date} onClick={() => { setSelDate(d.date); setSelTime(null) }}
+                style={{ flexShrink: 0, minWidth: 48, padding: '8px 4px', borderRadius: 12, border: isActive ? `1.5px solid ${BRAND}` : '1px solid var(--border)', background: isActive ? BRAND : 'white', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, transition: 'all 0.15s' }}>
+                <span style={{ fontSize: 10, fontWeight: 600, color: dayLabelColor }}>{d.isToday ? tLang('booking.today', lang) : getDayLabel(d.dow)}</span>
+                <span style={{ fontSize: 16, fontWeight: 800, color: dateColor }}>{d.day}</span>
+              </button>
+            )
+          })}
         </div>
         {/* 시간 슬롯 */}
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{lang === 'ko' ? '시간' : lang === 'zh' ? '选择时间' : 'Time'}</div>

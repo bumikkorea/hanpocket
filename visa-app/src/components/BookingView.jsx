@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { ArrowLeft, CalendarBlank, Clock, Users, CheckCircle, CaretRight, X } from '@phosphor-icons/react'
 import { Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useToast } from './Toast'
 
 // ─── 브랜드 컬러 ───
 const BRAND = '#C4725A'
@@ -477,12 +478,12 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
         <button onClick={() => handlePay('alipay')}
           className="btn btn-alipay"
           style={{ width: '100%', marginBottom: 10 }}>
-          💙 {L(lang, LABEL.alipay)}
+          {L(lang, LABEL.alipay)}
         </button>
         <button onClick={() => handlePay('wechat')}
           className="btn btn-wechat"
           style={{ width: '100%' }}>
-          💚 {L(lang, LABEL.wechat_pay)}
+          {L(lang, LABEL.wechat_pay)}
         </button>
       </div>
       <div style={{ padding: '8px 16px 12px', textAlign: 'center' }}>
@@ -714,6 +715,7 @@ function StepIndicator({ currentStep, lang }) {
 
 // ─── 메인 BookingView ───
 export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
+  const { showToast } = useToast()
   const [screen, setScreen] = useState('list')
   const [selectedShop, setSelectedShop] = useState(null)
   const [selectedService, setSelectedService] = useState(null)
@@ -754,6 +756,7 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
   function handlePay(booking) {
     setDoneBooking(booking)
     setScreen('done')
+    showToast({ type: 'booking', message: lang === 'ko' ? '예약이 완료되었습니다!' : lang === 'en' ? 'Booking confirmed!' : '预约成功！' })
   }
 
   return (
@@ -776,7 +779,17 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
           {/* 매장 리스트 */}
           <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px' }}>
             {shopsLoading ? (
-              <div style={{ textAlign: 'center', paddingTop: 80, color: 'var(--text-muted)', fontSize: 15 }}>加载中...</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {[1,2,3].map(i => (
+                  <div key={i} style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                    <div className="skeleton" style={{ height: 120 }} />
+                    <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <div className="skeleton" style={{ height: 18, width: '60%' }} />
+                      <div className="skeleton" style={{ height: 14, width: '40%' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
             ) : shops.length === 0 ? (
               <div style={{ textAlign: 'center', paddingTop: 80 }}>
                 <CalendarBlank size={40} style={{ color: 'var(--text-hint)', marginBottom: 12 }} />

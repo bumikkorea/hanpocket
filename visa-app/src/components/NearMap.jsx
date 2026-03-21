@@ -765,13 +765,12 @@ export default function NearMap({ lang = 'zh' }) {
           background: '#F9A825',
           border: 'none',
           boxShadow: '0 4px 16px rgba(249,168,37,0.5)',
-          fontSize: 22,
           cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
         title={t('taxi_mode', bilingual)}
       >
-        🚕
+        <Car size={24} color="white" />
       </button>
 
       {/* ─── 길찾기 화면 ─── */}

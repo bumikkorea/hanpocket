@@ -966,3 +966,30 @@ body {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.3; }
 }
+
+/* Toast 애니메이션 */
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 탭 content fadeIn */
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.tab-content-enter {
+  animation: tabFadeIn 0.2s ease both;
+}
+
+/* Skeleton shimmer */
+@keyframes skeletonPulse {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skeleton {
+  background: linear-gradient(-90deg, var(--surface) 0%, #EBEBEB 50%, var(--surface) 100%);
+  background-size: 200% 100%;
+  animation: skeletonPulse 1.5s infinite;
+  border-radius: 8px;
+}

@@ -22,6 +22,7 @@ import { useExchangeRate } from './hooks/useExchangeRate'
 import { pocketCategories, serviceItems, subMenuData, IMPLEMENTED_POCKETS } from './data/pockets'
 import AffiliateTracker from './components/AffiliateTracker'
 import LoadingSpinner from './components/LoadingSpinner'
+import { ToastProvider } from './components/Toast'
 // Onigiri removed (unused)
 import PWAInstallPrompt from './components/PWAInstallPrompt'
 // OnboardingSimple import removed — replaced by auth popup
@@ -69,6 +70,7 @@ const FlightInfoCard = lazy(() => import('./components/FlightInfoCard'))
 const ShowKorean = lazy(() => import('./components/ShowKorean'))
 const NearMap = lazy(() => import('./components/NearMap'))
 const DiscoverTab = lazy(() => import('./components/DiscoverTab'))
+const Onboarding = lazy(() => import('./components/Onboarding'))
 const BookingView = lazy(() => import('./components/BookingView'))
 const MorePage = lazy(() => import('./components/MorePage'))
 const MyTab = lazy(() => import('./components/MyTab'))
@@ -1540,6 +1542,13 @@ function AppInner() {
   const [adminMode, setAdminMode] = useState(false)
   const [adminView, setAdminView] = useState(false)
 
+  // NEAR 온보딩 (첫 진입 3-슬라이드)
+  const [onboardingDone, setOnboardingDone] = useState(() => !!localStorage.getItem('near_onboarding_done'))
+  const completeOnboarding = () => {
+    localStorage.setItem('near_onboarding_done', '1')
+    setOnboardingDone(true)
+  }
+
   // Auth popup state (replaces onboarding)
   const [showAuthPopup, setShowAuthPopup] = useState(() => {
     return !loadProfile() && !localStorage.getItem('hanpocket_dismissed_auth')
@@ -1965,6 +1974,14 @@ function AppInner() {
   if (showSplash) {
     return <SplashScreen onFinish={() => setShowSplash(false)} />
   }
+
+  if (!onboardingDone) {
+    return (
+      <Suspense fallback={<div style={{ height: '100dvh', background: '#FDF8F6' }} />}>
+        <Onboarding onComplete={completeOnboarding} />
+      </Suspense>
+    )
+  }
   
   if (showLanding) {
     return <LandingPage lang={lang} onEnter={() => setShowLanding(false)} />
@@ -2195,7 +2212,7 @@ function AppInner() {
       {adminMode && <div className="h-[36px]" />}
 
       {/* Content — full width, no side padding (tabs handle their own padding) */}
-      <div className="pt-0 pb-2 tab-enter" key={`${tab}-${subPage || ''}`}>
+      <div className="pt-0 pb-2 tab-content-enter" key={`${tab}-${subPage || ''}`}>
         {/* Push notification banner — disabled for now */}
         {/* Service grid - pockets.js 데이터 기반 */}
         {tab==='service' && !subPage && (
@@ -2895,5 +2912,11 @@ function FloatingChatbot({ lang }) {
 }
 
 export default function App() {
-  return <ErrorBoundary><AppInner /></ErrorBoundary>
+  return (
+    <ErrorBoundary>
+      <ToastProvider>
+        <AppInner />
+      </ToastProvider>
+    </ErrorBoundary>
+  )
 }

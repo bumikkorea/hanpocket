@@ -1719,7 +1719,9 @@ function AppInner() {
     const handlePopState = (e) => {
       // subPage가 있으면 subPage 닫기
       if (subPage) { setSubPage(null); return }
-      // near-home이 아니면 홈으로
+      // 지도탭/홈탭은 자체 내비 — 앱 레벨에서 뒤로가기 처리 안 함
+      if (tab === 'near-home' || tab === 'near-map') { return }
+      // 그 외 탭이면 near-home으로
       if (tab !== 'near-home') { handleTabChange('near-home'); return }
       // 메뉴가 열려있으면 닫기
       if (menuOpen) { setMenuOpen(false); return }
@@ -2126,7 +2128,7 @@ function AppInner() {
                 }} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
                   <ChevronLeft size={24} />
                 </button>
-              ) : tab !== 'home' ? (
+              ) : tab !== 'home' && tab !== 'near-home' && tab !== 'near-map' ? (
                 <button onClick={() => { setTab('home'); setSubPage(null) }} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
                   <ChevronLeft size={24} />
                 </button>

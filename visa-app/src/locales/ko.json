@@ -224,5 +224,11 @@
   "feed.5.location": "명동",
   "feed.6.location": "성수",
   "map.banner": "한국에서 이용 가능한 서비스를 보고 있습니다",
-  "booking.goBook": "예약하러 가기 →"
+  "booking.goBook": "예약하러 가기 →",
+  "district.all": "서울 전체",
+  "district.itaewon": "이태원",
+  "district.jamsil": "잠실",
+  "map.nav": "길찾기",
+  "map.taxi": "택시",
+  "map.book": "예약"
 }

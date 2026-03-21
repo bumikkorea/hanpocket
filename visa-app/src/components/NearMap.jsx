@@ -26,14 +26,23 @@ const PH_KEYS = ['search.placeholder.0','search.placeholder.1','search.placehold
 
 // ─── 지역 빠른 이동 ───
 const QUICK_AREAS = [
-  { id: 'seongsu',    key: 'area_seongsu',    lat: 37.5446, lng: 127.0560, zoom: 4 },
-  { id: 'hongdae',    key: 'area_hongdae',    lat: 37.5563, lng: 126.9236, zoom: 4 },
-  { id: 'gangnam',    key: 'area_gangnam',    lat: 37.4979, lng: 127.0276, zoom: 4 },
-  { id: 'myeongdong', key: 'area_myeongdong', lat: 37.5636, lng: 126.9869, zoom: 4 },
-  { id: 'ddp',        key: 'area_ddp',        lat: 37.5671, lng: 127.0095, zoom: 4 },
-  { id: 'itaewon',    key: 'area_itaewon',    lat: 37.5345, lng: 126.9946, zoom: 4 },
-  { id: 'yeouido',    key: 'area_yeouido',    lat: 37.5219, lng: 126.9245, zoom: 4 },
+  { id: 'all',        key: 'district.all',    lat: 37.5665, lng: 126.9780, zoom: 7, district: null       },
+  { id: 'hongdae',    key: 'area_hongdae',    lat: 37.5563, lng: 126.9220, zoom: 4, district: 'hongdae'   },
+  { id: 'seongsu',    key: 'area_seongsu',    lat: 37.5445, lng: 127.0560, zoom: 4, district: 'seongsu'   },
+  { id: 'gangnam',    key: 'area_gangnam',    lat: 37.5172, lng: 127.0286, zoom: 4, district: 'gangnam'   },
+  { id: 'myeongdong', key: 'area_myeongdong', lat: 37.5636, lng: 126.9860, zoom: 4, district: 'myeongdong'},
+  { id: 'itaewon',    key: 'area_itaewon',    lat: 37.5340, lng: 126.9940, zoom: 4, district: 'itaewon'  },
+  { id: 'jamsil',     key: 'district.jamsil', lat: 37.5133, lng: 127.1001, zoom: 4, district: 'jamsil'   },
 ]
+
+// 카카오T 딥링크 (택시 호출)
+function openKakaoTaxi(lat, lng, name) {
+  const n = encodeURIComponent(name || '')
+  const deepLink = `kakaot://taxi/call?destLng=${lng}&destLat=${lat}&destName=${n}`
+  const webFallback = `https://t.kakao.com/launch?destLng=${lng}&destLat=${lat}&destName=${n}`
+  window.location.href = deepLink
+  setTimeout(() => { window.location.href = webFallback }, 1500)
+}
 
 // ─── 영업 상태 판단 ───
 function getBusinessStatus(poi) {
@@ -274,6 +283,7 @@ export default function NearMap() {
     return () => clearInterval(iv)
   }, [])
   const [activeCategory, setActiveCategory] = useState('all')
+  const [selectedDistrict, setSelectedDistrict] = useState(null) // null = 서울 전체
   const [activePopup, setActivePopup] = useState(null)
   const [navPoi, setNavPoi] = useState(null)
   const [bilingual, setBilingual] = useState(false)
@@ -309,6 +319,9 @@ export default function NearMap() {
     const notExpired = !(p.is_temporary && p.end_date && p.end_date < today)
     if (!notExpired) return false
 
+    // 지역 필터
+    if (selectedDistrict && p.district !== selectedDistrict) return false
+
     // 전체
     if (activeCategory === 'all') return true
 
@@ -322,6 +335,18 @@ export default function NearMap() {
     return p.category === activeCategory
   })
   const isExpanded = !!activePopup
+
+  // ── 안드로이드 뒤로가기: NearMap 내부 서브뷰 순차 닫기 ──
+  useEffect(() => {
+    const handler = () => {
+      if (navPoi)    { setNavPoi(null);                          window.history.pushState({}, ''); return }
+      if (taxiPoi)   { setTaxiPoi(null); setTaxiFromFab(false); window.history.pushState({}, ''); return }
+      if (showSearch){ setShowSearch(false);                     window.history.pushState({}, ''); return }
+      if (isExpanded){ setActivePopup(null);                     window.history.pushState({}, ''); return }
+    }
+    window.addEventListener('popstate', handler)
+    return () => window.removeEventListener('popstate', handler)
+  }, [navPoi, taxiPoi, showSearch, isExpanded])
 
   // ── 북마크 토글 ──
   const toggleBookmark = useCallback((id) => {
@@ -503,7 +528,8 @@ export default function NearMap() {
   const moveToArea = (area) => {
     if (!mapReady || !mapInstance.current) return
     mapInstance.current.setCenter(new window.kakao.maps.LatLng(area.lat, area.lng))
-    mapInstance.current.setLevel(area.zoom)
+    mapInstance.current.setLevel(area.zoom ?? 4)
+    setSelectedDistrict(area.district ?? null)
     setShowList(false)
   }
 
@@ -905,7 +931,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             {tLang('navigate_here', lang)}
           </button>
           <button
-            onClick={() => onTaxi(poi)}
+            onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh)}
             className="btn btn-sm btn-taxi"
             style={{ flex: 1, minWidth: 72 }}
           >

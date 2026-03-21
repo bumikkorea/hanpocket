@@ -212,5 +212,12 @@
   "feed.5.location": "Myeongdong",
   "feed.6.location": "Seongsu",
   "map.banner": "Viewing services available in Korea",
-  "booking.goBook": "Book now →"
+  "booking.goBook": "Book now →",
+  "taxi_mode": "Taxi",
+  "district.all": "All Seoul",
+  "district.itaewon": "Itaewon",
+  "district.jamsil": "Jamsil",
+  "map.nav": "Navigate",
+  "map.taxi": "Taxi",
+  "map.book": "Book"
 }

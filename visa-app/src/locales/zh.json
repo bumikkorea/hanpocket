@@ -224,5 +224,11 @@
   "my.activity": "我的活动",
   "my.purposeTitle": "旅行目的是什么？",
   "my.done": "完成",
-  "booking.goBook": "去预约 →"
+  "booking.goBook": "去预约 →",
+  "district.all": "首尔全部",
+  "district.itaewon": "梨泰院",
+  "district.jamsil": "蚕室",
+  "map.nav": "导航去这里",
+  "map.taxi": "出租车",
+  "map.book": "预约"
 }

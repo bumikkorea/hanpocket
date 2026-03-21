@@ -9,7 +9,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser, ArrowUp, Calendar } from 'lucide-react'
+import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser, ArrowUp, Calendar, Home as HomeIcon, Compass } from 'lucide-react'
 import { House, Compass as PhCompass, QrCode, ShoppingBag as PhShoppingBag, User, MapPin as PhMapPin, AirplaneLanding, AirplaneTakeoff, Taxi, Motorcycle, Receipt as PhReceipt, BookBookmark, Hospital, GridFour, Camera as PhCamera, Heart as PhHeart, Lightning, CalendarBlank, ChatCircle, UsersThree, ForkKnife, CreditCard as PhCreditCard, Storefront, MagnifyingGlass } from '@phosphor-icons/react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
@@ -71,6 +71,7 @@ const ShowKorean = lazy(() => import('./components/ShowKorean'))
 const NearMap = lazy(() => import('./components/NearMap'))
 const DiscoverTab = lazy(() => import('./components/DiscoverTab'))
 const Onboarding = lazy(() => import('./components/Onboarding'))
+const NearHomeTab = lazy(() => import('./components/NearHomeTab'))
 const BookingView = lazy(() => import('./components/BookingView'))
 const MorePage = lazy(() => import('./components/MorePage'))
 const MyTab = lazy(() => import('./components/MyTab'))
@@ -1518,7 +1519,7 @@ function AppInner() {
   })
   const [profile, setProfile] = useState(() => loadProfile())
   const [showNotice, setShowNotice] = useState(false)
-  const [tab, setTab] = useState('near-map')
+  const [tab, setTab] = useState('near-home')
   const [view, setView] = useState('home')
   const [selCat, setSelCat] = useState(null)
   const [selVisa, setSelVisa] = useState(null)
@@ -1726,8 +1727,8 @@ function AppInner() {
     const handlePopState = (e) => {
       // subPage가 있으면 subPage 닫기
       if (subPage) { setSubPage(null); return }
-      // home이 아니면 홈으로
-      if (tab !== 'home') { handleTabChange('home'); return }
+      // near-home이 아니면 홈으로
+      if (tab !== 'near-home') { handleTabChange('near-home'); return }
       // 메뉴가 열려있으면 닫기
       if (menuOpen) { setMenuOpen(false); return }
     }
@@ -1819,7 +1820,8 @@ function AppInner() {
   }
 
   const bottomTabs = [
-    { id: 'discover',  icon: Search,      label: { ko: '탐험',   zh: '探险', en: 'Discover' } },
+    { id: 'near-home', icon: HomeIcon,    label: { ko: '홈',     zh: '首页', en: 'Home'     } },
+    { id: 'discover',  icon: Compass,     label: { ko: '탐험',   zh: '探险', en: 'Discover' } },
     { id: 'near-map',  icon: MapPin,      label: { ko: '지도',   zh: '地图', en: 'Map'      } },
     { id: 'booking',   icon: Calendar,    label: { ko: '예약',   zh: '预约', en: 'Book'     } },
     { id: 'my',        icon: LucideUser,  label: { ko: '내 정보', zh: '我的', en: 'My'       } },
@@ -2457,6 +2459,11 @@ function AppInner() {
               <ToolsTab lang={lang} profile={safeProfile} />
             </Suspense>
           </div>
+        )}
+        {tab==='near-home' && !subPage && (
+          <Suspense fallback={<LoadingSpinner />}>
+            <NearHomeTab lang={lang} setTab={handleTabChange} setSubPage={setSubPage} />
+          </Suspense>
         )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRateData} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet','taxrefund','departure','heatmap','wishlist','passport-scan','departure-shopping','flight-info','show-korean','near-map','korean-culture'].includes(t)) { setTab('home'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}

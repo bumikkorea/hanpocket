@@ -3,11 +3,11 @@
 // 기준일: 2026-03-19 | 출처: 보도자료/언론 기사 확인 데이터 전용
 
 export const CATEGORY_CONFIG = {
-  popup:   { color: '#E24B4A', label: '快闪店', letter: 'P' },
-  food:    { color: '#EF9F27', label: '美食',   letter: 'F' },
-  fashion: { color: '#7F77DD', label: '时尚',   letter: 'S' },
-  cafe:    { color: '#1D9E75', label: '咖啡',   letter: 'C' },
-  utility: { color: '#888780', label: '便利',   letter: 'U' },
+  popup:   { color: '#C4725A', label: '快闪店', letter: 'P' },
+  food:    { color: '#FF9500', label: '美食',   letter: 'F' },
+  fashion: { color: '#FF6B8A', label: '时尚',   letter: 'S' },
+  cafe:    { color: '#8B6F47', label: '咖啡',   letter: 'C' },
+  utility: { color: '#007AFF', label: '便利',   letter: 'U' },
 }
 
 export const POI_DATA = [

@@ -9,7 +9,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser, ArrowUp } from 'lucide-react'
+import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser, ArrowUp, Calendar } from 'lucide-react'
 import { House, Compass as PhCompass, QrCode, ShoppingBag as PhShoppingBag, User, MapPin as PhMapPin, AirplaneLanding, AirplaneTakeoff, Taxi, Motorcycle, Receipt as PhReceipt, BookBookmark, Hospital, GridFour, Camera as PhCamera, Heart as PhHeart, Lightning, CalendarBlank, ChatCircle, UsersThree, ForkKnife, CreditCard as PhCreditCard, Storefront, MagnifyingGlass } from '@phosphor-icons/react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
@@ -1809,10 +1809,10 @@ function AppInner() {
   }
 
   const bottomTabs = [
-    { id: 'discover',  icon: MagnifyingGlass, label: { ko: '탐험',   zh: '探险', en: 'Discover' } },
-    { id: 'near-map',  icon: PhMapPin,        label: { ko: '지도',   zh: '地图', en: 'Map'      } },
-    { id: 'booking',   icon: CalendarBlank,   label: { ko: '예약',   zh: '预约', en: 'Book'     } },
-    { id: 'my',        icon: User,            label: { ko: '내 정보', zh: '我的', en: 'My'       } },
+    { id: 'discover',  icon: Search,      label: { ko: '탐험',   zh: '探险', en: 'Discover' } },
+    { id: 'near-map',  icon: MapPin,      label: { ko: '지도',   zh: '地图', en: 'Map'      } },
+    { id: 'booking',   icon: Calendar,    label: { ko: '예약',   zh: '预约', en: 'Book'     } },
+    { id: 'my',        icon: LucideUser,  label: { ko: '내 정보', zh: '我的', en: 'My'       } },
   ]
 
   // Check if a service item has been migrated to pocket categories
@@ -2733,7 +2733,7 @@ function AppInner() {
                 aria-label={`${item.label[lang]} tab`}
                 style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <item.icon size={22} weight={active ? 'fill' : 'regular'} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', transform: active ? 'scale(1)' : 'scale(0.9)' }} />
+                  <item.icon size={22} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', transform: active ? 'scale(1)' : 'scale(0.9)' }} />
                   {active && (
                     <div style={{ position: 'absolute', bottom: '-10px', width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--primary)' }} />
                   )}

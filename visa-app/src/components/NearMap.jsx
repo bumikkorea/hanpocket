@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { MapPin, MagnifyingGlass, ArrowLeft } from '@phosphor-icons/react'
+import { Search, Navigation, Car, Calendar, Heart } from 'lucide-react'
 import { useNearPins } from '../hooks/usePopupStores'
 import TaxiCardView from './TaxiCardView.jsx'
 import { CATEGORY_CONFIG } from '../data/poiData'
@@ -98,26 +99,38 @@ function TagPill({ label, bg, color }) {
   )
 }
 
-// ─── waterdrop 핀 HTML (data-poi wrapper로 scale 제어) ───
+// ─── 카테고리별 SVG 아이콘 경로 (lucide 스타일) ───
+const PIN_ICONS = {
+  popup:   `<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" y1="6" x2="21" y2="6" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M16 10a4 4 0 0 1-8 0" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
+  food:    `<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 2v20" stroke="white" stroke-width="2" stroke-linecap="round"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3v-4" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`,
+  fashion: `<circle cx="6" cy="6" r="3" fill="none" stroke="white" stroke-width="2"/><circle cx="6" cy="18" r="3" fill="none" stroke="white" stroke-width="2"/><line x1="20" y1="4" x2="8.12" y2="15.88" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="14.47" y1="14.48" x2="20" y2="20" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="8.12" y1="8.12" x2="12" y2="12" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
+  cafe:    `<path d="M17 8h1a4 4 0 1 1 0 8h-1" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="6" y1="2" x2="6" y2="4" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="10" y1="2" x2="10" y2="4" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="14" y1="2" x2="14" y2="4" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
+  utility: `<path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 22v-4a3 3 0 0 0-6 0v4" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.25 13h19.5" stroke="white" stroke-width="2" stroke-linecap="round"/>`,
+}
+
+// ─── 원형 핀 HTML (40px circle + triangle tail + SVG icon) ───
 function buildPinHTML(category, isNew, poiId) {
   const cfg = CATEGORY_CONFIG[category] || CATEGORY_CONFIG.popup
+  const iconPaths = PIN_ICONS[category] || PIN_ICONS.popup
   const newBadge = isNew
-    ? `<div style="position:absolute;top:-4px;right:-4px;background:#FF3141;border-radius:50%;width:16px;height:16px;font-size:8px;color:white;display:flex;align-items:center;justify-content:center;font-weight:700;border:1.5px solid white;transform:rotate(45deg)">N</div>`
+    ? `<div style="position:absolute;top:-2px;right:-2px;background:#FF3141;border-radius:50%;width:10px;height:10px;border:1.5px solid white;"></div>`
     : ''
   return `
     <div data-poi="${poiId}" style="transition:transform 200ms ease,opacity 200ms ease;display:inline-block">
-      <div style="
-        width:28px;height:28px;
-        background:${cfg.color};
-        border-radius:50% 50% 50% 0;
-        transform:rotate(-45deg);
-        border:2px solid white;
-        box-shadow:0 2px 8px rgba(0,0,0,0.3);
-        display:flex;align-items:center;justify-content:center;
-        cursor:pointer;position:relative;
-      ">
-        <span style="transform:rotate(45deg);color:white;font-size:10px;font-weight:700;line-height:1">${cfg.letter}</span>
-        ${newBadge}
+      <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+        <div style="
+          width:40px;height:40px;
+          background:${cfg.color};
+          border-radius:50%;
+          border:2.5px solid white;
+          box-shadow:0 1px 3px rgba(0,0,0,0.12);
+          display:flex;align-items:center;justify-content:center;
+          cursor:pointer;position:relative;
+        ">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none">${iconPaths}</svg>
+          ${newBadge}
+        </div>
+        <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid ${cfg.color};margin-top:-1px;"></div>
       </div>
     </div>
   `
@@ -518,12 +531,12 @@ export default function NearMap({ lang = 'zh' }) {
         style={{ position: 'absolute', top: 16, left: 16, right: 72, zIndex: 10, background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
       >
         <div style={{
-          background: 'white', borderRadius: 12,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.15)',
+          background: 'white', borderRadius: 'var(--radius-pill)',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
           display: 'flex', alignItems: 'center',
-          padding: '0 12px', height: 44, gap: 8,
+          padding: '0 12px', height: 40, gap: 8,
         }}>
-          <MagnifyingGlass size={18} color="var(--text-muted)" weight="bold" />
+          <Search size={16} color="var(--text-muted)" />
           <span style={{ fontSize: 15, color: 'var(--text-muted)' }}>
             {t('search_placeholder', bilingual)}
           </span>
@@ -552,10 +565,11 @@ export default function NearMap({ lang = 'zh' }) {
               onClick={() => { setActiveCategory(chip.id); closeSheet(); exitCourseMode() }}
               style={{
                 flexShrink: 0,
+                height: 32,
                 background: active ? 'var(--text-primary)' : 'white',
                 color: active ? 'white' : 'var(--text-muted)',
-                border: active ? 'none' : '1px solid var(--border)',
-                borderRadius: 100, padding: '6px 14px',
+                border: active ? 'none' : '0.5px solid #E8E8E8',
+                borderRadius: 'var(--radius-chip)', padding: '0 14px',
                 fontSize: 13, fontWeight: 600,
                 boxShadow: active ? '0 2px 8px rgba(0,0,0,0.2)' : '0 1px 4px rgba(0,0,0,0.08)',
                 transition: 'all 0.15s',
@@ -570,10 +584,11 @@ export default function NearMap({ lang = 'zh' }) {
           onClick={() => { if (courseMode) exitCourseMode(); else { setCourseMode(true); closeSheet() } }}
           style={{
             flexShrink: 0,
+            height: 32,
             background: courseMode ? '#DC2626' : 'white',
             color: courseMode ? 'white' : 'var(--text-muted)',
-            border: courseMode ? 'none' : '1px solid var(--border)',
-            borderRadius: 100, padding: '6px 14px',
+            border: courseMode ? 'none' : '0.5px solid #E8E8E8',
+            borderRadius: 'var(--radius-chip)', padding: '0 14px',
             fontSize: 13, fontWeight: 600,
             boxShadow: courseMode ? '0 2px 8px rgba(220,38,38,0.3)' : '0 1px 4px rgba(0,0,0,0.08)',
             transition: 'all 0.15s',
@@ -594,7 +609,7 @@ export default function NearMap({ lang = 'zh' }) {
           height: isExpanded ? '60dvh' : (activeCourseId ? '50dvh' : 'auto'),
           minHeight: 124,
           transition: 'height 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          background: 'white', borderRadius: '20px 20px 0 0',
+          background: 'white', borderRadius: '24px 24px 0 0',
           boxShadow: '0 -4px 20px rgba(0,0,0,0.12)',
           overflowY: (isExpanded || activeCourseId) ? 'auto' : 'hidden',
         }}
@@ -892,35 +907,39 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button
             onClick={handleNavigate}
-            style={{ flex: 1.2, minWidth: 80, height: 44, borderRadius: 12, background: '#1A1A1A', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer' }}
+            style={{ flex: 1.2, minWidth: 80, height: 48, borderRadius: 'var(--radius-btn)', background: '#1A1A1A', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           >
+            <Navigation size={15} />
             {t('navigate_here', bilingual)}
           </button>
           <button
             onClick={() => onTaxi(poi)}
-            style={{ flex: 1, minWidth: 72, height: 44, borderRadius: 12, background: '#F9A825', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer' }}
+            style={{ flex: 1, minWidth: 72, height: 48, borderRadius: 'var(--radius-btn)', background: '#F9A825', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
           >
-            🚕 {t('taxi_mode', bilingual)}
+            <Car size={15} />
+            {t('taxi_mode', bilingual)}
           </button>
           {poi.has_reservation && (
             <button
               onClick={() => onReserve(poi)}
-              style={{ flex: 1, minWidth: 60, height: 44, borderRadius: 12, background: '#DC2626', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer' }}
+              style={{ flex: 1, minWidth: 60, height: 48, borderRadius: 'var(--radius-btn)', background: '#DC2626', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
             >
+              <Calendar size={15} />
               {t('reserve', bilingual)}
             </button>
           )}
           <button
             onClick={() => onBookmark(poi.id)}
             style={{
-              flex: 0.6, minWidth: 52, height: 44, borderRadius: 12,
+              flex: 0.6, minWidth: 52, height: 48, borderRadius: 'var(--radius-btn)',
               background: isBookmarked ? '#FFF1F1' : 'white',
-              color: isBookmarked ? '#E24B4A' : '#374151',
+              color: isBookmarked ? '#E24B4A' : 'var(--text-primary)',
               fontSize: 13, fontWeight: 600,
-              border: isBookmarked ? '1px solid #E24B4A' : '1px solid #E5E7EB',
-              cursor: 'pointer',
+              border: isBookmarked ? '1px solid #E24B4A' : '1px solid var(--border)',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
             }}
           >
+            <Heart size={15} fill={isBookmarked ? '#E24B4A' : 'none'} />
             {isBookmarked ? t('bookmarked', bilingual) : t('bookmark', bilingual)}
           </button>
         </div>

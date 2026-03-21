@@ -1559,19 +1559,20 @@ function AppInner() {
     localStorage.setItem('hanpocket_dismissed_auth', '1')
   }
 
-  // Welcome landing overlay (first-run only)
+  // Welcome popup — near_welcome_dismissed timestamp 기반 7일 숨김
   const [showWelcome, setShowWelcome] = useState(() => {
-    const done = localStorage.getItem('hp_welcome_done')
-    if (done === 'true') return false
-    // 7일간 다시보지 않음 체크
-    const snoozed = localStorage.getItem('hp_welcome_snoozed')
-    if (snoozed && Date.now() - Number(snoozed) < 7 * 24 * 60 * 60 * 1000) return false
-    return true
+    const ts = localStorage.getItem('near_welcome_dismissed')
+    if (!ts) return true
+    return Date.now() - Number(ts) > 7 * 24 * 60 * 60 * 1000
   })
   const [welcomeFading, setWelcomeFading] = useState(false)
-  const dismissWelcome = (accepted) => {
-    if (accepted) {
-      // 알림 설정 유도
+  const dismissWelcome = (withPermissions) => {
+    if (withPermissions) {
+      // 위치 권한 요청
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(() => {}, () => {})
+      }
+      // 알림 권한 요청
       if ('Notification' in window && Notification.permission === 'default') {
         Notification.requestPermission().then(perm => {
           localStorage.setItem('hp_notification_perm', perm)
@@ -1582,13 +1583,10 @@ function AppInner() {
           window.Capacitor.Plugins.PushNotifications.requestPermissions()
         }
       } catch {}
-      localStorage.setItem('hp_welcome_done', 'true')
-    } else {
-      // 7일간 다시보지 않음
-      localStorage.setItem('hp_welcome_snoozed', String(Date.now()))
     }
+    localStorage.setItem('near_welcome_dismissed', String(Date.now()))
     setWelcomeFading(true)
-    setTimeout(() => setShowWelcome(false), 500)
+    setTimeout(() => setShowWelcome(false), 300)
   }
   const handleAuth = (provider) => {
     const p = {
@@ -1993,47 +1991,60 @@ function AppInner() {
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
-      {/* Welcome Landing Overlay (first-run / 7일 스누즈) */}
+      {/* Welcome 팝업 — 권한 요청 + 7일 숨김 */}
       {showWelcome && (
-        <div className={`fixed inset-0 z-[300] flex items-end transition-opacity duration-500 ${welcomeFading ? 'opacity-0' : 'opacity-100'}`}
-          style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}>
-          <div className={`w-full bg-white rounded-t-[6px] transition-transform duration-500 ${welcomeFading ? 'translate-y-full' : 'translate-y-0'}`}
-            style={{ minHeight: '50vh' }}>
-            <div className="flex flex-col items-center justify-center px-6 pt-12 pb-10" style={{ minHeight: '50vh' }}>
-              {/* 타이틀 — HomeTab "한국 처음이신가요?"와 동일 스타일 */}
-              <h1 className="text-[15px] font-semibold tracking-wide text-[#1A1A1A] mb-4">
-                {L(lang, { ko: '한국에 오신걸 환영해요', zh: '欢迎来到韩国', en: 'Welcome to Korea' })}
-              </h1>
-
-              {/* 설명 */}
-              <p className="text-sm text-[#666] leading-relaxed tracking-wide text-center whitespace-pre-line mb-10">
-                {L(lang, {
-                  ko: '한국 방문객들이 가장 많이 찾는\n여행지는 어디일까요?',
-                  zh: '韩国游客最常去的\n旅行地是哪里呢？',
-                  en: 'Where are the most popular\ndestinations among visitors?'
-                })}
-              </p>
-
-              {/* 네, 좋아요! → 알림설정 유도 */}
-              <button
-                onClick={() => dismissWelcome(true)}
-                className="w-full py-3.5 rounded-2xl bg-[#2D5A3D] text-white font-semibold text-sm tracking-wider active:scale-[0.98] transition-transform mb-4"
-              >
-                {L(lang, { ko: '네, 좋아요!', zh: '好的！', en: 'Yes, please!' })}
-              </button>
-
-              {/* 아니요, 괜찮습니다 → 7일간 다시보지 않음 */}
-              <button
-                onClick={() => dismissWelcome(false)}
-                className="w-full text-center text-xs text-[#999] tracking-wider py-2"
-              >
-                {L(lang, {
-                  ko: '아니요, 괜찮습니다',
-                  zh: '不了，谢谢',
-                  en: 'No, thanks'
-                })}
-              </button>
-            </div>
+        <div
+          style={{ position: 'fixed', inset: 0, zIndex: 300, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px', backgroundColor: 'rgba(0,0,0,0.4)', opacity: welcomeFading ? 0 : 1, transition: 'opacity 0.3s ease' }}
+        >
+          <div style={{ background: 'white', borderRadius: 20, padding: '32px 24px', maxWidth: 340, width: '100%', transform: welcomeFading ? 'scale(0.95)' : 'scale(1)', transition: 'transform 0.3s ease', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
+            {/* 제목 */}
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 10px', textAlign: 'center' }}>
+              {L(lang, { ko: '서울에 오신 것을 환영합니다', zh: '欢迎来到首尔', en: 'Welcome to Seoul' })}
+            </h2>
+            {/* 설명 */}
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)', textAlign: 'center', margin: '0 0 20px', lineHeight: 1.6 }}>
+              {L(lang, { ko: '더 나은 서비스를 위해 다음 권한을 허용해주세요', zh: '为了给您提供更好的服务，请允许以下权限', en: 'Allow the following permissions for a better experience' })}
+            </p>
+            {/* 권한 항목 */}
+            {[
+              {
+                Icon: MapPin,
+                iconBg: '#EDF5FF', iconColor: '#007AFF',
+                title: { ko: '위치 정보', zh: '位置信息', en: 'Location' },
+                desc:  { ko: '주변 매장 검색 및 내비게이션에 사용', zh: '用于查找附近的店铺和导航', en: 'Find nearby shops and navigation' },
+              },
+              {
+                Icon: Bell,
+                iconBg: '#FFF8E1', iconColor: '#FF9500',
+                title: { ko: '알림 설정', zh: '通知提醒', en: 'Notifications' },
+                desc:  { ko: '예약 확인 및 혜택 정보 수신', zh: '接收预约确认和优惠信息', en: 'Receive booking confirmations and offers' },
+              },
+            ].map(({ Icon, iconBg, iconColor, title, desc }) => (
+              <div key={L(lang, title)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16, background: 'var(--surface)', borderRadius: 12, margin: '8px 0' }}>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icon size={18} color={iconColor} />
+                </div>
+                <div>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{L(lang, title)}</p>
+                  <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>{L(lang, desc)}</p>
+                </div>
+              </div>
+            ))}
+            {/* CTA */}
+            <button
+              onClick={() => dismissWelcome(true)}
+              className="btn btn-primary"
+              style={{ width: '100%', height: 48, marginTop: 20 }}
+            >
+              {L(lang, { ko: '확인, 시작하기', zh: '好的，开始使用', en: "Got it, let's go" })}
+            </button>
+            {/* 일주일간 보지않음 */}
+            <button
+              onClick={() => dismissWelcome(false)}
+              style={{ display: 'block', width: '100%', marginTop: 14, fontSize: 13, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center' }}
+            >
+              {L(lang, { ko: '일주일간 보지 않기', zh: '一周内不再显示', en: "Don't show for a week" })}
+            </button>
           </div>
         </div>
       )}

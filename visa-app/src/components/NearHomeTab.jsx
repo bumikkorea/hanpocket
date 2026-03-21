@@ -1,28 +1,69 @@
 /**
  * NearHomeTab — NEAR 앱 홈 탭 (首页)
- * 인사 + 검색바 + 퀵 액션 + 히어로 배너 + 카테고리 그리드 + 피드
- * (DiscoverTab 내용 통합)
+ * 인사 + 검색바 + 퀵 액션 + 히어로 배너 캐러셀 + 카테고리 그리드 + 피드
+ * 퀵 액션: 입국 / 출국 / SOS / 택시
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Search, Car, Phone, Calendar, MapPin, X, ChevronRight, Heart, Scissors, Utensils, ShoppingBag, Coffee, Train, ShoppingCart, Smartphone, MoreHorizontal } from 'lucide-react'
+import { Search, Car, Phone, X, ChevronRight, Heart, Scissors, Utensils,
+  ShoppingBag, Coffee, Train, ShoppingCart, Smartphone, MoreHorizontal,
+  PlaneLanding, PlaneTakeoff, ArrowLeft } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
+import MorePage from './MorePage.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
-// ─── 퀵 액션 (1행) ───
+// ─── 퀵 액션 (4개: 입국/출국/SOS/택시) ───
 const QUICK_ACTIONS = [
-  { id: 'beauty', icon: Calendar, bg: '#FDF3F1', color: '#C4725A', action: 'booking'  },
-  { id: 'taxi',   icon: Car,      bg: '#FFF9E6', color: '#F9A825', action: 'taxi'     },
-  { id: 'map',    icon: MapPin,   bg: '#EDF5FF', color: '#007AFF', action: 'near-map' },
-  { id: 'sos',    icon: Phone,    bg: '#FFF0F0', color: '#FF3B30', action: 'sos'      },
+  { id: 'arrival',    icon: PlaneLanding,  bg: '#EDF5FF', color: '#007AFF', action: 'arrival-sheet'  },
+  { id: 'departure',  icon: PlaneTakeoff,  bg: '#F0F9F0', color: '#34C759', action: 'departure-sheet' },
+  { id: 'sos',        icon: Phone,         bg: '#FFF0F0', color: '#FF3B30', action: 'sos'             },
+  { id: 'taxi',       icon: Car,           bg: '#FFF9E6', color: '#F9A825', action: 'taxi'            },
 ]
 
 const QUICK_ACTION_LABEL_KEYS = {
-  beauty: 'home.quick.beauty',
-  taxi:   'home.quick.taxi',
-  map:    'home.quick.explore',
-  sos:    'home.quick.emergency',
+  arrival:   'home.quick.arrival',
+  departure: 'home.quick.departure',
+  sos:       'home.quick.emergency',
+  taxi:      'home.quick.taxi',
 }
+
+// ─── 입국 바텀시트 항목 ───
+const ARRIVAL_ITEMS = [
+  { id: 'immigration-wait',  emoji: '⏱️', label: { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' }, sub: 'immigration-wait' },
+  { id: 'arrival-card',      emoji: '📋', label: { ko: '입국신고서 작성법', zh: '入境申报卡填写方法', en: 'Arrival Card Guide' },   sub: 'arrival-card' },
+  { id: 'sim-guide',         emoji: '📱', label: { ko: 'SIM카드 & 환전',    zh: 'SIM卡 & 换钱',           en: 'SIM & Exchange' },       sub: 'sim-guide' },
+  { id: 'passport-scan',     emoji: '🛂', label: { ko: '여권 스캔',          zh: '护照扫描',               en: 'Passport Scan' },        sub: 'passport-scan' },
+]
+
+// ─── 출국 바텀시트 항목 ───
+const DEPARTURE_ITEMS = [
+  { id: 'departure',          emoji: '⏳', label: { ko: '출국 카운트다운',   zh: '出境倒计时',             en: 'Departure Countdown' },      sub: 'departure' },
+  { id: 'taxrefund',          emoji: '🧾', label: { ko: '세금환급 안내',     zh: '退税指南',               en: 'Tax Refund Guide' },         sub: 'taxrefund' },
+  { id: 'departure-shopping', emoji: '🛍️', label: { ko: '출국 쇼핑 동선',   zh: '出境购物路线',           en: 'Departure Shopping Route' }, sub: 'departure-shopping' },
+  { id: 'tax-free',           emoji: '🔖', label: { ko: '면세 한도 안내',    zh: '免税限额指南',           en: 'Duty-Free Limits' },         sub: 'tax-free' },
+]
+
+// ─── 히어로 배너 슬라이드 ───
+const BANNER_SLIDES = [
+  {
+    id: 'b1',
+    gradient: 'linear-gradient(135deg, #C4725A, #E8956F)',
+    titleKey: 'home.banner.title',
+    descKey:  'home.banner.desc',
+  },
+  {
+    id: 'b2',
+    gradient: 'linear-gradient(135deg, #007AFF, #5AC8FA)',
+    title: { ko: '환전 필요 없이 제로페이', zh: '无需换钱，Zero Pay', en: 'Pay with Zero Pay' },
+    desc:  { ko: '알리페이·위챗페이 그대로 사용', zh: '支付宝·微信支付 直接使用', en: 'Alipay & WeChat Pay accepted' },
+  },
+  {
+    id: 'b3',
+    gradient: 'linear-gradient(135deg, #AF52DE, #FF2D55)',
+    title: { ko: '서울 팝업스토어 탐방', zh: '首尔快闪店探索', en: 'Seoul Pop-up Stores' },
+    desc:  { ko: '성수·홍대·강남 최신 팝업 정보', zh: '圣水·弘大·江南 最新快闪情报', en: 'Seongsu · Hongdae · Gangnam' },
+  },
+]
 
 // ─── 美团 스타일 카테고리 그리드 (10개) ───
 const MEITU_CATEGORIES = [
@@ -123,9 +164,64 @@ async function searchArchive(term, category, page = 1) {
 
 const PH_KEYS = ['search.placeholder.0','search.placeholder.1','search.placeholder.2','search.placeholder.3','search.placeholder.4']
 
+// ─── 입국/출국 바텀시트 컴포넌트 ───
+function TravelSheet({ open, onClose, items, titleKey, lang, t, setSubPage }) {
+  if (!open) return null
+  return (
+    <div
+      onClick={onClose}
+      style={{ position: 'fixed', inset: 0, zIndex: 9000, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'flex-end' }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{ background: 'white', borderRadius: '24px 24px 0 0', padding: '0 0 40px', width: '100%' }}
+      >
+        {/* 핸들바 */}
+        <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border)', margin: '12px auto 0' }} />
+        {/* 헤더 */}
+        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px 12px' }}>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px 4px 0', marginRight: 4 }}>
+            <ArrowLeft size={20} color="var(--text-primary)" />
+          </button>
+          <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{t(titleKey)}</span>
+        </div>
+        {/* 항목 리스트 */}
+        <div style={{ background: 'white', borderRadius: 16, margin: '0 20px', overflow: 'hidden', boxShadow: 'var(--shadow-card)' }}>
+          {items.map((item, i) => (
+            <button
+              key={item.id}
+              onClick={() => { if (setSubPage) setSubPage(item.sub); onClose() }}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 20px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer',
+                borderTop: i > 0 ? '1px solid var(--border)' : 'none',
+              }}
+              onTouchStart={e => e.currentTarget.style.background = 'var(--surface)'}
+              onTouchEnd={e => e.currentTarget.style.background = 'none'}
+            >
+              <span style={{ fontSize: 22 }}>{item.emoji}</span>
+              <span style={{ flex: 1, fontSize: 15, fontWeight: 500, color: 'var(--text-primary)' }}>
+                {L(lang, item.label)}
+              </span>
+              <ChevronRight size={16} color="var(--text-hint)" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function NearHomeTab({ setTab, setSubPage }) {
   const { lang, t } = useLanguage()
+
+  // ─── UI 상태 ───
   const [sosOpen, setSosOpen] = useState(false)
+  const [arrivalOpen, setArrivalOpen] = useState(false)
+  const [departureOpen, setDepartureOpen] = useState(false)
+  const [showMore, setShowMore] = useState(false)
+
+  // ─── 검색 상태 ───
   const [query, setQuery] = useState('')
   const [phIdx, setPhIdx] = useState(0)
   const [phVisible, setPhVisible] = useState(true)
@@ -136,10 +232,21 @@ export default function NearHomeTab({ setTab, setSubPage }) {
     }, 3000)
     return () => clearInterval(iv)
   }, [])
+
+  // ─── 배너 캐러셀 ───
+  const [bannerIdx, setBannerIdx] = useState(0)
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setBannerIdx(i => (i + 1) % BANNER_SLIDES.length)
+    }, 3500)
+    return () => clearInterval(iv)
+  }, [])
+
+  // ─── 검색/콘텐츠 상태 ───
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [activeCategory, setActiveCategory] = useState(null)
-  const [showFeed, setShowFeed] = useState(true)    // true = 피드 모드, false = 검색결과
+  const [showFeed, setShowFeed] = useState(true)
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
   const debounceRef = useRef(null)
@@ -149,9 +256,9 @@ export default function NearHomeTab({ setTab, setSubPage }) {
     setLoading(true)
     try {
       const searchTerm = lang === 'zh' ? zhToKo(term) : term
-      const { items, total: t } = await searchArchive(searchTerm, catId, pg)
+      const { items, total: tot } = await searchArchive(searchTerm, catId, pg)
       if (pg === 1) setResults(items); else setResults(prev => [...prev, ...items])
-      setTotal(t); setPage(pg)
+      setTotal(tot); setPage(pg)
     } catch { setResults(FALLBACK_ITEMS) }
     setLoading(false)
     setShowFeed(false)
@@ -165,6 +272,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   }
 
   const handleCategoryClick = (cat) => {
+    if (cat.id === 'more') { setShowMore(true); return }
     if (cat.tab && setTab) { setTab(cat.tab); return }
     if (cat.sub && setSubPage) { setSubPage(cat.sub); return }
     if (!cat.searchTerm) return
@@ -174,15 +282,18 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   }
 
   const handleQuickAction = (action) => {
-    if (action === 'sos') { setSosOpen(true); return }
-    if (action === 'taxi' || action === 'near-map') { setTab('near-map'); return }
-    setTab(action)
+    if (action === 'arrival-sheet')   { setArrivalOpen(true);   return }
+    if (action === 'departure-sheet') { setDepartureOpen(true); return }
+    if (action === 'sos')             { setSosOpen(true);        return }
+    if (action === 'taxi')            { setTab('near-map');      return }
   }
 
   const handleItemClick = (item) => {
     if (item.url) window.open(item.url, '_blank')
     else window.open(`https://map.kakao.com/link/search/${encodeURIComponent(item.title || item.tags?.[0] || '')}`, '_blank')
   }
+
+  const currentSlide = BANNER_SLIDES[bannerIdx]
 
   return (
     <div style={{ background: 'white', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif', paddingBottom: 24 }}>
@@ -218,7 +329,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         </div>
       </div>
 
-      {/* ─── 2. 퀵 액션 (4개 1행) ─── */}
+      {/* ─── 2. 퀵 액션 (4개: 입국/출국/SOS/택시) ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, padding: '0 20px 20px' }}>
         {QUICK_ACTIONS.map(item => {
           const Icon = item.icon
@@ -241,13 +352,43 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         })}
       </div>
 
-      {/* ─── 3. 히어로 배너 ─── */}
+      {/* ─── 3. 히어로 배너 캐러셀 ─── */}
       {showFeed && !query && (
-        <div style={{ margin: '0 20px 20px', height: 140, borderRadius: 'var(--radius-card)', background: 'linear-gradient(135deg, #C4725A, #E8956F)', padding: '20px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden', position: 'relative' }}>
-          <div style={{ position: 'absolute', right: -20, top: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
-          <div style={{ position: 'absolute', right: 60, top: 10, width: 50, height: 50, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
-          <div style={{ fontSize: 20, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{t('home.banner.title')}</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 4 }}>{t('home.banner.desc')}</div>
+        <div style={{ margin: '0 20px 20px', position: 'relative' }}>
+          <div
+            style={{
+              height: 140, borderRadius: 'var(--radius-card)',
+              background: currentSlide.gradient,
+              padding: '20px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+              overflow: 'hidden', position: 'relative',
+              transition: 'background 0.6s ease',
+            }}
+          >
+            {/* 장식 원 */}
+            <div style={{ position: 'absolute', right: -20, top: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+            <div style={{ position: 'absolute', right: 60, top: 10, width: 50, height: 50, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
+            <div style={{ fontSize: 20, fontWeight: 700, color: 'white', lineHeight: 1.3, position: 'relative' }}>
+              {currentSlide.titleKey ? t(currentSlide.titleKey) : L(lang, currentSlide.title)}
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 4, position: 'relative' }}>
+              {currentSlide.descKey ? t(currentSlide.descKey) : L(lang, currentSlide.desc)}
+            </div>
+          </div>
+          {/* 슬라이드 인디케이터 */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 8 }}>
+            {BANNER_SLIDES.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setBannerIdx(i)}
+                style={{
+                  width: i === bannerIdx ? 16 : 6, height: 6,
+                  borderRadius: 3, background: i === bannerIdx ? 'var(--text-primary)' : 'var(--border)',
+                  border: 'none', cursor: 'pointer', padding: 0,
+                  transition: 'all 0.3s ease',
+                }}
+              />
+            ))}
+          </div>
         </div>
       )}
 
@@ -359,18 +500,46 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           })}
         </div>
 
-        {/* 더보기 */}
+        {/* 더보기 버튼 */}
         {!showFeed && results.length < total && results.length > 0 && (
           <div style={{ padding: '12px 20px 0' }}>
-            <button onClick={() => { const t = lang === 'zh' ? zhToKo(query) : query; const c = MEITU_CATEGORIES.find(c => c.id === activeCategory)?.archiveCat || null; loadContent(t, c, page + 1) }}
+            <button
+              onClick={() => {
+                const term = lang === 'zh' ? zhToKo(query) : query
+                const c = MEITU_CATEGORIES.find(c => c.id === activeCategory)?.archiveCat || null
+                loadContent(term, c, page + 1)
+              }}
               disabled={loading}
               className="btn btn-outline"
-              style={{ width: '100%' }}>
+              style={{ width: '100%' }}
+            >
               {loading ? '...' : t('common.loadMore')}
             </button>
           </div>
         )}
       </div>
+
+      {/* ─── 입국 바텀시트 ─── */}
+      <TravelSheet
+        open={arrivalOpen}
+        onClose={() => setArrivalOpen(false)}
+        items={ARRIVAL_ITEMS}
+        titleKey="home.quick.arrival"
+        lang={lang}
+        t={t}
+        setSubPage={setSubPage}
+      />
+
+      {/* ─── 출국 바텀시트 ─── */}
+      <TravelSheet
+        open={departureOpen}
+        onClose={() => setDepartureOpen(false)}
+        items={DEPARTURE_ITEMS}
+        titleKey="home.quick.departure"
+        lang={lang}
+        t={t}
+        setSubPage={setSubPage}
+      />
 
       {/* ─── SOS 모달 ─── */}
       {sosOpen && (
@@ -393,6 +562,23 @@ export default function NearHomeTab({ setTab, setSubPage }) {
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ─── 더보기 풀스크린 오버레이 ─── */}
+      {showMore && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: 'var(--bg)', overflowY: 'auto' }}>
+          {/* 헤더 */}
+          <div style={{ position: 'sticky', top: 0, background: 'var(--bg)', zIndex: 1, display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+            <button onClick={() => setShowMore(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 12px 4px 0', marginRight: 4 }}>
+              <ArrowLeft size={22} color="var(--text-primary)" />
+            </button>
+            <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
+              {L(lang, { ko: '더보기', zh: '更多', en: 'More' })}
+            </span>
+          </div>
+          {/* MorePage 콘텐츠 */}
+          <MorePage lang={lang} setTab={setTab} setSubPage={(sub) => { setSubPage(sub); setShowMore(false) }} />
         </div>
       )}
     </div>

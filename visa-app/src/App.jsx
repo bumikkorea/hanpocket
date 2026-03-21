@@ -9,7 +9,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser, ArrowUp, Calendar, Home as HomeIcon, Compass } from 'lucide-react'
+import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser, ArrowUp, Calendar, Home as HomeIcon } from 'lucide-react'
 import { House, Compass as PhCompass, QrCode, ShoppingBag as PhShoppingBag, User, MapPin as PhMapPin, AirplaneLanding, AirplaneTakeoff, Taxi, Motorcycle, Receipt as PhReceipt, BookBookmark, Hospital, GridFour, Camera as PhCamera, Heart as PhHeart, Lightning, CalendarBlank, ChatCircle, UsersThree, ForkKnife, CreditCard as PhCreditCard, Storefront, MagnifyingGlass } from '@phosphor-icons/react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
@@ -1820,11 +1820,10 @@ function AppInner() {
   }
 
   const bottomTabs = [
-    { id: 'near-home', icon: HomeIcon,    label: { ko: '홈',     zh: '首页', en: 'Home'     } },
-    { id: 'discover',  icon: Compass,     label: { ko: '탐험',   zh: '探险', en: 'Discover' } },
-    { id: 'near-map',  icon: MapPin,      label: { ko: '지도',   zh: '地图', en: 'Map'      } },
-    { id: 'booking',   icon: Calendar,    label: { ko: '예약',   zh: '预约', en: 'Book'     } },
-    { id: 'my',        icon: LucideUser,  label: { ko: '내 정보', zh: '我的', en: 'My'       } },
+    { id: 'near-home', icon: HomeIcon,    label: { ko: '홈',      zh: '首页', en: 'Home' } },
+    { id: 'near-map',  icon: MapPin,      label: { ko: '지도',    zh: '地图', en: 'Map'  } },
+    { id: 'booking',   icon: Calendar,    label: { ko: '예약',    zh: '预约', en: 'Book' } },
+    { id: 'my',        icon: LucideUser,  label: { ko: '내 정보', zh: '我的', en: 'My'   } },
   ]
 
   // Check if a service item has been migrated to pocket categories

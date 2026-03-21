@@ -71,6 +71,7 @@ const NearMap = lazy(() => import('./components/NearMap'))
 const DiscoverTab = lazy(() => import('./components/DiscoverTab'))
 const BookingView = lazy(() => import('./components/BookingView'))
 const MorePage = lazy(() => import('./components/MorePage'))
+const MyTab = lazy(() => import('./components/MyTab'))
 const ImmigrationWaitTime = lazy(() => import('./components/ImmigrationWaitTime'))
 const ArrivalCardGuide = lazy(() => import('./components/guides/ArrivalCardGuide'))
 // C 섹션 실용 가이드 lazy imports
@@ -2459,7 +2460,7 @@ function AppInner() {
         )}
         {tab==='my' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <MorePage lang={lang} setTab={handleTabChange} setSubPage={(sp) => {
+            <MyTab lang={lang} setTab={handleTabChange} setSubPage={(sp) => {
               if (sp === 'reservation') { setSubPage('my-reservations') }
               else { setSubPage(sp) }
             }} />

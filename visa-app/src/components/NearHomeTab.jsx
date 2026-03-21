@@ -7,11 +7,11 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Search, X, ChevronRight, Heart, Scissors, Coffee,
   ShoppingBag, MoreHorizontal, PlaneLanding, PlaneTakeoff,
   ArrowLeft, Route, Languages, Palette, Droplets, Building2,
-  Sparkles, UtensilsCrossed, Star, ArrowRight } from 'lucide-react'
+  Sparkles, UtensilsCrossed, ArrowRight } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
-import { supabase } from '../lib/supabase.js'
 import { EDITORIALS } from '../data/editorials.js'
 import EditorialDetailPage from './EditorialDetailPage.jsx'
+import MorePage from './MorePage.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
@@ -204,231 +204,70 @@ function BottomSheet({ open, onClose, titleLabel, items, lang, t, setSubPage, se
   )
 }
 
-// ─── 추천 페이지 (더보기 풀스크린) ───
+// ─── 더보기 페이지 (풀스크린) ───
 function DiscoverPage({ lang, t, setSubPage, setTab, onClose, onEditorialClick }) {
-  const [filterCat, setFilterCat] = useState(null)
-  const [filterArea, setFilterArea] = useState(null)
-  const [shops, setShops] = useState([])
-  const [loading, setLoading] = useState(true)
-
-  const fetchShops = useCallback(async () => {
-    setLoading(true)
-    try {
-      let q = supabase
-        .from('popups')
-        .select('id, name, name_zh, name_en, category, district, image_url, address, cn_score, description_zh')
-        .order('cn_score', { ascending: false })
-        .limit(60)
-      if (filterCat) q = q.eq('category', filterCat)
-      if (filterArea) q = q.eq('district', filterArea)
-      const { data } = await q
-      setShops(data || [])
-    } catch {
-      setShops([])
-    }
-    setLoading(false)
-  }, [filterCat, filterArea])
-
-  useEffect(() => { fetchShops() }, [fetchShops])
-
-  const catIds = Object.keys(CAT_LABELS)
-  const areaIds = Object.keys(AREA_LABELS)
-
-  const catIcons = { beauty: Scissors, food: UtensilsCrossed, popup: Sparkles, cafe: Coffee, nail: Palette, cosmetics: Droplets, hotel: Building2, medical: Heart, shopping: ShoppingBag }
-  const catColors = { beauty: '#E57373', food: '#FF9800', popup: '#9C27B0', cafe: '#795548', nail: '#E8825A', cosmetics: '#E91E8C', hotel: '#2196F3', medical: '#4CAF50', shopping: '#E91E63' }
-
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px 12px', background: 'var(--bg)', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '56px 20px 14px', background: 'var(--bg)', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
         <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px 4px 0' }}>
           <ArrowLeft size={22} color="var(--text-primary)" />
         </button>
         <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
-          {L(lang, { ko: '매장 탐색', zh: '发现更多', en: 'Discover' })}
+          {L(lang, { ko: '더보기', zh: '更多', en: 'More' })}
         </span>
-        {(filterCat || filterArea) && (
-          <button onClick={() => { setFilterCat(null); setFilterArea(null) }}
-            style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-muted)', background: 'var(--surface)', border: 'none', borderRadius: 20, padding: '4px 10px', cursor: 'pointer' }}>
-            {L(lang, { ko: '초기화', zh: '重置', en: 'Reset' })}
-          </button>
-        )}
-      </div>
-
-      {/* 필터 영역 (sticky) */}
-      <div style={{ flexShrink: 0, background: 'var(--bg)', borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
-        {/* 카테고리 필터 */}
-        <div style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '10px 20px 0', scrollbarWidth: 'none' }}>
-          {catIds.map(id => {
-            const active = filterCat === id
-            const Icon = catIcons[id]
-            return (
-              <button key={id} onClick={() => setFilterCat(prev => prev === id ? null : id)}
-                style={{
-                  flexShrink: 0, display: 'flex', alignItems: 'center', gap: 5,
-                  padding: '6px 12px', borderRadius: 20, border: active ? 'none' : '1px solid var(--border)',
-                  background: active ? '#111' : 'white', cursor: 'pointer',
-                  fontSize: 12, fontWeight: active ? 600 : 400,
-                  color: active ? 'white' : 'var(--text-secondary)',
-                }}>
-                {Icon && <Icon size={12} color={active ? 'white' : catColors[id]} />}
-                {L(lang, CAT_LABELS[id])}
-              </button>
-            )
-          })}
         </div>
-        {/* 지역 필터 */}
-        <div style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '8px 20px 0', scrollbarWidth: 'none' }}>
-          {areaIds.map(id => {
-            const active = filterArea === id
-            return (
-              <button key={id} onClick={() => setFilterArea(prev => prev === id ? null : id)}
-                style={{
-                  flexShrink: 0, padding: '5px 12px', borderRadius: 20,
-                  border: active ? 'none' : '1px solid var(--border)',
-                  background: active ? '#111' : 'white', cursor: 'pointer',
-                  fontSize: 12, fontWeight: active ? 600 : 400,
-                  color: active ? 'white' : 'var(--text-secondary)',
-                }}>
-                {L(lang, AREA_LABELS[id])}
-              </button>
-            )
-          })}
-        </div>
-      </div>
 
-      {/* 매장 리스트 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 0 24px' }}>
+      {/* 스크롤 영역 */}
+      <div style={{ flex: 1, overflowY: 'auto' }}>
 
-        {/* ─── 서울 에디토리얼 섹션 ─── */}
-        <div style={{ padding: '16px 16px 0' }}>
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+        {/* ─── A) 서울 에디토리얼 — 가로 스크롤 120px ─── */}
+        <div style={{ padding: '20px 0 8px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, padding: '0 20px 12px' }}>
+            <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
               {L(lang, { ko: '서울 에디토리얼', zh: '首尔编辑部', en: 'Seoul Editorial' })}
-            </div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
-              {L(lang, { ko: '서울 10개 지역 깊이 읽기', zh: '首尔10个地区深度解读', en: 'A deeper read on 10 Seoul districts' })}
-            </div>
+            </span>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+              {L(lang, { ko: '10개 지역', zh: '10个地区', en: '10 districts' })}
+            </span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+          <div style={{ overflowX: 'auto', display: 'flex', gap: 10, padding: '0 20px 20px', scrollbarWidth: 'none' }}>
             {EDITORIALS.map(ed => (
               <button
                 key={ed.id}
                 onClick={() => onEditorialClick && onEditorialClick(ed.id)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 0, height: 80,
-                  borderRadius: 12, overflow: 'hidden',
+                  flexShrink: 0, width: 148, height: 120,
+                  borderRadius: 14, overflow: 'hidden',
                   background: ed.gradient, border: 'none', cursor: 'pointer',
-                  position: 'relative', textAlign: 'left', padding: 0,
+                  position: 'relative', textAlign: 'left',
+                  padding: '12px 12px 14px',
+                  display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
                 }}
                 onTouchStart={e => e.currentTarget.style.opacity = '0.85'}
                 onTouchEnd={e => e.currentTarget.style.opacity = '1'}
               >
-                {/* 큰 번호 장식 */}
                 <div style={{
-                  position: 'absolute', left: 16, top: '50%', transform: 'translateY(-55%)',
-                  fontSize: 52, fontWeight: 900, lineHeight: 1,
-                  color: ed.textDark ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.12)',
+                  position: 'absolute', right: 8, top: 6,
+                  fontSize: 38, fontWeight: 900, lineHeight: 1,
+                  color: ed.textDark ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.15)',
                   fontFamily: 'Inter, sans-serif', userSelect: 'none',
-                }} />
-                <div style={{ padding: '0 50px 0 20px', flex: 1 }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: ed.textDark ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', marginBottom: 3 }}>
-                    {ed.number}
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: ed.textDark ? '#111' : 'white', lineHeight: 1.3, marginBottom: 3 }}>
-                    {L(lang, ed.title)}
-                  </div>
-                  <div style={{ fontSize: 11, color: ed.textDark ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.7)', fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {L(lang, ed.subtitle)}
-                  </div>
+                }}>{ed.number}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: ed.textDark ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.65)', letterSpacing: '0.08em', marginBottom: 4 }}>
+                  SEOUL EDITORIAL
                 </div>
-                <div style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 28, height: 28, borderRadius: '50%', background: ed.textDark ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <ArrowRight size={13} color={ed.textDark ? '#333' : 'white'} />
+                <div style={{ fontSize: 13, fontWeight: 700, color: ed.textDark ? '#111' : 'white', lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {L(lang, ed.title)}
                 </div>
               </button>
             ))}
           </div>
-
-          {/* 구분선 */}
-          <div style={{ borderTop: '1px solid var(--border)', marginBottom: 16 }} />
-          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>
-            {L(lang, { ko: '매장 탐색', zh: '门店发现', en: 'Shops' })}
-          </div>
+          <div style={{ borderTop: '1px solid var(--border)', margin: '0 20px' }} />
         </div>
 
-        <div style={{ padding: '0 16px' }}>
-        {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} style={{ borderRadius: 12, overflow: 'hidden' }}>
-                <div className="skeleton" style={{ width: '100%', aspectRatio: '3/4' }} />
-                <div style={{ padding: '8px 10px' }}>
-                  <div className="skeleton" style={{ height: 12, marginBottom: 6, borderRadius: 4 }} />
-                  <div className="skeleton" style={{ height: 10, width: '60%', borderRadius: 4 }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : shops.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>🔍</div>
-            <p style={{ fontSize: 15, color: 'var(--text-secondary)', marginBottom: 12 }}>
-              {L(lang, { ko: '해당 조건의 매장이 없습니다', zh: '暂无符合条件的门店', en: 'No shops found' })}
-            </p>
-            {(filterCat || filterArea) && (
-              <button onClick={() => { setFilterCat(null); setFilterArea(null) }}
-                style={{ padding: '10px 20px', borderRadius: 20, background: '#111', color: 'white', border: 'none', fontSize: 13, cursor: 'pointer' }}>
-                {L(lang, { ko: '필터 초기화', zh: '重置筛选', en: 'Clear Filters' })}
-              </button>
-            )}
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {shops.map((shop, idx) => {
-              const name = lang === 'zh' ? (shop.name_zh || shop.name) : lang === 'en' ? (shop.name_en || shop.name) : shop.name
-              const CatIcon = catIcons[shop.category]
-              const catColor = catColors[shop.category] || '#999'
-              return (
-                <div
-                  key={shop.id || idx}
-                  onClick={() => {/* 매장 상세 — 추후 구현 */}}
-                  style={{ borderRadius: 12, overflow: 'hidden', background: 'var(--card)', boxShadow: 'var(--shadow-card)', cursor: 'pointer' }}
-                  onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
-                  onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
-                >
-                  {/* 이미지 */}
-                  <div style={{ width: '100%', aspectRatio: '3/4', background: shop.image_url ? 'none' : 'var(--surface)', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {shop.image_url ? (
-                      <img src={shop.image_url} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none' }} loading="lazy" />
-                    ) : (
-                      CatIcon && <CatIcon size={36} color={catColor} style={{ opacity: 0.3 }} />
-                    )}
-                    {shop.cn_score > 0 && (
-                      <span style={{ position: 'absolute', top: 8, left: 8, display: 'flex', alignItems: 'center', gap: 3, padding: '3px 7px', borderRadius: 8, background: 'rgba(0,0,0,0.55)', color: 'white', fontSize: 11, backdropFilter: 'blur(4px)' }}>
-                        <Star size={10} fill="white" /> {shop.cn_score}
-                      </span>
-                    )}
-                    {shop.district && (
-                      <span style={{ position: 'absolute', bottom: 8, left: 8, padding: '3px 8px', borderRadius: 8, background: 'rgba(0,0,0,0.5)', color: 'white', fontSize: 11, backdropFilter: 'blur(4px)' }}>
-                        {L(lang, AREA_LABELS[shop.district]) || shop.district}
-                      </span>
-                    )}
-                  </div>
-                  {/* 텍스트 */}
-                  <div style={{ padding: '10px 12px 12px' }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{name}</div>
-                    {shop.category && (
-                      <span style={{ display: 'inline-block', marginTop: 6, fontSize: 10, color: catColor, background: catColor + '18', borderRadius: 6, padding: '2px 6px', fontWeight: 600 }}>
-                        {L(lang, CAT_LABELS[shop.category]) || shop.category}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
-        </div>{/* /padding wrapper */}
+        {/* ─── B~F) MorePage 전체 섹션 ─── */}
+        <MorePage lang={lang} setTab={setTab} setSubPage={setSubPage} />
+
       </div>
     </div>
   )

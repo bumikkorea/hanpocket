@@ -233,5 +233,25 @@
   "feed.4.status": "需预约",
   "feed.5.location": "明洞",
   "feed.6.location": "圣水",
-  "map.banner": "正在查看韩国可用的服务"
+  "map.banner": "正在查看韩国可用的服务",
+
+  "search.placeholder.0": "搜索美容院...",
+  "search.placeholder.1": "搜索弘大美食...",
+  "search.placeholder.2": "搜索快闪店...",
+  "search.placeholder.3": "搜索咖啡厅...",
+  "search.placeholder.4": "附近有什么好店？",
+
+  "home.updated": "{date} 更新",
+
+  "my.orders":      "我的预约",
+  "my.points":      "积分",
+  "my.wishlist":    "收藏",
+  "my.checkins":    "打卡",
+  "my.reviews":     "评价",
+  "my.taxiUse":     "打车",
+  "my.saved":       "收藏",
+  "my.visited":     "足迹",
+  "my.activity":    "我的活动",
+  "my.purposeTitle":"旅行目的是什么？",
+  "my.done":        "完成"
 }

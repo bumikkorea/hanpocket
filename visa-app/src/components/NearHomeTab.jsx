@@ -121,10 +121,21 @@ async function searchArchive(term, category, page = 1) {
   }
 }
 
+const PH_KEYS = ['search.placeholder.0','search.placeholder.1','search.placeholder.2','search.placeholder.3','search.placeholder.4']
+
 export default function NearHomeTab({ setTab, setSubPage }) {
   const { lang, t } = useLanguage()
   const [sosOpen, setSosOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const [phIdx, setPhIdx] = useState(0)
+  const [phVisible, setPhVisible] = useState(true)
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setPhVisible(false)
+      setTimeout(() => { setPhIdx(i => (i + 1) % PH_KEYS.length); setPhVisible(true) }, 300)
+    }, 3000)
+    return () => clearInterval(iv)
+  }, [])
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [activeCategory, setActiveCategory] = useState(null)
@@ -191,11 +202,12 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             type="text"
             value={query}
             onChange={e => handleSearch(e.target.value)}
-            placeholder={t('home.search')}
+            placeholder={t(PH_KEYS[phIdx])}
             style={{
               width: '100%', padding: '12px 36px', borderRadius: 50,
               background: 'var(--surface)', border: '1px solid var(--border)',
               outline: 'none', fontSize: 14, color: 'var(--text-primary)', boxSizing: 'border-box',
+              transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0,
             }}
           />
           {query && (
@@ -264,14 +276,21 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       {/* ─── 5. 热门推荐 피드 ─── */}
       <div ref={feedRef}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px', marginBottom: 12 }}>
-          <span style={{ fontSize: 17, fontWeight: 600, color: 'var(--text-primary)' }}>
-            {showFeed && !query
-              ? t('home.trending')
-              : total > 0
-                ? L(lang, { ko: `${total}건`, zh: `共${total}条`, en: `${total} results` })
-                : L(lang, { ko: '검색 결과', zh: '搜索结果', en: 'Results' })
-            }
-          </span>
+          <div>
+            <span style={{ fontSize: 17, fontWeight: 600, color: 'var(--text-primary)' }}>
+              {showFeed && !query
+                ? t('home.trending')
+                : total > 0
+                  ? L(lang, { ko: `${total}건`, zh: `共${total}条`, en: `${total} results` })
+                  : L(lang, { ko: '검색 결과', zh: '搜索结果', en: 'Results' })
+              }
+            </span>
+            {showFeed && !query && (() => {
+              const now = new Date()
+              const d = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}${lang==='ko'?'시':':00'}`
+              return <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{t('home.updated').replace('{date}', d)}</div>
+            })()}
+          </div>
           <a href="https://archive.visitseoul.net" target="_blank" rel="noreferrer"
             style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 2 }}>
             {t('home.more')} <ChevronRight size={14} />

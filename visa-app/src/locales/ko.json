@@ -168,6 +168,26 @@
   "booking.myTitle": "내 예약 내역",
   "booking.today": "오늘",
 
+  "search.placeholder.0": "미용실 검색...",
+  "search.placeholder.1": "홍대 맛집 검색...",
+  "search.placeholder.2": "팝업스토어 검색...",
+  "search.placeholder.3": "카페 검색...",
+  "search.placeholder.4": "근처에 뭐가 있지?",
+
+  "home.updated": "{date} 업데이트",
+
+  "my.orders":      "내 예약",
+  "my.points":      "포인트",
+  "my.wishlist":    "찜",
+  "my.checkins":    "체크인",
+  "my.reviews":     "리뷰",
+  "my.taxiUse":     "택시",
+  "my.saved":       "저장",
+  "my.visited":     "방문",
+  "my.activity":    "내 활동",
+  "my.purposeTitle":"여행 목적이 뭔가요?",
+  "my.done":        "완료",
+
   "my.traveler": "여행자",
   "my.welcome": "서울에 오신 것을 환영합니다",
   "my.bookings": "내 예약",

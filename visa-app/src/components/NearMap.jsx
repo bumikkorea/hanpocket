@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { MapPin, MagnifyingGlass, ArrowLeft } from '@phosphor-icons/react'
-import { Search, Navigation, Car, Calendar, Heart } from 'lucide-react'
+import { Search, Navigation, Car, Calendar, Heart, LayoutGrid, Sparkles, UtensilsCrossed, Shirt, Coffee, Store, Route as RouteIcon } from 'lucide-react'
 import { useNearPins } from '../hooks/usePopupStores'
 import TaxiCardView from './TaxiCardView.jsx'
 import { CATEGORY_CONFIG } from '../data/poiData'
@@ -14,13 +14,15 @@ const IS_DEV = import.meta.env.DEV
 
 // ─── 카테고리 칩 ───
 const CATEGORY_CHIPS = [
-  { id: 'all',     key: 'cat_all'     },
-  { id: 'popup',   key: 'cat_popup'   },
-  { id: 'food',    key: 'cat_food'    },
-  { id: 'fashion', key: 'cat_fashion' },
-  { id: 'cafe',    key: 'cat_cafe'    },
-  { id: 'utility', key: 'cat_utility' },
+  { id: 'all',     key: 'cat_all',     Icon: LayoutGrid       },
+  { id: 'popup',   key: 'cat_popup',   Icon: Sparkles         },
+  { id: 'food',    key: 'cat_food',    Icon: UtensilsCrossed  },
+  { id: 'fashion', key: 'cat_fashion', Icon: Shirt            },
+  { id: 'cafe',    key: 'cat_cafe',    Icon: Coffee           },
+  { id: 'utility', key: 'cat_utility', Icon: Store            },
 ]
+
+const PH_KEYS = ['search.placeholder.0','search.placeholder.1','search.placeholder.2','search.placeholder.3','search.placeholder.4']
 
 // ─── 지역 빠른 이동 ───
 const QUICK_AREAS = [
@@ -262,6 +264,15 @@ export default function NearMap() {
   const touchStartY = useRef(0)
 
   const [mapReady, setMapReady] = useState(false)
+  const [phIdx, setPhIdx] = useState(0)
+  const [phVisible, setPhVisible] = useState(true)
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setPhVisible(false)
+      setTimeout(() => { setPhIdx(i => (i + 1) % PH_KEYS.length); setPhVisible(true) }, 300)
+    }, 3000)
+    return () => clearInterval(iv)
+  }, [])
   const [activeCategory, setActiveCategory] = useState('all')
   const [activePopup, setActivePopup] = useState(null)
   const [navPoi, setNavPoi] = useState(null)
@@ -547,8 +558,8 @@ export default function NearMap() {
           padding: '0 12px', height: 40, gap: 8,
         }}>
           <Search size={16} color="var(--text-muted)" />
-          <span style={{ fontSize: 15, color: 'var(--text-muted)' }}>
-            {tLang('search_placeholder', lang)}
+          <span style={{ fontSize: 15, color: 'var(--text-muted)', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}>
+            {tLang(PH_KEYS[phIdx], lang)}
           </span>
         </div>
       </button>
@@ -569,6 +580,7 @@ export default function NearMap() {
       }}>
         {CATEGORY_CHIPS.map(chip => {
           const active = activeCategory === chip.id && !courseMode
+          const ChipIcon = chip.Icon
           return (
             <button
               key={chip.id}
@@ -579,12 +591,14 @@ export default function NearMap() {
                 background: active ? '#1A1A1A' : '#FFFFFF',
                 color: active ? '#FFFFFF' : '#666666',
                 border: active ? 'none' : '1px solid #E5E5E5',
-                borderRadius: 'var(--radius-chip)', padding: '0 14px',
+                borderRadius: 'var(--radius-chip)', padding: '0 12px',
                 fontSize: 13, fontWeight: 600,
                 boxShadow: active ? '0 2px 8px rgba(0,0,0,0.2)' : '0 1px 4px rgba(0,0,0,0.08)',
                 transition: 'all 0.15s',
+                display: 'flex', alignItems: 'center', gap: 4,
               }}
             >
+              {ChipIcon && <ChipIcon size={14} color={active ? '#FFFFFF' : '#999999'} />}
               {tLang(chip.key, lang)}
             </button>
           )
@@ -598,14 +612,14 @@ export default function NearMap() {
             background: courseMode ? '#DC2626' : '#FFFFFF',
             color: courseMode ? 'white' : '#666666',
             border: courseMode ? 'none' : '1px solid #E5E5E5',
-            borderRadius: 'var(--radius-chip)', padding: '0 14px',
+            borderRadius: 'var(--radius-chip)', padding: '0 12px',
             fontSize: 13, fontWeight: 600,
             boxShadow: courseMode ? '0 2px 8px rgba(220,38,38,0.3)' : '0 1px 4px rgba(0,0,0,0.08)',
             transition: 'all 0.15s',
             display: 'flex', alignItems: 'center', gap: 4,
           }}
         >
-          {courseMode && <span style={{ fontSize: 8, background: 'rgba(255,255,255,0.3)', borderRadius: 100, padding: '1px 4px' }}>●</span>}
+          <RouteIcon size={14} color={courseMode ? 'white' : '#999999'} />
           {tLang('course_toggle', lang)}
         </button>
       </div>
@@ -1011,9 +1025,18 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   const [recent, setRecent] = useState(() => {
     try { return JSON.parse(localStorage.getItem('near_searches') || '[]') } catch { return [] }
   })
+  const [phIdx, setPhIdx] = useState(0)
+  const [phVisible, setPhVisible] = useState(true)
   const inputRef = useRef(null)
 
   useEffect(() => { setTimeout(() => inputRef.current?.focus(), 50) }, [])
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setPhVisible(false)
+      setTimeout(() => { setPhIdx(i => (i + 1) % PH_KEYS.length); setPhVisible(true) }, 300)
+    }, 3000)
+    return () => clearInterval(iv)
+  }, [])
 
   // 300ms 디바운스
   useEffect(() => {
@@ -1076,8 +1099,8 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder={tLang('search_placeholder', lang)}
-            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: 'var(--text-primary)' }}
+            placeholder={tLang(PH_KEYS[phIdx], lang)}
+            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: 'var(--text-primary)', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}
           />
           {query && (
             <button onClick={() => setQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, fontSize: 16, lineHeight: 1 }}>✕</button>

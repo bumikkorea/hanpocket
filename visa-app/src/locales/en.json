@@ -155,6 +155,26 @@
   "booking.myTitle": "My Booking History",
   "booking.today": "Today",
 
+  "search.placeholder.0": "Search salons...",
+  "search.placeholder.1": "Search Hongdae food...",
+  "search.placeholder.2": "Search popups...",
+  "search.placeholder.3": "Search cafes...",
+  "search.placeholder.4": "What is nearby?",
+
+  "home.updated": "Updated {date}",
+
+  "my.orders":      "My Bookings",
+  "my.points":      "Points",
+  "my.wishlist":    "Wishlist",
+  "my.checkins":    "Check-ins",
+  "my.reviews":     "Reviews",
+  "my.taxiUse":     "Taxi",
+  "my.saved":       "Saved",
+  "my.visited":     "Visited",
+  "my.activity":    "My Activity",
+  "my.purposeTitle":"What brings you here?",
+  "my.done":        "Done",
+
   "my.traveler": "Traveler",
   "my.welcome": "Welcome to Seoul",
   "my.bookings": "My Bookings",

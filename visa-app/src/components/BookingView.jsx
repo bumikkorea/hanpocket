@@ -121,6 +121,7 @@ async function fetchServices(popupId) {
 // Supabase: 예약 생성 (localStorage 병행)
 async function createBooking(booking) {
   saveToLocalStorage(booking)  // 항상 localStorage에도 저장
+  console.log('[createBooking] inserting:', booking.id, 'status:', booking.status, 'device:', getDeviceId())
   const { data, error } = await supabase
     .from('bookings')
     .insert({
@@ -135,23 +136,26 @@ async function createBooking(booking) {
       total_krw: booking.totalPrice || booking.deposit,
       payment_method: booking.payMethod,
       payment_status: 'pending',
-      status: 'pending',
+      status: booking.status || 'confirmed',
     })
     .select()
     .single()
-  if (error) { console.error('createBooking:', error); return null }
+  if (error) { console.error('[createBooking] error:', error); return null }
+  console.log('[createBooking] saved to DB:', data?.id)
   return data
 }
 
 // Supabase: 내 예약 조회
 async function fetchMyBookings() {
   const deviceId = getDeviceId()
+  console.log('[fetchMyBookings] device_id:', deviceId)
   const { data, error } = await supabase
     .from('bookings')
     .select('*, popups(name_zh, name_ko, address_zh, address_ko), popup_services(name_zh, name_ko)')
     .eq('device_id', deviceId)
     .order('booking_date', { ascending: false })
-  if (error) { console.error('fetchMyBookings:', error); return null }
+  if (error) { console.error('[fetchMyBookings] error:', error); return null }
+  console.log('[fetchMyBookings] rows:', data?.length)
   return data.map(row => ({
     id: row.booking_number || row.id,
     dbId: row.id,
@@ -630,14 +634,13 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
       {/* 예약 리스트 */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
         {filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', paddingTop: 60 }}>
-            <CalendarBlank size={40} style={{ color: 'var(--text-hint)', marginBottom: 12 }} />
-            <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>
-              {lang === 'zh' ? '还没有预约记录' : lang === 'ko' ? '예약 내역이 없습니다' : 'No bookings yet'}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 }}>
+            <p style={{ fontSize: 15, color: 'var(--text-muted)', margin: 0 }}>
+              {tLang('booking.empty', lang)}
             </p>
             <button onClick={onBack}
-              style={{ padding: '10px 24px', borderRadius: 'var(--radius-btn)', background: BRAND, color: 'white', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
-              {lang === 'zh' ? '去预约 →' : lang === 'ko' ? '예약하러 가기 →' : 'Book now →'}
+              style={{ padding: '8px 20px', borderRadius: 'var(--radius-btn)', background: BRAND, color: 'white', border: 'none', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+              {tLang('booking.goBook', lang)}
             </button>
           </div>
         ) : (
@@ -726,7 +729,12 @@ function StepIndicator({ currentStep, lang }) {
 export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
   const { showToast } = useToast()
   const { t } = useLanguage()
-  const [screen, setScreen] = useState('list')
+  const [screen, setScreen] = useState(() => {
+    // MyTab "내 예약" 클릭 시 my-bookings 화면으로 바로 진입
+    const s = localStorage.getItem('near_booking_open_screen')
+    if (s) { localStorage.removeItem('near_booking_open_screen'); return s }
+    return 'list'
+  })
   const [selectedShop, setSelectedShop] = useState(null)
   const [selectedService, setSelectedService] = useState(null)
   const [selectedDateTime, setSelectedDateTime] = useState(null)
@@ -803,9 +811,9 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
             ) : shops.length === 0 ? (
               <div style={{ textAlign: 'center', paddingTop: 80 }}>
                 <CalendarBlank size={40} style={{ color: 'var(--text-hint)', marginBottom: 12 }} />
-                <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>{t('booking.empty')}</p>
+                <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>{L(lang, LABEL.empty_shops)}</p>
                 <button onClick={onGoToMapTab} style={{ padding: '10px 24px', borderRadius: 'var(--radius-btn)', background: BRAND, color: 'white', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
-                  {t('booking.emptyGo')}
+                  {L(lang, LABEL.empty_go)}
                 </button>
               </div>
             ) : (

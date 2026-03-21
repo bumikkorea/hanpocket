@@ -9,7 +9,7 @@ import { useLanguage } from '../i18n/index.jsx'
 function L(lang, d) { return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
 const MENU_ITEMS = [
-  { id: 'reservations', icon: Calendar,    bg: '#FFF0E8', color: '#C4725A', labelKey: 'my.orders',       action: 'booking'           },
+  { id: 'reservations', icon: Calendar,    bg: '#FFF0E8', color: '#C4725A', labelKey: 'my.orders',       action: 'booking-my'        },
   { id: 'favorites',    icon: Heart,       bg: '#FFF8E1', color: '#FF9500', labelKey: 'my.wishlist',     action: 'sub:bookmarks'     },
   { id: 'taxi',         icon: Car,         bg: '#E3F2FD', color: '#2196F3', labelKey: 'my.taxiHistory',  action: 'sub:taxi-history'  },
   { id: 'language',     icon: Globe,       bg: '#F3E5F5', color: '#9C27B0', labelKey: 'my.language',     action: 'sub:language'      },
@@ -100,8 +100,14 @@ export default function MyTab({ setTab, setSubPage }) {
     )
   }
 
+  const goToMyBookings = () => {
+    localStorage.setItem('near_booking_open_screen', 'my-bookings')
+    setTab('booking')
+  }
+
   const handleMenuClick = (item) => {
     if (item.action === 'booking') { setTab('booking'); return }
+    if (item.action === 'booking-my') { goToMyBookings(); return }
     if (item.action === 'sub:language') { setLangModalOpen(true); return }
     if (item.action.startsWith('sub:') && setSubPage) setSubPage(item.action.slice(4))
   }
@@ -160,7 +166,7 @@ export default function MyTab({ setTab, setSubPage }) {
       {/* ─── 퀵 액션 3개 ─── */}
       <div style={{ display: 'flex', gap: 8, padding: '0 20px 20px' }}>
         {[
-          { labelKey: 'my.orders',   Icon: Calendar, count: bookingCount,  unit: '', action: () => setTab('booking')         },
+          { labelKey: 'my.orders',   Icon: Calendar, count: bookingCount,  unit: '', action: () => goToMyBookings()           },
           { labelKey: 'my.points',   Icon: Gift,     count: 0,             unit: 'P', action: () => {}                       },
           { labelKey: 'my.wishlist', Icon: Heart,    count: favoriteCount, unit: '', action: () => setSubPage?.('bookmarks') },
         ].map((item, i) => (

@@ -925,10 +925,9 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           <button
             onClick={() => onBookmark(poi.id)}
             className={`btn btn-sm ${isBookmarked ? 'btn-danger' : 'btn-outline'}`}
-            style={{ flex: 0.6, minWidth: 52 }}
+            style={{ flex: 0, minWidth: 44, paddingLeft: 0, paddingRight: 0 }}
           >
             <Heart size={15} fill={isBookmarked ? '#FF3B30' : 'none'} color={isBookmarked ? '#FF3B30' : 'currentColor'} />
-            {isBookmarked ? tLang('bookmarked', lang) : tLang('bookmark', lang)}
           </button>
         </div>
       </div>

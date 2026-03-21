@@ -839,3 +839,130 @@ body {
 .card-stagger:nth-child(4) { animation-delay: 0.15s; }
 .card-stagger:nth-child(5) { animation-delay: 0.2s; }
 .card-stagger:nth-child(6) { animation-delay: 0.25s; }
+
+/* ─── Button System — Liquid Glass Subtle ─── */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 20px;
+  border-radius: var(--radius-btn);
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.15s ease;
+  text-decoration: none;
+}
+.btn-sm {
+  height: 44px;
+  font-size: 13px;
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 15%; right: 15%; height: 0.5px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  pointer-events: none;
+}
+.btn:hover  { transform: translateY(-1px); }
+.btn:active { transform: scale(0.98); }
+
+/* Primary */
+.btn-primary {
+  background: linear-gradient(180deg, #CC7D66, #C4725A);
+  color: white;
+  box-shadow: 0 1px 1px rgba(196,114,90,0.12), 0 2px 3px rgba(196,114,90,0.05);
+}
+.btn-primary:hover  { background: linear-gradient(180deg, #D08570, #C87A64); box-shadow: 0 2px 4px rgba(196,114,90,0.18), 0 4px 8px rgba(196,114,90,0.08); }
+.btn-primary:active { background: linear-gradient(180deg, #B86A52, #A85D48); box-shadow: none; }
+
+/* Dark */
+.btn-dark {
+  background: linear-gradient(180deg, #252525, #1A1A1A);
+  color: white;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.08), 0 2px 3px rgba(0,0,0,0.04);
+}
+.btn-dark:hover  { background: linear-gradient(180deg, #333, #252525); box-shadow: 0 2px 4px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06); }
+.btn-dark:active { background: linear-gradient(180deg, #111, #0a0a0a); box-shadow: none; }
+
+/* Alipay */
+.btn-alipay {
+  background: linear-gradient(180deg, #2080F0, #1677FF);
+  color: white;
+  box-shadow: 0 1px 1px rgba(22,119,255,0.12), 0 2px 3px rgba(22,119,255,0.05);
+}
+.btn-alipay:hover  { background: linear-gradient(180deg, #3090FF, #2080F0); box-shadow: 0 2px 4px rgba(22,119,255,0.18), 0 4px 8px rgba(22,119,255,0.08); }
+.btn-alipay:active { background: linear-gradient(180deg, #1060D0, #0A60E0); box-shadow: none; }
+
+/* WeChat */
+.btn-wechat {
+  background: linear-gradient(180deg, #15CC65, #07C160);
+  color: white;
+  box-shadow: 0 1px 1px rgba(7,193,96,0.12), 0 2px 3px rgba(7,193,96,0.05);
+}
+.btn-wechat:hover  { background: linear-gradient(180deg, #25DC75, #15CC65); box-shadow: 0 2px 4px rgba(7,193,96,0.18), 0 4px 8px rgba(7,193,96,0.08); }
+.btn-wechat:active { background: linear-gradient(180deg, #05A050, #04903D); box-shadow: none; }
+
+/* Taxi */
+.btn-taxi {
+  background: linear-gradient(180deg, #FFA61A, #FF9500);
+  color: white;
+  box-shadow: 0 1px 1px rgba(255,149,0,0.12), 0 2px 3px rgba(255,149,0,0.05);
+}
+.btn-taxi:hover  { background: linear-gradient(180deg, #FFB030, #FFA610); box-shadow: 0 2px 4px rgba(255,149,0,0.18), 0 4px 8px rgba(255,149,0,0.08); }
+.btn-taxi:active { background: linear-gradient(180deg, #E08500, #D07800); box-shadow: none; }
+
+/* Outline */
+.btn-outline {
+  background: white;
+  color: var(--text-secondary);
+  border: 0.5px solid #E0E0E0;
+  box-shadow: 0 0px 1px rgba(0,0,0,0.015);
+}
+.btn-outline::after { display: none; }
+.btn-outline:hover  { background: #FAFAFA; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+.btn-outline:active { background: #F5F5F5; box-shadow: none; }
+
+/* Success */
+.btn-success {
+  background: linear-gradient(180deg, #3DD06E, #34C759);
+  color: white;
+  box-shadow: 0 1px 1px rgba(52,199,89,0.12), 0 2px 3px rgba(52,199,89,0.05);
+}
+.btn-success:hover  { background: linear-gradient(180deg, #4AE07A, #3DD06E); box-shadow: 0 2px 4px rgba(52,199,89,0.18), 0 4px 8px rgba(52,199,89,0.08); }
+.btn-success:active { background: linear-gradient(180deg, #2AB850, #23A845); box-shadow: none; }
+
+/* Danger */
+.btn-danger {
+  background: #FFF5F5;
+  color: var(--price);
+  box-shadow: 0 0px 1px rgba(0,0,0,0.01);
+}
+.btn-danger::after { display: none; }
+.btn-danger:hover  { background: #FFE8E8; }
+.btn-danger:active { background: #FFD8D8; }
+
+/* Glass (다크 배경 전용) */
+.btn-glass {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  color: white;
+  border: 0.5px solid rgba(255,255,255,0.12);
+  box-shadow: 0 0px 2px rgba(0,0,0,0.05);
+}
+.btn-glass::after { display: none; }
+.btn-glass:hover  { background: rgba(255,255,255,0.15); }
+.btn-glass:active { background: rgba(255,255,255,0.08); }
+
+/* Pulse — 화면 상태 인디케이터 */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}

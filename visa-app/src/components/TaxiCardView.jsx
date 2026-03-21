@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { X, Car, Copy, Phone, Check } from 'lucide-react'
 import { t } from '../locales/index.js'
 
 const KAKAO_APP_KEY = import.meta.env.VITE_KAKAO_MAP_API_KEY
@@ -12,58 +13,11 @@ function estimateFare(userPos, poi) {
   const a = Math.sin(dLat / 2) ** 2
     + Math.cos(userPos.lat * Math.PI / 180) * Math.cos(poi.lat * Math.PI / 180) * Math.sin(dLng / 2) ** 2
   const distKm = R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-  // 기본요금 4,800원 + 거리 × 2,000원/km, 범위 ±30%
   const base = 4800 + distKm * 2000
   const lo = Math.round(base * 0.85 / 100) * 100
   const hi = Math.round(base * 1.15 / 100) * 100
-  const mins = Math.round(distKm * 3 + 5) // 시내 평균 속도 20km/h 환산
+  const mins = Math.round(distKm * 3 + 5)
   return { lo, hi, mins, distKm }
-}
-
-// 미니맵 컴포넌트
-function MiniMap({ poi }) {
-  const containerRef = useRef(null)
-  const mapRef = useRef(null)
-
-  useEffect(() => {
-    if (!poi?.lat || !poi?.lng) return
-
-    const init = () => {
-      if (!containerRef.current || !window.kakao?.maps) return
-      const center = new window.kakao.maps.LatLng(poi.lat, poi.lng)
-      const map = new window.kakao.maps.Map(containerRef.current, {
-        center,
-        level: 3,
-        draggable: false,
-        scrollwheel: false,
-        disableDoubleClickZoom: true,
-      })
-      mapRef.current = map
-      // 목적지 마커
-      new window.kakao.maps.Marker({ position: center, map })
-    }
-
-    if (window.kakao?.maps) {
-      init()
-    } else {
-      const script = document.createElement('script')
-      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_APP_KEY}&autoload=false`
-      script.onload = () => window.kakao.maps.load(init)
-      document.head.appendChild(script)
-    }
-  }, [poi])
-
-  return (
-    <div
-      ref={containerRef}
-      style={{
-        width: '100%', height: 200,
-        borderRadius: 12,
-        overflow: 'hidden',
-        background: '#F3F4F6',
-      }}
-    />
-  )
 }
 
 export default function TaxiCardView({ poi, bilingual, onClose, userPos }) {
@@ -98,145 +52,141 @@ export default function TaxiCardView({ poi, bilingual, onClose, userPos }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 200,
-      background: 'white',
+      background: '#1A1A1A',
       display: 'flex', flexDirection: 'column',
-      overflowY: 'auto',
     }}>
-      {/* 헤더 */}
+      {/* ─── 헤더 ─── */}
       <div style={{
-        display: 'flex', alignItems: 'center',
-        padding: '14px 16px 10px',
-        borderBottom: '1px solid #F3F4F6',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '20px 20px 16px',
         flexShrink: 0,
       }}>
+        {/* 닫기 버튼 */}
         <button
           onClick={onClose}
           style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: 14, fontWeight: 700, color: '#C4725A',
-            display: 'flex', alignItems: 'center', gap: 4,
-            padding: 0,
+            width: 36, height: 36, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.1)',
+            border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
-          ← {t('taxi_back', bilingual)}
+          <X size={18} color="white" />
         </button>
+
+        {/* 출租车模式 배지 */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 6,
+          background: 'var(--primary)',
+          color: 'white', padding: '6px 14px',
+          borderRadius: 'var(--radius-pill)',
+          fontSize: 13, fontWeight: 600,
+        }}>
+          <Car size={14} />
+          出租车模式
+        </div>
       </div>
 
-      <div style={{ padding: '16px 16px 32px', display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {/* 미니맵 */}
-        <MiniMap poi={poi} />
+      {/* ─── 메인 콘텐츠 (스크롤 가능) ─── */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-        {/* 목적지 정보 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-            {t('taxi_dest', bilingual)}
-          </div>
-          <div style={{ fontSize: 28, fontWeight: 700, color: '#1A1A1A', lineHeight: 1.25 }}>
-            {addressKo || <span style={{ color: '#9CA3AF' }}>주소 정보 없음</span>}
-          </div>
-          {addressZh && (
-            <div style={{ fontSize: 16, color: '#888888', marginTop: 2 }}>{addressZh}</div>
-          )}
-          {nameZh && (
-            <div style={{ fontSize: 18, fontWeight: 600, color: '#374151', marginTop: 4 }}>{nameZh}</div>
-          )}
+        {/* 힌트 라벨 */}
+        <div style={{ textAlign: 'center', fontSize: 14, color: 'rgba(255,255,255,0.5)', letterSpacing: '1px' }}>
+          请把这个给司机看
         </div>
 
-        {/* 구분선 */}
-        <div style={{ height: 1, background: '#F3F4F6' }} />
+        {/* ─── 중앙 카드 ─── */}
+        <div style={{
+          position: 'relative',
+          background: 'white', borderRadius: 20,
+          padding: '32px 24px',
+          textAlign: 'center',
+          overflow: 'hidden',
+        }}>
+          {/* 상단 accent bar */}
+          <div style={{
+            position: 'absolute', top: 0, left: 24, right: 24, height: 4,
+            background: 'var(--primary)',
+            borderRadius: '0 0 4px 4px',
+          }} />
 
-        {/* 예상 요금 */}
-        <div>
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#9CA3AF', marginBottom: 6 }}>
-            {t('taxi_est_fare', bilingual)}
+          {/* 目的地 라벨 */}
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', letterSpacing: '2px', marginBottom: 12 }}>
+            目的地
           </div>
+
+          {/* 한국어 주소 */}
+          <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.5px', lineHeight: 1.4 }}>
+            {addressKo || <span style={{ color: 'var(--text-hint)' }}>주소 정보 없음</span>}
+          </div>
+
+          {/* 중국어 매장명 */}
+          {nameZh && (
+            <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 8 }}>{nameZh}</div>
+          )}
+          {addressZh && (
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{addressZh}</div>
+          )}
+
+          {/* 구분선 */}
+          <div style={{ width: 40, height: 2, background: 'var(--border)', margin: '16px auto' }} />
+
+          {/* 예상 요금 */}
           {fare ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A' }}>
+            <div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>预计费用</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
                 약 ₩{fare.lo.toLocaleString()} ~ ₩{fare.hi.toLocaleString()}
               </div>
-              <div style={{ fontSize: 14, color: '#888888' }}>
-                约 ¥{Math.round(fare.lo / 190)} ~ ¥{Math.round(fare.hi / 190)}
-              </div>
-              <div style={{ fontSize: 13, color: '#6B7280', marginTop: 4 }}>
-                约{fare.mins}分钟 · {fare.distKm.toFixed(1)}km
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+                约 ¥{Math.round(fare.lo / 190)} ~ ¥{Math.round(fare.hi / 190)} · 约{fare.mins}分钟
               </div>
             </div>
           ) : (
-            <div style={{ fontSize: 14, color: '#9CA3AF' }}>{t('taxi_no_location', bilingual)}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{t('taxi_no_location', bilingual)}</div>
           )}
         </div>
+      </div>
 
-        {/* 구분선 */}
-        <div style={{ height: 1, background: '#F3F4F6' }} />
-
-        {/* 기사님 안내 */}
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#6B7280', marginBottom: 4 }}>
-            {t('taxi_guide', bilingual)}
-          </div>
-          <div style={{ fontSize: 12, color: '#9CA3AF' }}>
-            {t('taxi_show_driver', bilingual)}
-          </div>
-        </div>
-
-        {/* 기사용 박스 — 핵심 */}
-        <div style={{
-          background: '#FFF8E1',
-          border: '2px solid #F9A825',
-          borderRadius: 12,
-          padding: '20px 16px',
-          display: 'flex', flexDirection: 'column', gap: 8,
-          boxShadow: '0 2px 8px rgba(249,168,37,0.15)',
-        }}>
-          <div style={{ fontSize: 24, fontWeight: 700, color: '#1A1A1A' }}>
-            이곳으로 가주세요
-          </div>
-          <div style={{ fontSize: 20, color: '#374151', fontWeight: 500, lineHeight: 1.4 }}>
-            {addressKo}
-          </div>
-        </div>
-
-        {/* 하단 버튼 */}
-        <div style={{ display: 'flex', gap: 10 }}>
-          <button
-            onClick={handleCopy}
-            style={{
-              flex: 1, height: 48, borderRadius: 12,
-              background: copied ? '#1A1A1A' : 'white',
-              color: copied ? 'white' : '#374151',
-              border: '1px solid #E5E7EB',
-              fontSize: 14, fontWeight: 600, cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
+      {/* ─── 하단 버튼 ─── */}
+      <div style={{ display: 'flex', gap: 10, padding: '24px 28px', flexShrink: 0 }}>
+        <button
+          onClick={handleCopy}
+          className="btn btn-glass"
+          style={{ flex: 1 }}
+        >
+          {copied ? <Check size={16} /> : <Copy size={16} />}
+          {copied ? t('taxi_copied', bilingual) : t('taxi_copy', bilingual)}
+        </button>
+        {phone ? (
+          <a
+            href={`tel:${phone}`}
+            className="btn btn-primary"
+            style={{ flex: 1 }}
           >
-            {copied ? t('taxi_copied', bilingual) : `📋 ${t('taxi_copy', bilingual)}`}
+            <Phone size={16} />
+            {t('taxi_call', bilingual)}
+          </a>
+        ) : (
+          <button
+            disabled
+            className="btn btn-outline"
+            style={{ flex: 1, opacity: 0.4, cursor: 'not-allowed' }}
+          >
+            <Phone size={16} />
+            {t('taxi_call', bilingual)}
           </button>
-          {phone ? (
-            <a
-              href={`tel:${phone}`}
-              style={{
-                flex: 1, height: 48, borderRadius: 12,
-                background: '#F9A825', color: 'white',
-                border: 'none', fontSize: 14, fontWeight: 600, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                textDecoration: 'none',
-              }}
-            >
-              📞 {t('taxi_call', bilingual)}
-            </a>
-          ) : (
-            <button
-              disabled
-              style={{
-                flex: 1, height: 48, borderRadius: 12,
-                background: '#F3F4F6', color: '#D1D5DB',
-                border: 'none', fontSize: 14, fontWeight: 600, cursor: 'not-allowed',
-              }}
-            >
-              📞 {t('taxi_call', bilingual)}
-            </button>
-          )}
+        )}
+      </div>
+
+      {/* ─── 화면 상태 ─── */}
+      <div style={{ textAlign: 'center', paddingBottom: 'max(20px, env(safe-area-inset-bottom))', flexShrink: 0 }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <div style={{
+            width: 6, height: 6, borderRadius: '50%', background: '#34C759',
+            animation: 'pulse-dot 2s infinite',
+          }} />
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>屏幕常亮中</span>
         </div>
       </div>
     </div>

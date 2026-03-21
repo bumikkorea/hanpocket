@@ -474,12 +474,14 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack }) {
         )}
         {/* 결제 버튼 */}
         <button onClick={() => handlePay('alipay')}
-          style={{ width: '100%', height: 50, borderRadius: 14, background: '#1677FF', color: 'white', fontSize: 15, fontWeight: 700, border: 'none', cursor: 'pointer', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          <span style={{ fontSize: 16 }}>💙</span> {L(lang, LABEL.alipay)}
+          className="btn btn-alipay"
+          style={{ width: '100%', marginBottom: 10 }}>
+          💙 {L(lang, LABEL.alipay)}
         </button>
         <button onClick={() => handlePay('wechat')}
-          style={{ width: '100%', height: 50, borderRadius: 14, background: '#07C160', color: 'white', fontSize: 15, fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          <span style={{ fontSize: 16 }}>💚</span> {L(lang, LABEL.wechat_pay)}
+          className="btn btn-wechat"
+          style={{ width: '100%' }}>
+          💚 {L(lang, LABEL.wechat_pay)}
         </button>
       </div>
       <div style={{ padding: '8px 16px 12px', textAlign: 'center' }}>

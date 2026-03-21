@@ -907,14 +907,16 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button
             onClick={handleNavigate}
-            style={{ flex: 1.2, minWidth: 80, height: 48, borderRadius: 'var(--radius-btn)', background: '#1A1A1A', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            className="btn btn-sm btn-dark"
+            style={{ flex: 1.2, minWidth: 80 }}
           >
             <Navigation size={15} />
             {t('navigate_here', bilingual)}
           </button>
           <button
             onClick={() => onTaxi(poi)}
-            style={{ flex: 1, minWidth: 72, height: 48, borderRadius: 'var(--radius-btn)', background: '#F9A825', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+            className="btn btn-sm btn-taxi"
+            style={{ flex: 1, minWidth: 72 }}
           >
             <Car size={15} />
             {t('taxi_mode', bilingual)}
@@ -922,7 +924,8 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
           {poi.has_reservation && (
             <button
               onClick={() => onReserve(poi)}
-              style={{ flex: 1, minWidth: 60, height: 48, borderRadius: 'var(--radius-btn)', background: '#DC2626', color: 'white', fontSize: 13, fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
+              className="btn btn-sm btn-primary"
+              style={{ flex: 1, minWidth: 60 }}
             >
               <Calendar size={15} />
               {t('reserve', bilingual)}
@@ -930,16 +933,10 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
           )}
           <button
             onClick={() => onBookmark(poi.id)}
-            style={{
-              flex: 0.6, minWidth: 52, height: 48, borderRadius: 'var(--radius-btn)',
-              background: isBookmarked ? '#FFF1F1' : 'white',
-              color: isBookmarked ? '#E24B4A' : 'var(--text-primary)',
-              fontSize: 13, fontWeight: 600,
-              border: isBookmarked ? '1px solid #E24B4A' : '1px solid var(--border)',
-              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
-            }}
+            className={`btn btn-sm ${isBookmarked ? 'btn-danger' : 'btn-outline'}`}
+            style={{ flex: 0.6, minWidth: 52 }}
           >
-            <Heart size={15} fill={isBookmarked ? '#E24B4A' : 'none'} />
+            <Heart size={15} fill={isBookmarked ? '#FF3B30' : 'none'} color={isBookmarked ? '#FF3B30' : 'currentColor'} />
             {isBookmarked ? t('bookmarked', bilingual) : t('bookmark', bilingual)}
           </button>
         </div>

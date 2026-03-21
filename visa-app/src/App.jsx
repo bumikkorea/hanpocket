@@ -2761,12 +2761,7 @@ function AppInner() {
               <button key={item.id} onClick={() => handleTabChange(item.id)}
                 aria-label={`${item.label} tab`}
                 style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <item.icon size={22} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', transform: active ? 'scale(1)' : 'scale(0.9)' }} />
-                  {active && (
-                    <div style={{ position: 'absolute', bottom: '-10px', width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--primary)' }} />
-                  )}
-                </div>
+                <item.icon size={22} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', transform: active ? 'scale(1)' : 'scale(0.9)' }} />
                 <span style={{ fontSize: 10, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px' }}>
                   {item.label}
                 </span>

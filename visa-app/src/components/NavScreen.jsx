@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { ArrowLeft } from '@phosphor-icons/react'
-import { t } from '../locales/index.js'
+import { t, tLang } from '../locales/index.js'
 import { buildTransitRoute, calcTaxiFare, LINE_COLORS } from '../data/stationData.js'
 
 // ─── 교통 모드 카드 ───
-function ModeCard({ icon, labelKey, duration, fareKrw, fareCny, active, bilingual, onClick }) {
+function ModeCard({ icon, labelKey, duration, fareKrw, fareCny, active, lang, onClick }) {
   return (
     <button
       onClick={onClick}
@@ -24,14 +24,14 @@ function ModeCard({ icon, labelKey, duration, fareKrw, fareCny, active, bilingua
     >
       <div style={{ fontSize: 20, marginBottom: 4 }}>{icon}</div>
       <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 2 }}>
-        {t(labelKey, bilingual)}
+        {tLang(labelKey, lang)}
       </div>
       <div style={{ fontSize: 16, fontWeight: 700 }}>
-        {duration}<span style={{ fontSize: 11, fontWeight: 400, opacity: 0.8 }}>{t('nav_min', bilingual)}</span>
+        {duration}<span style={{ fontSize: 11, fontWeight: 400, opacity: 0.8 }}>{tLang('nav_min', lang)}</span>
       </div>
       {fareKrw && (
         <div style={{ fontSize: 10, opacity: 0.7, marginTop: 2 }}>
-          ₩{fareKrw.toLocaleString()} ≈ {fareCny}{t('nav_cny', bilingual)}
+          ₩{fareKrw.toLocaleString()} ≈ {fareCny}{tLang('nav_cny', lang)}
         </div>
       )}
     </button>
@@ -39,7 +39,7 @@ function ModeCard({ icon, labelKey, duration, fareKrw, fareCny, active, bilingua
 }
 
 // ─── 지하철 경로 상세 ───
-function TransitDetail({ steps, destName, bilingual }) {
+function TransitDetail({ steps, destName, lang }) {
   return (
     <div style={{ paddingTop: 4 }}>
       {steps.map((step, i) => {
@@ -54,7 +54,7 @@ function TransitDetail({ steps, destName, bilingual }) {
                 <div style={{ width: 2, flex: 1, borderLeft: '2px dashed #D1D5DB', minHeight: 28 }} />
               </div>
               <div style={{ fontSize: 12, color: '#9CA3AF', paddingBottom: 12 }}>
-                {t('nav_walk_about', bilingual)}{step.walk_min}{t('nav_min', bilingual)}
+                {tLang('nav_walk_about', lang)}{step.walk_min}{tLang('nav_min', lang)}
               </div>
             </div>
           )
@@ -104,7 +104,7 @@ function TransitDetail({ steps, destName, bilingual }) {
                       {step.transfer_to}
                     </div>
                     <span style={{ fontSize: 11, fontWeight: 700, color: transferColor }}>
-                      {t('nav_transfer', bilingual)}{step.transfer_to}{t('nav_line', bilingual)}
+                      {tLang('nav_transfer', lang)}{step.transfer_to}{tLang('nav_line', lang)}
                     </span>
                   </div>
                 )}
@@ -123,8 +123,8 @@ function TransitDetail({ steps, destName, bilingual }) {
                 <span style={{ display: 'inline-block', width: 16, height: 16, borderRadius: '50%', background: step.color, color: 'white', fontSize: 9, fontWeight: 700, textAlign: 'center', lineHeight: '16px', flexShrink: 0 }}>
                   {step.line}
                 </span>
-                {t('nav_ride_on', bilingual)}{step.line}{t('nav_line', bilingual)}
-                &nbsp;→&nbsp;{step.stops}{t('nav_stops', bilingual)}&nbsp;({step.min}{t('nav_min', bilingual)})
+                {tLang('nav_ride_on', lang)}{step.line}{tLang('nav_line', lang)}
+                &nbsp;→&nbsp;{step.stops}{tLang('nav_stops', lang)}&nbsp;({step.min}{tLang('nav_min', lang)})
               </div>
             </div>
           )
@@ -139,7 +139,7 @@ function TransitDetail({ steps, destName, bilingual }) {
               </div>
               <div style={{ paddingTop: 22 }}>
                 <div style={{ fontSize: 12, color: '#9CA3AF', marginBottom: 4 }}>
-                  {t('nav_walk_about', bilingual)}{step.walk_min}{t('nav_min', bilingual)}
+                  {tLang('nav_walk_about', lang)}{step.walk_min}{tLang('nav_min', lang)}
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#E24B4A' }}>
                   {destName}
@@ -156,29 +156,29 @@ function TransitDetail({ steps, destName, bilingual }) {
 }
 
 // ─── 도보 상세 ───
-function WalkDetail({ walkMin, bilingual }) {
+function WalkDetail({ walkMin, lang }) {
   return (
     <div style={{ textAlign: 'center', padding: '48px 0 24px' }}>
       <div style={{ fontSize: 56 }}>🚶</div>
       <div style={{ marginTop: 12, display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 4 }}>
         <span style={{ fontSize: 48, fontWeight: 700, color: '#111827' }}>{walkMin}</span>
-        <span style={{ fontSize: 16, color: '#9CA3AF' }}>{t('nav_min', bilingual)}</span>
+        <span style={{ fontSize: 16, color: '#9CA3AF' }}>{tLang('nav_min', lang)}</span>
       </div>
       <div style={{ marginTop: 8, fontSize: 13, color: '#9CA3AF' }}>
-        {t('nav_walk', bilingual)} · {Math.round(walkMin * 67)}m
+        {tLang('nav_walk', lang)} · {Math.round(walkMin * 67)}m
       </div>
     </div>
   )
 }
 
 // ─── 택시 상세 ───
-function TaxiDetail({ taxiMin, fareKrw, fareCny, bilingual }) {
+function TaxiDetail({ taxiMin, fareKrw, fareCny, lang }) {
   return (
     <div style={{ textAlign: 'center', padding: '48px 0 24px' }}>
       <div style={{ fontSize: 56 }}>🚕</div>
       <div style={{ marginTop: 12, display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 4 }}>
         <span style={{ fontSize: 48, fontWeight: 700, color: '#111827' }}>{taxiMin}</span>
-        <span style={{ fontSize: 16, color: '#9CA3AF' }}>{t('nav_min', bilingual)}</span>
+        <span style={{ fontSize: 16, color: '#9CA3AF' }}>{tLang('nav_min', lang)}</span>
       </div>
       <div style={{
         marginTop: 20, display: 'inline-block',
@@ -186,13 +186,13 @@ function TaxiDetail({ taxiMin, fareKrw, fareCny, bilingual }) {
         padding: '16px 32px', border: '1px solid #F3F4F6',
       }}>
         <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 4 }}>
-          {t('nav_fare', bilingual)}
+          {tLang('nav_fare', lang)}
         </div>
         <div style={{ fontSize: 24, fontWeight: 700, color: '#111827' }}>
           ₩{fareKrw.toLocaleString()}
         </div>
         <div style={{ fontSize: 13, color: '#6B7280', marginTop: 2 }}>
-          ≈ {fareCny} {t('nav_cny', bilingual)}
+          ≈ {fareCny} {tLang('nav_cny', lang)}
         </div>
       </div>
     </div>
@@ -200,7 +200,7 @@ function TaxiDetail({ taxiMin, fareKrw, fareCny, bilingual }) {
 }
 
 // ─── 메인 컴포넌트 ───
-export default function NavScreen({ poi, onClose, bilingual }) {
+export default function NavScreen({ poi, onClose, lang }) {
   const [mode, setMode] = useState('transit')
 
   const route = buildTransitRoute(poi)
@@ -230,7 +230,7 @@ export default function NavScreen({ poi, onClose, bilingual }) {
           <ArrowLeft size={22} weight="bold" />
         </button>
         <span style={{ fontSize: 16, fontWeight: 700, color: '#111827' }}>
-          {t('nav_route_detail', bilingual)}
+          {tLang('nav_route_detail', lang)}
         </span>
       </div>
 
@@ -242,7 +242,7 @@ export default function NavScreen({ poi, onClose, bilingual }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#378ADD', flexShrink: 0, boxShadow: '0 0 0 3px rgba(55,138,221,0.2)' }} />
-          <span style={{ fontSize: 13, color: '#6B7280' }}>{t('nav_my_location', bilingual)}</span>
+          <span style={{ fontSize: 13, color: '#6B7280' }}>{tLang('nav_my_location', lang)}</span>
         </div>
         {/* 점선 연결 */}
         <div style={{ marginLeft: 5, width: 2, height: 18, borderLeft: '2px dashed #CBD5E1' }} />
@@ -263,14 +263,14 @@ export default function NavScreen({ poi, onClose, bilingual }) {
           icon="🚇" labelKey="nav_transit"
           duration={route.transit_min}
           active={mode === 'transit'}
-          bilingual={bilingual}
+          lang={lang}
           onClick={() => setMode('transit')}
         />
         <ModeCard
           icon="🚶" labelKey="nav_walk"
           duration={walkMin}
           active={mode === 'walk'}
-          bilingual={bilingual}
+          lang={lang}
           onClick={() => setMode('walk')}
         />
         <ModeCard
@@ -279,7 +279,7 @@ export default function NavScreen({ poi, onClose, bilingual }) {
           fareKrw={taxiFareKrw}
           fareCny={taxiFareCny}
           active={mode === 'taxi'}
-          bilingual={bilingual}
+          lang={lang}
           onClick={() => setMode('taxi')}
         />
       </div>
@@ -290,16 +290,16 @@ export default function NavScreen({ poi, onClose, bilingual }) {
           <TransitDetail
             steps={route.steps}
             destName={destName}
-            bilingual={bilingual}
+            lang={lang}
           />
         )}
-        {mode === 'walk' && <WalkDetail walkMin={walkMin} bilingual={bilingual} />}
+        {mode === 'walk' && <WalkDetail walkMin={walkMin} lang={lang} />}
         {mode === 'taxi' && (
           <TaxiDetail
             taxiMin={taxiMin}
             fareKrw={taxiFareKrw}
             fareCny={taxiFareCny}
-            bilingual={bilingual}
+            lang={lang}
           />
         )}
       </div>

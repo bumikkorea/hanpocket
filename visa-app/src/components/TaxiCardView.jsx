@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { X, Car, Copy, Phone, Check } from 'lucide-react'
-import { t } from '../locales/index.js'
+import { t, tLang } from '../locales/index.js'
 
 const KAKAO_APP_KEY = import.meta.env.VITE_KAKAO_MAP_API_KEY
 
@@ -20,7 +20,7 @@ function estimateFare(userPos, poi) {
   return { lo, hi, mins, distKm }
 }
 
-export default function TaxiCardView({ poi, bilingual, onClose, userPos }) {
+export default function TaxiCardView({ poi, lang, onClose, userPos }) {
   const [copied, setCopied] = useState(false)
   const wakeLockRef = useRef(null)
   const fare = estimateFare(userPos, poi)
@@ -143,7 +143,7 @@ export default function TaxiCardView({ poi, bilingual, onClose, userPos }) {
               </div>
             </div>
           ) : (
-            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{t('taxi_no_location', bilingual)}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{tLang('taxi_no_location', lang)}</div>
           )}
         </div>
       </div>
@@ -156,7 +156,7 @@ export default function TaxiCardView({ poi, bilingual, onClose, userPos }) {
           style={{ flex: 1 }}
         >
           {copied ? <Check size={16} /> : <Copy size={16} />}
-          {copied ? t('taxi_copied', bilingual) : t('taxi_copy', bilingual)}
+          {copied ? tLang('taxi_copied', lang) : tLang('taxi_copy', lang)}
         </button>
         {phone ? (
           <a
@@ -165,7 +165,7 @@ export default function TaxiCardView({ poi, bilingual, onClose, userPos }) {
             style={{ flex: 1 }}
           >
             <Phone size={16} />
-            {t('taxi_call', bilingual)}
+            {tLang('taxi_call', lang)}
           </a>
         ) : (
           <button
@@ -174,7 +174,7 @@ export default function TaxiCardView({ poi, bilingual, onClose, userPos }) {
             style={{ flex: 1, opacity: 0.4, cursor: 'not-allowed' }}
           >
             <Phone size={16} />
-            {t('taxi_call', bilingual)}
+            {tLang('taxi_call', lang)}
           </button>
         )}
       </div>

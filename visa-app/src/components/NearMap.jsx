@@ -48,21 +48,21 @@ function getBusinessStatus(poi) {
 }
 
 // ─── POI 태그 계산 ───
-function calcTags(poi, bilingual) {
+function calcTags(poi, lang) {
   const tags = []
   const daysLeft = poi.end_date
     ? Math.ceil((new Date(poi.end_date) - new Date()) / 86400000)
     : null
   if (daysLeft !== null && daysLeft <= 14 && daysLeft >= 0)
-    tags.push({ label: `D-${daysLeft} ${t('tag_closing', bilingual)}`, bg: '#FEF2F2', color: '#DC2626' })
+    tags.push({ label: `D-${daysLeft} ${tLang('tag_closing', lang)}`, bg: '#FEF2F2', color: '#DC2626' })
   if (poi.tags?.includes('limited'))
-    tags.push({ label: t('tag_limited', bilingual), bg: '#EFF6FF', color: '#2563EB' })
+    tags.push({ label: tLang('tag_limited', lang), bg: '#EFF6FF', color: '#2563EB' })
   if (poi.tags?.includes('free'))
-    tags.push({ label: t('tag_free', bilingual), bg: '#F0FDF4', color: '#16A34A' })
+    tags.push({ label: tLang('tag_free', lang), bg: '#F0FDF4', color: '#16A34A' })
   if (poi.has_reservation)
-    tags.push({ label: t('tag_reservation', bilingual), bg: '#FFFBEB', color: '#D97706' })
+    tags.push({ label: tLang('tag_reservation', lang), bg: '#FFFBEB', color: '#D97706' })
   if ((poi.view_count_7d || 0) > 1000)
-    tags.push({ label: t('tag_popular', bilingual), bg: '#F5F3FF', color: '#7C3AED' })
+    tags.push({ label: tLang('tag_popular', lang), bg: '#F5F3FF', color: '#7C3AED' })
   return tags
 }
 
@@ -155,7 +155,7 @@ function buildCoursePinHTML(number, color, poiId) {
 }
 
 // ─── Magic Pill 지역 셀렉터 ───
-function MagicPillSelector({ areas, bilingual, onSelect }) {
+function MagicPillSelector({ areas, lang, onSelect }) {
   const [expanded, setExpanded] = useState(false)
   const [selected, setSelected] = useState(areas[0])
 
@@ -183,7 +183,7 @@ function MagicPillSelector({ areas, bilingual, onSelect }) {
         style={{ background: '#1A1A1A', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
       >
         <MapPin size={14} weight="fill" />
-        {t(selected.key, bilingual)}
+        {tLang(selected.key, lang)}
         <span className="text-[10px] opacity-60 ml-0.5">{expanded ? '▲' : '▼'}</span>
       </button>
 
@@ -209,11 +209,11 @@ function MagicPillSelector({ areas, bilingual, onSelect }) {
                     {isCurrent ? <MapPin size={14} weight="duotone" color="#C4725A" /> : null}
                   </span>
                   <span className={`text-[13px] ${isCurrent ? 'font-bold' : 'font-medium'}`}>
-                    {t(area.key, bilingual)}
+                    {tLang(area.key, lang)}
                   </span>
                   {isCurrent && (
                     <span className="text-[10px] text-[#999] ml-auto">
-                      {t('area_current', bilingual)}
+                      {tLang('area_current', lang)}
                     </span>
                   )}
                 </button>
@@ -250,8 +250,8 @@ function DevBilingualToggle({ active, onToggle }) {
 }
 
 // ─── 메인 컴포넌트 ───
-export default function NearMap({ lang = 'zh' }) {
-  const { lang: uiLang } = useLanguage()
+export default function NearMap() {
+  const { lang } = useLanguage()
   const mapRef = useRef(null)
   const mapInstance = useRef(null)
   const overlaysRef = useRef([])        // { overlay, el, poi }[]
@@ -540,14 +540,14 @@ export default function NearMap({ lang = 'zh' }) {
         }}>
           <Search size={16} color="var(--text-muted)" />
           <span style={{ fontSize: 15, color: 'var(--text-muted)' }}>
-            {t('search_placeholder', bilingual)}
+            {tLang('search_placeholder', lang)}
           </span>
         </div>
       </button>
 
       {/* ─── Magic Pill (우상단) ─── */}
       <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
-        <MagicPillSelector areas={QUICK_AREAS} bilingual={bilingual} onSelect={moveToArea} />
+        <MagicPillSelector areas={QUICK_AREAS} lang={lang} onSelect={moveToArea} />
       </div>
 
       {/* ─── 개발 전용 bilingual 토글 ─── */}
@@ -577,7 +577,7 @@ export default function NearMap({ lang = 'zh' }) {
                 transition: 'all 0.15s',
               }}
             >
-              {t(chip.key, bilingual)}
+              {tLang(chip.key, lang)}
             </button>
           )
         })}
@@ -598,7 +598,7 @@ export default function NearMap({ lang = 'zh' }) {
           }}
         >
           {courseMode && <span style={{ fontSize: 8, background: 'rgba(255,255,255,0.3)', borderRadius: 100, padding: '1px 4px' }}>●</span>}
-          {t('course_toggle', bilingual)}
+          {tLang('course_toggle', lang)}
         </button>
       </div>
 
@@ -619,7 +619,7 @@ export default function NearMap({ lang = 'zh' }) {
         {isExpanded && sheetPoi ? (
           <ExpandedSheetContent
             poi={sheetPoi}
-            bilingual={bilingual}
+            lang={lang}
             bookmarks={bookmarks}
             onBookmark={toggleBookmark}
             onClose={closeSheet}
@@ -632,7 +632,7 @@ export default function NearMap({ lang = 'zh' }) {
           <CourseStopList
             course={courses.find(c => c.id === activeCourseId)}
             allPins={allPins}
-            bilingual={bilingual}
+            lang={lang}
             onSelectPoi={selectPin}
             onNavigatePoi={(p) => setNavPoi(p)}
             onExit={exitCourseMode}
@@ -640,7 +640,7 @@ export default function NearMap({ lang = 'zh' }) {
         ) : courseMode ? (
           <CourseSelectorSheet
             courses={courses}
-            bilingual={bilingual}
+            lang={lang}
             onSelectCourse={(id) => setActiveCourseId(id)}
             onExit={exitCourseMode}
           />
@@ -655,17 +655,17 @@ export default function NearMap({ lang = 'zh' }) {
                 onClick={() => setShowMyPanel(true)}
                 style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
               >
-                {t('my_panel', bilingual)} ›
+                {tLang('my_panel', lang)} ›
               </button>
             </div>
 
             {pinsError ? (
               <div style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 12 }}>{t('net_error', bilingual)}</div>
+                <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 12 }}>{tLang('net_error', lang)}</div>
                 <button
                   onClick={() => window.location.reload()}
                   style={{ fontSize: 13, fontWeight: 700, color: 'white', background: 'var(--text-primary)', border: 'none', borderRadius: 8, padding: '8px 20px', cursor: 'pointer' }}
-                >{t('retry', bilingual)}</button>
+                >{tLang('retry', lang)}</button>
               </div>
             ) : pinsLoading ? (
               <div style={{ padding: '8px 20px 20px' }}>
@@ -681,11 +681,11 @@ export default function NearMap({ lang = 'zh' }) {
             ) : sheetPoi ? (
               <CompactSheetCard
                 poi={sheetPoi}
-                bilingual={bilingual}
+                lang={lang}
                 onExpand={() => selectPin(sheetPoi)}
               />
             ) : (
-              <NearbyHotFallback pins={hotFallback} bilingual={bilingual} onSelect={selectPin} />
+              <NearbyHotFallback pins={hotFallback} lang={lang} onSelect={selectPin} />
             )}
           </>
         )}
@@ -705,7 +705,7 @@ export default function NearMap({ lang = 'zh' }) {
       {showList && (
         <ListView
           pins={filteredPins}
-          bilingual={bilingual}
+          lang={lang}
           listSort={listSort}
           onSortChange={setListSort}
           onSelectPoi={(poi) => { setShowList(false); selectPin(poi) }}
@@ -717,7 +717,7 @@ export default function NearMap({ lang = 'zh' }) {
       {showSearch && (
         <SearchOverlay
           allPins={allPins}
-          bilingual={bilingual}
+          lang={lang}
           onSelectPoi={(poi) => {
             setShowSearch(false)
             if (taxiFromFab) {
@@ -735,7 +735,7 @@ export default function NearMap({ lang = 'zh' }) {
       {reservationPoi && (
         <ReservationSheet
           poi={reservationPoi}
-          bilingual={bilingual}
+          lang={lang}
           onClose={() => setReservationPoi(null)}
         />
       )}
@@ -743,7 +743,7 @@ export default function NearMap({ lang = 'zh' }) {
       {/* ─── 내 정보 패널 ─── */}
       {showMyPanel && (
         <NearMyPanel
-          bilingual={bilingual}
+          lang={lang}
           bookmarks={bookmarks}
           allPins={allPins}
           onClose={() => setShowMyPanel(false)}
@@ -770,21 +770,21 @@ export default function NearMap({ lang = 'zh' }) {
           cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}
-        title={t('taxi_mode', bilingual)}
+        title={tLang('taxi_mode', lang)}
       >
         <Car size={24} color="white" />
       </button>
 
       {/* ─── 길찾기 화면 ─── */}
       {navPoi && (
-        <NavScreen poi={navPoi} onClose={() => setNavPoi(null)} bilingual={bilingual} />
+        <NavScreen poi={navPoi} onClose={() => setNavPoi(null)} lang={lang} />
       )}
 
       {/* ─── 택시 카드 화면 ─── */}
       {taxiPoi && (
         <TaxiCardView
           poi={taxiPoi}
-          bilingual={bilingual}
+          lang={lang}
           userPos={userPos}
           onClose={() => { setTaxiPoi(null); setTaxiFromFab(false) }}
         />
@@ -794,9 +794,9 @@ export default function NearMap({ lang = 'zh' }) {
 }
 
 // ─── 확장 바텀 시트 내용 ───
-function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, onNavigate, onReserve, onTaxi, statusTick }) {
+function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNavigate, onReserve, onTaxi, statusTick }) {
   const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
-  const tags = calcTags(poi, bilingual)
+  const tags = calcTags(poi, lang)
   // statusTick이 변할 때마다 재계산 (lint: eslint-disable-next-line no-unused-expressions)
   void statusTick
   const status = getBusinessStatus(poi)
@@ -839,14 +839,14 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
           </h2>
           {isNewPoi(poi.created_at) && (
             <span style={{ fontSize: 9, background: '#FF3141', color: 'white', borderRadius: 4, padding: '1px 5px', fontWeight: 700, flexShrink: 0 }}>
-              {t('badge_new', bilingual)}
+              {tLang('badge_new', lang)}
             </span>
           )}
         </div>
 
         {/* 서브타이틀 */}
         <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 14 }}>
-          {t('subtitle_city', bilingual)} · {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
+          {tLang('subtitle_city', lang)} · {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
         </p>
 
         {/* 태그 */}
@@ -877,17 +877,17 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
               </span>
               {status === 'open' && (
                 <span style={{ fontSize: 10, background: '#DCFCE7', color: '#16A34A', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>
-                  {t('status_open', bilingual)}
+                  {tLang('status_open', lang)}
                 </span>
               )}
               {status === 'closed' && (
                 <span style={{ fontSize: 10, background: '#FEE2E2', color: '#DC2626', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>
-                  {t('status_closed', bilingual)}
+                  {tLang('status_closed', lang)}
                 </span>
               )}
               {status === 'coming' && (
                 <span style={{ fontSize: 10, background: '#FFFBEB', color: '#D97706', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>
-                  {t('status_coming', bilingual)}
+                  {tLang('status_coming', lang)}
                 </span>
               )}
             </div>
@@ -898,7 +898,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ fontSize: 14 }}>⏳</span>
               <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>
-                {t('wait_prefix', bilingual)}{poi.wait_minutes}{t('wait_suffix', bilingual)}
+                {tLang('wait_prefix', lang)}{poi.wait_minutes}{tLang('wait_suffix', lang)}
               </span>
             </div>
           )}
@@ -912,7 +912,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
             style={{ flex: 1.2, minWidth: 80 }}
           >
             <Navigation size={15} />
-            {t('navigate_here', bilingual)}
+            {tLang('navigate_here', lang)}
           </button>
           <button
             onClick={() => onTaxi(poi)}
@@ -920,7 +920,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
             style={{ flex: 1, minWidth: 72 }}
           >
             <Car size={15} />
-            {t('taxi_mode', bilingual)}
+            {tLang('taxi_mode', lang)}
           </button>
           {poi.has_reservation && (
             <button
@@ -929,7 +929,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
               style={{ flex: 1, minWidth: 60 }}
             >
               <Calendar size={15} />
-              {t('reserve', bilingual)}
+              {tLang('reserve', lang)}
             </button>
           )}
           <button
@@ -938,7 +938,7 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
             style={{ flex: 0.6, minWidth: 52 }}
           >
             <Heart size={15} fill={isBookmarked ? '#FF3B30' : 'none'} color={isBookmarked ? '#FF3B30' : 'currentColor'} />
-            {isBookmarked ? t('bookmarked', bilingual) : t('bookmark', bilingual)}
+            {isBookmarked ? tLang('bookmarked', lang) : tLang('bookmark', lang)}
           </button>
         </div>
       </div>
@@ -947,9 +947,9 @@ function ExpandedSheetContent({ poi, bilingual, bookmarks, onBookmark, onClose, 
 }
 
 // ─── 축소 상태 카드 ───
-function CompactSheetCard({ poi, bilingual, onExpand }) {
+function CompactSheetCard({ poi, lang, onExpand }) {
   const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
-  const tags = calcTags(poi, bilingual)
+  const tags = calcTags(poi, lang)
   const dist = distLabel(poi)
 
   return (
@@ -976,7 +976,7 @@ function CompactSheetCard({ poi, bilingual, onExpand }) {
           </span>
           {isNewPoi(poi.created_at) && (
             <span style={{ fontSize: 9, background: '#FF3141', color: 'white', borderRadius: 4, padding: '1px 4px', fontWeight: 700, flexShrink: 0 }}>
-              {t('badge_new', bilingual)}
+              {tLang('badge_new', lang)}
             </span>
           )}
         </div>
@@ -997,7 +997,7 @@ function CompactSheetCard({ poi, bilingual, onExpand }) {
 }
 
 // ─── 검색 오버레이 ───
-function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
+function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [recent, setRecent] = useState(() => {
@@ -1068,7 +1068,7 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder={t('search_placeholder', bilingual)}
+            placeholder={tLang('search_placeholder', lang)}
             style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: 'var(--text-primary)' }}
           />
           {query && (
@@ -1084,11 +1084,11 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
             {recent.length > 0 && (
               <div style={{ paddingTop: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{t('search_recent', bilingual)}</span>
+                  <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('search_recent', lang)}</span>
                   <button
                     onClick={() => { setRecent([]); localStorage.removeItem('near_searches') }}
                     style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
-                  >{t('search_clear', bilingual)}</button>
+                  >{tLang('search_clear', lang)}</button>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
                   {recent.map((r, i) => (
@@ -1100,7 +1100,7 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
               </div>
             )}
             <div style={{ paddingTop: 20 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>🔥 {t('search_hot', bilingual)}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>🔥 {tLang('search_hot', lang)}</div>
               {hotPins.map((poi, i) => <PoiRow key={poi.id} poi={poi} rank={i} />)}
             </div>
           </>
@@ -1111,10 +1111,10 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
         ) : (
           <div style={{ paddingTop: 32, textAlign: 'center' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>🔍</div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{t('search_no_result', bilingual)}</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{tLang('search_no_result', lang)}</div>
             <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>"{query}"</div>
             <div style={{ textAlign: 'left' }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>🔥 {t('nearby_hot', bilingual)}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>🔥 {tLang('nearby_hot', lang)}</div>
               {hotPins.slice(0, 3).map((poi, i) => <PoiRow key={poi.id} poi={poi} rank={i} />)}
             </div>
           </div>
@@ -1125,7 +1125,7 @@ function SearchOverlay({ allPins, bilingual, onSelectPoi, onClose }) {
 }
 
 // ─── 리스트 뷰 ───
-function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack }) {
+function ListView({ pins, lang, listSort, onSortChange, onSelectPoi, onBack }) {
   const SORTS = [
     { id: 'all',      key: 'sort_all' },
     { id: 'distance', key: 'sort_distance' },
@@ -1148,12 +1148,12 @@ function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack
     <div style={{ position: 'absolute', inset: 0, zIndex: 30, background: 'white', display: 'flex', flexDirection: 'column' }}>
       {/* 헤더 */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px 14px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-        <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{t('list_title', bilingual)}</span>
+        <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('list_title', lang)}</span>
         <button
           onClick={onBack}
           style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'var(--surface)', border: 'none', borderRadius: 100, padding: '7px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'var(--text-primary)' }}
         >
-          {t('list_back_map', bilingual)}
+          {tLang('list_back_map', lang)}
         </button>
       </div>
       {/* 정렬 칩 */}
@@ -1170,7 +1170,7 @@ function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack
               fontSize: 13, fontWeight: 600, cursor: 'pointer',
             }}
           >
-            {t(s.key, bilingual)}
+            {tLang(s.key, lang)}
           </button>
         ))}
       </div>
@@ -1178,7 +1178,7 @@ function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 48px' }}>
         {sorted.map((poi) => {
           const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
-          const tags = calcTags(poi, bilingual)
+          const tags = calcTags(poi, lang)
           return (
             <button
               key={poi.id}
@@ -1211,7 +1211,7 @@ function ListView({ pins, bilingual, listSort, onSortChange, onSelectPoi, onBack
 }
 
 // ─── 코스 선택 시트 ───
-function CourseSelectorSheet({ courses, bilingual, onSelectCourse, onExit }) {
+function CourseSelectorSheet({ courses, lang, onSelectCourse, onExit }) {
   return (
     <div style={{ paddingBottom: 24 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px 10px' }}>
@@ -1220,8 +1220,8 @@ function CourseSelectorSheet({ courses, bilingual, onSelectCourse, onExit }) {
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 14px' }}>
-        <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{t('course_select', bilingual)}</span>
-        <button onClick={onExit} style={{ fontSize: 13, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>{t('course_exit', bilingual)}</button>
+        <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('course_select', lang)}</span>
+        <button onClick={onExit} style={{ fontSize: 13, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>{tLang('course_exit', lang)}</button>
       </div>
       <div style={{ padding: '0 20px' }}>
         {(courses || []).map(course => (
@@ -1235,7 +1235,7 @@ function CourseSelectorSheet({ courses, bilingual, onSelectCourse, onExit }) {
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>{course.title_zh}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{course.description_zh} · {course.estimated_hours}{t('course_hours', bilingual)}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{course.description_zh} · {course.estimated_hours}{tLang('course_hours', lang)}</div>
             </div>
             <span style={{ color: 'var(--text-hint)', fontSize: 16 }}>›</span>
           </button>
@@ -1246,7 +1246,7 @@ function CourseSelectorSheet({ courses, bilingual, onSelectCourse, onExit }) {
 }
 
 // ─── 코스 정거장 리스트 ───
-function CourseStopList({ course, allPins, bilingual, onSelectPoi, onNavigatePoi, onExit }) {
+function CourseStopList({ course, allPins, lang, onSelectPoi, onNavigatePoi, onExit }) {
   if (!course) return null
   const coursePois = course.poi_ids.map(id => allPins.find(p => p.id === id)).filter(Boolean)
 
@@ -1257,16 +1257,16 @@ function CourseStopList({ course, allPins, bilingual, onSelectPoi, onNavigatePoi
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ fontSize: 8, background: '#DC2626', color: 'white', borderRadius: 4, padding: '2px 6px', fontWeight: 700 }}>
-              {t('course_mode', bilingual)}
+              {tLang('course_mode', lang)}
             </span>
             <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{course.title_zh}</span>
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-            {course.description_zh} · {course.estimated_hours}{t('course_hours', bilingual)}
+            {course.description_zh} · {course.estimated_hours}{tLang('course_hours', lang)}
           </div>
         </div>
         <button onClick={onExit} style={{ fontSize: 12, color: '#DC2626', background: 'none', border: '1px solid #FCA5A5', borderRadius: 100, padding: '4px 10px', cursor: 'pointer', fontWeight: 600 }}>
-          {t('course_exit', bilingual)}
+          {tLang('course_exit', lang)}
         </button>
       </div>
       {/* 정거장 리스트 */}
@@ -1299,7 +1299,7 @@ function CourseStopList({ course, allPins, bilingual, onSelectPoi, onNavigatePoi
                 onClick={() => onNavigatePoi(poi)}
                 style={{ flexShrink: 0, background: '#1A1A1A', color: 'white', border: 'none', borderRadius: 8, padding: '6px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}
               >
-                {t('navigate', bilingual)}
+                {tLang('navigate', lang)}
               </button>
             </div>
           )
@@ -1310,7 +1310,7 @@ function CourseStopList({ course, allPins, bilingual, onSelectPoi, onNavigatePoi
 }
 
 // ─── 예약 시트 ───
-function ReservationSheet({ poi, bilingual, onClose }) {
+function ReservationSheet({ poi, lang, onClose }) {
   const genDates = () => Array.from({ length: 7 }, (_, i) => {
     const d = new Date(); d.setDate(d.getDate() + i + 1)
     return d.toISOString().slice(0, 10)
@@ -1357,8 +1357,8 @@ function ReservationSheet({ poi, bilingual, onClose }) {
     return (
       <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
         <div style={{ fontSize: 52 }}>✅</div>
-        <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{t('reserve_success', bilingual)}</div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{poi.name_zh} · {selDate} {selTime} · {count}{t('res_people', bilingual)}</div>
+        <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('reserve_success', lang)}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{poi.name_zh} · {selDate} {selTime} · {count}{tLang('res_people', lang)}</div>
       </div>
     )
   }
@@ -1369,13 +1369,13 @@ function ReservationSheet({ poi, bilingual, onClose }) {
         <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
           <ArrowLeft size={22} weight="bold" />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{poi.name_zh} · {t('reserve', bilingual)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{poi.name_zh} · {tLang('reserve', lang)}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px 48px' }}>
         {/* 날짜 */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{t('reserve_date', bilingual)}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{tLang('reserve_date', lang)}</div>
           <div style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: 4 }}>
             {dates.map(d => {
               const dt = new Date(d); const active = selDate === d
@@ -1395,7 +1395,7 @@ function ReservationSheet({ poi, bilingual, onClose }) {
 
         {/* 시간 */}
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{t('reserve_time', bilingual)}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{tLang('reserve_time', lang)}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {timeSlots.map(slot => (
               <button key={slot} onClick={() => setSelTime(slot)} style={{
@@ -1411,17 +1411,17 @@ function ReservationSheet({ poi, bilingual, onClose }) {
 
         {/* 인원 */}
         <div style={{ marginBottom: 32 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{t('reserve_people', bilingual)}</div>
+          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{tLang('reserve_people', lang)}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <button onClick={() => setCount(c => Math.max(1, c - 1))} style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
             <span style={{ fontSize: 20, fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{count}</span>
             <button onClick={() => setCount(c => Math.min(6, c + 1))} style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
-            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{count} {t('res_people', bilingual)}</span>
+            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{count} {tLang('res_people', lang)}</span>
           </div>
         </div>
 
         <button onClick={handleConfirm} style={{ width: '100%', height: 52, borderRadius: 14, background: '#1A1A1A', color: 'white', fontSize: 16, fontWeight: 700, border: 'none', cursor: 'pointer' }}>
-          {t('reserve_confirm', bilingual)}
+          {tLang('reserve_confirm', lang)}
         </button>
       </div>
     </div>
@@ -1429,7 +1429,7 @@ function ReservationSheet({ poi, bilingual, onClose }) {
 }
 
 // ─── 내 정보 패널 (업그레이드: 예약 3탭 + near_bookings_v2 통합) ───
-function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
+function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
   const [activeSection, setActiveSection] = useState('reservations')
   const [resFilter, setResFilter] = useState('upcoming')  // 'upcoming' | 'done' | 'cancelled'
   const [localLang, setLocalLang] = useState(() => localStorage.getItem('near_lang') || 'zh')
@@ -1495,7 +1495,6 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
     return b.status === 'cancelled'
   })
 
-  const lang = bilingual ? 'zh' : 'zh'  // bilingual 모드에서도 기본 zh
   const StatusBadge = ({ status }) => {
     const MAP = {
       upcoming:  ['#DCFCE7', '#16A34A', '即将'],
@@ -1515,7 +1514,7 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
         <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
           <ArrowLeft size={22} weight="bold" />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{t('my_panel', bilingual)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('my_panel', lang)}</span>
       </div>
 
       {/* 섹션 탭 */}
@@ -1528,7 +1527,7 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
             borderBottom: activeSection === s.id ? '2px solid #1A1A1A' : '2px solid transparent',
             transition: 'all 0.2s',
           }}>
-            {t(s.key, bilingual)}
+            {tLang(s.key, lang)}
           </button>
         ))}
       </div>
@@ -1601,7 +1600,7 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
           bookmarkedPois.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '48px 0' }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>🔖</div>
-              <div style={{ fontSize: 14, color: 'var(--text-muted)' }}>{t('bookmark_empty', bilingual)}</div>
+              <div style={{ fontSize: 14, color: 'var(--text-muted)' }}>{tLang('bookmark_empty', lang)}</div>
             </div>
           ) : (
             <div style={{ paddingTop: 12 }}>
@@ -1646,16 +1645,16 @@ function NearMyPanel({ bilingual, bookmarks, allPins, onClose, onSelectPoi }) {
 }
 
 // ─── Rule 5: 附近热门 폴백 ───
-function NearbyHotFallback({ pins, bilingual, onSelect }) {
+function NearbyHotFallback({ pins, lang, onSelect }) {
   return (
     <div style={{ padding: '4px 16px 20px' }}>
       <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 10, letterSpacing: '0.02em' }}>
-        🔥 {t('nearby_hot', bilingual)}
+        🔥 {tLang('nearby_hot', lang)}
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {pins.map(poi => {
           const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
-          const tags = calcTags(poi, bilingual)
+          const tags = calcTags(poi, lang)
           return (
             <button
               key={poi.id}

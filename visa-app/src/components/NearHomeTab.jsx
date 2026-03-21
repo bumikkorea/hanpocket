@@ -7,9 +7,11 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Search, X, ChevronRight, Heart, Scissors, Coffee,
   ShoppingBag, MoreHorizontal, PlaneLanding, PlaneTakeoff,
   ArrowLeft, Route, Languages, Palette, Droplets, Building2,
-  Sparkles, UtensilsCrossed, Star } from 'lucide-react'
+  Sparkles, UtensilsCrossed, Star, ArrowRight } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
 import { supabase } from '../lib/supabase.js'
+import { EDITORIALS } from '../data/editorials.js'
+import EditorialDetailPage from './EditorialDetailPage.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
@@ -51,11 +53,11 @@ const TRANSLATE_ITEMS = [
   { id: 'basic-korean', emoji: '💬', label: { ko: '기본 한국어 20문장', zh: '基础韩语20句',     en: '20 Korean Phrases' },     sub: 'basic-korean' },
 ]
 
-// ─── 히어로 배너 슬라이드 ───
+// ─── 히어로 배너 슬라이드 (2장: 팝업 배너 + 한남 에디토리얼) ───
+const HANNAM_ED = EDITORIALS.find(e => e.id === 'hannam')
 const BANNER_SLIDES = [
-  { id: 'b1', gradient: 'linear-gradient(135deg, #C4725A, #E8956F)', titleKey: 'home.banner.title', descKey: 'home.banner.desc' },
-  { id: 'b2', gradient: 'linear-gradient(135deg, #007AFF, #5AC8FA)', title: { ko: '환전 필요 없이 제로페이', zh: '无需换钱，Zero Pay', en: 'Pay with Zero Pay' }, desc: { ko: '알리페이·위챗페이 그대로 사용', zh: '支付宝·微信支付 直接使用', en: 'Alipay & WeChat Pay accepted' } },
-  { id: 'b3', gradient: 'linear-gradient(135deg, #AF52DE, #FF2D55)', title: { ko: '서울 팝업스토어 탐방', zh: '首尔快闪店探索', en: 'Seoul Pop-up Stores' }, desc: { ko: '성수·홍대·강남 최신 팝업 정보', zh: '圣水·弘大·江南 最新快闪情报', en: 'Seongsu · Hongdae · Gangnam' } },
+  { id: 'popup', type: 'promo', gradient: 'linear-gradient(135deg, #C4725A, #E8956F)', titleKey: 'home.banner.title', descKey: 'home.banner.desc', textDark: false },
+  { id: 'hannam', type: 'editorial', editorialId: 'hannam', gradient: HANNAM_ED.gradient, number: HANNAM_ED.number, title: HANNAM_ED.title, oneLiner: HANNAM_ED.oneLiner, textDark: HANNAM_ED.textDark },
 ]
 
 // ─── 카테고리 그리드 (10개: Taxi/KTX/SIM 제거, Nail/Cosmetics/Hotel 추가) ───
@@ -203,7 +205,7 @@ function BottomSheet({ open, onClose, titleLabel, items, lang, t, setSubPage, se
 }
 
 // ─── 추천 페이지 (더보기 풀스크린) ───
-function DiscoverPage({ lang, t, setSubPage, setTab, onClose }) {
+function DiscoverPage({ lang, t, setSubPage, setTab, onClose, onEditorialClick }) {
   const [filterCat, setFilterCat] = useState(null)
   const [filterArea, setFilterArea] = useState(null)
   const [shops, setShops] = useState([])
@@ -296,7 +298,65 @@ function DiscoverPage({ lang, t, setSubPage, setTab, onClose }) {
       </div>
 
       {/* 매장 리스트 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px 24px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 0 24px' }}>
+
+        {/* ─── 서울 에디토리얼 섹션 ─── */}
+        <div style={{ padding: '16px 16px 0' }}>
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              {L(lang, { ko: '서울 에디토리얼', zh: '首尔编辑部', en: 'Seoul Editorial' })}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
+              {L(lang, { ko: '서울 10개 지역 깊이 읽기', zh: '首尔10个地区深度解读', en: 'A deeper read on 10 Seoul districts' })}
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+            {EDITORIALS.map(ed => (
+              <button
+                key={ed.id}
+                onClick={() => onEditorialClick && onEditorialClick(ed.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 0, height: 80,
+                  borderRadius: 12, overflow: 'hidden',
+                  background: ed.gradient, border: 'none', cursor: 'pointer',
+                  position: 'relative', textAlign: 'left', padding: 0,
+                }}
+                onTouchStart={e => e.currentTarget.style.opacity = '0.85'}
+                onTouchEnd={e => e.currentTarget.style.opacity = '1'}
+              >
+                {/* 큰 번호 장식 */}
+                <div style={{
+                  position: 'absolute', left: 16, top: '50%', transform: 'translateY(-55%)',
+                  fontSize: 52, fontWeight: 900, lineHeight: 1,
+                  color: ed.textDark ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.12)',
+                  fontFamily: 'Inter, sans-serif', userSelect: 'none',
+                }} />
+                <div style={{ padding: '0 50px 0 20px', flex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: ed.textDark ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', marginBottom: 3 }}>
+                    {ed.number}
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: ed.textDark ? '#111' : 'white', lineHeight: 1.3, marginBottom: 3 }}>
+                    {L(lang, ed.title)}
+                  </div>
+                  <div style={{ fontSize: 11, color: ed.textDark ? 'rgba(0,0,0,0.45)' : 'rgba(255,255,255,0.7)', fontStyle: 'italic', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {L(lang, ed.subtitle)}
+                  </div>
+                </div>
+                <div style={{ position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)', width: 28, height: 28, borderRadius: '50%', background: ed.textDark ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ArrowRight size={13} color={ed.textDark ? '#333' : 'white'} />
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* 구분선 */}
+          <div style={{ borderTop: '1px solid var(--border)', marginBottom: 16 }} />
+          <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>
+            {L(lang, { ko: '매장 탐색', zh: '门店发现', en: 'Shops' })}
+          </div>
+        </div>
+
+        <div style={{ padding: '0 16px' }}>
         {loading ? (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {Array.from({ length: 6 }).map((_, i) => (
@@ -368,6 +428,7 @@ function DiscoverPage({ lang, t, setSubPage, setTab, onClose }) {
             })}
           </div>
         )}
+        </div>{/* /padding wrapper */}
       </div>
     </div>
   )
@@ -381,6 +442,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   const [departureOpen, setDepartureOpen] = useState(false)
   const [translateOpen, setTranslateOpen] = useState(false)
   const [showMore, setShowMore] = useState(false)
+  const [editorialId, setEditorialId] = useState(null)  // 에디토리얼 상세 페이지
 
   // ─── 카테고리 필터 (피드) ───
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -447,12 +509,20 @@ export default function NearHomeTab({ setTab, setSubPage }) {
     if (action === 'translate-sheet') { setTranslateOpen(true); return }
   }
 
+  const handleBannerClick = (slide) => {
+    if (slide.type === 'editorial') {
+      setShowMore(true)
+      setEditorialId(slide.editorialId)
+    }
+  }
+
   // 피드 필터링
   const filteredFeed = selectedCategory
     ? FEED_DATA.filter(item => item.category === selectedCategory)
     : FEED_DATA
 
   const currentSlide = BANNER_SLIDES[bannerIdx]
+  const currentEditorial = editorialId ? EDITORIALS.find(e => e.id === editorialId) : null
 
   return (
     <div style={{ background: 'white', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif', paddingBottom: 24 }}>
@@ -510,23 +580,60 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         })}
       </div>
 
-      {/* ─── 3. 히어로 배너 캐러셀 ─── */}
+      {/* ─── 3. 히어로 배너 캐러셀 (180px) ─── */}
       {!showSearch && (
         <div style={{ margin: '0 20px 20px', position: 'relative' }}>
-          <div style={{
-            height: 140, borderRadius: 'var(--radius-card)', background: currentSlide.gradient,
-            padding: '20px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-            overflow: 'hidden', position: 'relative', transition: 'background 0.6s ease',
-          }}>
-            <div style={{ position: 'absolute', right: -20, top: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
-            <div style={{ position: 'absolute', right: 60, top: 10, width: 50, height: 50, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
-            <div style={{ fontSize: 20, fontWeight: 700, color: 'white', lineHeight: 1.3, position: 'relative' }}>
-              {currentSlide.titleKey ? t(currentSlide.titleKey) : L(lang, currentSlide.title)}
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 4, position: 'relative' }}>
-              {currentSlide.descKey ? t(currentSlide.descKey) : L(lang, currentSlide.desc)}
-            </div>
+          <div
+            onClick={() => handleBannerClick(currentSlide)}
+            style={{
+              height: 180, borderRadius: 16, background: currentSlide.gradient,
+              padding: '20px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+              overflow: 'hidden', position: 'relative',
+              cursor: currentSlide.type === 'editorial' ? 'pointer' : 'default',
+            }}
+          >
+            {currentSlide.type === 'promo' ? (
+              <>
+                <div style={{ position: 'absolute', right: -20, top: -20, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
+                <div style={{ position: 'absolute', right: 70, top: 10, width: 60, height: 60, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
+                <div style={{ fontSize: 21, fontWeight: 700, color: 'white', lineHeight: 1.3, position: 'relative' }}>
+                  {t(currentSlide.titleKey)}
+                </div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 5, position: 'relative' }}>
+                  {t(currentSlide.descKey)}
+                </div>
+              </>
+            ) : (
+              <>
+                {/* 에디토리얼 카드 디자인 */}
+                <div style={{
+                  position: 'absolute', left: 20, top: '50%', transform: 'translateY(-60%)',
+                  fontSize: 80, fontWeight: 900, lineHeight: 1,
+                  color: currentSlide.textDark ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.12)',
+                  fontFamily: 'Inter, sans-serif', userSelect: 'none',
+                }}>
+                  {currentSlide.number}
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: currentSlide.textDark ? 'rgba(0,0,0,0.4)' : 'rgba(255,255,255,0.6)', letterSpacing: '0.12em', marginBottom: 6, textTransform: 'uppercase' }}>
+                    SEOUL EDITORIAL
+                  </div>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: currentSlide.textDark ? '#111' : 'white', lineHeight: 1.35, marginBottom: 6, letterSpacing: '-0.01em' }}>
+                    {L(lang, currentSlide.title)}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ fontSize: 12, color: currentSlide.textDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.75)', fontStyle: 'italic', flex: 1, paddingRight: 12 }}>
+                      {L(lang, currentSlide.oneLiner)}
+                    </div>
+                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: currentSlide.textDark ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <ArrowRight size={14} color={currentSlide.textDark ? '#333' : 'white'} />
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
+          {/* 인디케이터 */}
           <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 8 }}>
             {BANNER_SLIDES.map((_, i) => (
               <button key={i} onClick={() => setBannerIdx(i)}
@@ -695,12 +802,23 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       />
 
       {/* ─── 더보기 → 추천 페이지 ─── */}
+      {/* ─── 더보기 → 추천 페이지 ─── */}
       {showMore && (
         <DiscoverPage
           lang={lang} t={t}
           setSubPage={(sub) => { setSubPage(sub); setShowMore(false) }}
           setTab={(tab) => { setTab(tab); setShowMore(false) }}
-          onClose={() => setShowMore(false)}
+          onClose={() => { setShowMore(false); setEditorialId(null) }}
+          onEditorialClick={(id) => setEditorialId(id)}
+        />
+      )}
+
+      {/* ─── 에디토리얼 상세 페이지 ─── */}
+      {currentEditorial && (
+        <EditorialDetailPage
+          editorial={currentEditorial}
+          lang={lang}
+          onBack={() => setEditorialId(null)}
         />
       )}
     </div>

@@ -3,7 +3,7 @@
  * 프로필 + 여행 목적 태그 + 퀵 액션 3개 + 활동 내역 카드 + 메뉴 리스트
  */
 import { useState, useEffect } from 'react'
-import { Calendar, Heart, Car, Globe, Bell, HelpCircle, ChevronRight, X, Check, Gift, MapPin, MessageSquare, Footprints, Camera, Music, ShoppingBag, Briefcase, UtensilsCrossed, Pencil } from 'lucide-react'
+import { Calendar, Heart, Car, Bell, HelpCircle, ChevronRight, X, Check, Gift, MapPin, MessageSquare, Footprints, Camera, Music, ShoppingBag, Briefcase, UtensilsCrossed, Pencil } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
 
 function L(lang, d) { return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
@@ -12,7 +12,6 @@ const MENU_ITEMS = [
   { id: 'reservations', icon: Calendar,    bg: '#FFF0E8', color: '#C4725A', labelKey: 'my.orders',       action: 'booking-my'        },
   { id: 'favorites',    icon: Heart,       bg: '#FFF8E1', color: '#FF9500', labelKey: 'my.wishlist',     action: 'sub:bookmarks'     },
   { id: 'taxi',         icon: Car,         bg: '#E3F2FD', color: '#2196F3', labelKey: 'my.taxiHistory',  action: 'sub:taxi-history'  },
-  { id: 'language',     icon: Globe,       bg: '#F3E5F5', color: '#9C27B0', labelKey: 'my.language',     action: 'sub:language'      },
   { id: 'notifications',icon: Bell,        bg: '#E8F5E9', color: '#4CAF50', labelKey: 'my.notifications',action: 'sub:notifications' },
   { id: 'help',         icon: HelpCircle,  bg: '#F7F7F7', color: '#999999', labelKey: 'my.help',         action: 'sub:help'          },
 ]

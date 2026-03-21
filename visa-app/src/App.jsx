@@ -2218,7 +2218,7 @@ function AppInner() {
       {adminMode && <div className="h-[36px]" />}
 
       {/* Content — full width, no side padding (tabs handle their own padding) */}
-      <div className="pt-0 pb-2 tab-content-enter" key={`${tab}-${subPage || ''}`}>
+      <div className="pt-0 pb-2" key={`${tab}-${subPage || ''}`}>
         {/* Push notification banner — disabled for now */}
         {/* Service grid - pockets.js 데이터 기반 */}
         {tab==='service' && !subPage && (
@@ -2244,193 +2244,193 @@ function AppInner() {
         {/* Sub-pages from explore/tools — wrapped with px-4 since parent has no padding */}
         <div className="px-4">
         {subPage==='travel' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <TravelTab lang={lang} adminView={adminView} setTab={(t) => setSubPage(t)} />
           </Suspense>
         )}
         {subPage==='food' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <FoodTab lang={lang} adminView={adminView} setTab={(t) => setSubPage(t)} deepLink={deepLink?.tab === 'food' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
           </Suspense>
         )}
         {subPage==='shopping' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <ShoppingTab lang={lang} adminView={adminView} setTab={(t) => setSubPage(t)} deepLink={deepLink?.tab === 'shopping' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
           </Suspense>
         )}
         {subPage==='hallyu' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <HallyuTab lang={lang} adminView={adminView} setTab={(t) => setSubPage(t)} />
           </Suspense>
         )}
         {subPage==='learn' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <EducationTab lang={lang} />
           </Suspense>
         )}
         {subPage==='life' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <LifeToolsTab lang={lang} setTab={(t) => setSubPage(t)} />
           </Suspense>
         )}
         {subPage==='medical' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <MedicalTab lang={lang} />
           </Suspense>
         )}
         {subPage==='fitness' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <FitnessTab lang={lang} />
           </Suspense>
         )}
         {subPage==='community' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <CommunityTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='translator' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <TranslatorTab lang={lang} />
           </Suspense>
         )}
         {subPage==='artranslate' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <ARTranslateTab lang={lang} />
           </Suspense>
         )}
         {subPage==='sos' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <SOSTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='finance' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <FinanceTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='wallet' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <DigitalWalletTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='visaalert' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <VisaAlertTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='jobs' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <JobsTab lang={lang} />
           </Suspense>
         )}
         {subPage==='housing' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <HousingTab lang={lang} />
           </Suspense>
         )}
         {subPage==='resume' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <ResumeTab lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='pet' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <PetTab lang={lang} />
           </Suspense>
         )}
         {subPage==='wishlist' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <WishlistPage lang={lang} onBack={() => setSubPage(null)} />
           </Suspense>
         )}
         {subPage==='taxrefund' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <TaxRefundChecker lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='departure' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <DepartureCountdown lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='heatmap' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <VisitorHeatmapFull lang={lang} />
           </Suspense>
         )}
         {subPage==='passport-scan' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <PassportScan lang={lang} onComplete={(data) => { setProfile(prev => ({ ...prev, ...data })); setSubPage(null) }} onSkip={() => setSubPage(null)} />
           </Suspense>
         )}
         {subPage==='departure-shopping' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <DepartureShoppingRoute lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='flight-info' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <FlightInfoCard lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
           </Suspense>
         )}
         {subPage==='taxi' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <TaxiCalculator lang={lang} />
           </Suspense>
         )}
         {subPage==='subway' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <SubwayArrival lang={lang} />
           </Suspense>
         )}
         {subPage==='performance' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <PerformanceSection lang={lang} />
           </Suspense>
         )}
         {subPage==='show-korean' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <ShowKorean lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
           </Suspense>
         )}
         {subPage==='near-map' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <NearMap lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
           </Suspense>
         )}
         {subPage==='korean-culture' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <KoreanCulture lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
           </Suspense>
         )}
 
         {/* C 섹션 실용 가이드 (#51~#70) */}
-        {subPage === 'currency' && <Suspense fallback={<LoadingSpinner />}><CurrencyCalc lang={lang} /></Suspense>}
-        {subPage === 'emergency-numbers' && <Suspense fallback={<LoadingSpinner />}><EmergencyNumbers lang={lang} /></Suspense>}
-        {subPage === 'basic-korean' && <Suspense fallback={<LoadingSpinner />}><BasicKorean lang={lang} /></Suspense>}
-        {subPage === 'transit-card' && <Suspense fallback={<LoadingSpinner />}><TransitCardGuide lang={lang} /></Suspense>}
-        {subPage === 'voltage' && <Suspense fallback={<LoadingSpinner />}><VoltageGuide lang={lang} /></Suspense>}
-        {subPage === 'tax-free' && <Suspense fallback={<LoadingSpinner />}><TaxFreeGuide lang={lang} /></Suspense>}
-        {subPage === 'etiquette' && <Suspense fallback={<LoadingSpinner />}><EtiquetteGuide lang={lang} /></Suspense>}
-        {subPage === 'sim-guide' && <Suspense fallback={<LoadingSpinner />}><SimGuide lang={lang} /></Suspense>}
-        {subPage === 'price-guide' && <Suspense fallback={<LoadingSpinner />}><PriceGuide lang={lang} /></Suspense>}
-        {subPage === 'allergy-card' && <Suspense fallback={<LoadingSpinner />}><AllergyCard lang={lang} /></Suspense>}
-        {subPage === 'lost-item' && <Suspense fallback={<LoadingSpinner />}><LostItemGuide lang={lang} /></Suspense>}
-        {subPage === 'holiday' && <Suspense fallback={<LoadingSpinner />}><HolidayCalendar lang={lang} /></Suspense>}
-        {subPage === 'wifi' && <Suspense fallback={<LoadingSpinner />}><WifiHotspot lang={lang} /></Suspense>}
-        {subPage === 'weather-recommend' && <Suspense fallback={<LoadingSpinner />}><WeatherRecommend lang={lang} /></Suspense>}
-        {subPage === 'discover-pass' && <Suspense fallback={<LoadingSpinner />}><DiscoverSeoulPass lang={lang} /></Suspense>}
-        {subPage === 'hallyu-exp' && <Suspense fallback={<LoadingSpinner />}><HallyuExperiences lang={lang} /></Suspense>}
-        {subPage === 'hiking' && <Suspense fallback={<LoadingSpinner />}><HikingCourses lang={lang} /></Suspense>}
-        {subPage === 'today-events' && <Suspense fallback={<LoadingSpinner />}><TodayEvents lang={lang} /></Suspense>}
-        {subPage === 'hallyu-course' && <Suspense fallback={<LoadingSpinner />}><HallyuCourseMap lang={lang} /></Suspense>}
-        {subPage === 'taste-seoul' && <Suspense fallback={<LoadingSpinner />}><TasteOfSeoul lang={lang} /></Suspense>}
-        {subPage === 'medical-tourism' && <Suspense fallback={<LoadingSpinner />}><MedicalTourism lang={lang} /></Suspense>}
-        {subPage === 'seoul-stay' && <Suspense fallback={<LoadingSpinner />}><SeoulStay lang={lang} /></Suspense>}
-        {subPage === 'culture-lounge' && <Suspense fallback={<LoadingSpinner />}><CultureLounge lang={lang} /></Suspense>}
-        {subPage === 'sos-language' && <Suspense fallback={<LoadingSpinner />}><SOSLanguageCard lang={lang} /></Suspense>}
-        {subPage === 'immigration-wait' && <Suspense fallback={<LoadingSpinner />}><ImmigrationWaitTime lang={lang} /></Suspense>}
-        {subPage === 'arrival-card' && <Suspense fallback={<LoadingSpinner />}><ArrivalCardGuide lang={lang} onClose={() => setSubPage(null)} /></Suspense>}
+        {subPage === 'currency' && <Suspense fallback={<div />}><CurrencyCalc lang={lang} /></Suspense>}
+        {subPage === 'emergency-numbers' && <Suspense fallback={<div />}><EmergencyNumbers lang={lang} /></Suspense>}
+        {subPage === 'basic-korean' && <Suspense fallback={<div />}><BasicKorean lang={lang} /></Suspense>}
+        {subPage === 'transit-card' && <Suspense fallback={<div />}><TransitCardGuide lang={lang} /></Suspense>}
+        {subPage === 'voltage' && <Suspense fallback={<div />}><VoltageGuide lang={lang} /></Suspense>}
+        {subPage === 'tax-free' && <Suspense fallback={<div />}><TaxFreeGuide lang={lang} /></Suspense>}
+        {subPage === 'etiquette' && <Suspense fallback={<div />}><EtiquetteGuide lang={lang} /></Suspense>}
+        {subPage === 'sim-guide' && <Suspense fallback={<div />}><SimGuide lang={lang} /></Suspense>}
+        {subPage === 'price-guide' && <Suspense fallback={<div />}><PriceGuide lang={lang} /></Suspense>}
+        {subPage === 'allergy-card' && <Suspense fallback={<div />}><AllergyCard lang={lang} /></Suspense>}
+        {subPage === 'lost-item' && <Suspense fallback={<div />}><LostItemGuide lang={lang} /></Suspense>}
+        {subPage === 'holiday' && <Suspense fallback={<div />}><HolidayCalendar lang={lang} /></Suspense>}
+        {subPage === 'wifi' && <Suspense fallback={<div />}><WifiHotspot lang={lang} /></Suspense>}
+        {subPage === 'weather-recommend' && <Suspense fallback={<div />}><WeatherRecommend lang={lang} /></Suspense>}
+        {subPage === 'discover-pass' && <Suspense fallback={<div />}><DiscoverSeoulPass lang={lang} /></Suspense>}
+        {subPage === 'hallyu-exp' && <Suspense fallback={<div />}><HallyuExperiences lang={lang} /></Suspense>}
+        {subPage === 'hiking' && <Suspense fallback={<div />}><HikingCourses lang={lang} /></Suspense>}
+        {subPage === 'today-events' && <Suspense fallback={<div />}><TodayEvents lang={lang} /></Suspense>}
+        {subPage === 'hallyu-course' && <Suspense fallback={<div />}><HallyuCourseMap lang={lang} /></Suspense>}
+        {subPage === 'taste-seoul' && <Suspense fallback={<div />}><TasteOfSeoul lang={lang} /></Suspense>}
+        {subPage === 'medical-tourism' && <Suspense fallback={<div />}><MedicalTourism lang={lang} /></Suspense>}
+        {subPage === 'seoul-stay' && <Suspense fallback={<div />}><SeoulStay lang={lang} /></Suspense>}
+        {subPage === 'culture-lounge' && <Suspense fallback={<div />}><CultureLounge lang={lang} /></Suspense>}
+        {subPage === 'sos-language' && <Suspense fallback={<div />}><SOSLanguageCard lang={lang} /></Suspense>}
+        {subPage === 'immigration-wait' && <Suspense fallback={<div />}><ImmigrationWaitTime lang={lang} /></Suspense>}
+        {subPage === 'arrival-card' && <Suspense fallback={<div />}><ArrivalCardGuide lang={lang} onClose={() => setSubPage(null)} /></Suspense>}
 
         {/* Pocket catch-all — 전용 탭이 없는 pocket ID는 PocketContent로 렌더링 */}
         {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet','wishlist','taxrefund','departure','heatmap','passport-scan','departure-shopping','taxi','subway','performance','flight-info','show-korean','near-map','korean-culture','immigration-wait','arrival-card'].includes(subPage) && (
@@ -2440,54 +2440,54 @@ function AppInner() {
 
         {tab==='course' && !subPage && (
           <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
-            <Suspense fallback={<LoadingSpinner />}>
+            <Suspense fallback={<div />}>
               <CourseTab lang={lang} adminView={adminView} deepLink={deepLink?.tab === 'course' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
             </Suspense>
           </div>
         )}
         {tab==='search' && !subPage && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <SearchTab lang={lang} onNavigate={(target) => { setTab('service'); setSubPage(target) }} />
           </Suspense>
         )}
         {tab==='korean' && !subPage && (
           <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
-            <Suspense fallback={<LoadingSpinner />}>
+            <Suspense fallback={<div />}>
               <KoreanTab lang={lang} />
             </Suspense>
           </div>
         )}
         {tab==='tools' && !subPage && (
           <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
-            <Suspense fallback={<LoadingSpinner />}>
+            <Suspense fallback={<div />}>
               <ToolsTab lang={lang} profile={safeProfile} />
             </Suspense>
           </div>
         )}
         {tab==='near-home' && !subPage && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <NearHomeTab setTab={handleTabChange} setSubPage={setSubPage} />
           </Suspense>
         )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRateData} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet','taxrefund','departure','heatmap','wishlist','passport-scan','departure-shopping','flight-info','show-korean','near-map','korean-culture'].includes(t)) { setTab('home'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
         {(tab==='popup' || tab==='near-map') && !subPage && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <NearMap lang={lang} onBack={() => { setTab('home') }} />
           </Suspense>
         )}
         {tab==='discover' && !subPage && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <DiscoverTab lang={lang} setTab={handleTabChange} setSubPage={setSubPage} />
           </Suspense>
         )}
         {tab==='more' && !subPage && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <MorePage lang={lang} setTab={handleTabChange} setSubPage={setSubPage} />
           </Suspense>
         )}
         {tab==='my' && !subPage && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <MyTab setTab={handleTabChange} setSubPage={(sp) => {
               if (sp === 'reservation') { setSubPage('my-reservations') }
               else { setSubPage(sp) }
@@ -2495,17 +2495,17 @@ function AppInner() {
           </Suspense>
         )}
         {tab==='booking' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <BookingView lang={lang} onGoToMyTab={() => handleTabChange('my')} onGoToMapTab={() => handleTabChange('near-map')} />
           </Suspense>
         )}
         {tab==='reservation' && !subPage && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <ReservationTab lang={lang} adminView={adminView} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='my-reservations' && (
-          <Suspense fallback={<LoadingSpinner />}>
+          <Suspense fallback={<div />}>
             <ReservationTab lang={lang} adminView={adminView} profile={safeProfile} onBack={() => { setSubPage(null); setTab('my') }} />
           </Suspense>
         )}

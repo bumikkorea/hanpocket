@@ -668,17 +668,9 @@ export default function NearMap() {
           />
         ) : (
           <>
-            {/* 핸들바 + 我的 버튼 */}
-            <div style={{ display: 'flex', alignItems: 'center', padding: '10px 16px 6px' }}>
-              <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-                <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--text-hint)' }} />
-              </div>
-              <button
-                onClick={() => setShowMyPanel(true)}
-                style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0' }}
-              >
-                {tLang('my_panel', lang)} ›
-              </button>
+            {/* 핸들바 */}
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 16px 6px' }}>
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--text-hint)' }} />
             </div>
 
             {pinsError ? (
@@ -773,30 +765,6 @@ export default function NearMap() {
         />
       )}
 
-      {/* ─── FAB: 택시 모드 ─── */}
-      <button
-        onClick={() => {
-          setTaxiFromFab(true)
-          setShowSearch(true)
-        }}
-        style={{
-          position: 'absolute',
-          right: 16,
-          bottom: 140,
-          zIndex: 25,
-          width: 52, height: 52,
-          borderRadius: '50%',
-          background: '#F9A825',
-          border: 'none',
-          boxShadow: '0 4px 16px rgba(249,168,37,0.5)',
-          cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}
-        title={tLang('taxi_mode', lang)}
-      >
-        <Car size={24} color="white" />
-      </button>
-
       {/* ─── 길찾기 화면 ─── */}
       {navPoi && (
         <NavScreen poi={navPoi} onClose={() => setNavPoi(null)} lang={lang} />
@@ -828,7 +796,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
   const handleNavigate = () => onNavigate(poi)
 
   return (
-    <div style={{ paddingBottom: 32 }}>
+    <div style={{ paddingBottom: 16 }}>
       {/* 핸들바 + 닫기 */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '10px 20px 6px' }}>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
@@ -1109,7 +1077,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
       </div>
 
       {/* 결과 영역 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 48px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 16px' }}>
         {query.trim() === '' ? (
           <>
             {recent.length > 0 && (
@@ -1206,7 +1174,7 @@ function ListView({ pins, lang, listSort, onSortChange, onSelectPoi, onBack }) {
         ))}
       </div>
       {/* 카드 리스트 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 48px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 16px' }}>
         {sorted.map((poi) => {
           const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
           const tags = calcTags(poi, lang)
@@ -1301,7 +1269,7 @@ function CourseStopList({ course, allPins, lang, onSelectPoi, onNavigatePoi, onE
         </button>
       </div>
       {/* 정거장 리스트 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px 24px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px 16px' }}>
         {coursePois.map((poi, idx) => {
           const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
           return (
@@ -1403,7 +1371,7 @@ function ReservationSheet({ poi, lang, onClose }) {
         <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{poi.name_zh} · {tLang('reserve', lang)}</span>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px 48px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px 16px' }}>
         {/* 날짜 */}
         <div style={{ marginBottom: 24 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{tLang('reserve_date', lang)}</div>
@@ -1564,7 +1532,7 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
       </div>
 
       {/* 내용 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 48px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px' }}>
 
         {activeSection === 'reservations' && (
           <>

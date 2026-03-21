@@ -1,122 +1,73 @@
 import { useState } from 'react'
-import { MapPin, Clock, DollarSign } from 'lucide-react'
-import TaxiAddressInput from '../components/TaxiAddressInput'
-import TaxiDriverCard from '../components/TaxiDriverCard'
+import { ArrowLeft } from 'lucide-react'
+import TaxiModeCard from '../components/TaxiModeCard'
 
-export default function TaxiPage({ hotel, language, L }) {
-  const [destination, setDestination] = useState('')
-  const [showDriverCard, setShowDriverCard] = useState(false)
+const L = (obj) => {
+  if (!obj) return ''
+  if (typeof obj === 'string') return obj
+  return obj.zh || obj.ko || obj.en || ''
+}
 
-  // Simple distance calculation (mock)
-  const calculateFare = (dest) => {
-    const distance = Math.random() * 10 + 2 // 2-12km
-    const baseFare = 4800
-    const perKmFare = 2000
-    const fare = baseFare + Math.floor(distance * perKmFare)
-    return { distance: Math.round(distance * 10) / 10, fare, eta: Math.round(distance * 2 + 3) }
+export default function TaxiPage({ hotel, onBack }) {
+  const [showTaxiMode, setShowTaxiMode] = useState(false)
+
+  if (showTaxiMode) {
+    return (
+      <TaxiModeCard hotel={hotel} />
+    )
   }
-
-  const handleRequest = () => {
-    if (destination.trim()) {
-      setShowDriverCard(true)
-    }
-  }
-
-  const fareInfo = destination ? calculateFare(destination) : null
 
   return (
-    <div className="h-full flex flex-col bg-gray-50">
-      {/* Departure Address (Fixed) */}
-      <div className="bg-white px-4 py-4 border-b border-gray-100">
-        <div className="text-xs text-gray-500 mb-1">출발지</div>
-        <div className="flex items-center gap-2">
-          <MapPin size={16} className="text-[#F9A825]" />
-          <div className="font-semibold text-sm text-gray-900">{L(language, hotel.name)}</div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 px-4 py-6 overflow-y-auto">
-        <div className="space-y-4">
-          {/* Destination Input */}
-          <div>
-            <label className="text-xs text-gray-500 mb-2 block">목적지</label>
-            <TaxiAddressInput
-              value={destination}
-              onChange={setDestination}
-              placeholder={L(language, {
-                ko: '목적지를 입력하세요',
-                zh: '输入目的地',
-                en: 'Enter destination',
-              })}
-              language={language}
-              L={L}
-            />
-          </div>
-
-          {/* Fare Estimate */}
-          {fareInfo && (
-            <div className="bg-white rounded-xl p-4 space-y-3">
-              <h3 className="font-semibold text-gray-900">
-                {L(language, { ko: '요금 예상', zh: '费用估计', en: 'Fare Estimate' })}
-              </h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">거리</span>
-                  <span className="font-semibold">{fareInfo.distance} km</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">예상 시간</span>
-                  <span className="font-semibold">{fareInfo.eta}분</span>
-                </div>
-                <div className="border-t border-gray-200 pt-2 flex justify-between">
-                  <span className="font-semibold">예상 요금</span>
-                  <span className="font-bold text-[#F9A825] text-lg">₩{fareInfo.fare.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Driver Card Preview */}
-          {showDriverCard && fareInfo && (
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-900">
-                {L(language, { ko: '배정된 기사', zh: '司机信息', en: 'Driver Info' })}
-              </h3>
-              <TaxiDriverCard
-                driver={{
-                  name: 'Kim Min Ho',
-                  rating: 4.8,
-                  plate: '56가7890',
-                  phone: '010-1234-5678',
-                }}
-                destination={destination}
-                language={language}
-                L={L}
-              />
-            </div>
-          )}
-
-          {/* Info */}
-          <div className="bg-blue-50 rounded-lg p-4 text-xs text-blue-900">
-            <p className="font-semibold mb-2">팁:</p>
-            <p>• {L(language, { ko: '호텔에서 기사님이 5분 이내에 도착합니다', zh: '司机将在5分钟内到达酒店', en: 'Driver arrives in 5 min' })}</p>
-            <p>• {L(language, { ko: '카드 또는 현금 결제 가능', zh: '支持刷卡或现金支付', en: 'Card or cash accepted' })}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Call Button */}
-      <div className="bg-white border-t border-gray-100 px-4 py-4">
+    <div className="flex flex-col h-screen">
+      {/* 헤더 */}
+      <div className="px-5 py-4 border-b border-[var(--border)]">
         <button
-          onClick={handleRequest}
-          disabled={!destination.trim()}
-          className="w-full bg-[#F9A825] text-white font-bold py-3 rounded-xl hover:bg-[#E89412] disabled:bg-gray-300 active:scale-95 transition-all"
+          onClick={onBack}
+          className="flex items-center gap-2 text-sm font-medium text-[var(--primary)] mb-4"
         >
-          {showDriverCard
-            ? L(language, { ko: '호출 중...', zh: '呼叫中...', en: 'Calling...' })
-            : L(language, { ko: '택시 호출', zh: '呼叫出租车', en: 'Call Taxi' })}
+          <ArrowLeft size={20} />
+          {L({ ko: '돌아가기', zh: '返回', en: 'Back' })}
         </button>
+        <h1 className="text-2xl font-bold">{L({ ko: '택시 호출', zh: '出租车模式', en: 'Taxi' })}</h1>
+      </div>
+
+      {/* 메인 콘텐츠 */}
+      <div className="flex-1 flex flex-col items-center justify-center px-[var(--spacing-xl)] space-y-[var(--spacing-2xl)]">
+        {/* 설명 */}
+        <div className="text-center space-y-[var(--spacing-md)]">
+          <p className="text-lg font-semibold text-[var(--text-primary)]">
+            {L({ ko: '택시 기사에게 주소 보여주기', zh: '向司机展示地址', en: 'Show address to taxi driver' })}
+          </p>
+          <p className="text-sm text-[var(--text-secondary)]">
+            {L({ ko: '호텔 주소를 큰 글씨로 표시합니다', zh: '酒店地址将以大字体显示', en: 'Hotel address shown in large font' })}
+          </p>
+        </div>
+
+        {/* 호텔 정보 미리보기 */}
+        <div className="w-full max-w-xs space-y-[var(--spacing-lg)] bg-[var(--surface)] p-[var(--spacing-2xl)] rounded-[var(--radius-card)]">
+          <p className="text-xs text-[var(--text-muted)] font-medium">목적지</p>
+          <div>
+            <h2 className="text-2xl font-bold text-[var(--text-primary)]">{L(hotel.name)}</h2>
+            <p className="text-sm text-[var(--text-secondary)] mt-[var(--spacing-md)]">{L(hotel.address)}</p>
+          </div>
+          <div className="pt-[var(--spacing-lg)] border-t border-[var(--border)]">
+            <p className="text-xs text-[var(--text-muted)]">예상 요금</p>
+            <p className="text-lg font-bold text-[var(--price)]">4,800 ~ 8,000 KRW</p>
+          </div>
+        </div>
+
+        {/* CTA 버튼 */}
+        <button
+          onClick={() => setShowTaxiMode(true)}
+          className="w-full max-w-xs h-13 px-[var(--spacing-xl)] bg-gradient-to-b from-[#FFA61A] to-[var(--warning)] text-white font-semibold rounded-[var(--radius-btn)] shadow-[0_1px_1px_rgba(255,149,0,0.12),0_2px_3px_rgba(255,149,0,0.05)] hover:-translate-y-0.5 active:scale-98 transition-all"
+        >
+          {L({ ko: '택시 모드 시작', zh: '进入出租车模式', en: 'Start Taxi Mode' })}
+        </button>
+
+        {/* 팁 */}
+        <p className="text-xs text-[var(--text-muted)] text-center max-w-xs mt-[var(--spacing-lg)]">
+          {L({ ko: '택시 기사에게 주소를 보여주고 확인받으세요', zh: '向司机展示地址并确认', en: 'Show to driver and confirm' })}
+        </p>
       </div>
     </div>
   )

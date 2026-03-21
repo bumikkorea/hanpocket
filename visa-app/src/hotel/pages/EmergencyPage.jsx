@@ -1,105 +1,73 @@
-import { Phone, AlertTriangle, BookOpen } from 'lucide-react'
+import { ArrowLeft, Phone } from 'lucide-react'
 
-export default function EmergencyPage({ hotel, language, L }) {
-  const emergencyNumbers = [
-    {
-      emoji: '🚨',
-      label: { ko: '경찰', zh: '警察', en: 'Police' },
-      number: '112',
-      desc: { ko: '범죄 신고', zh: '举报犯罪', en: 'Crime Report' },
-    },
-    {
-      emoji: '🚒',
-      label: { ko: '소방', zh: '消防', en: 'Fire' },
-      number: '119',
-      desc: { ko: '화재·구조', zh: '火灾救援', en: 'Fire & Rescue' },
-    },
-    {
-      emoji: '🏥',
-      label: { ko: '관광 지원', zh: '游客援助', en: 'Tourist Info' },
-      number: '1330',
-      desc: { ko: '관광 관련 문의', zh: '旅游问题咨询', en: 'Tourism Help' },
-    },
-    {
-      emoji: '🏛',
-      label: { ko: '중국 대사관', zh: '中国使馆', en: 'Chinese Embassy' },
-      number: '02-3455-0100',
-      desc: { ko: '영사 관련 지원', zh: '领事协助', en: 'Consular Aid' },
-    },
-  ]
+const L = (obj) => {
+  if (!obj) return ''
+  if (typeof obj === 'string') return obj
+  return obj.zh || obj.ko || obj.en || ''
+}
 
+const emergencyNumbers = [
+  { name: '警察', zh: '警察', ko: '경찰', number: '112', emoji: '🚨' },
+  { name: '救护车', zh: '救护车', ko: '119', number: '119', emoji: '🚑' },
+  { name: '观光咨询热线', zh: '旅游热线', ko: '관광안내', number: '1330', emoji: '📞' },
+  { name: '中国大使馆', zh: '大使馆', ko: '대사관', number: '+82-2-3455-0100', emoji: '🏛️' },
+  { name: '领事保护', zh: '领保热线', ko: '영사보호', number: '+86-10-6532-1821', emoji: '🆘' }
+]
+
+export default function EmergencyPage({ onBack }) {
   return (
-    <div className="h-full flex flex-col bg-gray-50">
-      {/* Emergency Alert */}
-      <div className="bg-red-50 border-l-4 border-red-500 px-4 py-4">
-        <div className="flex gap-2">
-          <AlertTriangle size={20} className="text-red-600 flex-shrink-0 mt-0.5" />
-          <div>
-            <h3 className="font-bold text-red-900">긴급 상황</h3>
-            <p className="text-sm text-red-800">즉시 아래 번호로 신고하세요 / 立即拨打以下号码 / Call immediately</p>
-          </div>
+    <div className="flex flex-col h-screen">
+      {/* 헤더 */}
+      <div className="px-5 py-4 border-b border-[var(--border)]">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 text-sm font-medium text-[var(--primary)] mb-4"
+        >
+          <ArrowLeft size={20} />
+          {L({ ko: '돌아가기', zh: '返回', en: 'Back' })}
+        </button>
+        <h1 className="text-2xl font-bold">{L({ ko: '긴급 번호', zh: '紧急电话', en: 'Emergency' })}</h1>
+      </div>
+
+      {/* 히어로 배너 */}
+      <div className="h-32 bg-gradient-to-br from-[var(--price)] to-[color-mix(in_srgb,var(--price)_80%,#000)] flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="text-5xl mb-2">🆘</div>
+          <p className="text-sm font-semibold">{L({ ko: '긴급 상황시 전화하기', zh: '紧急情况请拨打', en: 'Emergency numbers' })}</p>
         </div>
       </div>
 
-      {/* Emergency Buttons */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
-        <div className="space-y-3">
-          {emergencyNumbers.map((item, idx) => (
-            <a
-              key={idx}
-              href={`tel:${item.number}`}
-              className="bg-white rounded-xl p-4 flex items-center gap-4 hover:shadow-md transition-shadow active:scale-95"
-            >
-              {/* Number */}
-              <div className="flex-shrink-0 w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">{item.number}</span>
+      {/* 번호 리스트 */}
+      <div className="flex-1 overflow-y-auto px-[var(--spacing-xl)] py-[var(--spacing-lg)] space-y-[var(--spacing-md)]">
+        {emergencyNumbers.map((item, idx) => (
+          <a
+            key={idx}
+            href={`tel:${item.number}`}
+            className="flex items-center justify-between p-[var(--spacing-lg)] bg-[var(--surface)] rounded-[var(--radius-card)] hover:bg-red-50 active:scale-95 transition-all"
+          >
+            <div className="flex items-center gap-3 flex-1">
+              <div className="text-3xl">{item.emoji}</div>
+              <div className="min-w-0">
+                <p className="font-semibold text-sm">{item.name}</p>
+                <p className="text-xs text-[var(--text-muted)]">{item.zh}</p>
               </div>
-
-              {/* Info */}
-              <div className="flex-1">
-                <h3 className="font-bold text-gray-900">{L(language, item.label)}</h3>
-                <p className="text-sm text-gray-500">{L(language, item.desc)}</p>
-              </div>
-
-              {/* Call Icon */}
-              <div className="flex-shrink-0 p-3 bg-red-100 rounded-lg text-red-600">
-                <Phone size={20} />
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* Useful Resources */}
-        <div className="mt-8">
-          <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <BookOpen size={18} />
-            {L(language, { ko: '유용한 정보', zh: '有用的信息', en: 'Useful Info' })}
-          </h3>
-
-          <div className="space-y-3">
-            <div className="bg-white rounded-lg p-4">
-              <h4 className="font-semibold text-gray-900 text-sm mb-2">
-                {L(language, { ko: '약물 알레르기 정보', zh: '药物过敏信息', en: 'Allergy Info' })}
-              </h4>
-              <p className="text-xs text-gray-600">
-                {L(language, {
-                  ko: '약국에서 약을 살 때 아래 영어/한국어 카드를 보여주세요',
-                  zh: '在药店购药时请出示英文/韩文卡片',
-                  en: 'Show this card when buying medicines',
-                })}
-              </p>
             </div>
 
-            <div className="bg-white rounded-lg p-4">
-              <h4 className="font-semibold text-gray-900 text-sm mb-2">
-                {L(language, { ko: '병원 찾기', zh: '找医院', en: 'Find Hospital' })}
-              </h4>
-              <button className="text-sm text-blue-600 hover:underline font-semibold">
-                → {L(language, { ko: '외국인 진료 병원 목록', zh: '外国人就诊医院列表', en: 'English-speaking hospitals' })}
-              </button>
+            <div className="flex items-center gap-2 ml-3">
+              <div className="text-right">
+                <p className="font-bold text-base text-[var(--price)]">{item.number}</p>
+              </div>
+              <Phone size={20} className="text-[var(--price)]" />
             </div>
-          </div>
-        </div>
+          </a>
+        ))}
+      </div>
+
+      {/* 주의사항 */}
+      <div className="px-[var(--spacing-xl)] py-[var(--spacing-lg)] bg-yellow-50 border-t border-yellow-200">
+        <p className="text-xs text-yellow-700 leading-relaxed">
+          {L({ ko: '긴급 상황이 아닌 경우 먼저 호텔 프론트에 연락하세요', zh: '非紧急情况请先联系酒店前台', en: 'Contact hotel reception for non-emergencies' })}
+        </p>
       </div>
     </div>
   )

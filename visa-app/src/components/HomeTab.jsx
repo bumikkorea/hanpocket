@@ -1158,7 +1158,7 @@ export default function HomeTab({ lang, exchangeRate, setTab, widgetSettings = {
             <button
               key={L(lang, label)}
               onClick={onClick}
-              className="flex flex-col items-center justify-center gap-2 py-5 rounded-[var(--radius-card)] bg-white active:scale-[0.96] transition-all duration-150"
+              className="flex flex-col items-center justify-center gap-2 py-5 rounded-[var(--radius-card)] bg-white active:scale-[0.96] transition-all duration-150 card-stagger btn-hover-lift"
               style={{ boxShadow: 'var(--shadow-card)' }}
             >
               <Icon size={26} weight="light" style={{ color }} />

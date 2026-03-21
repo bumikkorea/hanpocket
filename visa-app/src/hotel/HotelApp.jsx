@@ -1,103 +1,140 @@
 import { useState, useEffect } from 'react'
-import { ChevronLeft } from 'lucide-react'
-import HotelHeader from './HotelHeader'
-import HotelMenuGrid from './HotelMenuGrid'
+import { X } from 'lucide-react'
+import HotelHeader from './components/HotelHeader'
+import HotelMenuGrid from './components/HotelMenuGrid'
 import DeliveryPage from './pages/DeliveryPage'
 import TaxiPage from './pages/TaxiPage'
 import NearbyFoodPage from './pages/NearbyFoodPage'
 import BeautyBookingPage from './pages/BeautyBookingPage'
 import NearbyMapPage from './pages/NearbyMapPage'
 import EmergencyPage from './pages/EmergencyPage'
-import { hotels } from '../data/hotels'
+import OnboardingFlow from './components/OnboardingFlow'
 
-const L = (lang, data) => {
-  if (typeof data === 'string') return data
-  return data?.[lang] || data?.ko || data?.en || ''
+const hotels = {
+  'myeongdong-lotte': {
+    id: 'myeongdong-lotte',
+    name: { ko: '명동 롯데호텔', zh: '明洞乐天酒店', en: 'Lotte Hotel Myeongdong' },
+    address: { ko: '서울 중구 명동 1-1', zh: '首尔市中区明洞1-1', en: 'Myeongdong 1-1, Jung-gu, Seoul' },
+    phone: '02-1661-7000',
+    lat: 37.5643,
+    lng: 127.0021
+  },
+  'hongdae-l7': {
+    id: 'hongdae-l7',
+    name: { ko: '홍대 L7 호텔', zh: '弘大L7酒店', en: 'L7 Hotel Hongdae' },
+    address: { ko: '서울 마포구 홍대 2-4', zh: '首尔市麻浦区弘大2-4', en: 'Hongdae 2-4, Mapo-gu, Seoul' },
+    phone: '02-6954-7000',
+    lat: 37.5548,
+    lng: 126.9224
+  },
+  'gangnam-ibis': {
+    id: 'gangnam-ibis',
+    name: { ko: '강남 이비스 호텔', zh: '江南宜必思酒店', en: 'Ibis Gangnam Hotel' },
+    address: { ko: '서울 강남구 강남 2-5', zh: '首尔市江南区江南2-5', en: 'Gangnam 2-5, Gangnam-gu, Seoul' },
+    phone: '02-3451-2222',
+    lat: 37.4979,
+    lng: 127.0277
+  }
+}
+
+const L = (obj) => {
+  if (!obj) return ''
+  if (typeof obj === 'string') return obj
+  return obj.zh || obj.ko || obj.en || ''
 }
 
 export default function HotelApp() {
-  const [currentPage, setCurrentPage] = useState('menu') // 'menu' | 'delivery' | 'taxi' | 'food' | 'beauty' | 'map' | 'emergency'
-  const [language, setLanguage] = useState('zh') // 'ko' | 'zh' | 'en'
   const [hotel, setHotel] = useState(null)
+  const [currentPage, setCurrentPage] = useState('menu')
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
-  // Extract hotel ID from URL query params
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    const hotelId = params.get('h')
-
-    if (hotelId) {
-      const selectedHotel = hotels.find(h => h.id === hotelId)
-      if (selectedHotel) {
-        setHotel(selectedHotel)
-      }
+    const hotelId = params.get('h') || 'myeongdong-lotte'
+    const selectedHotel = hotels[hotelId]
+    
+    if (selectedHotel) {
+      setHotel(selectedHotel)
     } else {
-      // Default to first hotel if no param
-      setHotel(hotels[0])
+      setHotel(hotels['myeongdong-lotte'])
+    }
+
+    const visited = localStorage.getItem('hotel_app_visited')
+    if (!visited) {
+      setShowOnboarding(true)
+      localStorage.setItem('hotel_app_visited', 'true')
     }
   }, [])
 
-  const pageProps = {
-    hotel,
-    language,
-    onBack: () => setCurrentPage('menu'),
-    L,
+  if (!hotel) {
+    return <div className="w-full h-screen flex items-center justify-center bg-white">로딩중...</div>
   }
 
-  if (!hotel) {
+  if (showOnboarding) {
     return (
-      <div className="w-full h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-gray-100">
-        <div className="text-center">
-          <div className="text-gray-500 text-sm">Loading hotel...</div>
-        </div>
-      </div>
+      <OnboardingFlow
+        onComplete={() => setShowOnboarding(false)}
+      />
     )
   }
 
   return (
-    <div className="w-full h-screen bg-white flex flex-col overflow-hidden">
-      {/* Header with back button */}
-      {currentPage !== 'menu' && (
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 bg-white">
-          <button
-            onClick={() => setCurrentPage('menu')}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ChevronLeft size={24} />
-          </button>
-          <div className="flex-1 text-center">
-            <h2 className="font-semibold text-gray-900">
-              {currentPage === 'delivery' && L(language, '点餐')}
-              {currentPage === 'taxi' && L(language, '打车')}
-              {currentPage === 'food' && L(language, '附近美食')}
-              {currentPage === 'beauty' && L(language, '美容预约')}
-              {currentPage === 'map' && L(language, '周边地图')}
-              {currentPage === 'emergency' && L(language, '紧急求助')}
-            </h2>
-          </div>
-          <div className="w-10" />
-        </div>
-      )}
+    <div className="fixed inset-0 flex flex-col bg-white">
+      {/* 상단 헤더 */}
+      <HotelHeader
+        hotel={hotel}
+        onClose={() => window.close()}
+      />
 
-      {/* Main content */}
+      {/* 메인 콘텐츠 */}
       <div className="flex-1 overflow-y-auto">
         {currentPage === 'menu' && (
-          <>
-            <HotelHeader hotel={hotel} language={language} onLanguageChange={setLanguage} L={L} />
-            <HotelMenuGrid
-              hotel={hotel}
-              language={language}
-              onSelectMenu={(menu) => setCurrentPage(menu)}
-              L={L}
-            />
-          </>
+          <HotelMenuGrid
+            hotel={hotel}
+            onSelectMenu={(menu) => setCurrentPage(menu)}
+          />
         )}
 
-        {currentPage === 'delivery' && <DeliveryPage {...pageProps} />}
-        {currentPage === 'taxi' && <TaxiPage {...pageProps} />}
-        {currentPage === 'food' && <NearbyFoodPage {...pageProps} />}
-        {currentPage === 'beauty' && <BeautyBookingPage {...pageProps} />}
-        {currentPage === 'map' && <NearbyMapPage {...pageProps} />}
-        {currentPage === 'emergency' && <EmergencyPage {...pageProps} />}
+        {currentPage === 'delivery' && (
+          <DeliveryPage
+            hotel={hotel}
+            onBack={() => setCurrentPage('menu')}
+          />
+        )}
+
+        {currentPage === 'taxi' && (
+          <TaxiPage
+            hotel={hotel}
+            onBack={() => setCurrentPage('menu')}
+          />
+        )}
+
+        {currentPage === 'food' && (
+          <NearbyFoodPage
+            hotel={hotel}
+            onBack={() => setCurrentPage('menu')}
+          />
+        )}
+
+        {currentPage === 'beauty' && (
+          <BeautyBookingPage
+            hotel={hotel}
+            onBack={() => setCurrentPage('menu')}
+          />
+        )}
+
+        {currentPage === 'map' && (
+          <NearbyMapPage
+            hotel={hotel}
+            onBack={() => setCurrentPage('menu')}
+          />
+        )}
+
+        {currentPage === 'emergency' && (
+          <EmergencyPage
+            onBack={() => setCurrentPage('menu')}
+          />
+        )}
       </div>
     </div>
   )

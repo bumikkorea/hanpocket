@@ -1,65 +1,60 @@
-import { MapPin, Coffee, Pill, Smartphone } from 'lucide-react'
+import { ArrowLeft, MapPin, Phone } from 'lucide-react'
 
-export default function NearbyMapPage({ hotel, language, L }) {
-  const nearbyPlaces = [
-    {
-      emoji: '☕',
-      label: { ko: '카페', zh: '咖啡店', en: 'Cafe' },
-      count: 8,
-    },
-    {
-      emoji: '💊',
-      label: { ko: '약국', zh: '药店', en: 'Pharmacy' },
-      count: 3,
-    },
-    {
-      emoji: '🏪',
-      label: { ko: '편의점', zh: '便利店', en: 'Convenience' },
-      count: 5,
-    },
-    {
-      emoji: '🔌',
-      label: { ko: '충전소', zh: '充电宝', en: 'Charger' },
-      count: 2,
-    },
-  ]
+const L = (obj) => {
+  if (!obj) return ''
+  if (typeof obj === 'string') return obj
+  return obj.zh || obj.ko || obj.en || ''
+}
 
+const nearbyPlaces = [
+  { emoji: '🏪', name: '便利店', ko: '편의점', distance: '200m' },
+  { emoji: '💊', name: '药店', ko: '약국', distance: '350m' },
+  { emoji: '🏧', name: 'ATM', ko: 'ATM', distance: '150m' },
+  { emoji: '🚇', name: '地铁站', ko: '지하철역', distance: '450m' },
+  { emoji: '🏥', name: '医院', ko: '병원', distance: '600m' },
+  { emoji: '📱', name: '移动服务', ko: '통신사', distance: '300m' }
+]
+
+export default function NearbyMapPage({ hotel, onBack }) {
   return (
-    <div className="h-full flex flex-col bg-gray-50">
-      {/* Map Placeholder */}
-      <div className="h-64 bg-gray-200 flex items-center justify-center">
-        <div className="text-center">
-          <MapPin size={48} className="text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-500 text-sm">{L(language, { ko: '카카오맵 연동 예정', zh: '地图加载中', en: 'Map loading' })}</p>
+    <div className="flex flex-col h-screen">
+      {/* 헤더 */}
+      <div className="px-5 py-4 border-b border-[var(--border)]">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-2 text-sm font-medium text-[var(--primary)] mb-4"
+        >
+          <ArrowLeft size={20} />
+          {L({ ko: '돌아가기', zh: '返回', en: 'Back' })}
+        </button>
+        <h1 className="text-2xl font-bold">{L({ ko: '주변지도', zh: '周边地图', en: 'Nearby Map' })}</h1>
+      </div>
+
+      {/* 히어로 배너 */}
+      <div className="h-32 bg-gradient-to-br from-[var(--info)] to-[color-mix(in_srgb,var(--info)_80%,#000)] flex items-center justify-center">
+        <div className="text-center text-white">
+          <MapPin size={40} className="mx-auto mb-2" />
+          <p className="text-lg font-bold">{L(hotel.name)}</p>
         </div>
       </div>
 
-      {/* Nearby Categories */}
-      <div className="flex-1 overflow-y-auto px-4 py-6">
-        <h3 className="font-semibold text-gray-900 mb-4">
-          {L(language, { ko: '주변 시설', zh: '周边设施', en: 'Nearby Places' })}
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          {nearbyPlaces.map((place, idx) => (
-            <div
-              key={idx}
-              className="bg-white rounded-xl p-4 text-center hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div className="text-3xl mb-2">{place.emoji}</div>
-              <h4 className="font-semibold text-gray-900 text-sm mb-1">
-                {L(language, place.label)}
-              </h4>
-              <p className="text-xs text-gray-500">{place.count}개</p>
+      {/* 주변 시설 리스트 */}
+      <div className="flex-1 overflow-y-auto px-[var(--spacing-xl)] py-[var(--spacing-lg)] space-y-[var(--spacing-md)]">
+        {nearbyPlaces.map((place, idx) => (
+          <div
+            key={idx}
+            className="flex items-center justify-between p-[var(--spacing-lg)] bg-[var(--surface)] rounded-[var(--radius-card)] hover:bg-[var(--bg)] transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="text-2xl">{place.emoji}</div>
+              <div>
+                <p className="font-semibold text-sm">{place.name}</p>
+                <p className="text-xs text-[var(--text-muted)]">{place.distance}</p>
+              </div>
             </div>
-          ))}
-        </div>
-
-        {/* Info */}
-        <div className="bg-blue-50 rounded-lg p-4 mt-6 text-xs text-blue-900">
-          <p className="font-semibold mb-2">💡 팁:</p>
-          <p>• {L(language, { ko: '핸드폰 배터리 부족 시 충전소를 찾아보세요', zh: '手机电量不足可找充电宝', en: 'Out of battery? Find a charger' })}</p>
-          <p>• {L(language, { ko: '감기약은 가까운 약국에서 구입 가능합니다', zh: '感冒药可在药店购买', en: 'Cold meds available at pharmacies' })}</p>
-        </div>
+            <a href="#" className="text-[var(--primary)] text-lg">›</a>
+          </div>
+        ))}
       </div>
     </div>
   )

@@ -3,6 +3,7 @@ import { MapPin, Search, Filter, Navigation, Info, ArrowUpDown, Route, X, Extern
 import { translateBrandName, smartTranslate } from '../data/brandMapping.js'
 import { Capacitor } from '@capacitor/core'
 import { Geolocation } from '@capacitor/geolocation'
+import Button from './ButtonSystem'
 
 // 네이티브 or 브라우저 위치 가져오기 통합 함수
 const getPosition = async (options = {}) => {
@@ -556,7 +557,8 @@ export default function MapTab({ lang }) {
       // 커스텀 마커 이미지
       const markerImage = new window.kakao.maps.MarkerImage(
         getCategoryMarkerImage(markerData.category),
-        new window.kakao.maps.Size(30, 30)
+        new window.kakao.maps.Size(40, 40),
+        new window.kakao.maps.Point(20, 20)
       )
 
       const marker = new window.kakao.maps.Marker({
@@ -597,23 +599,32 @@ export default function MapTab({ lang }) {
   }, [map, mapReady, selectedCategory])
 
   // 카테고리별 마커 이미지 생성
-  const getCategoryMarkerImage = (category) => {
+  const getCategoryMarkerImage = (category, isNew = false) => {
     const iconMap = {
-      restaurant: { emoji: '🍜', color: '#FF6B6B' },
-      medical: { emoji: '🏥', color: '#4ECDC4' },
+      restaurant: { emoji: '🍜', color: '#FF9500' },
+      beauty: { emoji: '💅', color: '#FF6B8A' },
+      cafe: { emoji: '☕', color: '#8B6F47' },
+      convenience: { emoji: '🏪', color: '#007AFF' },
+      medical: { emoji: '🏥', color: '#C4725A' },
       transport: { emoji: '🚇', color: '#45B7D1' },
       shopping: { emoji: '🛍️', color: '#96CEB4' },
       tourism: { emoji: '🏛️', color: '#FECA57' },
       zeropay: { emoji: '💳', color: '#7C3AED' },
       city_tour_bus: { emoji: '🚌', color: '#E53935' }
     }
-    
-    const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#111827' }
-    
+
+    const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#C4725A' }
+
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-      <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" width="30" height="30">
-        <circle cx="15" cy="15" r="15" fill="${color}" stroke="white" stroke-width="2"/>
-        <text x="15" y="20" text-anchor="middle" font-size="14">${emoji}</text>
+      <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+        <defs>
+          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="1" stdDeviation="1" flood-opacity="0.12" flood-color="#000000"/>
+          </filter>
+        </defs>
+        <circle cx="20" cy="20" r="20" fill="${color}" filter="url(#shadow)"/>
+        <text x="20" y="27" text-anchor="middle" font-size="18" dominant-baseline="middle">${emoji}</text>
+        ${isNew ? '<circle cx="32" cy="8" r="7" fill="#FF3B30" stroke="white" stroke-width="2"/><text x="32" y="11" text-anchor="middle" font-size="9" fill="white" font-weight="bold">NEW</text>' : ''}
       </svg>
     `)
   }
@@ -1075,13 +1086,9 @@ export default function MapTab({ lang }) {
         ).slice(0, 100)
 
         const markerImg = new window.kakao.maps.MarkerImage(
-          'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
-            <svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg" width="30" height="30">
-              <circle cx="15" cy="15" r="15" fill="#7C3AED" stroke="white" stroke-width="2"/>
-              <text x="15" y="20" text-anchor="middle" font-size="14">💳</text>
-            </svg>
-          `),
-          new window.kakao.maps.Size(30, 30)
+          getCategoryMarkerImage('zeropay'),
+          new window.kakao.maps.Size(40, 40),
+          new window.kakao.maps.Point(20, 20)
         )
 
         const newMarkers = []
@@ -1451,23 +1458,23 @@ export default function MapTab({ lang }) {
   return (
     <div className="bg-white" style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column' }}>
       {/* 검색 헤더 */}
-      <div className="bg-white sticky top-0 z-40 ">
-        <div className="px-3 py-2.5 flex items-center gap-2">
+      <div className="bg-white sticky top-0 z-40 border-b border-[var(--border)]">
+        <div className="px-5 py-3 flex items-center gap-3">
           {/* 검색 입력창 */}
           <div className="flex-1 relative search-container">
-            <div className="flex items-center bg-[var(--bg)] rounded-[var(--radius-pill)] px-3 py-2">
-              <Search size={16} className="text-gray-400 shrink-0" />
+            <div className="flex items-center bg-white rounded-[var(--radius-pill)] px-4 py-2.5" style={{ height: '40px', boxShadow: '0 1px 3px rgba(0,0,0,0.06)', border: '0.5px solid var(--border)' }}>
+              <Search size={16} className="text-[var(--text-muted)] shrink-0" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => handleSearchQueryChange(e.target.value)}
                 onKeyPress={(e) => { if (e.key === "Enter") searchPlace(searchQuery) }}
-                placeholder={L({ ko: "장소, 주소 검색", zh: "搜索地点、地址", en: "Search places" })}
-                className="flex-1 bg-transparent outline-none text-sm ml-2 placeholder-gray-400"
+                placeholder={L({ ko: "장소, 주소 검색", zh: "搜索弹窗店、美食、地点...", en: "Search places, restaurants" })}
+                className="flex-1 bg-transparent outline-none text-sm ml-3 placeholder-[var(--text-hint)]"
               />
               {searchQuery && (
-                <button onClick={() => { handleSearchQueryChange(''); setShowSearchResults(false) }} className="p-0.5">
-                  <X size={14} className="text-gray-400" />
+                <button onClick={() => { handleSearchQueryChange(''); setShowSearchResults(false) }} className="p-0.5 ml-2">
+                  <X size={16} className="text-[var(--text-muted)]" />
                 </button>
               )}
             </div>
@@ -1509,18 +1516,18 @@ export default function MapTab({ lang }) {
       {/* 카테고리 탭 — 지도 밖 고정, 침범 안 함 */}
       <div className="bg-white border-b border-[var(--border)] z-30 relative">
         <div className="px-4 py-2">
-          <div className="flex space-x-2 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 overflow-x-auto scrollbar-hide">
             {mapCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => searchByCategory(category.id)}
-                className={`flex-shrink-0 px-3 py-1.5 rounded-full border transition-all text-xs ${
+                className={`flex-shrink-0 h-8 px-3.5 rounded-[var(--radius-chip)] border-0.5 transition-all text-[13px] font-medium ${
                   selectedCategory === category.id
-                    ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white border-gray-900'
-                    : 'bg-white text-gray-600 border-[var(--border)] hover:border-gray-300'
+                    ? 'bg-[var(--text-primary)] text-white border-[var(--text-primary)]'
+                    : 'bg-white text-[var(--text-secondary)] border-[#E8E8E8]'
                 }`}
               >
-                <span className="font-medium">{L(category.name)}</span>
+                {L(category.name)}
               </button>
             ))}
             
@@ -1539,8 +1546,8 @@ export default function MapTab({ lang }) {
       {selectedCategory === 'city_tour_bus' && (
         <div className="bg-white border-b border-[var(--border)] z-30 relative">
           <div className="px-4 py-1.5">
-            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
-              <span className="text-[10px] text-gray-400 flex-shrink-0 mr-1">🚌</span>
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+              <span className="text-[10px] text-[var(--text-muted)] flex-shrink-0">🚌</span>
               {[
                 { id: 'all',         name: { ko: '전체노선', zh: '全部路线', en: 'All Routes' }, color: '#374151' },
                 { id: 'downtown',    name: { ko: '🔴 도심순환', zh: '🔴 市中心', en: '🔴 Downtown' }, color: '#E53935' },
@@ -1555,10 +1562,10 @@ export default function MapTab({ lang }) {
                     // 노선 변경 시 다시 그리기
                     setTimeout(() => searchByCategory('city_tour_bus'), 50)
                   }}
-                  className={`flex-shrink-0 px-2.5 py-1 rounded-full border transition-all text-[11px] font-medium ${
+                  className={`flex-shrink-0 h-8 px-3 rounded-[var(--radius-chip)] border-0.5 transition-all text-[12px] font-medium ${
                     selectedBusRoute === route.id
                       ? 'text-white border-transparent'
-                      : 'bg-white text-[var(--text-secondary)] border-[var(--border)] hover:border-gray-300'
+                      : 'bg-white text-[var(--text-secondary)] border-[#E8E8E8]'
                   }`}
                   style={selectedBusRoute === route.id ? { backgroundColor: route.color, borderColor: route.color } : {}}
                 >
@@ -1705,43 +1712,107 @@ export default function MapTab({ lang }) {
           </div>
         )}
 
-        {/* 마커 상세 정보 패널 */}
+        {/* 마커 상세 정보 — 바텀시트 [8] */}
         {selectedMarker && (
-          <div className="absolute bottom-16 left-3 right-3 z-50 bg-white rounded-[var(--radius-pill)] shadow-xl px-3 py-2.5">
-            {/* 헤더: 이름 + 닫기 */}
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-bold text-gray-900 text-[13px] leading-tight">{L(selectedMarker.name)}</h3>
-                <p className="text-[var(--text-secondary)] text-[11px] leading-tight mt-0.5 line-clamp-2">{L(selectedMarker.description)}</p>
+          <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm animate-fade-in" onClick={() => setSelectedMarker(null)}>
+            <div
+              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl max-h-[90vh] overflow-y-auto bottom-sheet-enter"
+              onClick={e => e.stopPropagation()}
+            >
+              {/* 핸들 바 */}
+              <div className="flex justify-center pt-4 pb-2 sticky top-0 bg-white rounded-t-3xl">
+                <div className="w-9 h-1 bg-[#E8E8E8] rounded-full" />
               </div>
-              <button onClick={() => setSelectedMarker(null)} className="p-0.5 hover:bg-[var(--bg)] rounded shrink-0 mt-0.5">
-                <X size={14} className="text-gray-400" />
-              </button>
-            </div>
 
-            {/* 부가 정보 (한 줄로 압축) */}
-            <div className="flex flex-wrap gap-x-3 gap-y-0 mt-1 text-[11px] text-[var(--text-secondary)]">
-              {selectedMarker.chineseSupport && <span className="text-red-500">🇨🇳</span>}
-              {selectedMarker.phone && <span>📞 {selectedMarker.phone}</span>}
-              {selectedMarker.priceRange && <span>💰 {selectedMarker.priceRange}</span>}
-              {selectedMarker.categoryName && <span>🏷️ {selectedMarker.categoryName}</span>}
-            </div>
+              {/* 이미지 슬라이더 (220px 높이) */}
+              <div className="relative w-full h-55 bg-[var(--surface)] overflow-hidden">
+                <div className="w-full h-full bg-gradient-to-br from-[var(--text-primary)]/10 to-[var(--primary)]/10 flex items-center justify-center">
+                  <div className="text-6xl">{selectedMarker.emoji || '📍'}</div>
+                </div>
 
-            {/* 길찾기 영역 */}
-            <div className="mt-2 pt-2 border-t border-[var(--border)]">
-              {!showRoutePanel ? (
-                <button
-                  onClick={() => {
-                    setEndLocation(L(selectedMarker.name))
-                    setEndCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
-                    setShowRoutePanel(true)
-                  }}
-                  className="w-full py-2 text-[13px] font-medium text-white bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] rounded-[var(--radius-pill)]"
-                >
-                  {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
-                </button>
-              ) : (
-                <div className="space-y-1.5">
+                {/* 이미지 인디케이터 (점) */}
+                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-white/80" />
+                </div>
+              </div>
+
+              {/* 콘텐츠 섹션 */}
+              <div className="px-5 py-5 space-y-4">
+                {/* 제목 + 닫기 */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <h2 className="font-bold text-lg text-[var(--text-primary)]">{L(selectedMarker.name)}</h2>
+                    <p className="text-sm text-[var(--text-secondary)] mt-1">{L(selectedMarker.description)}</p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedMarker(null)}
+                    className="p-1.5 hover:bg-[var(--bg)] rounded-lg shrink-0"
+                  >
+                    <X size={20} className="text-[var(--text-muted)]" />
+                  </button>
+                </div>
+
+                {/* 태그 칩스 */}
+                <div className="flex flex-wrap gap-2">
+                  {selectedMarker.chineseSupport && (
+                    <span className="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 rounded-[var(--radius-chip)] text-xs font-medium card-stagger">
+                      🇨🇳 중국어
+                    </span>
+                  )}
+                  {selectedMarker.categoryName && (
+                    <span
+                      className="inline-flex items-center px-3 py-1.5 rounded-[var(--radius-chip)] text-xs font-medium text-white card-stagger"
+                      style={{
+                        backgroundColor: {
+                          '🍜': '#FF9500',
+                          '💅': '#FF6B8A',
+                          '☕': '#8B6F47',
+                          '🏪': '#007AFF',
+                          '🏥': '#C4725A'
+                        }[selectedMarker.emoji] || '#C4725A'
+                      }}
+                    >
+                      {selectedMarker.categoryName}
+                    </span>
+                  )}
+                  {selectedMarker.phone && (
+                    <span className="inline-flex items-center px-3 py-1.5 bg-[var(--bg)] rounded-[var(--radius-chip)] text-xs font-medium text-[var(--text-secondary)]">
+                      📞 {selectedMarker.phone}
+                    </span>
+                  )}
+                </div>
+
+                {/* 서비스 정보 */}
+                {selectedMarker.priceRange && (
+                  <div className="space-y-2 pt-3 border-t border-[var(--border)]">
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)]">💰 가격대</h3>
+                    <p className="text-sm text-[var(--text-secondary)]">{selectedMarker.priceRange}</p>
+                  </div>
+                )}
+
+                {/* CTA 버튼 바 */}
+                <div className="flex gap-2 pt-4 pb-5 border-t border-[var(--border)] sticky bottom-0 bg-white">
+                  {!showRoutePanel ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          setEndLocation(L(selectedMarker.name))
+                          setEndCoords({ x: String(selectedMarker.lng), y: String(selectedMarker.lat) })
+                          setShowRoutePanel(true)
+                        }}
+                        className="flex-1 py-2.5 text-sm font-semibold text-white bg-[var(--primary)] rounded-[var(--radius-btn)] btn-hover-lift btn-active-press transition-all"
+                      >
+                        {L({ ko: '길찾기', zh: '导航', en: 'Directions' })}
+                      </button>
+                      <button
+                        onClick={() => window.open(getKakaoMapUrl(selectedMarker))}
+                        className="px-4 py-2.5 text-sm font-semibold text-[var(--primary)] border border-[var(--border)] rounded-[var(--radius-btn)] btn-hover-lift btn-active-press transition-all"
+                      >
+                        {L({ ko: '지도', zh: '地图', en: 'Map' })}
+                      </button>
+                    </>
+                  ) : (
+                    <div className="w-full space-y-1.5">
                   {/* 출발지 */}
                   <div className="relative">
                     <div className="flex items-center gap-2">
@@ -1802,7 +1873,10 @@ export default function MapTab({ lang }) {
                     </button>
                   </div>
                 </div>
-              )}
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         )}

@@ -707,3 +707,135 @@ body {
 .btn-press:active {
   transform: scale(0.95);
 }
+
+/* ─── [17] Animation System ─── */
+
+/* 화면 전환: translateX 슬라이드 */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+.page-enter {
+  animation: slideInFromRight 0.3s ease forwards;
+}
+
+.page-exit {
+  animation: slideOutToLeft 0.3s ease forwards;
+}
+
+/* 버튼 호버: translateY(-1px) */
+.btn-hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 버튼 활성: scale(0.98) */
+.btn-active-press {
+  transition: transform 0.15s ease;
+}
+
+.btn-active-press:active {
+  transform: scale(0.98);
+}
+
+/* 바텀시트: translateY 0.3s cubic-bezier(0.32,0.72,0,1) */
+@keyframes bottomSheetEnter {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bottomSheetExit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.bottom-sheet-enter {
+  animation: bottomSheetEnter 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+.bottom-sheet-exit {
+  animation: bottomSheetExit 0.3s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+/* 탭 아이콘 전환: scale(0.9→1) 0.2s */
+@keyframes tabIconScale {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.tab-icon-enter {
+  animation: tabIconScale 0.2s ease-out forwards;
+}
+
+/* Skeleton loading: shimmer 1.5s infinite */
+@keyframes skeletonShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+/* 카드 등장: fadeInUp with stagger */
+.card-stagger {
+  animation: fadeUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.card-stagger:nth-child(1) { animation-delay: 0s; }
+.card-stagger:nth-child(2) { animation-delay: 0.05s; }
+.card-stagger:nth-child(3) { animation-delay: 0.1s; }
+.card-stagger:nth-child(4) { animation-delay: 0.15s; }
+.card-stagger:nth-child(5) { animation-delay: 0.2s; }
+.card-stagger:nth-child(6) { animation-delay: 0.25s; }

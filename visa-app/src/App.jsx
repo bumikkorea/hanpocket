@@ -2720,7 +2720,7 @@ function AppInner() {
       {/* Bottom Navigation — 4탭: 探险/地图/预约/我的 */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white transition-transform duration-300"
         style={{
-          borderTop: '1px solid #F0F0F0',
+          borderTop: '0.5px solid var(--border)',
           height: '56px',
           paddingBottom: 'env(safe-area-inset-bottom)',
           transform: bottomBarVisible ? 'translateY(0)' : 'translateY(100%)',
@@ -2731,9 +2731,14 @@ function AppInner() {
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
                 aria-label={`${item.label[lang]} tab`}
-                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
-                <item.icon size={22} weight={active ? 'fill' : 'regular'} style={{ color: active ? '#C4725A' : '#999999', transition: 'color 0.2s' }} />
-                <span style={{ fontSize: 10, fontWeight: 500, color: active ? '#C4725A' : '#999999', transition: 'color 0.2s', letterSpacing: '-0.2px' }}>
+                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <item.icon size={22} weight={active ? 'fill' : 'regular'} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', transform: active ? 'scale(1)' : 'scale(0.9)' }} />
+                  {active && (
+                    <div style={{ position: 'absolute', bottom: '-10px', width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--primary)' }} />
+                  )}
+                </div>
+                <span style={{ fontSize: 10, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px' }}>
                   {item.label[lang]}
                 </span>
               </button>

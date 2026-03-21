@@ -5,16 +5,24 @@
  */
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Search, Car, Phone, Calendar, MapPin, X, ChevronRight, Heart, Scissors, Utensils, ShoppingBag, Coffee, Train, ShoppingCart, Smartphone, MoreHorizontal } from 'lucide-react'
+import { useLanguage } from '../i18n/index.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
 // ─── 퀵 액션 (1행) ───
 const QUICK_ACTIONS = [
-  { id: 'beauty', icon: Calendar, bg: '#FDF3F1', color: '#C4725A', label: { zh: '美容预约', ko: '뷰티 예약', en: 'Beauty' },     action: 'booking'    },
-  { id: 'taxi',   icon: Car,      bg: '#FFF9E6', color: '#F9A825', label: { zh: '叫出租车', ko: '택시',    en: 'Taxi' },         action: 'taxi'       },
-  { id: 'map',    icon: MapPin,   bg: '#EDF5FF', color: '#007AFF', label: { zh: '周边探索', ko: '주변 탐색', en: 'Explore' },    action: 'near-map'   },
-  { id: 'sos',    icon: Phone,    bg: '#FFF0F0', color: '#FF3B30', label: { zh: '紧急电话', ko: '긴급 전화', en: 'Emergency' },  action: 'sos'        },
+  { id: 'beauty', icon: Calendar, bg: '#FDF3F1', color: '#C4725A', action: 'booking'  },
+  { id: 'taxi',   icon: Car,      bg: '#FFF9E6', color: '#F9A825', action: 'taxi'     },
+  { id: 'map',    icon: MapPin,   bg: '#EDF5FF', color: '#007AFF', action: 'near-map' },
+  { id: 'sos',    icon: Phone,    bg: '#FFF0F0', color: '#FF3B30', action: 'sos'      },
 ]
+
+const QUICK_ACTION_LABEL_KEYS = {
+  beauty: 'home.quick.beauty',
+  taxi:   'home.quick.taxi',
+  map:    'home.quick.explore',
+  sos:    'home.quick.emergency',
+}
 
 // ─── 美团 스타일 카테고리 그리드 (10개) ───
 const MEITU_CATEGORIES = [
@@ -60,10 +68,10 @@ const ZH_TO_KO = {
 
 // ─── 긴급 전화 ───
 const SOS_NUMBERS = [
-  { label: { zh: '报警', ko: '경찰', en: 'Police' }, num: '112' },
-  { label: { zh: '急救', ko: '구급', en: 'Ambulance' }, num: '119' },
-  { label: { zh: '旅游急救', ko: '여행 SOS', en: 'Travel SOS' }, num: '1330' },
-  { label: { zh: '中国大使馆', ko: '중국 대사관', en: 'CN Embassy' }, num: '02-738-1038' },
+  { labelKey: 'sos.police',   num: '112' },
+  { labelKey: 'sos.ambulance', num: '119' },
+  { labelKey: 'sos.travel',   num: '1330' },
+  { labelKey: 'sos.embassy',  num: '02-738-1038' },
 ]
 
 const ARCHIVE_BASE = 'https://archive.visitseoul.net'
@@ -113,7 +121,8 @@ async function searchArchive(term, category, page = 1) {
   }
 }
 
-export default function NearHomeTab({ lang, setTab, setSubPage }) {
+export default function NearHomeTab({ setTab, setSubPage }) {
+  const { lang, t } = useLanguage()
   const [sosOpen, setSosOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
@@ -124,8 +133,6 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
   const [page, setPage] = useState(1)
   const debounceRef = useRef(null)
   const feedRef = useRef(null)
-
-  const greeting = lang === 'ko' ? '안녕하세요, 여행자님' : lang === 'en' ? 'Hello, Traveler' : '你好，旅行者'
 
   const loadContent = useCallback(async (term, catId, pg = 1) => {
     setLoading(true)
@@ -172,10 +179,10 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
       {/* ─── 1. 상단 인사 + 검색바 ─── */}
       <div style={{ padding: '20px 20px 16px' }}>
         <p style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 4px', lineHeight: 1.3 }}>
-          {greeting} 👋
+          {t('home.greeting')} 👋
         </p>
         <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 14px' }}>
-          {lang === 'ko' ? '서울에서 무엇이 필요하세요?' : lang === 'en' ? 'What do you need in Seoul?' : '在首尔，需要什么帮助？'}
+          {t('home.subtitle')}
         </p>
         {/* 검색바 — pill shape */}
         <div style={{ position: 'relative' }}>
@@ -184,7 +191,7 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
             type="text"
             value={query}
             onChange={e => handleSearch(e.target.value)}
-            placeholder={lang === 'ko' ? '미용실, 맛집, 택시...' : lang === 'en' ? 'Beauty, food, taxi...' : '搜索美容院、餐厅、出租车...'}
+            placeholder={t('home.search')}
             style={{
               width: '100%', padding: '12px 36px', borderRadius: 50,
               background: 'var(--surface)', border: '1px solid var(--border)',
@@ -215,7 +222,7 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
                 <Icon size={20} color={item.color} />
               </div>
               <span style={{ fontSize: 11, fontWeight: 600, color: item.color, textAlign: 'center', lineHeight: 1.3 }}>
-                {L(lang, item.label)}
+                {t(QUICK_ACTION_LABEL_KEYS[item.id])}
               </span>
             </button>
           )
@@ -227,8 +234,8 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
         <div style={{ margin: '0 20px 20px', height: 140, borderRadius: 'var(--radius-card)', background: 'linear-gradient(135deg, #C4725A, #E8956F)', padding: '20px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden', position: 'relative' }}>
           <div style={{ position: 'absolute', right: -20, top: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
           <div style={{ position: 'absolute', right: 60, top: 10, width: 50, height: 50, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
-          <div style={{ fontSize: 20, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>首尔弹窗情报站</div>
-          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 4 }}>发现最新限时快闪店 · 美食 · 美容</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{t('home.banner.title')}</div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 4 }}>{t('home.banner.desc')}</div>
         </div>
       )}
 
@@ -259,7 +266,7 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px', marginBottom: 12 }}>
           <span style={{ fontSize: 17, fontWeight: 600, color: 'var(--text-primary)' }}>
             {showFeed && !query
-              ? L(lang, { ko: '인기 추천', zh: '热门推荐', en: 'Trending' })
+              ? t('home.trending')
               : total > 0
                 ? L(lang, { ko: `${total}건`, zh: `共${total}条`, en: `${total} results` })
                 : L(lang, { ko: '검색 결과', zh: '搜索结果', en: 'Results' })
@@ -267,7 +274,7 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
           </span>
           <a href="https://archive.visitseoul.net" target="_blank" rel="noreferrer"
             style={{ fontSize: 13, color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 2 }}>
-            {L(lang, { ko: '더 보기', zh: '查看更多', en: 'More' })} <ChevronRight size={14} />
+            {t('home.more')} <ChevronRight size={14} />
           </a>
         </div>
 
@@ -340,7 +347,7 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
               disabled={loading}
               className="btn btn-outline"
               style={{ width: '100%' }}>
-              {loading ? '...' : L(lang, { ko: '더보기', zh: '加载更多', en: 'Load More' })}
+              {loading ? '...' : t('common.loadMore')}
             </button>
           </div>
         )}
@@ -355,13 +362,13 @@ export default function NearHomeTab({ lang, setTab, setSubPage }) {
             <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border)', margin: '0 auto 20px' }} />
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#FF3B30', margin: '0 0 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
               <Phone size={18} color="#FF3B30" />
-              {lang === 'ko' ? '긴급 연락처' : lang === 'en' ? 'Emergency Contacts' : '紧急联系电话'}
+              {t('sos.title')}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {SOS_NUMBERS.map(s => (
                 <a key={s.num} href={`tel:${s.num}`}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', borderRadius: 'var(--radius-card)', background: '#FFF0F0', textDecoration: 'none' }}>
-                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{L(lang, s.label)}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{t(s.labelKey)}</span>
                   <span style={{ fontSize: 18, fontWeight: 700, color: '#FF3B30', fontFamily: 'Inter, sans-serif' }}>{s.num}</span>
                 </a>
               ))}

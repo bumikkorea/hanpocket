@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, lazy, Suspense } from 'react'
+import { LanguageProvider, useLanguage } from './i18n/index.jsx'
 import SplashScreen from './components/SplashScreen'
 import LandingPage from './components/LandingPage'
 import useDarkMode from './hooks/useDarkMode'
@@ -1509,14 +1510,7 @@ function AppInner() {
   const [showSplash, setShowSplash] = useState(true)
   const [showLanding, setShowLanding] = useState(false)
 
-  const [lang, setLang] = useState(() => {
-    const saved = localStorage.getItem('hp_lang')
-    if (saved && ['ko','zh','en'].includes(saved)) return saved
-    const sys = (navigator.language || navigator.userLanguage || 'ko').toLowerCase()
-    if (sys.startsWith('zh')) return 'zh'
-    if (sys.startsWith('en')) return 'en'
-    return 'ko'
-  })
+  const { lang, setLanguage: setLang, t: tI18n } = useLanguage()
   const [profile, setProfile] = useState(() => loadProfile())
   const [showNotice, setShowNotice] = useState(false)
   const [tab, setTab] = useState('near-home')
@@ -1818,10 +1812,10 @@ function AppInner() {
   }
 
   const bottomTabs = [
-    { id: 'near-home', icon: HomeIcon,    label: { ko: '홈',      zh: '首页', en: 'Home' } },
-    { id: 'near-map',  icon: MapPin,      label: { ko: '지도',    zh: '地图', en: 'Map'  } },
-    { id: 'booking',   icon: Calendar,    label: { ko: '예약',    zh: '预约', en: 'Book' } },
-    { id: 'my',        icon: LucideUser,  label: { ko: '내 정보', zh: '我的', en: 'My'   } },
+    { id: 'near-home', icon: HomeIcon,   label: tI18n('tab.home')    },
+    { id: 'near-map',  icon: MapPin,     label: tI18n('tab.map')     },
+    { id: 'booking',   icon: Calendar,   label: tI18n('tab.booking') },
+    { id: 'my',        icon: LucideUser, label: tI18n('tab.my')      },
   ]
 
   // Check if a service item has been migrated to pocket categories
@@ -1999,34 +1993,34 @@ function AppInner() {
           <div style={{ background: 'white', borderRadius: 20, padding: '32px 24px', maxWidth: 340, width: '100%', transform: welcomeFading ? 'scale(0.95)' : 'scale(1)', transition: 'transform 0.3s ease', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
             {/* 제목 */}
             <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', margin: '0 0 10px', textAlign: 'center' }}>
-              {L(lang, { ko: '서울에 오신 것을 환영합니다', zh: '欢迎来到首尔', en: 'Welcome to Seoul' })}
+              {tI18n('welcome.title')}
             </h2>
             {/* 설명 */}
             <p style={{ fontSize: 14, color: 'var(--text-secondary)', textAlign: 'center', margin: '0 0 20px', lineHeight: 1.6 }}>
-              {L(lang, { ko: '더 나은 서비스를 위해 다음 권한을 허용해주세요', zh: '为了给您提供更好的服务，请允许以下权限', en: 'Allow the following permissions for a better experience' })}
+              {tI18n('welcome.desc')}
             </p>
             {/* 권한 항목 */}
             {[
               {
                 Icon: MapPin,
                 iconBg: '#EDF5FF', iconColor: '#007AFF',
-                title: { ko: '위치 정보', zh: '位置信息', en: 'Location' },
-                desc:  { ko: '주변 매장 검색 및 내비게이션에 사용', zh: '用于查找附近的店铺和导航', en: 'Find nearby shops and navigation' },
+                titleKey: 'welcome.location',
+                descKey:  'welcome.locationDesc',
               },
               {
                 Icon: Bell,
                 iconBg: '#FFF8E1', iconColor: '#FF9500',
-                title: { ko: '알림 설정', zh: '通知提醒', en: 'Notifications' },
-                desc:  { ko: '예약 확인 및 혜택 정보 수신', zh: '接收预约确认和优惠信息', en: 'Receive booking confirmations and offers' },
+                titleKey: 'welcome.notification',
+                descKey:  'welcome.notificationDesc',
               },
-            ].map(({ Icon, iconBg, iconColor, title, desc }) => (
-              <div key={L(lang, title)} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16, background: 'var(--surface)', borderRadius: 12, margin: '8px 0' }}>
+            ].map(({ Icon, iconBg, iconColor, titleKey, descKey }) => (
+              <div key={titleKey} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16, background: 'var(--surface)', borderRadius: 12, margin: '8px 0' }}>
                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Icon size={18} color={iconColor} />
                 </div>
                 <div>
-                  <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{L(lang, title)}</p>
-                  <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>{L(lang, desc)}</p>
+                  <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{tI18n(titleKey)}</p>
+                  <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>{tI18n(descKey)}</p>
                 </div>
               </div>
             ))}
@@ -2036,14 +2030,14 @@ function AppInner() {
               className="btn btn-primary"
               style={{ width: '100%', height: 48, marginTop: 20 }}
             >
-              {L(lang, { ko: '확인, 시작하기', zh: '好的，开始使用', en: "Got it, let's go" })}
+              {tI18n('welcome.cta')}
             </button>
             {/* 일주일간 보지않음 */}
             <button
               onClick={() => dismissWelcome(false)}
               style={{ display: 'block', width: '100%', marginTop: 14, fontSize: 13, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'center' }}
             >
-              {L(lang, { ko: '일주일간 보지 않기', zh: '一周内不再显示', en: "Don't show for a week" })}
+              {tI18n('welcome.dismiss')}
             </button>
           </div>
         </div>
@@ -2163,7 +2157,7 @@ function AppInner() {
                       { code: 'en', label: 'English', flag: '🇺🇸' },
                     ].map(l => (
                       <button key={l.code}
-                        onClick={() => { setLang(l.code); localStorage.setItem('hp_lang', l.code); setShowLangMenu(false) }}
+                        onClick={() => { setLang(l.code); setShowLangMenu(false) }}
                         className={`w-full px-3 py-2 text-left text-[13px] flex items-center gap-2 ${lang === l.code ? 'font-bold text-[#1A1A1A] bg-[#F3F4F6]' : 'text-[#555]'}`}>
                         <span>{l.flag}</span>
                         <span>{l.label}</span>
@@ -2472,7 +2466,7 @@ function AppInner() {
         )}
         {tab==='near-home' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <NearHomeTab lang={lang} setTab={handleTabChange} setSubPage={setSubPage} />
+            <NearHomeTab setTab={handleTabChange} setSubPage={setSubPage} />
           </Suspense>
         )}
         {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRateData} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet','taxrefund','departure','heatmap','wishlist','passport-scan','departure-shopping','flight-info','show-korean','near-map','korean-culture'].includes(t)) { setTab('home'); setSubPage(t) } else { setTab(t) }}} />}
@@ -2494,7 +2488,7 @@ function AppInner() {
         )}
         {tab==='my' && !subPage && (
           <Suspense fallback={<LoadingSpinner />}>
-            <MyTab lang={lang} setTab={handleTabChange} setSubPage={(sp) => {
+            <MyTab setTab={handleTabChange} setSubPage={(sp) => {
               if (sp === 'reservation') { setSubPage('my-reservations') }
               else { setSubPage(sp) }
             }} />
@@ -2765,7 +2759,7 @@ function AppInner() {
             const active = tab === item.id
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
-                aria-label={`${item.label[lang]} tab`}
+                aria-label={`${item.label} tab`}
                 style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
                 <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <item.icon size={22} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', transform: active ? 'scale(1)' : 'scale(0.9)' }} />
@@ -2774,7 +2768,7 @@ function AppInner() {
                   )}
                 </div>
                 <span style={{ fontSize: 10, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px' }}>
-                  {item.label[lang]}
+                  {item.label}
                 </span>
               </button>
             )
@@ -2931,9 +2925,11 @@ function FloatingChatbot({ lang }) {
 export default function App() {
   return (
     <ErrorBoundary>
-      <ToastProvider>
-        <AppInner />
-      </ToastProvider>
+      <LanguageProvider>
+        <ToastProvider>
+          <AppInner />
+        </ToastProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   )
 }

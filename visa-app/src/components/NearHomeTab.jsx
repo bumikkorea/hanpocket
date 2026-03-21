@@ -13,6 +13,7 @@ import { EDITORIALS } from '../data/editorials.js'
 import EditorialDetailPage from './EditorialDetailPage.jsx'
 import MorePage from './MorePage.jsx'
 import NearPageHeader from './NearPageHeader.jsx'
+import CourseListPage from './CourseListPage.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
@@ -275,6 +276,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   const [translateOpen, setTranslateOpen] = useState(false)
   const [showMore, setShowMore] = useState(false)
   const [editorialId, setEditorialId] = useState(null)  // 에디토리얼 상세 페이지
+  const [showCourseList, setShowCourseList] = useState(false)
 
   // ─── 카테고리 필터 (피드) ───
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -337,7 +339,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   const handleQuickAction = (action) => {
     if (action === 'arrival-sheet')   { setArrivalOpen(true);   return }
     if (action === 'departure-sheet') { setDepartureOpen(true); return }
-    if (action === 'course')          { setTab('near-map');      return }
+    if (action === 'course')          { setShowCourseList(true); return }
     if (action === 'translate-sheet') { setTranslateOpen(true); return }
   }
 
@@ -642,6 +644,14 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           setTab={(tab) => { setTab(tab); setShowMore(false) }}
           onClose={() => { setShowMore(false); setEditorialId(null) }}
           onEditorialClick={(id) => setEditorialId(id)}
+        />
+      )}
+
+      {/* ─── 여행코스 리스트 페이지 ─── */}
+      {showCourseList && (
+        <CourseListPage
+          onClose={() => setShowCourseList(false)}
+          setTab={setTab}
         />
       )}
 

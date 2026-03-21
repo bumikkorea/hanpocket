@@ -314,6 +314,16 @@ export default function NearMap() {
       .catch(() => {})
   }, [])
 
+  // 홈탭 여행코스 → sessionStorage pending 코스 자동 활성화
+  useEffect(() => {
+    const pending = sessionStorage.getItem('near_pending_course')
+    if (pending) {
+      sessionStorage.removeItem('near_pending_course')
+      setCourseMode(true)
+      setActiveCourseId(pending)
+    }
+  }, [])
+
   const today = new Date().toISOString().slice(0, 10)
   const filteredPins = allPins.filter(p => {
     const notExpired = !(p.is_temporary && p.end_date && p.end_date < today)
@@ -489,9 +499,18 @@ export default function NearMap() {
     if (!course) return
 
     const map = mapInstance.current
-    const coursePois = course.poi_ids
+    let coursePois = (course.poi_ids || [])
       .map(id => allPins.find(p => p.id === id))
       .filter(Boolean)
+    // poi_ids 미매칭 시 stops 폴백 (하드코딩 좌표 코스)
+    if (coursePois.length === 0 && course.stops?.length) {
+      coursePois = course.stops.map((s, i) => ({
+        id: `stop-${i}`, category: 'utility',
+        name_zh: s.name_zh || s.name_ko, name_ko: s.name_ko, name_en: s.name_en,
+        lat: s.lat, lng: s.lng, image_url: null,
+        address_zh: s.address_zh || '',
+      }))
+    }
 
     // 번호 핀
     courseOverlaysRef.current = coursePois.map((poi, idx) => {
@@ -1272,7 +1291,15 @@ function CourseSelectorSheet({ courses, lang, onSelectCourse, onExit }) {
 // ─── 코스 정거장 리스트 ───
 function CourseStopList({ course, allPins, lang, onSelectPoi, onNavigatePoi, onExit }) {
   if (!course) return null
-  const coursePois = course.poi_ids.map(id => allPins.find(p => p.id === id)).filter(Boolean)
+  let coursePois = (course.poi_ids || []).map(id => allPins.find(p => p.id === id)).filter(Boolean)
+  if (coursePois.length === 0 && course.stops?.length) {
+    coursePois = course.stops.map((s, i) => ({
+      id: `stop-${i}`, category: 'utility',
+      name_zh: s.name_zh || s.name_ko, name_ko: s.name_ko, name_en: s.name_en,
+      lat: s.lat, lng: s.lng, image_url: null,
+      address_zh: s.address_zh || '',
+    }))
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -1283,10 +1310,12 @@ function CourseStopList({ course, allPins, lang, onSelectPoi, onNavigatePoi, onE
             <span style={{ fontSize: 8, background: '#DC2626', color: 'white', borderRadius: 4, padding: '2px 6px', fontWeight: 700 }}>
               {tLang('course_mode', lang)}
             </span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{course.title_zh}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
+              {lang === 'ko' ? (course.title_ko || course.title_zh) : lang === 'en' ? (course.title_en || course.title_zh) : course.title_zh}
+            </span>
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-            {course.description_zh} · {course.estimated_hours}{tLang('course_hours', lang)}
+            {lang === 'ko' ? (course.description_ko || course.description_zh) : lang === 'en' ? (course.description_en || course.description_zh) : course.description_zh} · {course.estimated_hours}{tLang('course_hours', lang)}
           </div>
         </div>
         <button onClick={onExit} style={{ fontSize: 12, color: '#DC2626', background: 'none', border: '1px solid #FCA5A5', borderRadius: 100, padding: '4px 10px', cursor: 'pointer', fontWeight: 600 }}>

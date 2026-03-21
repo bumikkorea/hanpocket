@@ -12,6 +12,7 @@ import { useLanguage } from '../i18n/index.jsx'
 import { EDITORIALS } from '../data/editorials.js'
 import EditorialDetailPage from './EditorialDetailPage.jsx'
 import MorePage from './MorePage.jsx'
+import NearPageHeader from './NearPageHeader.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
@@ -208,15 +209,7 @@ function BottomSheet({ open, onClose, titleLabel, items, lang, t, setSubPage, se
 function DiscoverPage({ lang, t, setSubPage, setTab, onClose, onEditorialClick }) {
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
-      {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '56px 20px 14px', background: 'var(--bg)', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px 4px 0' }}>
-          <ArrowLeft size={22} color="var(--text-primary)" />
-        </button>
-        <span style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>
-          {L(lang, { ko: '더보기', zh: '更多', en: 'More' })}
-        </span>
-        </div>
+      <NearPageHeader onBack={onClose} setTab={setTab} />
 
       {/* 스크롤 영역 */}
       <div style={{ flex: 1, overflowY: 'auto' }}>
@@ -658,6 +651,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           editorial={currentEditorial}
           lang={lang}
           onBack={() => setEditorialId(null)}
+          setTab={setTab}
         />
       )}
     </div>

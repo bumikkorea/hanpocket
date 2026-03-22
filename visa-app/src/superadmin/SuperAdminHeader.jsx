@@ -2,12 +2,10 @@ import { Bell, Search, User } from 'lucide-react'
 
 export default function SuperAdminHeader({ user, currentTab }) {
   const tabNames = {
-    dashboard: '대시보드',
-    users: '사용자 관리',
-    admins: '관리자 관리',
-    hotels: '호텔/점주 관리',
-    settings: '시스템 설정',
-    logs: '로그 및 분석',
+    'popup-review':    '팝업 검수',
+    'manual-register': '수동 등록',
+    'near-manage':     '매장 관리',
+    settings:          '설정',
   }
 
   return (

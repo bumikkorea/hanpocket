@@ -1,18 +1,13 @@
 import { useState } from 'react'
-import { BarChart3, Users, Building2, Lock, Settings, FileText, LogOut, AlertCircle, Store, PlusCircle, Database } from 'lucide-react'
+import { Lock, Settings, AlertCircle, Store, PlusCircle, Database } from 'lucide-react'
 import { supabase as supabaseNear } from '../lib/supabase'
 import { supabaseScraper } from '../lib/supabaseScraper'
 import SuperAdminHeader from './SuperAdminHeader'
 import SuperAdminNav from './SuperAdminNav'
-import DashboardTab from './tabs/DashboardTab'
 import PopupReviewTab from './tabs/PopupReviewTab'
 import PopupManualRegister from './tabs/PopupManualRegister'
 import PopupNearManage from './tabs/PopupNearManage'
-import UsersTab from './tabs/UsersTab'
-import AdminsTab from './tabs/AdminsTab'
-import HotelsTab from './tabs/HotelsTab'
 import SettingsTab from './tabs/SettingsTab'
-import LogsTab from './tabs/LogsTab'
 
 /**
  * SHA-256으로 비밀번호 해싱
@@ -162,15 +157,10 @@ export default function SuperAdminApp() {
   }
 
   const tabs = [
-    { id: 'dashboard', label: '대시보드', icon: BarChart3 },
-    { id: 'popup-review', label: '팝업 검수', icon: Store },
+    { id: 'popup-review',    label: '팝업 검수', icon: Store },
     { id: 'manual-register', label: '수동 등록', icon: PlusCircle },
-    { id: 'near-manage', label: 'DB 관리', icon: Database },
-    { id: 'users', label: '사용자', icon: Users },
-    { id: 'admins', label: '관리자', icon: Lock },
-    { id: 'hotels', label: '호텔/점주', icon: Building2 },
-    { id: 'settings', label: '설정', icon: Settings },
-    { id: 'logs', label: '로그', icon: FileText },
+    { id: 'near-manage',     label: '매장 관리', icon: Database },
+    { id: 'settings',        label: '설정',      icon: Settings },
   ]
 
   const handleLogout = () => {
@@ -196,16 +186,11 @@ export default function SuperAdminApp() {
         <SuperAdminHeader user={user} currentTab={currentTab} />
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6">
-          {currentTab === 'dashboard' && <DashboardTab supabaseNear={supabaseNear} supabaseScraper={supabaseScraper} />}
-          {currentTab === 'popup-review' && <PopupReviewTab supabaseScraper={supabaseScraper} supabaseNear={supabaseNear} />}
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
+          {currentTab === 'popup-review'    && <PopupReviewTab supabaseScraper={supabaseScraper} supabaseNear={supabaseNear} />}
           {currentTab === 'manual-register' && <PopupManualRegister supabaseNear={supabaseNear} />}
-          {currentTab === 'near-manage' && <PopupNearManage supabaseNear={supabaseNear} />}
-          {currentTab === 'users' && <UsersTab />}
-          {currentTab === 'admins' && <AdminsTab />}
-          {currentTab === 'hotels' && <HotelsTab />}
-          {currentTab === 'settings' && <SettingsTab />}
-          {currentTab === 'logs' && <LogsTab />}
+          {currentTab === 'near-manage'     && <PopupNearManage supabaseNear={supabaseNear} />}
+          {currentTab === 'settings'        && <SettingsTab />}
         </div>
       </div>
     </div>

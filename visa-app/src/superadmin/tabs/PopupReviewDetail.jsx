@@ -117,7 +117,7 @@ function RejectModal({ onConfirm, onCancel }) {
         />
         <div className="flex gap-3 mt-4">
           <button onClick={onCancel} className="flex-1 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50">취소</button>
-          <button onClick={() => onConfirm(note)} className="flex-1 py-2 bg-red-500 text-white rounded-xl text-sm font-medium hover:bg-red-600">거절 확정</button>
+          <button onClick={() => onConfirm(note)} className="flex-1 py-2 text-white rounded-xl text-sm font-medium" style={{ backgroundColor: '#E53935' }}>거절 확정</button>
         </div>
       </div>
     </div>
@@ -376,21 +376,28 @@ export default function PopupReviewDetail({ item, onBack, supabaseNear, supabase
         <button
           onClick={() => setShowRejectModal(true)}
           disabled={loading}
-          className="flex items-center justify-center gap-2 px-6 py-3 border border-red-300 text-red-600 rounded-xl hover:bg-red-50 disabled:opacity-50 transition-colors text-sm font-medium"
+          className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl disabled:opacity-50 transition-colors text-sm font-medium"
+          style={{ border: '1px solid #E53935', color: '#E53935' }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = '#FFEBEE'}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = ''}
         >
           <Ban size={15} /> 거절
         </button>
         <button
           onClick={handleHold}
           disabled={loading}
-          className="flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 disabled:opacity-50 transition-colors text-sm font-medium"
+          className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl disabled:opacity-50 transition-colors text-sm font-medium"
+          style={{ border: '1px solid #888', color: '#888' }}
+          onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F5F5F5'}
+          onMouseLeave={e => e.currentTarget.style.backgroundColor = ''}
         >
           <Pause size={15} /> 보류
         </button>
         <button
           onClick={handleApprove}
           disabled={loading}
-          className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:opacity-50 transition-colors text-sm font-bold"
+          className="flex-1 flex items-center justify-center gap-2 py-3 text-white rounded-xl disabled:opacity-50 transition-colors text-sm font-bold"
+          style={{ backgroundColor: '#C4725A' }}
         >
           <Check size={16} /> {loading ? '처리 중...' : '승인 → NEAR DB 저장'}
         </button>

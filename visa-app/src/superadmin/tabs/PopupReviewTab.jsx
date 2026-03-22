@@ -25,16 +25,16 @@ const SOURCE_OPTIONS = [
   { value: 'instagram', label: 'instagram' },
 ]
 
-const STATUS_OPTIONS = [
-  { value: 'pending',  label: '대기',  color: 'bg-yellow-100 text-yellow-700' },
-  { value: 'approved', label: '승인',  color: 'bg-green-100 text-green-700' },
-  { value: 'rejected', label: '거절',  color: 'bg-red-100 text-red-700' },
-]
+const STATUS_BADGE = {
+  pending:  { bg: '#FFF8E1', color: '#F9A825', label: '대기' },
+  approved: { bg: '#E8F5E9', color: '#43A047', label: '승인' },
+  rejected: { bg: '#FFEBEE', color: '#E53935', label: '거절' },
+}
 
 function statusBadge(status) {
-  const opt = STATUS_OPTIONS.find(o => o.value === status)
-  return opt
-    ? <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${opt.color}`}>{opt.label}</span>
+  const b = STATUS_BADGE[status]
+  return b
+    ? <span style={{ backgroundColor: b.bg, color: b.color }} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold">{b.label}</span>
     : <span className="inline-flex px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">{status}</span>
 }
 
@@ -194,7 +194,7 @@ function PopupCard({ item, onClick }) {
 
   return (
     <div
-      className="bg-white rounded-xl border border-gray-200 p-4 hover:border-blue-300 hover:shadow-sm transition-all cursor-pointer"
+      className="bg-white rounded-xl border border-gray-200 p-4 hover:border-[#C4725A] hover:shadow-sm transition-all cursor-pointer"
       onClick={() => onClick(item)}
     >
       <div className="flex items-start justify-between gap-3">
@@ -388,7 +388,8 @@ export default function PopupReviewTab({ supabaseScraper, supabaseNear }) {
         <button
           onClick={fetchPopups}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors text-sm font-medium flex-shrink-0"
+          className="flex items-center gap-2 px-4 py-2 text-white rounded-lg disabled:opacity-50 transition-colors text-sm font-medium flex-shrink-0"
+          style={{ backgroundColor: '#C4725A' }}
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           새로고침

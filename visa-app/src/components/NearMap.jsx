@@ -9,6 +9,7 @@ import { supabase } from '../lib/supabase'
 import { t, tLang } from '../locales/index.js'
 import { useLanguage } from '../i18n/index.jsx'
 import NavScreen from './NavScreen.jsx'
+import { getLocalizedName, getLocalizedAddress } from '../utils/localize.js'
 
 const IS_DEV = import.meta.env.DEV
 
@@ -942,7 +943,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         {/* 제목 + NEW 뱃지 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
           <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {poi.name_zh || poi.name_ko}
+            {getLocalizedName(poi, lang)}
           </h2>
           {isNewPoi(poi.created_at) && (
             <span style={{ fontSize: 9, background: '#FF3141', color: 'white', borderRadius: 4, padding: '1px 5px', fontWeight: 700, flexShrink: 0 }}>
@@ -953,7 +954,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
 
         {/* 서브타이틀 */}
         <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {tLang('subtitle_city', lang)} · {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
+          {tLang('subtitle_city', lang)} · {getLocalizedAddress(poi, lang)}{dist ? ` · ${dist}` : ''}
         </p>
 
         {/* 주소 복사 — 언어 토글 + 복사 버튼 */}
@@ -1054,7 +1055,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         {/* CTA 버튼 */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button
-            onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh, 'PUBLICTRANSIT')}
+            onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', 'PUBLICTRANSIT')}
             className="btn btn-sm btn-dark"
             style={{ flex: 1.2, minWidth: 80 }}
           >
@@ -1062,7 +1063,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             {tLang('navigate_here', lang)}
           </button>
           <button
-            onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh, userPos)}
+            onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', userPos)}
             className="btn btn-sm btn-taxi"
             style={{ flex: 1, minWidth: 72 }}
           >
@@ -1118,7 +1119,7 @@ function CompactSheetCard({ poi, lang, onExpand }) {
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
           <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {poi.name_zh || poi.name_ko}
+            {getLocalizedName(poi, lang)}
           </span>
           {isNewPoi(poi.created_at) && (
             <span style={{ fontSize: 9, background: '#FF3141', color: 'white', borderRadius: 4, padding: '1px 4px', fontWeight: 700, flexShrink: 0 }}>
@@ -1127,7 +1128,7 @@ function CompactSheetCard({ poi, lang, onExpand }) {
           )}
         </div>
         <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
+          {getLocalizedAddress(poi, lang)}{dist ? ` · ${dist}` : ''}
         </p>
         {tags.length > 0 ? (
           <div style={{ display: 'flex', gap: 4, flexWrap: 'nowrap', overflow: 'hidden' }}>
@@ -1171,7 +1172,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   const results = debouncedQuery.trim().length > 0
     ? allPins.filter(p => {
         const q = debouncedQuery.toLowerCase()
-        return (p.name_zh || '').includes(debouncedQuery) ||
+        return (p.name_zh || '').toLowerCase().includes(q) ||
                (p.name_ko || '').toLowerCase().includes(q) ||
                (p.name_en || '').toLowerCase().includes(q)
       })
@@ -1186,7 +1187,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   }
 
   const handleSelect = (poi) => {
-    addRecent(poi.name_zh || poi.name_ko)
+    addRecent(getLocalizedName(poi, lang))
     onSelectPoi(poi)
   }
 
@@ -1201,8 +1202,8 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
           {cfg.letter}
         </span>
         <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
-          <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.name_zh || poi.name_ko}</div>
-          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.address_zh}</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getLocalizedName(poi, lang)}</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getLocalizedAddress(poi, lang)}</div>
         </div>
         {rank != null && <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>#{rank + 1}</span>}
         {rank == null && <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>{distLabel(poi)}</span>}
@@ -1347,9 +1348,9 @@ function ListView({ pins, lang, listSort, onSortChange, onSelectPoi, onBack }) {
                 }
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{poi.name_zh || poi.name_ko}</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getLocalizedName(poi, lang)}</div>
                 <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {poi.address_zh}{distLabel(poi) ? ` · ${distLabel(poi)}` : ''}
+                  {getLocalizedAddress(poi, lang)}{distLabel(poi) ? ` · ${distLabel(poi)}` : ''}
                 </div>
                 {tags.length > 0 && (
                   <div style={{ display: 'flex', gap: 4 }}>
@@ -1456,8 +1457,8 @@ function CourseStopList({ course, allPins, lang, onSelectPoi, onNavigatePoi, onE
                 onClick={() => onSelectPoi(poi)}
                 style={{ flex: 1, textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: 0, minWidth: 0 }}
               >
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{poi.name_zh || poi.name_ko}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{distLabel(poi) || poi.address_zh}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getLocalizedName(poi, lang)}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{distLabel(poi) || getLocalizedAddress(poi, lang)}</div>
               </button>
               {/* 导航 버튼 */}
               <button
@@ -1507,7 +1508,7 @@ function ReservationSheet({ poi, lang, onClose }) {
     list.unshift({
       id: `res-${Date.now()}`,
       poi_id: poi.id,
-      poi_name: poi.name_zh || poi.name_ko,
+      poi_name: getLocalizedName(poi, lang),
       poi_image: poi.image_url,
       date: selDate, time: selTime, count,
       created_at: new Date().toISOString(),
@@ -1523,7 +1524,7 @@ function ReservationSheet({ poi, lang, onClose }) {
       <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
         <div style={{ fontSize: 52 }}>✅</div>
         <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('reserve_success', lang)}</div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{poi.name_zh} · {selDate} {selTime} · {count}{tLang('res_people', lang)}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{getLocalizedName(poi, lang)} · {selDate} {selTime} · {count}{tLang('res_people', lang)}</div>
       </div>
     )
   }
@@ -1534,7 +1535,7 @@ function ReservationSheet({ poi, lang, onClose }) {
         <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
           <ArrowLeft size={22} weight="bold" />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{poi.name_zh} · {tLang('reserve', lang)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{getLocalizedName(poi, lang)} · {tLang('reserve', lang)}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px 16px' }}>
@@ -1780,8 +1781,8 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
                       }
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{poi.name_zh}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{poi.address_zh}</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getLocalizedName(poi, lang)}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{getLocalizedAddress(poi, lang)}</div>
                     </div>
                     <span style={{ color: 'var(--text-hint)', fontSize: 16, flexShrink: 0 }}>›</span>
                   </button>
@@ -1837,7 +1838,7 @@ function NearbyHotFallback({ pins, lang, onSelect }) {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginBottom: 3 }}>
-                  {poi.name_zh || poi.name_ko}
+                  {getLocalizedName(poi, lang)}
                 </p>
                 <div style={{ display: 'flex', gap: 4 }}>
                   {tags.slice(0, 2).map(tag => (

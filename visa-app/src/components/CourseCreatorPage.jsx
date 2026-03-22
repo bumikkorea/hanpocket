@@ -7,6 +7,7 @@ import { Search, Plus, X, ChevronUp, ChevronDown } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
 import { supabase } from '../lib/supabase.js'
 import NearPageHeader from './NearPageHeader.jsx'
+import { getLocalizedName, getLocalizedAddress } from '../utils/localize.js'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
@@ -76,7 +77,7 @@ function StopSearchModal({ lang, onAdd, onClose, addedIds }) {
             </div>
           )}
           {!loading && results.map(item => {
-            const name = lang === 'zh' ? (item.name_zh || item.name) : lang === 'en' ? (item.name_en || item.name) : (item.name_ko || item.name)
+            const name = getLocalizedName(item, lang) || item.name || ''
             const alreadyAdded = addedIds.includes(item.id)
             return (
               <button
@@ -93,7 +94,7 @@ function StopSearchModal({ lang, onAdd, onClose, addedIds }) {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 14, fontWeight: 600, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name}</div>
                   <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>
-                    {item.category} · {item.address_zh || item.address_ko || ''}
+                    {item.category} · {getLocalizedAddress(item, lang)}
                   </div>
                 </div>
                 {alreadyAdded
@@ -247,10 +248,10 @@ export default function CourseCreatorPage({ onClose, setTab }) {
                   {/* 이름 + 주소 */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {lang === 'zh' ? stop.name_zh : lang === 'en' ? stop.name_en : stop.name_ko}
+                      {getLocalizedName(stop, lang)}
                     </div>
-                    {stop.address_zh && (
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{stop.address_zh}</div>
+                    {getLocalizedAddress(stop, lang) && (
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getLocalizedAddress(stop, lang)}</div>
                     )}
                   </div>
 

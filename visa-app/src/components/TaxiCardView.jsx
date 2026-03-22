@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { X, Car, Copy, Phone, Check } from 'lucide-react'
 import { t, tLang } from '../locales/index.js'
+import { getLocalizedName, getLocalizedAddress } from '../utils/localize.js'
 
 const KAKAO_APP_KEY = import.meta.env.VITE_KAKAO_MAP_API_KEY
 
@@ -39,7 +40,9 @@ export default function TaxiCardView({ poi, lang, onClose, userPos }) {
 
   const addressKo = poi.address_ko || ''
   const addressZh = poi.address_zh || ''
-  const nameZh = poi.name_zh || poi.name_ko || ''
+  const nameDisplay = getLocalizedName(poi, lang)
+  // 택시기사용 이름은 항상 한국어 우선
+  const nameForDriver = poi.name_ko || poi.name_zh || ''
   const phone = poi._raw?.phone || poi.phone || ''
 
   const handleCopy = () => {
@@ -120,12 +123,12 @@ export default function TaxiCardView({ poi, lang, onClose, userPos }) {
             {addressKo || <span style={{ color: 'var(--text-hint)' }}>주소 정보 없음</span>}
           </div>
 
-          {/* 중국어 매장명 */}
-          {nameZh && (
-            <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 8 }}>{nameZh}</div>
+          {/* 매장명 (현재 언어) */}
+          {nameDisplay && (
+            <div style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 8 }}>{nameDisplay}</div>
           )}
-          {addressZh && (
-            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{addressZh}</div>
+          {getLocalizedAddress(poi, lang) && (
+            <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 4 }}>{getLocalizedAddress(poi, lang)}</div>
           )}
 
           {/* 구분선 */}

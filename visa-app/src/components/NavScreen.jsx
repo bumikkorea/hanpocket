@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowLeft } from '@phosphor-icons/react'
 import { t, tLang } from '../locales/index.js'
 import { buildTransitRoute, calcTaxiFare, LINE_COLORS } from '../data/stationData.js'
+import { getLocalizedName } from '../utils/localize.js'
 
 // ─── 교통 모드 카드 ───
 function ModeCard({ icon, labelKey, duration, fareKrw, fareCny, active, lang, onClick }) {
@@ -85,13 +86,13 @@ function TransitDetail({ steps, destName, lang }) {
                 }} />
               </div>
               <div style={{ paddingBottom: 14, flex: 1 }}>
-                {/* 중국어 역명 (주) */}
+                {/* 역명 (현재 언어 우선) */}
                 <div style={{ fontSize: 15, fontWeight: 700, color: '#111827', lineHeight: 1.3 }}>
-                  {step.name_zh}
+                  {getLocalizedName(step, lang)}
                 </div>
-                {/* 한국어 + 영어 역명 */}
+                {/* 보조 역명 */}
                 <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>
-                  ({step.name_ko})&nbsp;&nbsp;{step.name_en}
+                  {lang === 'ko' ? `(${step.name_zh})` : `(${step.name_ko})`}&nbsp;&nbsp;{lang === 'en' ? '' : step.name_en}
                 </div>
                 {/* 환승 표시 */}
                 {hasTransfer && (
@@ -209,7 +210,7 @@ export default function NavScreen({ poi, onClose, lang }) {
   const taxiMin = Math.max(5, Math.ceil(dist / 350))
   const taxiFareKrw = calcTaxiFare(dist)
   const taxiFareCny = Math.round(taxiFareKrw / 183)
-  const destName = poi.name_zh || poi.name_ko
+  const destName = getLocalizedName(poi, lang)
 
   return (
     <div style={{

@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase'
 import { useToast } from './Toast'
 import { useLanguage } from '../i18n/index.jsx'
 import { tLang } from '../locales/index.js'
+import { getLocalizedName, getLocalizedAddress } from '../utils/localize.js'
 
 // ─── 브랜드 컬러 ───
 const BRAND = '#C4725A'
@@ -161,6 +162,9 @@ async function fetchMyBookings() {
     dbId: row.id,
     shopName: row.popups?.name_ko || row.popups?.name_zh || '',
     service: row.popup_services?.name_ko || row.popup_services?.name_zh || '',
+    // 다국어 표시용 raw 데이터
+    _shop: row.popups ? { name_zh: row.popups.name_zh, name_ko: row.popups.name_ko, address_zh: row.popups.address_zh, address_ko: row.popups.address_ko } : null,
+    _service: row.popup_services ? { name_zh: row.popup_services.name_zh, name_ko: row.popup_services.name_ko } : null,
     date: row.booking_date,
     time: (row.booking_time || '').slice(0, 5),
     guests: row.guests || 1,
@@ -293,9 +297,9 @@ function saveToLocalStorage(booking) {
 
 // ─── 서브 컴포넌트: 매장 카드 ───
 function ShopCard({ shop, lang, onBook }) {
-  const nameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
   const catKey = lang === 'ko' ? 'category_ko' : 'category_zh'
-  const locKey = lang === 'ko' ? 'location_ko' : 'location_zh'
+  const shopName = getLocalizedName(shop, lang)
+  const shopLoc = lang === 'ko' ? (shop.location_ko || shop.location_zh) : lang === 'en' ? (shop.location_ko || shop.location_zh) : (shop.location_zh || shop.location_ko)
   return (
     <div style={{ background: 'white', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-card)', padding: '20px', display: 'flex', gap: 14, alignItems: 'flex-start', border: '1px solid var(--border)' }}>
       {/* 이미지/아이콘 */}
@@ -304,9 +308,9 @@ function ShopCard({ shop, lang, onBook }) {
       </div>
       {/* 정보 */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{shop[nameKey]}</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{shopName}</div>
         <div style={{ fontSize: 13, color: BRAND, fontWeight: 600, marginBottom: 4 }}>{shop[catKey]}</div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{shop[locKey]}</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{shopLoc}</div>
       </div>
       {/* 예약 버튼 */}
       <button onClick={() => onBook(shop)} style={{ flexShrink: 0, background: BRAND_LIGHT, border: 'none', borderRadius: 'var(--radius-btn)', padding: '8px 14px', fontSize: 13, fontWeight: 700, color: BRAND, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -320,10 +324,9 @@ function ShopCard({ shop, lang, onBook }) {
 function StepService({ shop, services, servicesLoading, lang, onSelect, onBack, noHeader }) {
   const [selected, setSelected] = useState(null)
   const nameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
-  const shopNameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {!noHeader && <StepHeader title={L(lang, LABEL.step1_title)} subtitle={shop[shopNameKey]} onBack={onBack} />}
+      {!noHeader && <StepHeader title={L(lang, LABEL.step1_title)} subtitle={getLocalizedName(shop, lang)} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 20px' }}>
         {servicesLoading ? (
           <div style={{ textAlign: 'center', paddingTop: 60, color: 'var(--text-muted)', fontSize: 15 }}>{tLang('booking.loading', lang)}</div>
@@ -371,10 +374,9 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
     if (lang === 'en') return DAY_EN[dow]
     return DAY_ZH[dow]
   }
-  const shopNameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {!noHeader && <StepHeader title={L(lang, LABEL.step2_title)} subtitle={shop[shopNameKey]} onBack={onBack} />}
+      {!noHeader && <StepHeader title={L(lang, LABEL.step2_title)} subtitle={getLocalizedName(shop, lang)} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 20px' }}>
         {/* 날짜 선택 */}
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{lang === 'ko' ? '날짜' : lang === 'zh' ? '选择日期' : 'Date'}</div>
@@ -433,16 +435,16 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
   const [showNote, setShowNote] = useState(false)
   const deposit = Math.round(service.price_krw * 0.3)
   const depositCny = krwToCny(deposit)
-  const shopNameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
-  const svcNameKey = lang === 'ko' ? 'name_ko' : 'name_zh'
+  const shopName = getLocalizedName(shop, lang)
+  const svcName = getLocalizedName(service, lang)
   function handlePay(method) {
     const id = genBookingId()
     const booking = {
       id,
       shopId: shop.id,
-      shopName: shop[shopNameKey],
+      shopName,
       serviceId: service.id,
-      service: service[svcNameKey],
+      service: svcName,
       date: dateTime.date,
       time: dateTime.time,
       guests: dateTime.guests,
@@ -458,12 +460,12 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
   }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {!noHeader && <StepHeader title={L(lang, LABEL.step3_title)} subtitle={shop[shopNameKey]} onBack={onBack} />}
+      {!noHeader && <StepHeader title={L(lang, LABEL.step3_title)} subtitle={shopName} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px' }}>
         {/* 예약 요약 */}
         <div style={{ background: 'var(--surface)', borderRadius: 'var(--radius-card)', padding: '20px', marginBottom: 16, border: '1px solid var(--border)' }}>
-          <Row label={lang === 'ko' ? '매장' : lang === 'zh' ? '门店' : 'Shop'} value={shop[shopNameKey]} />
-          <Row label={lang === 'ko' ? '서비스' : lang === 'zh' ? '服务' : 'Service'} value={service[svcNameKey]} />
+          <Row label={lang === 'ko' ? '매장' : lang === 'zh' ? '门店' : 'Shop'} value={shopName} />
+          <Row label={lang === 'ko' ? '서비스' : lang === 'zh' ? '服务' : 'Service'} value={svcName} />
           <Row label={lang === 'ko' ? '날짜' : lang === 'zh' ? '日期' : 'Date'} value={dateTime.date} />
           <Row label={lang === 'ko' ? '시간' : lang === 'zh' ? '时间' : 'Time'} value={dateTime.time} />
           <Row label={L(lang, LABEL.guests)} value={`${dateTime.guests}${L(lang, LABEL.people_unit)}`} />
@@ -649,8 +651,8 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
               <div key={b.id} style={{ background: 'white', borderRadius: 'var(--radius-card)', padding: '20px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-card)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                   <div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{b.shopName}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{b.service}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{b._shop ? getLocalizedName(b._shop, lang) : b.shopName}</div>
+                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{b._service ? getLocalizedName(b._service, lang) : b.service}</div>
                   </div>
                   <StatusBadge status={b.status} />
                 </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { ChevronLeft, Share2, Phone, Navigation2, Ticket, Bookmark, Share } from 'lucide-react'
 import { kakaoDirectionLink, getDirectionLinks } from '../utils/travelTime'
+import { getLocalizedName } from '../utils/localize.js'
 
 function L(lang, d) {
   if (typeof d === 'string') return d
@@ -451,7 +452,7 @@ export default function PlaceDetail({ place, onBack, onAddStop, onSetDestination
       {place.nearby && place.nearby.length > 0 && (
         <Section title={L(lang, { ko: '주변 추천', zh: '周边推荐', en: 'Nearby' })} last>
           {place.nearby.map((nb, i) => (
-            <NearbyItem key={i} name={nb.name_zh} distance={nb.distance} tag={nb.tag} />
+            <NearbyItem key={i} name={getLocalizedName(nb, lang)} distance={nb.distance} tag={nb.tag} />
           ))}
         </Section>
       )}

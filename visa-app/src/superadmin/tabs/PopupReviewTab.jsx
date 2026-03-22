@@ -31,6 +31,12 @@ const STATUS_BADGE = {
   rejected: { bg: '#FFEBEE', color: '#E53935', label: '거절' },
 }
 
+const STATUS_OPTIONS = [
+  { value: 'pending',  label: '대기' },
+  { value: 'approved', label: '승인' },
+  { value: 'rejected', label: '거절' },
+]
+
 function statusBadge(status) {
   const b = STATUS_BADGE[status]
   return b

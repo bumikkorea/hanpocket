@@ -36,21 +36,19 @@ const TEXTS = {
   title:      { ko: '출국 체크리스트',  zh: '出境清单',    en: 'Departure Checklist' },
   reset:      { ko: '초기화',           zh: '重置',        en: 'Reset'               },
   congestion: { ko: '출국장 혼잡도',    zh: '出境大厅拥挤度', en: 'Departure Congestion' },
-  zone:       { ko: '구역',             zh: '区域',        en: 'Zone'                },
-  waiting:    { ko: '대기',             zh: '等待',        en: 'Wait'                },
-  people:     { ko: '명',               zh: '人',          en: ''                    },
-  updated:    { ko: '업데이트',         zh: '更新',        en: 'Updated'             },
+  waiting:    { ko: '명 대기',          zh: '人等待',      en: ' waiting'            },
+  waitTime:   { ko: '분',              zh: '分钟',        en: 'min'                 },
   loading:    { ko: '조회 중...',       zh: '查询中...',   en: 'Loading...'          },
   noData:     { ko: '데이터 없음',      zh: '暂无数据',    en: 'No data'             },
   doneAll:    { ko: '모두 완료! 좋은 여행 되세요 ✈️', zh: '全部完成！祝您旅途愉快 ✈️', en: 'All done! Have a great trip ✈️' },
 }
 
-// 대기인원 → 혼잡도 색상
-function congestionColor(waiting) {
-  if (waiting <= 20)  return { bg: '#F0FDF4', bar: '#10B981', text: '#065F46' }
-  if (waiting <= 50)  return { bg: '#FFFBEB', bar: '#F59E0B', text: '#92400E' }
-  if (waiting <= 100) return { bg: '#FFF7ED', bar: '#F97316', text: '#9A3412' }
-  return               { bg: '#FEF2F2', bar: '#EF4444', text: '#991B1B' }
+// 대기시간(분) → 혼잡도 색상
+function congestionColor(minutes) {
+  if (minutes <= 5)  return { bar: '#10B981', text: '#065F46' } // 초록: 5분 이하
+  if (minutes <= 15) return { bar: '#F59E0B', text: '#92400E' } // 노랑: 15분 이하
+  if (minutes <= 30) return { bar: '#F97316', text: '#9A3412' } // 주황: 30분 이하
+  return                    { bar: '#EF4444', text: '#991B1B' } // 빨강: 30분 초과
 }
 
 export default function DepartureCountdown({ lang }) {
@@ -172,21 +170,24 @@ export default function DepartureCountdown({ lang }) {
                 <p className="text-xs text-[#9CA3AF] text-center py-3">{L(lang, TEXTS.noData)}</p>
               ) : (
                 (congestion[termTab] || [])
-                  .sort((a, b) => (a.zone || '').localeCompare(b.zone || ''))
+                  .sort((a, b) => {
+                    const n = parseInt(a.zone) - parseInt(b.zone)
+                    return n !== 0 ? n : (a.area || '').localeCompare(b.area || '')
+                  })
                   .map((z, i) => {
-                    const c = congestionColor(z.waiting)
-                    const maxWaiting = Math.max(...(congestion[termTab].map(x => x.waiting)), 1)
+                    const c = congestionColor(z.waitTime) // 대기시간(분) 기준으로 색상
+                    const maxTime = Math.max(...(congestion[termTab].map(x => x.waitTime)), 1)
                     return (
                       <div key={i} className="flex items-center gap-2">
-                        <span className="text-[11px] text-[#6B7280] w-14 shrink-0">
-                          {z.area ? `${z.area} ` : ''}{z.zone}
+                        <span className="text-[11px] text-[#6B7280] w-12 shrink-0 font-medium">
+                          {z.zone}번 {z.area}
                         </span>
-                        <div className="flex-1 h-5 bg-[#F3F4F6] rounded-full overflow-hidden">
+                        <div className="flex-1 h-4 bg-[#F3F4F6] rounded-full overflow-hidden">
                           <div className="h-full rounded-full transition-all duration-500"
-                            style={{ width: `${Math.max((z.waiting / maxWaiting) * 100, 4)}%`, background: c.bar }} />
+                            style={{ width: `${Math.max((z.waitTime / maxTime) * 100, 3)}%`, background: c.bar }} />
                         </div>
-                        <span className="text-[11px] font-semibold shrink-0" style={{ color: c.text }}>
-                          {z.waiting}{L(lang, TEXTS.people)}
+                        <span className="text-[11px] font-semibold w-14 text-right shrink-0" style={{ color: c.text }}>
+                          {z.waitTime}{L(lang, TEXTS.waitTime)} / {z.waiting}{L(lang, TEXTS.waiting)}
                         </span>
                       </div>
                     )

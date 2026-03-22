@@ -49,16 +49,19 @@ export async function fetchDepartureCongestion() {
     const list = Array.isArray(items) ? items : [items]
 
     // 터미널별 그룹핑
+    // gateId 형식: "DG1_E" (DG=출국장, 숫자=구역번호, E=동/W=서)
     const result = { T1: [], T2: [], updatedAt: '' }
     for (const d of list) {
-      // 필드명은 API 실제 응답에 따라 조정 필요
-      const terminal = d.terno === 'P02' ? 'T2' : 'T1'
-      const zone     = d.conzoneId  || d.congestNo || d.zoneName || ''
-      const area     = d.areaNo     || d.areaNm    || ''
-      const waiting  = parseInt(d.congestion ?? d.waitPersonCnt ?? d.congestionLevel ?? 0)
-      const dt       = d.dtm || d.occDt || ''
+      const terminal = d.terminalId === 'P02' ? 'T2' : 'T1'
+      const gateId   = d.gateId || ''
+      const zoneNum  = gateId.match(/DG(\d+)/)?.[1] || gateId
+      const area     = gateId.endsWith('_E') ? '동' : gateId.endsWith('_W') ? '서' : ''
+      const waiting  = parseInt(d.waitLength || 0) || 0
+      const waitTime = parseInt(d.waitTime  || 0) || 0
+      const dt       = d.occurtime || ''
+
       if (!result.updatedAt && dt) result.updatedAt = dt
-      result[terminal].push({ zone, area, waiting })
+      result[terminal].push({ zone: zoneNum, area, waiting, waitTime, gateId })
     }
     return result
   } catch {

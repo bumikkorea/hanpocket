@@ -38,10 +38,16 @@ const QUICK_AREAS = [
 // 카카오T 딥링크 (택시 호출)
 function openKakaoTaxi(lat, lng, name) {
   const n = encodeURIComponent(name || '')
-  const deepLink = `kakaot://taxi/call?destLng=${lng}&destLat=${lat}&destName=${n}`
-  const webFallback = `https://t.kakao.com/launch?destLng=${lng}&destLat=${lat}&destName=${n}`
+  const deepLink = `kakaot://taxi/call?destLat=${lat}&destLng=${lng}&destName=${n}`
+  console.log('KakaoT:', deepLink, 'lat:', lat, 'lng:', lng, 'name:', name)
   window.location.href = deepLink
-  setTimeout(() => { window.location.href = webFallback }, 1500)
+  // 앱 미설치 시 스토어로 이동
+  setTimeout(() => {
+    const isIOS = /iPhone|iPad/i.test(navigator.userAgent)
+    window.location.href = isIOS
+      ? 'https://apps.apple.com/kr/app/kakaot/id981110422'
+      : 'https://play.google.com/store/apps/details?id=com.kakao.taxi'
+  }, 2000)
 }
 
 // ─── 영업 상태 판단 ───

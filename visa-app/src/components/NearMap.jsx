@@ -63,15 +63,8 @@ function openKakaoTaxi(destLat, destLng, destName, userPos) {
   }
 
   const dn = encodeURIComponent(destName || '')
-  let url
-
-  if (userPos?.lat && userPos?.lng) {
-    // 출발지 + 도착지 모두 전달 (더 높은 성공률)
-    const sn = encodeURIComponent('현재 위치')
-    url = `kakaot://taxi/call?startLat=${Number(userPos.lat).toFixed(6)}&startLng=${Number(userPos.lng).toFixed(6)}&startName=${sn}&destLat=${dLat.toFixed(6)}&destLng=${dLng.toFixed(6)}&destName=${dn}`
-  } else {
-    url = `kakaot://taxi/call?destLat=${dLat.toFixed(6)}&destLng=${dLng.toFixed(6)}&destName=${dn}`
-  }
+  // 카카오 내부 좌표계: X = 경도(lng), Y = 위도(lat)
+  const url = `kakaot://taxi/call?destX=${dLng.toFixed(6)}&destY=${dLat.toFixed(6)}&destName=${dn}`
 
   window.location.href = url
   setTimeout(() => {

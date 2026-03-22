@@ -35,6 +35,16 @@ const QUICK_AREAS = [
   { id: 'jamsil',     key: 'district.jamsil', lat: 37.5133, lng: 127.1001, zoom: 4, district: 'jamsil'   },
 ]
 
+// 앱 딥링크 열기 — 앱이 열리면 타이머 취소 (앱스토어 오발화 방지)
+function openDeepLink(url, fallbackUrl) {
+  window.location.href = url
+  const timer = setTimeout(() => { window.location.href = fallbackUrl }, 2000)
+  // 앱이 열려 화면이 숨겨지면 타이머 취소
+  const cancel = () => clearTimeout(timer)
+  document.addEventListener('visibilitychange', cancel, { once: true })
+  window.addEventListener('pagehide', cancel, { once: true })
+}
+
 // 카카오맵 딥링크 — 길찾기
 function openKakaoMapRoute(lat, lng, name, by = 'PUBLICTRANSIT') {
   const latNum = Number(lat)
@@ -48,12 +58,14 @@ function openKakaoMapRoute(lat, lng, name, by = 'PUBLICTRANSIT') {
     const fallback = encodeURIComponent('https://play.google.com/store/apps/details?id=net.daum.android.map')
     window.location.href = `intent://route?ep=${latNum.toFixed(6)},${lngNum.toFixed(6)}&edt=${n}&by=${by}#Intent;scheme=kakaomap;package=net.daum.android.map;S.browser_fallback_url=${fallback};end`
   } else {
-    window.location.href = `kakaomap://route?ep=${latNum.toFixed(6)},${lngNum.toFixed(6)}&edt=${n}&by=${by}`
-    setTimeout(() => { window.location.href = 'https://apps.apple.com/kr/app/id304608425' }, 2000)
+    openDeepLink(
+      `kakaomap://route?ep=${latNum.toFixed(6)},${lngNum.toFixed(6)}&edt=${n}&by=${by}`,
+      'https://apps.apple.com/kr/app/id304608425'
+    )
   }
 }
 
-// 카카오T 딥링크 — 택시 호출 (출발지 + 도착지)
+// 카카오T 딥링크 — 택시 호출
 function openKakaoTaxi(destLat, destLng, destName, userPos) {
   const dLat = Number(destLat)
   const dLng = Number(destLng)
@@ -63,16 +75,14 @@ function openKakaoTaxi(destLat, destLng, destName, userPos) {
   }
 
   const dn = encodeURIComponent(destName || '')
+  const isIOS = /iPhone|iPad/i.test(navigator.userAgent)
   // 카카오 내부 좌표계: X = 경도(lng), Y = 위도(lat)
-  const url = `kakaot://taxi/call?destX=${dLng.toFixed(6)}&destY=${dLat.toFixed(6)}&destName=${dn}`
-
-  window.location.href = url
-  setTimeout(() => {
-    const isIOS = /iPhone|iPad/i.test(navigator.userAgent)
-    window.location.href = isIOS
+  openDeepLink(
+    `kakaot://taxi/call?destX=${dLng.toFixed(6)}&destY=${dLat.toFixed(6)}&destName=${dn}`,
+    isIOS
       ? 'https://apps.apple.com/kr/app/kakaot/id981110422'
       : 'https://play.google.com/store/apps/details?id=com.kakao.taxi'
-  }, 2000)
+  )
 }
 
 // ─── 영업 상태 판단 ───
@@ -883,6 +893,25 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
   const status = getBusinessStatus(poi)
   const isBookmarked = bookmarks.includes(poi.id)
   const dist = distLabel(poi)
+  const [copied, setCopied] = useState(false)
+
+  const handleCopyAddress = () => {
+    const addr = poi.address_zh || poi.address_ko || poi.name_ko || ''
+    navigator.clipboard?.writeText(addr).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }).catch(() => {
+      // fallback: execCommand
+      const el = document.createElement('textarea')
+      el.value = addr
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
 
   const handleNavigate = () => onNavigate(poi)
 
@@ -925,10 +954,26 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           )}
         </div>
 
-        {/* 서브타이틀 */}
-        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 14 }}>
-          {tLang('subtitle_city', lang)} · {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
-        </p>
+        {/* 서브타이틀 + 주소 복사 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {tLang('subtitle_city', lang)} · {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
+          </p>
+          <button
+            onClick={handleCopyAddress}
+            style={{
+              flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4,
+              padding: '4px 10px', borderRadius: 8,
+              background: copied ? '#DCFCE7' : 'var(--surface)',
+              border: `1px solid ${copied ? '#86EFAC' : 'var(--border)'}`,
+              color: copied ? '#16A34A' : 'var(--text-muted)',
+              fontSize: 11, fontWeight: 600, cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            {copied ? '✓' : '복사'}
+          </button>
+        </div>
 
         {/* 태그 */}
         {tags.length > 0 && (

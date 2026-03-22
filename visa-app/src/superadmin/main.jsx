@@ -3,8 +3,11 @@ import ReactDOM from 'react-dom/client'
 import SuperAdminApp from './SuperAdminApp'
 import '../index.css'
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <SuperAdminApp />
-  </React.StrictMode>,
-)
+const _superEl = document.getElementById('superadmin-root')
+if (_superEl) {
+  ReactDOM.createRoot(_superEl).render(
+    <React.StrictMode>
+      <SuperAdminApp />
+    </React.StrictMode>,
+  )
+}

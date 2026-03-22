@@ -350,11 +350,19 @@ export default function DepartureBoard({ onBack, setTab }) {
     : null
   const myFlightNotFound = myFlightInput.trim().length >= 3 && !loading && !myFlight
 
+  // 현재 KST 기준 -30분 이전 출발 편 숨김 (공항 전광판 기준)
+  const nowHHMM = (() => {
+    const kst = new Date(Date.now() + 9 * 60 * 60 * 1000)
+    return kst.getUTCHours() * 60 + kst.getUTCMinutes() - 30
+  })()
   const filtered = allFlights.filter(f => {
     const q = query.toLowerCase()
     const matchQ = !query || f.flightId?.toLowerCase().includes(q) || f.destination?.toLowerCase().includes(q) || f.airline?.toLowerCase().includes(q)
     const matchA = !airlineFilter || f.airline === airlineFilter
-    return matchQ && matchA
+    const t = f.scheduledTime
+    const flightMin = t?.length >= 4 ? parseInt(t.slice(0,2)) * 60 + parseInt(t.slice(2,4)) : 9999
+    const matchTime = flightMin >= nowHHMM
+    return matchQ && matchA && matchTime
   })
 
   // KST 날짜 (정적, 화면 열릴 때 계산)
@@ -389,6 +397,13 @@ export default function DepartureBoard({ onBack, setTab }) {
             </button>
           )}
         </div>
+      </div>
+
+      {/* 면책 고지 — 항상 표시 */}
+      <div style={{ padding: '8px 16px', background: '#FFFBEB', borderBottom: '1px solid #FDE68A', flexShrink: 0 }}>
+        <p style={{ margin: 0, fontSize: 11, color: '#92400E', lineHeight: 1.5 }}>
+          {L(lang, TEXTS.disclaimer)}
+        </p>
       </div>
 
       {/* 내 항공편 찾기 */}
@@ -474,12 +489,7 @@ export default function DepartureBoard({ onBack, setTab }) {
         ) : (
           <>
             {filtered.map((f, i) => <FlightRow key={f.flightId + i} f={f} lang={lang} isEven={i % 2 === 0} />)}
-            <div style={{ margin: '12px 16px 0', padding: '10px 14px', background: '#FFFBEB', borderRadius: 10, border: '1px solid #FDE68A' }}>
-              <p style={{ margin: 0, fontSize: 11, color: '#92400E', lineHeight: 1.5 }}>
-                {L(lang, TEXTS.disclaimer)}
-              </p>
-            </div>
-            <div style={{ padding: '8px 16px 16px', fontSize: 10, color: '#D1D5DB', textAlign: 'center' }}>
+            <div style={{ padding: '12px 16px 16px', fontSize: 10, color: '#D1D5DB', textAlign: 'center' }}>
               {L(lang, TEXTS.gimpo)}
             </div>
           </>

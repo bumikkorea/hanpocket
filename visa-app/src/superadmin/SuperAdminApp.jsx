@@ -144,7 +144,7 @@ function SuperAdminLoginScreen({ onLogin }) {
 
 export default function SuperAdminApp() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [currentTab, setCurrentTab] = useState('dashboard')
+  const [currentTab, setCurrentTab] = useState('popup-review')
   const [user, setUser] = useState({
     name: 'Admin User',
     role: 'super_admin',

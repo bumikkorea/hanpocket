@@ -37,10 +37,24 @@ const QUICK_AREAS = [
 
 // 카카오T 딥링크 (택시 호출)
 function openKakaoTaxi(lat, lng, name) {
+  const latNum = Number(lat)
+  const lngNum = Number(lng)
+
+  // 좌표 디버그 (모바일 확인용 — 검증 후 제거)
+  alert(`KakaoT\nlat: ${latNum}\nlng: ${lngNum}\nname: ${name}`)
+
+  if (!latNum || !lngNum || isNaN(latNum) || isNaN(lngNum)) {
+    alert('좌표 없음 — 카카오T 앱만 열립니다')
+    window.location.href = 'kakaot://'
+    return
+  }
+
   const n = encodeURIComponent(name || '')
-  const deepLink = `kakaot://taxi/call?destLat=${lat}&destLng=${lng}&destName=${n}`
-  console.log('KakaoT:', deepLink, 'lat:', lat, 'lng:', lng, 'name:', name)
+  // /call 없는 포맷 시도
+  const deepLink = `kakaot://taxi?destLat=${latNum.toFixed(6)}&destLng=${lngNum.toFixed(6)}&destName=${n}`
+  console.log('KakaoT deeplink:', deepLink)
   window.location.href = deepLink
+
   // 앱 미설치 시 스토어로 이동
   setTimeout(() => {
     const isIOS = /iPhone|iPad/i.test(navigator.userAgent)

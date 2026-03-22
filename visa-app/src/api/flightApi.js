@@ -29,8 +29,42 @@ function toKSTDate() {
 
 // Legacy stubs (used by useDepartureCountdown)
 export async function fetchFlightStatus() { return null }
-export async function getAirportCongestion() { return null }
 export function estimateGateWalkTime() { return null }
+
+/**
+ * 인천공항 출국장 혼잡도 (B551177/statusOfDepartureCongestion)
+ * 1분 주기 실시간, T1/T2 구역별 대기인원수
+ * Returns: { T1: [{zone, area, waiting}], T2: [...], updatedAt }
+ */
+export async function fetchDepartureCongestion() {
+  const key = import.meta.env.VITE_TOUR_API_KEY
+  if (!key) return null
+  try {
+    const url = `${BASE}/statusOfDepartureCongestion/getDepartureCongestion?serviceKey=${key}&type=json&numOfRows=100&pageNo=1`
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const json = await res.json()
+    const items = json?.response?.body?.items
+    if (!items) return null
+    const list = Array.isArray(items) ? items : [items]
+
+    // 터미널별 그룹핑
+    const result = { T1: [], T2: [], updatedAt: '' }
+    for (const d of list) {
+      // 필드명은 API 실제 응답에 따라 조정 필요
+      const terminal = d.terno === 'P02' ? 'T2' : 'T1'
+      const zone     = d.conzoneId  || d.congestNo || d.zoneName || ''
+      const area     = d.areaNo     || d.areaNm    || ''
+      const waiting  = parseInt(d.congestion ?? d.waitPersonCnt ?? d.congestionLevel ?? 0)
+      const dt       = d.dtm || d.occDt || ''
+      if (!result.updatedAt && dt) result.updatedAt = dt
+      result[terminal].push({ zone, area, waiting })
+    }
+    return result
+  } catch {
+    return null
+  }
+}
 
 export async function fetchDepartureFlights({ date, numOfRows = 200 } = {}) {
   const proxyUrl = import.meta.env.VITE_AIRPORT_PROXY_URL

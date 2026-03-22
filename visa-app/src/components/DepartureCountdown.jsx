@@ -4,7 +4,8 @@
  * - 체크리스트 localStorage 유지
  */
 import { useState, useEffect } from 'react'
-import { CheckCircle2, Circle, Users, RotateCcw } from 'lucide-react'
+import { CheckCircle2, Circle, Users, RotateCcw, RefreshCw } from 'lucide-react'
+import { fetchDepartureCongestion } from '../api/flightApi'
 
 function L(lang, d) {
   if (typeof d === 'string') return d
@@ -32,19 +33,44 @@ function loadChecklist() {
 }
 
 const TEXTS = {
-  title:       { ko: '출국 체크리스트',     zh: '出境清单',       en: 'Departure Checklist'   },
-  reset:       { ko: '초기화',              zh: '重置',           en: 'Reset'                 },
-  congestion:  { ko: '공항 혼잡도',         zh: '机场拥挤度',     en: 'Airport Congestion'    },
-  comingSoon:  { ko: '준비 중',             zh: '准备中',         en: 'Coming soon'           },
-  doneAll:     { ko: '모두 완료! 좋은 여행 되세요 ✈️', zh: '全部完成！祝您旅途愉快 ✈️', en: 'All done! Have a great trip ✈️' },
+  title:      { ko: '출국 체크리스트',  zh: '出境清单',    en: 'Departure Checklist' },
+  reset:      { ko: '초기화',           zh: '重置',        en: 'Reset'               },
+  congestion: { ko: '출국장 혼잡도',    zh: '出境大厅拥挤度', en: 'Departure Congestion' },
+  zone:       { ko: '구역',             zh: '区域',        en: 'Zone'                },
+  waiting:    { ko: '대기',             zh: '等待',        en: 'Wait'                },
+  people:     { ko: '명',               zh: '人',          en: ''                    },
+  updated:    { ko: '업데이트',         zh: '更新',        en: 'Updated'             },
+  loading:    { ko: '조회 중...',       zh: '查询中...',   en: 'Loading...'          },
+  noData:     { ko: '데이터 없음',      zh: '暂无数据',    en: 'No data'             },
+  doneAll:    { ko: '모두 완료! 좋은 여행 되세요 ✈️', zh: '全部完成！祝您旅途愉快 ✈️', en: 'All done! Have a great trip ✈️' },
+}
+
+// 대기인원 → 혼잡도 색상
+function congestionColor(waiting) {
+  if (waiting <= 20)  return { bg: '#F0FDF4', bar: '#10B981', text: '#065F46' }
+  if (waiting <= 50)  return { bg: '#FFFBEB', bar: '#F59E0B', text: '#92400E' }
+  if (waiting <= 100) return { bg: '#FFF7ED', bar: '#F97316', text: '#9A3412' }
+  return               { bg: '#FEF2F2', bar: '#EF4444', text: '#991B1B' }
 }
 
 export default function DepartureCountdown({ lang }) {
   const [checklist, setChecklist] = useState(loadChecklist)
+  const [congestion, setCongestion] = useState(null)
+  const [congLoading, setCongLoading] = useState(false)
+  const [termTab, setTermTab] = useState('T1')
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(checklist))
   }, [checklist])
+
+  async function loadCongestion() {
+    setCongLoading(true)
+    const data = await fetchDepartureCongestion()
+    setCongestion(data)
+    setCongLoading(false)
+  }
+
+  useEffect(() => { loadCongestion() }, [])
 
   function toggle(id) {
     setChecklist(prev => prev.map(item => item.id === id ? { ...item, checked: !item.checked } : item))
@@ -108,15 +134,67 @@ export default function DepartureCountdown({ lang }) {
         )}
       </div>
 
-      {/* 공항 혼잡도 — 추후 API 연동 */}
+      {/* 출국장 혼잡도 */}
       <div className="mx-4 mt-6">
-        <div className="flex items-center gap-2 mb-3">
-          <Users size={14} className="text-[#6B7280]" />
-          <h3 className="text-[13px] font-bold text-[#111827]">{L(lang, TEXTS.congestion)}</h3>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Users size={14} className="text-[#6B7280]" />
+            <h3 className="text-[13px] font-bold text-[#111827]">{L(lang, TEXTS.congestion)}</h3>
+            {congestion?.updatedAt && (
+              <span className="text-[10px] text-[#9CA3AF]">{congestion.updatedAt.slice(8,10)}:{congestion.updatedAt.slice(10,12)}</span>
+            )}
+          </div>
+          <button onClick={loadCongestion} className="p-1">
+            <RefreshCw size={13} className={`text-[#9CA3AF] ${congLoading ? 'animate-spin' : ''}`} />
+          </button>
         </div>
-        <div className="p-4 rounded-xl border border-dashed border-[#E5E7EB] text-center">
-          <p className="text-xs text-[#9CA3AF]">{L(lang, TEXTS.comingSoon)}</p>
-        </div>
+
+        {congLoading ? (
+          <p className="text-xs text-[#9CA3AF] text-center py-4">{L(lang, TEXTS.loading)}</p>
+        ) : !congestion ? (
+          <p className="text-xs text-[#9CA3AF] text-center py-4">{L(lang, TEXTS.noData)}</p>
+        ) : (
+          <>
+            {/* T1 / T2 탭 */}
+            <div className="flex gap-2 mb-3">
+              {['T1', 'T2'].map(t => (
+                <button key={t} onClick={() => setTermTab(t)}
+                  className="px-4 py-1.5 rounded-full text-xs font-semibold transition-colors"
+                  style={{ background: termTab === t ? '#111827' : '#F3F4F6', color: termTab === t ? 'white' : '#6B7280' }}>
+                  {t}
+                </button>
+              ))}
+            </div>
+
+            {/* 구역별 막대 */}
+            <div className="space-y-2">
+              {(congestion[termTab] || []).length === 0 ? (
+                <p className="text-xs text-[#9CA3AF] text-center py-3">{L(lang, TEXTS.noData)}</p>
+              ) : (
+                (congestion[termTab] || [])
+                  .sort((a, b) => (a.zone || '').localeCompare(b.zone || ''))
+                  .map((z, i) => {
+                    const c = congestionColor(z.waiting)
+                    const maxWaiting = Math.max(...(congestion[termTab].map(x => x.waiting)), 1)
+                    return (
+                      <div key={i} className="flex items-center gap-2">
+                        <span className="text-[11px] text-[#6B7280] w-14 shrink-0">
+                          {z.area ? `${z.area} ` : ''}{z.zone}
+                        </span>
+                        <div className="flex-1 h-5 bg-[#F3F4F6] rounded-full overflow-hidden">
+                          <div className="h-full rounded-full transition-all duration-500"
+                            style={{ width: `${Math.max((z.waiting / maxWaiting) * 100, 4)}%`, background: c.bar }} />
+                        </div>
+                        <span className="text-[11px] font-semibold shrink-0" style={{ color: c.text }}>
+                          {z.waiting}{L(lang, TEXTS.people)}
+                        </span>
+                      </div>
+                    )
+                  })
+              )}
+            </div>
+          </>
+        )}
       </div>
 
     </div>

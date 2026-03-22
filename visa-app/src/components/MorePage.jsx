@@ -14,7 +14,6 @@ const SECTIONS = [
       { id: 'arr-wait',     emoji: '⏱️', label: { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' }, sub: 'immigration-wait' },
       { id: 'arr-card',     emoji: '📋', label: { ko: '입국신고서 작성법', zh: '入境申报卡填写方法', en: 'Arrival Card Guide' }, sub: 'arrival-card' },
       { id: 'arr-sim',      emoji: '📱', label: { ko: 'SIM카드 & 환전', zh: 'SIM卡 & 换钱', en: 'SIM & Exchange' }, sub: 'sim-guide' },
-      { id: 'arr-passport', emoji: '🛂', label: { ko: '여권 스캔', zh: '护照扫描', en: 'Passport Scan' }, sub: 'passport-scan' },
       { id: 'dep-count',    emoji: '⏳', label: { ko: '출국 카운트다운', zh: '出境倒计时', en: 'Departure Countdown' }, sub: 'departure' },
       { id: 'dep-tax',      emoji: '🧾', label: { ko: '세금환급 안내', zh: '退税指南', en: 'Tax Refund Guide' }, sub: 'taxrefund' },
       { id: 'dep-shop',     emoji: '🛍️', label: { ko: '출국 쇼핑 동선', zh: '出境购物路线', en: 'Departure Shopping Route' }, sub: 'departure-shopping' },

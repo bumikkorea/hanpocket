@@ -37,7 +37,6 @@ const ARRIVAL_ITEMS = [
   { id: 'immigration-wait', emoji: '⏱️', label: { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' }, sub: 'immigration-wait' },
   { id: 'arrival-card',     emoji: '📋', label: { ko: '입국신고서 작성법', zh: '入境申报卡填写方法', en: 'Arrival Card Guide' },   sub: 'arrival-card' },
   { id: 'sim-guide',        emoji: '📱', label: { ko: 'SIM카드 & 환전',    zh: 'SIM卡 & 换钱',           en: 'SIM & Exchange' },       sub: 'sim-guide' },
-  { id: 'passport-scan',    emoji: '🛂', label: { ko: '여권 스캔',          zh: '护照扫描',               en: 'Passport Scan' },        sub: 'passport-scan' },
 ]
 
 // ─── 출국 바텀시트 항목 ───

@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect, lazy, Suspense } from 'react'
 import SplashScreen from './components/SplashScreen'
-import LandingPage from './components/LandingPage'
 import useDarkMode from './hooks/useDarkMode'
 import { isPushSupported, subscribePush, scheduleDdayCheck, cacheVisaProfile, registerPeriodicSync } from './utils/pushNotification'
 import { initKakao, loginWithKakao, loginWithKakaoPopup, logoutFromKakao, getKakaoUser, isKakaoLoggedIn, handleKakaoCallback } from './utils/kakaoAuth'
 import { loginWithApple, logoutFromApple, getAppleUser, isAppleLoggedIn, handleAppleCallback } from './utils/appleAuth'
-import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
@@ -25,7 +23,7 @@ import PWAInstallPrompt from './components/PWAInstallPrompt'
 // OnboardingSimple import removed — replaced by auth popup
 import PocketContent from './components/pockets/PocketContent'
 import OfflineNotice from './components/common/OfflineNotice'
-import ErrorBoundary from './components/ErrorBoundary'
+import ErrorBoundary from './components/common/ErrorBoundary'
 
 // Lazy-loaded tab components for better code splitting
 const EducationTab = lazy(() => import('./components/EducationTab'))
@@ -1455,7 +1453,7 @@ function AppShortcut({ name, description, deepLink, webUrl, domain }) {
 function AppInner() {
   // Splash screen → Landing page → Home
   const [showSplash, setShowSplash] = useState(true)
-  const [showLanding, setShowLanding] = useState(true)
+  const [showLanding, setShowLanding] = useState(false)
 
   const [lang, setLang] = useState(() => {
     const saved = localStorage.getItem('hp_lang')
@@ -1855,9 +1853,6 @@ function AppInner() {
     return <SplashScreen onFinish={() => setShowSplash(false)} />
   }
   
-  if (showLanding) {
-    return <LandingPage lang={lang} onEnter={() => setShowLanding(false)} />
-  }
 
   return (
     <div className="min-h-screen pb-20" style={{ backgroundColor: '#FFFFFF' }}>

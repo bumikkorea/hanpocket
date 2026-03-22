@@ -9,6 +9,7 @@ import {
   calcDistance,
   formatDistance,
 } from '../data/poiData'
+import { getLocalizedName, getLocalizedAddress, getReservationLabel } from '../utils/localize'
 
 // ─── GPS 헬퍼 ────────────────────────────────────────────────────
 const getPosition = async (options = {}) => {
@@ -392,7 +393,7 @@ export default function MapTab({ lang = 'zh' }) {
           <input
             type="text"
             readOnly
-            placeholder="搜索弹窗店、美食、地点..."
+            placeholder={lang === 'ko' ? '팝업, 맛집, 장소 검색...' : lang === 'en' ? 'Search pop-ups, food, places...' : '搜索弹窗店、美食、地点...'}
             className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent cursor-pointer"
             style={{ fontFamily: "'Inter', sans-serif" }}
           />
@@ -425,7 +426,7 @@ export default function MapTab({ lang = 'zh' }) {
                 fontSize: 13,
               }}
             >
-              {chip.zh}
+              {chip[lang] || chip.zh}
             </button>
           )
         })}
@@ -469,7 +470,7 @@ export default function MapTab({ lang = 'zh' }) {
             />
           ) : (
             <div className="text-center text-sm text-gray-400 py-4">
-              暂无附近地点
+              {lang === 'ko' ? '주변 장소가 없습니다' : lang === 'en' ? 'No nearby places' : '暂无附近地点'}
             </div>
           )}
         </div>
@@ -489,8 +490,8 @@ function POICard({ poi, lang, L, onNavigate, onDetail, userLocation }) {
   const timeStr =
     poi.open_time ? `${formatTime(poi.open_time)}~${formatTime(poi.close_time)}` : ''
 
-  const name = poi[`name_${lang}`] || poi.name_zh || poi.name_ko
-  const address = poi[`address_${lang}`] || poi.address_zh || poi.address_ko
+  const name = getLocalizedName(poi, lang)
+  const address = getLocalizedAddress(poi, lang)
 
   return (
     <div className="flex gap-3 items-start">
@@ -527,6 +528,14 @@ function POICard({ poi, lang, L, onNavigate, onDetail, userLocation }) {
               NEW
             </span>
           )}
+          {poi.has_reservation && (
+            <span
+              className="font-bold flex-shrink-0"
+              style={{ background: '#FFF3CD', color: '#92600A', fontSize: 8, padding: '1px 5px', borderRadius: 4 }}
+            >
+              {getReservationLabel(lang)}
+            </span>
+          )}
           <span className="text-[13px] font-bold text-gray-900 truncate">{name}</span>
         </div>
         <p className="text-[11px] text-gray-500 truncate">
@@ -549,7 +558,7 @@ function POICard({ poi, lang, L, onNavigate, onDetail, userLocation }) {
             style={{ background: '#111827', borderRadius: 8 }}
           >
             <Navigation size={12} />
-            导航
+            {lang === 'ko' ? '길찾기' : lang === 'en' ? 'Navigate' : '导航'}
           </button>
           <button
             onClick={onDetail}
@@ -557,7 +566,7 @@ function POICard({ poi, lang, L, onNavigate, onDetail, userLocation }) {
             style={{ borderRadius: 8 }}
           >
             <Info size={12} />
-            详情
+            {lang === 'ko' ? '상세' : lang === 'en' ? 'Detail' : '详情'}
           </button>
         </div>
       </div>

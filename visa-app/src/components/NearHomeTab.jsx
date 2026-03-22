@@ -7,7 +7,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Search, X, ChevronRight, Heart, Scissors, Coffee,
   ShoppingBag, MoreHorizontal, PlaneLanding, PlaneTakeoff,
   ArrowLeft, Route, Languages, Palette, Droplets, Building2,
-  Sparkles, UtensilsCrossed, ArrowRight } from 'lucide-react'
+  Sparkles, UtensilsCrossed, ArrowRight, Plus, Pencil } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
 import { EDITORIALS } from '../data/editorials.js'
 import EditorialDetailPage from './EditorialDetailPage.jsx'
@@ -206,6 +206,50 @@ function BottomSheet({ open, onClose, titleLabel, items, lang, t, setSubPage, se
   )
 }
 
+// ─── 입국/출국 풀스크린 페이지 ───
+function FullPage({ open, onClose, titleLabel, items, lang, t, setSubPage, setTab, accentColor }) {
+  if (!open) return null
+  return (
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: 'var(--bg)', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
+      <NearPageHeader onBack={onClose} setTab={setTab} />
+      <div style={{ flex: 1, overflowY: 'auto', padding: '24px 20px 48px' }}>
+        <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: 6 }}>
+          {typeof titleLabel === 'string' ? t(titleLabel) : L(lang, titleLabel)}
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 28 }}>
+          {L(lang, { zh: '选择需要的服务', ko: '필요한 서비스를 선택하세요', en: 'Select a service' })}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {items.map(item => (
+            <button
+              key={item.id}
+              onClick={() => {
+                if (item.sub && setSubPage) setSubPage(item.sub)
+                else if (item.tool && setSubPage) setSubPage(item.tool)
+                else if (item.tab && setTab) setTab(item.tab)
+                onClose()
+              }}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 16,
+                padding: '18px 20px', borderRadius: 16, textAlign: 'left',
+                background: 'var(--card)', border: 'none', cursor: 'pointer',
+                boxShadow: 'var(--shadow-card)',
+                transition: 'transform 0.1s',
+              }}
+              onTouchStart={e => e.currentTarget.style.transform = 'scale(0.98)'}
+              onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              <span style={{ fontSize: 28, flexShrink: 0 }}>{item.emoji}</span>
+              <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{L(lang, item.label)}</span>
+              <ChevronRight size={16} color="var(--text-hint)" />
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── 더보기 페이지 (풀스크린) ───
 function DiscoverPage({ lang, t, setSubPage, setTab, onClose, onEditorialClick }) {
   return (
@@ -267,8 +311,102 @@ function DiscoverPage({ lang, t, setSubPage, setTab, onClose, onEditorialClick }
   )
 }
 
+// ── 상단 정보바 유틸 ──
+const TIMEZONE_OPTIONS = [
+  { id: 'CST',     flag: '🇨🇳', name: { ko: '중국',       zh: '中国',   en: 'China'       }, offset: 8  },
+  { id: 'JST',     flag: '🇯🇵', name: { ko: '일본',       zh: '日本',   en: 'Japan'       }, offset: 9  },
+  { id: 'EST',     flag: '🇺🇸', name: { ko: '미국 동부',  zh: '美国东部', en: 'US East'   }, offset: -5 },
+  { id: 'PST',     flag: '🇺🇸', name: { ko: '미국 서부',  zh: '美国西部', en: 'US West'   }, offset: -8 },
+  { id: 'GMT',     flag: '🇬🇧', name: { ko: '영국',       zh: '英国',   en: 'UK'          }, offset: 0  },
+  { id: 'SGT',     flag: '🇸🇬', name: { ko: '싱가포르',   zh: '新加坡', en: 'Singapore'   }, offset: 8  },
+  { id: 'AEST',    flag: '🇦🇺', name: { ko: '호주(시드니)', zh: '悉尼', en: 'Sydney'      }, offset: 11 },
+  { id: 'ICT_TH',  flag: '🇹🇭', name: { ko: '태국',       zh: '泰国',   en: 'Thailand'    }, offset: 7  },
+  { id: 'ICT_VN',  flag: '🇻🇳', name: { ko: '베트남',     zh: '越南',   en: 'Vietnam'     }, offset: 7  },
+  { id: 'PHT',     flag: '🇵🇭', name: { ko: '필리핀',     zh: '菲律宾', en: 'Philippines' }, offset: 8  },
+]
+
+function weatherEmoji_NH(code) {
+  if (code === 0) return '☀️'
+  if (code <= 3)  return '⛅'
+  if (code <= 48) return '🌫️'
+  if (code <= 55) return '🌦️'
+  if (code <= 67) return '🌧️'
+  if (code <= 77) return '❄️'
+  if (code <= 86) return '❄️'
+  if (code <= 99) return '⛈️'
+  return '🌡️'
+}
+
+const _nhWeatherCache = { data: {}, key: '', ts: 0 }
+function useNHWeather(tzIds) {
+  const [data, setData] = useState(_nhWeatherCache.data)
+  useEffect(() => {
+    const cacheKey = ['KST', ...tzIds].sort().join(',')
+    if (_nhWeatherCache.key === cacheKey && Date.now() - _nhWeatherCache.ts < 30 * 60 * 1000) {
+      setData(_nhWeatherCache.data); return
+    }
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=37.57&longitude=126.98&current=temperature_2m,weather_code&timezone=auto')
+      .then(r => r.json())
+      .then(j => {
+        const map = { KST: { temp: Math.round(j.current?.temperature_2m ?? 0), emoji: weatherEmoji_NH(j.current?.weather_code ?? 0) } }
+        _nhWeatherCache.data = map; _nhWeatherCache.key = cacheKey; _nhWeatherCache.ts = Date.now()
+        setData(map)
+      })
+      .catch(() => {})
+  }, [tzIds.join(',')]) // eslint-disable-line react-hooks/exhaustive-deps
+  return data
+}
+
+function getNHTimeForOffset(offset) {
+  const now = new Date()
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000
+  const d = new Date(utc + offset * 3600000)
+  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+}
+
+function useNHMultiTimezone() {
+  const getState = () => {
+    const saved = localStorage.getItem('hanpocket_extra_timezones')
+    const extras = saved ? JSON.parse(saved) : []
+    return {
+      kst: getNHTimeForOffset(9),
+      extras: extras.map(id => { const tz = TIMEZONE_OPTIONS.find(t => t.id === id); return tz ? { ...tz, time: getNHTimeForOffset(tz.offset) } : null }).filter(Boolean),
+    }
+  }
+  const [times, setTimes] = useState(getState)
+  useEffect(() => {
+    const iv = setInterval(() => setTimes(getState()), 30000)
+    return () => clearInterval(iv)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  return { ...times, refresh: () => setTimes(getState()) }
+}
+
+const _nhRateCache = { rate: null, ts: 0 }
+function useNHCNYRate() {
+  const [rate, setRate] = useState(() => _nhRateCache.rate || 191)
+  useEffect(() => {
+    if (_nhRateCache.rate && Date.now() - _nhRateCache.ts < 30 * 60 * 1000) { setRate(_nhRateCache.rate); return }
+    fetch('https://open.er-api.com/v6/latest/CNY')
+      .then(r => r.json())
+      .then(d => { const krw = d.rates?.KRW; if (krw > 100) { _nhRateCache.rate = krw; _nhRateCache.ts = Date.now(); setRate(krw) } })
+      .catch(() => {})
+  }, [])
+  return rate
+}
+
 export default function NearHomeTab({ setTab, setSubPage }) {
   const { lang, t } = useLanguage()
+
+  // ─── 정보바 훅 ───
+  const tzData = useNHMultiTimezone()
+  const weatherData = useNHWeather(tzData.extras.map(e => e.id))
+  const cnyRate = useNHCNYRate()
+  const [showTzPicker, setShowTzPicker] = useState(false)
+  const [showExchangePopover, setShowExchangePopover] = useState(false)
+  const [tzSelection, setTzSelection] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('hanpocket_extra_timezones') || '["CST"]') } catch { return ['CST'] }
+  })
+  const exchangeRef = useRef(null)
 
   // ─── UI 상태 ───
   const [arrivalOpen, setArrivalOpen] = useState(false)
@@ -297,6 +435,13 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   useEffect(() => {
     const iv = setInterval(() => setBannerIdx(i => (i + 1) % BANNER_SLIDES.length), 3500)
     return () => clearInterval(iv)
+  }, [])
+
+  // exchange popover 클릭 외부 닫기
+  useEffect(() => {
+    const handler = (e) => { if (exchangeRef.current && !exchangeRef.current.contains(e.target)) setShowExchangePopover(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
   }, [])
 
   // ─── 검색 상태 ───
@@ -360,6 +505,43 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
   return (
     <div style={{ background: 'white', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif', paddingBottom: 24 }}>
+
+      {/* ─── 0. 정보바 (날씨/시간/환율/타임존) ─── */}
+      <div style={{ display: 'flex', alignItems: 'center', padding: '8px 16px 4px', overflowX: 'auto', scrollbarWidth: 'none', fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap', gap: 0 }}>
+        <span style={{ flexShrink: 0 }}>
+          {weatherData.KST ? `${weatherData.KST.emoji}${weatherData.KST.temp}°` : '⛅'} · 서울 · {tzData.kst}
+        </span>
+        <span ref={exchangeRef} style={{ position: 'relative', flexShrink: 0 }}>
+          <button
+            onClick={() => setShowExchangePopover(v => !v)}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 12, padding: '0 0 0 6px' }}
+          >
+            · ¥1 = ₩{Math.round(cnyRate)}
+          </button>
+          {showExchangePopover && (
+            <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 9999, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 14px', boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 160, marginTop: 4 }}>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>실시간 환율</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>¥100 = ₩{Math.round(cnyRate * 100).toLocaleString()}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>open.er-api.com</div>
+            </div>
+          )}
+        </span>
+        {tzData.extras.map(tz => {
+          const diff = tz.offset - 9
+          const diffStr = diff === 0 ? '' : (diff > 0 ? ` (+${diff}h)` : ` (${diff}h)`)
+          return (
+            <span key={tz.id} style={{ flexShrink: 0, paddingLeft: 6 }}>
+              · {tz.flag} {tz.time}{diffStr}
+            </span>
+          )
+        })}
+        <button
+          onClick={() => setShowTzPicker(true)}
+          style={{ flexShrink: 0, marginLeft: 6, background: 'none', border: '1px solid var(--border)', borderRadius: 10, cursor: 'pointer', color: 'var(--text-hint)', fontSize: 11, padding: '1px 6px', lineHeight: 1.5 }}
+        >
+          +
+        </button>
+      </div>
 
       {/* ─── 1. 인사 + 검색바 ─── */}
       <div style={{ padding: '20px 20px 16px' }}>
@@ -614,22 +796,22 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         )}
       </div>
 
-      {/* ─── 입국 바텀시트 ─── */}
-      <BottomSheet
+      {/* ─── 입국 풀스크린 ─── */}
+      <FullPage
         open={arrivalOpen} onClose={() => setArrivalOpen(false)}
         titleLabel="home.quick.arrival"
         items={ARRIVAL_ITEMS} lang={lang} t={t} setSubPage={setSubPage} setTab={setTab}
       />
 
-      {/* ─── 출국 바텀시트 ─── */}
-      <BottomSheet
+      {/* ─── 출국 풀스크린 ─── */}
+      <FullPage
         open={departureOpen} onClose={() => setDepartureOpen(false)}
         titleLabel="home.quick.departure"
         items={DEPARTURE_ITEMS} lang={lang} t={t} setSubPage={setSubPage} setTab={setTab}
       />
 
-      {/* ─── 통역·번역 바텀시트 ─── */}
-      <BottomSheet
+      {/* ─── 통역·번역 풀스크린 ─── */}
+      <FullPage
         open={translateOpen} onClose={() => setTranslateOpen(false)}
         titleLabel="home.quick.translate"
         items={TRANSLATE_ITEMS} lang={lang} t={t} setSubPage={setSubPage} setTab={setTab}
@@ -663,6 +845,42 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           onBack={() => setEditorialId(null)}
           setTab={setTab}
         />
+      )}
+
+      {/* ─── 타임존 선택 모달 ─── */}
+      {showTzPicker && (
+        <div onClick={() => setShowTzPicker(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'flex-end' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg)', borderRadius: '20px 20px 0 0', padding: '0 0 40px', width: '100%' }}>
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border)', margin: '12px auto 16px' }} />
+            <div style={{ padding: '0 20px 12px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
+              {L(lang, { ko: '타임존 추가', zh: '添加时区', en: 'Add Timezone' })}
+            </div>
+            <div style={{ maxHeight: '55vh', overflowY: 'auto' }}>
+              {TIMEZONE_OPTIONS.map(tz => {
+                const isOn = tzSelection.includes(tz.id)
+                return (
+                  <button
+                    key={tz.id}
+                    onClick={() => {
+                      const next = isOn ? tzSelection.filter(id => id !== tz.id) : [...tzSelection, tz.id]
+                      setTzSelection(next)
+                      localStorage.setItem('hanpocket_extra_timezones', JSON.stringify(next))
+                      tzData.refresh()
+                    }}
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '14px 20px', background: 'none', border: 'none', cursor: 'pointer', borderTop: '1px solid var(--border)' }}
+                  >
+                    <span style={{ fontSize: 22 }}>{tz.flag}</span>
+                    <span style={{ flex: 1, fontSize: 15, fontWeight: 500, color: 'var(--text-primary)', textAlign: 'left' }}>{L(lang, tz.name)}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)', marginRight: 8 }}>{getNHTimeForOffset(tz.offset)}</span>
+                    <span style={{ width: 22, height: 22, borderRadius: '50%', background: isOn ? '#007AFF' : 'var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {isOn && <span style={{ color: 'white', fontSize: 14, lineHeight: 1 }}>✓</span>}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

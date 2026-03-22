@@ -10,7 +10,7 @@ function L(lang, d) { return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
 const MENU_ITEMS = [
   { id: 'reservations', icon: Calendar,    bg: '#FFF0E8', color: '#C4725A', labelKey: 'my.orders',       action: 'booking-my'        },
-  { id: 'favorites',    icon: Heart,       bg: '#FFF8E1', color: '#FF9500', labelKey: 'my.wishlist',     action: 'sub:bookmarks'     },
+  { id: 'favorites',    icon: Heart,       bg: '#FFF8E1', color: '#FF9500', labelKey: 'my.wishlist',     action: 'sub:my-seoul'      },
   { id: 'taxi',         icon: Car,         bg: '#E3F2FD', color: '#2196F3', labelKey: 'my.taxiHistory',  action: 'sub:taxi-history'  },
   { id: 'notifications',icon: Bell,        bg: '#E8F5E9', color: '#4CAF50', labelKey: 'my.notifications',action: 'sub:notifications' },
   { id: 'help',         icon: HelpCircle,  bg: '#F7F7F7', color: '#999999', labelKey: 'my.help',         action: 'sub:help'          },
@@ -35,7 +35,7 @@ const ACTIVITY_STATS = [
   { icon: MapPin,        storageKey: 'near_checkins',   labelKey: 'my.checkins' },
   { icon: MessageSquare, storageKey: 'near_reviews',    labelKey: 'my.reviews'  },
   { icon: Car,           storageKey: 'near_taxi_count', labelKey: 'my.taxiUse'  },
-  { icon: Heart,         storageKey: 'near_bookmarks',  labelKey: 'my.saved'    },
+  { icon: Heart,         storageKey: 'near_my_seoul',   labelKey: 'my.saved'    },
   { icon: Footprints,    storageKey: 'near_visited',    labelKey: 'my.visited'  },
 ]
 
@@ -44,6 +44,7 @@ function getStorageCount(key) {
     const raw = localStorage.getItem(key)
     if (!raw) return 0
     const parsed = JSON.parse(raw)
+    if (key === 'near_my_seoul' && parsed && Array.isArray(parsed.pins)) return parsed.pins.length
     return Array.isArray(parsed) ? parsed.length : (Number(parsed) || 0)
   } catch { return 0 }
 }
@@ -72,7 +73,7 @@ export default function MyTab({ setTab, setSubPage }) {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const bookingCount  = getStorageCount('near_bookings_v2')
-  const favoriteCount = getStorageCount('near_bookmarks')
+  const favoriteCount = getStorageCount('near_my_seoul')
 
   const displayName = nickname || t('my.traveler')
 
@@ -167,7 +168,7 @@ export default function MyTab({ setTab, setSubPage }) {
         {[
           { labelKey: 'my.orders',   Icon: Calendar, count: bookingCount,  unit: '', action: () => goToMyBookings()           },
           { labelKey: 'my.points',   Icon: Gift,     count: 0,             unit: 'P', action: () => {}                       },
-          { labelKey: 'my.wishlist', Icon: Heart,    count: favoriteCount, unit: '', action: () => setSubPage?.('bookmarks') },
+          { labelKey: 'my.wishlist', Icon: Heart,    count: favoriteCount, unit: '', action: () => setSubPage?.('my-seoul')  },
         ].map((item, i) => (
           <button
             key={i}

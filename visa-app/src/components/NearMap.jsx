@@ -10,6 +10,8 @@ import { t, tLang } from '../locales/index.js'
 import { useLanguage } from '../i18n/index.jsx'
 import NavScreen from './NavScreen.jsx'
 import { getLocalizedName, getLocalizedAddress } from '../utils/localize.js'
+import { addPin, removePin, isPinSaved, getMySeoul } from '../utils/mySeoul.js'
+import { useToast } from './Toast.jsx'
 
 const IS_DEV = import.meta.env.DEV
 
@@ -284,6 +286,7 @@ function MagicPillSelector({ areas, lang, onSelect }) {
 // ─── 메인 컴포넌트 ───
 export default function NearMap() {
   const { lang } = useLanguage()
+  const { showToast } = useToast()
   const mapRef = useRef(null)
   const mapInstance = useRef(null)
   const overlaysRef = useRef([])        // { overlay, el, poi }[]
@@ -305,9 +308,7 @@ export default function NearMap() {
   const [selectedDistrict, setSelectedDistrict] = useState(null) // null = 서울 전체
   const [activePopup, setActivePopup] = useState(null)
   const [navPoi, setNavPoi] = useState(null)
-  const [bookmarks, setBookmarks] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('near_bookmarks') || '[]') } catch { return [] }
-  })
+  const [bookmarks, setBookmarks] = useState(() => getMySeoul().pins.map(p => p.id))
   const [showSearch, setShowSearch] = useState(false)
   const [showList, setShowList] = useState(false)
   const [listSort, setListSort] = useState('all')
@@ -390,14 +391,18 @@ export default function NearMap() {
     return () => window.removeEventListener('popstate', handler)
   }, [navPoi, taxiPoi, showSearch, isExpanded])
 
-  // ── 북마크 토글 ──
-  const toggleBookmark = useCallback((id) => {
-    setBookmarks(prev => {
-      const next = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-      localStorage.setItem('near_bookmarks', JSON.stringify(next))
-      return next
-    })
-  }, [])
+  // ── 내 서울 핀 토글 ──
+  const toggleBookmark = useCallback((poi) => {
+    const id = typeof poi === 'object' ? poi.id : poi
+    const isSaved = isPinSaved(id)
+    if (isSaved) {
+      removePin(id)
+    } else if (typeof poi === 'object') {
+      addPin(poi)
+    }
+    setBookmarks(getMySeoul().pins.map(p => p.id))
+    showToast({ type: 'success', message: tLang(isSaved ? 'mySeoul.removed' : 'mySeoul.added', lang) })
+  }, [lang, showToast])
 
   // ── 바텀 시트 닫기 ──
   const closeSheet = useCallback(() => {
@@ -1078,7 +1083,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             </button>
           )}
           <button
-            onClick={() => onBookmark(poi.id)}
+            onClick={() => onBookmark(poi)}
             className={`btn btn-sm ${isBookmarked ? 'btn-danger' : 'btn-outline'}`}
             style={{ flex: 0, minWidth: 44, paddingLeft: 0, paddingRight: 0 }}
           >

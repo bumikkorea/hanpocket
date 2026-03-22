@@ -61,6 +61,7 @@ const TaxRefundChecker = lazy(() => import('./components/TaxRefundChecker'))
 const DepartureCountdown = lazy(() => import('./components/DepartureCountdown'))
 const VisitorHeatmapFull = lazy(() => import('./components/VisitorHeatmapFull'))
 const WishlistPage = lazy(() => import('./components/WishlistPage'))
+const MySeoulPage = lazy(() => import('./components/MySeoulPage'))
 const PassportScan = lazy(() => import('./components/PassportScan'))
 const DepartureShoppingRoute = lazy(() => import('./components/DepartureShoppingRoute'))
 const ReservationTab = lazy(() => import('./components/reservation/ReservationTab'))
@@ -2144,8 +2145,8 @@ function AppInner() {
               <Logo />
             </button>
 
-            {/* 우측: 언어 + 프로필 */}
-            <div className="flex items-center justify-end gap-1 w-20">
+            {/* 우측: 언어 */}
+            <div className="flex items-center justify-end gap-1 w-10">
               <div className="relative" ref={langMenuRef}>
                 <button onClick={() => setShowLangMenu(!showLangMenu)} className="text-[#5F6368] p-1">
                   <Globe size={20} />
@@ -2169,19 +2170,6 @@ function AppInner() {
                   </div>
                 )}
               </div>
-              <button onClick={() => {
-                if (!profile) {
-                  // #23 비회원 → 온보딩/퀵 퀴즈 유도
-                  handleTabChange('profile')
-                  setSubPage('quick-quiz')
-                } else {
-                  // #23 회원 → 프로필 (취향/위시리스트)
-                  handleTabChange('profile')
-                  setSubPage(null)
-                }
-              }} className="p-1 min-w-[44px] min-h-[44px] flex items-center justify-center">
-                <LucideUser size={20} strokeWidth={tab === 'profile' ? 2 : 1.5} className={tab === 'profile' ? 'text-[#111827]' : 'text-[#5F6368]'} />
-              </button>
             </div>
           </div>
         </div>
@@ -2343,6 +2331,11 @@ function AppInner() {
         {subPage==='wishlist' && (
           <Suspense fallback={<div />}>
             <WishlistPage lang={lang} onBack={() => setSubPage(null)} />
+          </Suspense>
+        )}
+        {subPage==='my-seoul' && (
+          <Suspense fallback={<div />}>
+            <MySeoulPage onBack={() => setSubPage(null)} setTab={setTab} />
           </Suspense>
         )}
         {subPage==='taxrefund' && (

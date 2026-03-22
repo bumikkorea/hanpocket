@@ -35,27 +35,25 @@ const QUICK_AREAS = [
   { id: 'jamsil',     key: 'district.jamsil', lat: 37.5133, lng: 127.1001, zoom: 4, district: 'jamsil'   },
 ]
 
-// 카카오T 딥링크 (택시 호출)
-function openKakaoTaxi(lat, lng, name) {
+// 카카오맵 딥링크 공통 (길찾기/택시)
+function openKakaoMapRoute(lat, lng, name, by = 'PUBLICTRANSIT') {
   const latNum = Number(lat)
   const lngNum = Number(lng)
-
-  if (isNaN(latNum) || isNaN(lngNum) || !latNum || !lngNum) {
-    window.location.href = 'kakaot://'
-    return
-  }
+  if (isNaN(latNum) || isNaN(lngNum) || !latNum || !lngNum) return
 
   const n = encodeURIComponent(name || '')
-  const deepLink = `kakaot://taxi?destLat=${latNum.toFixed(6)}&destLng=${lngNum.toFixed(6)}&destName=${n}`
-  window.location.href = deepLink
+  const isAndroid = /Android/i.test(navigator.userAgent)
 
-  // 앱 미설치 시 스토어로 이동
-  setTimeout(() => {
-    const isIOS = /iPhone|iPad/i.test(navigator.userAgent)
-    window.location.href = isIOS
-      ? 'https://apps.apple.com/kr/app/kakaot/id981110422'
-      : 'https://play.google.com/store/apps/details?id=com.kakao.taxi'
-  }, 2000)
+  if (isAndroid) {
+    // Android intent 포맷 (앱 미설치 시 Play Store 폴백)
+    const fallback = encodeURIComponent(`https://play.google.com/store/apps/details?id=net.daum.android.map`)
+    window.location.href = `intent://route?ep=${latNum.toFixed(6)},${lngNum.toFixed(6)}&edt=${n}&by=${by}#Intent;scheme=kakaomap;package=net.daum.android.map;S.browser_fallback_url=${fallback};end`
+  } else {
+    window.location.href = `kakaomap://route?ep=${latNum.toFixed(6)},${lngNum.toFixed(6)}&edt=${n}&by=${by}`
+    setTimeout(() => {
+      window.location.href = 'https://apps.apple.com/kr/app/id304608425'
+    }, 2000)
+  }
 }
 
 // ─── 영업 상태 판단 ───
@@ -970,7 +968,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         {/* CTA 버튼 */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button
-            onClick={handleNavigate}
+            onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh, 'PUBLICTRANSIT')}
             className="btn btn-sm btn-dark"
             style={{ flex: 1.2, minWidth: 80 }}
           >
@@ -978,7 +976,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             {tLang('navigate_here', lang)}
           </button>
           <button
-            onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh)}
+            onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh, 'TAXI')}
             className="btn btn-sm btn-taxi"
             style={{ flex: 1, minWidth: 72 }}
           >

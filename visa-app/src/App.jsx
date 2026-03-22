@@ -2695,6 +2695,7 @@ function AppInner() {
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                   <AppShortcut name="Trip.com" description={L(lang, {ko:'항공권, 호텔 예약', zh:'机票、酒店预订', en:'Flights, hotels'})} deepLink="ctrip://" webUrl="https://www.trip.com/?promo=aff_1892_hp&locale=ko-KR" domain="trip.com" />
                   <AppShortcut name="Klook" description={L(lang, {ko:'액티비티, 투어, 입장권', zh:'活动、旅游、门票', en:'Activities, tours, tickets'})} deepLink="klook://" webUrl="https://www.klook.com/ko/?aid=aff_3219_hp&utm_source=hanpocket" domain="klook.com" />
+                  <AppShortcut name="캐치테이블" description={L(lang, {ko:'인기 레스토랑 예약', zh:'热门餐厅预订', en:'Restaurant reservations'})} deepLink="catchtable://" webUrl="https://catchtable.co.kr" domain="catchtable.co.kr" />
                 </div>
               </div>
 

@@ -894,22 +894,19 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
   const isBookmarked = bookmarks.includes(poi.id)
   const dist = distLabel(poi)
   const [copied, setCopied] = useState(false)
+  const [addrLang, setAddrLang] = useState('ko')
 
   const handleCopyAddress = () => {
-    const addr = poi.address_zh || poi.address_ko || poi.name_ko || ''
-    navigator.clipboard?.writeText(addr).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    }).catch(() => {
-      // fallback: execCommand
+    const addr = addrLang === 'zh'
+      ? (poi.address_zh || poi.address_ko || '')
+      : (poi.address_ko || poi.address_zh || '')
+    const text = addr || poi.name_ko || ''
+    const doWrite = () => { setCopied(true); setTimeout(() => setCopied(false), 2000) }
+    navigator.clipboard?.writeText(text).then(doWrite).catch(() => {
       const el = document.createElement('textarea')
-      el.value = addr
-      document.body.appendChild(el)
-      el.select()
-      document.execCommand('copy')
-      document.body.removeChild(el)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      el.value = text
+      document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el)
+      doWrite()
     })
   }
 
@@ -954,16 +951,40 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           )}
         </div>
 
-        {/* 서브타이틀 + 주소 복사 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-          <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {tLang('subtitle_city', lang)} · {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
-          </p>
+        {/* 서브타이틀 */}
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {tLang('subtitle_city', lang)} · {poi.address_zh || poi.address_ko}{dist ? ` · ${dist}` : ''}
+        </p>
+
+        {/* 주소 복사 — 언어 토글 + 복사 버튼 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
+          {/* 언어 토글 pill */}
+          <div style={{ display: 'flex', borderRadius: 8, border: '1px solid var(--border)', overflow: 'hidden', flexShrink: 0 }}>
+            {['ko', 'zh'].map(l => (
+              <button
+                key={l}
+                onClick={() => setAddrLang(l)}
+                style={{
+                  padding: '4px 9px', fontSize: 11, fontWeight: 700,
+                  background: addrLang === l ? '#1A1A1A' : 'transparent',
+                  color: addrLang === l ? 'white' : 'var(--text-muted)',
+                  border: 'none', cursor: 'pointer',
+                  transition: 'background 0.15s, color 0.15s',
+                }}
+              >
+                {l === 'ko' ? 'KO' : 'ZH'}
+              </button>
+            ))}
+          </div>
+          {/* 주소 텍스트 */}
+          <span style={{ flex: 1, fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {addrLang === 'zh' ? (poi.address_zh || poi.address_ko) : (poi.address_ko || poi.address_zh)}
+          </span>
+          {/* 복사 버튼 */}
           <button
             onClick={handleCopyAddress}
             style={{
-              flexShrink: 0, display: 'flex', alignItems: 'center', gap: 4,
-              padding: '4px 10px', borderRadius: 8,
+              flexShrink: 0, padding: '4px 10px', borderRadius: 8,
               background: copied ? '#DCFCE7' : 'var(--surface)',
               border: `1px solid ${copied ? '#86EFAC' : 'var(--border)'}`,
               color: copied ? '#16A34A' : 'var(--text-muted)',

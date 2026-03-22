@@ -1,8 +1,11 @@
 import { useState } from 'react'
-import { BarChart3, Users, Building2, Lock, Settings, FileText, LogOut, AlertCircle } from 'lucide-react'
+import { BarChart3, Users, Building2, Lock, Settings, FileText, LogOut, AlertCircle, Store } from 'lucide-react'
+import { supabase as supabaseNear } from '../lib/supabase'
+import { supabaseScraper } from '../lib/supabaseScraper'
 import SuperAdminHeader from './SuperAdminHeader'
 import SuperAdminNav from './SuperAdminNav'
 import DashboardTab from './tabs/DashboardTab'
+import PopupReviewTab from './tabs/PopupReviewTab'
 import UsersTab from './tabs/UsersTab'
 import AdminsTab from './tabs/AdminsTab'
 import HotelsTab from './tabs/HotelsTab'
@@ -158,6 +161,7 @@ export default function SuperAdminApp() {
 
   const tabs = [
     { id: 'dashboard', label: '대시보드', icon: BarChart3 },
+    { id: 'popup-review', label: '팝업 검수', icon: Store },
     { id: 'users', label: '사용자', icon: Users },
     { id: 'admins', label: '관리자', icon: Lock },
     { id: 'hotels', label: '호텔/점주', icon: Building2 },
@@ -189,7 +193,8 @@ export default function SuperAdminApp() {
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
-          {currentTab === 'dashboard' && <DashboardTab />}
+          {currentTab === 'dashboard' && <DashboardTab supabaseNear={supabaseNear} supabaseScraper={supabaseScraper} />}
+          {currentTab === 'popup-review' && <PopupReviewTab supabaseScraper={supabaseScraper} />}
           {currentTab === 'users' && <UsersTab />}
           {currentTab === 'admins' && <AdminsTab />}
           {currentTab === 'hotels' && <HotelsTab />}

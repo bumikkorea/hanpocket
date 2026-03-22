@@ -194,7 +194,7 @@ export default function SuperAdminApp() {
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-4 md:p-6">
           {currentTab === 'dashboard' && <DashboardTab supabaseNear={supabaseNear} supabaseScraper={supabaseScraper} />}
-          {currentTab === 'popup-review' && <PopupReviewTab supabaseScraper={supabaseScraper} />}
+          {currentTab === 'popup-review' && <PopupReviewTab supabaseScraper={supabaseScraper} supabaseNear={supabaseNear} />}
           {currentTab === 'users' && <UsersTab />}
           {currentTab === 'admins' && <AdminsTab />}
           {currentTab === 'hotels' && <HotelsTab />}

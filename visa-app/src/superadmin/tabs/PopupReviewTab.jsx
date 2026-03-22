@@ -4,6 +4,7 @@
  */
 import { useState, useEffect, useCallback } from 'react'
 import { Search, RefreshCw, X, MapPin, Calendar, Tag, ExternalLink, Check, Ban, Clock } from 'lucide-react'
+import PopupReviewDetail from './PopupReviewDetail'
 
 // ─── 지역 키워드 맵 ───
 const AREA_OPTIONS = [
@@ -229,7 +230,9 @@ function PopupCard({ item, onClick }) {
 }
 
 // ─── 메인 탭 ───
-export default function PopupReviewTab({ supabaseScraper }) {
+export default function PopupReviewTab({ supabaseScraper, supabaseNear }) {
+  const [detailItem, setDetailItem] = useState(null)  // null = 리스트, item = 상세
+
   const [popups, setPopups] = useState([])
   const [loading, setLoading] = useState(false)
   const [actionLoading, setActionLoading] = useState(false)
@@ -316,6 +319,19 @@ export default function PopupReviewTab({ supabaseScraper }) {
     showToast('🚫 거절 처리 완료')
     setSelected(null)
     fetchPopups()
+  }
+
+  // ─── 상세 뷰 ───
+  if (detailItem) {
+    return (
+      <PopupReviewDetail
+        item={detailItem}
+        supabaseNear={supabaseNear}
+        supabaseScraper={supabaseScraper}
+        onBack={() => setDetailItem(null)}
+        onDone={() => { setDetailItem(null); fetchPopups() }}
+      />
+    )
   }
 
   return (
@@ -412,7 +428,7 @@ export default function PopupReviewTab({ supabaseScraper }) {
       ) : (
         <div className="space-y-2">
           {filtered.map(item => (
-            <PopupCard key={item.id} item={item} onClick={setSelected} />
+            <PopupCard key={item.id} item={item} onClick={setDetailItem} />
           ))}
         </div>
       )}

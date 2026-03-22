@@ -102,6 +102,18 @@ export default function MedicalPocket({ lang }) {
                     <Navigation size={10} />
                     {L(lang, { ko: '百度 길찾기', zh: '百度导航', en: 'Baidu Maps' })}
                   </button>
+                  {h.lat && h.lng && (
+                    <button
+                      onClick={() => {
+                        const name = encodeURIComponent(L('zh', h.name) || L('ko', h.name))
+                        window.open(`https://uri.amap.com/navigation?to=${h.lng},${h.lat},${name}&mode=bus&coordinate=wgs84&callnative=1`, '_blank')
+                      }}
+                      className="flex items-center gap-1 text-[10px] font-semibold text-[#2B6BFF] bg-[#EFF4FF] px-2.5 py-2 rounded-xl active:scale-[0.98] transition-transform"
+                    >
+                      <Navigation size={10} />
+                      {L(lang, { ko: '高德 길찾기', zh: '高德导航', en: 'Amap' })}
+                    </button>
+                  )}
                 </div>
                 {h.foreignService && h.languages?.length > 0 && (
                   <div className="flex items-center gap-1 mt-2">

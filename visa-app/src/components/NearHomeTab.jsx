@@ -49,6 +49,7 @@ const ARRIVAL_ITEMS = [
 
 // ─── 출국 바텀시트 항목 ───
 const DEPARTURE_ITEMS = [
+  { id: 'flight-board',       emoji: '✈️', label: { ko: '출발 전광판',       zh: '出发航班',       en: 'Departures Board' },         sub: 'flight-board' },
   { id: 'departure',          emoji: '⏳', label: { ko: '출국 카운트다운',   zh: '出境倒计时',     en: 'Departure Countdown' },      sub: 'departure' },
   { id: 'taxrefund',          emoji: '🧾', label: { ko: '세금환급 안내',     zh: '退税指南',       en: 'Tax Refund Guide' },         sub: 'taxrefund' },
   { id: 'departure-shopping', emoji: '🛍️', label: { ko: '출국 쇼핑 동선',   zh: '出境购物路线',   en: 'Departure Shopping Route' }, sub: 'departure-shopping' },
@@ -67,6 +68,20 @@ const HANNAM_ED = EDITORIALS.find(e => e.id === 'hannam')
 const BANNER_SLIDES = [
   { id: 'popup', type: 'promo', gradient: 'linear-gradient(135deg, #C4725A, #E8956F)', titleKey: 'home.banner.title', descKey: 'home.banner.desc', textDark: false },
   { id: 'hannam', type: 'editorial', editorialId: 'hannam', gradient: HANNAM_ED.gradient, number: HANNAM_ED.number, title: HANNAM_ED.title, oneLiner: HANNAM_ED.oneLiner, textDark: HANNAM_ED.textDark },
+]
+
+// ─── 서울관광재단 아카이브 이미지 ───
+const ARCHIVE_IMAGES = [
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2023/01//a4300f12b2154478b8f29965c4eb6e4d.jpg', caption: { ko: '경복궁', zh: '景福宫', en: 'Gyeongbokgung' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2025/08//79e4dcad147a42b2ab9729fdd8a9fdde.jpg', caption: { ko: '한강 야경', zh: '汉江夜景', en: 'Han River Night' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2021/05//47b4c8680fe6409e9fd5177f04e4c85f.jpg', caption: { ko: '남산타워', zh: '南山塔', en: 'Namsan Tower' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2022/07//ed577ddc95ef4cc5a1074742dc27f4fd.jpg', caption: { ko: '북촌 한옥마을', zh: '北村韩屋村', en: 'Bukchon Hanok' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2021/05//91d85bb96b3648b29132efce488d73a5.jpg', caption: { ko: '서울의 봄', zh: '首尔之春', en: 'Seoul Spring' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2023/12//2a04b135fe524988ae7e4153cc84aedc.jpg', caption: { ko: '잠실 롯데월드', zh: '蚕室乐天世界', en: 'Lotte World' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2023/11//b707289646a64551821a6026c914ebde.jpg', caption: { ko: '동대문 DDP', zh: '东大门DDP', en: 'Dongdaemun DDP' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2022/11//f7144dac2144442db51785b8c4d65785.jpg', caption: { ko: '덕수궁', zh: '德寿宫', en: 'Deoksugung' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2020/12//img_migration_0531.jpg', caption: { ko: '롯데타워', zh: '乐天塔', en: 'Lotte Tower' } },
+  { src: 'https://archive.visitseoul.net/upload/encoding/image/2020/12//img_migration_2000.jpg', caption: { ko: '인사동', zh: '仁寺洞', en: 'Insadong' } },
 ]
 
 // ─── 카테고리 그리드 (10개: Taxi/KTX/SIM 제거, Nail/Cosmetics/Hotel 추가) ───
@@ -444,6 +459,14 @@ export default function NearHomeTab({ setTab, setSubPage }) {
     return () => clearInterval(iv)
   }, [])
 
+  // ─── 서울관광재단 아카이브 슬라이더 ───
+  const [archiveIdx, setArchiveIdx] = useState(0)
+  const archiveTouchRef = useRef(null)
+  useEffect(() => {
+    const iv = setInterval(() => setArchiveIdx(i => (i + 1) % ARCHIVE_IMAGES.length), 3000)
+    return () => clearInterval(iv)
+  }, [])
+
   // exchange popover 클릭 외부 닫기
   useEffect(() => {
     const handler = (e) => { if (exchangeRef.current && !exchangeRef.current.contains(e.target)) setShowExchangePopover(false) }
@@ -802,6 +825,52 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           </div>
         )}
       </div>
+
+      {/* ─── 서울관광재단 아카이브 슬라이더 ─── */}
+      {!showSearch && !selectedCategory && (() => {
+        const img = ARCHIVE_IMAGES[archiveIdx]
+        return (
+          <div style={{ padding: '8px 20px 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
+                {L(lang, { ko: '서울 풍경', zh: '首尔风景', en: 'Seoul Scenes' })}
+              </span>
+              <span style={{ fontSize: 11, color: 'var(--text-hint)' }}>© Seoul Tourism Archive</span>
+            </div>
+            <div
+              style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', height: 200, cursor: 'pointer' }}
+              onTouchStart={e => { archiveTouchRef.current = e.touches[0].clientX }}
+              onTouchEnd={e => {
+                if (archiveTouchRef.current === null) return
+                const diff = archiveTouchRef.current - e.changedTouches[0].clientX
+                if (Math.abs(diff) > 40) {
+                  if (diff > 0) setArchiveIdx(i => (i + 1) % ARCHIVE_IMAGES.length)
+                  else setArchiveIdx(i => (i - 1 + ARCHIVE_IMAGES.length) % ARCHIVE_IMAGES.length)
+                }
+                archiveTouchRef.current = null
+              }}
+              onClick={() => window.open('https://archive.visitseoul.net', '_blank')}
+            >
+              <img
+                key={archiveIdx}
+                src={img.src}
+                alt={L(lang, img.caption)}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                loading="lazy"
+              />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%)' }} />
+              <div style={{ position: 'absolute', bottom: 12, left: 16, right: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                <span style={{ fontSize: 17, fontWeight: 700, color: 'white' }}>{L(lang, img.caption)}</span>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  {ARCHIVE_IMAGES.map((_, i) => (
+                    <div key={i} style={{ width: i === archiveIdx ? 12 : 4, height: 4, borderRadius: 4, background: i === archiveIdx ? 'white' : 'rgba(255,255,255,0.4)', transition: 'all 0.3s' }} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* ─── 입국 풀스크린 ─── */}
       <FullPage

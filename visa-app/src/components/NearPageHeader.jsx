@@ -90,12 +90,6 @@ export default function NearPageHeader({ onBack, setTab }) {
             </div>
           )}
         </div>
-        <button
-          onClick={() => setTab && setTab('profile')}
-          style={{ padding: 4, minWidth: 44, minHeight: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'none', border: 'none', cursor: 'pointer' }}
-        >
-          <User size={20} color="#5F6368" strokeWidth={1.5} />
-        </button>
       </div>
     </div>
   )

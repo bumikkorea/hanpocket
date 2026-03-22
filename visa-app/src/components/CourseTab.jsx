@@ -993,6 +993,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                     { label: 'Kakao', url: dLinks.kakao, color: '#3396FF' },
                     { label: 'Google', url: dLinks.google, color: '#34A853' },
                     { label: L(lang, { ko: '百度', zh: '百度地图', en: 'Baidu' }), url: dLinks.baidu, color: '#3385FF' },
+                    { label: L(lang, { ko: '高德', zh: '高德地图', en: 'Amap' }), url: dLinks.amap, color: '#2B6BFF' },
                   ]
                   const MODE_DISPLAY = [
                     { key: 'taxi', icon: '🚕', label: { ko: '택시', zh: '出租车', en: 'Taxi' } },
@@ -1182,7 +1183,7 @@ async function reverseGeocode(lat, lng) {
   })
 }
 
-function CreateCourse({ lang, onBack, onSave }) {
+export function CreateCourse({ lang, onBack, onSave }) {
   const [name, setName] = useState('')
   const [stops, setStops] = useState([{ name: '', lat: 0, lng: 0, confirmed: false }])
   const [activeIdx, setActiveIdx] = useState(0) // which stop is being edited
@@ -1520,6 +1521,7 @@ function CreateCourse({ lang, onBack, onSave }) {
                     { label: 'Kakao', url: dLinks2.kakao, color: '#3396FF' },
                     { label: 'Google', url: dLinks2.google, color: '#34A853' },
                     { label: L(lang, { ko: '百度', zh: '百度地图', en: 'Baidu' }), url: dLinks2.baidu, color: '#3385FF' },
+                    { label: L(lang, { ko: '高德', zh: '高德地图', en: 'Amap' }), url: dLinks2.amap, color: '#2B6BFF' },
                   ]
                   const MODE_DISPLAY = [
                     { key: 'taxi', icon: '🚕' },

@@ -72,7 +72,7 @@ export default function VisitorHeatmapCard({ lang, onExpand }) {
 
       {/* Stats */}
       {loading ? (
-        <div className="px-5 py-8 text-center text-[#9CA3AF] text-sm">Loading...</div>
+        <div className="px-5 py-8 text-center text-[#9CA3AF] text-sm">준비 중...</div>
       ) : data && (
         <>
           {/* Monthly total */}

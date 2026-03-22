@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Clock, Users, User, AlertCircle, RefreshCw } from 'lucide-react'
-import { fetchImmigrationWaitTime, getWaitLevel } from '../api/immigrationApi'
+import { Clock, Users, User, RefreshCw } from 'lucide-react'
+import { fetchArrivalCongestion, getCongestionLevel } from '../api/immigrationApi'
 
 function L(lang, d) {
   if (typeof d === 'string') return d
@@ -8,146 +8,121 @@ function L(lang, d) {
 }
 
 const TEXTS = {
-  title: { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time', ja: '入国審査待ち時間' },
-  foreigner: { ko: '외국인', zh: '外国人', en: 'Foreigner', ja: '外国人' },
-  korean: { ko: '내국인', zh: '韩国人', en: 'Korean', ja: '韓国人' },
-  minutes: { ko: '분', zh: '分钟', en: 'min', ja: '分' },
-  lastUpdated: { ko: '최근 업데이트', zh: '最后更新', en: 'Last updated', ja: '最終更新' },
-  historical: { ko: '시간대별 평균 기준', zh: '基于历史时段平均值', en: 'Based on historical average', ja: '時間帯別平均に基づく' },
-  low: { ko: '원활', zh: '顺畅', en: 'Smooth', ja: 'スムーズ' },
-  medium: { ko: '보통', zh: '一般', en: 'Moderate', ja: '普通' },
-  high: { ko: '혼잡', zh: '拥挤', en: 'Congested', ja: '混雑' },
-  arriving: { ko: '곧 도착 예정이시군요!', zh: '即将到达！', en: 'Arriving soon!', ja: 'まもなく到着！' },
-  refresh: { ko: '새로고침', zh: '刷新', en: 'Refresh', ja: '更新' },
+  title:    { ko: '입국장 혼잡도',      zh: '入境大厅拥挤度',     en: '입국장 혼잡도' },
+  foreigner:{ ko: '외국인',            zh: '外国人',            en: '외국인' },
+  korean:   { ko: '내국인',            zh: '韩国人',            en: '내국인' },
+  people:   { ko: '명',               zh: '人',               en: '명' },
+  updated:  { ko: '업데이트',           zh: '更新时间',           en: '업데이트' },
+  low:      { ko: '원활',             zh: '顺畅',              en: '원활' },
+  medium:   { ko: '보통',             zh: '一般',              en: '보통' },
+  high:     { ko: '혼잡',             zh: '拥挤',              en: '혼잡' },
+  noData:   { ko: '실시간 데이터 준비 중', zh: '实时数据准备中',    en: '실시간 데이터 준비 중' },
+  noDataSub:{ ko: '인천공항 API 연동 후 표시됩니다', zh: '接入仁川机场API后显示', en: '인천공항 API 연동 후 표시됩니다' },
 }
 
 const LEVEL_COLORS = {
-  low: { bg: 'bg-emerald-50', text: 'text-emerald-700', bar: 'bg-emerald-500', border: 'border-emerald-200' },
-  medium: { bg: 'bg-amber-50', text: 'text-amber-700', bar: 'bg-amber-500', border: 'border-amber-200' },
-  high: { bg: 'bg-red-50', text: 'text-red-700', bar: 'bg-red-500', border: 'border-red-200' },
+  low:    { bg: '#F0FDF4', text: '#16A34A', bar: '#22C55E', border: '#BBF7D0' },
+  medium: { bg: '#FFFBEB', text: '#D97706', bar: '#F59E0B', border: '#FDE68A' },
+  high:   { bg: '#FEF2F2', text: '#DC2626', bar: '#EF4444', border: '#FECACA' },
 }
 
-function WaitCard({ lang, label, minutes, icon: Icon }) {
-  const level = getWaitLevel(minutes)
-  const colors = LEVEL_COLORS[level]
-  const maxMin = 90
-
+function CongestionCard({ lang, label, count, Icon }) {
+  const level = getCongestionLevel(count)
+  const c = LEVEL_COLORS[level]
+  const maxCount = 500
   return (
-    <div className={`rounded-xl p-4 ${colors.bg} ${colors.border} border`}>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Icon size={16} className={colors.text} />
-          <span className={`text-sm font-medium ${colors.text}`}>{L(lang, label)}</span>
+    <div style={{ borderRadius: 12, padding: '14px 16px', background: c.bg, border: `1px solid ${c.border}` }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Icon size={15} color={c.text} />
+          <span style={{ fontSize: 13, fontWeight: 500, color: c.text }}>{L(lang, label)}</span>
         </div>
-        <span className={`text-xs px-2 py-0.5 rounded-full ${colors.bg} ${colors.text} font-medium`}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: c.text, background: 'rgba(255,255,255,0.6)', borderRadius: 20, padding: '2px 8px' }}>
           {L(lang, TEXTS[level])}
         </span>
       </div>
-      <div className="flex items-baseline gap-1 mb-2">
-        <span className={`text-3xl font-light ${colors.text}`}>{minutes}</span>
-        <span className={`text-sm ${colors.text} opacity-70`}>{L(lang, TEXTS.minutes)}</span>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 8 }}>
+        <span style={{ fontSize: 30, fontWeight: 300, color: c.text }}>{count.toLocaleString()}</span>
+        <span style={{ fontSize: 12, color: c.text, opacity: 0.7 }}>{L(lang, TEXTS.people)}</span>
       </div>
-      <div className="w-full h-1.5 bg-white/60 rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full ${colors.bar} transition-all duration-500`}
-          style={{ width: `${Math.min(100, (minutes / maxMin) * 100)}%` }}
-        />
+      <div style={{ height: 4, background: 'rgba(255,255,255,0.6)', borderRadius: 4, overflow: 'hidden' }}>
+        <div style={{ height: '100%', width: `${Math.min(100, (count / maxCount) * 100)}%`, background: c.bar, borderRadius: 4, transition: 'width 0.5s' }} />
       </div>
     </div>
   )
 }
 
-export default function ImmigrationWaitTime({ lang, scheduledLanding }) {
+export default function ImmigrationWaitTime({ lang }) {
   const [terminal, setTerminal] = useState('T1')
   const [data, setData] = useState({ T1: null, T2: null })
   const [loading, setLoading] = useState(true)
+  const hasApiKey = !!import.meta.env.VITE_AIRPORT_API_KEY
 
-  const isArrivingSoon = scheduledLanding && (() => {
-    const landing = new Date(scheduledLanding)
-    const now = new Date()
-    const diff = (landing - now) / (1000 * 60)
-    return diff > 0 && diff <= 120
-  })()
-
-  async function loadData() {
+  async function load() {
     setLoading(true)
-    try {
-      const [t1, t2] = await Promise.all([
-        fetchImmigrationWaitTime('T1'),
-        fetchImmigrationWaitTime('T2'),
-      ])
-      setData({ T1: t1, T2: t2 })
-    } catch (e) {
-      console.error('Failed to load immigration data:', e)
-    }
+    const [t1, t2] = await Promise.all([
+      fetchArrivalCongestion('T1'),
+      fetchArrivalCongestion('T2'),
+    ])
+    setData({ T1: t1, T2: t2 })
     setLoading(false)
   }
 
-  useEffect(() => { loadData() }, [])
+  useEffect(() => { load() }, [])
 
   const current = data[terminal]
   const updated = current?.lastUpdated
-    ? new Date(current.lastUpdated).toLocaleTimeString(lang === 'ko' ? 'ko-KR' : lang === 'zh' ? 'zh-CN' : lang === 'ja' ? 'ja-JP' : 'en-US', { hour: '2-digit', minute: '2-digit' })
-    : '--:--'
+    ? new Date(current.lastUpdated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    : null
 
   return (
-    <div className={`bg-white rounded-2xl border ${isArrivingSoon ? 'border-blue-300 ring-2 ring-blue-100' : 'border-[#E5E7EB]'} overflow-hidden`}>
-      {/* Header */}
-      <div className="px-5 pt-5 pb-3">
-        {isArrivingSoon && (
-          <div className="flex items-center gap-2 text-blue-600 text-xs font-medium mb-2">
-            <AlertCircle size={14} />
-            <span>{L(lang, TEXTS.arriving)}</span>
-          </div>
-        )}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Clock size={18} className="text-[#111827]" />
-            <h3 className="text-base font-semibold text-[#111827]">{L(lang, TEXTS.title)}</h3>
-          </div>
-          <button onClick={loadData} className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title={L(lang, TEXTS.refresh)}>
-            <RefreshCw size={14} className={`text-[#9CA3AF] ${loading ? 'animate-spin' : ''}`} />
-          </button>
+    <div style={{ background: 'white', borderRadius: 16, border: '1px solid #E5E7EB', overflow: 'hidden' }}>
+      <div style={{ padding: '16px 20px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Clock size={17} color="#111827" />
+          <span style={{ fontSize: 15, fontWeight: 600, color: '#111827' }}>{L(lang, TEXTS.title)}</span>
         </div>
-      </div>
-
-      {/* Terminal tabs */}
-      <div className="px-5 flex gap-2 mb-4">
-        {['T1', 'T2'].map(t => (
-          <button
-            key={t}
-            onClick={() => setTerminal(t)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
-              terminal === t
-                ? 'bg-[#111827] text-white'
-                : 'bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]'
-            }`}
-          >
-            {t}
+        {hasApiKey && (
+          <button onClick={load} style={{ padding: 6, borderRadius: 8, background: 'none', border: 'none', cursor: 'pointer' }}>
+            <RefreshCw size={13} color="#9CA3AF" />
           </button>
-        ))}
-      </div>
-
-      {/* Wait time cards */}
-      <div className="px-5 pb-4 space-y-3">
-        {loading || !current ? (
-          <div className="py-8 text-center text-[#9CA3AF] text-sm">Loading...</div>
-        ) : (
-          <>
-            <WaitCard lang={lang} label={TEXTS.foreigner} minutes={current.foreigner.waitMinutes} icon={Users} />
-            <WaitCard lang={lang} label={TEXTS.korean} minutes={current.korean.waitMinutes} icon={User} />
-          </>
         )}
       </div>
 
-      {/* Footer */}
-      {current && (
-        <div className="px-5 pb-4 flex items-center justify-between text-[11px] text-[#9CA3AF]">
-          <span>{L(lang, TEXTS.lastUpdated)}: {updated}</span>
-          {!current.realtime && (
-            <span className="italic">{L(lang, TEXTS.historical)}</span>
+      {!hasApiKey ? (
+        <div style={{ padding: '20px 20px 24px', textAlign: 'center' }}>
+          <div style={{ fontSize: 32, marginBottom: 8 }}>🚧</div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 4 }}>{L(lang, TEXTS.noData)}</div>
+          <div style={{ fontSize: 12, color: '#9CA3AF' }}>{L(lang, TEXTS.noDataSub)}</div>
+        </div>
+      ) : (
+        <>
+          <div style={{ padding: '0 20px 12px', display: 'flex', gap: 8 }}>
+            {['T1', 'T2'].map(t => (
+              <button key={t} onClick={() => setTerminal(t)}
+                style={{ padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 500, border: 'none', cursor: 'pointer', background: terminal === t ? '#111827' : '#F3F4F6', color: terminal === t ? 'white' : '#6B7280' }}>
+                {t}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ padding: '0 20px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {loading || !current ? (
+              <div style={{ padding: '24px 0', textAlign: 'center', color: '#9CA3AF', fontSize: 13 }}>준비 중...</div>
+            ) : (
+              <>
+                <CongestionCard lang={lang} label={TEXTS.foreigner} count={current.foreigner} Icon={Users} />
+                <CongestionCard lang={lang} label={TEXTS.korean} count={current.korean} Icon={User} />
+              </>
+            )}
+          </div>
+
+          {updated && (
+            <div style={{ padding: '0 20px 12px', fontSize: 11, color: '#9CA3AF' }}>
+              {L(lang, TEXTS.updated)}: {updated}
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   )

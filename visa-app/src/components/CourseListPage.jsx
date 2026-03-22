@@ -9,7 +9,6 @@ import { tLang } from '../locales/index.js'
 import { addBulkPins, getMySeoul, deleteMyCourse } from '../utils/mySeoul.js'
 import { useToast } from './Toast.jsx'
 import NearPageHeader from './NearPageHeader.jsx'
-import CourseCreatorPage from './CourseCreatorPage.jsx'
 import { CreateCourse } from './CourseTab.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
@@ -324,7 +323,6 @@ export default function CourseListPage({ onClose, setTab }) {
   const { lang } = useLanguage()
   const { showToast } = useToast()
   const [selectedMode, setSelectedMode] = useState('first_visit')
-  const [showCreator, setShowCreator] = useState(false)
   const [showLegacyCreator, setShowLegacyCreator] = useState(false)
   const [customCourses, setCustomCourses] = useState(() => loadCustomCourses())
   const [mySeoulCourses, setMySeoulCourses] = useState(() => getMySeoul().courses)
@@ -344,13 +342,6 @@ export default function CourseListPage({ onClose, setTab }) {
     setTab('near-map')
   }
 
-  const handleCreatorClose = (result) => {
-    if (result === 'saved') {
-      setCustomCourses(loadCustomCourses())
-      setMySeoulCourses(getMySeoul().courses)
-    }
-    setShowCreator(false)
-  }
 
   const handleDeleteMyCourse = (courseId) => {
     deleteMyCourse(courseId)
@@ -487,25 +478,6 @@ export default function CourseListPage({ onClose, setTab }) {
             ))}
 
             <button
-              onClick={() => setShowCreator(true)}
-              style={{ width: '100%', height: 72, borderRadius: 14, border: '2px dashed #D1D5DB', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
-              onTouchStart={e => { e.currentTarget.style.borderColor = '#9CA3AF'; e.currentTarget.style.background = 'rgba(0,0,0,0.02)' }}
-              onTouchEnd={e => { e.currentTarget.style.borderColor = '#D1D5DB'; e.currentTarget.style.background = 'transparent' }}
-            >
-              <div style={{ width: 28, height: 28, borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Plus size={14} color="#6B7280" />
-              </div>
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: '#374151' }}>
-                  {L(lang, { zh: '创建我的路线', ko: '내 코스 만들기', en: 'Create My Course' })}
-                </div>
-                <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>
-                  {L(lang, { zh: '自定义行程，随时导航', ko: '장소 추가하고 지도에서 탐색', en: 'Add stops and navigate on map' })}
-                </div>
-              </div>
-            </button>
-
-            <button
               onClick={() => setShowLegacyCreator(true)}
               style={{ width: '100%', height: 72, borderRadius: 14, border: '2px dashed #C4B5FD', background: 'transparent', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
               onTouchStart={e => { e.currentTarget.style.borderColor = '#A78BFA'; e.currentTarget.style.background = 'rgba(167,139,250,0.04)' }}
@@ -534,12 +506,7 @@ export default function CourseListPage({ onClose, setTab }) {
         </div>
       </div>
 
-      {/* 코스 만들기 페이지 (신버전) */}
-      {showCreator && (
-        <CourseCreatorPage onClose={handleCreatorClose} setTab={setTab} />
-      )}
-
-      {/* 코스 만들기 (구버전) */}
+{/* 코스 만들기 (구버전) */}
       {showLegacyCreator && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 9700, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
           <CreateCourse

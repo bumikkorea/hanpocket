@@ -31,7 +31,7 @@ const LoadingSpinner = () => {
       <div className="animate-bounce relative z-10">
         <Onigiri mood="loading" size={60} />
       </div>
-      <p className="text-xs text-[#999999] mt-3 animate-pulse relative z-10">Loading...</p>
+      <p className="text-xs text-[#999999] mt-3 animate-pulse relative z-10">준비 중...</p>
     </div>
   )
 }

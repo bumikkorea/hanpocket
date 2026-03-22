@@ -32,7 +32,7 @@ const TEXTS = {
   buyTicket: { ko: '티켓 구매', zh: '购票', en: 'Buy Tickets' },
   interpark: { ko: '인터파크 티켓', zh: 'Interpark购票', en: 'Interpark Tickets' },
   yes24: { ko: 'YES24 티켓', zh: 'YES24购票', en: 'YES24 Tickets' },
-  loading: { ko: '로딩 중...', zh: '加载中...', en: 'Loading...' },
+  loading: { ko: '준비 중...', zh: '准备中...', en: '준비 중...' },
   openrun: { ko: '오픈런', zh: '长期公演', en: 'Open Run' },
   viewAll: { ko: '전체보기', zh: '查看全部', en: 'View All' },
 }

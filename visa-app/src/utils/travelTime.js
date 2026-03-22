@@ -115,6 +115,7 @@ export function getDirectionLinks(from, to) {
     kakao: kakaoDirectionLink(from, to),
     google: `https://www.google.com/maps/dir/?api=1&origin=${from?.lat},${from?.lng}&destination=${to?.lat},${to?.lng}&travelmode=transit`,
     baidu: `https://api.map.baidu.com/direction?origin=latlng:${from?.lat},${from?.lng}|name:${encodeURIComponent(sName)}&destination=latlng:${to?.lat},${to?.lng}|name:${encodeURIComponent(eName)}&coord_type=wgs84&mode=transit&output=html`,
+    amap: `https://uri.amap.com/navigation?from=${from?.lng},${from?.lat},${encodeURIComponent(sName)}&to=${to?.lng},${to?.lat},${encodeURIComponent(eName)}&mode=bus&coordinate=wgs84&callnative=1`,
     naver: `https://map.naver.com/v5/directions/${from?.lng},${from?.lat},${encodeURIComponent(sName)}/${to?.lng},${to?.lat},${encodeURIComponent(eName)}/-/transit`,
   }
 }

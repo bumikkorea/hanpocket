@@ -36,6 +36,7 @@ export default function PlaceDetail({ place, onBack, onAddStop, onSetDestination
     { label: L(lang, { ko: '카카오맵', zh: '카카오地图', en: 'KakaoMap' }), url: links.kakao, color: '#FEE500', textColor: '#000' },
     { label: L(lang, { ko: '구글맵', zh: '谷歌地图', en: 'Google Maps' }), url: links.google, color: '#4285F4', textColor: '#fff' },
     { label: L(lang, { ko: '바이두맵', zh: '百度地图', en: 'Baidu Maps' }), url: links.baidu, color: '#3385FF', textColor: '#fff' },
+    { label: L(lang, { ko: '가오더맵', zh: '高德地图', en: 'Amap' }), url: links.amap, color: '#2B6BFF', textColor: '#fff' },
   ].filter(l => l.url)
 
   useEffect(() => {

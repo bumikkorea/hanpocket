@@ -16,7 +16,7 @@ function LoadingSpinner() {
       <div className="animate-bounce">
         <Onigiri mood="loading" size={60} />
       </div>
-      <p className="text-xs text-[#999999] mt-3 animate-pulse">Loading...</p>
+      <p className="text-xs text-[#999999] mt-3 animate-pulse">준비 중...</p>
     </div>
   )
 }

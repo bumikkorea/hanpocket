@@ -17,7 +17,6 @@ import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTra
 import { t } from './data/i18n'
 import { generateChatResponse } from './data/chatResponses'
 import { updateLog, dataSources } from './data/updateLog'
-import HomeTab from './components/HomeTab'
 import PopupAdmin from './components/PopupAdmin'
 import { useExchangeRate } from './hooks/useExchangeRate'
 import { pocketCategories, serviceItems, subMenuData, IMPLEMENTED_POCKETS } from './data/pockets'
@@ -69,6 +68,7 @@ const TaxiCalculator = lazy(() => import('./components/TaxiCalculator'))
 const SubwayArrival = lazy(() => import('./components/SubwayArrival'))
 const PerformanceSection = lazy(() => import('./components/PerformanceSection'))
 const FlightInfoCard = lazy(() => import('./components/FlightInfoCard'))
+const DepartureBoard = lazy(() => import('./components/DepartureBoard'))
 const ShowKorean = lazy(() => import('./components/ShowKorean'))
 const NearMap = lazy(() => import('./components/NearMap'))
 const DiscoverTab = lazy(() => import('./components/DiscoverTab'))
@@ -79,6 +79,7 @@ const MorePage = lazy(() => import('./components/MorePage'))
 const MyTab = lazy(() => import('./components/MyTab'))
 const ImmigrationWaitTime = lazy(() => import('./components/ImmigrationWaitTime'))
 const ArrivalCardGuide = lazy(() => import('./components/guides/ArrivalCardGuide'))
+const DutyFreeLimitGuide = lazy(() => import('./components/guides/DutyFreeLimitGuide'))
 // C 섹션 실용 가이드 lazy imports
 const CurrencyCalc = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.CurrencyCalc })))
 const EmergencyNumbers = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.EmergencyNumbers })))
@@ -2328,6 +2329,16 @@ function AppInner() {
             <PetTab lang={lang} />
           </Suspense>
         )}
+        {subPage==='pet-entry' && (
+          <Suspense fallback={<div />}>
+            <PetTab lang={lang} />
+          </Suspense>
+        )}
+        {subPage==='country-duty-free' && (
+          <Suspense fallback={<div />}>
+            <DutyFreeLimitGuide lang={lang} onClose={() => setSubPage(null)} />
+          </Suspense>
+        )}
         {subPage==='wishlist' && (
           <Suspense fallback={<div />}>
             <WishlistPage lang={lang} onBack={() => setSubPage(null)} />
@@ -2366,6 +2377,11 @@ function AppInner() {
         {subPage==='flight-info' && (
           <Suspense fallback={<div />}>
             <FlightInfoCard lang={lang} onBack={() => { setSubPage(null); setTab('home') }} />
+          </Suspense>
+        )}
+        {subPage==='flight-board' && (
+          <Suspense fallback={<div />}>
+            <DepartureBoard onBack={() => setSubPage(null)} setTab={setTab} />
           </Suspense>
         )}
         {subPage==='taxi' && (
@@ -2464,7 +2480,6 @@ function AppInner() {
             <NearHomeTab setTab={handleTabChange} setSubPage={setSubPage} />
           </Suspense>
         )}
-        {tab==='home' && !subPage && <HomeTab profile={profile} lang={lang} adminView={adminView} exchangeRate={exchangeRateData} widgetSettings={widgetSettings} setTab={(t, params) => { if (params) setDeepLink({ tab: t, ...params }); if(['travel','food','shopping','hallyu','learn','life','jobs','housing','medical','fitness','translator','artranslate','sos','finance','wallet','resume','visaalert','community','pet','taxrefund','departure','heatmap','wishlist','passport-scan','departure-shopping','flight-info','show-korean','near-map','korean-culture'].includes(t)) { setTab('home'); setSubPage(t) } else { setTab(t) }}} />}
         {tab==='transition' && !subPage && <div className="px-4"><VisaTab profile={profile} lang={lang} view={view} setView={setView} selCat={selCat} setSelCat={setSelCat} selVisa={selVisa} setSelVisa={setSelVisa} sq={sq} setSq={setSq} /></div>}
         {(tab==='popup' || tab==='near-map') && !subPage && (
           <Suspense fallback={<div />}>

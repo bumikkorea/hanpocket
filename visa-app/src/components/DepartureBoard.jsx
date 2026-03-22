@@ -19,45 +19,104 @@ function fmt(hhmm) {
   return `${hhmm.slice(0, 2)}:${hhmm.slice(2, 4)}`
 }
 
-// IATA 코드 → 도시명 (zh / en)
+// IATA 코드 → 도시명 (zh / en) + 국가명 (co)
 const CITY = {
-  NRT:{ zh:'东京成田', en:'Tokyo (NRT)' }, HND:{ zh:'东京羽田', en:'Tokyo (HND)' },
-  KIX:{ zh:'大阪',    en:'Osaka'       }, CTS:{ zh:'札幌',    en:'Sapporo'     },
-  FUK:{ zh:'福冈',    en:'Fukuoka'     }, NGO:{ zh:'名古屋',  en:'Nagoya'      },
-  OKA:{ zh:'冲绳',    en:'Okinawa'     }, SDJ:{ zh:'仙台',    en:'Sendai'      },
-  PEK:{ zh:'北京首都',en:'Beijing Cap' }, PKX:{ zh:'北京大兴',en:'Beijing Dax' },
-  PVG:{ zh:'上海浦东',en:'Shanghai PVG'}, SHA:{ zh:'上海虹桥',en:'Shanghai SHA'},
-  CAN:{ zh:'广州',    en:'Guangzhou'   }, SZX:{ zh:'深圳',    en:'Shenzhen'    },
-  CTU:{ zh:'成都',    en:'Chengdu'     }, CKG:{ zh:'重庆',    en:'Chongqing'   },
-  XIY:{ zh:'西安',    en:"Xi'an"       }, WUH:{ zh:'武汉',    en:'Wuhan'       },
-  HGH:{ zh:'杭州',    en:'Hangzhou'    }, NKG:{ zh:'南京',    en:'Nanjing'     },
-  XMN:{ zh:'厦门',    en:'Xiamen'      }, TAO:{ zh:'青岛',    en:'Qingdao'     },
-  TSN:{ zh:'天津',    en:'Tianjin'     }, DLC:{ zh:'大连',    en:'Dalian'      },
-  SHE:{ zh:'沈阳',    en:'Shenyang'    }, HRB:{ zh:'哈尔滨',  en:'Harbin'      },
-  CGO:{ zh:'郑州',    en:'Zhengzhou'   }, TNA:{ zh:'济南',    en:"Ji'nan"      },
-  KMG:{ zh:'昆明',    en:'Kunming'     }, URC:{ zh:'乌鲁木齐',en:'Urumqi'      },
-  CSX:{ zh:'长沙',    en:'Changsha'    }, KHN:{ zh:'南昌',    en:'Nanchang'    },
-  HKG:{ zh:'香港',    en:'Hong Kong'   }, MFM:{ zh:'澳门',    en:'Macau'       },
-  TPE:{ zh:'台北',    en:'Taipei'      }, KHH:{ zh:'高雄',    en:'Kaohsiung'   },
-  MNL:{ zh:'马尼拉',  en:'Manila'      }, CEB:{ zh:'宿务',    en:'Cebu'        },
-  DPS:{ zh:'巴厘岛',  en:'Bali'        }, SIN:{ zh:'新加坡',  en:'Singapore'   },
-  KUL:{ zh:'吉隆坡',  en:'Kuala Lumpur'}, BKK:{ zh:'曼谷',    en:'Bangkok'     },
-  DMK:{ zh:'曼谷廊曼',en:'Bangkok DMK' }, HKT:{ zh:'普吉',    en:'Phuket'      },
-  HAN:{ zh:'河内',    en:'Hanoi'       }, SGN:{ zh:'胡志明市',en:'Ho Chi Minh' },
-  DAD:{ zh:'岘港',    en:'Da Nang'     }, RGN:{ zh:'仰光',    en:'Yangon'      },
-  KTM:{ zh:'加德满都',en:'Kathmandu'   }, DEL:{ zh:'德里',    en:'Delhi'       },
-  BOM:{ zh:'孟买',    en:'Mumbai'      }, ULN:{ zh:'乌兰巴托',en:'Ulaanbaatar' },
-  TAS:{ zh:'塔什干',  en:'Tashkent'    }, ALA:{ zh:'阿拉木图',en:'Almaty'      },
-  DXB:{ zh:'迪拜',    en:'Dubai'       }, DOH:{ zh:'多哈',    en:'Doha'        },
-  AUH:{ zh:'阿布扎比',en:'Abu Dhabi'   }, IST:{ zh:'伊斯坦布尔',en:'Istanbul'  },
-  LHR:{ zh:'伦敦',    en:'London'      }, CDG:{ zh:'巴黎',    en:'Paris'       },
-  FRA:{ zh:'法兰克福',en:'Frankfurt'   }, AMS:{ zh:'阿姆斯特丹',en:'Amsterdam' },
-  VIE:{ zh:'维也纳',  en:'Vienna'      }, ZRH:{ zh:'苏黎世',  en:'Zurich'      },
-  FCO:{ zh:'罗马',    en:'Rome'        }, BCN:{ zh:'巴塞罗那',en:'Barcelona'   },
-  LAX:{ zh:'洛杉矶',  en:'Los Angeles' }, JFK:{ zh:'纽约',    en:'New York'    },
-  SFO:{ zh:'旧金山',  en:'San Francisco'}, ORD:{ zh:'芝加哥', en:'Chicago'     },
-  YVR:{ zh:'温哥华',  en:'Vancouver'   }, YYZ:{ zh:'多伦多',  en:'Toronto'     },
-  SYD:{ zh:'悉尼',    en:'Sydney'      }, MEL:{ zh:'墨尔本',  en:'Melbourne'   },
+  // 일본
+  NRT:{ zh:'东京成田', en:'Tokyo Narita',  co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  HND:{ zh:'东京羽田', en:'Tokyo Haneda',  co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  KIX:{ zh:'大阪',     en:'Osaka',         co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  ITM:{ zh:'大阪伊丹', en:'Osaka Itami',   co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  CTS:{ zh:'札幌',     en:'Sapporo',       co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  FUK:{ zh:'福冈',     en:'Fukuoka',       co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  NGO:{ zh:'名古屋',   en:'Nagoya',        co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  OKA:{ zh:'冲绳',     en:'Okinawa',       co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  SDJ:{ zh:'仙台',     en:'Sendai',        co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  HIJ:{ zh:'广岛',     en:'Hiroshima',     co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  KMJ:{ zh:'熊本',     en:'Kumamoto',      co:{ ko:'일본', zh:'日本', en:'Japan' } },
+  // 중국 (본토)
+  PEK:{ zh:'北京首都', en:'Beijing Cap.',  co:{ ko:'중국', zh:'中国', en:'China' } },
+  PKX:{ zh:'北京大兴', en:'Beijing Daxing',co:{ ko:'중국', zh:'中国', en:'China' } },
+  PVG:{ zh:'上海浦东', en:'Shanghai PVG',  co:{ ko:'중국', zh:'中国', en:'China' } },
+  SHA:{ zh:'上海虹桥', en:'Shanghai Hongq',co:{ ko:'중국', zh:'中国', en:'China' } },
+  CAN:{ zh:'广州',     en:'Guangzhou',     co:{ ko:'중국', zh:'中国', en:'China' } },
+  SZX:{ zh:'深圳',     en:'Shenzhen',      co:{ ko:'중국', zh:'中国', en:'China' } },
+  CTU:{ zh:'成都',     en:'Chengdu',       co:{ ko:'중국', zh:'中国', en:'China' } },
+  TFU:{ zh:'成都天府', en:'Chengdu Tianfu',co:{ ko:'중국', zh:'中国', en:'China' } },
+  CKG:{ zh:'重庆',     en:'Chongqing',     co:{ ko:'중국', zh:'中국', en:'China' } },
+  XIY:{ zh:'西安',     en:"Xi'an",         co:{ ko:'중국', zh:'中国', en:'China' } },
+  WUH:{ zh:'武汉',     en:'Wuhan',         co:{ ko:'중국', zh:'中国', en:'China' } },
+  HGH:{ zh:'杭州',     en:'Hangzhou',      co:{ ko:'중국', zh:'中国', en:'China' } },
+  NKG:{ zh:'南京',     en:'Nanjing',       co:{ ko:'중국', zh:'中国', en:'China' } },
+  XMN:{ zh:'厦门',     en:'Xiamen',        co:{ ko:'중국', zh:'中国', en:'China' } },
+  TAO:{ zh:'青岛',     en:'Qingdao',       co:{ ko:'중국', zh:'中国', en:'China' } },
+  TSN:{ zh:'天津',     en:'Tianjin',       co:{ ko:'중국', zh:'中国', en:'China' } },
+  DLC:{ zh:'大连',     en:'Dalian',        co:{ ko:'중국', zh:'中国', en:'China' } },
+  SHE:{ zh:'沈阳',     en:'Shenyang',      co:{ ko:'중국', zh:'中国', en:'China' } },
+  HRB:{ zh:'哈尔滨',   en:'Harbin',        co:{ ko:'중국', zh:'中国', en:'China' } },
+  CGO:{ zh:'郑州',     en:'Zhengzhou',     co:{ ko:'중국', zh:'中国', en:'China' } },
+  TNA:{ zh:'济南',     en:"Jinan",         co:{ ko:'중국', zh:'中国', en:'China' } },
+  KMG:{ zh:'昆明',     en:'Kunming',       co:{ ko:'중국', zh:'中国', en:'China' } },
+  URC:{ zh:'乌鲁木齐', en:'Urumqi',        co:{ ko:'중국', zh:'中国', en:'China' } },
+  CSX:{ zh:'长沙',     en:'Changsha',      co:{ ko:'중국', zh:'中国', en:'China' } },
+  KHN:{ zh:'南昌',     en:'Nanchang',      co:{ ko:'중국', zh:'中国', en:'China' } },
+  NNG:{ zh:'南宁',     en:'Nanning',       co:{ ko:'중국', zh:'中国', en:'China' } },
+  HAK:{ zh:'海口',     en:'Haikou',        co:{ ko:'중국', zh:'中国', en:'China' } },
+  SYX:{ zh:'三亚',     en:'Sanya',         co:{ ko:'중국', zh:'中国', en:'China' } },
+  WEH:{ zh:'威海',     en:'Weihai',        co:{ ko:'중국', zh:'中国', en:'China' } },
+  YNT:{ zh:'烟台',     en:'Yantai',        co:{ ko:'중국', zh:'中国', en:'China' } },
+  // 홍콩·마카오·대만
+  HKG:{ zh:'香港',     en:'Hong Kong',     co:{ ko:'홍콩', zh:'香港', en:'Hong Kong' } },
+  MFM:{ zh:'澳门',     en:'Macau',         co:{ ko:'마카오', zh:'澳门', en:'Macau' } },
+  TPE:{ zh:'台北桃园', en:'Taipei',        co:{ ko:'대만', zh:'台湾', en:'Taiwan' } },
+  KHH:{ zh:'高雄',     en:'Kaohsiung',     co:{ ko:'대만', zh:'台湾', en:'Taiwan' } },
+  // 동남아
+  MNL:{ zh:'马尼拉',   en:'Manila',        co:{ ko:'필리핀', zh:'菲律宾', en:'Philippines' } },
+  CEB:{ zh:'宿务',     en:'Cebu',          co:{ ko:'필리핀', zh:'菲律宾', en:'Philippines' } },
+  DPS:{ zh:'巴厘岛',   en:'Bali',          co:{ ko:'인도네시아', zh:'印度尼西亚', en:'Indonesia' } },
+  CGK:{ zh:'雅加达',   en:'Jakarta',       co:{ ko:'인도네시아', zh:'印度尼西亚', en:'Indonesia' } },
+  SIN:{ zh:'新加坡',   en:'Singapore',     co:{ ko:'싱가포르', zh:'新加坡', en:'Singapore' } },
+  KUL:{ zh:'吉隆坡',   en:'Kuala Lumpur',  co:{ ko:'말레이시아', zh:'马来西亚', en:'Malaysia' } },
+  BKK:{ zh:'曼谷素万',  en:'Bangkok BKK',  co:{ ko:'태국', zh:'泰国', en:'Thailand' } },
+  DMK:{ zh:'曼谷廊曼',  en:'Bangkok DMK',  co:{ ko:'태국', zh:'泰国', en:'Thailand' } },
+  HKT:{ zh:'普吉',     en:'Phuket',        co:{ ko:'태국', zh:'泰国', en:'Thailand' } },
+  CNX:{ zh:'清迈',     en:'Chiang Mai',    co:{ ko:'태국', zh:'泰国', en:'Thailand' } },
+  HAN:{ zh:'河内',     en:'Hanoi',         co:{ ko:'베트남', zh:'越南', en:'Vietnam' } },
+  SGN:{ zh:'胡志明市', en:'Ho Chi Minh',   co:{ ko:'베트남', zh:'越南', en:'Vietnam' } },
+  DAD:{ zh:'岘港',     en:'Da Nang',       co:{ ko:'베트남', zh:'越南', en:'Vietnam' } },
+  RGN:{ zh:'仰光',     en:'Yangon',        co:{ ko:'미얀마', zh:'缅甸', en:'Myanmar' } },
+  REP:{ zh:'暹粒',     en:'Siem Reap',     co:{ ko:'캄보디아', zh:'柬埔寨', en:'Cambodia' } },
+  // 남아시아·중앙아시아
+  KTM:{ zh:'加德满都', en:'Kathmandu',     co:{ ko:'네팔', zh:'尼泊尔', en:'Nepal' } },
+  DEL:{ zh:'德里',     en:'Delhi',         co:{ ko:'인도', zh:'印度', en:'India' } },
+  BOM:{ zh:'孟买',     en:'Mumbai',        co:{ ko:'인도', zh:'印度', en:'India' } },
+  ULN:{ zh:'乌兰巴托', en:'Ulaanbaatar',   co:{ ko:'몽골', zh:'蒙古', en:'Mongolia' } },
+  TAS:{ zh:'塔什干',   en:'Tashkent',      co:{ ko:'우즈베키스탄', zh:'乌兹别克斯坦', en:'Uzbekistan' } },
+  ALA:{ zh:'阿拉木图', en:'Almaty',        co:{ ko:'카자흐스탄', zh:'哈萨克斯坦', en:'Kazakhstan' } },
+  // 중동
+  DXB:{ zh:'迪拜',     en:'Dubai',         co:{ ko:'UAE', zh:'阿联酋', en:'UAE' } },
+  DOH:{ zh:'多哈',     en:'Doha',          co:{ ko:'카타르', zh:'卡塔尔', en:'Qatar' } },
+  AUH:{ zh:'阿布扎比', en:'Abu Dhabi',     co:{ ko:'UAE', zh:'阿联酋', en:'UAE' } },
+  IST:{ zh:'伊斯坦布尔',en:'Istanbul',     co:{ ko:'터키', zh:'土耳其', en:'Turkey' } },
+  // 유럽
+  LHR:{ zh:'伦敦',     en:'London',        co:{ ko:'영국', zh:'英国', en:'UK' } },
+  CDG:{ zh:'巴黎',     en:'Paris',         co:{ ko:'프랑스', zh:'法国', en:'France' } },
+  FRA:{ zh:'法兰克福', en:'Frankfurt',     co:{ ko:'독일', zh:'德国', en:'Germany' } },
+  AMS:{ zh:'阿姆斯特丹',en:'Amsterdam',    co:{ ko:'네덜란드', zh:'荷兰', en:'Netherlands' } },
+  VIE:{ zh:'维也纳',   en:'Vienna',        co:{ ko:'오스트리아', zh:'奥地利', en:'Austria' } },
+  ZRH:{ zh:'苏黎世',   en:'Zurich',        co:{ ko:'스위스', zh:'瑞士', en:'Switzerland' } },
+  FCO:{ zh:'罗马',     en:'Rome',          co:{ ko:'이탈리아', zh:'意大利', en:'Italy' } },
+  BCN:{ zh:'巴塞罗那', en:'Barcelona',     co:{ ko:'스페인', zh:'西班牙', en:'Spain' } },
+  MAD:{ zh:'马德里',   en:'Madrid',        co:{ ko:'스페인', zh:'西班牙', en:'Spain' } },
+  // 북미·오세아니아
+  LAX:{ zh:'洛杉矶',   en:'Los Angeles',   co:{ ko:'미국', zh:'美国', en:'USA' } },
+  JFK:{ zh:'纽约',     en:'New York',      co:{ ko:'미국', zh:'美国', en:'USA' } },
+  SFO:{ zh:'旧金山',   en:'San Francisco', co:{ ko:'미국', zh:'美国', en:'USA' } },
+  ORD:{ zh:'芝加哥',   en:'Chicago',       co:{ ko:'미국', zh:'美国', en:'USA' } },
+  SEA:{ zh:'西雅图',   en:'Seattle',       co:{ ko:'미국', zh:'美国', en:'USA' } },
+  YVR:{ zh:'温哥华',   en:'Vancouver',     co:{ ko:'캐나다', zh:'加拿大', en:'Canada' } },
+  YYZ:{ zh:'多伦多',   en:'Toronto',       co:{ ko:'캐나다', zh:'加拿大', en:'Canada' } },
+  SYD:{ zh:'悉尼',     en:'Sydney',        co:{ ko:'호주', zh:'澳大利亚', en:'Australia' } },
+  MEL:{ zh:'墨尔本',   en:'Melbourne',     co:{ ko:'호주', zh:'澳大利亚', en:'Australia' } },
 }
 
 // 항공사명 번역 (한국어 → zh / en)
@@ -94,11 +153,13 @@ const AIRLINE = {
   'KLM':          { zh:'荷兰皇家航空',   en:'KLM'                },
 }
 
-function translateCity(lang, airportCode, koName) {
-  if (lang === 'ko') return koName
+// { city, country } 반환
+function getCityInfo(lang, airportCode, koName) {
   const c = CITY[airportCode]
-  if (c) return c[lang] || koName
-  return koName
+  if (!c) return { city: koName, country: '' }
+  const city    = lang === 'ko' ? koName : (c[lang] || koName)
+  const country = c.co?.[lang] || ''
+  return { city, country }
 }
 function translateAirline(lang, koName) {
   if (lang === 'ko') return koName
@@ -107,11 +168,12 @@ function translateAirline(lang, koName) {
   return koName
 }
 
-// P01=T1 본관 / P02=T2 / P03=탑승동(T1)
+// P01=T1 본관 / P02=T2 / P03=탑승동(T1 소속, 셔틀 이용)
 const TERM_LABEL = {
-  P01: { ko: 'T1',   zh: 'T1',   en: 'T1',   color: '#3B82F6' },
-  P02: { ko: 'T2',   zh: 'T2',   en: 'T2',   color: '#8B5CF6' },
-  P03: { ko: '탑승동', zh: '卫星楼', en: 'Conc', color: '#06B6D4' },
+  P01: { ko: 'T1', zh: 'T1', en: 'T1', color: '#3B82F6', note: null },
+  P02: { ko: 'T2', zh: 'T2', en: 'T2', color: '#8B5CF6', note: null },
+  P03: { ko: 'T1', zh: 'T1', en: 'T1', color: '#3B82F6',
+    note: { ko: '탑승동(셔틀)', zh: 'T1卫星楼', en: 'T1 Concourse' } },
 }
 
 const TEXTS = {
@@ -157,19 +219,26 @@ function FlightRow({ f, lang, isEven }) {
         </div>
         {delayed && <div style={{ fontSize: 10, color: '#F59E0B', marginTop: 1 }}>{fmt(f.actualTime)}</div>}
         {tl && (
-          <div style={{ marginTop: 3, display: 'inline-block', fontSize: 9, fontWeight: 700, color: tl.color, background: tl.color + '18', borderRadius: 3, padding: '1px 4px' }}>
-            {L(lang, tl)}
+          <div>
+            <div style={{ marginTop: 3, display: 'inline-block', fontSize: 9, fontWeight: 700, color: tl.color, background: tl.color + '18', borderRadius: 3, padding: '1px 4px' }}>
+              {L(lang, tl)}
+            </div>
+            {tl.note && (
+              <div style={{ fontSize: 8, color: '#06B6D4', marginTop: 1 }}>{L(lang, tl.note)}</div>
+            )}
           </div>
         )}
       </div>
 
-      {/* 목적지 + 항공사 */}
+      {/* 목적지 + 국가 + 항공사 */}
       <div style={{ minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {translateCity(lang, f.airportCode, f.destination)}
+          {getCityInfo(lang, f.airportCode, f.destination).city}
         </div>
         <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {translateAirline(lang, f.airline)}
+          {getCityInfo(lang, f.airportCode, f.destination).country
+            ? `${getCityInfo(lang, f.airportCode, f.destination).country} · ${translateAirline(lang, f.airline)}`
+            : translateAirline(lang, f.airline)}
         </div>
       </div>
 
@@ -208,7 +277,7 @@ function MyFlightCard({ flight, lang }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <PlaneTakeoff size={16} color={tl?.color || '#3B82F6'} />
           <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{flight.flightId}</span>
-          <span style={{ fontSize: 12, color: '#6B7280' }}>→ {translateCity(lang, flight.airportCode, flight.destination)}</span>
+          <span style={{ fontSize: 12, color: '#6B7280' }}>→ {getCityInfo(lang, flight.airportCode, flight.destination).city}</span>
         </div>
         <span style={{ fontSize: 11, fontWeight: 700, color: ri.color, background: ri.color + '18', borderRadius: 6, padding: '3px 8px' }}>
           {lang === 'zh' ? ri.zh : lang === 'en' ? ri.en : (flight.remark || '정시')}
@@ -232,6 +301,15 @@ function MyFlightCard({ flight, lang }) {
       <div style={{ marginTop: 8, fontSize: 11, color: '#9CA3AF', textAlign: 'center' }}>
         {translateAirline(lang, flight.airline)}
       </div>
+      {flight.terminal === 'P03' && (
+        <div style={{ marginTop: 8, padding: '7px 10px', background: '#ECFEFF', borderRadius: 8, border: '1px solid #A5F3FC', fontSize: 11, color: '#0891B2', textAlign: 'center' }}>
+          {L(lang, {
+            ko: '🚌 T1 도착 후 탑승동 셔틀 탑승 필요 (약 10분)',
+            zh: '🚌 到达T1后需乘摆渡车前往卫星楼（约10分钟）',
+            en: '🚌 Go to T1 → take shuttle to Concourse (~10 min)',
+          })}
+        </div>
+      )}
     </div>
   )
 }

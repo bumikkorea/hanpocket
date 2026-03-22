@@ -41,6 +41,7 @@ export async function fetchDepartureFlights({ date, numOfRows = 50 } = {}) {
       flightId:      f.flightId || '',
       airline:       f.airline || '',
       destination:   f.airport || '',
+      airportCode:   f.airportCode || '',
       scheduledTime: f.scheduleDateTime || '',   // 이미 HHMM 형식
       actualTime:    f.estimatedDateTime || '',  // 이미 HHMM 형식
       terminal:      f.terminalId || '',

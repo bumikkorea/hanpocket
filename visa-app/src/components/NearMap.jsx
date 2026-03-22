@@ -281,29 +281,6 @@ function MagicPillSelector({ areas, lang, onSelect }) {
   )
 }
 
-// ─── 개발 전용 bilingual 토글 ───
-function DevBilingualToggle({ active, onToggle }) {
-  if (!IS_DEV) return null
-  return (
-    <button
-      onClick={onToggle}
-      title={active ? 'bilingual ON — 병기 표시 중' : 'bilingual OFF'}
-      style={{
-        position: 'absolute', top: 70, right: 16, zIndex: 15,
-        width: 32, height: 32, borderRadius: 8,
-        background: active ? '#1A1A1A' : 'rgba(255,255,255,0.92)',
-        border: active ? 'none' : '1px solid #DDD',
-        boxShadow: '0 1px 6px rgba(0,0,0,0.15)',
-        fontSize: 15, cursor: 'pointer',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        backdropFilter: 'blur(4px)',
-      }}
-    >
-      🔧
-    </button>
-  )
-}
-
 // ─── 메인 컴포넌트 ───
 export default function NearMap() {
   const { lang } = useLanguage()
@@ -328,7 +305,6 @@ export default function NearMap() {
   const [selectedDistrict, setSelectedDistrict] = useState(null) // null = 서울 전체
   const [activePopup, setActivePopup] = useState(null)
   const [navPoi, setNavPoi] = useState(null)
-  const [bilingual, setBilingual] = useState(false)
   const [bookmarks, setBookmarks] = useState(() => {
     try { return JSON.parse(localStorage.getItem('near_bookmarks') || '[]') } catch { return [] }
   })
@@ -670,8 +646,29 @@ export default function NearMap() {
         <MagicPillSelector areas={QUICK_AREAS} lang={lang} onSelect={moveToArea} />
       </div>
 
-      {/* ─── 개발 전용 bilingual 토글 ─── */}
-      <DevBilingualToggle active={bilingual} onToggle={() => setBilingual(v => !v)} />
+      {/* ─── 내 위치 버튼 (우하단 FAB) ─── */}
+      <button
+        onClick={() => {
+          if (!navigator.geolocation) return
+          navigator.geolocation.getCurrentPosition(
+            p => {
+              if (!mapInstance.current) return
+              mapInstance.current.setCenter(new window.kakao.maps.LatLng(p.coords.latitude, p.coords.longitude))
+              mapInstance.current.setLevel(3)
+            },
+            () => {}
+          )
+        }}
+        style={{
+          position: 'absolute', bottom: 180, right: 16, zIndex: 10,
+          width: 40, height: 40, borderRadius: '50%',
+          background: 'white', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+        }}
+      >
+        <Navigation size={18} color="#378ADD" />
+      </button>
 
       {/* ─── 카테고리 칩 ─── */}
       <div style={{

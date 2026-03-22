@@ -49,11 +49,9 @@ const ARRIVAL_ITEMS = [
 
 // ─── 출국 바텀시트 항목 ───
 const DEPARTURE_ITEMS = [
-  { id: 'flight-board',       emoji: '✈️', label: { ko: '출발 전광판',       zh: '出发航班',       en: 'Departures Board' },         sub: 'flight-board' },
-  { id: 'departure',          emoji: '⏳', label: { ko: '출국 카운트다운',   zh: '出境倒计时',     en: 'Departure Countdown' },      sub: 'departure' },
-  { id: 'taxrefund',          emoji: '🧾', label: { ko: '세금환급 안내',     zh: '退税指南',       en: 'Tax Refund Guide' },         sub: 'taxrefund' },
-  { id: 'departure-shopping', emoji: '🛍️', label: { ko: '출국 쇼핑 동선',   zh: '出境购物路线',   en: 'Departure Shopping Route' }, sub: 'departure-shopping' },
-  { id: 'tax-free',           emoji: '🔖', label: { ko: '면세 한도 안내',    zh: '免税限额指南',   en: 'Duty-Free Limits' },         sub: 'tax-free' },
+  { id: 'flight-board', emoji: '✈️', label: { ko: '출발 전광판',   zh: '出发航班',   en: 'Departures Board' }, sub: 'flight-board' },
+  { id: 'taxrefund',    emoji: '🧾', label: { ko: '세금환급 안내', zh: '退税指南',   en: 'Tax Refund Guide' }, sub: 'taxrefund'    },
+  { id: 'tax-free',     emoji: '🔖', label: { ko: '면세점 가이드', zh: '免税店指南', en: 'Duty-Free Guide'  }, sub: 'tax-free'     },
 ]
 
 // ─── 통역·번역 바텀시트 항목 ───

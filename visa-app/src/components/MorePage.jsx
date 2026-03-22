@@ -11,7 +11,6 @@ const SECTIONS = [
     title: { ko: '공항 & 이동', zh: '机场 & 交通', en: 'Airport & Transit' },
     emoji: '✈️',
     items: [
-      { id: 'country-duty-free', emoji: '🌍', label: { ko: '국가별 면세한도', zh: '各国免税限额', en: 'Duty-Free Limits by Country' }, sub: 'country-duty-free' },
       { id: 'parcel-send',       emoji: '📦', label: { ko: '택배 보내기',     zh: '寄快递',       en: 'Ship Packages' },                 url: 'https://m.epost.go.kr' },
       { id: 'airport-to-seoul',  emoji: '🚆', label: { ko: '공항 → 서울',    zh: '机场→首尔',    en: 'Airport → Seoul' },               tab: 'travel' },
       { id: 'airport-from-seoul',emoji: '🚕', label: { ko: '공항 이동',      zh: '前往机场',     en: 'To Airport' },                   tab: 'travel' },

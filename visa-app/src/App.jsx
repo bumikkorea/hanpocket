@@ -57,12 +57,10 @@ const SearchTab = lazy(() => import('./components/SearchTab'))
 const KoreanTab = lazy(() => import('./components/KoreanTab'))
 const ToolsTab = lazy(() => import('./components/ToolsTab'))
 const TaxRefundChecker = lazy(() => import('./components/TaxRefundChecker'))
-const DepartureCountdown = lazy(() => import('./components/DepartureCountdown'))
 const VisitorHeatmapFull = lazy(() => import('./components/VisitorHeatmapFull'))
 const WishlistPage = lazy(() => import('./components/WishlistPage'))
 const MySeoulPage = lazy(() => import('./components/MySeoulPage'))
 const PassportScan = lazy(() => import('./components/PassportScan'))
-const DepartureShoppingRoute = lazy(() => import('./components/DepartureShoppingRoute'))
 const ReservationTab = lazy(() => import('./components/reservation/ReservationTab'))
 const TaxiCalculator = lazy(() => import('./components/TaxiCalculator'))
 const SubwayArrival = lazy(() => import('./components/SubwayArrival'))
@@ -79,7 +77,6 @@ const MorePage = lazy(() => import('./components/MorePage'))
 const MyTab = lazy(() => import('./components/MyTab'))
 const ImmigrationWaitTime = lazy(() => import('./components/ImmigrationWaitTime'))
 const ArrivalCardGuide = lazy(() => import('./components/guides/ArrivalCardGuide'))
-const DutyFreeLimitGuide = lazy(() => import('./components/guides/DutyFreeLimitGuide'))
 // C 섹션 실용 가이드 lazy imports
 const CurrencyCalc = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.CurrencyCalc })))
 const EmergencyNumbers = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.EmergencyNumbers })))
@@ -2334,11 +2331,6 @@ function AppInner() {
             <PetTab lang={lang} />
           </Suspense>
         )}
-        {subPage==='country-duty-free' && (
-          <Suspense fallback={<div />}>
-            <DutyFreeLimitGuide lang={lang} onClose={() => setSubPage(null)} />
-          </Suspense>
-        )}
         {subPage==='wishlist' && (
           <Suspense fallback={<div />}>
             <WishlistPage lang={lang} onBack={() => setSubPage(null)} />
@@ -2354,11 +2346,6 @@ function AppInner() {
             <TaxRefundChecker lang={lang} profile={safeProfile} />
           </Suspense>
         )}
-        {subPage==='departure' && (
-          <Suspense fallback={<div />}>
-            <DepartureCountdown lang={lang} profile={safeProfile} />
-          </Suspense>
-        )}
         {subPage==='heatmap' && (
           <Suspense fallback={<div />}>
             <VisitorHeatmapFull lang={lang} />
@@ -2367,11 +2354,6 @@ function AppInner() {
         {subPage==='passport-scan' && (
           <Suspense fallback={<div />}>
             <PassportScan lang={lang} onComplete={(data) => { setProfile(prev => ({ ...prev, ...data })); setSubPage(null) }} onSkip={() => setSubPage(null)} />
-          </Suspense>
-        )}
-        {subPage==='departure-shopping' && (
-          <Suspense fallback={<div />}>
-            <DepartureShoppingRoute lang={lang} profile={safeProfile} />
           </Suspense>
         )}
         {subPage==='flight-info' && (

@@ -35,7 +35,7 @@ const QUICK_AREAS = [
   { id: 'jamsil',     key: 'district.jamsil', lat: 37.5133, lng: 127.1001, zoom: 4, district: 'jamsil'   },
 ]
 
-// 카카오맵 딥링크 공통 (길찾기/택시)
+// 카카오맵 딥링크 — 길찾기
 function openKakaoMapRoute(lat, lng, name, by = 'PUBLICTRANSIT') {
   const latNum = Number(lat)
   const lngNum = Number(lng)
@@ -45,15 +45,41 @@ function openKakaoMapRoute(lat, lng, name, by = 'PUBLICTRANSIT') {
   const isAndroid = /Android/i.test(navigator.userAgent)
 
   if (isAndroid) {
-    // Android intent 포맷 (앱 미설치 시 Play Store 폴백)
-    const fallback = encodeURIComponent(`https://play.google.com/store/apps/details?id=net.daum.android.map`)
+    const fallback = encodeURIComponent('https://play.google.com/store/apps/details?id=net.daum.android.map')
     window.location.href = `intent://route?ep=${latNum.toFixed(6)},${lngNum.toFixed(6)}&edt=${n}&by=${by}#Intent;scheme=kakaomap;package=net.daum.android.map;S.browser_fallback_url=${fallback};end`
   } else {
     window.location.href = `kakaomap://route?ep=${latNum.toFixed(6)},${lngNum.toFixed(6)}&edt=${n}&by=${by}`
-    setTimeout(() => {
-      window.location.href = 'https://apps.apple.com/kr/app/id304608425'
-    }, 2000)
+    setTimeout(() => { window.location.href = 'https://apps.apple.com/kr/app/id304608425' }, 2000)
   }
+}
+
+// 카카오T 딥링크 — 택시 호출 (출발지 + 도착지)
+function openKakaoTaxi(destLat, destLng, destName, userPos) {
+  const dLat = Number(destLat)
+  const dLng = Number(destLng)
+  if (isNaN(dLat) || isNaN(dLng) || !dLat || !dLng) {
+    window.location.href = 'kakaot://'
+    return
+  }
+
+  const dn = encodeURIComponent(destName || '')
+  let url
+
+  if (userPos?.lat && userPos?.lng) {
+    // 출발지 + 도착지 모두 전달 (더 높은 성공률)
+    const sn = encodeURIComponent('현재 위치')
+    url = `kakaot://taxi/call?startLat=${Number(userPos.lat).toFixed(6)}&startLng=${Number(userPos.lng).toFixed(6)}&startName=${sn}&destLat=${dLat.toFixed(6)}&destLng=${dLng.toFixed(6)}&destName=${dn}`
+  } else {
+    url = `kakaot://taxi/call?destLat=${dLat.toFixed(6)}&destLng=${dLng.toFixed(6)}&destName=${dn}`
+  }
+
+  window.location.href = url
+  setTimeout(() => {
+    const isIOS = /iPhone|iPad/i.test(navigator.userAgent)
+    window.location.href = isIOS
+      ? 'https://apps.apple.com/kr/app/kakaot/id981110422'
+      : 'https://play.google.com/store/apps/details?id=com.kakao.taxi'
+  }, 2000)
 }
 
 // ─── 영업 상태 판단 ───
@@ -719,6 +745,7 @@ export default function NearMap() {
             onNavigate={(p) => setNavPoi(p)}
             onReserve={(p) => setReservationPoi(p)}
             onTaxi={(p) => setTaxiPoi(p)}
+            userPos={userPos}
             statusTick={statusTick}
           />
         ) : activeCourseId ? (
@@ -855,7 +882,7 @@ export default function NearMap() {
 }
 
 // ─── 확장 바텀 시트 내용 ───
-function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNavigate, onReserve, onTaxi, statusTick }) {
+function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNavigate, onReserve, onTaxi, userPos, statusTick }) {
   const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
   const tags = calcTags(poi, lang)
   // statusTick이 변할 때마다 재계산 (lint: eslint-disable-next-line no-unused-expressions)
@@ -976,7 +1003,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             {tLang('navigate_here', lang)}
           </button>
           <button
-            onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh, 'TAXI')}
+            onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh, userPos)}
             className="btn btn-sm btn-taxi"
             style={{ flex: 1, minWidth: 72 }}
           >

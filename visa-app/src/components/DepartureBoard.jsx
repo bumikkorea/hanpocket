@@ -194,6 +194,11 @@ const TEXTS = {
   status:     { ko: '상태',      zh: '状态', en: 'Status' },
   terminal:   { ko: '터미널',    zh: '航站楼', en: 'Terminal' },
   gimpo:      { ko: '* 인천공항 전용 (김포 미지원)', zh: '* 仅限仁川机场', en: '* Incheon only' },
+  disclaimer: {
+    ko: '⚠️ 본 정보는 참고용입니다. 실제 탑승 전 공항 공식 전광판을 반드시 확인하세요.',
+    zh: '⚠️ 本信息仅供参考，请以机场官方显示屏信息为准。',
+    en: '⚠️ For reference only. Always verify at the official airport departure board.',
+  },
 }
 
 function FlightRow({ f, lang, isEven }) {
@@ -322,19 +327,16 @@ export default function DepartureBoard({ onBack, setTab }) {
   const [updated, setUpdated] = useState(null)
   const [myFlightInput, setMyFlightInput] = useState('')
   const [airlineFilter, setAirlineFilter] = useState(null)
-  const [now, setNow] = useState(new Date())
-  const hasKey = !!import.meta.env.VITE_AIRPORT_API_KEY
-
-  useEffect(() => {
-    const iv = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(iv)
-  }, [])
+  const hasKey = !!(import.meta.env.VITE_AIRPORT_PROXY_URL || import.meta.env.VITE_AIRPORT_API_KEY)
 
   async function load() {
     setLoading(true)
     const data = await fetchDepartureFlights({ numOfRows: 200 })
     setFlights(data)
-    setUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }))
+    const kst = new Date(Date.now() + 9 * 60 * 60 * 1000)
+    const hh = String(kst.getUTCHours()).padStart(2, '0')
+    const min = String(kst.getUTCMinutes()).padStart(2, '0')
+    setUpdated(`${hh}:${min}`)
     setLoading(false)
   }
 
@@ -355,7 +357,9 @@ export default function DepartureBoard({ onBack, setTab }) {
     return matchQ && matchA
   })
 
-  const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
+  // KST 날짜 (정적, 화면 열릴 때 계산)
+  const kst = new Date(Date.now() + 9 * 60 * 60 * 1000)
+  const kstDate = `${kst.getUTCFullYear()}.${String(kst.getUTCMonth()+1).padStart(2,'0')}.${String(kst.getUTCDate()).padStart(2,'0')}`
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 9500, display: 'flex', flexDirection: 'column', background: 'white', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
@@ -366,11 +370,16 @@ export default function DepartureBoard({ onBack, setTab }) {
       <div style={{ background: '#0A0E1A', padding: '12px 16px 10px', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>
               {L(lang, TEXTS.title)}
             </div>
-            <div style={{ fontSize: 28, fontWeight: 300, color: 'white', fontVariantNumeric: 'tabular-nums', letterSpacing: '0.02em' }}>
-              {timeStr}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+              <span style={{ fontSize: 22, fontWeight: 600, color: 'white', fontVariantNumeric: 'tabular-nums' }}>
+                {kstDate}
+              </span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: '#60A5FA', background: 'rgba(96,165,250,0.15)', borderRadius: 4, padding: '2px 6px' }}>
+                KST
+              </span>
             </div>
           </div>
           {hasKey && (
@@ -465,7 +474,12 @@ export default function DepartureBoard({ onBack, setTab }) {
         ) : (
           <>
             {filtered.map((f, i) => <FlightRow key={f.flightId + i} f={f} lang={lang} isEven={i % 2 === 0} />)}
-            <div style={{ padding: '12px 16px', fontSize: 10, color: '#D1D5DB', textAlign: 'center' }}>
+            <div style={{ margin: '12px 16px 0', padding: '10px 14px', background: '#FFFBEB', borderRadius: 10, border: '1px solid #FDE68A' }}>
+              <p style={{ margin: 0, fontSize: 11, color: '#92400E', lineHeight: 1.5 }}>
+                {L(lang, TEXTS.disclaimer)}
+              </p>
+            </div>
+            <div style={{ padding: '8px 16px 16px', fontSize: 10, color: '#D1D5DB', textAlign: 'center' }}>
               {L(lang, TEXTS.gimpo)}
             </div>
           </>

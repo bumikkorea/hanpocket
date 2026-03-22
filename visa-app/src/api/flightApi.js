@@ -1,6 +1,7 @@
 /**
  * 인천공항 여객기 운항정보 API (data.go.kr B551177)
- * 실제 동작 엔드포인트: StatusOfPassengerFlightsOdp/getPassengerDeparturesOdp
+ * - VITE_AIRPORT_PROXY_URL 있으면 CF Worker 프록시 사용 (5분 캐시, API키 서버보관)
+ * - 없으면 직접 호출 (개발용 fallback, VITE_AIRPORT_API_KEY 필요)
  */
 const BASE = 'https://apis.data.go.kr/B551177'
 
@@ -21,17 +22,30 @@ export function getRemarkInfo(remark) {
   return REMARK_MAP[remark?.trim()] || DEFAULT_REMARK
 }
 
+function toKSTDate() {
+  const now = new Date(Date.now() + 9 * 60 * 60 * 1000)
+  return now.toISOString().slice(0, 10).replace(/-/g, '')
+}
+
 // Legacy stubs (used by useDepartureCountdown)
 export async function fetchFlightStatus() { return null }
 export async function getAirportCongestion() { return null }
 export function estimateGateWalkTime() { return null }
 
-export async function fetchDepartureFlights({ date, numOfRows = 50 } = {}) {
-  const key = import.meta.env.VITE_AIRPORT_API_KEY
-  if (!key) return null
+export async function fetchDepartureFlights({ date, numOfRows = 200 } = {}) {
+  const proxyUrl = import.meta.env.VITE_AIRPORT_PROXY_URL
+  const directKey = import.meta.env.VITE_AIRPORT_API_KEY
+  if (!proxyUrl && !directKey) return null
   try {
-    const today = date || new Date().toISOString().slice(0, 10).replace(/-/g, '')
-    const url = `${BASE}/StatusOfPassengerFlightsOdp/getPassengerDeparturesOdp?serviceKey=${key}&numOfRows=${numOfRows}&pageNo=1&searchday=${today}&type=json`
+    const today = date || toKSTDate()
+    let url
+    if (proxyUrl) {
+      // CF Worker 프록시 (5분 캐시, API키 노출 없음)
+      url = `${proxyUrl}/departures?searchday=${today}&numOfRows=${numOfRows}`
+    } else {
+      // 직접 호출 (개발용)
+      url = `${BASE}/StatusOfPassengerFlightsOdp/getPassengerDeparturesOdp?serviceKey=${directKey}&numOfRows=${numOfRows}&pageNo=1&searchday=${today}&type=json`
+    }
     const res = await fetch(url)
     if (!res.ok) return null
     const json = await res.json()

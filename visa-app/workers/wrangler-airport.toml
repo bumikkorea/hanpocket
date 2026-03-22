@@ -1,6 +1,6 @@
 name = "hanpocket-airport-proxy"
-main = "airport-api-proxy.js"
+main = "airport-proxy.js"
 compatibility_date = "2024-01-01"
 
-[vars]
-AIRPORT_API_KEY = "2496d2b4a0583b554b287697f93fdb135d8a3def4d9b3358cb5d1a49c96aa3df"
+# API 키는 wrangler secret put AIRPORT_API_KEY 로 등록
+# VITE_AIRPORT_API_KEY는 .env에서 제거해도 됨

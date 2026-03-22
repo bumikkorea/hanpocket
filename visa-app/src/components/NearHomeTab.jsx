@@ -35,8 +35,16 @@ const QUICK_ACTION_LABEL_KEYS = {
 // ─── 입국 바텀시트 항목 ───
 const ARRIVAL_ITEMS = [
   { id: 'immigration-wait', emoji: '⏱️', label: { ko: '입국심사 대기시간', zh: '入境审查等候时间', en: 'Immigration Wait Time' }, sub: 'immigration-wait' },
-  { id: 'arrival-card',     emoji: '📋', label: { ko: '입국신고서 작성법', zh: '入境申报卡填写方法', en: 'Arrival Card Guide' },   sub: 'arrival-card' },
+  { id: 'arrival-card',     emoji: '📋', label: { ko: '입국신고서 작성법', zh: '入境申报卡填写方법', en: 'Arrival Card Guide' },   sub: 'arrival-card' },
   { id: 'sim-guide',        emoji: '📱', label: { ko: 'SIM카드 & 환전',    zh: 'SIM卡 & 换钱',           en: 'SIM & Exchange' },       sub: 'sim-guide' },
+  { id: 'airport-seoul',    emoji: '🚌', label: { ko: '인천공항 → 서울',   zh: '仁川机场→首尔',           en: 'Airport → Seoul' },      tab: 'travel' },
+  { id: 'transit-card',     emoji: '🎫', label: { ko: '교통카드 안내',     zh: '交通卡指南',             en: 'Transit Card' },         sub: 'transit-card' },
+  { id: 'currency',         emoji: '💱', label: { ko: '환율 계산기',       zh: '汇率计算器',             en: 'Currency Converter' },   sub: 'currency' },
+  { id: 'etiquette',        emoji: '🎎', label: { ko: '한국 에티켓',       zh: '韩国礼仪',               en: 'Korean Etiquette' },     sub: 'etiquette' },
+  { id: 'price-guide',      emoji: '💰', label: { ko: '한국 물가 가이드',  zh: '韩国物价指南',           en: 'Price Guide' },          sub: 'price-guide' },
+  { id: 'voltage',          emoji: '🔌', label: { ko: '콘센트/전압',       zh: '插座/电压',              en: 'Plug & Voltage' },       sub: 'voltage' },
+  { id: 'holiday',          emoji: '📅', label: { ko: '공휴일 캘린더',     zh: '公休日历',               en: 'Holidays' },             sub: 'holiday' },
+  { id: 'wifi',             emoji: '📶', label: { ko: '무료 와이파이',     zh: '免费WiFi',               en: 'Free WiFi' },            sub: 'wifi' },
 ]
 
 // ─── 출국 바텀시트 항목 ───

@@ -33,7 +33,6 @@ const SECTIONS = [
     title: { ko: '실용 도구', zh: '实用工具', en: 'Tools' },
     emoji: '🛠',
     items: [
-      { id: 'tool-exchange', emoji: '💱', label: { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency Converter' }, sub: 'currency' },
       { id: 'tool-taxrefund', emoji: '🧾', label: { ko: '세금환급 계산기', zh: '退税计算器', en: 'Tax Refund Calculator' }, sub: 'taxrefund' },
       { id: 'tool-learn',    emoji: '📚', label: { ko: '한국어 학습', zh: '韩语学习', en: 'Korean Study' }, tool: 'learn' },
       { id: 'tool-taxi',     emoji: '🚕', label: { ko: '택시 요금 계산', zh: '出租车费用', en: 'Taxi Calculator' }, tab: 'taxi-calc' },
@@ -44,15 +43,8 @@ const SECTIONS = [
     title: { ko: '한국 가이드', zh: '韩国指南', en: 'Korea Guide' },
     emoji: '📖',
     items: [
-      { id: 'guide-airport',   emoji: '✈️', label: { ko: '인천공항 → 서울', zh: '仁川机场→首尔', en: 'Airport → Seoul' }, tab: 'travel' },
-      { id: 'guide-tcard',     emoji: '🎫', label: { ko: '교통카드 안내', zh: '交通卡指南', en: 'Transit Card' }, sub: 'transit-card' },
       { id: 'guide-taxfree',   emoji: '🧾', label: { ko: '쇼핑 면세 가이드', zh: '退税购物指南', en: 'Tax-Free Shopping' }, sub: 'tax-free' },
       { id: 'guide-sim',       emoji: '📱', label: { ko: 'SIM/eSIM 구매', zh: '购买SIM/eSIM', en: 'Buy SIM/eSIM' }, sub: 'sim-guide' },
-      { id: 'guide-etiquette', emoji: '🎎', label: { ko: '한국 에티켓', zh: '韩国礼仪', en: 'Korean Etiquette' }, sub: 'etiquette' },
-      { id: 'guide-price',     emoji: '💰', label: { ko: '한국 물가 가이드', zh: '韩国物价指南', en: 'Price Guide' }, sub: 'price-guide' },
-      { id: 'guide-voltage',   emoji: '🔌', label: { ko: '콘센트/전압', zh: '插座/电压', en: 'Plug & Voltage' }, sub: 'voltage' },
-      { id: 'guide-holiday',   emoji: '📅', label: { ko: '공휴일 캘린더', zh: '公休日历', en: 'Holidays' }, sub: 'holiday' },
-      { id: 'guide-wifi',      emoji: '📶', label: { ko: '무료 와이파이', zh: '免费WiFi', en: 'Free WiFi' }, sub: 'wifi' },
       { id: 'guide-weather',   emoji: '🌤️', label: { ko: '날씨별 추천 관광지', zh: '天气推荐景点', en: 'Weather Spots' }, sub: 'weather-recommend' },
       { id: 'guide-discover',  emoji: '🎟️', label: { ko: '디스커버서울패스', zh: '首尔探索通票', en: 'Discover Seoul Pass' }, sub: 'discover-pass' },
       { id: 'guide-hallyu',    emoji: '💜', label: { ko: '한류 체험 프로그램', zh: '韩流体验项目', en: 'Hallyu Experiences' }, sub: 'hallyu-exp' },

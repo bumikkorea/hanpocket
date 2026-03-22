@@ -303,15 +303,29 @@ export default function NearMap() {
   const { pins: allPins, loading: pinsLoading, error: pinsError, userPos } = useNearPins()
   const [taxiPoi, setTaxiPoi] = useState(null)
   const [taxiFromFab, setTaxiFromFab] = useState(false)
-  const [courses, setCourses] = useState(COURSE_DATA)
+  const [courses, setCourses] = useState(() => {
+    try {
+      const custom = JSON.parse(localStorage.getItem('near_custom_courses') || '[]')
+      return [...COURSE_DATA, ...custom]
+    } catch { return COURSE_DATA }
+  })
 
-  // 코스 데이터 — Supabase 우선, COURSE_DATA fallback
+  // 코스 데이터 — Supabase 우선, COURSE_DATA fallback + localStorage 커스텀 코스 머지
   useEffect(() => {
     supabase.from('courses').select('*').eq('is_active', true)
       .then(({ data, error }) => {
-        if (!error && data?.length) setCourses(data)
+        let base = (!error && data?.length) ? data : COURSE_DATA
+        try {
+          const custom = JSON.parse(localStorage.getItem('near_custom_courses') || '[]')
+          setCourses([...base, ...custom])
+        } catch { setCourses(base) }
       })
-      .catch(() => {})
+      .catch(() => {
+        try {
+          const custom = JSON.parse(localStorage.getItem('near_custom_courses') || '[]')
+          setCourses([...COURSE_DATA, ...custom])
+        } catch {}
+      })
   }, [])
 
   // 홈탭 여행코스 → sessionStorage pending 코스 자동 활성화

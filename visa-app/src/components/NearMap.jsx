@@ -3,6 +3,8 @@ import { MapPin, MagnifyingGlass, ArrowLeft } from '@phosphor-icons/react'
 import { Search, Navigation, Car, Calendar, Heart, LayoutGrid, Sparkles, UtensilsCrossed, Shirt, Coffee, Store, Route as RouteIcon } from 'lucide-react'
 import { useNearPins } from '../hooks/usePopupStores'
 import TaxiCardView from './TaxiCardView.jsx'
+import PlaceDetail from './PlaceDetail.jsx'
+import { searchLocalPlaces } from '../data/hanpocketPlaceDB.js'
 import { CATEGORY_CONFIG } from '../data/poiData'
 import { COURSE_DATA } from '../data/courseData.js'
 import { supabase } from '../lib/supabase'
@@ -1195,16 +1197,91 @@ function CompactSheetCard({ poi, lang, onExpand }) {
   )
 }
 
+// ─── 카카오 서비스 로드 ───
+function ensureKakaoServices() {
+  return new Promise((resolve) => {
+    if (window.kakao?.maps?.services) { resolve(); return }
+    const key = import.meta.env.VITE_KAKAO_MAP_API_KEY || 'd93decd524c15c3455ff05983ca07fac'
+    if (document.querySelector(`script[src*="dapi.kakao.com/v2/maps/sdk.js"]`)) {
+      const check = setInterval(() => {
+        if (window.kakao?.maps?.services) { clearInterval(check); resolve() }
+      }, 200)
+      setTimeout(() => { clearInterval(check); resolve() }, 5000)
+      return
+    }
+    const s = document.createElement('script')
+    s.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${key}&libraries=services&autoload=false`
+    s.onload = () => { window.kakao.maps.load(() => resolve()) }
+    document.head.appendChild(s)
+  })
+}
+
+function detectLang(text) {
+  if (/[\u3400-\u9FFF]/.test(text)) {
+    if (/[\u3040-\u309F\u30A0-\u30FF]/.test(text)) return 'ja'
+    return 'zh'
+  }
+  if (/[\u3040-\u309F\u30A0-\u30FF]/.test(text)) return 'ja'
+  if (/[\uAC00-\uD7AF]/.test(text)) return 'ko'
+  return 'en'
+}
+
+async function searchPlacesCombined(query) {
+  if (!query || query.length < 1) return []
+  const inputLang = detectLang(query)
+  const local = searchLocalPlaces(query, 7).map(p => ({
+    ...p,
+    name: p.ko,
+    koName: p.ko,
+    nameZh: p.zh,
+    nameEn: p.en,
+    address: p.address_zh || p.address_ko || '',
+    source: 'local',
+  }))
+
+  if (inputLang === 'ko' || inputLang === 'en') {
+    const hasExtended = local.some(p => p.category)
+    if (hasExtended && local.length >= 3) return local
+    let kakao = []
+    try {
+      await ensureKakaoServices()
+      if (window.kakao?.maps?.services) {
+        kakao = await new Promise((resolve) => {
+          const ps = new window.kakao.maps.services.Places()
+          ps.keywordSearch(query, (data, status) => {
+            if (status !== window.kakao.maps.services.Status.OK) { resolve([]); return }
+            resolve((data || []).slice(0, 7).map(doc => ({
+              ko: doc.place_name, zh: doc.place_name, en: doc.place_name,
+              name: doc.place_name, koName: doc.place_name, nameZh: doc.place_name, nameEn: doc.place_name,
+              address: doc.address_name, address_zh: doc.address_name, address_ko: doc.address_name,
+              lat: parseFloat(doc.y), lng: parseFloat(doc.x),
+              category: doc.category_group_name || null,
+              phone: doc.phone || null,
+              source: 'kakao',
+              kakaoUrl: doc.place_url,
+            })))
+          })
+        })
+      }
+    } catch(e) {}
+    return [...local, ...kakao].slice(0, 10)
+  }
+  return local
+}
+
 // ─── 검색 오버레이 ───
 function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   const [query, setQuery] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
+  const [results, setResults] = useState([])
+  const [searching, setSearching] = useState(false)
   const [recent, setRecent] = useState(() => {
     try { return JSON.parse(localStorage.getItem('near_searches') || '[]') } catch { return [] }
   })
   const [phIdx, setPhIdx] = useState(0)
   const [phVisible, setPhVisible] = useState(true)
+  const [detailPlace, setDetailPlace] = useState(null)
   const inputRef = useRef(null)
+  const searchTimerRef = useRef(null)
 
   useEffect(() => { setTimeout(() => inputRef.current?.focus(), 50) }, [])
   useEffect(() => {
@@ -1215,20 +1292,18 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
     return () => clearInterval(iv)
   }, [])
 
-  // 300ms 디바운스
+  // 300ms 디바운스 비동기 검색
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedQuery(query), 300)
-    return () => clearTimeout(timer)
+    if (searchTimerRef.current) clearTimeout(searchTimerRef.current)
+    if (!query.trim()) { setResults([]); setSearching(false); return }
+    setSearching(true)
+    searchTimerRef.current = setTimeout(async () => {
+      const res = await searchPlacesCombined(query.trim())
+      setResults(res)
+      setSearching(false)
+    }, 300)
+    return () => clearTimeout(searchTimerRef.current)
   }, [query])
-
-  const results = debouncedQuery.trim().length > 0
-    ? allPins.filter(p => {
-        const q = debouncedQuery.toLowerCase()
-        return (p.name_zh || '').toLowerCase().includes(q) ||
-               (p.name_ko || '').toLowerCase().includes(q) ||
-               (p.name_en || '').toLowerCase().includes(q)
-      })
-    : []
 
   const hotPins = [...allPins].sort((a, b) => (b.view_count_7d || 0) - (a.view_count_7d || 0)).slice(0, 5)
 
@@ -1238,16 +1313,59 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
     localStorage.setItem('near_searches', JSON.stringify(next))
   }
 
-  const handleSelect = (poi) => {
+  const handleSelect = (place) => {
+    const displayName = place.nameZh || place.zh || place.ko || place.name || ''
+    addRecent(displayName)
+    // 확장 데이터가 있는 장소 → PlaceDetail 표시
+    if (place.category && place.lat) {
+      setDetailPlace(place)
+      return
+    }
+    // allPins POI → 기존 동작 (지도 포커스)
+    if (place.id && !place.source) {
+      onSelectPoi(place)
+      return
+    }
+    // 카카오 결과 or 로컬 단순 장소 → PlaceDetail 표시
+    if (place.lat) {
+      setDetailPlace(place)
+      return
+    }
+    onSelectPoi(place)
+  }
+
+  const handlePoiRow = (poi) => {
     addRecent(getLocalizedName(poi, lang))
     onSelectPoi(poi)
+  }
+
+  // PlaceDetail에서 "지도에서 보기" → 맵 포커스
+  const handlePlaceDetailSelect = (place) => {
+    setDetailPlace(null)
+    if (place.lat && place.lng) {
+      onSelectPoi({ ...place, lat: place.lat, lng: place.lng, name_ko: place.ko, name_zh: place.zh, name_en: place.en })
+    }
+  }
+
+  // ─ PlaceDetail 열려있으면 표시
+  if (detailPlace) {
+    return (
+      <div style={{ position: 'absolute', inset: 0, zIndex: 50 }}>
+        <PlaceDetail
+          place={detailPlace}
+          lang={lang}
+          onBack={() => setDetailPlace(null)}
+          onSetDestination={handlePlaceDetailSelect}
+        />
+      </div>
+    )
   }
 
   const PoiRow = ({ poi, rank }) => {
     const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
     return (
       <button
-        onClick={() => handleSelect(poi)}
+        onClick={() => handlePoiRow(poi)}
         style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid var(--border)' }}
       >
         <span style={{ width: 36, height: 36, borderRadius: '50%', background: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, color: 'white', fontWeight: 700, flexShrink: 0 }}>
@@ -1259,6 +1377,51 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
         </div>
         {rank != null && <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>#{rank + 1}</span>}
         {rank == null && <span style={{ fontSize: 12, color: 'var(--text-muted)', flexShrink: 0 }}>{distLabel(poi)}</span>}
+      </button>
+    )
+  }
+
+  // 검색 결과 행 (로컬 DB + 카카오)
+  const SearchResultRow = ({ place, idx }) => {
+    const isLocal = place.source === 'local'
+    const isKakao = place.source === 'kakao'
+    const hasDetail = place.category && place.lat
+    const name = lang === 'zh' ? (place.nameZh || place.zh || place.name) :
+                 lang === 'ko' ? (place.ko || place.name) :
+                 (place.nameEn || place.en || place.name)
+    const addr = place.address_zh || place.address_ko || place.address || ''
+
+    return (
+      <button
+        onClick={() => handleSelect(place)}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid rgba(0,0,0,0.05)', textAlign: 'left' }}
+      >
+        <span style={{
+          width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
+          background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 18, boxShadow: '3px 3px 8px rgba(190,190,190,0.4), -3px -3px 8px #FFFFFF',
+        }}>
+          {isKakao ? '📍' : hasDetail ? '⭐' : '🗺️'}
+        </span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {name}
+            </span>
+            {hasDetail && (
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#C4725A', background: 'rgba(196,114,90,0.1)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
+                {lang === 'zh' ? '详情' : lang === 'ko' ? '상세' : 'Detail'}
+              </span>
+            )}
+            {isKakao && (
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#888', background: 'rgba(0,0,0,0.06)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
+                카카오
+              </span>
+            )}
+          </div>
+          {addr ? <div style={{ fontSize: 13, color: '#888', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{addr}</div> : null}
+        </div>
+        <span style={{ fontSize: 18, color: '#BBB', flexShrink: 0 }}>›</span>
       </button>
     )
   }
@@ -1321,9 +1484,14 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
               {hotPins.map((poi, i) => <PoiRow key={poi.id} poi={poi} rank={i} />)}
             </div>
           </>
+        ) : searching ? (
+          <div style={{ paddingTop: 32, textAlign: 'center' }}>
+            <div style={{ fontSize: 24, marginBottom: 8 }}>🔍</div>
+            <div style={{ fontSize: 14, color: '#888' }}>{lang === 'zh' ? '搜索中...' : lang === 'ko' ? '검색 중...' : 'Searching...'}</div>
+          </div>
         ) : results.length > 0 ? (
           <div style={{ paddingTop: 8 }}>
-            {results.map(poi => <PoiRow key={poi.id} poi={poi} rank={null} />)}
+            {results.map((place, i) => <SearchResultRow key={`${place.ko || place.name}_${i}`} place={place} idx={i} />)}
           </div>
         ) : (
           <div style={{ paddingTop: 32, textAlign: 'center' }}>

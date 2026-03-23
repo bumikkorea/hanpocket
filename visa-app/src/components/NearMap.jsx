@@ -630,7 +630,7 @@ export default function NearMap() {
         ref={mapRef}
         style={{
           position: 'absolute', top: 0, left: 0, right: 0,
-          bottom: isExpanded ? '60dvh' : (activeCourseId ? '50dvh' : 0),
+          bottom: activeCourseId ? '50dvh' : 0,
           transition: 'bottom 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         }}
       />
@@ -638,7 +638,7 @@ export default function NearMap() {
       {/* ─── 지도 탭 클릭 → 바텀 시트 닫기 (확장 상태에서만) ─── */}
       {isExpanded && (
         <div
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '40dvh', zIndex: 8 }}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: '120px', zIndex: 8 }}
           onClick={closeSheet}
         />
       )}

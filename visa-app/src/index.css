@@ -993,3 +993,40 @@ body {
   animation: skeletonPulse 1.5s infinite;
   border-radius: 8px;
 }
+
+/* ─── 데스크톱에서 스마트폰 뷰포트 고정 ─── */
+@media (min-width: 480px) {
+  html {
+    background: #111111;
+    min-height: 100vh;
+  }
+
+  body {
+    background: #111111 !important;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 24px 0;
+  }
+
+  #root {
+    width: 390px;
+    min-height: calc(100vh - 48px);
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 44px;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 30px 80px rgba(0, 0, 0, 0.6),
+      0 10px 30px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+    position: relative;
+    scrollbar-width: none;
+  }
+
+  #root::-webkit-scrollbar {
+    display: none;
+  }
+}

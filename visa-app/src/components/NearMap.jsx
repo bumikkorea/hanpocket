@@ -302,6 +302,7 @@ export default function NearMap() {
   const courseOverlaysRef = useRef([])  // { overlay, el, poi }[]
   const coursePolylineRef = useRef(null)
   const touchStartY = useRef(0)
+  const tempSearchMarkerRef = useRef(null) // 검색 결과 임시 핀
 
   const [mapReady, setMapReady] = useState(false)
   const [phIdx, setPhIdx] = useState(0)
@@ -420,6 +421,11 @@ export default function NearMap() {
       const wrapper = el?.querySelector('[data-poi]')
       if (wrapper) { wrapper.style.transform = 'scale(1)'; wrapper.style.opacity = '1' }
     })
+    // 임시 검색 핀 제거
+    if (tempSearchMarkerRef.current) {
+      tempSearchMarkerRef.current.setMap(null)
+      tempSearchMarkerRef.current = null
+    }
   }, [])
 
   // ── 핀 선택 ──
@@ -859,9 +865,31 @@ export default function NearMap() {
             if (taxiFromFab) {
               setTaxiFromFab(false)
               setTaxiPoi(poi)
-            } else {
-              selectPin(poi)
+              return
             }
+            // 임시 검색 핀 추가 (allPins에 없는 외부 검색 결과)
+            const isExternalResult = poi.source === 'local' || poi.source === 'kakao'
+            if (isExternalResult && poi.lat && poi.lng && mapInstance.current && window.kakao?.maps) {
+              // 기존 임시 핀 제거
+              if (tempSearchMarkerRef.current) {
+                tempSearchMarkerRef.current.setMap(null)
+                tempSearchMarkerRef.current = null
+              }
+              // 기존 오버레이 opacity 초기화
+              overlaysRef.current.forEach(({ el }) => {
+                const wrapper = el?.querySelector('[data-poi]')
+                if (wrapper) { wrapper.style.transform = 'scale(1)'; wrapper.style.opacity = '1' }
+              })
+              // 새 임시 핀 생성
+              const pos = new window.kakao.maps.LatLng(poi.lat, poi.lng)
+              const el = document.createElement('div')
+              el.innerHTML = `<div style="width:22px;height:22px;background:#C4725A;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(196,114,90,0.5);transform:scale(1);transition:transform 0.2s"></div>`
+              const overlay = new window.kakao.maps.CustomOverlay({ position: pos, content: el, zIndex: 5 })
+              overlay.setMap(mapInstance.current)
+              tempSearchMarkerRef.current = overlay
+              mapInstance.current.panTo(pos)
+            }
+            selectPin(poi)
           }}
           onClose={() => { setShowSearch(false); setTaxiFromFab(false) }}
         />
@@ -1279,7 +1307,6 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   })
   const [phIdx, setPhIdx] = useState(0)
   const [phVisible, setPhVisible] = useState(true)
-  const [detailPlace, setDetailPlace] = useState(null)
   const inputRef = useRef(null)
   const searchTimerRef = useRef(null)
 
@@ -1314,51 +1341,22 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   }
 
   const handleSelect = (place) => {
-    const displayName = place.nameZh || place.zh || place.ko || place.name || ''
+    const displayName = (lang === 'zh' ? place.nameZh || place.zh : lang === 'ko' ? place.ko : place.nameEn || place.en) || place.name || place.ko || ''
     addRecent(displayName)
-    // 확장 데이터가 있는 장소 → PlaceDetail 표시
-    if (place.category && place.lat) {
-      setDetailPlace(place)
-      return
-    }
-    // allPins POI → 기존 동작 (지도 포커스)
-    if (place.id && !place.source) {
-      onSelectPoi(place)
-      return
-    }
-    // 카카오 결과 or 로컬 단순 장소 → PlaceDetail 표시
-    if (place.lat) {
-      setDetailPlace(place)
-      return
-    }
-    onSelectPoi(place)
+    // 항상 지도로 이동 — name_ko/name_zh/address_ko/address_zh 필드로 정규화
+    onSelectPoi({
+      ...place,
+      name_ko: place.ko || place.name || place.koName || '',
+      name_zh: place.zh || place.nameZh || place.ko || '',
+      name_en: place.en || place.nameEn || '',
+      address_ko: place.address_ko || place.address || '',
+      address_zh: place.address_zh || place.address || '',
+    })
   }
 
   const handlePoiRow = (poi) => {
     addRecent(getLocalizedName(poi, lang))
     onSelectPoi(poi)
-  }
-
-  // PlaceDetail에서 "지도에서 보기" → 맵 포커스
-  const handlePlaceDetailSelect = (place) => {
-    setDetailPlace(null)
-    if (place.lat && place.lng) {
-      onSelectPoi({ ...place, lat: place.lat, lng: place.lng, name_ko: place.ko, name_zh: place.zh, name_en: place.en })
-    }
-  }
-
-  // ─ PlaceDetail 열려있으면 표시
-  if (detailPlace) {
-    return (
-      <div style={{ position: 'absolute', inset: 0, zIndex: 50 }}>
-        <PlaceDetail
-          place={detailPlace}
-          lang={lang}
-          onBack={() => setDetailPlace(null)}
-          onSetDestination={handlePlaceDetailSelect}
-        />
-      </div>
-    )
   }
 
   const PoiRow = ({ poi, rank }) => {

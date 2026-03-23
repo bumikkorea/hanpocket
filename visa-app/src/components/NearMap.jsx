@@ -757,11 +757,13 @@ export default function NearMap() {
         onTouchEnd={handleTouchEnd}
         style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 20,
-          height: isExpanded ? '60dvh' : (activeCourseId ? '50dvh' : 'auto'),
+          height: isExpanded ? 'auto' : (activeCourseId ? '50dvh' : 'auto'),
+          maxHeight: isExpanded ? '60dvh' : (activeCourseId ? '50dvh' : 'auto'),
           minHeight: 124,
-          transition: 'height 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: 'max-height 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           background: '#FAFAFA', borderRadius: '24px 24px 0 0',
           boxShadow: '0 -8px 24px rgba(200,200,200,0.4), 0 -2px 8px rgba(255,255,255,0.9)',
+          overflowX: 'hidden',
           overflowY: (isExpanded || activeCourseId) ? 'auto' : 'hidden',
         }}
       >
@@ -961,36 +963,23 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
 
   const handleNavigate = () => onNavigate(poi)
 
+  const address = getLocalizedAddress(poi, lang) || poi.address_ko || poi.address_zh || poi.address || ''
+  const catLabel = poi.category ? (CATEGORY_CONFIG[poi.category]?.letter || poi.category) : ''
+
   return (
-    <div style={{ paddingBottom: 16 }}>
+    <div style={{ overflowX: 'hidden' }}>
       {/* 핸들바 + 닫기 */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '10px 20px 6px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', padding: '10px 20px 8px' }}>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--text-hint)' }} />
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#DDDDDD' }} />
         </div>
-        <button
-          onClick={onClose}
-          style={{ color: 'var(--text-muted)', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}
-        >
-          ✕
-        </button>
+        <button onClick={onClose} style={{ color: '#AAAAAA', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
       </div>
 
-      {/* Hero image */}
-      <div style={{ margin: '0 20px 16px', height: 140, borderRadius: 20, overflow: 'hidden', background: '#F0F0F0', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
-        {poi.image_url ? (
-          <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        ) : (
-          <div style={{ width: '100%', height: '100%', background: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 32, fontWeight: 700 }}>
-            {cfg.letter}
-          </div>
-        )}
-      </div>
-
-      <div style={{ padding: '0 20px' }}>
-        {/* 제목 + NEW 뱃지 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-          <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+      <div style={{ padding: '0 20px 20px' }}>
+        {/* 이름 + NEW 뱃지 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {getLocalizedName(poi, lang)}
           </h2>
           {isNewPoi(poi.created_at) && (
@@ -1000,52 +989,65 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           )}
         </div>
 
-        {/* 서브타이틀 */}
-        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 10, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {tLang('subtitle_city', lang)} · {getLocalizedAddress(poi, lang)}{dist ? ` · ${dist}` : ''}
-        </p>
-
-        {/* 주소 복사 — 언어 토글 + 복사 버튼 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-          {/* 언어 토글 pill */}
-          <div style={{ display: 'flex', borderRadius: 24, overflow: 'hidden', flexShrink: 0, background: '#FAFAFA', boxShadow: 'inset 2px 2px 6px rgba(190,190,190,0.3), inset -2px -2px 6px rgba(255,255,255,0.7)', padding: 2 }}>
-            {['ko', 'zh'].map(l => (
-              <button
-                key={l}
-                onClick={() => setAddrLang(l)}
-                style={{
-                  padding: '4px 10px', fontSize: 11, fontWeight: 700,
-                  background: addrLang === l ? '#C4725A' : 'transparent',
-                  color: addrLang === l ? 'white' : '#888888',
-                  border: 'none', cursor: 'pointer',
-                  borderRadius: 20,
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                {l === 'ko' ? 'KO' : 'ZH'}
-              </button>
-            ))}
-          </div>
-          {/* 주소 텍스트 */}
-          <span style={{ flex: 1, fontSize: 12, color: '#888888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {addrLang === 'zh' ? (poi.address_zh || poi.address_ko) : (poi.address_ko || poi.address_zh)}
-          </span>
-          {/* 복사 버튼 */}
-          <button
-            onClick={handleCopyAddress}
-            style={{
-              flexShrink: 0, padding: '6px 12px', borderRadius: 12,
-              background: copied ? 'rgba(22,163,74,0.1)' : '#FAFAFA',
-              border: 'none',
-              boxShadow: copied ? 'none' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
-              color: copied ? '#16A34A' : '#888888',
-              fontSize: 11, fontWeight: 600, cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            {copied ? '✓' : '복사'}
-          </button>
+        {/* 종류 + 거리 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: address ? 10 : 14 }}>
+          {poi.category && (
+            <span style={{ fontSize: 11, fontWeight: 700, color: cfg.color, background: cfg.color + '18', borderRadius: 6, padding: '2px 8px', flexShrink: 0 }}>
+              {catLabel}
+            </span>
+          )}
+          {dist && <span style={{ fontSize: 12, color: '#999' }}>{dist}</span>}
         </div>
+
+        {/* 주소 — 한 번만 */}
+        {address ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <span style={{ fontSize: 13, color: '#666', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              📍 {address}
+            </span>
+            <button
+              onClick={handleCopyAddress}
+              style={{
+                flexShrink: 0, padding: '5px 10px', borderRadius: 10,
+                background: copied ? 'rgba(22,163,74,0.1)' : '#FAFAFA',
+                border: 'none',
+                boxShadow: copied ? 'none' : '3px 3px 8px rgba(200,200,200,0.5), -3px -3px 8px #FFFFFF',
+                color: copied ? '#16A34A' : '#888888',
+                fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {copied ? '✓' : lang === 'zh' ? '复制' : '복사'}
+            </button>
+          </div>
+        ) : null}
+
+        {/* 운영 기간 */}
+        {poi.is_temporary && poi.start_date && poi.end_date && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: 14 }}>📅</span>
+            <span style={{ fontSize: 13, color: '#444' }}>{poi.start_date} – {poi.end_date}</span>
+          </div>
+        )}
+
+        {/* 영업 시간 */}
+        {poi.open_time && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: 14 }}>⏰</span>
+            <span style={{ fontSize: 13, color: '#444' }}>{poi.open_time}–{poi.close_time}</span>
+            {status === 'open' && <span style={{ fontSize: 10, background: '#DCFCE7', color: '#16A34A', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_open', lang)}</span>}
+            {status === 'closed' && <span style={{ fontSize: 10, background: '#FEE2E2', color: '#DC2626', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_closed', lang)}</span>}
+            {status === 'coming' && <span style={{ fontSize: 10, background: '#FFFBEB', color: '#D97706', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_coming', lang)}</span>}
+          </div>
+        )}
+
+        {/* 웨이팅 */}
+        {poi.wait_minutes != null && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: 14 }}>⏳</span>
+            <span style={{ fontSize: 13, color: '#444' }}>{tLang('wait_prefix', lang)}{poi.wait_minutes}{tLang('wait_suffix', lang)}</span>
+          </div>
+        )}
 
         {/* 태그 */}
         {tags.length > 0 && (
@@ -1054,66 +1056,11 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           </div>
         )}
 
-        {/* 정보 행 */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 9, marginBottom: 18 }}>
-          {/* 운영 기간 */}
-          {poi.is_temporary && poi.start_date && poi.end_date && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 14 }}>📅</span>
-              <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>
-                {poi.start_date} – {poi.end_date}
-              </span>
-            </div>
-          )}
-
-          {/* 영업 시간 + 상태 뱃지 */}
-          {poi.open_time && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 14 }}>⏰</span>
-              <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>
-                {poi.open_time}–{poi.close_time}
-              </span>
-              {status === 'open' && (
-                <span style={{ fontSize: 10, background: '#DCFCE7', color: '#16A34A', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>
-                  {tLang('status_open', lang)}
-                </span>
-              )}
-              {status === 'closed' && (
-                <span style={{ fontSize: 10, background: '#FEE2E2', color: '#DC2626', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>
-                  {tLang('status_closed', lang)}
-                </span>
-              )}
-              {status === 'coming' && (
-                <span style={{ fontSize: 10, background: '#FFFBEB', color: '#D97706', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>
-                  {tLang('status_coming', lang)}
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* 웨이팅 */}
-          {poi.wait_minutes != null && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 14 }}>⏳</span>
-              <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>
-                {tLang('wait_prefix', lang)}{poi.wait_minutes}{tLang('wait_suffix', lang)}
-              </span>
-            </div>
-          )}
-        </div>
-
         {/* CTA 버튼 */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', 'PUBLICTRANSIT')}
-            style={{
-              flex: 1.2, minWidth: 80, minHeight: 44,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              background: '#1A1A1A', color: 'white', border: 'none', borderRadius: 16,
-              fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              boxShadow: '4px 4px 10px rgba(0,0,0,0.15), -2px -2px 6px rgba(255,255,255,0.5)',
-              transition: 'box-shadow 0.15s ease, transform 0.15s ease',
-            }}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#1A1A1A', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(0,0,0,0.15)', transition: 'transform 0.15s ease' }}
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
@@ -1122,14 +1069,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           </button>
           <button
             onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', userPos)}
-            style={{
-              flex: 1, minWidth: 72, minHeight: 44,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-              background: '#C4725A', color: 'white', border: 'none', borderRadius: 16,
-              fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              boxShadow: '4px 4px 10px rgba(196,114,90,0.3), -2px -2px 6px rgba(255,255,255,0.6)',
-              transition: 'box-shadow 0.15s ease, transform 0.15s ease',
-            }}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#C4725A', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(196,114,90,0.3)', transition: 'transform 0.15s ease' }}
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
@@ -1139,14 +1079,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           {poi.has_reservation && (
             <button
               onClick={() => onReserve(poi)}
-              style={{
-                flex: 1, minWidth: 60, minHeight: 44,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                background: '#FAFAFA', color: '#C4725A', border: 'none', borderRadius: 16,
-                fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
-                transition: 'box-shadow 0.15s ease, transform 0.15s ease',
-              }}
+              style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#FAFAFA', color: '#C4725A', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'transform 0.15s ease' }}
               onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
               onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
             >
@@ -1156,20 +1089,18 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           )}
           <button
             onClick={() => onBookmark(poi)}
-            style={{
-              flex: 0, minWidth: 44, minHeight: 44,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: '#FAFAFA', border: 'none', borderRadius: 16,
-              cursor: 'pointer',
-              boxShadow: isBookmarked
-                ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
-                : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
-              transition: 'box-shadow 0.15s ease',
-            }}
+            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FAFAFA', border: 'none', borderRadius: 14, cursor: 'pointer', flexShrink: 0, boxShadow: isBookmarked ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
           >
             <Heart size={15} fill={isBookmarked ? '#FF3B30' : 'none'} color={isBookmarked ? '#FF3B30' : '#888888'} />
           </button>
         </div>
+
+        {/* 이미지 — 아래쪽, 있을 때만 */}
+        {poi.image_url && (
+          <div style={{ marginTop: 14, height: 130, borderRadius: 16, overflow: 'hidden', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
+            <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        )}
       </div>
     </div>
   )

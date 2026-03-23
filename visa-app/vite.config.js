@@ -117,7 +117,7 @@ export default defineConfig({
           }
           
           // Home 관련 (순환 의존성 방지를 위해 가장 먼저 체크)
-          if (id.includes('/home/')) {
+          if (id.includes('/src/components/home/')) {
             return 'home-components';
           }
           

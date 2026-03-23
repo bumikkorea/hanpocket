@@ -462,8 +462,8 @@ const _nhRateCache = { rate: null, ts: 0 }
 function useNHCNYRate() {
   const [rate, setRate] = useState(() => _nhRateCache.rate || 191)
   useEffect(() => {
-    if (_nhRateCache.rate && Date.now() - _nhRateCache.ts < 30 * 60 * 1000) { setRate(_nhRateCache.rate); return }
-    fetch('https://open.er-api.com/v6/latest/CNY')
+    if (_nhRateCache.rate && Date.now() - _nhRateCache.ts < 60 * 60 * 1000) { setRate(_nhRateCache.rate); return }
+    fetch('https://api.frankfurter.app/latest?from=CNY&to=KRW')
       .then(r => r.json())
       .then(d => { const krw = d.rates?.KRW; if (krw > 100) { _nhRateCache.rate = krw; _nhRateCache.ts = Date.now(); setRate(krw) } })
       .catch(() => {})
@@ -644,7 +644,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 9999, background: '#FAFAFA', border: 'none', borderRadius: 16, padding: '12px 16px', boxShadow: '8px 8px 18px rgba(200,200,200,0.5), -8px -8px 18px #FFFFFF', minWidth: 168, marginTop: 6 }}>
               <div style={{ fontSize: 11, color: '#888888', marginBottom: 6 }}>실시간 환율</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>¥100 = ₩{Math.round(cnyRate * 100).toLocaleString()}</div>
-              <div style={{ fontSize: 11, color: '#888888', marginTop: 4 }}>open.er-api.com</div>
+              <div style={{ fontSize: 11, color: '#888888', marginTop: 4 }}>ECB · frankfurter.app</div>
             </div>
           )}
         </span>

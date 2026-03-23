@@ -614,12 +614,11 @@ export default function NearMap() {
     ? [...allPins].sort((a, b) => b.view_count_7d - a.view_count_7d).slice(0, 3)
     : []
 
-  // ── 스와이프 제스처 (아래→닫기, 위→리스트) ──
+  // ── 스와이프 제스처 (아래로만 → 닫기) ──
   const handleTouchStart = (e) => { touchStartY.current = e.touches[0].clientY }
   const handleTouchEnd = (e) => {
     const delta = e.changedTouches[0].clientY - touchStartY.current
     if (delta > 60 && isExpanded) closeSheet()
-    else if (delta < -80 && !isExpanded && !courseMode) setShowList(true)
   }
 
   return (
@@ -798,9 +797,18 @@ export default function NearMap() {
           />
         ) : (
           <>
-            {/* 핸들바 */}
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 16px 6px' }}>
+            {/* 핸들바 + 목록 버튼 */}
+            <div style={{ display: 'flex', alignItems: 'center', padding: '10px 16px 6px' }}>
+              <div style={{ flex: 1 }} />
               <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--text-hint)' }} />
+              <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  onClick={() => setShowList(true)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', fontSize: 12, fontWeight: 600, color: '#AAAAAA', display: 'flex', alignItems: 'center', gap: 3 }}
+                >
+                  {lang === 'zh' ? '列表' : lang === 'en' ? 'List' : '목록'} ›
+                </button>
+              </div>
             </div>
 
             {pinsError ? (

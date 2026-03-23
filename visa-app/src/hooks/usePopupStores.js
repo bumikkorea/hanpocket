@@ -1,6 +1,7 @@
 // DB에서 팝업 목록을 가져오고 HomeTab/NearMap 공통 형식으로 정규화
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase.js'
+import { POI_DATA } from '../data/poiData.js'
 
 const API = 'https://hanpocket-popup-store.bumik-korea.workers.dev/api/popups'
 
@@ -136,8 +137,6 @@ export function useNearPins() {
     const today = new Date().toISOString().split('T')[0]
 
     const loadPins = async () => {
-      const { POI_DATA } = await import('../data/poiData.js')
-
       let rawData = POI_DATA
       try {
         const { data, error: fetchError } = await supabase

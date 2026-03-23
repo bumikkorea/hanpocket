@@ -15,7 +15,7 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
   const isLight = editorial.textDark
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9800, background: 'white', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9800, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
 
       {/* ─── 공통 헤더 ─── */}
       <NearPageHeader onBack={onBack} setTab={setTab} />
@@ -60,13 +60,14 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
         </div>
 
         {/* ─── 본문 영역 ─── */}
-        <div style={{ padding: '28px 24px 60px', background: 'white' }}>
+        <div style={{ padding: '28px 24px 60px', background: '#FAFAFA' }}>
 
           {/* 추천 방문 시간 */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
-            padding: '12px 16px', borderRadius: 12,
-            background: '#F7F7F7', marginBottom: 24,
+            padding: '12px 16px', borderRadius: 14,
+            background: '#FAFAFA', marginBottom: 24,
+            boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
           }}>
             <Clock size={16} color="#999" />
             <span style={{ fontSize: 13, color: '#666' }}>
@@ -101,8 +102,9 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
                 {spots.map((spot, i) => (
                   <span key={i} style={{
                     display: 'inline-block', padding: '7px 14px',
-                    borderRadius: 20, background: '#F5F5F5',
+                    borderRadius: 20, background: '#FAFAFA',
                     fontSize: 13, color: '#444', fontWeight: 500,
+                    boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
                   }}>
                     {spot}
                   </span>
@@ -114,9 +116,9 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
           {/* 중국 도시 비유 섹션 */}
           {editorial.subtitle && (
             <div style={{
-              padding: '16px 18px', borderRadius: 12,
-              background: 'linear-gradient(135deg, #FDF8F5, #F9F2EC)',
-              borderLeft: '3px solid #C4725A',
+              padding: '16px 18px', borderRadius: 16,
+              background: '#FAFAFA',
+              boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
             }}>
               <div style={{ fontSize: 11, color: '#C4725A', fontWeight: 700, letterSpacing: '0.08em', marginBottom: 6, textTransform: 'uppercase' }}>
                 {L(lang, { ko: '이런 곳과 비슷해요', zh: '类似的地方', en: 'Feels like' })}

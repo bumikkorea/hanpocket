@@ -236,8 +236,15 @@ function MagicPillSelector({ areas, lang, onSelect }) {
       <button
         onClick={toggleDropdown}
         onTouchEnd={(e) => e.stopPropagation()}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold text-white"
-        style={{ background: '#1A1A1A', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}
+        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold"
+        style={{
+          background: '#FAFAFA',
+          color: '#1A1A1A',
+          boxShadow: expanded
+            ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+            : '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+          transition: 'box-shadow 0.15s ease',
+        }}
       >
         <MapPin size={14} weight="fill" />
         {tLang(selected.key, lang)}
@@ -248,8 +255,8 @@ function MagicPillSelector({ areas, lang, onSelect }) {
         <>
           <div className="fixed inset-0 z-30" onClick={closeDropdown} onTouchEnd={closeDropdown} />
           <div
-            className="absolute top-full right-0 mt-1 z-40 bg-white rounded-[14px] py-1 overflow-hidden"
-            style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.15)', minWidth: 140 }}
+            className="absolute top-full right-0 mt-2 z-40 rounded-[16px] py-1 overflow-hidden"
+            style={{ background: '#FAFAFA', boxShadow: '8px 8px 18px rgba(200,200,200,0.5), -8px -8px 18px #FFFFFF', minWidth: 148 }}
             onTouchEnd={(e) => e.stopPropagation()}
           >
             {areas.map((area) => {
@@ -259,8 +266,8 @@ function MagicPillSelector({ areas, lang, onSelect }) {
                   key={area.id}
                   onClick={(e) => handleSelect(area, e)}
                   onTouchEnd={(e) => e.stopPropagation()}
-                  className="w-full px-4 py-2.5 flex items-center gap-2 cursor-pointer select-none active:bg-[#1A1A1A] active:text-white transition-colors duration-100"
-                  style={{ background: isCurrent ? '#F5F5F5' : 'transparent', color: '#1A1A1A' }}
+                  className="w-full px-4 py-2.5 flex items-center gap-2 cursor-pointer select-none transition-colors duration-100"
+                  style={{ background: isCurrent ? 'rgba(196,114,90,0.06)' : 'transparent', color: isCurrent ? '#C4725A' : '#1A1A1A' }}
                 >
                   <span className="w-4 flex items-center justify-center">
                     {isCurrent ? <MapPin size={14} weight="duotone" color="#C4725A" /> : null}
@@ -634,13 +641,15 @@ export default function NearMap() {
         style={{ position: 'absolute', top: 16, left: 16, right: 72, zIndex: 10, background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
       >
         <div style={{
-          background: 'white', borderRadius: 'var(--radius-pill)',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+          background: '#FAFAFA',
+          borderRadius: 50,
+          boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
           display: 'flex', alignItems: 'center',
-          padding: '0 12px', height: 40, gap: 8,
+          padding: '0 14px', height: 44, gap: 8,
+          transition: 'box-shadow 0.15s ease',
         }}>
-          <Search size={16} color="var(--text-muted)" />
-          <span style={{ fontSize: 15, color: 'var(--text-muted)', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}>
+          <Search size={16} color="#888888" />
+          <span style={{ fontSize: 14, color: '#888888', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}>
             {tLang(PH_KEYS[phIdx], lang)}
           </span>
         </div>
@@ -666,13 +675,16 @@ export default function NearMap() {
         }}
         style={{
           position: 'absolute', bottom: 180, right: 16, zIndex: 10,
-          width: 40, height: 40, borderRadius: '50%',
-          background: 'white', border: 'none', cursor: 'pointer',
+          width: 44, height: 44, borderRadius: '50%',
+          background: '#FAFAFA', border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+          transition: 'box-shadow 0.15s ease',
         }}
+        onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'}
+        onTouchEnd={e => e.currentTarget.style.boxShadow = '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF'}
       >
-        <Navigation size={18} color="#378ADD" />
+        <Navigation size={18} color="#C4725A" />
       </button>
 
       {/* ─── 카테고리 칩 ─── */}
@@ -690,18 +702,20 @@ export default function NearMap() {
               onClick={() => { setActiveCategory(chip.id); closeSheet(); exitCourseMode() }}
               style={{
                 flexShrink: 0,
-                height: 32,
-                background: active ? '#1A1A1A' : '#FFFFFF',
-                color: active ? '#FFFFFF' : '#666666',
-                border: active ? 'none' : '1px solid #E5E5E5',
-                borderRadius: 'var(--radius-chip)', padding: '0 12px',
-                fontSize: 13, fontWeight: 600,
-                boxShadow: active ? '0 2px 8px rgba(0,0,0,0.2)' : '0 1px 4px rgba(0,0,0,0.08)',
-                transition: 'all 0.15s',
+                height: 36, minWidth: 44,
+                background: '#FAFAFA',
+                color: active ? '#C4725A' : '#666666',
+                border: 'none',
+                borderRadius: 24, padding: '0 14px',
+                fontSize: 13, fontWeight: active ? 700 : 600,
+                boxShadow: active
+                  ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+                  : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+                transition: 'all 0.15s ease',
                 display: 'flex', alignItems: 'center', gap: 4,
               }}
             >
-              {ChipIcon && <ChipIcon size={14} color={active ? '#FFFFFF' : '#999999'} />}
+              {ChipIcon && <ChipIcon size={14} color={active ? '#C4725A' : '#999999'} />}
               {tLang(chip.key, lang)}
             </button>
           )
@@ -711,18 +725,20 @@ export default function NearMap() {
           onClick={() => { if (courseMode) exitCourseMode(); else { setCourseMode(true); closeSheet() } }}
           style={{
             flexShrink: 0,
-            height: 32,
-            background: courseMode ? '#DC2626' : '#FFFFFF',
-            color: courseMode ? 'white' : '#666666',
-            border: courseMode ? 'none' : '1px solid #E5E5E5',
-            borderRadius: 'var(--radius-chip)', padding: '0 12px',
-            fontSize: 13, fontWeight: 600,
-            boxShadow: courseMode ? '0 2px 8px rgba(220,38,38,0.3)' : '0 1px 4px rgba(0,0,0,0.08)',
-            transition: 'all 0.15s',
+            height: 36, minWidth: 44,
+            background: '#FAFAFA',
+            color: courseMode ? '#C4725A' : '#666666',
+            border: 'none',
+            borderRadius: 24, padding: '0 14px',
+            fontSize: 13, fontWeight: courseMode ? 700 : 600,
+            boxShadow: courseMode
+              ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+              : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+            transition: 'all 0.15s ease',
             display: 'flex', alignItems: 'center', gap: 4,
           }}
         >
-          <RouteIcon size={14} color={courseMode ? 'white' : '#999999'} />
+          <RouteIcon size={14} color={courseMode ? '#C4725A' : '#999999'} />
           {tLang('course_toggle', lang)}
         </button>
       </div>
@@ -736,8 +752,8 @@ export default function NearMap() {
           height: isExpanded ? '60dvh' : (activeCourseId ? '50dvh' : 'auto'),
           minHeight: 124,
           transition: 'height 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          background: 'white', borderRadius: '24px 24px 0 0',
-          boxShadow: '0 -4px 20px rgba(0,0,0,0.12)',
+          background: '#FAFAFA', borderRadius: '24px 24px 0 0',
+          boxShadow: '0 -8px 24px rgba(200,200,200,0.4), 0 -2px 8px rgba(255,255,255,0.9)',
           overflowY: (isExpanded || activeCourseId) ? 'auto' : 'hidden',
         }}
       >
@@ -931,7 +947,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
       </div>
 
       {/* Hero image */}
-      <div style={{ margin: '0 20px 16px', height: 140, borderRadius: 12, overflow: 'hidden', background: 'var(--surface)' }}>
+      <div style={{ margin: '0 20px 16px', height: 140, borderRadius: 20, overflow: 'hidden', background: '#F0F0F0', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
         {poi.image_url ? (
           <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
@@ -960,19 +976,20 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         </p>
 
         {/* 주소 복사 — 언어 토글 + 복사 버튼 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
           {/* 언어 토글 pill */}
-          <div style={{ display: 'flex', borderRadius: 8, border: '1px solid var(--border)', overflow: 'hidden', flexShrink: 0 }}>
+          <div style={{ display: 'flex', borderRadius: 24, overflow: 'hidden', flexShrink: 0, background: '#FAFAFA', boxShadow: 'inset 2px 2px 6px rgba(190,190,190,0.3), inset -2px -2px 6px rgba(255,255,255,0.7)', padding: 2 }}>
             {['ko', 'zh'].map(l => (
               <button
                 key={l}
                 onClick={() => setAddrLang(l)}
                 style={{
-                  padding: '4px 9px', fontSize: 11, fontWeight: 700,
-                  background: addrLang === l ? '#1A1A1A' : 'transparent',
-                  color: addrLang === l ? 'white' : 'var(--text-muted)',
+                  padding: '4px 10px', fontSize: 11, fontWeight: 700,
+                  background: addrLang === l ? '#C4725A' : 'transparent',
+                  color: addrLang === l ? 'white' : '#888888',
                   border: 'none', cursor: 'pointer',
-                  transition: 'background 0.15s, color 0.15s',
+                  borderRadius: 20,
+                  transition: 'all 0.15s ease',
                 }}
               >
                 {l === 'ko' ? 'KO' : 'ZH'}
@@ -980,19 +997,20 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             ))}
           </div>
           {/* 주소 텍스트 */}
-          <span style={{ flex: 1, fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <span style={{ flex: 1, fontSize: 12, color: '#888888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {addrLang === 'zh' ? (poi.address_zh || poi.address_ko) : (poi.address_ko || poi.address_zh)}
           </span>
           {/* 복사 버튼 */}
           <button
             onClick={handleCopyAddress}
             style={{
-              flexShrink: 0, padding: '4px 10px', borderRadius: 8,
-              background: copied ? '#DCFCE7' : 'var(--surface)',
-              border: `1px solid ${copied ? '#86EFAC' : 'var(--border)'}`,
-              color: copied ? '#16A34A' : 'var(--text-muted)',
+              flexShrink: 0, padding: '6px 12px', borderRadius: 12,
+              background: copied ? 'rgba(22,163,74,0.1)' : '#FAFAFA',
+              border: 'none',
+              boxShadow: copied ? 'none' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+              color: copied ? '#16A34A' : '#888888',
               fontSize: 11, fontWeight: 600, cursor: 'pointer',
-              transition: 'all 0.2s',
+              transition: 'all 0.15s ease',
             }}
           >
             {copied ? '✓' : '복사'}
@@ -1058,16 +1076,32 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <button
             onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', 'PUBLICTRANSIT')}
-            className="btn btn-sm btn-dark"
-            style={{ flex: 1.2, minWidth: 80 }}
+            style={{
+              flex: 1.2, minWidth: 80, minHeight: 44,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              background: '#1A1A1A', color: 'white', border: 'none', borderRadius: 16,
+              fontSize: 13, fontWeight: 700, cursor: 'pointer',
+              boxShadow: '4px 4px 10px rgba(0,0,0,0.15), -2px -2px 6px rgba(255,255,255,0.5)',
+              transition: 'box-shadow 0.15s ease, transform 0.15s ease',
+            }}
+            onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
+            onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
             <Navigation size={15} />
             {tLang('navigate_here', lang)}
           </button>
           <button
             onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', userPos)}
-            className="btn btn-sm btn-taxi"
-            style={{ flex: 1, minWidth: 72 }}
+            style={{
+              flex: 1, minWidth: 72, minHeight: 44,
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+              background: '#C4725A', color: 'white', border: 'none', borderRadius: 16,
+              fontSize: 13, fontWeight: 700, cursor: 'pointer',
+              boxShadow: '4px 4px 10px rgba(196,114,90,0.3), -2px -2px 6px rgba(255,255,255,0.6)',
+              transition: 'box-shadow 0.15s ease, transform 0.15s ease',
+            }}
+            onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
+            onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
             <Car size={15} />
             {tLang('taxi_mode', lang)}
@@ -1075,8 +1109,16 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           {poi.has_reservation && (
             <button
               onClick={() => onReserve(poi)}
-              className="btn btn-sm btn-primary"
-              style={{ flex: 1, minWidth: 60 }}
+              style={{
+                flex: 1, minWidth: 60, minHeight: 44,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                background: '#FAFAFA', color: '#C4725A', border: 'none', borderRadius: 16,
+                fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+                transition: 'box-shadow 0.15s ease, transform 0.15s ease',
+              }}
+              onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
+              onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
             >
               <Calendar size={15} />
               {tLang('reserve', lang)}
@@ -1084,10 +1126,18 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           )}
           <button
             onClick={() => onBookmark(poi)}
-            className={`btn btn-sm ${isBookmarked ? 'btn-danger' : 'btn-outline'}`}
-            style={{ flex: 0, minWidth: 44, paddingLeft: 0, paddingRight: 0 }}
+            style={{
+              flex: 0, minWidth: 44, minHeight: 44,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: '#FAFAFA', border: 'none', borderRadius: 16,
+              cursor: 'pointer',
+              boxShadow: isBookmarked
+                ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+                : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+              transition: 'box-shadow 0.15s ease',
+            }}
           >
-            <Heart size={15} fill={isBookmarked ? '#FF3B30' : 'none'} color={isBookmarked ? '#FF3B30' : 'currentColor'} />
+            <Heart size={15} fill={isBookmarked ? '#FF3B30' : 'none'} color={isBookmarked ? '#FF3B30' : '#888888'} />
           </button>
         </div>
       </div>
@@ -1107,7 +1157,7 @@ function CompactSheetCard({ poi, lang, onExpand }) {
       style={{ display: 'flex', gap: 14, alignItems: 'center', padding: '4px 20px 20px', width: '100%', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
     >
       {/* 썸네일 */}
-      <div style={{ width: 64, height: 64, borderRadius: 12, overflow: 'hidden', flexShrink: 0, background: 'var(--surface)' }}>
+      <div style={{ width: 64, height: 64, borderRadius: 16, overflow: 'hidden', flexShrink: 0, background: '#F0F0F0', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
         {poi.image_url ? (
           <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
@@ -1214,20 +1264,29 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: 'white', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       {/* 검색 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 20px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
-          <ArrowLeft size={22} weight="bold" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 20px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+        <button onClick={onClose} style={{
+          background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10,
+          borderRadius: '50%', color: '#1A1A1A', display: 'flex',
+          boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+          transition: 'box-shadow 0.15s ease',
+        }}>
+          <ArrowLeft size={20} weight="bold" />
         </button>
-        <div style={{ flex: 1, background: 'var(--surface)', borderRadius: 12, display: 'flex', alignItems: 'center', padding: '0 14px', height: 44, gap: 8 }}>
-          <MagnifyingGlass size={17} color="var(--text-muted)" weight="bold" />
+        <div style={{
+          flex: 1, background: '#FAFAFA', borderRadius: 50,
+          boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)',
+          display: 'flex', alignItems: 'center', padding: '0 14px', height: 44, gap: 8,
+        }}>
+          <MagnifyingGlass size={17} color="#888888" weight="bold" />
           <input
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={tLang(PH_KEYS[phIdx], lang)}
-            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: 'var(--text-primary)', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}
+            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: '#1A1A1A', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}
           />
           {query && (
             <button onClick={() => setQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, fontSize: 16, lineHeight: 1 }}>✕</button>
@@ -1250,7 +1309,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
                   {recent.map((r, i) => (
-                    <button key={i} onClick={() => setQuery(r)} style={{ background: 'var(--surface)', border: 'none', borderRadius: 100, padding: '6px 14px', fontSize: 13, color: 'var(--text-primary)', cursor: 'pointer' }}>
+                    <button key={i} onClick={() => setQuery(r)} style={{ background: '#FAFAFA', border: 'none', borderRadius: 24, padding: '8px 16px', fontSize: 13, color: '#1A1A1A', cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
                       {r}
                     </button>
                   ))}
@@ -1303,29 +1362,41 @@ function ListView({ pins, lang, listSort, onSortChange, onSelectPoi, onBack }) {
   })
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 30, background: 'white', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 30, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px 14px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-        <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('list_title', lang)}</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px 14px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+        <span style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>{tLang('list_title', lang)}</span>
         <button
           onClick={onBack}
-          style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'var(--surface)', border: 'none', borderRadius: 100, padding: '7px 16px', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'var(--text-primary)' }}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            background: '#FAFAFA', border: 'none', borderRadius: 24, padding: '8px 18px',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer', color: '#1A1A1A',
+            boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+            transition: 'box-shadow 0.15s ease',
+          }}
+          onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'}
+          onTouchEnd={e => e.currentTarget.style.boxShadow = '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF'}
         >
           {tLang('list_back_map', lang)}
         </button>
       </div>
       {/* 정렬 칩 */}
-      <div style={{ display: 'flex', gap: 8, padding: '10px 20px', overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0, borderBottom: '1px solid var(--border)' }}>
+      <div style={{ display: 'flex', gap: 8, padding: '12px 20px', overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0, background: '#FAFAFA' }}>
         {SORTS.map(s => (
           <button
             key={s.id}
             onClick={() => onSortChange(s.id)}
             style={{
               flexShrink: 0,
-              background: listSort === s.id ? 'var(--text-primary)' : 'var(--surface)',
-              color: listSort === s.id ? 'white' : 'var(--text-primary)',
-              border: 'none', borderRadius: 100, padding: '6px 16px',
-              fontSize: 13, fontWeight: 600, cursor: 'pointer',
+              background: '#FAFAFA',
+              color: listSort === s.id ? '#C4725A' : '#666666',
+              border: 'none', borderRadius: 24, padding: '7px 16px',
+              fontSize: 13, fontWeight: listSort === s.id ? 700 : 600, cursor: 'pointer',
+              boxShadow: listSort === s.id
+                ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+                : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+              transition: 'all 0.15s ease',
             }}
           >
             {tLang(s.key, lang)}
@@ -1386,7 +1457,7 @@ function CourseSelectorSheet({ courses, lang, onSelectCourse, onExit }) {
           <button
             key={course.id}
             onClick={() => onSelectCourse(course.id)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', marginBottom: 10, cursor: 'pointer', textAlign: 'left' }}
+            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '16px 18px', background: '#FAFAFA', border: 'none', borderRadius: 20, marginBottom: 12, cursor: 'pointer', textAlign: 'left', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
           >
             <div style={{ width: 40, height: 40, borderRadius: 10, background: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ fontSize: 18 }}>🗺</span>
@@ -1523,7 +1594,7 @@ function ReservationSheet({ poi, lang, onClose }) {
 
   if (done) {
     return (
-      <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+      <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FAFAFA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
         <div style={{ fontSize: 52 }}>✅</div>
         <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('reserve_success', lang)}</div>
         <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{getLocalizedName(poi, lang)} · {selDate} {selTime} · {count}{tLang('res_people', lang)}</div>
@@ -1532,12 +1603,12 @@ function ReservationSheet({ poi, lang, onClose }) {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: 'white', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
-          <ArrowLeft size={22} weight="bold" />
+    <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+        <button onClick={onClose} style={{ background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#1A1A1A', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
+          <ArrowLeft size={20} weight="bold" />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{getLocalizedName(poi, lang)} · {tLang('reserve', lang)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{getLocalizedName(poi, lang)} · {tLang('reserve', lang)}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px 16px' }}>
@@ -1549,9 +1620,15 @@ function ReservationSheet({ poi, lang, onClose }) {
               const dt = new Date(d); const active = selDate === d
               return (
                 <button key={d} onClick={() => setSelDate(d)} style={{
-                  flexShrink: 0, width: 52, padding: '8px 0', borderRadius: 12, textAlign: 'center',
-                  background: active ? '#1A1A1A' : '#F3F4F6', color: active ? 'white' : '#374151',
-                  border: 'none', cursor: 'pointer', transition: 'all 0.15s',
+                  flexShrink: 0, width: 52, padding: '8px 0', borderRadius: 16, textAlign: 'center',
+                  background: '#FAFAFA',
+                  color: active ? '#C4725A' : '#374151',
+                  border: 'none', cursor: 'pointer',
+                  boxShadow: active
+                    ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+                    : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+                  fontWeight: active ? 700 : 400,
+                  transition: 'all 0.15s ease',
                 }}>
                   <div style={{ fontSize: 10, opacity: 0.7 }}>{DAY_ZH[dt.getDay()]}</div>
                   <div style={{ fontSize: 16, fontWeight: 700 }}>{dt.getDate()}</div>
@@ -1567,11 +1644,15 @@ function ReservationSheet({ poi, lang, onClose }) {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {timeSlots.map(slot => (
               <button key={slot} onClick={() => setSelTime(slot)} style={{
-                padding: '8px 16px', borderRadius: 100,
-                background: selTime === slot ? '#1A1A1A' : '#F3F4F6',
-                color: selTime === slot ? 'white' : '#374151',
-                border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600,
-                transition: 'all 0.15s',
+                padding: '8px 16px', borderRadius: 24,
+                background: '#FAFAFA',
+                color: selTime === slot ? '#C4725A' : '#374151',
+                border: 'none', cursor: 'pointer', fontSize: 13,
+                fontWeight: selTime === slot ? 700 : 500,
+                boxShadow: selTime === slot
+                  ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+                  : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+                transition: 'all 0.15s ease',
               }}>{slot}</button>
             ))}
           </div>
@@ -1581,14 +1662,14 @@ function ReservationSheet({ poi, lang, onClose }) {
         <div style={{ marginBottom: 32 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{tLang('reserve_people', lang)}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <button onClick={() => setCount(c => Math.max(1, c - 1))} style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
-            <span style={{ fontSize: 20, fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{count}</span>
-            <button onClick={() => setCount(c => Math.min(6, c + 1))} style={{ width: 36, height: 36, borderRadius: '50%', border: '1.5px solid #E5E7EB', background: 'white', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+            <button onClick={() => setCount(c => Math.max(1, c - 1))} style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', color: '#1A1A1A' }}>−</button>
+            <span style={{ fontSize: 20, fontWeight: 700, minWidth: 28, textAlign: 'center', color: '#1A1A1A' }}>{count}</span>
+            <button onClick={() => setCount(c => Math.min(6, c + 1))} style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', color: '#1A1A1A' }}>+</button>
             <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{count} {tLang('res_people', lang)}</span>
           </div>
         </div>
 
-        <button onClick={handleConfirm} style={{ width: '100%', height: 52, borderRadius: 14, background: '#1A1A1A', color: 'white', fontSize: 16, fontWeight: 700, border: 'none', cursor: 'pointer' }}>
+        <button onClick={handleConfirm} style={{ width: '100%', height: 52, borderRadius: 16, background: '#C4725A', color: 'white', fontSize: 16, fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '6px 6px 14px rgba(196,114,90,0.3), -4px -4px 10px rgba(255,255,255,0.8)', transition: 'box-shadow 0.15s ease, transform 0.15s ease' }}>
           {tLang('reserve_confirm', lang)}
         </button>
       </div>
@@ -1676,24 +1757,24 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: 'white', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex' }}>
-          <ArrowLeft size={22} weight="bold" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+        <button onClick={onClose} style={{ background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#1A1A1A', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
+          <ArrowLeft size={20} weight="bold" />
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('my_panel', lang)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{tLang('my_panel', lang)}</span>
       </div>
 
       {/* 섹션 탭 */}
-      <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', flexShrink: 0 }}>
+      <div style={{ display: 'flex', background: '#FAFAFA', flexShrink: 0, padding: '8px 16px 0', gap: 4 }}>
         {SECTIONS.map(s => (
           <button key={s.id} onClick={() => setActiveSection(s.id)} style={{
             flex: 1, padding: '10px 4px', fontSize: 12, fontWeight: 600,
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: activeSection === s.id ? '#111827' : '#9CA3AF',
-            borderBottom: activeSection === s.id ? '2px solid #1A1A1A' : '2px solid transparent',
-            transition: 'all 0.2s',
+            background: '#FAFAFA', border: 'none', cursor: 'pointer',
+            color: activeSection === s.id ? '#C4725A' : '#9CA3AF',
+            borderBottom: activeSection === s.id ? '2px solid #C4725A' : '2px solid transparent',
+            transition: 'all 0.15s ease',
           }}>
             {tLang(s.key, lang)}
           </button>

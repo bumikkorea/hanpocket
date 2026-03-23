@@ -21,8 +21,8 @@ function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d
 const QUICK_ACTIONS = [
   { id: 'arrival',   icon: PlaneLanding, bg: '#EDF5FF', color: '#007AFF', action: 'arrival-sheet'  },
   { id: 'departure', icon: PlaneTakeoff, bg: '#F0F9F0', color: '#34C759', action: 'departure-sheet' },
-  { id: 'course',    icon: Route,        bg: '#F3E8FF', color: '#9B51E0', action: 'course'          },
   { id: 'translate', icon: Languages,    bg: '#FFF9E6', color: '#F9A825', action: 'translate-sheet' },
+  { id: 'course',    icon: Route,        bg: '#F3E8FF', color: '#9B51E0', action: 'course'          },
 ]
 
 const QUICK_ACTION_LABEL_KEYS = {
@@ -191,17 +191,32 @@ function BottomSheet({ open, onClose, titleLabel, items, lang, t, setSubPage, se
   if (!open) return null
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 9000, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'flex-end' }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'white', borderRadius: '24px 24px 0 0', padding: '0 0 40px', width: '100%' }}>
-        <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border)', margin: '12px auto 0' }} />
+      <div onClick={e => e.stopPropagation()} style={{
+        background: '#FAFAFA',
+        borderRadius: '24px 24px 0 0',
+        padding: '0 0 40px', width: '100%',
+        boxShadow: '-4px -4px 20px rgba(255,255,255,0.9), 0 -6px 20px rgba(200,200,200,0.2)',
+      }}>
+        <div style={{ width: 40, height: 4, borderRadius: 2, background: '#BBBBBB', margin: '12px auto 0' }} />
         <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px 12px' }}>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px 4px 0' }}>
-            <ArrowLeft size={20} color="var(--text-primary)" />
+          <button onClick={onClose} style={{
+            background: '#FAFAFA', border: 'none', cursor: 'pointer',
+            padding: '8px', borderRadius: '50%', marginRight: 4,
+            boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'box-shadow 0.15s ease',
+          }}>
+            <ArrowLeft size={18} color="#1A1A1A" />
           </button>
-          <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>
+          <span style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>
             {typeof titleLabel === 'string' ? t(titleLabel) : L(lang, titleLabel)}
           </span>
         </div>
-        <div style={{ background: 'white', borderRadius: 16, margin: '0 20px', overflow: 'hidden', boxShadow: 'var(--shadow-card)' }}>
+        <div style={{
+          borderRadius: 20, margin: '0 20px', overflow: 'hidden',
+          background: '#FAFAFA',
+          boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+        }}>
           {items.map((item, i) => (
             <button
               key={item.id}
@@ -211,13 +226,19 @@ function BottomSheet({ open, onClose, titleLabel, items, lang, t, setSubPage, se
                 else if (item.tab && setTab) setTab(item.tab)
                 onClose()
               }}
-              style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '16px 20px', textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', borderTop: i > 0 ? '1px solid var(--border)' : 'none' }}
-              onTouchStart={e => e.currentTarget.style.background = 'var(--surface)'}
+              style={{
+                width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                padding: '16px 20px', textAlign: 'left', background: 'none', border: 'none',
+                cursor: 'pointer',
+                borderTop: i > 0 ? '1px solid rgba(200,200,200,0.3)' : 'none',
+                transition: 'background 0.15s ease',
+              }}
+              onTouchStart={e => e.currentTarget.style.background = 'rgba(196,114,90,0.04)'}
               onTouchEnd={e => e.currentTarget.style.background = 'none'}
             >
               <span style={{ fontSize: 22 }}>{item.emoji}</span>
-              <span style={{ flex: 1, fontSize: 15, fontWeight: 500, color: 'var(--text-primary)' }}>{L(lang, item.label)}</span>
-              <ChevronRight size={16} color="var(--text-hint)" />
+              <span style={{ flex: 1, fontSize: 15, fontWeight: 500, color: '#1A1A1A' }}>{L(lang, item.label)}</span>
+              <ChevronRight size={16} color="#BBBBBB" />
             </button>
           ))}
         </div>
@@ -230,16 +251,16 @@ function BottomSheet({ open, onClose, titleLabel, items, lang, t, setSubPage, se
 function FullPage({ open, onClose, titleLabel, items, lang, t, setSubPage, setTab, accentColor }) {
   if (!open) return null
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: 'var(--bg)', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", "Noto Sans SC", sans-serif' }}>
       <NearPageHeader onBack={onClose} setTab={setTab} />
       <div style={{ flex: 1, overflowY: 'auto', padding: '24px 20px 48px' }}>
-        <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em', marginBottom: 6 }}>
+        <div style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A', letterSpacing: '-0.02em', marginBottom: 6 }}>
           {typeof titleLabel === 'string' ? t(titleLabel) : L(lang, titleLabel)}
         </div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 28 }}>
+        <div style={{ fontSize: 13, color: '#888888', marginBottom: 28 }}>
           {L(lang, { zh: '选择需要的服务', ko: '필요한 서비스를 선택하세요', en: 'Select a service' })}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {items.map(item => (
             <button
               key={item.id}
@@ -251,17 +272,17 @@ function FullPage({ open, onClose, titleLabel, items, lang, t, setSubPage, setTa
               }}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', gap: 16,
-                padding: '18px 20px', borderRadius: 16, textAlign: 'left',
-                background: 'var(--card)', border: 'none', cursor: 'pointer',
-                boxShadow: 'var(--shadow-card)',
-                transition: 'transform 0.1s',
+                padding: '18px 20px', borderRadius: 20, textAlign: 'left',
+                background: '#FAFAFA', border: 'none', cursor: 'pointer',
+                boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+                transition: 'box-shadow 0.15s ease, transform 0.15s ease',
               }}
-              onTouchStart={e => e.currentTarget.style.transform = 'scale(0.98)'}
-              onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+              onTouchStart={e => { e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'; e.currentTarget.style.transform = 'scale(0.98)' }}
+              onTouchEnd={e => { e.currentTarget.style.boxShadow = '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF'; e.currentTarget.style.transform = 'scale(1)' }}
             >
               <span style={{ fontSize: 28, flexShrink: 0 }}>{item.emoji}</span>
-              <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{L(lang, item.label)}</span>
-              <ChevronRight size={16} color="var(--text-hint)" />
+              <span style={{ flex: 1, fontSize: 15, fontWeight: 600, color: '#1A1A1A' }}>{L(lang, item.label)}</span>
+              <ChevronRight size={16} color="#BBBBBB" />
             </button>
           ))}
         </div>
@@ -273,7 +294,7 @@ function FullPage({ open, onClose, titleLabel, items, lang, t, setSubPage, setTa
 // ─── 더보기 페이지 (풀스크린) ───
 function DiscoverPage({ lang, t, setSubPage, setTab, onClose, onEditorialClick }) {
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: '#FAFAFA', display: 'flex', flexDirection: 'column' }}>
       <NearPageHeader onBack={onClose} setTab={setTab} />
 
       {/* 스크롤 영역 */}
@@ -532,7 +553,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   const currentEditorial = editorialId ? EDITORIALS.find(e => e.id === editorialId) : null
 
   return (
-    <div style={{ background: 'white', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif', paddingBottom: 24 }}>
+    <div style={{ background: '#FAFAFA', fontFamily: '-apple-system, "Pretendard", "Noto Sans SC", sans-serif', paddingBottom: 24 }}>
 
       {/* ─── 0. 정보바 (날씨/시간/환율/타임존) ─── */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '8px 16px 4px', overflowX: 'auto', scrollbarWidth: 'none', fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap', gap: 0 }}>
@@ -547,10 +568,10 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             · ¥1 = ₩{Math.round(cnyRate)}
           </button>
           {showExchangePopover && (
-            <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 9999, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '10px 14px', boxShadow: '0 4px 20px rgba(0,0,0,0.12)', minWidth: 160, marginTop: 4 }}>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>실시간 환율</div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>¥100 = ₩{Math.round(cnyRate * 100).toLocaleString()}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>open.er-api.com</div>
+            <div style={{ position: 'absolute', top: '100%', left: 0, zIndex: 9999, background: '#FAFAFA', border: 'none', borderRadius: 16, padding: '12px 16px', boxShadow: '8px 8px 18px rgba(200,200,200,0.5), -8px -8px 18px #FFFFFF', minWidth: 168, marginTop: 6 }}>
+              <div style={{ fontSize: 11, color: '#888888', marginBottom: 6 }}>실시간 환율</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>¥100 = ₩{Math.round(cnyRate * 100).toLocaleString()}</div>
+              <div style={{ fontSize: 11, color: '#888888', marginTop: 4 }}>open.er-api.com</div>
             </div>
           )}
         </span>
@@ -588,8 +609,10 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             placeholder={t(PH_KEYS[phIdx])}
             style={{
               width: '100%', padding: '12px 36px', borderRadius: 50,
-              background: 'var(--surface)', border: '1px solid var(--border)',
-              outline: 'none', fontSize: 14, color: 'var(--text-primary)', boxSizing: 'border-box',
+              background: '#FAFAFA',
+              border: 'none',
+              outline: 'none', fontSize: 14, color: '#1A1A1A', boxSizing: 'border-box',
+              boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)',
               opacity: phVisible ? 1 : 0, transition: 'opacity 0.3s ease',
             }}
           />
@@ -602,21 +625,31 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 2. 퀵 액션 (입국/출국/여행코스/통역번역) ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, padding: '0 20px 20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, padding: '0 20px 20px' }}>
         {QUICK_ACTIONS.map(item => {
           const Icon = item.icon
           return (
             <button
               key={item.id}
               onClick={() => handleQuickAction(item.action)}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '14px 8px', borderRadius: 'var(--radius-card)', background: item.bg, border: 'none', cursor: 'pointer' }}
-              onTouchStart={e => e.currentTarget.style.opacity = '0.7'}
-              onTouchEnd={e => e.currentTarget.style.opacity = '1'}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+                padding: '14px 8px', borderRadius: 20,
+                background: '#FAFAFA', border: 'none', cursor: 'pointer',
+                boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+                transition: 'box-shadow 0.15s ease',
+              }}
+              onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'}
+              onTouchEnd={e => e.currentTarget.style.boxShadow = '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF'}
             >
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Icon size={20} color={item.color} />
+              <div style={{
+                width: 44, height: 44, borderRadius: 14,
+                background: 'transparent',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Icon size={22} color={item.color} />
               </div>
-              <span style={{ fontSize: 11, fontWeight: 600, color: item.color, textAlign: 'center', lineHeight: 1.3 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#1A1A1A', textAlign: 'center', lineHeight: 1.3 }}>
                 {t(QUICK_ACTION_LABEL_KEYS[item.id])}
               </span>
             </button>
@@ -630,10 +663,11 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           <div
             onClick={() => handleBannerClick(currentSlide)}
             style={{
-              height: 180, borderRadius: 16, background: currentSlide.gradient,
+              height: 180, borderRadius: 20, background: currentSlide.gradient,
               padding: '20px 24px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
               overflow: 'hidden', position: 'relative',
               cursor: currentSlide.type === 'editorial' ? 'pointer' : 'default',
+              boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
             }}
           >
             {currentSlide.type === 'promo' ? (
@@ -694,19 +728,27 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           const Icon = cat.icon
           return (
             <button key={cat.id} onClick={() => handleCategoryClick(cat)}
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, padding: '12px 4px', cursor: 'pointer', borderRadius: 12, background: 'transparent', border: 'none', transition: 'all 0.15s' }}
+              style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                padding: '12px 4px', cursor: 'pointer', borderRadius: 16,
+                background: '#FAFAFA', border: 'none',
+                transition: 'all 0.15s ease',
+              }}
               onTouchStart={e => e.currentTarget.style.transform = 'scale(0.95)'}
               onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
             >
               <div style={{
-                width: 44, height: 44, borderRadius: 14, background: cat.bg,
+                width: 44, height: 44, borderRadius: 14,
+                background: '#FAFAFA',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: isActive ? `0 0 0 2px ${cat.color}` : 'none',
-                transition: 'box-shadow 0.15s',
+                boxShadow: isActive
+                  ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+                  : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+                transition: 'box-shadow 0.15s ease',
               }}>
-                <Icon size={20} color={cat.color} />
+                <Icon size={20} color={isActive ? '#C4725A' : cat.color} />
               </div>
-              <span style={{ fontSize: 11, color: isActive ? cat.color : 'var(--text-secondary)', fontWeight: isActive ? 700 : 500, textAlign: 'center', lineHeight: 1.2 }}>
+              <span style={{ fontSize: 11, color: isActive ? '#C4725A' : '#888888', fontWeight: isActive ? 700 : 500, textAlign: 'center', lineHeight: 1.2 }}>
                 {L(lang, { zh: cat.zh, ko: cat.ko, en: cat.en })}
               </span>
             </button>
@@ -762,9 +804,13 @@ export default function NearHomeTab({ setTab, setSubPage }) {
               <div
                 key={item.id}
                 onClick={() => !isFeed && item.url && window.open(item.url, '_blank')}
-                style={{ borderRadius: 'var(--radius-card)', overflow: 'hidden', background: 'var(--card)', boxShadow: 'var(--shadow-card)', cursor: 'pointer', transition: 'transform 0.2s' }}
-                onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
-                onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+                style={{
+                  borderRadius: 20, overflow: 'hidden', background: '#FAFAFA',
+                  boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+                  cursor: 'pointer', transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                }}
+                onTouchStart={e => { e.currentTarget.style.transform = 'scale(0.97)'; e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' }}
+                onTouchEnd={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}
               >
                 <div style={{ width: '100%', aspectRatio: '3/4', background: isFeed ? item.gradient : (item.image ? 'none' : 'var(--surface)'), position: 'relative', overflow: 'hidden' }}>
                   {!isFeed && item.image && (
@@ -836,7 +882,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
               <span style={{ fontSize: 11, color: 'var(--text-hint)' }}>© Seoul Tourism Archive</span>
             </div>
             <div
-              style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', height: 200, cursor: 'pointer' }}
+              style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', height: 200, cursor: 'pointer', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}
               onTouchStart={e => { archiveTouchRef.current = e.touches[0].clientX }}
               onTouchEnd={e => {
                 if (archiveTouchRef.current === null) return
@@ -924,7 +970,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       {/* ─── 타임존 선택 모달 ─── */}
       {showTzPicker && (
         <div onClick={() => setShowTzPicker(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'flex-end' }}>
-          <div onClick={e => e.stopPropagation()} style={{ background: 'var(--bg)', borderRadius: '20px 20px 0 0', padding: '0 0 40px', width: '100%' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#FAFAFA', borderRadius: '24px 24px 0 0', padding: '0 0 40px', width: '100%', boxShadow: '-4px -4px 16px rgba(255,255,255,0.9), 0 -6px 18px rgba(200,200,200,0.2)' }}>
             <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--border)', margin: '12px auto 16px' }} />
             <div style={{ padding: '0 20px 12px', fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>
               {L(lang, { ko: '타임존 추가', zh: '添加时区', en: 'Add Timezone' })}

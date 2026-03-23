@@ -269,12 +269,12 @@ const MODE_COLORS = {
 function CuratedCourseCard({ course, modeId, lang, onAddToMySeoul, onCourseClick }) {
   const color = MODE_COLORS[modeId] || '#C4725A'
   return (
-    <div style={{ position: 'relative', borderRadius: 16, background: color + '10', border: `1px solid ${color}22`, overflow: 'hidden', marginBottom: 12 }}>
+    <div style={{ position: 'relative', borderRadius: 20, background: '#FAFAFA', overflow: 'hidden', marginBottom: 12, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
       <button
         onClick={() => onCourseClick(course)}
-        style={{ width: '100%', padding: '16px 16px 12px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
-        onTouchStart={e => e.currentTarget.style.opacity = '0.8'}
-        onTouchEnd={e => e.currentTarget.style.opacity = '1'}
+        style={{ width: '100%', padding: '16px 16px 12px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.15s ease' }}
+        onTouchStart={e => e.currentTarget.style.background = 'rgba(196,114,90,0.04)'}
+        onTouchEnd={e => e.currentTarget.style.background = 'none'}
       >
         {/* 타입 뱃지 */}
         <span style={{ display: 'inline-block', fontSize: 10, fontWeight: 700, color, background: color + '22', borderRadius: 8, padding: '2px 8px', marginBottom: 6 }}>
@@ -300,13 +300,15 @@ function CuratedCourseCard({ course, modeId, lang, onAddToMySeoul, onCourseClick
       <button
         onClick={() => onAddToMySeoul(course)}
         style={{
-          margin: '0 16px 14px', padding: '8px 0', width: 'calc(100% - 32px)',
-          borderRadius: 10, border: `1.5px solid ${color}`,
-          background: 'transparent', color, fontSize: 13, fontWeight: 700,
+          margin: '0 16px 14px', padding: '9px 0', width: 'calc(100% - 32px)',
+          borderRadius: 12, border: 'none',
+          background: '#FAFAFA', color: '#C4725A', fontSize: 13, fontWeight: 700,
           cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+          boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+          transition: 'box-shadow 0.15s ease',
         }}
-        onTouchStart={e => { e.currentTarget.style.background = color + '15' }}
-        onTouchEnd={e => { e.currentTarget.style.background = 'transparent' }}
+        onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'}
+        onTouchEnd={e => e.currentTarget.style.boxShadow = '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF'}
       >
         <span style={{ fontSize: 15 }}>+</span>
         {tLang('course.addToMySeoul', lang)}
@@ -350,7 +352,7 @@ export default function CourseListPage({ onClose, setTab }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: 'var(--bg)', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
 
       <NearPageHeader onBack={onClose} setTab={setTab} />
 
@@ -373,11 +375,14 @@ export default function CourseListPage({ onClose, setTab }) {
                 key={mode.id}
                 onClick={() => setSelectedMode(mode.id)}
                 style={{
-                  flexShrink: 0, padding: '8px 16px', borderRadius: 20,
-                  border: isSelected ? 'none' : `1.5px solid ${mcolor}55`,
-                  background: isSelected ? mcolor : 'transparent',
-                  color: isSelected ? 'white' : mcolor,
+                  flexShrink: 0, padding: '8px 16px', borderRadius: 20, border: 'none',
+                  background: '#FAFAFA',
+                  color: isSelected ? '#C4725A' : mcolor,
                   fontSize: 12, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
+                  boxShadow: isSelected
+                    ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
+                    : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
+                  transition: 'box-shadow 0.15s ease, color 0.15s ease',
                 }}
               >
                 {L(lang, mode.label)}
@@ -422,7 +427,7 @@ export default function CourseListPage({ onClose, setTab }) {
                       onClose()
                       setTab('near-map')
                     }}
-                    style={{ width: '100%', padding: '14px 44px 14px 16px', borderRadius: 12, background: 'var(--surface)', border: '1px solid var(--border)', cursor: 'pointer', textAlign: 'left' }}
+                    style={{ width: '100%', padding: '14px 44px 14px 16px', borderRadius: 16, background: '#FAFAFA', border: 'none', cursor: 'pointer', textAlign: 'left', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
                   >
                     <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{course.title}</div>
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -452,7 +457,7 @@ export default function CourseListPage({ onClose, setTab }) {
               <div key={course.id} style={{ position: 'relative' }}>
                 <button
                   onClick={() => { sessionStorage.setItem('near_pending_course', course.id); onClose(); setTab('near-map') }}
-                  style={{ width: '100%', height: 72, borderRadius: 14, background: 'linear-gradient(135deg, #E3F2FD, #BBDEFB)', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '0 44px 0 16px', display: 'flex', alignItems: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+                  style={{ width: '100%', height: 72, borderRadius: 16, background: '#FAFAFA', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '0 44px 0 16px', display: 'flex', alignItems: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
                 >
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>
@@ -499,7 +504,7 @@ export default function CourseListPage({ onClose, setTab }) {
         </div>
 
         {/* 하단 힌트 */}
-        <div style={{ margin: '20px 20px 0', padding: '12px 16px', borderRadius: 12, background: 'var(--surface)' }}>
+        <div style={{ margin: '20px 20px 0', padding: '12px 16px', borderRadius: 14, background: '#FAFAFA', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
           <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
             {L(lang, { zh: '点击路线，在地图上查看详细停靠点', ko: '코스를 클릭하면 지도에서 탐색할 수 있어요', en: 'Tap a course to explore it on the map' })}
           </p>

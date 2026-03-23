@@ -6,6 +6,14 @@ import { ChevronRight } from 'lucide-react'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
+const NEU = {
+  bg: '#FAFAFA',
+  shadowOut: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+  terra: '#C4725A',
+  textPrimary: '#1A1A1A',
+  textSecondary: '#888888',
+}
+
 const SECTIONS = [
   {
     title: { ko: '공항 & 이동', zh: '机场 & 交通', en: 'Airport & Transit' },
@@ -73,12 +81,10 @@ export default function MorePage({ lang, setTab, setSubPage }) {
       return
     }
     if (item.tool) {
-      // subPage로 직접 열기
       if (setSubPage) setSubPage(item.tool)
       return
     }
     if (item.sub) {
-      // C 섹션 가이드 페이지로 이동
       if (setSubPage) setSubPage(item.sub)
       else if (setTab) setTab(item.sub)
     } else if (item.tab) {
@@ -97,24 +103,41 @@ export default function MorePage({ lang, setTab, setSubPage }) {
   }
 
   return (
-    <div className="px-5 pt-4 pb-0 animate-fade-up">
+    <div style={{ padding: '16px 20px 0', background: NEU.bg, fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       {SECTIONS.map(section => (
-        <div key={section.emoji} className="mb-8">
-          <p className="text-[17px] font-semibold text-[var(--text-primary)] mb-3">
-            {L(lang, section.title)}
+        <div key={section.emoji} style={{ marginBottom: 28 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: NEU.textSecondary, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 10, paddingLeft: 4 }}>
+            {section.emoji}&nbsp; {L(lang, section.title)}
           </p>
-          <div className="bg-white rounded-[16px] overflow-hidden" style={{ boxShadow: 'var(--shadow-card)' }}>
+          <div style={{ background: NEU.bg, borderRadius: 20, overflow: 'hidden', boxShadow: NEU.shadowOut }}>
             {section.items.map((item, i) => (
-              <button key={item.id}
+              <button
+                key={item.id}
                 onClick={() => handleItemClick(item)}
-                className="w-full flex items-center gap-3 px-5 py-4 text-left active:bg-[var(--surface)] transition-colors"
-                style={i > 0 ? { borderTop: '1px solid var(--border)' } : {}}>
-                <span className="text-[18px]">{item.emoji}</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[15px] font-medium text-[var(--text-primary)]">{L(lang, item.label)}</p>
-                  {item.detail && <p className="text-[13px] text-[var(--text-muted)] mt-0.5">{typeof item.detail === 'string' ? item.detail : L(lang, item.detail)}</p>}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '14px 18px', textAlign: 'left',
+                  background: 'transparent', border: 'none', cursor: 'pointer',
+                  borderTop: i > 0 ? '1px solid rgba(0,0,0,0.04)' : 'none',
+                  transition: 'background 0.15s ease',
+                }}
+                onTouchStart={e => e.currentTarget.style.background = 'rgba(196,114,90,0.05)'}
+                onTouchEnd={e => e.currentTarget.style.background = 'transparent'}
+                onMouseDown={e => e.currentTarget.style.background = 'rgba(196,114,90,0.05)'}
+                onMouseUp={e => e.currentTarget.style.background = 'transparent'}
+              >
+                <span style={{ fontSize: 20, flexShrink: 0 }}>{item.emoji}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 15, fontWeight: 500, color: NEU.textPrimary, margin: 0 }}>
+                    {L(lang, item.label)}
+                  </p>
+                  {item.detail && (
+                    <p style={{ fontSize: 12, color: NEU.textSecondary, margin: '2px 0 0' }}>
+                      {typeof item.detail === 'string' ? item.detail : L(lang, item.detail)}
+                    </p>
+                  )}
                 </div>
-                <ChevronRight size={16} className="text-[var(--text-hint)] shrink-0" />
+                <ChevronRight size={16} color="#BBBBBB" style={{ flexShrink: 0 }} />
               </button>
             ))}
           </div>
@@ -122,9 +145,9 @@ export default function MorePage({ lang, setTab, setSubPage }) {
       ))}
 
       {/* NEAR 버전 정보 */}
-      <div className="text-center mt-8 mb-0">
-        <p className="text-[11px] text-[var(--text-hint)]">NEAR v1.0.0</p>
-        <p className="text-[11px] text-[var(--text-hint)] mt-1">到韩国，只需NEAR</p>
+      <div style={{ textAlign: 'center', marginTop: 28, paddingBottom: 0 }}>
+        <p style={{ fontSize: 11, color: '#BBBBBB', margin: 0 }}>NEAR v1.0.0</p>
+        <p style={{ fontSize: 11, color: '#BBBBBB', marginTop: 4 }}>到韩国，只需NEAR</p>
       </div>
     </div>
   )

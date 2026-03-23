@@ -1378,7 +1378,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={tLang(PH_KEYS[phIdx], lang)}
-            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: '#1A1A1A', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}
+            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 16, color: '#1A1A1A', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}
           />
           {query && (
             <button onClick={() => setQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, fontSize: 16, lineHeight: 1 }}>✕</button>

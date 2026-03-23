@@ -426,6 +426,14 @@ function useNHWeather(tzIds) {
   return data
 }
 
+function getNHDateForOffset(offset) {
+  const now = new Date()
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000
+  const d = new Date(utc + offset * 3600000)
+  const days = ['日', '月', '火', '水', '木', '金', '土']
+  return `${d.getMonth() + 1}/${d.getDate()}(${days[d.getDay()]})`
+}
+
 function getNHTimeForOffset(offset) {
   const now = new Date()
   const utc = now.getTime() + now.getTimezoneOffset() * 60000
@@ -620,15 +628,15 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   return (
     <div style={{ background: '#FAFAFA', fontFamily: '-apple-system, "Pretendard", "Noto Sans SC", sans-serif', paddingBottom: 24 }}>
 
-      {/* ─── 0. 정보바 (날씨/시간/환율/타임존) ─── */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '8px 16px 4px', overflowX: 'auto', scrollbarWidth: 'none', fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap', gap: 0 }}>
+      {/* ─── 0. 정보바 (날짜/날씨/시간/환율/타임존) ─── */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px 16px 4px', overflowX: 'auto', scrollbarWidth: 'none', fontSize: 10, color: 'var(--text-muted)', whiteSpace: 'nowrap', gap: 0 }}>
         <span style={{ flexShrink: 0 }}>
-          {weatherData.KST ? `${weatherData.KST.emoji}${weatherData.KST.temp}°` : '⛅'} · 서울 · {tzData.kst}
+          {getNHDateForOffset(9)} · {weatherData.KST ? `${weatherData.KST.emoji}${weatherData.KST.temp}°` : '⛅'} · 서울 · {tzData.kst}
         </span>
         <span ref={exchangeRef} style={{ position: 'relative', flexShrink: 0 }}>
           <button
             onClick={() => setShowExchangePopover(v => !v)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 12, padding: '0 0 0 6px' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 10, padding: '0 0 0 6px' }}
           >
             · ¥1 = ₩{Math.round(cnyRate)}
           </button>
@@ -644,14 +652,14 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           const diff = tz.offset - 9
           const diffStr = diff === 0 ? '' : (diff > 0 ? ` (+${diff}h)` : ` (${diff}h)`)
           return (
-            <span key={tz.id} style={{ flexShrink: 0, paddingLeft: 6 }}>
-              · {tz.flag} {tz.time}{diffStr}
+            <span key={tz.id} style={{ flexShrink: 0, paddingLeft: 6, color: '#007AFF' }}>
+              · {L(lang, tz.name)} {tz.time}{diffStr}
             </span>
           )
         })}
         <button
           onClick={() => setShowTzPicker(true)}
-          style={{ flexShrink: 0, marginLeft: 6, background: 'none', border: '1px solid var(--border)', borderRadius: 10, cursor: 'pointer', color: 'var(--text-hint)', fontSize: 11, padding: '1px 6px', lineHeight: 1.5 }}
+          style={{ flexShrink: 0, marginLeft: 6, background: 'none', border: '1px solid var(--border)', borderRadius: 10, cursor: 'pointer', color: 'var(--text-hint)', fontSize: 10, padding: '1px 6px', lineHeight: 1.5 }}
         >
           +
         </button>
@@ -1039,7 +1047,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                 value={query}
                 onChange={e => handleSearch(e.target.value)}
                 placeholder={t(PH_KEYS[phIdx])}
-                style={{ width: '100%', padding: '11px 36px', borderRadius: 50, border: 'none', outline: 'none', fontSize: 14, color: '#1A1A1A', background: '#FAFAFA', boxSizing: 'border-box', boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' }}
+                style={{ width: '100%', padding: '11px 36px', borderRadius: 50, border: 'none', outline: 'none', fontSize: 16, color: '#1A1A1A', background: '#FAFAFA', boxSizing: 'border-box', boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' }}
               />
               {query && (
                 <button onClick={() => handleSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>

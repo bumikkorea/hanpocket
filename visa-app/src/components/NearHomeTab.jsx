@@ -527,9 +527,34 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   const [loading, setLoading] = useState(false)
   const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
-  const [showSearch, setShowSearch] = useState(false)  // true = 검색결과 표시
+  const [showSearch, setShowSearch] = useState(false)
+  const [showSearchOverlay, setShowSearchOverlay] = useState(false)
   const debounceRef = useRef(null)
   const feedRef = useRef(null)
+  const overlayInputRef = useRef(null)
+
+  // 최근 검색어
+  const getRecentSearches = () => { try { return JSON.parse(localStorage.getItem('near_recent') || '[]') } catch { return [] } }
+  const addRecentSearch = (term) => {
+    if (!term.trim()) return
+    const prev = getRecentSearches().filter(t => t !== term)
+    localStorage.setItem('near_recent', JSON.stringify([term, ...prev].slice(0, 8)))
+  }
+  const removeRecentSearch = (term) => {
+    localStorage.setItem('near_recent', JSON.stringify(getRecentSearches().filter(t => t !== term)))
+    setRecentSearches(getRecentSearches())
+  }
+  const [recentSearches, setRecentSearches] = useState(() => getRecentSearches())
+
+  const openSearchOverlay = () => {
+    setShowSearchOverlay(true)
+    setRecentSearches(getRecentSearches())
+    setTimeout(() => overlayInputRef.current?.focus(), 80)
+  }
+  const closeSearchOverlay = () => {
+    setShowSearchOverlay(false)
+    setQuery(''); setResults([]); setShowSearch(false)
+  }
 
   const loadContent = useCallback(async (term, catId, pg = 1) => {
     setLoading(true)
@@ -555,7 +580,11 @@ export default function NearHomeTab({ setTab, setSubPage }) {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     if (!term.trim()) { setShowSearch(false); setResults([]); return }
     setShowSearch(true)
-    debounceRef.current = setTimeout(() => loadContent(term, null), 500)
+    debounceRef.current = setTimeout(() => {
+      addRecentSearch(term)
+      setRecentSearches(getRecentSearches())
+      loadContent(term, null)
+    }, 500)
   }
 
   const handleCategoryClick = (cat) => {
@@ -636,28 +665,23 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 14px' }}>
           {t('home.subtitle')}
         </p>
-        <div style={{ position: 'relative' }}>
-          <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-hint)' }} />
-          <input
-            type="text"
-            value={query}
-            onChange={e => handleSearch(e.target.value)}
-            placeholder={t(PH_KEYS[phIdx])}
-            style={{
-              width: '100%', padding: '12px 36px', borderRadius: 50,
-              background: '#FAFAFA',
-              border: 'none',
-              outline: 'none', fontSize: 14, color: '#1A1A1A', boxSizing: 'border-box',
-              boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)',
-              opacity: phVisible ? 1 : 0, transition: 'opacity 0.3s ease',
-            }}
-          />
-          {query && (
-            <button onClick={() => handleSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
-              <X size={14} color="var(--text-muted)" />
-            </button>
-          )}
-        </div>
+        <button
+          onClick={openSearchOverlay}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+            padding: '12px 16px', borderRadius: 50, border: 'none', cursor: 'pointer',
+            background: '#FAFAFA', textAlign: 'left',
+            boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)',
+          }}
+        >
+          <Search size={16} color="#BBBBBB" style={{ flexShrink: 0 }} />
+          <span style={{
+            fontSize: 14, color: '#BBBBBB', flex: 1,
+            opacity: phVisible ? 1 : 0, transition: 'opacity 0.3s ease',
+          }}>
+            {t(PH_KEYS[phIdx])}
+          </span>
+        </button>
       </div>
 
       {/* ─── 2. 퀵 액션 (입국/출국/여행코스/통역번역) ─── */}
@@ -996,6 +1020,145 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           onClose={() => setShowCourseList(false)}
           setTab={setTab}
         />
+      )}
+
+      {/* ─── 검색 오버레이 ─── */}
+      {showSearchOverlay && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9200, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
+
+          {/* 헤더 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px 10px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 12px rgba(200,200,200,0.25)' }}>
+            <button onClick={closeSearchOverlay} style={{ width: 40, height: 40, borderRadius: '50%', background: '#FAFAFA', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
+              <ArrowLeft size={18} color="#888" />
+            </button>
+            <div style={{ flex: 1, position: 'relative' }}>
+              <Search size={15} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#BBBBBB', pointerEvents: 'none' }} />
+              <input
+                ref={overlayInputRef}
+                type="text"
+                value={query}
+                onChange={e => handleSearch(e.target.value)}
+                placeholder={t(PH_KEYS[phIdx])}
+                style={{ width: '100%', padding: '11px 36px', borderRadius: 50, border: 'none', outline: 'none', fontSize: 14, color: '#1A1A1A', background: '#FAFAFA', boxSizing: 'border-box', boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' }}
+              />
+              {query && (
+                <button onClick={() => handleSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
+                  <X size={14} color="#BBBBBB" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* 바디 */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px' }}>
+
+            {/* 검색어 없으면 최근 검색어 */}
+            {!query && (
+              <div>
+                {recentSearches.length > 0 && (
+                  <>
+                    <p style={{ fontSize: 12, fontWeight: 700, color: '#888', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>
+                      {L(lang, { ko: '최근 검색', zh: '最近搜索', en: 'Recent' })}
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                      {recentSearches.map(term => (
+                        <div key={term} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#FAFAFA', borderRadius: 20, padding: '7px 12px', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
+                          <button onClick={() => handleSearch(term)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1A1A', padding: 0 }}>{term}</button>
+                          <button onClick={() => removeRecentSearch(term)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}>
+                            <X size={11} color="#BBBBBB" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+                <p style={{ fontSize: 12, fontWeight: 700, color: '#888', letterSpacing: '0.05em', textTransform: 'uppercase', margin: recentSearches.length > 0 ? '24px 0 12px' : '0 0 12px' }}>
+                  {L(lang, { ko: '추천 검색어', zh: '推荐搜索', en: 'Suggestions' })}
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {[
+                    { ko: '홍대 맛집', zh: '弘大美食', en: 'Hongdae food' },
+                    { ko: '명동 쇼핑', zh: '明洞购物', en: 'Myeongdong shopping' },
+                    { ko: '강남 카페', zh: '江南咖啡', en: 'Gangnam cafe' },
+                    { ko: '한복 체험', zh: '韩服体验', en: 'Hanbok experience' },
+                    { ko: '경복궁', zh: '景福宫', en: 'Gyeongbokgung' },
+                    { ko: '성수동 팝업', zh: '圣水洞快闪', en: 'Seongsu popup' },
+                  ].map(s => (
+                    <button key={s.ko} onClick={() => handleSearch(L(lang, s))}
+                      style={{ background: '#FAFAFA', border: 'none', borderRadius: 20, padding: '7px 14px', fontSize: 13, color: '#C4725A', fontWeight: 600, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
+                      {L(lang, s)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 로딩 스켈레톤 */}
+            {query && loading && results.length === 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} style={{ borderRadius: 20, overflow: 'hidden', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
+                    <div className="skeleton" style={{ width: '100%', aspectRatio: '3/4' }} />
+                    <div style={{ padding: '10px 12px 14px' }}>
+                      <div className="skeleton" style={{ height: 14, marginBottom: 6, borderRadius: 4 }} />
+                      <div className="skeleton" style={{ height: 11, width: '60%', borderRadius: 4 }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* 결과 없음 */}
+            {query && !loading && results.length === 0 && (
+              <div style={{ textAlign: 'center', paddingTop: 60 }}>
+                <p style={{ fontSize: 32, marginBottom: 12 }}>🔍</p>
+                <p style={{ fontSize: 15, color: '#888' }}>{L(lang, { ko: '검색 결과가 없어요', zh: '没有找到结果', en: 'No results found' })}</p>
+              </div>
+            )}
+
+            {/* 결과 그리드 */}
+            {query && results.length > 0 && (
+              <>
+                <p style={{ fontSize: 13, color: '#888', marginBottom: 12 }}>
+                  {L(lang, { ko: `${total}건`, zh: `共${total}条`, en: `${total} results` })}
+                </p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {results.map(item => {
+                    const isFeed = 'gradient' in item && !item.source
+                    return (
+                      <div key={item.id}
+                        onClick={() => item.url && window.open(item.url, '_blank')}
+                        style={{ borderRadius: 20, overflow: 'hidden', background: '#FAFAFA', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF', cursor: item.url ? 'pointer' : 'default' }}
+                        onTouchStart={e => { e.currentTarget.style.transform = 'scale(0.97)'; e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' }}
+                        onTouchEnd={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}
+                      >
+                        <div style={{ width: '100%', aspectRatio: '3/4', background: item.image ? 'none' : (item.gradient || '#F0F0F0'), position: 'relative', overflow: 'hidden' }}>
+                          {item.image && <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" onError={e => { e.target.style.display = 'none' }} />}
+                          {item.source === 'tour' && (
+                            <span style={{ position: 'absolute', top: 8, left: 8, background: '#C4725A', color: 'white', fontSize: 9, fontWeight: 700, borderRadius: 6, padding: '2px 6px' }}>TourAPI</span>
+                          )}
+                        </div>
+                        <div style={{ padding: '10px 12px 14px' }}>
+                          <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.4, color: '#1A1A1A', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                            {isFeed ? t(item.titleKey) : item.title}
+                          </div>
+                          <div style={{ fontSize: 11, color: item.source === 'tour' ? '#C4725A' : '#888', marginTop: 6 }}>
+                            {item.source === 'tour'
+                              ? (item.addr?.replace('서울특별시 ', '').slice(0, 16) || 'TourAPI')
+                              : isFeed
+                                ? (item.locationKey ? t(item.locationKey) : 'NEAR')
+                                : (item.tags?.[0] ? `#${item.tags[0]}` : 'NEAR')
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       )}
 
       {/* ─── 에디토리얼 상세 페이지 ─── */}

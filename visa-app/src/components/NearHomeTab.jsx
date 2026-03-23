@@ -9,6 +9,7 @@ import { Search, X, ChevronRight, Heart, Scissors, Coffee,
   ArrowLeft, Route, Languages, Palette, Droplets, Building2,
   Sparkles, UtensilsCrossed, ArrowRight, Plus, Pencil } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
+import { searchKeyword } from '../api/tourApi'
 import { EDITORIALS } from '../data/editorials.js'
 import EditorialDetailPage from './EditorialDetailPage.jsx'
 import MorePage from './MorePage.jsx'
@@ -60,6 +61,33 @@ const TRANSLATE_ITEMS = [
   { id: 'artranslate',  emoji: '📸', label: { ko: '간판 사전',          zh: '招牌词典',         en: 'Sign Dictionary' },       tool: 'artranslate' },
   { id: 'basic-korean', emoji: '💬', label: { ko: '기본 한국어 20문장', zh: '基础韩语20句',     en: '20 Korean Phrases' },     sub: 'basic-korean' },
 ]
+
+// ─── TourAPI contentTypeId → NEAR 카테고리 ───
+const TOUR_CAT_MAP = { '82': 'food', '85': 'shopping', '76': 'beauty', '78': 'popup', '32': 'hotel', '38': 'hotel' }
+const TOUR_GRADIENTS = {
+  food: 'linear-gradient(160deg,#FFF3E0,#FFE0B2)',
+  shopping: 'linear-gradient(160deg,#FCE4EC,#F8BBD9)',
+  beauty: 'linear-gradient(160deg,#FFEEF0,#FFD6DC)',
+  popup: 'linear-gradient(160deg,#F3E5F5,#E1BEE7)',
+  hotel: 'linear-gradient(160deg,#E8F5E9,#C8E6C9)',
+  more: 'linear-gradient(160deg,#E8F4FF,#BBDEFB)',
+}
+function normalizeTourItem(item) {
+  const cat = TOUR_CAT_MAP[String(item.contentTypeId)] || 'more'
+  return {
+    id: `tour_${item.contentid}`,
+    title: item.title,
+    image: item.firstimage || item.firstimage2 || null,
+    gradient: (!item.firstimage && !item.firstimage2) ? TOUR_GRADIENTS[cat] : undefined,
+    url: (item.mapx && item.mapy)
+      ? `https://map.kakao.com/link/map/${encodeURIComponent(item.title)},${item.mapy},${item.mapx}`
+      : null,
+    category: cat,
+    tags: [],
+    addr: item.addr1 || '',
+    source: 'tour',
+  }
+}
 
 // ─── 히어로 배너 슬라이드 (2장: 팝업 배너 + 한남 에디토리얼) ───
 const HANNAM_ED = EDITORIALS.find(e => e.id === 'hannam')
@@ -507,9 +535,17 @@ export default function NearHomeTab({ setTab, setSubPage }) {
     setLoading(true)
     try {
       const searchTerm = lang === 'zh' ? zhToKo(term) : term
-      const { items, total: tot } = await searchArchive(searchTerm, catId, pg)
-      if (pg === 1) setResults(items); else setResults(prev => [...prev, ...items])
-      setTotal(tot); setPage(pg)
+      // TourAPI + 서울관광재단 아카이브 병렬 호출
+      const [tourRes, archiveRes] = await Promise.allSettled([
+        pg === 1 ? searchKeyword(term, { numOfRows: 12, areaCode: 1 }) : Promise.resolve({ items: [] }),
+        searchArchive(searchTerm, catId, pg),
+      ])
+      const tourItems = tourRes.status === 'fulfilled' ? tourRes.value.items.map(normalizeTourItem) : []
+      const archiveItems = archiveRes.status === 'fulfilled' ? (archiveRes.value.items || []) : []
+      const archiveTotal = archiveRes.status === 'fulfilled' ? (archiveRes.value.total || 0) : 0
+      const merged = pg === 1 ? [...tourItems, ...archiveItems] : archiveItems
+      if (pg === 1) setResults(merged); else setResults(prev => [...prev, ...merged])
+      setTotal(tourItems.length + archiveTotal); setPage(pg)
     } catch { setResults([]) }
     setLoading(false)
   }, [lang])
@@ -830,8 +866,13 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                     {isFeed ? t(item.titleKey) : item.title}
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                      {isFeed ? (item.locationKey ? t(item.locationKey) : (item.statusKey ? t(item.statusKey) : 'NEAR')) : (item.tags?.[0] ? `#${item.tags[0]}` : 'NEAR')}
+                    <span style={{ fontSize: 11, color: item.source === 'tour' ? '#C4725A' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
+                      {item.source === 'tour'
+                        ? (item.addr ? item.addr.replace('서울특별시 ', '').slice(0, 16) : 'TourAPI')
+                        : isFeed
+                          ? (item.locationKey ? t(item.locationKey) : (item.statusKey ? t(item.statusKey) : 'NEAR'))
+                          : (item.tags?.[0] ? `#${item.tags[0]}` : 'NEAR')
+                      }
                     </span>
                     <span style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
                       <Heart size={12} /> {isFeed ? item.likes : ''}

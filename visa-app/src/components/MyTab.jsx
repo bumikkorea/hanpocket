@@ -96,12 +96,7 @@ export default function MyTab({ setTab, setSubPage }) {
   const [nicknameInput,      setNicknameInput]     = useState('')
   const [selectedPurposes,   setSelectedPurposes]  = useState([])
 
-  useEffect(() => {
-    if (purposes === null) {
-      setSelectedPurposes([])
-      setPurposeModalOpen(true)
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  // 목적 선택은 온보딩 마지막 스텝에서 처리 (자동 팝업 제거)
 
   const bookingCount  = getStorageCount('near_bookings_v2')
   const favoriteCount = getStorageCount('near_my_seoul')

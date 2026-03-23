@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
 import { MapPin, MagnifyingGlass, ArrowLeft } from '@phosphor-icons/react'
 import { Search, Navigation, Car, Calendar, Heart, LayoutGrid, Sparkles, UtensilsCrossed, Shirt, Coffee, Store, Route as RouteIcon } from 'lucide-react'
 import { useNearPins } from '../hooks/usePopupStores'
@@ -301,8 +301,13 @@ export default function NearMap() {
   const overlaysRef = useRef([])        // { overlay, el, poi }[]
   const courseOverlaysRef = useRef([])  // { overlay, el, poi }[]
   const coursePolylineRef = useRef(null)
-  const touchStartY = useRef(0)
   const tempSearchMarkerRef = useRef(null) // 검색 결과 임시 핀
+
+  // ── 바텀 시트 드래그 ──
+  const sheetRef = useRef(null)
+  const dragRef = useRef(null)   // null = not dragging
+  const skipSnapRef = useRef(false)
+  const SHEET_PEEK = 124 // compact 상태에서 보이는 높이(px)
 
   const [mapReady, setMapReady] = useState(false)
   const [phIdx, setPhIdx] = useState(0)
@@ -614,12 +619,75 @@ export default function NearMap() {
     ? [...allPins].sort((a, b) => b.view_count_7d - a.view_count_7d).slice(0, 3)
     : []
 
-  // ── 스와이프 제스처 (아래로만 → 닫기) ──
-  const handleTouchStart = (e) => { touchStartY.current = e.touches[0].clientY }
-  const handleTouchEnd = (e) => {
-    const delta = e.changedTouches[0].clientY - touchStartY.current
-    if (delta > 60 && isExpanded) closeSheet()
-  }
+  // ── 시트 스냅 (transform 기반, GPU 가속) ──
+  const snapSheet = useCallback((expanded, velPxS = 0) => {
+    const el = sheetRef.current
+    if (!el) return
+    const dur = Math.abs(velPxS) > 500 ? 0.26 : 0.44
+    el.style.transition = `transform ${dur}s cubic-bezier(0.22, 1, 0.36, 1)`
+    el.style.transform = expanded ? 'translateY(0)' : `translateY(${el.offsetHeight - SHEET_PEEK}px)`
+  }, [SHEET_PEEK])
+
+  // isExpanded 상태가 드래그 없이 바뀔 때 (핀 클릭, X 버튼 등)
+  useLayoutEffect(() => {
+    if (skipSnapRef.current) { skipSnapRef.current = false; return }
+    snapSheet(isExpanded)
+  }, [isExpanded, snapSheet])
+
+  // 지도 로드 완료 후 초기 위치 세팅
+  useEffect(() => {
+    if (!mapReady) return
+    const el = sheetRef.current
+    if (!el) return
+    el.style.transition = 'none'
+    el.style.transform = `translateY(${el.offsetHeight - SHEET_PEEK}px)`
+  }, [mapReady, SHEET_PEEK])
+
+  // ── 드래그 핸들러 ──
+  const onDragStart = useCallback((e) => {
+    const el = sheetRef.current
+    if (!el) return
+    el.style.transition = 'none'
+    const ty = new DOMMatrix(getComputedStyle(el).transform).m42
+    dragRef.current = { sy: e.touches[0].clientY, stTY: ty, ly: e.touches[0].clientY, lt: Date.now(), vel: 0 }
+  }, [])
+
+  const onDragMove = useCallback((e) => {
+    const d = dragRef.current
+    if (!d) return
+    const y = e.touches[0].clientY
+    const now = Date.now()
+    const dt = now - d.lt
+    if (dt > 0) d.vel = (y - d.ly) / dt * 1000
+    d.ly = y; d.lt = now
+    const el = sheetRef.current
+    if (!el) return
+    el.style.transform = `translateY(${Math.max(0, d.stTY + y - d.sy)}px)`
+  }, [])
+
+  const onDragEnd = useCallback(() => {
+    const d = dragRef.current
+    dragRef.current = null
+    if (!d) return
+    const el = sheetRef.current
+    if (!el) return
+    const ty = new DOMMatrix(getComputedStyle(el).transform).m42
+    const h = el.offsetHeight
+    const goExpand = d.vel < -300 || (!isExpanded && ty < (h - SHEET_PEEK) * 0.5)
+    const goCollapse = d.vel > 300 || (isExpanded && ty > 80)
+
+    if (goExpand && sheetPoi && !isExpanded) {
+      skipSnapRef.current = true
+      snapSheet(true, d.vel)
+      selectPin(sheetPoi)
+    } else if (goCollapse && isExpanded) {
+      skipSnapRef.current = true
+      snapSheet(false, d.vel)
+      closeSheet()
+    } else {
+      snapSheet(isExpanded)
+    }
+  }, [isExpanded, sheetPoi, snapSheet, selectPin, closeSheet, SHEET_PEEK])
 
   return (
     <div style={{ position: 'relative', height: 'calc(100dvh - 116px)', overflow: 'hidden', background: 'var(--surface)' }}>
@@ -752,18 +820,18 @@ export default function NearMap() {
 
       {/* ─── 바텀 시트 ─── */}
       <div
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
+        ref={sheetRef}
+        onTouchStart={activeCourseId ? undefined : onDragStart}
+        onTouchMove={activeCourseId ? undefined : onDragMove}
+        onTouchEnd={activeCourseId ? undefined : onDragEnd}
         style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 20,
-          height: isExpanded ? 'auto' : (activeCourseId ? '50dvh' : 'auto'),
-          maxHeight: isExpanded ? '60dvh' : (activeCourseId ? '50dvh' : 'auto'),
-          minHeight: 124,
-          transition: 'max-height 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          height: activeCourseId ? '50dvh' : '68dvh',
+          willChange: 'transform',
           background: '#FAFAFA', borderRadius: '24px 24px 0 0',
           boxShadow: '0 -8px 24px rgba(200,200,200,0.4), 0 -2px 8px rgba(255,255,255,0.9)',
           overflowX: 'hidden',
-          overflowY: (isExpanded || activeCourseId) ? 'auto' : 'hidden',
+          overflowY: isExpanded || activeCourseId ? 'auto' : 'hidden',
         }}
       >
         {isExpanded && sheetPoi ? (

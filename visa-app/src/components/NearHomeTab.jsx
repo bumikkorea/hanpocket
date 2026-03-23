@@ -518,7 +518,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   const [archiveIdx, setArchiveIdx] = useState(0)
   const archiveTouchRef = useRef(null)
   useEffect(() => {
-    const iv = setInterval(() => setArchiveIdx(i => (i + 1) % ARCHIVE_IMAGES.length), 3000)
+    const iv = setInterval(() => setArchiveIdx(i => (i + 1) % ARCHIVE_IMAGES.length), 4000)
     return () => clearInterval(iv)
   }, [])
 
@@ -944,50 +944,60 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 서울관광재단 아카이브 슬라이더 ─── */}
-      {!showSearch && !selectedCategory && (() => {
-        const img = ARCHIVE_IMAGES[archiveIdx]
-        return (
-          <div style={{ padding: '8px 20px 24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
-                {L(lang, { ko: '서울 풍경', zh: '首尔风景', en: 'Seoul Scenes' })}
-              </span>
-              <span style={{ fontSize: 11, color: 'var(--text-hint)' }}>© Seoul Tourism Archive</span>
-            </div>
-            <div
-              style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', height: 200, cursor: 'pointer', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}
-              onTouchStart={e => { archiveTouchRef.current = e.touches[0].clientX }}
-              onTouchEnd={e => {
-                if (archiveTouchRef.current === null) return
-                const diff = archiveTouchRef.current - e.changedTouches[0].clientX
-                if (Math.abs(diff) > 40) {
-                  if (diff > 0) setArchiveIdx(i => (i + 1) % ARCHIVE_IMAGES.length)
-                  else setArchiveIdx(i => (i - 1 + ARCHIVE_IMAGES.length) % ARCHIVE_IMAGES.length)
-                }
-                archiveTouchRef.current = null
-              }}
-              onClick={() => window.open('https://archive.visitseoul.net', '_blank')}
-            >
-              <img
-                key={archiveIdx}
-                src={img.src}
-                alt={L(lang, img.caption)}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                loading="lazy"
-              />
-              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%)' }} />
-              <div style={{ position: 'absolute', bottom: 12, left: 16, right: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                <span style={{ fontSize: 17, fontWeight: 700, color: 'white' }}>{L(lang, img.caption)}</span>
-                <div style={{ display: 'flex', gap: 4 }}>
-                  {ARCHIVE_IMAGES.map((_, i) => (
-                    <div key={i} style={{ width: i === archiveIdx ? 12 : 4, height: 4, borderRadius: 4, background: i === archiveIdx ? 'white' : 'rgba(255,255,255,0.4)', transition: 'all 0.3s' }} />
-                  ))}
+      {!showSearch && !selectedCategory && (
+        <div style={{ padding: '8px 20px 24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <span style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
+              {L(lang, { ko: '서울 풍경', zh: '首尔风景', en: 'Seoul Scenes' })}
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--text-hint)' }}>© Seoul Tourism Archive</span>
+          </div>
+          <div
+            style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', height: 200, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF', cursor: 'pointer' }}
+            onTouchStart={e => { archiveTouchRef.current = e.touches[0].clientX }}
+            onTouchEnd={e => {
+              if (archiveTouchRef.current === null) return
+              const diff = archiveTouchRef.current - e.changedTouches[0].clientX
+              if (Math.abs(diff) > 40) {
+                if (diff > 0) setArchiveIdx(i => (i + 1) % ARCHIVE_IMAGES.length)
+                else setArchiveIdx(i => (i - 1 + ARCHIVE_IMAGES.length) % ARCHIVE_IMAGES.length)
+              }
+              archiveTouchRef.current = null
+            }}
+            onClick={() => window.open('https://archive.visitseoul.net', '_blank')}
+          >
+            {/* 슬라이딩 스트립 */}
+            <div style={{
+              display: 'flex',
+              width: `${ARCHIVE_IMAGES.length * 100}%`,
+              height: '100%',
+              transform: `translateX(-${archiveIdx * (100 / ARCHIVE_IMAGES.length)}%)`,
+              transition: 'transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            }}>
+              {ARCHIVE_IMAGES.map((img, i) => (
+                <div key={i} style={{ position: 'relative', width: `${100 / ARCHIVE_IMAGES.length}%`, flexShrink: 0, height: '100%' }}>
+                  <img
+                    src={img.src}
+                    alt={L(lang, img.caption)}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    loading="lazy"
+                  />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%)' }} />
+                  <div style={{ position: 'absolute', bottom: 12, left: 16, right: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <span style={{ fontSize: 17, fontWeight: 700, color: 'white' }}>{L(lang, img.caption)}</span>
+                  </div>
                 </div>
-              </div>
+              ))}
+            </div>
+            {/* 도트 인디케이터 */}
+            <div style={{ position: 'absolute', bottom: 12, right: 16, display: 'flex', gap: 4 }}>
+              {ARCHIVE_IMAGES.map((_, i) => (
+                <div key={i} style={{ width: i === archiveIdx ? 12 : 4, height: 4, borderRadius: 4, background: i === archiveIdx ? 'white' : 'rgba(255,255,255,0.4)', transition: 'all 0.3s' }} />
+              ))}
             </div>
           </div>
-        )
-      })()}
+        </div>
+      )}
 
       {/* ─── 입국 풀스크린 ─── */}
       <FullPage

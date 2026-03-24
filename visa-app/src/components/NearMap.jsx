@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
 import { MapPin, MagnifyingGlass, ArrowLeft } from '@phosphor-icons/react'
-import { Search, Navigation, Car, Calendar, Heart, LayoutGrid, Sparkles, UtensilsCrossed, Shirt, Coffee, Store, Route as RouteIcon } from 'lucide-react'
+import { Search, Navigation, Bus, Car, Calendar, Heart, LayoutGrid, Sparkles, UtensilsCrossed, Shirt, Coffee, Store, Route as RouteIcon } from 'lucide-react'
 import { useNearPins } from '../hooks/usePopupStores'
 import TaxiCardView from './TaxiCardView.jsx'
 import PlaceDetail from './PlaceDetail.jsx'
@@ -238,19 +238,16 @@ function MagicPillSelector({ areas, lang, onSelect }) {
       <button
         onClick={toggleDropdown}
         onTouchEnd={(e) => e.stopPropagation()}
-        className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-bold"
         style={{
-          background: '#FAFAFA',
-          color: '#1A1A1A',
-          boxShadow: expanded
-            ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
-            : '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+          width: 44, height: 44, borderRadius: '50%',
+          background: '#FAFAFA', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: expanded ? '0 0 0 1.5px rgba(0,0,0,0.15) inset' : '0 2px 8px rgba(0,0,0,0.12)',
           transition: 'box-shadow 0.15s ease',
+          fontSize: 10, color: '#555',
         }}
       >
-        <MapPin size={14} weight="fill" />
-        {tLang(selected.key, lang)}
-        <span className="text-[10px] opacity-60 ml-0.5">{expanded ? '▲' : '▼'}</span>
+        {expanded ? '▲' : '▼'}
       </button>
 
       {expanded && (
@@ -258,7 +255,7 @@ function MagicPillSelector({ areas, lang, onSelect }) {
           <div className="fixed inset-0 z-30" onClick={closeDropdown} onTouchEnd={closeDropdown} />
           <div
             className="absolute top-full right-0 mt-2 z-40 rounded-[16px] py-1 overflow-hidden"
-            style={{ background: '#FAFAFA', boxShadow: '8px 8px 18px rgba(200,200,200,0.5), -8px -8px 18px #FFFFFF', minWidth: 148 }}
+            style={{ background: '#FAFAFA', boxShadow: '8px 8px 18px rgba(200,200,200,0.5), -8px -8px 18px #FFFFFF', minWidth: 120 }}
             onTouchEnd={(e) => e.stopPropagation()}
           >
             {areas.map((area) => {
@@ -268,20 +265,13 @@ function MagicPillSelector({ areas, lang, onSelect }) {
                   key={area.id}
                   onClick={(e) => handleSelect(area, e)}
                   onTouchEnd={(e) => e.stopPropagation()}
-                  className="w-full px-4 py-2.5 flex items-center gap-2 cursor-pointer select-none transition-colors duration-100"
+                  className="w-full px-3 py-2 flex items-center gap-1.5 cursor-pointer select-none transition-colors duration-100"
                   style={{ background: isCurrent ? 'rgba(196,114,90,0.06)' : 'transparent', color: isCurrent ? '#C4725A' : '#1A1A1A' }}
                 >
-                  <span className="w-4 flex items-center justify-center">
-                    {isCurrent ? <MapPin size={14} weight="duotone" color="#C4725A" /> : null}
-                  </span>
-                  <span className={`text-[13px] ${isCurrent ? 'font-bold' : 'font-medium'}`}>
+                  {isCurrent && <MapPin size={11} weight="fill" color="#C4725A" />}
+                  <span className={`text-[12px] ${isCurrent ? 'font-bold' : 'font-medium'}`}>
                     {tLang(area.key, lang)}
                   </span>
-                  {isCurrent && (
-                    <span className="text-[10px] text-[#999] ml-auto">
-                      {tLang('area_current', lang)}
-                    </span>
-                  )}
                 </button>
               )
             })}
@@ -330,6 +320,7 @@ export default function NearMap() {
   const [courseMode, setCourseMode] = useState(false)
   const [activeCourseId, setActiveCourseId] = useState(null)
   const [showMyPanel, setShowMyPanel] = useState(false)
+  const [showAllPanel, setShowAllPanel] = useState(false)
   const [reservationPoi, setReservationPoi] = useState(null)
   const [statusTick, setStatusTick] = useState(0)      // 1분 간격 영업상태 갱신
   const [mapMoveStamp, setMapMoveStamp] = useState(0)  // 지도 이동 시 핀 재조회
@@ -623,8 +614,8 @@ export default function NearMap() {
   const snapSheet = useCallback((expanded, velPxS = 0) => {
     const el = sheetRef.current
     if (!el) return
-    const dur = Math.abs(velPxS) > 500 ? 0.26 : 0.44
-    el.style.transition = `transform ${dur}s cubic-bezier(0.22, 1, 0.36, 1)`
+    const dur = Math.abs(velPxS) > 500 ? 0.32 : 0.6
+    el.style.transition = `transform ${dur}s cubic-bezier(0.16, 1, 0.3, 1)`
     el.style.transform = expanded ? 'translateY(0)' : `translateY(${el.offsetHeight - SHEET_PEEK}px)`
   }, [SHEET_PEEK])
 
@@ -702,10 +693,10 @@ export default function NearMap() {
         }}
       />
 
-      {/* ─── 지도 탭 클릭 → 바텀 시트 닫기 (확장 상태에서만) ─── */}
-      {isExpanded && (
+      {/* ─── 지도 탭 클릭 → 바텀 시트 닫기 ─── */}
+      {sheetPoi && (
         <div
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: '120px', zIndex: 8 }}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: SHEET_PEEK, zIndex: 8 }}
           onClick={closeSheet}
         />
       )}
@@ -718,7 +709,7 @@ export default function NearMap() {
         <div style={{
           background: '#FAFAFA',
           borderRadius: 50,
-          boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
           display: 'flex', alignItems: 'center',
           padding: '0 14px', height: 44, gap: 8,
           transition: 'box-shadow 0.15s ease',
@@ -753,70 +744,118 @@ export default function NearMap() {
           width: 44, height: 44, borderRadius: '50%',
           background: '#FAFAFA', border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
           transition: 'box-shadow 0.15s ease',
         }}
-        onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'}
-        onTouchEnd={e => e.currentTarget.style.boxShadow = '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF'}
+        onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'}
+        onTouchEnd={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)'}
       >
         <Navigation size={18} color="#C4725A" />
       </button>
 
       {/* ─── 카테고리 칩 ─── */}
-      <div style={{
-        position: 'absolute', top: 70, left: 0, right: IS_DEV ? 56 : 0, zIndex: 9,
-        display: 'flex', gap: 8, overflowX: 'auto',
-        padding: '0 20px', scrollbarWidth: 'none',
-      }}>
-        {CATEGORY_CHIPS.map(chip => {
-          const active = activeCategory === chip.id && !courseMode
-          const ChipIcon = chip.Icon
-          return (
+      <div style={{ position: 'absolute', top: 70, left: 0, right: IS_DEV ? 56 : 0, zIndex: 9 }}>
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 20px', scrollbarWidth: 'none' }}>
+          {CATEGORY_CHIPS.map(chip => {
+            const active = activeCategory === chip.id && !courseMode
+            const ChipIcon = chip.Icon
+            return (
+              <button
+                key={chip.id}
+                onClick={() => {
+                  setActiveCategory(chip.id)
+                  closeSheet()
+                  exitCourseMode()
+                  setShowAllPanel(chip.id === 'all' ? v => !v : false)
+                }}
+                style={{
+                  flexShrink: 0,
+                  height: 34, minWidth: 44,
+                  background: active ? '#1A1A1A' : 'white',
+                  color: active ? 'white' : '#555',
+                  border: active ? 'none' : '1px solid rgba(0,0,0,0.10)',
+                  borderRadius: 24, padding: '0 13px',
+                  fontSize: 13, fontWeight: active ? 700 : 500,
+                  boxShadow: active ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.08)',
+                  transition: 'all 0.15s ease',
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  cursor: 'pointer',
+                }}
+              >
+                {ChipIcon && <ChipIcon size={13} color={active ? 'white' : '#888'} />}
+                {tLang(chip.key, lang)}
+              </button>
+            )
+          })}
+          {/* 코스 토글 칩 */}
+          <button
+            onClick={() => { if (courseMode) exitCourseMode(); else { setCourseMode(true); closeSheet() } }}
+            style={{
+              flexShrink: 0,
+              height: 34, minWidth: 44,
+              background: courseMode ? '#1A1A1A' : 'white',
+              color: courseMode ? 'white' : '#555',
+              border: courseMode ? 'none' : '1px solid rgba(0,0,0,0.10)',
+              borderRadius: 24, padding: '0 13px',
+              fontSize: 13, fontWeight: courseMode ? 700 : 500,
+              boxShadow: courseMode ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.08)',
+              transition: 'all 0.15s ease',
+              display: 'flex', alignItems: 'center', gap: 4,
+              cursor: 'pointer',
+            }}
+          >
+            <RouteIcon size={13} color={courseMode ? 'white' : '#888'} />
+            {tLang('course_toggle', lang)}
+          </button>
+        </div>
+      </div>
+
+      {/* ─── 전체 슬라이드 패널 ─── */}
+      <div
+        style={{
+          position: 'absolute', top: 0, left: 0, bottom: 0, width: '40%',
+          background: 'white', zIndex: 12,
+          transform: showAllPanel ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 0.75s cubic-bezier(0.16, 1, 0.3, 1)',
+          boxShadow: '6px 0 24px rgba(0,0,0,0.08)',
+          display: 'flex', flexDirection: 'column',
+        }}
+        onTouchEnd={e => e.stopPropagation()}
+      >
+        <div style={{ padding: '72px 14px 10px', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+            {tLang('cat_all', lang)}
+          </p>
+        </div>
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {filteredPins.slice(0, 40).map(pin => (
             <button
-              key={chip.id}
-              onClick={() => { setActiveCategory(chip.id); closeSheet(); exitCourseMode() }}
+              key={pin.id}
+              onClick={() => { selectPin(pin); setShowAllPanel(false) }}
               style={{
-                flexShrink: 0,
-                height: 36, minWidth: 44,
-                background: '#FAFAFA',
-                color: active ? '#C4725A' : '#666666',
-                border: 'none',
-                borderRadius: 24, padding: '0 14px',
-                fontSize: 13, fontWeight: active ? 700 : 600,
-                boxShadow: active
-                  ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
-                  : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
-                transition: 'all 0.15s ease',
-                display: 'flex', alignItems: 'center', gap: 4,
+                width: '100%', padding: '11px 14px', textAlign: 'left',
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                borderBottom: '1px solid rgba(0,0,0,0.04)',
               }}
             >
-              {ChipIcon && <ChipIcon size={14} color={active ? '#C4725A' : '#999999'} />}
-              {tLang(chip.key, lang)}
+              <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1A1A', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {pin.name_ko || pin.name_zh}
+              </p>
+              {pin.category && (
+                <p style={{ fontSize: 11, color: '#aaa', margin: '2px 0 0' }}>
+                  {pin.category}
+                </p>
+              )}
             </button>
-          )
-        })}
-        {/* 코스 토글 칩 */}
-        <button
-          onClick={() => { if (courseMode) exitCourseMode(); else { setCourseMode(true); closeSheet() } }}
-          style={{
-            flexShrink: 0,
-            height: 36, minWidth: 44,
-            background: '#FAFAFA',
-            color: courseMode ? '#C4725A' : '#666666',
-            border: 'none',
-            borderRadius: 24, padding: '0 14px',
-            fontSize: 13, fontWeight: courseMode ? 700 : 600,
-            boxShadow: courseMode
-              ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
-              : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
-            transition: 'all 0.15s ease',
-            display: 'flex', alignItems: 'center', gap: 4,
-          }}
-        >
-          <RouteIcon size={14} color={courseMode ? '#C4725A' : '#999999'} />
-          {tLang('course_toggle', lang)}
-        </button>
+          ))}
+        </div>
       </div>
+      {showAllPanel && (
+        <div
+          style={{ position: 'absolute', inset: 0, zIndex: 11 }}
+          onClick={() => setShowAllPanel(false)}
+        />
+      )}
 
       {/* ─── 바텀 시트 ─── */}
       <div
@@ -1140,8 +1179,8 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <Navigation size={15} />
-            {tLang('navigate_here', lang)}
+            <Bus size={15} />
+            {{ ko: '대중교통', zh: '公共交通', en: 'Bus/Subway' }[lang] || 'Bus/Subway'}
           </button>
           <button
             onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', userPos)}

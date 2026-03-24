@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
-import { Volume2, Copy, Check, ChevronLeft, Search, Building2, Pill, Shield, Home, Landmark, Banknote, ShoppingCart, Car, MessageSquare, Languages, Heart, Utensils, BookOpen } from 'lucide-react'
+import { Volume2, Copy, Check, ChevronLeft, Search, Building2, Pill, Shield, Home, Landmark, Banknote, ShoppingCart, Car, MessageSquare, Languages, Heart, Utensils, BookOpen, Mic, Camera } from 'lucide-react'
 import { trackTranslation, trackEvent } from '../utils/analytics'
+import LiveTranslatorPage from './LiveTranslatorPage.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -237,6 +238,7 @@ function speak(text) {
 const FAVORITES_KEY = 'hp_translator_favorites'
 
 export default function TranslatorTab({ lang }) {
+  const [showLive, setShowLive] = useState(false)
   const [selected, setSelected] = useState(null)
   const [customText, setCustomText] = useState('')
   const [customResult, setCustomResult] = useState('')
@@ -428,8 +430,32 @@ export default function TranslatorTab({ lang }) {
     )
   }
 
+  if (showLive) return <LiveTranslatorPage lang={lang} onBack={() => setShowLive(false)} />
+
   return (
     <div className="space-y-5 animate-fade-up">
+      {/* ── 실시간 통역기 A·B·C·D ── */}
+      <button
+        onClick={() => setShowLive(true)}
+        style={{
+          width: '100%', borderRadius: 16, padding: '16px 18px',
+          background: '#1A1A1A', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left',
+        }}
+      >
+        <div style={{ width: 44, height: 44, borderRadius: 12, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Mic size={22} color="white" />
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <p style={{ fontSize: 14, fontWeight: 700, color: 'white', margin: '0 0 3px' }}>
+            실시간 통역기
+          </p>
+          <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', margin: 0 }}>
+            🎤음성 · 📝텍스트 · 📷카메라  ·  A Qwen / B DeepSeek / C Google / D Qwen-MT
+          </p>
+        </div>
+        <Camera size={16} color="rgba(255,255,255,0.4)" style={{ flexShrink: 0 }} />
+      </button>
       {/* Real-time translation */}
       <div className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow">
         <div className="flex items-center justify-between mb-3">

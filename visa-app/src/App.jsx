@@ -778,7 +778,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
   }
 
   return (
-    <div className="min-h-screen p-4 pb-32 font-['Inter']" style={{ backgroundColor: '#FFFFFF' }}>
+    <div className="p-4 pb-20 font-['Inter']" style={{ backgroundColor: '#FFFFFF' }}>
       {/* 메인 프로필 카드 */}
       <div className="rounded-2xl p-6 border border-[#E5E7EB]" style={{ backgroundColor: '#FFFFFF' }}>
         {/* 프로필 헤더 */}
@@ -1688,23 +1688,12 @@ function AppInner() {
     return () => document.removeEventListener('pointerdown', handler)
   }, [showLangMenu])
 
-  // 스크롤 시 하단탭 숨김/표시
+  // 스크롤 시 맨위로 버튼만 제어 (하단탭은 항상 고정)
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY
-      const delta = currentY - lastScrollY.current
-      // 스크롤 방향 감지 (10px 이상 움직였을 때만)
-      if (Math.abs(delta) > 10) {
-        setBottomBarVisible(delta < 0) // 위로 스크롤 = 보임, 아래로 스크롤 = 숨김
-      }
-      // 맨 위면 항상 보임
-      if (currentY <= 10) setBottomBarVisible(true)
-      // 300px 이상 스크롤하면 맨위로 버튼 표시
       setShowScrollTop(currentY > 300)
       lastScrollY.current = currentY
-      // 스크롤 멈추면 2초 후 다시 보임
-      if (scrollTimeout.current) clearTimeout(scrollTimeout.current)
-      scrollTimeout.current = setTimeout(() => setBottomBarVisible(true), 2000)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
@@ -1982,7 +1971,7 @@ function AppInner() {
   }
 
   return (
-    <div className="min-h-screen pb-32" style={{ backgroundColor: '#FFFFFF' }}>
+    <div className="pb-20" style={{ backgroundColor: '#FFFFFF' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
@@ -2708,7 +2697,7 @@ function AppInner() {
       {/* Location Context Bar */}
       {!locationBarDismissed && (
       <div className="fixed left-0 right-0 z-50 safe-bottom transition-transform duration-300"
-        style={{ bottom: '64px', transform: bottomBarVisible ? 'translateY(0)' : 'translateY(calc(100% + 64px))' }}
+        style={{ bottom: '64px', transform: 'translateY(0)' }}
         onClick={() => { setLocationBarDismissed(true); localStorage.setItem('loc_bar_dismissed', '1') }}>
         <div className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-full bg-[#1A1A1A]/90 backdrop-blur-md cursor-pointer">
           <MapPin size={14} className="text-[#C4725A] flex-shrink-0" />
@@ -2727,7 +2716,7 @@ function AppInner() {
         className="fixed z-50 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-all duration-300"
         style={{
           right: '16px',
-          bottom: bottomBarVisible ? '80px' : '20px',
+          bottom: '80px',
           backgroundColor: '#FFFFFF',
           border: '1px solid #E5E7EB',
           opacity: showScrollTop ? 1 : 0,
@@ -2745,7 +2734,7 @@ function AppInner() {
           borderTop: '0.5px solid var(--border)',
           height: '56px',
           paddingBottom: 'env(safe-area-inset-bottom)',
-          transform: bottomBarVisible ? 'translateY(0)' : 'translateY(100%)',
+          transform: 'translateY(0)',
         }}>
         <div className="flex items-center justify-around h-full">
           {bottomTabs.map(item => {

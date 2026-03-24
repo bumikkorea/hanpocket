@@ -1867,7 +1867,7 @@ function AppInner() {
               case 'medical': setTab('medical'); break;
               case 'finance': setTab('finance'); break;
               case 'resume': setTab('resume'); break;
-              case 'translator': setTab('translator'); break;
+              case 'translator': setSubPage('translator'); break;
               case 'artranslate': setTab('artranslate'); break;
               case 'wallet': setTab('wallet'); break;
               default: break;

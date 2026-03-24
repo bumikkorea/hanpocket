@@ -45,6 +45,7 @@ const TravelTab = lazy(() => import('./components/TravelTab'))
 const FoodTab = lazy(() => import('./components/FoodTab'))
 const HallyuTab = lazy(() => import('./components/HallyuTab'))
 const TranslatorTab = lazy(() => import('./components/TranslatorTab'))
+const LiveTranslatorPage = lazy(() => import('./components/LiveTranslatorPage'))
 const ARTranslateTab = lazy(() => import('./components/ARTranslateTab'))
 const SOSTab = lazy(() => import('./components/SOSTab'))
 const CommunityTab = lazy(() => import('./components/CommunityTab'))
@@ -2267,7 +2268,7 @@ function AppInner() {
         )}
         {subPage==='translator' && (
           <Suspense fallback={<div />}>
-            <TranslatorTab lang={lang} />
+            <LiveTranslatorPage lang={lang} onBack={() => setSubPage(null)} />
           </Suspense>
         )}
         {subPage==='artranslate' && (

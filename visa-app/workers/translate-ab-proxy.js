@@ -132,11 +132,11 @@ export default {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.QWEN_API_KEY}` },
           body: JSON.stringify({
-            model: 'qwen-omni-turbo',
+            model: 'qwen3-omni-flash',
             messages: [{
               role: 'user',
               content: [
-                { type: 'input_audio', input_audio: { data: audioData, format: audioFormat } },
+                { type: 'input_audio', input_audio: { data: audioData, format: audioFormat === 'webm' ? 'ogg' : audioFormat } },
                 { type: 'text', text: instrText },
               ],
             }],

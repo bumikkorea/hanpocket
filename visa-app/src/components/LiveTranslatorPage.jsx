@@ -21,12 +21,7 @@ const MODES = [
   { id: 'camera', icon: '📷', sub: '',   label: '카메라' },
 ]
 
-const MODELS = [
-  { id: 'a', name: 'Qwen 3.5+',   color: '#7C3AED', bg: '#FAF5FF' },
-  { id: 'b', name: 'DeepSeek V3', color: '#2563EB', bg: '#EFF6FF' },
-  { id: 'd', name: 'Qwen MT',     color: '#DC2626', bg: '#FFF5F5' },
-  { id: 'c', name: 'Google',      color: '#059669', bg: '#F0FDF4' },
-]
+const GOOGLE_MODEL = { id: 'c', name: 'Google', color: '#059669', bg: '#F0FDF4' }
 
 async function googleTranslate(text, from, to) {
   const sl = from === 'zh' ? 'zh-CN' : 'ko'
@@ -35,17 +30,6 @@ async function googleTranslate(text, from, to) {
   const r = await fetch(url)
   const d = await r.json()
   return d[0].map(s => s[0]).join('')
-}
-
-async function workerTranslate(endpoint, text, from, to) {
-  const r = await fetch(`${PROXY}${endpoint}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, from, to }),
-  })
-  const d = await r.json()
-  if (d.error) throw new Error(d.error)
-  return d.result
 }
 
 function fileToBase64(file) {
@@ -133,9 +117,10 @@ export default function LiveTranslatorPage({ lang, onBack }) {
   const [mode, setMode]           = useState('v2v')
   const [inputText, setInputText] = useState('')
   const [interimText, setInterimText] = useState('')
-  const [results, setResults]     = useState({ a: '', b: '', c: '', d: '' })
-  const [loading, setLoading]     = useState({ a: false, b: false, c: false, d: false })
-  const [latency, setLatency]     = useState({ a: null, b: null, c: null, d: null })
+  const [googleResult, setGoogleResult] = useState('')
+  const [googleLoading, setGoogleLoading] = useState(false)
+  const [googleLatency, setGoogleLatency] = useState(null)
+  const [speakingGoogle, setSpeakingGoogle] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [speakingId, setSpeakingId]   = useState(null)   // 현재 재생 중인 모델 ID
   const [cameraImg, setCameraImg] = useState(null)
@@ -229,54 +214,43 @@ export default function LiveTranslatorPage({ lang, onBack }) {
     mediaRecRef.current?.stop()
   }, [])
 
-  // 음성 출력 토글
-  const toggleSpeak = useCallback((modelId) => {
-    if (speakingId === modelId) {
+  // Google 음성 출력 토글
+  const toggleGoogleSpeak = useCallback(() => {
+    if (speakingGoogle) {
       window.speechSynthesis?.cancel()
-      setSpeakingId(null)
+      setSpeakingGoogle(false)
       return
     }
-    const text = results[modelId]
-    if (!text || !window.speechSynthesis) return
+    if (!googleResult || !window.speechSynthesis) return
     window.speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(text)
+    const u = new SpeechSynthesisUtterance(googleResult)
     u.lang = dir.toLang
     u.rate = 0.88
-    u.onend = () => setSpeakingId(null)
-    u.onerror = () => setSpeakingId(null)
-    setSpeakingId(modelId)
+    u.onend = () => setSpeakingGoogle(false)
+    u.onerror = () => setSpeakingGoogle(false)
+    setSpeakingGoogle(true)
     window.speechSynthesis.speak(u)
-  }, [speakingId, results, dir.toLang])
+  }, [speakingGoogle, googleResult, dir.toLang])
 
-  // 전체 모델 병렬 번역
+  // Google 번역
   const translateAll = useCallback(async (text) => {
     if (!text?.trim()) return
     const { from, to } = dir
     window.speechSynthesis?.cancel()
-    setSpeakingId(null)
-    setLoading({ a: true, b: true, c: true, d: true })
-    setLatency({ a: null, b: null, c: null, d: null })
-    setResults({ a: '', b: '', c: '', d: '' })
-
-    const timed = async (key, fn) => {
-      const t0 = Date.now()
-      try {
-        const result = await fn()
-        setResults(p => ({ ...p, [key]: result }))
-        setLatency(p => ({ ...p, [key]: Date.now() - t0 }))
-      } catch (err) {
-        setResults(p => ({ ...p, [key]: `(오류: ${err.message.slice(0, 50)})` }))
-      } finally {
-        setLoading(p => ({ ...p, [key]: false }))
-      }
+    setSpeakingGoogle(false)
+    setGoogleLoading(true)
+    setGoogleLatency(null)
+    setGoogleResult('')
+    const t0 = Date.now()
+    try {
+      const result = await googleTranslate(text, from, to)
+      setGoogleResult(result)
+      setGoogleLatency(Date.now() - t0)
+    } catch (err) {
+      setGoogleResult(`(오류: ${err.message.slice(0, 50)})`)
+    } finally {
+      setGoogleLoading(false)
     }
-
-    await Promise.all([
-      timed('a', () => workerTranslate('/translate/a', text, from, to)),
-      timed('b', () => workerTranslate('/translate/b', text, from, to)),
-      timed('d', () => workerTranslate('/translate/d', text, from, to)),
-      timed('c', () => googleTranslate(text, from, to)),
-    ])
   }, [dir])
 
   const handleTextInput = useCallback((text) => {
@@ -347,11 +321,9 @@ export default function LiveTranslatorPage({ lang, onBack }) {
     mediaRecRef.current?.stop()
     if (omniAudioRef.current) { omniAudioRef.current.pause(); omniAudioRef.current = null }
     window.speechSynthesis?.cancel()
-    setSpeakingId(null)
+    setSpeakingGoogle(false)
     setInputText(''); setInterimText(''); setOcrText('')
-    setResults({ a: '', b: '', c: '', d: '' })
-    setLoading({ a: false, b: false, c: false, d: false })
-    setLatency({ a: null, b: null, c: null, d: null })
+    setGoogleResult(''); setGoogleLoading(false); setGoogleLatency(null)
     setCameraImg(null)
     setOmniResult({ text: '', audio: '' })
     setOmniLoading(false)
@@ -360,7 +332,7 @@ export default function LiveTranslatorPage({ lang, onBack }) {
     setIsRecording(false)
   }
 
-  const showPlay = mode !== 'v2t'   // 음성→텍스트만 재생 버튼 숨김
+  const showPlay = mode !== 'v2t'
 
   return (
     <div style={{
@@ -375,7 +347,7 @@ export default function LiveTranslatorPage({ lang, onBack }) {
           <ChevronLeft size={22} color="#1A1A1A" />
         </button>
         <span style={{ fontSize: 15, fontWeight: 700 }}>실시간 통역기</span>
-        <span style={{ fontSize: 11, color: '#bbb', marginLeft: 6 }}>Omni · A · B · C · D</span>
+        <span style={{ fontSize: 11, color: '#bbb', marginLeft: 6 }}>Omni · Google</span>
         <button onClick={reset} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <RotateCcw size={17} color="#888" />
         </button>
@@ -579,21 +551,18 @@ export default function LiveTranslatorPage({ lang, onBack }) {
           />
         )}
 
-        {/* ── 결과 카드 2×2 ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-          {MODELS.map(model => (
-            <ResultCard
-              key={model.id}
-              model={model}
-              result={results[model.id]}
-              loading={loading[model.id]}
-              latency={latency[model.id]}
-              showPlay={showPlay}
-              isSpeaking={speakingId === model.id}
-              onToggleSpeak={() => toggleSpeak(model.id)}
-            />
-          ))}
-        </div>
+        {/* ── Google 결과 카드 (비-Omni 모드) ── */}
+        {mode !== 'omni' && (
+          <ResultCard
+            model={GOOGLE_MODEL}
+            result={googleResult}
+            loading={googleLoading}
+            latency={googleLatency}
+            showPlay={showPlay}
+            isSpeaking={speakingGoogle}
+            onToggleSpeak={toggleGoogleSpeak}
+          />
+        )}
 
       </div>
     </div>

@@ -58,7 +58,6 @@ const DEPARTURE_ITEMS = [
 // ─── 통역·번역 바텀시트 항목 ───
 const TRANSLATE_ITEMS = [
   { id: 'translator',   emoji: '🗣️', label: { ko: '통역&번역',         zh: '口译&翻译',       en: 'Translate' },             tool: 'translator' },
-  { id: 'artranslate',  emoji: '📸', label: { ko: '간판 사전',          zh: '招牌词典',         en: 'Sign Dictionary' },       tool: 'artranslate' },
   { id: 'basic-korean', emoji: '💬', label: { ko: '기본 한국어 20문장', zh: '基础韩语20句',     en: '20 Korean Phrases' },     sub: 'basic-korean' },
 ]
 

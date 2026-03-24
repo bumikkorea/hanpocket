@@ -14,6 +14,7 @@ const DIRECTIONS = [
 ]
 
 const MODES = [
+  { id: 'omni',   icon: '⚡', sub: '🔊', label: 'Omni' },
   { id: 'v2v',    icon: '🎤', sub: '🔊', label: '음성→음성' },
   { id: 'v2t',    icon: '🎤', sub: '📝', label: '음성→텍스트' },
   { id: 't2v',    icon: '📝', sub: '🔊', label: '텍스트→음성' },
@@ -141,10 +142,92 @@ export default function LiveTranslatorPage({ lang, onBack }) {
   const [ocrText, setOcrText]     = useState('')
   const [cameraLoading, setCameraLoading] = useState(false)
 
+  const [omniResult, setOmniResult]   = useState({ text: '', audio: '' })
+  const [omniLoading, setOmniLoading] = useState(false)
+  const [omniLatency, setOmniLatency] = useState(null)
+  const [omniPlaying, setOmniPlaying] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
+
   const recognitionRef = useRef(null)
   const debounceRef    = useRef(null)
   const fileInputRef   = useRef(null)
+  const mediaRecRef    = useRef(null)
+  const omniAudioRef   = useRef(null)
   const dir = DIRECTIONS[dirIdx]
+
+  // Omni: base64 WAV 재생
+  const playOmniAudio = useCallback((base64) => {
+    if (!base64) return
+    try {
+      const raw = atob(base64)
+      const bytes = new Uint8Array(raw.length)
+      for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
+      const blob = new Blob([bytes], { type: 'audio/wav' })
+      const url = URL.createObjectURL(blob)
+      if (omniAudioRef.current) {
+        omniAudioRef.current.pause()
+        URL.revokeObjectURL(omniAudioRef.current.src)
+      }
+      const audio = new Audio(url)
+      omniAudioRef.current = audio
+      setOmniPlaying(true)
+      audio.play()
+      audio.onended = () => { setOmniPlaying(false); URL.revokeObjectURL(url) }
+      audio.onerror = () => { setOmniPlaying(false); URL.revokeObjectURL(url) }
+    } catch (e) { console.error('omni audio error', e) }
+  }, [])
+
+  // Omni: 녹음 시작
+  const startOmniRecord = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 16000 },
+      })
+      const chunks = []
+      const mr = new MediaRecorder(stream, { mimeType: 'audio/webm' })
+      mr.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data) }
+      mr.onstop = async () => {
+        stream.getTracks().forEach(t => t.stop())
+        setIsRecording(false)
+        const blob = new Blob(chunks, { type: 'audio/webm' })
+        const base64 = await new Promise((res, rej) => {
+          const reader = new FileReader()
+          reader.onload = () => res(reader.result.split(',')[1])
+          reader.onerror = rej
+          reader.readAsDataURL(blob)
+        })
+        setOmniLoading(true)
+        setOmniResult({ text: '', audio: '' })
+        setOmniLatency(null)
+        const t0 = Date.now()
+        try {
+          const r = await fetch(`${PROXY}/translate/omni`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ audio: base64, audioFormat: 'webm', from: dir.from, to: dir.to }),
+          })
+          const d = await r.json()
+          if (d.error) throw new Error(d.error)
+          setOmniLatency(Date.now() - t0)
+          setOmniResult({ text: d.text || '', audio: d.audio || '' })
+          if (d.audio) playOmniAudio(d.audio)
+        } catch (err) {
+          setOmniResult({ text: `(오류: ${err.message.slice(0, 60)})`, audio: '' })
+        } finally {
+          setOmniLoading(false)
+        }
+      }
+      mediaRecRef.current = mr
+      mr.start()
+      setIsRecording(true)
+    } catch (err) {
+      alert('마이크 접근 실패: ' + err.message)
+    }
+  }, [dir, playOmniAudio])
+
+  const stopOmniRecord = useCallback(() => {
+    mediaRecRef.current?.stop()
+  }, [])
 
   // 음성 출력 토글
   const toggleSpeak = useCallback((modelId) => {
@@ -261,6 +344,8 @@ export default function LiveTranslatorPage({ lang, onBack }) {
 
   const reset = () => {
     stopListening()
+    mediaRecRef.current?.stop()
+    if (omniAudioRef.current) { omniAudioRef.current.pause(); omniAudioRef.current = null }
     window.speechSynthesis?.cancel()
     setSpeakingId(null)
     setInputText(''); setInterimText(''); setOcrText('')
@@ -268,6 +353,11 @@ export default function LiveTranslatorPage({ lang, onBack }) {
     setLoading({ a: false, b: false, c: false, d: false })
     setLatency({ a: null, b: null, c: null, d: null })
     setCameraImg(null)
+    setOmniResult({ text: '', audio: '' })
+    setOmniLoading(false)
+    setOmniLatency(null)
+    setOmniPlaying(false)
+    setIsRecording(false)
   }
 
   const showPlay = mode !== 'v2t'   // 음성→텍스트만 재생 버튼 숨김
@@ -285,7 +375,7 @@ export default function LiveTranslatorPage({ lang, onBack }) {
           <ChevronLeft size={22} color="#1A1A1A" />
         </button>
         <span style={{ fontSize: 15, fontWeight: 700 }}>실시간 통역기</span>
-        <span style={{ fontSize: 11, color: '#bbb', marginLeft: 6 }}>A · B · C · D</span>
+        <span style={{ fontSize: 11, color: '#bbb', marginLeft: 6 }}>Omni · A · B · C · D</span>
         <button onClick={reset} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <RotateCcw size={17} color="#888" />
         </button>
@@ -303,11 +393,11 @@ export default function LiveTranslatorPage({ lang, onBack }) {
         </button>
 
         {/* ── 모드 탭 ── */}
-        <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
+        <div style={{ display: 'flex', gap: 5, marginBottom: 12, flexWrap: 'wrap' }}>
           {MODES.map(m => (
             <button key={m.id} onClick={() => { setMode(m.id); reset() }} style={{
-              flex: 1, height: 40, borderRadius: 10,
-              background: mode === m.id ? '#1A1A1A' : 'white',
+              flex: '1 1 calc(20% - 4px)', minWidth: 56, height: 44, borderRadius: 10,
+              background: mode === m.id ? (m.id === 'omni' ? 'linear-gradient(135deg,#7C3AED,#2563EB)' : '#1A1A1A') : 'white',
               color: mode === m.id ? 'white' : '#666',
               border: mode === m.id ? 'none' : '1px solid rgba(0,0,0,0.10)',
               fontSize: 10, fontWeight: 600, cursor: 'pointer',
@@ -318,6 +408,99 @@ export default function LiveTranslatorPage({ lang, onBack }) {
             </button>
           ))}
         </div>
+
+        {/* ── Omni 모드 ── */}
+        {mode === 'omni' && (
+          <div style={{ marginBottom: 12 }}>
+            {/* 설명 배너 */}
+            <div style={{
+              borderRadius: 12, background: 'linear-gradient(135deg,#7C3AED,#2563EB)',
+              padding: '12px 16px', marginBottom: 10, color: 'white',
+            }}>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, opacity: 0.9 }}>⚡ Qwen-Omni Turbo</p>
+              <p style={{ margin: '3px 0 0', fontSize: 11, opacity: 0.75 }}>음성 → 음성 네이티브 파이프라인 · STT/번역/TTS 한 번에</p>
+            </div>
+
+            {/* 녹음 버튼 */}
+            <button
+              onPointerDown={startOmniRecord}
+              onPointerUp={stopOmniRecord}
+              disabled={omniLoading}
+              style={{
+                width: '100%', height: 72, borderRadius: 16, border: 'none', cursor: omniLoading ? 'not-allowed' : 'pointer',
+                background: isRecording ? '#EF4444' : omniLoading ? '#888' : '#1A1A1A',
+                color: 'white', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 4,
+                fontSize: 13, fontWeight: 700, transition: 'background 0.2s',
+                userSelect: 'none', WebkitUserSelect: 'none',
+              }}
+            >
+              {omniLoading ? (
+                <><span style={{ fontSize: 20 }}>⏳</span><span>처리 중…</span></>
+              ) : isRecording ? (
+                <><span style={{ fontSize: 20 }}>🔴</span><span>놓으면 번역 시작</span></>
+              ) : (
+                <><Mic size={24} /><span>누르고 말하기</span></>
+              )}
+            </button>
+            <p style={{ fontSize: 10, color: '#bbb', textAlign: 'center', margin: '6px 0 10px' }}>
+              손가락을 누르는 동안 녹음 · 떼면 자동 번역
+            </p>
+
+            {/* 결과 카드 */}
+            {(omniResult.text || omniLoading) && (
+              <div style={{
+                borderRadius: 14, background: 'white', overflow: 'hidden',
+                border: '2px solid #7C3AED22',
+              }}>
+                {/* 헤더 */}
+                <div style={{
+                  padding: '8px 12px', background: '#FAF5FF',
+                  borderBottom: '1px solid #7C3AED18',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                }}>
+                  <span style={{ fontSize: 11, fontWeight: 800, color: '#7C3AED', letterSpacing: '0.06em' }}>
+                    ⚡ QWEN-OMNI
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    {omniLatency != null && (
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#7C3AED', background: '#7C3AED18', padding: '2px 7px', borderRadius: 20 }}>
+                        {omniLatency < 1000 ? `${omniLatency}ms` : `${(omniLatency / 1000).toFixed(1)}s`}
+                      </span>
+                    )}
+                    {omniResult.audio && !omniLoading && (
+                      <button
+                        onClick={() => omniPlaying
+                          ? (omniAudioRef.current?.pause(), setOmniPlaying(false))
+                          : playOmniAudio(omniResult.audio)
+                        }
+                        style={{
+                          background: omniPlaying ? '#7C3AED' : '#7C3AED18',
+                          border: 'none', borderRadius: 20, padding: '3px 10px',
+                          color: omniPlaying ? 'white' : '#7C3AED',
+                          fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', gap: 4,
+                        }}
+                      >
+                        {omniPlaying ? <><Square size={9} fill="currentColor" />&nbsp;중지</> : <><Volume2 size={9} />&nbsp;재생</>}
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {/* 번역 텍스트 */}
+                <div style={{ padding: '12px 14px', minHeight: 52 }}>
+                  {omniLoading ? (
+                    <span style={{ fontSize: 12, color: '#ccc' }}>번역 중…</span>
+                  ) : omniResult.text ? (
+                    <p style={{ fontSize: 14, color: '#1A1A1A', margin: 0, lineHeight: 1.7 }}>{omniResult.text}</p>
+                  ) : (
+                    <span style={{ fontSize: 12, color: '#e0e0e0' }}>—</span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* ── 카메라 ── */}
         {mode === 'camera' && (

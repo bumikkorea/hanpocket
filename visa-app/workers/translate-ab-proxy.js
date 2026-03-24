@@ -65,10 +65,10 @@ export default {
         return json({ result })
       }
 
-      // ── Model B: DeepSeek V3 ────────────────────────────────
+      // ── Model B: DeepSeek V3.2 (via Alibaba Cloud) ─────────
       if (path === '/translate/b') {
         if (!text?.trim()) return json({ error: 'text required' }, 400)
-        const result = await chatComplete(DEEPSEEK_URL, env.DEEPSEEK_API_KEY, 'deepseek-chat', [
+        const result = await chatComplete(DASH_URL, env.QWEN_API_KEY, 'deepseek-v3', [
           { role: 'system', content: sysPrompt(from, to) },
           { role: 'user', content: text.trim() },
         ])
@@ -119,6 +119,83 @@ export default {
           result: transMatch?.[1]?.trim() || raw,
           raw,
         })
+      }
+
+      // ── Omni: Qwen3-Omni-Flash (audio → audio + text) ─────────
+      if (path === '/translate/omni') {
+        const { audio: audioData, audioFormat = 'wav' } = body
+        if (!audioData) return json({ error: 'audio required' }, 400)
+        const toLangName = langName(to)
+        const fromLangName = langName(from)
+        const instrText = `You are a professional interpreter. Listen to this ${fromLangName} speech and provide the translation in ${toLangName}. Speak only the translation, nothing else.`
+        const r = await fetch(DASH_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.QWEN_API_KEY}` },
+          body: JSON.stringify({
+            model: 'qwen-omni-turbo',
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'input_audio', input_audio: { data: audioData, format: audioFormat } },
+                { type: 'text', text: instrText },
+              ],
+            }],
+            modalities: ['text', 'audio'],
+            audio: { voice: 'Cherry', format: 'wav' },
+            stream: true,
+          }),
+        })
+        if (!r.ok) throw new Error(`Omni error ${r.status}: ${(await r.text()).slice(0, 200)}`)
+
+        // Accumulate SSE stream
+        const reader = r.body.getReader()
+        const decoder = new TextDecoder()
+        const textParts = []
+        const audioChunks = []
+        let buffer = ''
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          buffer += decoder.decode(value, { stream: true })
+          const lines = buffer.split('\n')
+          buffer = lines.pop() // keep incomplete line
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue
+            const data = line.slice(6).trim()
+            if (data === '[DONE]') continue
+            try {
+              const obj = JSON.parse(data)
+              const delta = obj.choices?.[0]?.delta
+              if (delta?.content) textParts.push(delta.content)
+              if (delta?.audio?.data) audioChunks.push(delta.audio.data)
+            } catch { /* skip malformed */ }
+          }
+        }
+
+        // Concatenate audio binary (decode each base64 chunk, merge, re-encode)
+        let audioBase64 = ''
+        if (audioChunks.length > 0) {
+          const binaries = audioChunks.map(b64 => {
+            const raw = atob(b64)
+            const bytes = new Uint8Array(raw.length)
+            for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i)
+            return bytes
+          })
+          const totalLen = binaries.reduce((s, b) => s + b.length, 0)
+          const merged = new Uint8Array(totalLen)
+          let off = 0
+          for (const b of binaries) { merged.set(b, off); off += b.length }
+          // btoa on large arrays — chunked to avoid stack overflow
+          let str = ''
+          const chunk = 8192
+          for (let i = 0; i < merged.length; i += chunk) {
+            str += String.fromCharCode(...merged.subarray(i, i + chunk))
+          }
+          audioBase64 = btoa(str)
+        }
+
+        return json({ text: textParts.join(''), audio: audioBase64 })
       }
 
       return json({ error: 'unknown path' }, 404)

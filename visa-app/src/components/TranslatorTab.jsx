@@ -497,9 +497,9 @@ export default function TranslatorTab({ lang }) {
         )}
       </div>
 
-      {/* Situation templates */}
-      <h3 className="font-bold text-[#111827] text-sm">{L(lang, { ko: '상황별 통역', zh: '场景翻译', en: 'Situation Templates' })}</h3>
-      <div className="grid grid-cols-2 gap-3">
+      {/* Situation templates — hidden */}
+      {false && <h3 className="font-bold text-[#111827] text-sm">{L(lang, { ko: '상황별 통역', zh: '场景翻译', en: 'Situation Templates' })}</h3>}
+      {false && <div className="grid grid-cols-2 gap-3">
         {/* Favorites section */}
         <button onClick={() => {
           setSelected('favorites')
@@ -516,23 +516,9 @@ export default function TranslatorTab({ lang }) {
         </button>
         
         {situations.map(sit => (
-          <button key={sit.id} onClick={() => {
-            setSelected(sit.id)
-            trackEvent('translation_section_selected', {
-              section: sit.id,
-              section_label: L(lang, sit.label),
-              phrase_count: sit.phrases.length,
-              event_category: 'translation',
-              event_label: `select_${sit.id}`
-            })
-          }}
-            className="bg-white rounded-2xl p-5 border border-[#E5E7EB] card-glow text-left hover:border-[#111827]/20 transition-all">
-            <sit.icon size={22} className="text-[#111827] mb-2" />
-            <p className="font-bold text-[#111827] text-sm">{L(lang, sit.label)}</p>
-            <p className="text-xs text-[#6B7280] mt-1">{sit.phrases.length}+</p>
-          </button>
+          <button key={sit.id} onClick={() => {}} className="hidden" />
         ))}
-      </div>
+      </div>}
     </div>
   )
 }

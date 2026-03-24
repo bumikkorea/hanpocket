@@ -93,43 +93,66 @@ export default {
         if (!image) return json({ error: 'image required' }, 400)
         const toLangName = langName(to)
         const fromLangName = langName(from)
-        const prompt = `Detect every text region in this image. For each region return its translation from ${fromLangName} to ${toLangName} and its bounding box as percentages of image width/height.
-Return ONLY a JSON array, no markdown, no explanation:
-[{"orig":"original text","trans":"translated text","x1":10,"y1":5,"x2":40,"y2":15}, ...]
-x1,y1 = top-left corner %, x2,y2 = bottom-right corner %. If no text found return [].`
+        const prompt = `You are an OCR and translation assistant. Look at this image carefully.
+
+Step 1: Find all visible text regions.
+Step 2: For each text region, output one JSON object with:
+- "orig": the original text as it appears
+- "trans": translation to ${toLangName}
+- "x1","y1": top-left corner as percentage of image (0-100)
+- "x2","y2": bottom-right corner as percentage of image (0-100)
+
+Output ONLY a raw JSON array. No markdown fences, no explanation, nothing else.
+Example: [{"orig":"안녕하세요","trans":"你好","x1":10,"y1":5,"x2":60,"y2":15}]`
+
         const r = await fetch(DASH_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.QWEN_API_KEY}` },
           body: JSON.stringify({
             model: 'qwen-vl-plus',
-            messages: [{
-              role: 'user',
-              content: [
-                { type: 'image_url', image_url: { url: `data:${mimeType};base64,${image}` } },
-                { type: 'text', text: prompt },
-              ],
-            }],
-            temperature: 0.1,
-            max_tokens: 800,
+            messages: [
+              {
+                role: 'system',
+                content: 'You are an OCR assistant. Always respond with valid JSON arrays only. Never use markdown code blocks.',
+              },
+              {
+                role: 'user',
+                content: [
+                  { type: 'image_url', image_url: { url: `data:${mimeType};base64,${image}` } },
+                  { type: 'text', text: prompt },
+                ],
+              },
+            ],
+            temperature: 0.05,
+            max_tokens: 2000,
           }),
         })
-        if (!r.ok) throw new Error(`VL error ${r.status}`)
+        if (!r.ok) throw new Error(`VL error ${r.status}: ${(await r.text()).slice(0,200)}`)
         const d = await r.json()
         const raw = d.choices?.[0]?.message?.content?.trim() || ''
 
-        // JSON 파싱 (```json ... ``` 감싸진 경우도 처리)
+        // JSON 파싱 — 여러 포맷 처리
         let blocks = []
         try {
-          const jsonStr = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+          // 마크다운 코드블록 제거
+          let jsonStr = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim()
+          // 배열 시작 위치 찾기 (앞에 설명 텍스트가 붙은 경우)
+          const arrStart = jsonStr.indexOf('[')
+          const arrEnd   = jsonStr.lastIndexOf(']')
+          if (arrStart !== -1 && arrEnd !== -1) {
+            jsonStr = jsonStr.slice(arrStart, arrEnd + 1)
+          }
           const parsed = JSON.parse(jsonStr)
-          if (Array.isArray(parsed)) blocks = parsed
-        } catch {
-          // 파싱 실패 시 전체 텍스트 폴백
-          blocks = []
-        }
+          if (Array.isArray(parsed)) {
+            blocks = parsed.filter(b =>
+              typeof b.orig === 'string' &&
+              typeof b.trans === 'string' &&
+              typeof b.x1 === 'number'
+            )
+          }
+        } catch { blocks = [] }
 
-        // 전체 텍스트 요약 (폴백용)
-        const allOrig = blocks.map(b => b.orig).join(' / ') || raw
+        const allOrig  = blocks.map(b => b.orig).join(' / ') || raw
         const allTrans = blocks.map(b => b.trans).join(' / ')
 
         return json({ blocks, ocr: allOrig, result: allTrans, raw })

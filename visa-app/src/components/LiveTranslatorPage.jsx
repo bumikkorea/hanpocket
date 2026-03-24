@@ -14,7 +14,7 @@ const DIRECTIONS = [
 ]
 
 const MODES = [
-  { id: 'omni',   icon: '⚡', sub: '🔊', label: 'Omni' },
+  { id: 'omni',   icon: '⚡', sub: '',   label: 'Turbo' },
   { id: 'v2v',    icon: '🎤', sub: '🔊', label: '음성→음성' },
   { id: 'v2t',    icon: '🎤', sub: '📝', label: '음성→텍스트' },
   { id: 't2v',    icon: '📝', sub: '🔊', label: '텍스트→음성' },
@@ -347,7 +347,7 @@ export default function LiveTranslatorPage({ lang, onBack }) {
           <ChevronLeft size={22} color="#1A1A1A" />
         </button>
         <span style={{ fontSize: 15, fontWeight: 700 }}>실시간 통역기</span>
-        <span style={{ fontSize: 11, color: '#bbb', marginLeft: 6 }}>Omni · Google</span>
+        <span style={{ fontSize: 11, color: '#bbb', marginLeft: 6 }}>Turbo · Google</span>
         <button onClick={reset} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', padding: 4 }}>
           <RotateCcw size={17} color="#888" />
         </button>
@@ -389,8 +389,8 @@ export default function LiveTranslatorPage({ lang, onBack }) {
               borderRadius: 12, background: 'linear-gradient(135deg,#7C3AED,#2563EB)',
               padding: '12px 16px', marginBottom: 10, color: 'white',
             }}>
-              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, opacity: 0.9 }}>⚡ Qwen-Omni Turbo</p>
-              <p style={{ margin: '3px 0 0', fontSize: 11, opacity: 0.75 }}>음성 → 음성 네이티브 파이프라인 · STT/번역/TTS 한 번에</p>
+              <p style={{ margin: 0, fontSize: 12, fontWeight: 700, opacity: 0.9 }}>⚡ Qwen3-Omni Turbo</p>
+              <p style={{ margin: '3px 0 0', fontSize: 11, opacity: 0.75 }}>음성 → 음성 네이티브 파이프라인 · STT/번역/TTS 한 번에 · 카메라 ❌</p>
             </div>
 
             {/* 녹음 버튼 */}

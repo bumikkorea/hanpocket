@@ -88,12 +88,15 @@ export default {
         return json({ result })
       }
 
-      // ── Camera: Qwen VL (OCR + translate) ──────────────────
+      // ── Camera: Qwen VL (OCR + overlay translate) ──────────
       if (path === '/translate/camera') {
         if (!image) return json({ error: 'image required' }, 400)
         const toLangName = langName(to)
         const fromLangName = langName(from)
-        const prompt = `Please extract all text from this image (which is in ${fromLangName}), then translate it to ${toLangName}.\nFormat your response exactly as:\n원문: [extracted text]\n번역: [translated text]`
+        const prompt = `Detect every text region in this image. For each region return its translation from ${fromLangName} to ${toLangName} and its bounding box as percentages of image width/height.
+Return ONLY a JSON array, no markdown, no explanation:
+[{"orig":"original text","trans":"translated text","x1":10,"y1":5,"x2":40,"y2":15}, ...]
+x1,y1 = top-left corner %, x2,y2 = bottom-right corner %. If no text found return [].`
         const r = await fetch(DASH_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.QWEN_API_KEY}` },
@@ -107,19 +110,29 @@ export default {
               ],
             }],
             temperature: 0.1,
-            max_tokens: 300,
+            max_tokens: 800,
           }),
         })
         if (!r.ok) throw new Error(`VL error ${r.status}`)
         const d = await r.json()
         const raw = d.choices?.[0]?.message?.content?.trim() || ''
-        const origMatch = raw.match(/원문[：:]\s*(.+?)(?:\n|번역|$)/s)
-        const transMatch = raw.match(/번역[：:]\s*(.+?)$/s)
-        return json({
-          ocr: origMatch?.[1]?.trim() || raw,
-          result: transMatch?.[1]?.trim() || raw,
-          raw,
-        })
+
+        // JSON 파싱 (```json ... ``` 감싸진 경우도 처리)
+        let blocks = []
+        try {
+          const jsonStr = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
+          const parsed = JSON.parse(jsonStr)
+          if (Array.isArray(parsed)) blocks = parsed
+        } catch {
+          // 파싱 실패 시 전체 텍스트 폴백
+          blocks = []
+        }
+
+        // 전체 텍스트 요약 (폴백용)
+        const allOrig = blocks.map(b => b.orig).join(' / ') || raw
+        const allTrans = blocks.map(b => b.trans).join(' / ')
+
+        return json({ blocks, ocr: allOrig, result: allTrans, raw })
       }
 
       // ── Omni: Qwen3-Omni-Flash (audio → audio + text) ─────────

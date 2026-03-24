@@ -134,9 +134,11 @@ export default function LiveTranslatorPage({ lang, onBack }) {
   const [speakingGoogle, setSpeakingGoogle] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [speakingId, setSpeakingId]   = useState(null)   // 현재 재생 중인 모델 ID
-  const [cameraImg, setCameraImg] = useState(null)
-  const [ocrText, setOcrText]     = useState('')
+  const [cameraImg, setCameraImg]         = useState(null)
+  const [ocrText, setOcrText]             = useState('')
   const [cameraLoading, setCameraLoading] = useState(false)
+  const [overlayBlocks, setOverlayBlocks] = useState([])  // [{orig,trans,x1,y1,x2,y2}]
+  const [showOverlay, setShowOverlay]     = useState(true)
 
   const [omniResult, setOmniResult]   = useState({ text: '', audio: '' })
   const [omniLoading, setOmniLoading] = useState(false)
@@ -308,6 +310,8 @@ export default function LiveTranslatorPage({ lang, onBack }) {
     setCameraImg(URL.createObjectURL(file))
     setCameraLoading(true)
     setOcrText('')
+    setOverlayBlocks([])
+    setShowOverlay(true)
     try {
       const base64 = await fileToBase64(file)
       const r = await fetch(`${PROXY}/translate/camera`, {
@@ -316,10 +320,10 @@ export default function LiveTranslatorPage({ lang, onBack }) {
         body: JSON.stringify({ image: base64, mimeType: 'image/jpeg', from: dir.from, to: dir.to }),
       })
       const d = await r.json()
-      const ocr = d.ocr || '(인식 실패)'
-      setOcrText(ocr)
-      setInputText(ocr)
-      await translateAll(ocr)
+      if (d.blocks?.length > 0) {
+        setOverlayBlocks(d.blocks)
+      }
+      setOcrText(d.ocr || '(인식 실패)')
     } catch (err) {
       setOcrText(`(오류: ${err.message})`)
     } finally {
@@ -336,6 +340,7 @@ export default function LiveTranslatorPage({ lang, onBack }) {
     setInputText(''); setInterimText(''); setOcrText('')
     setGoogleResult(''); setGoogleLoading(false); setGoogleLatency(null)
     setCameraImg(null)
+    setOverlayBlocks([])
     setOmniResult({ text: '', audio: '' })
     setOmniLoading(false)
     setOmniLatency(null)
@@ -489,22 +494,69 @@ export default function LiveTranslatorPage({ lang, onBack }) {
         {mode === 'camera' && (
           <div style={{ marginBottom: 12 }}>
             <input ref={fileInputRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleFileChange} />
+
+            {/* 이미지 + 오버레이 */}
             {cameraImg && (
-              <div style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 8, position: 'relative' }}>
-                <img src={cameraImg} alt="capture" style={{ width: '100%', maxHeight: 180, objectFit: 'cover', display: 'block' }} />
-                {cameraLoading && (
-                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ color: 'white', fontSize: 13, fontWeight: 600 }}>OCR 인식 중…</span>
+              <div style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 8, position: 'relative', background: '#000' }}>
+                <img
+                  src={cameraImg} alt="capture"
+                  style={{ width: '100%', display: 'block', opacity: cameraLoading ? 0.5 : 1, transition: 'opacity 0.2s' }}
+                />
+
+                {/* 번역 오버레이 블록 */}
+                {!cameraLoading && showOverlay && overlayBlocks.map((b, i) => (
+                  <div key={i} style={{
+                    position: 'absolute',
+                    left: `${b.x1}%`, top: `${b.y1}%`,
+                    width: `${Math.max(b.x2 - b.x1, 5)}%`,
+                    minHeight: `${Math.max(b.y2 - b.y1, 3)}%`,
+                    background: 'rgba(255,255,255,0.93)',
+                    borderRadius: 3,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    padding: '1px 3px',
+                    boxSizing: 'border-box',
+                  }}>
+                    <span style={{
+                      fontSize: `clamp(8px, ${Math.max(b.y2 - b.y1, 4) * 0.28}vw, 15px)`,
+                      fontWeight: 700, color: '#1A1A1A',
+                      lineHeight: 1.2, textAlign: 'center', wordBreak: 'keep-all',
+                    }}>{b.trans}</span>
                   </div>
+                ))}
+
+                {/* 로딩 오버레이 */}
+                {cameraLoading && (
+                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                    <span style={{ color: 'white', fontSize: 13, fontWeight: 700 }}>번역 중…</span>
+                    <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11 }}>텍스트 인식 + 위치 분석</span>
+                  </div>
+                )}
+
+                {/* 오버레이 토글 버튼 */}
+                {!cameraLoading && overlayBlocks.length > 0 && (
+                  <button
+                    onClick={() => setShowOverlay(v => !v)}
+                    style={{
+                      position: 'absolute', bottom: 8, right: 8,
+                      background: 'rgba(0,0,0,0.6)', border: 'none', borderRadius: 20,
+                      color: 'white', fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                      padding: '4px 10px',
+                    }}
+                  >
+                    {showOverlay ? '원문 보기' : '번역 보기'}
+                  </button>
                 )}
               </div>
             )}
-            {ocrText && (
+
+            {/* 텍스트 요약 (오버레이 보완) */}
+            {!cameraLoading && ocrText && overlayBlocks.length === 0 && (
               <div style={{ borderRadius: 10, background: 'white', border: '1px solid rgba(0,0,0,0.08)', padding: '9px 12px', marginBottom: 8 }}>
                 <p style={{ fontSize: 10, color: '#aaa', margin: '0 0 3px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>인식된 텍스트</p>
                 <p style={{ fontSize: 13, color: '#333', margin: 0, lineHeight: 1.6 }}>{ocrText}</p>
               </div>
             )}
+
             <button onClick={() => fileInputRef.current?.click()} style={{
               width: '100%', height: 46, borderRadius: 12, cursor: 'pointer',
               background: cameraImg ? 'white' : '#1A1A1A',

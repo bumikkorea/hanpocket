@@ -98,7 +98,7 @@ export default {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.QWEN_API_KEY}` },
           body: JSON.stringify({
-            model: 'qwen-vl-max',
+            model: 'qwen-vl-plus',
             messages: [{
               role: 'user',
               content: [
@@ -107,6 +107,7 @@ export default {
               ],
             }],
             temperature: 0.1,
+            max_tokens: 300,
           }),
         })
         if (!r.ok) throw new Error(`VL error ${r.status}`)

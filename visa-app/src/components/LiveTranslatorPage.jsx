@@ -32,12 +32,23 @@ async function googleTranslate(text, from, to) {
   return d[0].map(s => s[0]).join('')
 }
 
-function fileToBase64(file) {
+// 이미지 리사이즈 + 압축 후 base64 반환 (OCR 속도 최적화)
+function fileToBase64(file, maxPx = 1024, quality = 0.82) {
   return new Promise((resolve, reject) => {
-    const r = new FileReader()
-    r.onload = () => resolve(r.result.split(',')[1])
-    r.onerror = reject
-    r.readAsDataURL(file)
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const scale = Math.min(1, maxPx / Math.max(img.width, img.height))
+      const w = Math.round(img.width * scale)
+      const h = Math.round(img.height * scale)
+      const canvas = document.createElement('canvas')
+      canvas.width = w; canvas.height = h
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h)
+      resolve(canvas.toDataURL('image/jpeg', quality).split(',')[1])
+    }
+    img.onerror = reject
+    img.src = url
   })
 }
 
@@ -302,7 +313,7 @@ export default function LiveTranslatorPage({ lang, onBack }) {
       const r = await fetch(`${PROXY}/translate/camera`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64, mimeType: file.type, from: dir.from, to: dir.to }),
+        body: JSON.stringify({ image: base64, mimeType: 'image/jpeg', from: dir.from, to: dir.to }),
       })
       const d = await r.json()
       const ocr = d.ocr || '(인식 실패)'

@@ -2,10 +2,9 @@
  * LiveTranslatorPage — 실시간 통역기
  * 대화 모드: 중문↔한국어 채팅형 (나/상대방 버튼)
  * 텍스트 모드: 음성→텍스트 / 텍스트→음성
- * 카메라 모드: 사진 번역 오버레이
  */
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { Mic, MicOff, Volume2, RotateCcw, ChevronLeft, Square, ArrowLeftRight, Camera } from 'lucide-react'
+import { Mic, MicOff, Volume2, RotateCcw, ChevronLeft, Square, ArrowLeftRight } from 'lucide-react'
 
 const PROXY = import.meta.env.VITE_TRANSLATE_AB_PROXY || 'https://hanpocket-translate-ab.bumik-korea.workers.dev'
 
@@ -23,25 +22,6 @@ async function googleTranslate(text, from, to) {
   return d[0].map(s => s[0]).join('')
 }
 
-// 이미지 리사이즈 + 압축
-function fileToBase64(file, maxPx = 1024, quality = 0.82) {
-  return new Promise((resolve, reject) => {
-    const img = new Image()
-    const url = URL.createObjectURL(file)
-    img.onload = () => {
-      URL.revokeObjectURL(url)
-      const scale = Math.min(1, maxPx / Math.max(img.width, img.height))
-      const w = Math.round(img.width * scale)
-      const h = Math.round(img.height * scale)
-      const canvas = document.createElement('canvas')
-      canvas.width = w; canvas.height = h
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h)
-      resolve(canvas.toDataURL('image/jpeg', quality).split(',')[1])
-    }
-    img.onerror = reject
-    img.src = url
-  })
-}
 
 // ─── 채팅 말풍선 ──────────────────────────────────────────────
 function ChatBubble({ entry, onSpeak }) {
@@ -88,7 +68,7 @@ function ChatBubble({ entry, onSpeak }) {
 
 // ─── Main ─────────────────────────────────────────────────────
 export default function LiveTranslatorPage({ lang, onBack }) {
-  const [mode, setMode]           = useState('chat')  // 'chat' | 'text' | 'camera'
+  const [mode, setMode]           = useState('chat')  // 'chat' | 'text'
 
   // ── 대화 모드 state ──
   const [chatLog, setChatLog]         = useState([])
@@ -104,17 +84,10 @@ export default function LiveTranslatorPage({ lang, onBack }) {
   const [isTranslating, setIsTranslating] = useState(false)
   const [isSpeaking, setIsSpeaking]   = useState(false)
 
-  // ── 카메라 state ──
-  const [cameraImg, setCameraImg]         = useState(null)
-  const [cameraLoading, setCameraLoading] = useState(false)
-  const [overlayBlocks, setOverlayBlocks] = useState([])
-  const [showOverlay, setShowOverlay]     = useState(true)
-  const [ocrText, setOcrText]             = useState('')
 
   const recRef      = useRef(null)
   const debounceRef = useRef(null)
   const logRef      = useRef(null)
-  const fileRef     = useRef(null)
 
   const textDir = dirIdx === 0 ? { from: 'zh', to: 'ko' } : { from: 'ko', to: 'zh' }
 
@@ -216,25 +189,6 @@ export default function LiveTranslatorPage({ lang, onBack }) {
     setActiveRec(null); setChatInterim({ side: null, text: '' })
   }
 
-  // ── 카메라 ──
-  const handleFileChange = async (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setCameraImg(URL.createObjectURL(file))
-    setCameraLoading(true); setOverlayBlocks([]); setOcrText(''); setShowOverlay(true)
-    try {
-      const base64 = await fileToBase64(file)
-      const r = await fetch(`${PROXY}/translate/camera`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64, mimeType: 'image/jpeg', from: 'ko', to: 'zh' }),
-      })
-      const d = await r.json()
-      if (d.blocks?.length > 0) setOverlayBlocks(d.blocks)
-      setOcrText(d.ocr || '')
-    } catch (err) { setOcrText(`오류: ${err.message}`) }
-    finally { setCameraLoading(false) }
-  }
-
   // ── 리셋 ──
   const reset = () => {
     recRef.current?.stop()
@@ -242,7 +196,6 @@ export default function LiveTranslatorPage({ lang, onBack }) {
     setActiveRec(null); setChatInterim({ side: null, text: '' }); setChatLog([])
     setInputText(''); setInterimText(''); setTranslated('')
     setIsListening(false); setIsTranslating(false); setIsSpeaking(false)
-    setCameraImg(null); setOverlayBlocks([]); setOcrText(''); setCameraLoading(false)
   }
 
   const handleModeChange = (m) => { setMode(m); reset() }
@@ -271,9 +224,8 @@ export default function LiveTranslatorPage({ lang, onBack }) {
       {/* ── 모드 탭 ── */}
       <div style={{ display: 'flex', padding: '10px 16px', background: 'white', gap: 8, flexShrink: 0, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
         {[
-          { id: 'chat',   label: '대화 모드',  icon: '💬' },
-          { id: 'text',   label: '텍스트',     icon: '📝' },
-          { id: 'camera', label: '카메라',     icon: '📷' },
+          { id: 'chat', label: '대화 모드', icon: '💬' },
+          { id: 'text', label: '텍스트',   icon: '📝' },
         ].map(m => (
           <button key={m.id} onClick={() => handleModeChange(m.id)} style={{
             flex: 1, height: 42, borderRadius: 12,
@@ -502,109 +454,6 @@ export default function LiveTranslatorPage({ lang, onBack }) {
         </div>
       )}
 
-      {/* ════════════════ 카메라 모드 ════════════════ */}
-      {mode === 'camera' && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <input ref={fileRef} type="file" accept="image/*" capture="environment" style={{ display: 'none' }} onChange={handleFileChange} />
-
-          {cameraImg ? (
-            <>
-              {/* 이미지 + 오버레이 — 스크롤 가능 영역 */}
-              <div style={{ flex: 1, overflowY: 'auto', background: '#111' }}>
-                {/* 이미지 래퍼: position:relative + width:100% + height:auto
-                    → overlay % 좌표가 이미지 픽셀과 1:1 매핑됨 */}
-                <div style={{ position: 'relative', width: '100%', lineHeight: 0 }}>
-                  <img
-                    src={cameraImg} alt="capture"
-                    style={{
-                      width: '100%', height: 'auto', display: 'block',
-                      opacity: cameraLoading ? 0.35 : 1, transition: 'opacity 0.25s',
-                    }}
-                  />
-
-                  {/* 번역 오버레이 — 이미지 위에 정확히 위치 */}
-                  {!cameraLoading && showOverlay && overlayBlocks.map((b, i) => (
-                    <div key={i} style={{
-                      position: 'absolute',
-                      left:   `${b.x1}%`,
-                      top:    `${b.y1}%`,
-                      width:  `${Math.max(b.x2 - b.x1, 4)}%`,
-                      height: `${Math.max(b.y2 - b.y1, 3)}%`,
-                      background: 'rgba(255,255,255,0.94)',
-                      borderRadius: 3, boxSizing: 'border-box',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      padding: '1px 3px', overflow: 'hidden',
-                    }}>
-                      <span style={{
-                        fontSize: `clamp(8px, ${(b.y2 - b.y1) * 0.3}vw, 15px)`,
-                        fontWeight: 700, color: '#111',
-                        lineHeight: 1.15, textAlign: 'center', wordBreak: 'keep-all',
-                      }}>{b.trans}</span>
-                    </div>
-                  ))}
-
-                  {/* 로딩 오버레이 */}
-                  {cameraLoading && (
-                    <div style={{
-                      position: 'absolute', inset: 0,
-                      display: 'flex', flexDirection: 'column',
-                      alignItems: 'center', justifyContent: 'center', gap: 10,
-                    }}>
-                      <span style={{ color: 'white', fontSize: 15, fontWeight: 700, textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>분석 중…</span>
-                      <span style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12 }}>텍스트 인식 + 번역</span>
-                    </div>
-                  )}
-
-                  {/* 원문/번역 토글 */}
-                  {!cameraLoading && overlayBlocks.length > 0 && (
-                    <button onClick={() => setShowOverlay(v => !v)} style={{
-                      position: 'absolute', top: 10, right: 10,
-                      background: 'rgba(0,0,0,0.65)', border: 'none', borderRadius: 20,
-                      color: 'white', fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                      padding: '5px 13px', backdropFilter: 'blur(4px)',
-                    }}>
-                      {showOverlay ? '원문 보기' : '번역 보기'}
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* 폴백 텍스트 */}
-              {!cameraLoading && ocrText && overlayBlocks.length === 0 && (
-                <div style={{ background: 'white', padding: '12px 16px', borderTop: '1px solid rgba(0,0,0,0.07)' }}>
-                  <p style={{ fontSize: 11, color: '#aaa', margin: '0 0 4px', fontWeight: 700, textTransform: 'uppercase' }}>인식 결과</p>
-                  <p style={{ fontSize: 14, color: '#333', margin: 0 }}>{ocrText}</p>
-                </div>
-              )}
-
-              <div style={{ padding: '12px 16px 28px', background: 'white', borderTop: '1px solid rgba(0,0,0,0.07)', flexShrink: 0 }}>
-                <button onClick={() => fileRef.current?.click()} style={{
-                  width: '100%', height: 50, borderRadius: 14, cursor: 'pointer',
-                  background: 'white', color: '#1A1A1A', border: '2px solid #1A1A1A',
-                  fontSize: 14, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                }}>
-                  <Camera size={18} /> 다시 촬영
-                </button>
-              </div>
-            </>
-          ) : (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 32, gap: 20 }}>
-              <span style={{ fontSize: 64 }}>📷</span>
-              <div style={{ textAlign: 'center' }}>
-                <p style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', margin: '0 0 8px' }}>한국어 간판 · 메뉴판 번역</p>
-                <p style={{ fontSize: 13, color: '#aaa', margin: 0, lineHeight: 1.6 }}>사진을 찍으면 텍스트 위치에<br/>중국어 번역을 표시합니다</p>
-              </div>
-              <button onClick={() => fileRef.current?.click()} style={{
-                width: '100%', maxWidth: 280, height: 56, borderRadius: 16, cursor: 'pointer',
-                background: '#1A1A1A', color: 'white', border: 'none',
-                fontSize: 16, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              }}>
-                <Camera size={22} /> 촬영하기
-              </button>
-            </div>
-          )}
-        </div>
-      )}
     </div>
   )
 }

@@ -13,7 +13,7 @@ const CORS = {
   'Access-Control-Allow-Headers': 'Content-Type',
 }
 
-const DASH_URL = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions'
+const DASH_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions'
 const DEEPSEEK_URL = 'https://api.deepseek.com/v1/chat/completions'
 
 function json(data, status = 200) {
@@ -58,7 +58,7 @@ export default {
       // ── Model A: Qwen Plus ──────────────────────────────────
       if (path === '/translate/a') {
         if (!text?.trim()) return json({ error: 'text required' }, 400)
-        const result = await chatComplete(DASH_URL, env.QWEN_API_KEY, 'qwen-plus', [
+        const result = await chatComplete(DASH_URL, env.QWEN_API_KEY, 'qwen3.5-plus', [
           { role: 'system', content: sysPrompt(from, to) },
           { role: 'user', content: text.trim() },
         ])
@@ -82,7 +82,7 @@ export default {
         const mtPrompt = from === 'zh'
           ? `将以下中文翻译成韩语，只输出翻译结果：\n${text.trim()}`
           : `다음 한국어를 중국어(简体)로 번역하세요. 번역 결과만 출력하세요：\n${text.trim()}`
-        const result = await chatComplete(DASH_URL, env.QWEN_API_KEY, 'qwen-mt-plus', [
+        const result = await chatComplete(DASH_URL, env.QWEN_API_KEY, 'qwen-mt-turbo', [
           { role: 'user', content: mtPrompt },
         ])
         return json({ result })
@@ -98,7 +98,7 @@ export default {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${env.QWEN_API_KEY}` },
           body: JSON.stringify({
-            model: 'qwen-vl-plus',
+            model: 'qwen-vl-max',
             messages: [{
               role: 'user',
               content: [

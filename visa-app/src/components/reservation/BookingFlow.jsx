@@ -629,6 +629,7 @@ const base = {
   maxWidth: 420, margin: "0 auto", background: T.color.bg, minHeight: "100vh",
   fontFamily: T.font.family, color: T.color.text1,
   WebkitFontSmoothing: "antialiased", MozOsxFontSmoothing: "grayscale",
+  overflowX: "hidden",
 };
 const cardStyle = {
   background: T.color.card, borderRadius: T.radius.lg,

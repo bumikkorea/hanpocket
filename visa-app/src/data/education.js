@@ -184,9 +184,9 @@ export const sessions = [
     units: [
       { day: 1, title: { ko: '자기소개 하기', zh: '自我介绍', en: 'Self-introduction' }, 
         pronunciation: [
-          { word: '안녕하세요', pronunciation: 'an-nyeong-ha-se-yo', meaning: { ko: '인사말', zh: '问候语', en: 'greeting' } },
-          { word: '저는', pronunciation: 'jeo-neun', meaning: { ko: '나는 (정중하게)', zh: '我（敬语）', en: 'I am (polite)' } },
-          { word: '입니다', pronunciation: 'im-ni-da', meaning: { ko: '~입니다', zh: '是', en: 'is/am' } }
+          { word: '안녕하세요', pronunciation: 'an-nyeong-ha-se-yo', zh_pron: '阿尼呦哈赛呦', meaning: { ko: '인사말', zh: '问候语', en: 'greeting' } },
+          { word: '저는', pronunciation: 'jeo-neun', zh_pron: '扣嫩', meaning: { ko: '나는 (정중하게)', zh: '我（敬语）', en: 'I am (polite)' } },
+          { word: '입니다', pronunciation: 'im-ni-da', zh_pron: '因尼达', meaning: { ko: '~입니다', zh: '是', en: 'is/am' } }
         ] 
       },
       { day: 2, title: { ko: '숫자 1-100 (한자어)', zh: '数字 1-100（汉字词）', en: 'Numbers 1-100 (Sino-Korean)' } },

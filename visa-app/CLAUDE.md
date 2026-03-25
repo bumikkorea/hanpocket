@@ -104,6 +104,22 @@ VITE_APPLE_CLIENT_ID=com.hanpocket.signin
 - 카카오맵에 없는 화면 먼저 (알리페이 되는 곳, 외국인 병원, 중국어 통하는 곳)
 - 상세 전략: `docs/hanpocket-master-briefing.md` 참고
 
+## 🚨 온보딩 회색지대 — MVP 필수 기능
+
+**2026-03-24 발견:** 중국인 관광객이 도착 직후 앱 진입 불가능
+
+**문제:**
+- 중국 구매 아이폰: eSIM 활성화 불가 (제조사 잠금)
+- 공항 여행용 USIM: 본인인증 불가능 (관광객은 "등록되지 않은 외국인" = 절대 불가)
+- 결과: 휴대폰 인증 필요한 모든 앱/기능 blocked → 첫 1시간 내에 Kakao/Naver로 분산
+
+**해결책 (P0 — MVP 필수):**
+- `OnboardingFlow.jsx`: "로그인 없이 둘러보기" 버튼 추가
+- 비회원 모드: 지도/SOS/병원/긴급전화 모두 접근 가능
+- 나중 인증: 이메일/위챗/알리페이 먼저 → 휴대폰은 나중에
+
+**상세:** `docs/onboarding-grey-zone.md` 참고
+
 ## TourAPI 연동
 - ChsService2 (중국어간체) 우선, KorService2 (한국어) 폴백
 - ContentTypeId: 75=레포츠, 76=관광지, 77=교통, 78=문화시설, 79=쇼핑, 80=숙박, 82=음식점, 85=축제

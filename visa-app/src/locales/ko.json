@@ -246,5 +246,15 @@
   "mySeoul.myCourses": "내 코스",
   "mySeoul.courseSaved": "코스가 저장되었습니다",
   "course.addToMySeoul": "내 서울에 담기",
-  "course.bulkAdded": "{n}개 장소가 내 서울에 추가되었습니다"
+  "course.bulkAdded": "{n}개 장소가 내 서울에 추가되었습니다",
+  "cat_michelin": "미슐랭",
+  "michelin_all": "전체",
+  "michelin_3star": "3스타",
+  "michelin_2star": "2스타",
+  "michelin_1star": "1스타",
+  "michelin_bib": "빕구르망",
+  "michelin_blue": "블루리본",
+  "michelin_price": "가격대",
+  "michelin_award": "수상",
+  "michelin_reserve": "예약"
 }

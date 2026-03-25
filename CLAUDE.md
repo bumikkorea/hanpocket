@@ -290,6 +290,22 @@ These require 범범뻠 (Kelly) to complete before development can proceed:
 - Naver login review request — blocks Naver OAuth
 - `law.go.kr` API key — blocks visa legal data
 
+## 🚨 CRITICAL: Onboarding "Grey Zone" (2026-03-24 discovered)
+
+**Problem:** Chinese visitors arrive unable to authenticate.
+- eSIM: China-manufactured iPhones → eSIM disabled (manufacturer lock)
+- USIM: Korean airport travel SIMs → **본인인증 impossible for non-residents** (tourists cannot get verified USIM — only registered foreigners can)
+- **Result:** No phone-based auth → app entry blocked for most tourists
+
+**Impact:** Tourists land at Incheon, cannot use HanPocket (or any Korean app requiring SMS auth).
+This is the **critical first-hour problem**. If unsolved, they switch to Kakao Map, Naver, others.
+
+**Required Fix (P0 priority - blocks MVP):**
+- `OnboardingFlow.jsx` — add **"Browse Without Login"** mode
+- Allow non-authenticated browsing of: maps, SOS, hospitals, emergency services
+- Lazy auth: email/WeChat/Alipay signup first, phone number added later
+- Core features (emergency, navigation) must work offline/unauthenticated
+
 ## Important Safety Rules
 
 - **Never expose API keys** — use `.env` files and Cloudflare secrets

@@ -3,7 +3,6 @@
  * 메인 App TopBar와 동일한 스타일로 통일
  */
 import { useState, useRef, useEffect } from 'react'
-import { ChevronLeft, Globe } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
 
 export default function NearPageHeader({ onBack, setTab }) {
@@ -17,6 +16,8 @@ export default function NearPageHeader({ onBack, setTab }) {
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [showLangMenu])
+
+  const langLabel = { zh: 'ZH', ko: 'KO', en: 'EN' }[lang] || 'ZH'
 
   return (
     <div style={{
@@ -38,23 +39,23 @@ export default function NearPageHeader({ onBack, setTab }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: 'none', border: 'none', cursor: 'pointer',
             color: '#5F6368', marginLeft: -8,
+            fontSize: 18, fontWeight: 300,
           }}
         >
-          <ChevronLeft size={24} />
+          ←
         </button>
       </div>
 
       {/* 중앙: NEAR 로고 — 절대 중앙 고정 */}
-      <div
-        style={{
-          position: 'absolute', left: '50%', transform: 'translateX(-50%)',
-          padding: '4px 8px',
-        }}
-      >
+      <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
         <span style={{
-          fontFamily: "'Caveat', cursive", fontWeight: 700, fontSize: 22,
-          color: '#C4725A', letterSpacing: '0.01em',
-          textShadow: '2px 2px 5px rgba(200,200,200,0.6), -1px -1px 3px rgba(255,255,255,0.9)',
+          fontFamily: "'Nunito', sans-serif",
+          fontWeight: 900,
+          fontSize: 21,
+          letterSpacing: '0.04em',
+          color: '#1A1A1A',
+          userSelect: 'none',
+          lineHeight: 1,
         }}>
           NEAR
         </span>
@@ -65,9 +66,9 @@ export default function NearPageHeader({ onBack, setTab }) {
         <div style={{ position: 'relative' }} ref={menuRef}>
           <button
             onClick={() => setShowLangMenu(v => !v)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5F6368', padding: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#5F6368', padding: '4px 6px', fontSize: 12, fontWeight: 600, letterSpacing: '0.05em' }}
           >
-            <Globe size={20} />
+            {langLabel}
           </button>
           {showLangMenu && (
             <div style={{
@@ -77,13 +78,13 @@ export default function NearPageHeader({ onBack, setTab }) {
               border: '1px solid #E5E7EB',
               padding: '4px 0',
               zIndex: 9999,
-              minWidth: 120,
+              minWidth: 110,
               boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
             }}>
               {[
-                { code: 'zh', label: '简体中文', flag: '🇨🇳' },
-                { code: 'ko', label: '한국어',   flag: '🇰🇷' },
-                { code: 'en', label: 'English',  flag: '🇺🇸' },
+                { code: 'zh', label: '简体中文' },
+                { code: 'ko', label: '한국어' },
+                { code: 'en', label: 'English' },
               ].map(l => (
                 <button
                   key={l.code}
@@ -93,14 +94,12 @@ export default function NearPageHeader({ onBack, setTab }) {
                     background: lang === l.code ? '#F3F4F6' : 'transparent',
                     border: 'none', cursor: 'pointer',
                     fontSize: 13,
-                    display: 'flex', alignItems: 'center', gap: 8,
                     fontWeight: lang === l.code ? 700 : 400,
                     color: lang === l.code ? '#1A1A1A' : '#555555',
                   }}
                 >
-                  <span>{l.flag}</span>
-                  <span style={{ flex: 1 }}>{l.label}</span>
-                  {lang === l.code && <span style={{ color: '#C4725A' }}>✓</span>}
+                  {l.label}
+                  {lang === l.code && <span style={{ color: '#C4725A', marginLeft: 6 }}>✓</span>}
                 </button>
               ))}
             </div>

@@ -4,6 +4,8 @@
 
 /* ─── NEAR Design System — 토스/미단/소홍서 스타일 ─── */
 :root {
+  color-scheme: light only;
+
   /* Brand Colors */
   --primary: #C4725A;
   --primary-light: #FDF8F6;
@@ -333,7 +335,12 @@
   -webkit-backface-visibility: hidden;
 }
 
-/* ─── Base Body Styles ─── */
+/* ─── Base HTML/Body Styles (Light Mode Only) ─── */
+
+html {
+  background-color: #FAFAFA;
+  color: #1A1A1A;
+}
 
 body {
   margin: 0;
@@ -341,8 +348,8 @@ body {
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: var(--y2k-bg);
-  color: var(--y2k-text);
+  background: #FAFAFA;
+  color: #1A1A1A;
   letter-spacing: 0;
   transition: background-color 0.3s ease, color 0.3s ease;
 }

@@ -2,7 +2,6 @@
  * 에디토리얼 상세 페이지 — 풀스크린 오버레이
  * 서울 10개 지역 깊이 읽기
  */
-import { Clock, MapPin } from 'lucide-react'
 import NearPageHeader from './NearPageHeader.jsx'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
@@ -38,7 +37,7 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
           <div style={{
             position: 'absolute', right: 20, top: 20,
             fontSize: 80, fontWeight: 900, lineHeight: 1,
-            color: isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.12)',
+            color: '#F0F0F0',
             fontFamily: 'Inter, sans-serif',
             userSelect: 'none',
           }}>
@@ -47,13 +46,13 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
 
           {/* 콘텐츠 */}
           <div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: isLight ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.6)', letterSpacing: '0.1em', marginBottom: 8, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: '#AAAAAA', letterSpacing: '0.1em', marginBottom: 8, textTransform: 'uppercase' }}>
               SEOUL EDITORIAL {editorial.number}
             </div>
-            <h1 style={{ fontSize: 20, fontWeight: 700, color: isLight ? '#111' : 'white', lineHeight: 1.4, margin: '0 0 10px', letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111', lineHeight: 1.4, margin: '0 0 10px', letterSpacing: '-0.02em' }}>
               {L(lang, editorial.title)}
             </h1>
-            <p style={{ fontSize: 13, color: isLight ? 'rgba(0,0,0,0.55)' : 'rgba(255,255,255,0.75)', margin: 0, lineHeight: 1.5, fontStyle: 'italic' }}>
+            <p style={{ fontSize: 13, color: '#999999', margin: 0, lineHeight: 1.5, fontStyle: 'italic' }}>
               {L(lang, editorial.oneLiner)}
             </p>
           </div>
@@ -69,7 +68,6 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
             background: '#FAFAFA', marginBottom: 24,
             boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
           }}>
-            <Clock size={16} color="#999" />
             <span style={{ fontSize: 13, color: '#666' }}>
               {L(lang, { ko: '추천 방문 시간', zh: '推荐游览时间', en: 'Best time to visit' })}:&nbsp;
               <strong style={{ color: '#111' }}>{L(lang, editorial.timeRecommend)}</strong>
@@ -93,7 +91,6 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
           {spots.length > 0 && (
             <div style={{ marginBottom: 28 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
-                <MapPin size={15} color="#C4725A" />
                 <span style={{ fontSize: 14, fontWeight: 700, color: '#111' }}>
                   {L(lang, { ko: '어디를 가야 할까?', zh: '去哪里好？', en: 'Where to go?' })}
                 </span>

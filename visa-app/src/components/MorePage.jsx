@@ -2,7 +2,6 @@
  * 3.4 더보기 페이지 — 긴급정보, 실용도구, 한국가이드, 커뮤니티, 설정
  * C 섹션(#51~#70) 가이드 페이지 연결 포함
  */
-import { ChevronRight } from 'lucide-react'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
@@ -137,7 +136,7 @@ export default function MorePage({ lang, setTab, setSubPage }) {
                     </p>
                   )}
                 </div>
-                <ChevronRight size={16} color="#BBBBBB" style={{ flexShrink: 0 }} />
+                <span style={{ color: '#BBBBBB', flexShrink: 0, fontSize: 16 }}>›</span>
               </button>
             ))}
           </div>

@@ -3,7 +3,6 @@
  * 프로필 + 여행 목적 태그 + 퀵 액션 3개 + 활동 내역 카드 + 메뉴 리스트
  */
 import { useState, useEffect } from 'react'
-import { Calendar, Heart, Car, Bell, HelpCircle, ChevronRight, X, Check, Gift, MapPin, MessageSquare, Footprints, Camera, Music, ShoppingBag, Briefcase, UtensilsCrossed, Pencil } from 'lucide-react'
 import { useLanguage } from '../i18n/index.jsx'
 
 function L(lang, d) { return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
@@ -19,11 +18,11 @@ const NEU = {
 }
 
 const MENU_ITEMS = [
-  { id: 'reservations', icon: Calendar,    bg: NEU.terraLight,      color: NEU.terra,    labelKey: 'my.orders',       action: 'booking-my'        },
-  { id: 'favorites',    icon: Heart,       bg: 'rgba(255,149,0,0.08)',  color: '#FF9500',    labelKey: 'my.wishlist',     action: 'sub:my-seoul'      },
-  { id: 'taxi',         icon: Car,         bg: 'rgba(33,150,243,0.08)', color: '#2196F3',    labelKey: 'my.taxiHistory',  action: 'sub:taxi-history'  },
-  { id: 'notifications',icon: Bell,        bg: 'rgba(76,175,80,0.08)',  color: '#4CAF50',    labelKey: 'my.notifications',action: 'sub:notifications' },
-  { id: 'help',         icon: HelpCircle,  bg: 'rgba(153,153,153,0.08)',color: '#999999',    labelKey: 'my.help',         action: 'sub:help'          },
+  { id: 'reservations', bg: NEU.terraLight,      color: NEU.terra,    labelKey: 'my.orders',       action: 'booking-my'        },
+  { id: 'favorites',    bg: 'rgba(255,149,0,0.08)',  color: '#FF9500',    labelKey: 'my.wishlist',     action: 'sub:my-seoul'      },
+  { id: 'taxi',         bg: 'rgba(33,150,243,0.08)', color: '#2196F3',    labelKey: 'my.taxiHistory',  action: 'sub:taxi-history'  },
+  { id: 'notifications',bg: 'rgba(76,175,80,0.08)',  color: '#4CAF50',    labelKey: 'my.notifications',action: 'sub:notifications' },
+  { id: 'help',         bg: 'rgba(153,153,153,0.08)',color: '#999999',    labelKey: 'my.help',         action: 'sub:help'          },
 ]
 
 const LANG_OPTIONS = [
@@ -33,20 +32,20 @@ const LANG_OPTIONS = [
 ]
 
 const PURPOSE_OPTIONS = [
-  { id: 'sightseeing', Icon: Camera,          zh: '观光',     ko: '관광',     en: 'Sightseeing' },
-  { id: 'food',        Icon: UtensilsCrossed, zh: '美食',     ko: '미식',     en: 'Food'        },
-  { id: 'kpop',        Icon: Music,           zh: 'K-POP',    ko: 'K-POP',    en: 'K-POP'       },
-  { id: 'shopping',    Icon: ShoppingBag,     zh: '购物',     ko: '쇼핑',     en: 'Shopping'    },
-  { id: 'medical',     Icon: Heart,           zh: '医疗美容', ko: '의료뷰티', en: 'Medical'     },
-  { id: 'business',    Icon: Briefcase,       zh: '出差',     ko: '비즈니스', en: 'Business'    },
+  { id: 'sightseeing', zh: '观光',     ko: '관광',     en: 'Sightseeing' },
+  { id: 'food',        zh: '美食',     ko: '미식',     en: 'Food'        },
+  { id: 'kpop',        zh: 'K-POP',    ko: 'K-POP',    en: 'K-POP'       },
+  { id: 'shopping',    zh: '购物',     ko: '쇼핑',     en: 'Shopping'    },
+  { id: 'medical',     zh: '医疗美容', ko: '의료뷰티', en: 'Medical'     },
+  { id: 'business',    zh: '出差',     ko: '비즈니스', en: 'Business'    },
 ]
 
 const ACTIVITY_STATS = [
-  { icon: MapPin,        storageKey: 'near_checkins',   labelKey: 'my.checkins' },
-  { icon: MessageSquare, storageKey: 'near_reviews',    labelKey: 'my.reviews'  },
-  { icon: Car,           storageKey: 'near_taxi_count', labelKey: 'my.taxiUse'  },
-  { icon: Heart,         storageKey: 'near_my_seoul',   labelKey: 'my.saved'    },
-  { icon: Footprints,    storageKey: 'near_visited',    labelKey: 'my.visited'  },
+  { storageKey: 'near_checkins',   labelKey: 'my.checkins' },
+  { storageKey: 'near_reviews',    labelKey: 'my.reviews'  },
+  { storageKey: 'near_taxi_count', labelKey: 'my.taxiUse'  },
+  { storageKey: 'near_my_seoul',   labelKey: 'my.saved'    },
+  { storageKey: 'near_visited',    labelKey: 'my.visited'  },
 ]
 
 function getStorageCount(key) {
@@ -159,7 +158,7 @@ export default function MyTab({ setTab, setSubPage }) {
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}
           >
             <span style={{ fontSize: 19, fontWeight: 700, color: '#1A1A1A' }}>{displayName}</span>
-            <Pencil size={13} color="#888888" />
+            <span style={{ fontSize: 11, color: '#888888' }}>수정</span>
           </button>
 
           {/* 여행 목적 태그 */}
@@ -196,9 +195,9 @@ export default function MyTab({ setTab, setSubPage }) {
       {/* ─── 퀵 액션 3개 ─── */}
       <div style={{ display: 'flex', gap: 10, padding: '0 20px 24px' }}>
         {[
-          { labelKey: 'my.orders',   Icon: Calendar, count: bookingCount,  unit: '', action: () => goToMyBookings()           },
-          { labelKey: 'my.points',   Icon: Gift,     count: 0,             unit: 'P', action: () => {}                       },
-          { labelKey: 'my.wishlist', Icon: Heart,    count: favoriteCount, unit: '', action: () => setSubPage?.('my-seoul')  },
+          { labelKey: 'my.orders',   count: bookingCount,  unit: '', action: () => goToMyBookings()           },
+          { labelKey: 'my.points',   count: 0,             unit: 'P', action: () => {}                       },
+          { labelKey: 'my.wishlist', count: favoriteCount, unit: '', action: () => setSubPage?.('my-seoul')  },
         ].map((item, i) => (
           <button
             key={i}
@@ -214,7 +213,6 @@ export default function MyTab({ setTab, setSubPage }) {
             onTouchStart={e => e.currentTarget.style.boxShadow = NEU.shadowIn}
             onTouchEnd={e => e.currentTarget.style.boxShadow = NEU.shadowOut}
           >
-            <item.Icon size={16} color={NEU.terra} />
             <div style={{ textAlign: 'left' }}>
               <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
                 {item.count}{item.unit}
@@ -236,7 +234,6 @@ export default function MyTab({ setTab, setSubPage }) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
           {ACTIVITY_STATS.map((stat, i) => {
-            const StatIcon = stat.icon
             const count = getStorageCount(stat.storageKey)
             return (
               <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
@@ -245,7 +242,6 @@ export default function MyTab({ setTab, setSubPage }) {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   boxShadow: NEU.shadowOutSm,
                 }}>
-                  <StatIcon size={18} color={NEU.terra} strokeWidth={1.5} />
                 </div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', fontFamily: 'Inter, sans-serif' }}>{count}</div>
                 <div style={{ fontSize: 11, color: '#888888' }}>{t(stat.labelKey)}</div>
@@ -258,7 +254,6 @@ export default function MyTab({ setTab, setSubPage }) {
       {/* ─── 메뉴 리스트 ─── */}
       <div style={{ padding: '0 20px', display: 'flex', flexDirection: 'column', gap: 10 }}>
         {MENU_ITEMS.map((item) => {
-          const MenuIcon = item.icon
           const badge = item.id === 'reservations' ? bookingCount : item.id === 'favorites' ? favoriteCount : 0
           return (
             <button
@@ -275,14 +270,6 @@ export default function MyTab({ setTab, setSubPage }) {
               onTouchStart={e => e.currentTarget.style.boxShadow = NEU.shadowIn}
               onTouchEnd={e => e.currentTarget.style.boxShadow = NEU.shadowOut}
             >
-              <div style={{
-                width: 40, height: 40, borderRadius: 14,
-                background: NEU.bg,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                boxShadow: NEU.shadowOutSm,
-              }}>
-                <MenuIcon size={18} color={item.color} />
-              </div>
               <span style={{ flex: 1, fontSize: 15, color: '#1A1A1A', fontWeight: 500 }}>{t(item.labelKey)}</span>
               {badge > 0 && (
                 <span style={{
@@ -291,7 +278,7 @@ export default function MyTab({ setTab, setSubPage }) {
                   fontSize: 11, fontWeight: 700,
                 }}>{badge}</span>
               )}
-              <ChevronRight size={14} color="#BBBBBB" />
+              <span style={{ fontSize: 14, color: '#BBBBBB' }}>›</span>
             </button>
           )
         })}
@@ -310,8 +297,8 @@ export default function MyTab({ setTab, setSubPage }) {
         <NeuSheet onClose={() => setLangModalOpen(false)}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: 0 }}>{t('lang.title')}</h3>
-            <button onClick={() => setLangModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex' }}>
-              <X size={18} color="#888888" />
+            <button onClick={() => setLangModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#888888' }}>
+              ✕
             </button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -330,7 +317,7 @@ export default function MyTab({ setTab, setSubPage }) {
                 }}
               >
                 <span style={{ fontSize: 16, fontWeight: 600, color: lang === opt.code ? NEU.terra : '#1A1A1A' }}>{opt.native}</span>
-                {lang === opt.code && <Check size={18} color={NEU.terra} />}
+                {lang === opt.code && <span style={{ fontSize: 18, color: NEU.terra }}>✓</span>}
               </button>
             ))}
           </div>
@@ -344,8 +331,8 @@ export default function MyTab({ setTab, setSubPage }) {
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: 0 }}>
               {L(lang, { zh: '修改昵称', ko: '닉네임 수정', en: 'Edit Nickname' })}
             </h3>
-            <button onClick={() => setNicknameModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex' }}>
-              <X size={18} color="#888888" />
+            <button onClick={() => setNicknameModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#888888' }}>
+              ✕
             </button>
           </div>
           <input
@@ -382,8 +369,8 @@ export default function MyTab({ setTab, setSubPage }) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: 0 }}>{t('my.purposeTitle')}</h3>
             {purposes !== null && (
-              <button onClick={() => setPurposeModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex' }}>
-                <X size={18} color="#888888" />
+              <button onClick={() => setPurposeModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#888888' }}>
+                ✕
               </button>
             )}
           </div>
@@ -393,7 +380,6 @@ export default function MyTab({ setTab, setSubPage }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 24 }}>
             {PURPOSE_OPTIONS.map(p => {
               const selected = selectedPurposes.includes(p.id)
-              const PIcon = p.Icon
               return (
                 <button
                   key={p.id}
@@ -408,7 +394,6 @@ export default function MyTab({ setTab, setSubPage }) {
                     transition: 'box-shadow 0.15s ease',
                   }}
                 >
-                  <PIcon size={24} color={selected ? NEU.terra : '#888888'} />
                   <span style={{ fontSize: 13, fontWeight: selected ? 700 : 400, color: selected ? NEU.terra : '#1A1A1A' }}>
                     {L(lang, p)}
                   </span>

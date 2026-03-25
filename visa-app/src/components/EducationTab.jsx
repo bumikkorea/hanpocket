@@ -1,5 +1,4 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
-import { Play, Volume2, Mic, Award, Target, CheckCircle, XCircle, ChevronLeft } from 'lucide-react'
 import { sessions, minimaps, xpRules, levelTitles, getLevelFromXp, getNextLevelXp, levels } from '../data/education'
 import Onigiri from './Onigiri'
 
@@ -22,7 +21,7 @@ function speakKorean(text, rate = 0.7) {
 }
 
 // 발음 연습을 위한 미니 퀴즈 컴포넌트
-function PronunciationQuiz({ word, pronunciation, meaning, lang, onComplete }) {
+function PronunciationQuiz({ word, pronunciation, zh_pron, meaning, lang, onComplete }) {
   const [isListening, setIsListening] = useState(false)
   const [result, setResult] = useState(null)
   
@@ -48,14 +47,19 @@ function PronunciationQuiz({ word, pronunciation, meaning, lang, onComplete }) {
     <div className="bg-[#F5F1EB] rounded-xl p-6 border border-[#B2DFDB]">
       <div className="text-center mb-4">
         <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">{word}</h3>
-        <p className="text-sm text-[#666666] italic">[{pronunciation}]</p>
+        {lang === 'zh' && zh_pron
+          ? <p className="text-sm text-[#C4725A] font-medium">{zh_pron}</p>
+          : <p className="text-sm text-[#666666] italic">[{pronunciation}]</p>
+        }
+        {lang === 'zh' && zh_pron && (
+          <p className="text-[11px] text-[#999999] mt-0.5 italic">[{pronunciation}]</p>
+        )}
         <p className="text-xs text-[#999999] mt-1">{L(lang, meaning)}</p>
       </div>
       
       <div className="flex justify-center gap-3 mb-4">
         <button onClick={handleSpeak}
           className="flex items-center gap-2 px-4 py-3 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors">
-          <Volume2 size={18} />
           {lang === 'ko' ? '듣기' : lang === 'zh' ? '听一下' : 'Listen'}
         </button>
         
@@ -63,10 +67,9 @@ function PronunciationQuiz({ word, pronunciation, meaning, lang, onComplete }) {
           className={`flex items-center gap-2 px-4 py-3 rounded-xl transition-colors ${
             isListening ? 'bg-[#DC2626] text-white animate-pulse' : 'bg-gradient-to-b from-[#2D5A3D] to-[#1A3A28] text-white'
           }`}>
-          <Mic size={18} />
-          {isListening 
+          {isListening
             ? (lang === 'ko' ? '듣는 중...' : lang === 'zh' ? '正在听...' : 'Listening...')
-            : (lang === 'ko' ? '발음하기' : lang === 'zh' ? '跟读' : 'Pronounce')
+            : (lang === 'ko' ? '말하기' : lang === 'zh' ? '跟读' : 'Pronounce')
           }
         </button>
       </div>
@@ -77,12 +80,12 @@ function PronunciationQuiz({ word, pronunciation, meaning, lang, onComplete }) {
         }`}>
           {result === 'correct' ? (
             <div className="flex items-center justify-center gap-2">
-              <CheckCircle size={20} />
+              <span>✓</span>
               {lang === 'ko' ? '완벽합니다!' : lang === 'zh' ? '完美！' : 'Perfect!'}
             </div>
           ) : (
             <div className="flex items-center justify-center gap-2">
-              <XCircle size={16} />
+              <span>✕</span>
               {lang === 'ko' ? '다시 한번 해보세요' : lang === 'zh' ? '再试一次' : 'Try again'}
             </div>
           )}
@@ -114,7 +117,6 @@ function XpBar({ xp, lang }) {
     <div className="bg-white rounded-xl p-4 border border-[#E5E7EB]">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="text-lg">⭐</span>
           <span className="font-bold text-[#1A1A1A]">Lv.{level + 1} {title}</span>
         </div>
         <span className="text-sm text-[#666666]">{xp} XP</span>
@@ -137,7 +139,6 @@ function StreakBadge({ streak, lang }) {
   return (
     <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-xl p-3 text-white flex items-center justify-between">
       <div className="flex items-center gap-2">
-        <span className="text-2xl">🔥</span>
         <div>
           <div className="font-bold text-lg">{streak}{lang === 'ko' ? '일' : lang === 'zh' ? '天' : ' days'}</div>
           <div className="text-xs opacity-80">{labels[lang]}</div>
@@ -395,7 +396,7 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
   return (
     <div className="space-y-4 animate-fade-up">
       <button onClick={onBack} className="text-[#2D5A3D] text-sm font-medium flex items-center gap-2">
-        <ChevronLeft size={16} />
+        ←
         {lang === 'ko' ? '세션으로 돌아가기' : lang === 'zh' ? '返回课程' : 'Back to Session'}
       </button>
       
@@ -418,6 +419,7 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
           <PronunciationQuiz
             word={pronunciationWords[currentStep].word}
             pronunciation={pronunciationWords[currentStep].pronunciation}
+            zh_pron={pronunciationWords[currentStep].zh_pron}
             meaning={pronunciationWords[currentStep].meaning}
             lang={lang}
             onComplete={() => handlePronunciationComplete(currentStep)}
@@ -437,7 +439,6 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
             </p>
             <button onClick={handleUnitComplete}
               className="bg-gradient-to-r from-[#2D5A3D] to-[#B8860B] text-white px-8 py-3 rounded-xl font-semibold transition-all">
-              <Award className="inline mr-2" size={20} />
               {lang === 'ko' ? '완료하고 XP 받기' : lang === 'zh' ? '完成并获得XP' : 'Complete & Get XP'}
             </button>
           </div>

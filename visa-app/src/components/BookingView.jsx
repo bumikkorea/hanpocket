@@ -1,8 +1,6 @@
 // BookingView.jsx — 预约 탭 메인 화면
 // 매장 리스트 → 서비스 선택 → 날짜/시간 → 결제 확인 → 완료
 import { useState, useMemo, useEffect } from 'react'
-import { ArrowLeft, CalendarBlank, Clock, Users, CheckCircle, CaretRight, X } from '@phosphor-icons/react'
-import { Check } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useToast } from './Toast'
 import { useLanguage } from '../i18n/index.jsx'
@@ -337,7 +335,7 @@ function StepService({ shop, services, servicesLoading, lang, onSelect, onBack, 
               <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{svc[nameKey]}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 13, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
-                  <Clock size={12} /> {svc.duration_min}{L(lang, LABEL.min)}
+                  {svc.duration_min}{L(lang, LABEL.min)}
                 </span>
               </div>
             </div>
@@ -345,7 +343,7 @@ function StepService({ shop, services, servicesLoading, lang, onSelect, onBack, 
               <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>{L(lang, LABEL.krw)}{svc.price_krw.toLocaleString()}</div>
               <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>≈ {L(lang, LABEL.cny)}{krwToCny(svc.price_krw)}</div>
             </div>
-            {selected?.id === svc.id && <CheckCircle size={20} weight="fill" style={{ color: BRAND, flexShrink: 0 }} />}
+            {selected?.id === svc.id && <span style={{ color: BRAND, flexShrink: 0, fontSize: 20 }}>✓</span>}
           </button>
         ))}
       </div>
@@ -482,7 +480,7 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
         <button onClick={() => setShowNote(v => !v)}
           style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#FAFAFA', borderRadius: 12, border: 'none', cursor: 'pointer', marginBottom: showNote ? 0 : 16, boxShadow: showNote ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
           <span style={{ fontSize: 12, fontWeight: 700, color: '#92400E' }}>{L(lang, LABEL.deposit_label)}</span>
-          <CaretRight size={14} style={{ color: '#92400E', transform: showNote ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }} />
+          <span style={{ color: '#92400E', display: 'inline-block', transform: showNote ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s', fontSize: 14 }}>›</span>
         </button>
         {showNote && (
           <div style={{ background: '#FAFAFA', padding: '10px 14px', borderRadius: '0 0 12px 12px', marginBottom: 16, boxShadow: '0 4px 8px rgba(200,200,200,0.3)' }}>
@@ -513,7 +511,7 @@ function ConfirmDone({ booking, lang, onGoMy, onGoMap }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', textAlign: 'center', flex: 1 }}>
       <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
-        <CheckCircle size={44} weight="fill" style={{ color: '#16A34A' }} />
+        <span style={{ color: '#16A34A', fontSize: 44, lineHeight: 1 }}>✓</span>
       </div>
       <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px' }}>{L(lang, LABEL.confirm_ok)}</h2>
       <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>{L(lang, LABEL.booking_no)}</p>
@@ -541,7 +539,7 @@ function StepHeader({ title, subtitle, onBack }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 20px 12px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 12px rgba(200,200,200,0.25), 0 -2px 6px rgba(255,255,255,0.8)' }}>
       <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex', borderRadius: 8 }}>
-        <ArrowLeft size={22} weight="bold" />
+        ←
       </button>
       <div>
         <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{title}</div>
@@ -657,9 +655,9 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
                   <StatusBadge status={b.status} />
                 </div>
                 <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-muted)', marginBottom: 10 }}>
-                  <span>📅 {b.date}</span>
-                  <span>⏰ {b.time}</span>
-                  <span>👥 {b.guests}{lang === 'zh' ? '人' : lang === 'ko' ? '명' : ''}</span>
+                  <span>{b.date}</span>
+                  <span>{b.time}</span>
+                  <span>{b.guests}{lang === 'zh' ? '人' : lang === 'ko' ? '명' : ''}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, borderTop: '1px solid var(--border)' }}>
                   <div>
@@ -711,7 +709,7 @@ function StepIndicator({ currentStep, lang }) {
                 boxShadow: active ? `0 0 0 4px rgba(196,114,90,0.2)` : 'none',
                 transition: 'all 0.2s',
               }}>
-                {done ? <Check size={14} /> : step}
+                {done ? '✓' : step}
               </div>
               <span style={{ fontSize: 12, fontWeight: active ? 600 : 400, color: active ? BRAND : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                 {labels[i]}
@@ -812,7 +810,7 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
               </div>
             ) : shops.length === 0 ? (
               <div style={{ textAlign: 'center', paddingTop: 80 }}>
-                <CalendarBlank size={40} style={{ color: 'var(--text-hint)', marginBottom: 12 }} />
+                <span style={{ color: 'var(--text-hint)', fontSize: 40, display: 'block', marginBottom: 12 }}></span>
                 <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>{L(lang, LABEL.empty_shops)}</p>
                 <button onClick={onGoToMapTab} style={{ padding: '10px 24px', borderRadius: 'var(--radius-btn)', background: BRAND, color: 'white', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
                   {L(lang, LABEL.empty_go)}

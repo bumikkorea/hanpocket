@@ -1,11 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
-import { MapPin, MagnifyingGlass, ArrowLeft } from '@phosphor-icons/react'
-import { Search, Navigation, Bus, Car, Calendar, Heart, LayoutGrid, Sparkles, UtensilsCrossed, Shirt, Coffee, Store, Route as RouteIcon } from 'lucide-react'
 import { useNearPins } from '../hooks/usePopupStores'
 import TaxiCardView from './TaxiCardView.jsx'
 import PlaceDetail from './PlaceDetail.jsx'
 import { searchLocalPlaces } from '../data/hanpocketPlaceDB.js'
 import { CATEGORY_CONFIG } from '../data/poiData'
+import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS } from '../data/restaurantData.js'
 import { COURSE_DATA } from '../data/courseData.js'
 import { supabase } from '../lib/supabase'
 import { t, tLang } from '../locales/index.js'
@@ -19,12 +18,38 @@ const IS_DEV = import.meta.env.DEV
 
 // ─── 카테고리 칩 ───
 const CATEGORY_CHIPS = [
-  { id: 'all',     key: 'cat_all',     Icon: LayoutGrid       },
-  { id: 'popup',   key: 'cat_popup',   Icon: Sparkles         },
-  { id: 'food',    key: 'cat_food',    Icon: UtensilsCrossed  },
-  { id: 'fashion', key: 'cat_fashion', Icon: Shirt            },
-  { id: 'cafe',    key: 'cat_cafe',    Icon: Coffee           },
-  { id: 'utility', key: 'cat_utility', Icon: Store            },
+  { id: 'all',     key: 'cat_all'     },
+  { id: 'popup',   key: 'cat_popup'   },
+  { id: 'food',    key: 'cat_food'    },
+  { id: 'fashion', key: 'cat_fashion' },
+  { id: 'cafe',    key: 'cat_cafe'    },
+  { id: 'utility', key: 'cat_utility' },
+  { id: 'michelin', key: 'cat_michelin' },
+]
+
+// ─── 미슐랭 서브필터 ───
+const MICHELIN_SUB_FILTERS = [
+  { id: 'all',       key: 'michelin_all' },
+  { id: 'michelin3', key: 'michelin_3star' },
+  { id: 'michelin2', key: 'michelin_2star' },
+  { id: 'michelin1', key: 'michelin_1star' },
+  { id: 'bib',       key: 'michelin_bib' },
+  { id: 'blue',      key: 'michelin_blue' },
+]
+
+// ─── 미슐랭 핀 설정 ───
+const MICHELIN_PIN_CONFIG = {
+  michelin3: { color: '#DC2626', emoji: '⭐⭐⭐', label: '3★' },
+  michelin2: { color: '#DC2626', emoji: '⭐⭐', label: '2★' },
+  michelin1: { color: '#DC2626', emoji: '⭐', label: '1★' },
+  bib:       { color: '#EA580C', emoji: '😋', label: 'Bib' },
+  blue:      { color: '#2563EB', emoji: '🎗️', label: 'BR' },
+}
+
+// ─── 전체 식당 데이터 (좌표 있는 것만) ───
+const ALL_RESTAURANTS = [
+  ...MICHELIN_RESTAURANTS.filter(r => r.lat && r.lng),
+  ...BLUE_RIBBON_RESTAURANTS.filter(r => r.lat && r.lng).map(r => ({ ...r, award: 'blue' })),
 ]
 
 const PH_KEYS = ['search.placeholder.0','search.placeholder.1','search.placeholder.2','search.placeholder.3','search.placeholder.4']
@@ -213,6 +238,28 @@ function buildCoursePinHTML(number, color, poiId) {
   `
 }
 
+// ─── 미슐랭 핀 HTML ───
+function buildMichelinPinHTML(award, poiId) {
+  const cfg = MICHELIN_PIN_CONFIG[award] || MICHELIN_PIN_CONFIG.michelin1
+  return `
+    <div data-poi="${poiId}" style="transition:transform 200ms ease,opacity 200ms ease;display:inline-block">
+      <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+        <div style="
+          min-width:36px;height:36px;
+          background:${cfg.color};
+          border-radius:18px;
+          border:2.5px solid white;
+          box-shadow:0 2px 6px rgba(0,0,0,0.2);
+          display:flex;align-items:center;justify-content:center;
+          cursor:pointer;padding:0 6px;
+          font-size:${award === 'michelin3' ? '10' : '12'}px;line-height:1;
+        ">${cfg.emoji}</div>
+        <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid ${cfg.color};margin-top:-1px;"></div>
+      </div>
+    </div>
+  `
+}
+
 // ─── Magic Pill 지역 셀렉터 ───
 function MagicPillSelector({ areas, lang, onSelect }) {
   const [expanded, setExpanded] = useState(false)
@@ -268,7 +315,6 @@ function MagicPillSelector({ areas, lang, onSelect }) {
                   className="w-full px-3 py-2 flex items-center gap-1.5 cursor-pointer select-none transition-colors duration-100"
                   style={{ background: isCurrent ? 'rgba(196,114,90,0.06)' : 'transparent', color: isCurrent ? '#C4725A' : '#1A1A1A' }}
                 >
-                  {isCurrent && <MapPin size={11} weight="fill" color="#C4725A" />}
                   <span className={`text-[12px] ${isCurrent ? 'font-bold' : 'font-medium'}`}>
                     {tLang(area.key, lang)}
                   </span>
@@ -310,6 +356,8 @@ export default function NearMap() {
     return () => clearInterval(iv)
   }, [])
   const [activeCategory, setActiveCategory] = useState('all')
+  const [michelinFilter, setMichelinFilter] = useState('all')
+  const michelinOverlaysRef = useRef([])  // 미슐랭 전용 오버레이
   const [selectedDistrict, setSelectedDistrict] = useState(null) // null = 서울 전체
   const [activePopup, setActivePopup] = useState(null)
   const [navPoi, setNavPoi] = useState(null)
@@ -515,6 +563,7 @@ export default function NearMap() {
     overlaysRef.current.forEach(o => o.overlay.setMap(null))
     overlaysRef.current = []
     if (activeCourseId) return  // 코스 모드: 코스 핀이 대신 렌더됨
+    if (activeCategory === 'michelin') return  // 미슐랭 모드: 별도 렌더
 
     const map = mapInstance.current
     const inBounds = getPinsInBounds(filteredPins, map)
@@ -533,6 +582,49 @@ export default function NearMap() {
       return { overlay, el, poi }
     })
   }, [mapReady, filteredPins, selectPin, activeCourseId, mapMoveStamp, activeCategory])
+
+  // ── 미슐랭 핀 렌더 ──
+  useEffect(() => {
+    if (!mapReady || !mapInstance.current) return
+    michelinOverlaysRef.current.forEach(o => o.overlay.setMap(null))
+    michelinOverlaysRef.current = []
+    if (activeCategory !== 'michelin') return
+
+    const map = mapInstance.current
+    const filtered = ALL_RESTAURANTS.filter(r => {
+      if (michelinFilter === 'all') return true
+      if (michelinFilter === 'blue') return r.award === 'blue'
+      if (michelinFilter === 'bib') return r.award === 'bib'
+      return r.award === michelinFilter
+    })
+
+    const inBounds = filtered.filter(r => {
+      try {
+        return map.getBounds().contain(new window.kakao.maps.LatLng(r.lat, r.lng))
+      } catch { return true }
+    }).slice(0, 50)
+
+    michelinOverlaysRef.current = inBounds.map(r => {
+      const el = document.createElement('div')
+      el.innerHTML = buildMichelinPinHTML(r.award, r.id)
+      const overlay = new window.kakao.maps.CustomOverlay({
+        map, position: new window.kakao.maps.LatLng(r.lat, r.lng),
+        content: el, yAnchor: 1.3, zIndex: 2,
+      })
+      // 미슐랭 식당을 POI 형태로 변환
+      const poi = {
+        id: r.id,
+        lat: r.lat, lng: r.lng,
+        name_ko: r.name?.ko, name_zh: r.name?.zh, name_en: r.name?.en,
+        address_ko: (r.area?.gu || '') + ' ' + (r.area?.dong || ''),
+        category: 'michelin',
+        image_url: r.images?.[0] || null,
+        _restaurant: r,  // 원본 데이터 참조
+      }
+      el.addEventListener('click', () => selectPin(poi))
+      return { overlay, el, poi }
+    })
+  }, [mapReady, activeCategory, michelinFilter, selectPin, mapMoveStamp])
 
   // ── 코스 핀 + 폴리라인 ──
   useEffect(() => {
@@ -714,7 +806,6 @@ export default function NearMap() {
           padding: '0 14px', height: 44, gap: 8,
           transition: 'box-shadow 0.15s ease',
         }}>
-          <Search size={16} color="#888888" />
           <span style={{ fontSize: 14, color: '#888888', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}>
             {tLang(PH_KEYS[phIdx], lang)}
           </span>
@@ -746,11 +837,12 @@ export default function NearMap() {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
           transition: 'box-shadow 0.15s ease',
+        fontSize: 18, color: '#C4725A',
         }}
         onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'}
         onTouchEnd={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)'}
       >
-        <Navigation size={18} color="#C4725A" />
+        ◎
       </button>
 
       {/* ─── 카테고리 칩 ─── */}
@@ -758,7 +850,6 @@ export default function NearMap() {
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 20px', scrollbarWidth: 'none' }}>
           {CATEGORY_CHIPS.map(chip => {
             const active = activeCategory === chip.id && !courseMode
-            const ChipIcon = chip.Icon
             return (
               <button
                 key={chip.id}
@@ -782,7 +873,6 @@ export default function NearMap() {
                   cursor: 'pointer',
                 }}
               >
-                {ChipIcon && <ChipIcon size={13} color={active ? 'white' : '#888'} />}
                 {tLang(chip.key, lang)}
               </button>
             )
@@ -804,10 +894,38 @@ export default function NearMap() {
               cursor: 'pointer',
             }}
           >
-            <RouteIcon size={13} color={courseMode ? 'white' : '#888'} />
             {tLang('course_toggle', lang)}
           </button>
         </div>
+
+        {/* ─── 미슐랭 서브필터 ─── */}
+        {activeCategory === 'michelin' && !courseMode && (
+          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 20px 0', scrollbarWidth: 'none' }}>
+            {MICHELIN_SUB_FILTERS.map(f => {
+              const active = michelinFilter === f.id
+              const pinCfg = MICHELIN_PIN_CONFIG[f.id === 'all' ? 'michelin1' : f.id === 'blue' ? 'blue' : f.id === 'bib' ? 'bib' : f.id]
+              return (
+                <button
+                  key={f.id}
+                  onClick={() => setMichelinFilter(f.id)}
+                  style={{
+                    flexShrink: 0, height: 28, minWidth: 36,
+                    background: active ? (pinCfg?.color || '#DC2626') : 'white',
+                    color: active ? 'white' : '#777',
+                    border: active ? 'none' : '1px solid rgba(0,0,0,0.08)',
+                    borderRadius: 20, padding: '0 10px',
+                    fontSize: 11, fontWeight: active ? 700 : 500,
+                    boxShadow: active ? `0 2px 6px ${(pinCfg?.color || '#DC2626')}40` : '0 1px 3px rgba(0,0,0,0.06)',
+                    transition: 'all 0.15s ease',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {tLang(f.key, lang)}
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* ─── 전체 슬라이드 패널 ─── */}
@@ -874,6 +992,15 @@ export default function NearMap() {
         }}
       >
         {isExpanded && sheetPoi ? (
+          sheetPoi._restaurant ? (
+            <MichelinSheetContent
+              poi={sheetPoi}
+              restaurant={sheetPoi._restaurant}
+              lang={lang}
+              onClose={closeSheet}
+              userPos={userPos}
+            />
+          ) : (
           <ExpandedSheetContent
             poi={sheetPoi}
             lang={lang}
@@ -886,6 +1013,7 @@ export default function NearMap() {
             userPos={userPos}
             statusTick={statusTick}
           />
+          )
         ) : activeCourseId ? (
           <CourseStopList
             course={courses.find(c => c.id === activeCourseId)}
@@ -1050,6 +1178,101 @@ export default function NearMap() {
   )
 }
 
+// ─── 미슐랭 바텀 시트 ───
+function MichelinSheetContent({ poi, restaurant, lang, onClose, userPos }) {
+  const r = restaurant
+  const pinCfg = MICHELIN_PIN_CONFIG[r.award] || MICHELIN_PIN_CONFIG.michelin1
+  const name = lang === 'zh' ? r.name?.zh : lang === 'en' ? r.name?.en : r.name?.ko
+  const priceLabel = r.priceRange ? '₩'.repeat(r.priceRange) : ''
+
+  const awardLabel = {
+    michelin3: { ko: '미슐랭 3스타', zh: '米其林三星', en: 'Michelin 3-Star' },
+    michelin2: { ko: '미슐랭 2스타', zh: '米其林二星', en: 'Michelin 2-Star' },
+    michelin1: { ko: '미슐랭 1스타', zh: '米其林一星', en: 'Michelin 1-Star' },
+    bib:       { ko: '빕 구르망',    zh: '必比登推荐', en: 'Bib Gourmand' },
+    blue:      { ko: '블루리본',     zh: '蓝带推荐',   en: 'Blue Ribbon' },
+  }[r.award] || {}
+
+  return (
+    <div style={{ overflowX: 'hidden' }}>
+      {/* 핸들바 + 닫기 */}
+      <div style={{ display: 'flex', alignItems: 'center', padding: '10px 20px 8px' }}>
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#DDDDDD' }} />
+        </div>
+        <button onClick={onClose} style={{ color: '#AAAAAA', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
+      </div>
+
+      <div style={{ padding: '0 20px 20px' }}>
+        {/* 이름 */}
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: '0 0 6px' }}>
+          {name || r.name?.ko}
+        </h2>
+
+        {/* 수상 뱃지 + 가격대 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <span style={{
+            fontSize: 11, fontWeight: 700,
+            color: 'white', background: pinCfg.color,
+            borderRadius: 6, padding: '3px 8px',
+          }}>
+            {pinCfg.emoji} {awardLabel[lang] || awardLabel.en}
+          </span>
+          {priceLabel && (
+            <span style={{ fontSize: 12, color: '#999', fontWeight: 600 }}>{priceLabel}</span>
+          )}
+        </div>
+
+        {/* 지역 */}
+        <div style={{ fontSize: 13, color: '#666', marginBottom: 14 }}>
+          📍 {r.area?.city} {r.area?.gu} {r.area?.dong || ''}
+        </div>
+
+        {/* 이미지 */}
+        {r.images?.length > 0 && (
+          <div style={{ display: 'flex', gap: 8, overflowX: 'auto', marginBottom: 14, scrollbarWidth: 'none' }}>
+            {r.images.slice(0, 3).map((img, i) => (
+              <div key={i} style={{ width: 120, height: 90, borderRadius: 12, overflow: 'hidden', flexShrink: 0, boxShadow: '4px 4px 10px rgba(200,200,200,0.4)' }}>
+                <img src={img} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* CTA 버튼 */}
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button
+            onClick={() => openKakaoMapRoute(r.lat, r.lng, r.name?.ko || '', 'PUBLICTRANSIT')}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#1A1A1A', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(0,0,0,0.15)', transition: 'transform 0.15s ease' }}
+            onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
+            onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            {{ ko: '길찾기', zh: '导航', en: 'Navigate' }[lang] || 'Navigate'}
+          </button>
+          <button
+            onClick={() => openKakaoTaxi(r.lat, r.lng, r.name?.ko || '', userPos)}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: pinCfg.color, color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: `4px 4px 10px ${pinCfg.color}40`, transition: 'transform 0.15s ease' }}
+            onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
+            onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            {{ ko: '택시', zh: '打车', en: 'Taxi' }[lang] || 'Taxi'}
+          </button>
+          {r.catchTableUrl && (
+            <button
+              onClick={() => window.open(r.catchTableUrl, '_blank')}
+              style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#FAFAFA', color: pinCfg.color, border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'transform 0.15s ease' }}
+              onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
+              onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
+            >
+              {tLang('michelin_reserve', lang)}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── 확장 바텀 시트 내용 ───
 function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNavigate, onReserve, onTaxi, userPos, statusTick }) {
   const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
@@ -1179,7 +1402,6 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <Bus size={15} />
             {{ ko: '대중교통', zh: '公共交通', en: 'Bus/Subway' }[lang] || 'Bus/Subway'}
           </button>
           <button
@@ -1188,7 +1410,6 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <Car size={15} />
             {tLang('taxi_mode', lang)}
           </button>
           {poi.has_reservation && (
@@ -1198,15 +1419,14 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
               onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
               onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
             >
-              <Calendar size={15} />
               {tLang('reserve', lang)}
             </button>
           )}
           <button
             onClick={() => onBookmark(poi)}
-            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FAFAFA', border: 'none', borderRadius: 14, cursor: 'pointer', flexShrink: 0, boxShadow: isBookmarked ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
+            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FAFAFA', border: 'none', borderRadius: 14, cursor: 'pointer', flexShrink: 0, boxShadow: isBookmarked ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 15, color: isBookmarked ? '#FF3B30' : '#888888' }}
           >
-            <Heart size={15} fill={isBookmarked ? '#FF3B30' : 'none'} color={isBookmarked ? '#FF3B30' : '#888888'} />
+            {isBookmarked ? '♥' : '♡'}
           </button>
         </div>
 
@@ -1479,15 +1699,15 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
           borderRadius: '50%', color: '#1A1A1A', display: 'flex',
           boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
           transition: 'box-shadow 0.15s ease',
+          fontSize: 20, fontWeight: 'bold',
         }}>
-          <ArrowLeft size={20} weight="bold" />
+          ←
         </button>
         <div style={{
           flex: 1, background: '#FAFAFA', borderRadius: 50,
           boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)',
           display: 'flex', alignItems: 'center', padding: '0 14px', height: 44, gap: 8,
         }}>
-          <MagnifyingGlass size={17} color="#888888" weight="bold" />
           <input
             ref={inputRef}
             value={query}
@@ -1817,8 +2037,8 @@ function ReservationSheet({ poi, lang, onClose }) {
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
-        <button onClick={onClose} style={{ background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#1A1A1A', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
-          <ArrowLeft size={20} weight="bold" />
+        <button onClick={onClose} style={{ background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#1A1A1A', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 20, fontWeight: 'bold' }}>
+          ←
         </button>
         <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{getLocalizedName(poi, lang)} · {tLang('reserve', lang)}</span>
       </div>
@@ -1972,8 +2192,8 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
     <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       {/* 헤더 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
-        <button onClick={onClose} style={{ background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#1A1A1A', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
-          <ArrowLeft size={20} weight="bold" />
+        <button onClick={onClose} style={{ background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#1A1A1A', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 20, fontWeight: 'bold' }}>
+          ←
         </button>
         <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{tLang('my_panel', lang)}</span>
       </div>

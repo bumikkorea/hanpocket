@@ -10,8 +10,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MessageCircle, X, Grid3x3, Users, Search, ChevronLeft, ChevronDown, Globe, Bell, Pencil, LogOut, Settings, ChevronRight, Menu, Wallet, BookOpen, CreditCard, MapPin, User as LucideUser, ArrowUp, Calendar, Home as HomeIcon } from 'lucide-react'
-import { House, Compass as PhCompass, QrCode, ShoppingBag as PhShoppingBag, User, MapPin as PhMapPin, AirplaneLanding, AirplaneTakeoff, Taxi, Motorcycle, Receipt as PhReceipt, BookBookmark, Hospital, GridFour, Camera as PhCamera, Heart as PhHeart, Lightning, CalendarBlank, ChatCircle, UsersThree, ForkKnife, CreditCard as PhCreditCard, Storefront, MagnifyingGlass } from '@phosphor-icons/react'
+import { MapPin, User as LucideUser, Calendar, Home as HomeIcon } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -76,7 +75,6 @@ const NearHomeTab = lazy(() => import('./components/NearHomeTab'))
 const BookingView = lazy(() => import('./components/BookingView'))
 const MorePage = lazy(() => import('./components/MorePage'))
 const MyTab = lazy(() => import('./components/MyTab'))
-const ImmigrationWaitTime = lazy(() => import('./components/ImmigrationWaitTime'))
 const ArrivalCardGuide = lazy(() => import('./components/guides/ArrivalCardGuide'))
 // C 섹션 실용 가이드 lazy imports
 const CurrencyCalc = lazy(() => import('./components/PracticalGuides').then(m => ({ default: m.CurrencyCalc })))
@@ -116,17 +114,20 @@ function nextLang(c) { return LANGS[(LANGS.indexOf(c)+1)%3] }
 function langLabel(c) { return {ko:'한국어',zh:'中文',en:'EN'}[nextLang(c)] }
 
 function Logo({ size = 'md' }) {
-  const scales = { sm: 0.7, md: 0.9, lg: 1.15 }
-  const sc = scales[size] || scales.md
+  const sizes = { sm: 17, md: 21, lg: 27 }
+  const fs = sizes[size] || sizes.md
   return (
-    <svg width={160 * sc} height={28 * sc} viewBox="0 0 160 28" fill="none">
-      {/* NEAR 텍스트 */}
-      <text x="80" y="19" textAnchor="middle" fontFamily="'Caveat', cursive" fontWeight="700" fontSize="24" fill="#C4725A">
-        NEAR
-      </text>
-
-
-    </svg>
+    <span style={{
+      fontFamily: "'Nunito', sans-serif",
+      fontWeight: 900,
+      fontSize: fs,
+      letterSpacing: '0.04em',
+      color: '#1A1A1A',
+      userSelect: 'none',
+      lineHeight: 1,
+    }}>
+      NEAR
+    </span>
   )
 }
 
@@ -243,7 +244,6 @@ function CategoryCards({ onSelect, lang }) {
         <button key={cat.id} onClick={() => onSelect(cat.id)}
           style={{ animationDelay: `${i * 0.06}s` }}
           className="glass rounded-lg p-4 card-hover btn-press text-left animate-fade-up">
-          <div className="text-2xl mb-2">{cat.icon}</div>
           <div className="font-bold text-[#111827] text-sm">{L(lang, cat.name)}</div>
           <div className="text-xs text-[#6B7280] mt-1">{L(lang, cat.description)}</div>
         </button>
@@ -258,7 +258,7 @@ function VisaList({ categoryId, region, onSelectVisa, onBack, lang }) {
   return (
     <div className="space-y-4 animate-fade-up">
       <button onClick={onBack} className="text-[#111827] text-sm font-medium">{s.back}</button>
-      <h2 className="text-lg font-bold text-[#111827]">{cat?.icon} {L(lang, cat?.name)}</h2>
+      <h2 className="text-lg font-bold text-[#111827]">{L(lang, cat?.name)}</h2>
       {!filtered.length ? <div className="glass rounded-lg p-8 text-center text-[#6B7280]">{s.noVisaForRegion}</div> :
         filtered.map((visa, i) => (
           <button key={visa.id} onClick={() => onSelectVisa(visa.id)}
@@ -468,7 +468,7 @@ function VisaAccordionModal({ lang, visaTypes, tempVisaType, setTempVisaType, on
             {lang === 'ko' ? '비자 타입 선택' : lang === 'zh' ? '选择签证类型' : 'Select Visa Type'}
           </h3>
           <button onClick={onClose} className="w-8 h-8 flex items-center justify-center">
-            <X className="w-5 h-5 text-[#6B7280]" />
+            ✕
           </button>
         </div>
         <div className="overflow-y-auto flex-1 p-2">
@@ -479,7 +479,6 @@ function VisaAccordionModal({ lang, visaTypes, tempVisaType, setTempVisaType, on
                 className="w-full py-3 px-4 bg-[#F5F5F5] rounded-xl mb-1 flex justify-between items-center"
               >
                 <span className="text-sm font-bold text-[#1A1A1A]">{L(lang, cat.label)}</span>
-                <ChevronRight className={`w-4 h-4 text-[#6B7280] transition-transform ${openCats[cat.code] ? 'rotate-90' : ''}`} />
               </button>
               {openCats[cat.code] && (
                 <div className="pb-1">
@@ -794,11 +793,11 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
               {avatar ? (
                 <img src={avatar} alt="" className="w-full h-full object-cover" />
               ) : (
-                <User className="w-10 h-10 text-[#9CA3AF]" />
+                <span className="w-10 h-10 flex items-center justify-center text-[#9CA3AF] text-2xl">—</span>
               )}
             </div>
             <div className="absolute bottom-0 right-0 w-7 h-7 bg-gradient-to-b from-[#2D5A3D] to-[#1A3A28] rounded-full flex items-center justify-center border-2 border-white">
-              <PhCamera size={14} weight="light" className="text-white" />
+              <span className="text-[10px] text-white font-medium">사진</span>
             </div>
             <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
           </div>
@@ -817,7 +816,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
           ) : (
             <div onClick={() => setEditingNickname(true)} className="text-xl font-bold cursor-pointer flex items-center justify-center gap-1" style={{ color: '#1A1A1A' }}>
               {nickname || (lang === 'ko' ? '사용자' : lang === 'zh' ? '用户' : 'User')}
-              <Pencil className="w-3.5 h-3.5 text-[#9CA3AF]" />
+              <span className="text-xs text-[#9CA3AF]">수정</span>
             </div>
           )}
         </div>
@@ -837,7 +836,6 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
             </span>
             <span className="font-medium text-[#111827] text-sm flex items-center gap-1">
               {getVisaTypeLabel()}
-              <ChevronRight className="w-3.5 h-3.5 text-[#9CA3AF]" />
             </span>
           </div>
 
@@ -866,7 +864,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
                 onClick={handleEditExpiry}
                 className="w-6 h-6 bg-[#F3F4F6] rounded-full flex items-center justify-center hover:bg-[#E5E7EB] transition-colors"
               >
-                <Pencil className="w-3 h-3 text-[#6B7280]" />
+                <span className="text-[10px] text-[#6B7280]">수정</span>
               </button>
             </div>
           </div>
@@ -895,47 +893,38 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
           <div className="grid grid-cols-3 gap-3">
             {/* 방문 기록 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <PhMapPin size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '방문\n기록' : lang === 'zh' ? '访问\n记录' : 'Visit\nHistory'}</span>
             </button>
             {/* 저장한 찜 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <PhHeart size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '저장한\n찜' : lang === 'zh' ? '保存的\n喜欢' : 'Saved\nLikes'}</span>
             </button>
             {/* 여행 다이어리 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <BookBookmark size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '여행\n다이어리' : lang === 'zh' ? '旅行\n日记' : 'Travel\nDiary'}</span>
             </button>
             {/* 최근 활동 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <Lightning size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '최근\n활동' : lang === 'zh' ? '最近\n活动' : 'Recent\nActivity'}</span>
             </button>
             {/* 다음 여행 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <CalendarBlank size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '다음\n여행' : lang === 'zh' ? '下次\n旅行' : 'Next\nTrip'}</span>
             </button>
             {/* 피드백/문의 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <ChatCircle size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '피드백\n/문의' : lang === 'zh' ? '反馈\n/询问' : 'Feedback\n/Support'}</span>
             </button>
             {/* 친구 초대 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <UsersThree size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '친구\n초대' : lang === 'zh' ? '邀请\n朋友' : 'Invite\nFriends'}</span>
             </button>
             {/* 식이 제한 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <ForkKnife size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '식이\n제한' : lang === 'zh' ? '饮食\n限制' : 'Diet\nPrefs'}</span>
             </button>
             {/* 결제 수단 */}
             <button className="flex flex-col items-center justify-center py-3 rounded-lg hover:bg-[#F9FAFB] transition-colors">
-              <PhCreditCard size={24} weight="light" className="mb-1 text-[#6B7280]" />
               <span className="text-xs text-[#6B7280] text-center">{lang === 'ko' ? '결제\n수단' : lang === 'zh' ? '支付\n方式' : 'Payment\nMethod'}</span>
             </button>
           </div>
@@ -950,7 +939,7 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
           }}
           className="w-full text-[#6B7280] text-sm py-3 transition-colors flex items-center justify-center gap-2 mt-2"
         >
-          <LogOut className="w-4 h-4" />
+          <span>로그아웃</span>
           {lang === 'ko' ? '로그아웃' : lang === 'zh' ? '注销' : 'Logout'}
         </button>
       </div>
@@ -965,12 +954,10 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
           className="w-full flex items-center justify-between py-2"
         >
           <div className="flex items-center gap-2">
-            <Settings className="w-4 h-4 text-[#6B7280]" />
             <span className="text-sm text-[#6B7280]">
               {lang === 'ko' ? '관리자 설정' : lang === 'zh' ? '管理员设置' : 'Admin Settings'}
             </span>
           </div>
-          <ChevronRight className={`w-4 h-4 text-[#9CA3AF] transition-transform duration-200 ${showAdminPanel && adminMode ? 'rotate-90' : ''}`} />
         </button>
 
         {adminMode && showAdminPanel && (
@@ -1081,7 +1068,6 @@ function ProfileTab({ profile, setProfile, lang, onResetPushDismiss, isDark, tog
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-lg w-full max-w-sm p-6 shadow-xl">
             <div className="text-center mb-6">
-              <Bell className="w-12 h-12 text-[#111827] mx-auto mb-3" />
               <h3 className="text-lg font-bold text-[#111827] mb-2">
                 {lang === 'ko' ? '비자 만료일 알림' : lang === 'zh' ? '签证到期提醒' : 'Visa Expiry Alert'}
               </h3>
@@ -1437,7 +1423,6 @@ function ServiceGrid({ lang, L, setSubPage }) {
           >
             <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400">{L(lang, comingSoonLabel)}</h3>
             <span className="text-xs text-gray-400">({unimplementedPockets.length})</span>
-            <ChevronRight size={14} className={`text-gray-400 transition-transform duration-200 ${showComingSoon ? 'rotate-90' : ''}`} />
           </button>
           {showComingSoon && (
             <div className="grid grid-cols-5 gap-1 mt-2">
@@ -1679,6 +1664,7 @@ function AppInner() {
   const langMenuRef = useRef(null)
   const [subPage, setSubPage] = useState(null)
   const [deepLink, setDeepLink] = useState(null) // { tab, itemId, itemData }
+  const [fabOpen, setFabOpen] = useState(false)
   const scrollPositions = useRef({}) // { tabId: { y: number, timestamp: number } }
 
   // A3: 언어 드롭다운 외부 클릭 닫기
@@ -1993,22 +1979,20 @@ function AppInner() {
             {/* 권한 항목 */}
             {[
               {
-                Icon: MapPin,
-                iconBg: '#EDF5FF', iconColor: '#007AFF',
+                emoji: '📍',
+                iconBg: '#EDF5FF',
                 titleKey: 'welcome.location',
                 descKey:  'welcome.locationDesc',
               },
               {
-                Icon: Bell,
-                iconBg: '#FFF8E1', iconColor: '#FF9500',
+                emoji: '🔔',
+                iconBg: '#FFF8E1',
                 titleKey: 'welcome.notification',
                 descKey:  'welcome.notificationDesc',
               },
-            ].map(({ Icon, iconBg, iconColor, titleKey, descKey }) => (
+            ].map(({ iconBg, titleKey, descKey }) => (
               <div key={titleKey} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16, background: 'var(--surface)', borderRadius: 12, margin: '8px 0' }}>
-                <div style={{ width: 40, height: 40, borderRadius: '50%', background: iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                  <Icon size={18} color={iconColor} />
-                </div>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: iconBg, flexShrink: 0 }} />
                 <div>
                   <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>{tI18n(titleKey)}</p>
                   <p style={{ margin: '2px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>{tI18n(descKey)}</p>
@@ -2041,7 +2025,7 @@ function AppInner() {
             <div className="px-5 pt-5 pb-3">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-lg font-bold text-[#1A1A1A]">NEAR</h2>
-                <button onClick={dismissAuth} className="p-1 text-[#999]"><X size={20} /></button>
+                <button onClick={dismissAuth} className="p-1 text-[#999]">✕</button>
               </div>
               <p className="text-sm text-[#666666]">
                 {L(lang, { ko: '한국 여행의 모든 것을 한 곳에서.\n간편 인증으로 시작하세요.', zh: '韩国旅行一站式服务。\n简单认证即可开始。', en: 'Everything for Korea travel in one place.\nStart with easy sign-in.' }).split('\n').map((line, i) => <span key={i}>{line}<br/></span>)}
@@ -2115,15 +2099,15 @@ function AppInner() {
                   setSubPage(null)
                   if (homeOriginPages.includes(subPage)) setTab('home')
                 }} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
-                  <ChevronLeft size={24} />
+                  ←
                 </button>
-              ) : tab !== 'home' && tab !== 'near-home' && tab !== 'near-map' ? (
+              ) : tab !== 'home' && tab !== 'near-home' && tab !== 'near-map' && tab !== 'booking' && tab !== 'my' ? (
                 <button onClick={() => { setTab('home'); setSubPage(null) }} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
-                  <ChevronLeft size={24} />
+                  ←
                 </button>
               ) : (
                 <button onClick={() => setShowAppMenu(!showAppMenu)} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
-                  <Menu size={22} />
+                  메뉴
                 </button>
               )}
             </div>
@@ -2134,10 +2118,10 @@ function AppInner() {
             </button>
 
             {/* 우측: 언어 */}
-            <div className="flex items-center justify-end gap-1 w-10">
+            <div className="flex items-center justify-end gap-1 w-16">
               <div className="relative" ref={langMenuRef}>
                 <button onClick={() => setShowLangMenu(!showLangMenu)} className="text-[#5F6368] p-1">
-                  <Globe size={20} />
+                  <span style={{fontSize:12,fontWeight:600,letterSpacing:'0.05em'}}>{lang?.toUpperCase?.() || 'ZH'}</span>
                 </button>
                 {showLangMenu && (
                   <div className="absolute right-0 top-9 bg-white rounded-[10px] border border-[#E5E7EB] py-1 z-50 min-w-[120px]"
@@ -2203,11 +2187,10 @@ function AppInner() {
           <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
             <div className="px-4 pt-2 pb-3">
               <div className="relative">
-                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#999]" />
                 <input
                   type="text"
                   placeholder={lang === 'ko' ? '포켓, 코스, 가이드 검색...' : lang === 'zh' ? '搜索口袋、路线、指南...' : 'Search pockets, courses, guides...'}
-                  className="w-full pl-10 pr-4 py-2.5 bg-[#F3F4F6] rounded-xl text-sm text-[#1A1A1A] placeholder-[#999] outline-none focus:ring-1 focus:ring-[#2D5A3D]"
+                  className="w-full pl-3 pr-4 py-2.5 bg-[#F3F4F6] rounded-xl text-sm text-[#1A1A1A] placeholder-[#999] outline-none focus:ring-1 focus:ring-[#2D5A3D]"
                   onFocus={() => { setTab('search') }}
                   readOnly
                 />
@@ -2390,7 +2373,7 @@ function AppInner() {
         {/* C 섹션 실용 가이드 (#51~#70) */}
         {subPage === 'currency' && <Suspense fallback={<div />}><CurrencyCalc lang={lang} /></Suspense>}
         {subPage === 'emergency-numbers' && <Suspense fallback={<div />}><EmergencyNumbers lang={lang} /></Suspense>}
-        {subPage === 'basic-korean' && <Suspense fallback={<div />}><BasicKorean lang={lang} /></Suspense>}
+        {subPage === 'basic-korean' && <Suspense fallback={<div />}><BasicKorean lang={lang} setTab={handleTabChange} setSubPage={setSubPage} /></Suspense>}
         {subPage === 'transit-card' && <Suspense fallback={<div />}><TransitCardGuide lang={lang} /></Suspense>}
         {subPage === 'voltage' && <Suspense fallback={<div />}><VoltageGuide lang={lang} /></Suspense>}
         {subPage === 'tax-free' && <Suspense fallback={<div />}><TaxFreeGuide lang={lang} /></Suspense>}
@@ -2412,11 +2395,10 @@ function AppInner() {
         {subPage === 'seoul-stay' && <Suspense fallback={<div />}><SeoulStay lang={lang} /></Suspense>}
         {subPage === 'culture-lounge' && <Suspense fallback={<div />}><CultureLounge lang={lang} /></Suspense>}
         {subPage === 'sos-language' && <Suspense fallback={<div />}><SOSLanguageCard lang={lang} /></Suspense>}
-        {subPage === 'immigration-wait' && <Suspense fallback={<div />}><ImmigrationWaitTime lang={lang} /></Suspense>}
         {subPage === 'arrival-card' && <Suspense fallback={<div />}><ArrivalCardGuide lang={lang} onClose={() => setSubPage(null)} /></Suspense>}
 
         {/* Pocket catch-all — 전용 탭이 없는 pocket ID는 PocketContent로 렌더링 */}
-        {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet','wishlist','taxrefund','departure','heatmap','passport-scan','departure-shopping','taxi','subway','performance','flight-info','show-korean','near-map','korean-culture','immigration-wait','arrival-card'].includes(subPage) && (
+        {subPage && tab === 'service' && !['travel','food','shopping','hallyu','learn','life','medical','fitness','community','translator','artranslate','sos','finance','wallet','visaalert','jobs','housing','resume','pet','wishlist','taxrefund','departure','heatmap','passport-scan','departure-shopping','taxi','subway','performance','flight-info','show-korean','near-map','korean-culture','arrival-card'].includes(subPage) && (
           <PocketContent pocketId={subPage} lang={lang} setTab={(t) => setSubPage(t)} />
         )}
         </div>
@@ -2424,7 +2406,7 @@ function AppInner() {
         {tab==='course' && !subPage && (
           <div className="mx-auto w-full" style={{ maxWidth: 480 }}>
             <Suspense fallback={<div />}>
-              <CourseTab lang={lang} adminView={adminView} deepLink={deepLink?.tab === 'course' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} />
+              <CourseTab lang={lang} adminView={adminView} deepLink={deepLink?.tab === 'course' ? deepLink : null} onDeepLinkConsumed={() => setDeepLink(null)} onBack={() => handleTabChange('near-home')} />
             </Suspense>
           </div>
         )}
@@ -2477,9 +2459,11 @@ function AppInner() {
           </Suspense>
         )}
         {tab==='booking' && (
-          <Suspense fallback={<div />}>
-            <BookingView lang={lang} onGoToMyTab={() => handleTabChange('my')} onGoToMapTab={() => handleTabChange('near-map')} />
-          </Suspense>
+          <div style={{ overflowX: 'hidden' }}>
+            <Suspense fallback={<div />}>
+              <BookingView lang={lang} onGoToMyTab={() => handleTabChange('my')} onGoToMapTab={() => handleTabChange('near-map')} />
+            </Suspense>
+          </div>
         )}
         {tab==='reservation' && !subPage && (
           <Suspense fallback={<div />}>
@@ -2500,10 +2484,9 @@ function AppInner() {
           {/* 검색 헤더 */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[#E5E7EB]">
             <button onClick={() => { setShowSearch(false); setSearchQuery('') }} className="p-1">
-              <ChevronLeft size={24} className="text-[#111827]" />
+              ←
             </button>
             <div className="flex-1 bg-[#F1F3F4] rounded-full px-4 py-2.5 flex items-center gap-2">
-              <Search size={18} className="text-[#9AA0A6]" />
               <input
                 autoFocus
                 value={searchQuery}
@@ -2513,7 +2496,7 @@ function AppInner() {
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery('')}>
-                  <X size={16} className="text-[#9AA0A6]" />
+                  ✕
                 </button>
               )}
             </div>
@@ -2611,7 +2594,6 @@ function AppInner() {
                           }}
                           className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[#F8F9FA] transition-colors text-left"
                         >
-                          <Search size={16} className="text-[#9AA0A6] shrink-0" />
                           <span className="text-sm font-medium text-[#111827]">{L(lang, item.label)}</span>
                         </button>
                       ))}
@@ -2646,7 +2628,7 @@ function AppInner() {
               className="p-1"
               style={{ color: '#1A1A1A' }}
             >
-              <X size={22} />
+              ✕
             </button>
           </div>
 
@@ -2662,8 +2644,6 @@ function AppInner() {
                 <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
                   <AppShortcut name="카카오맵" description={L(lang, {ko:'지도, 길찾기, 장소검색', zh:'地图、导航、搜索', en:'Map, directions, search'})} deepLink="kakaomap://" webUrl="https://map.kakao.com" domain="map.kakao.com" />
                   <AppShortcut name="바이두 지도" description={L(lang, {ko:'중국어 지도', zh:'百度地图 — 中文地图', en:'Chinese map'})} deepLink="baidumap://" webUrl="https://map.baidu.com" domain="map.baidu.com" />
-                  <AppShortcut name="구글맵" description="Google Maps" deepLink="comgooglemaps://" webUrl="https://maps.google.com" domain="maps.google.com" />
-                  <AppShortcut name="네이버 지도" description={L(lang, {ko:'지도, 내비게이션', zh:'地图、导航', en:'Map, navigation'})} deepLink="nmap://" webUrl="https://map.naver.com" domain="map.naver.com" />
                 </div>
               </div>
 
@@ -2701,12 +2681,11 @@ function AppInner() {
         style={{ bottom: '64px', transform: 'translateY(0)' }}
         onClick={() => { setLocationBarDismissed(true); localStorage.setItem('loc_bar_dismissed', '1') }}>
         <div className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-full bg-[#1A1A1A]/90 backdrop-blur-md cursor-pointer">
-          <MapPin size={14} className="text-[#C4725A] flex-shrink-0" />
           <span className="text-[11px] text-white/90 truncate flex-1">
             {lang === 'ko' ? '한국에서 사용 가능한 서비스를 보고 있습니다' : lang === 'zh' ? '正在查看韩国可用的服务' : 'Viewing services available in Korea'}
           </span>
           <span className="text-[13px] flex-shrink-0">🇰🇷</span>
-          <X size={14} className="text-white/50 flex-shrink-0" />
+          <span className="text-white/50 flex-shrink-0 text-xs">✕</span>
         </div>
       </div>
       )}
@@ -2717,23 +2696,73 @@ function AppInner() {
         className="fixed z-50 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-all duration-300"
         style={{
           right: '16px',
-          bottom: '80px',
+          bottom: fabOpen ? '164px' : '104px',
           backgroundColor: '#FFFFFF',
           border: '1px solid #E5E7EB',
           opacity: showScrollTop ? 1 : 0,
           pointerEvents: showScrollTop ? 'auto' : 'none',
           transform: showScrollTop ? 'scale(1)' : 'scale(0.8)',
+          transition: 'bottom 0.25s ease, opacity 0.3s, transform 0.3s',
         }}
         aria-label="Scroll to top"
       >
-        <ArrowUp size={18} className="text-[#374151]" />
+        ↑
+      </button>
+
+      {/* ─── 플로팅 통역/번역 FAB ─── */}
+      {/* 딤 오버레이 */}
+      {fabOpen && (
+        <div
+          onClick={() => setFabOpen(false)}
+          style={{ position: 'fixed', inset: 0, zIndex: 199, background: 'rgba(0,0,0,0.35)' }}
+        />
+      )}
+      {/* 확장 옵션 */}
+      <div style={{ position: 'fixed', right: 16, bottom: 122, zIndex: 200, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, pointerEvents: fabOpen ? 'auto' : 'none' }}>
+        {[
+          { label: { ko: '번역', zh: '翻译', en: 'Translate' }, subPage: 'basic-korean' },
+          { label: { ko: '통역', zh: '口译', en: 'Interpret' }, subPage: 'translator'   },
+        ].map((opt, i) => (
+          <button
+            key={opt.subPage}
+            onClick={() => { setFabOpen(false); setSubPage(opt.subPage) }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              opacity: fabOpen ? 1 : 0,
+              transform: fabOpen ? 'translateY(0)' : 'translateY(8px)',
+              transition: `opacity 0.15s ease ${i * 0.05}s, transform 0.15s ease ${i * 0.05}s`,
+              background: '#FFFFFF', border: '1px solid #F0EDED', borderRadius: 20,
+              padding: '8px 14px', cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+            }}
+          >
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', whiteSpace: 'nowrap' }}>
+              {lang === 'zh' ? opt.label.zh : lang === 'en' ? opt.label.en : opt.label.ko}
+            </span>
+          </button>
+        ))}
+      </div>
+      {/* 메인 FAB — "译" */}
+      <button
+        onClick={() => setFabOpen(v => !v)}
+        style={{
+          position: 'fixed', right: 16, bottom: 72, zIndex: 200,
+          width: 42, height: 42, borderRadius: '50%', border: 'none', cursor: 'pointer',
+          background: '#C4725A', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 12px rgba(196,114,90,0.35)',
+          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          transform: fabOpen ? 'scale(1.05)' : 'scale(1)',
+        }}
+        aria-label="Translator"
+      >
+        <span style={{fontSize:11,fontWeight:700,color:'white',letterSpacing:'-0.5px'}}>译</span>
       </button>
 
       {/* Bottom Navigation — 4탭: 探险/地图/预约/我的 */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white transition-transform duration-300"
         style={{
           borderTop: '0.5px solid var(--border)',
-          height: '56px',
+          height: '36px',
           paddingBottom: 'env(safe-area-inset-bottom)',
           transform: 'translateY(0)',
         }}>
@@ -2743,9 +2772,9 @@ function AppInner() {
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
                 aria-label={`${item.label} tab`}
-                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
-                <item.icon size={22} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', transform: active ? 'scale(1)' : 'scale(0.9)' }} />
-                <span style={{ fontSize: 10, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px' }}>
+                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', transition: 'all 0.2s' }}>
+                <item.icon size={14} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s' }} />
+                <span style={{ fontSize: 8, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px', lineHeight: 1 }}>
                   {item.label}
                 </span>
               </button>
@@ -2837,7 +2866,6 @@ function FloatingChatbot({ lang }) {
           onClick={handleOpen}
           className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-[#111827] text-white flex items-center justify-center  hover:scale-110 transition-transform"
         >
-          <MessageCircle size={20} />
         </button>
       )}
 
@@ -2848,7 +2876,7 @@ function FloatingChatbot({ lang }) {
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] bg-[#111827]">
             <span className="text-sm font-bold text-white">{lang === 'ko' ? '개선 요청' : lang === 'zh' ? '改进建议' : 'Feedback'}</span>
             <button onClick={() => setOpen(false)} className="text-white/60 hover:text-white">
-              <X size={16} />
+              ✕
             </button>
           </div>
 

@@ -235,5 +235,15 @@
   "mySeoul.myCourses": "My Courses",
   "mySeoul.courseSaved": "Course saved",
   "course.addToMySeoul": "Add to My Seoul",
-  "course.bulkAdded": "{n} places added to My Seoul"
+  "course.bulkAdded": "{n} places added to My Seoul",
+  "cat_michelin": "Michelin",
+  "michelin_all": "All",
+  "michelin_3star": "3-Star",
+  "michelin_2star": "2-Star",
+  "michelin_1star": "1-Star",
+  "michelin_bib": "Bib",
+  "michelin_blue": "Blue Ribbon",
+  "michelin_price": "Price",
+  "michelin_award": "Award",
+  "michelin_reserve": "Reserve"
 }

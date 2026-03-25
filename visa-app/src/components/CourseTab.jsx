@@ -1,9 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import {
-  ChevronLeft, ChevronRight, Plus, Trash2, ChevronUp, ChevronDown,
-  Clock, ArrowRight, Navigation, Share2, MapPin, Check, X,
-  Sparkles, Compass, Search, Link, Loader, ExternalLink
-} from 'lucide-react'
 import { RECOMMENDED_COURSES, COURSE_CATEGORIES } from '../data/recommendedCourses'
 import { useUserPopups, PLATFORM_INFO } from '../hooks/useUserPopups'
 import { getDdayLabel, isActiveOrUpcoming } from '../data/popupData'
@@ -609,7 +604,6 @@ function OnboardingQuiz({ lang, onComplete }) {
                   }`}
                 >
                   <div className="flex items-start gap-3">
-                    <span className="text-xl shrink-0 mt-0.5">{opt.emoji}</span>
                     <div className="flex-1 min-w-0">
                       <p className={`text-xs font-bold leading-tight ${selected ? 'text-white' : 'text-[var(--y2k-text)]'}`}>
                         {L(lang, opt.title)}
@@ -620,7 +614,7 @@ function OnboardingQuiz({ lang, onComplete }) {
                         </p>
                       )}
                     </div>
-                    {selected && <Check size={14} className="text-white shrink-0 mt-1" />}
+                    {selected && <span className="text-white shrink-0 mt-1">✓</span>}
                   </div>
                 </button>
               )
@@ -641,7 +635,6 @@ function OnboardingQuiz({ lang, onComplete }) {
                     selected ? 'bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] border-[var(--y2k-pink)]' : 'bg-white border-[var(--y2k-border)]'
                   }`}
                 >
-                  <div className="text-2xl mb-1">{opt.emoji}</div>
                   <p className={`text-xs font-semibold ${selected ? 'text-white' : 'text-[var(--y2k-text)]'}`}>
                     {L(lang, opt.title)}
                   </p>
@@ -692,14 +685,12 @@ function CourseCard({ course, lang, onPress, isBestForYou }) {
     >
       <div className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-[20px] bg-[var(--y2k-bg)] flex items-center justify-center shrink-0">
-          <MapPin size={18} className="text-[var(--y2k-text)]" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
             <p className="font-bold text-sm text-[var(--y2k-text)] leading-tight truncate">{L(lang, course.name)}</p>
             {isBestForYou && (
               <span className="inline-flex items-center gap-0.5 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-[10px] font-medium px-1.5 py-0.5 rounded-[20px] shrink-0">
-                <Sparkles size={10} />
                 {L(lang, { ko: '추천', zh: '推荐', en: 'For you' })}
               </span>
             )}
@@ -710,13 +701,13 @@ function CourseCard({ course, lang, onPress, isBestForYou }) {
               <span key={i} className="flex items-center gap-1">
                 <span className="w-4 h-4 rounded-full bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-[8px] font-bold flex items-center justify-center shrink-0">{PIN_LABELS[i]}</span>
                 <span className="text-[10px] text-[#374151] font-medium">{L(lang, s.name)}</span>
-                {i < course.stops.length - 1 && <ArrowRight size={10} className="text-[var(--y2k-text-sub)] mx-0.5" />}
+                {i < course.stops.length - 1 && <span className="text-[var(--y2k-text-sub)] mx-0.5">→</span>}
               </span>
             ))}
           </div>
           <div className="flex items-center gap-3 mt-2">
             <span className="flex items-center gap-1 text-[10px] text-[var(--y2k-text-sub)]">
-              <Clock size={10} /> {course.duration}
+              {course.duration}
             </span>
             <span className="text-[10px] text-[var(--y2k-text-sub)]">{L(lang, DIFF_LABEL[course.difficulty] || {})}</span>
             <span className="text-[10px] text-[var(--y2k-text-sub)]">{L(lang, course.estimatedCost)}</span>
@@ -789,7 +780,7 @@ function PhraseCard({ type, stopName, lang, onClose }) {
             <span className="font-bold text-sm text-[var(--y2k-text)]">{stopName}</span>
             {STOP_TYPE_LABEL[type] && <span className="text-[10px] bg-[#F3F4F6] text-[var(--y2k-text-sub)] px-1.5 py-px rounded-[4px]">{L(lang, STOP_TYPE_LABEL[type])}</span>}
           </div>
-          <button onClick={onClose} className="p-1"><X size={18} className="text-[var(--y2k-text-sub)]" /></button>
+          <button onClick={onClose} className="p-1"><span className="text-[var(--y2k-text-sub)]">✕</span></button>
         </div>
         <div className="flex-1 overflow-y-auto">
           {phrases.map((p, i) => (
@@ -858,7 +849,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
     <div className="h-full flex flex-col max-w-[480px] mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--y2k-border)]">
-        <button onClick={onBack} className="p-1"><ChevronLeft size={20} className="text-[var(--y2k-text)]" /></button>
+        <button onClick={onBack} className="p-1"><span className="text-[var(--y2k-text)]">←</span></button>
         <div className="flex-1 min-w-0">
           <p className="font-bold text-sm text-[var(--y2k-text)] truncate">
             {isRecommended ? L(lang, course.name) : course.name}
@@ -886,7 +877,6 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
 
         {/* Start time picker */}
         <div className="flex items-center gap-2 px-4 mt-4 mb-3">
-          <Clock size={14} className="text-[var(--y2k-text-sub)]" />
           <span className="text-xs text-[var(--y2k-text-sub)]">{L(lang, { ko: '시작시간', zh: '开始时间', en: 'Start time' })}</span>
           <select
             value={startHour}
@@ -949,8 +939,8 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                     {/* Ratings inline */}
                     {(stop.naverRating || stop.hpRating) && (
                       <div className="flex items-center gap-2 mt-0.5 text-[10px]">
-                        {stop.naverRating && <span className="text-[var(--y2k-text-sub)]"><Star size={9} className="inline text-[#F59E0B]" /> {stop.naverRating}</span>}
-                        {stop.hpRating && <span className="text-[var(--y2k-text-sub)]"><Sparkles size={9} className="inline" /> {stop.hpRating}</span>}
+                        {stop.naverRating && <span className="text-[var(--y2k-text-sub)]">{stop.naverRating}</span>}
+                        {stop.hpRating && <span className="text-[var(--y2k-text-sub)]">{stop.hpRating}</span>}
                       </div>
                     )}
 
@@ -965,7 +955,6 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
                         }}
                         className="flex items-center gap-1 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-[10px] font-semibold px-2.5 py-1 rounded-[5px] active:scale-95"
                       >
-                        <Navigation size={10} />
                         {L(lang, { ko: '길찾기', zh: '导航', en: 'Nav' })}
                       </button>
                       <button
@@ -1071,7 +1060,7 @@ function CourseDetail({ course, lang, onBack, onSave, isSaved }) {
           </button>
           <div className="w-px h-6 bg-[#E5E7EB]" />
           <button onClick={() => setShowShareCard(true)} className="w-10 h-10 rounded-full bg-[#F3F4F6] flex items-center justify-center active:scale-90 transition-transform" title="Share">
-            <Share2 size={16} className="text-[var(--y2k-text-sub)]" />
+            <span className="text-xs text-[var(--y2k-text-sub)]">공유</span>
           </button>
         </div>
       </div>
@@ -1366,7 +1355,7 @@ export function CreateCourse({ lang, onBack, onSave }) {
   return (
     <div className="h-full flex flex-col max-w-[480px] mx-auto">
       <div className="flex items-center gap-3 px-4 py-3 border-b border-[var(--y2k-border)]">
-        <button onClick={onBack} className="p-1"><ChevronLeft size={20} className="text-[var(--y2k-text)]" /></button>
+        <button onClick={onBack} className="p-1"><span className="text-[var(--y2k-text)]">←</span></button>
         <p className="font-bold text-sm text-[var(--y2k-text)]">
           {L(lang, { ko: '새 코스 만들기', zh: '创建新路线', en: 'Create New Course' })}
         </p>
@@ -1427,9 +1416,9 @@ export function CreateCourse({ lang, onBack, onSave }) {
                         )}
                       </div>
                       <div className="flex items-center gap-1">
-                        <button onClick={(e) => { e.stopPropagation(); moveStop(i, -1) }} disabled={i === 0} className="text-[var(--y2k-text-sub)] disabled:opacity-20 p-0.5"><ChevronUp size={12} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); moveStop(i, 1) }} disabled={i === stops.length - 1} className="text-[var(--y2k-text-sub)] disabled:opacity-20 p-0.5"><ChevronDown size={12} /></button>
-                        <button onClick={(e) => { e.stopPropagation(); removeStop(i) }} className="text-[var(--y2k-text-sub)] hover:text-red-500 p-0.5"><Trash2 size={12} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); moveStop(i, -1) }} disabled={i === 0} className="text-[var(--y2k-text-sub)] disabled:opacity-20 p-0.5"><span>↑</span></button>
+                        <button onClick={(e) => { e.stopPropagation(); moveStop(i, 1) }} disabled={i === stops.length - 1} className="text-[var(--y2k-text-sub)] disabled:opacity-20 p-0.5"><span>↓</span></button>
+                        <button onClick={(e) => { e.stopPropagation(); removeStop(i) }} className="text-[var(--y2k-text-sub)] hover:text-red-500 p-0.5"><span>삭제</span></button>
                       </div>
                     </div>
                   </div>
@@ -1467,13 +1456,12 @@ export function CreateCourse({ lang, onBack, onSave }) {
 
                     {/* Search input */}
                     <div className="relative">
-                      <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)]" />
                       <input
                         type="text"
                         value={searchQuery}
                         onChange={e => handleSearch(e.target.value)}
                         placeholder={L(lang, { ko: '장소명, 주소, 상호명 검색', zh: '搜索地名、地址、商号', en: 'Search place, address, name' })}
-                        className="w-full pl-8 pr-3 py-2.5 bg-white rounded-[20px] text-sm text-[var(--y2k-text)] outline-none border border-[var(--y2k-border)] placeholder:text-[var(--y2k-text-sub)] focus:border-[#2D5A3D]"
+                        className="w-full pl-3 pr-3 py-2.5 bg-white rounded-[20px] text-sm text-[var(--y2k-text)] outline-none border border-[var(--y2k-border)] placeholder:text-[var(--y2k-text-sub)] focus:border-[#2D5A3D]"
                         autoFocus={i > 0}
                       />
                       {searching && <span className="absolute right-3 top-1/2 -translate-y-1/2 animate-spin w-3 h-3 border border-[#9CA3AF] border-t-transparent rounded-full" />}
@@ -1570,7 +1558,7 @@ export function CreateCourse({ lang, onBack, onSave }) {
             onClick={() => { setStops([...stops, { name: '', lat: 0, lng: 0, confirmed: false }]); setActiveIdx(stops.length) }}
             className="w-full py-2 rounded-[20px] border border-dashed border-[#D1D5DB] text-xs text-[var(--y2k-text-sub)] font-medium flex items-center justify-center gap-1 active:bg-[var(--y2k-bg)]"
           >
-            <Plus size={14} /> {L(lang, { ko: '경유지 추가', zh: '添加经停点', en: 'Add Stop' })}
+            + {L(lang, { ko: '경유지 추가', zh: '添加经停点', en: 'Add Stop' })}
           </button>
         )}
       </div>
@@ -1613,7 +1601,7 @@ function UserPopupCard({ popup, lang, onDelete }) {
           </div>
           <div className="flex flex-col items-end gap-1 shrink-0">
             <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-[4px] ${closing ? 'bg-[#FEF2F2] text-[#EF4444]' : 'bg-[#F3F4F6] text-[var(--y2k-text-sub)]'}`}>{dday}</span>
-            <button onClick={() => onDelete(popup.id)} className="p-0.5 text-[#D1D5DB] hover:text-[#EF4444]"><X size={13} /></button>
+            <button onClick={() => onDelete(popup.id)} className="p-0.5 text-[#D1D5DB] hover:text-[#EF4444]"><span>✕</span></button>
           </div>
         </div>
         <div className="flex items-center gap-1.5 mt-1.5">
@@ -1623,7 +1611,6 @@ function UserPopupCard({ popup, lang, onDelete }) {
           ))}
           {popup.sourceUrl && (
             <a href={popup.sourceUrl} target="_blank" rel="noreferrer" className="ml-auto text-[var(--y2k-text-sub)]">
-              <ExternalLink size={11} />
             </a>
           )}
         </div>
@@ -1816,10 +1803,7 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
                     )}
                   </div>
                   <div className="shrink-0 mt-0.5">
-                    <ChevronDown
-                      size={16}
-                      className={`text-[var(--y2k-text-sub)] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-                    />
+                    <span className={`text-[var(--y2k-text-sub)] transition-transform duration-200 inline-block ${isOpen ? 'rotate-180' : ''}`}>↓</span>
                   </div>
                 </div>
               </button>
@@ -1829,7 +1813,6 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
                 <div className="px-4 pb-4">
                   {/* Read time + excerpt */}
                   <div className="flex items-center gap-1.5 mb-3">
-                    <Clock size={11} className="text-[var(--y2k-text-sub)]" />
                     <span className="text-[10px] text-[var(--y2k-text-sub)]">
                       {L(lang, { ko: '읽는 시간', zh: '阅读时间', en: 'Read time' })} {L(lang, col.readTime)}
                     </span>
@@ -1874,16 +1857,15 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
                       }`}
                     >
                       {isSaved ? (
-                        <><Check size={12} /> {L(lang, { ko: '관심 등록됨', zh: '已收藏', en: 'Saved' })}</>
+                        <>✓ {L(lang, { ko: '관심 등록됨', zh: '已收藏', en: 'Saved' })}</>
                       ) : (
-                        <><Plus size={12} /> {L(lang, { ko: '관심 등록', zh: '收藏专栏', en: 'Save Column' })}</>
+                        <>+ {L(lang, { ko: '관심 등록', zh: '收藏专栏', en: 'Save Column' })}</>
                       )}
                     </button>
                     <button
                       onClick={() => onCreateCourse(col)}
                       className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-[var(--y2k-bg)] text-[var(--y2k-text)] text-xs font-semibold rounded-[8px] active:bg-[#E5E7EB] transition-colors"
                     >
-                      <Compass size={13} />
                       {L(lang, { ko: '이 코스 만들기', zh: '生成此路线', en: 'Create this course' })}
                     </button>
                   </div>
@@ -1898,7 +1880,7 @@ export function EditorialColumns({ lang, savedIds, onSave, onCreateCourse }) {
 }
 
 
-export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminView = false }) {
+export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminView = false, onBack }) {
   const [view, setView] = useState('list')
   const [selectedCourse, setSelectedCourse] = useState(null)
   const [filter, setFilter] = useState('all')
@@ -2002,7 +1984,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
   // ─── Detail View ───
   if (view === 'detail' && selectedCourse) {
     return (
-      <div className="bg-white h-full" style={{ height: 'calc(100vh - 140px)' }}>
+      <div className="h-full" style={{ height: 'calc(100vh - 140px)', background: '#FAFAFA' }}>
         <CourseDetail
           course={selectedCourse}
           lang={lang}
@@ -2017,7 +1999,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
   // ─── Create View ───
   if (view === 'create') {
     return (
-      <div className="bg-white h-full" style={{ height: 'calc(100vh - 140px)' }}>
+      <div className="h-full" style={{ height: 'calc(100vh - 140px)', background: '#FAFAFA' }}>
         <CreateCourse lang={lang} onBack={() => setView('list')} onSave={saveCustomCourse} />
       </div>
     )
@@ -2025,7 +2007,25 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
 
   // ─── List View ───
   return (
-    <div className="bg-white overflow-y-auto px-4 py-4 max-w-[480px] mx-auto" style={{ height: 'calc(100vh - 140px)' }}>
+    <div className="overflow-y-auto px-4 py-4 max-w-[480px] mx-auto" style={{
+      height: 'calc(100vh - 140px)',
+      background: '#FAFAFA',
+      '--y2k-bg': '#FFFFFF',
+      '--y2k-card': '#FAFAFA',
+      '--y2k-text': '#1A1A1A',
+      '--y2k-text-sub': '#888888',
+      '--y2k-border': 'rgba(200,200,200,0.3)',
+    }}>
+
+      {/* 뒤로가기 헤더 */}
+      {onBack && (
+        <div className="flex items-center mb-4 -mx-1">
+          <button onClick={onBack} className="flex items-center gap-1 p-1 text-[var(--y2k-text)]">
+            <span>←</span>
+            <span className="text-sm font-medium">{L(lang, { ko: '홈', zh: '首页', en: 'Home' })}</span>
+          </button>
+        </div>
+      )}
 
       {/* A) My Courses — horizontal scroll */}
       <section className="mb-6">
@@ -2036,14 +2036,13 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
           <button onClick={() => setView('create')}
             className="flex items-center gap-1 text-xs font-semibold text-[var(--y2k-text)] bg-[var(--y2k-bg)] px-3 py-1.5 rounded-[20px] active:bg-[#E5E7EB] transition-colors"
           >
-            <Plus size={14} />
+            +
             {L(lang, { ko: '만들기', zh: '创建', en: 'Create' })}
           </button>
         </div>
 
         {myCourses.length === 0 ? (
           <div className="bg-[var(--y2k-bg)] rounded-[20px] border border-dashed border-[var(--y2k-border)] p-6 text-center">
-            <MapPin size={24} className="mx-auto text-[#D1D5DB] mb-2" />
             <p className="text-xs text-[var(--y2k-text-sub)]">
               {L(lang, { ko: '저장된 코스가 없습니다. 추천 코스로 시작해보세요', zh: '暂无保存的路线。从推荐路线开始吧', en: 'No saved courses yet. Start with a recommended one' })}
             </p>
@@ -2066,7 +2065,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                   onClick={() => deleteMyCourse(course.id)}
                   className="absolute top-1.5 right-1.5 w-5 h-5 bg-[var(--y2k-bg)] rounded-full flex items-center justify-center hover:bg-[#E5E7EB]"
                 >
-                  <X size={10} className="text-[var(--y2k-text-sub)]" />
+                  <span className="text-[var(--y2k-text-sub)] text-[10px]">✕</span>
                 </button>
               </div>
             ))}
@@ -2096,7 +2095,6 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
       {courseProfile && !showQuiz && (
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Sparkles size={14} className="text-[var(--y2k-text)]" />
             <span className="text-xs font-medium text-[var(--y2k-text-sub)]">
               {L(lang, { ko: '맞춤 추천 활성화됨', zh: '个性推荐已开启', en: 'Personalized recommendations on' })}
             </span>
@@ -2208,7 +2206,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
               <h3 className="text-base font-bold text-[var(--y2k-text)]">
                 {L(lang, { ko: '팝업 URL 추가', zh: '添加快闪店链接', en: 'Add Popup URL' })}
               </h3>
-              <button onClick={() => setShowAddPopup(false)} className="p-1 text-[var(--y2k-text-sub)]"><X size={18} /></button>
+              <button onClick={() => setShowAddPopup(false)} className="p-1 text-[var(--y2k-text-sub)]"><span>✕</span></button>
             </div>
 
             {!parsedData ? (
@@ -2246,7 +2244,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
                   disabled={parsing || !pastedUrl.trim()}
                   className="w-full py-3 bg-gradient-to-r from-[var(--y2k-pink)] to-[var(--y2k-lavender)] text-white text-sm font-semibold rounded-[8px] disabled:opacity-40 flex items-center justify-center gap-2"
                 >
-                  {parsing ? <><Loader size={14} className="animate-spin" />{L(lang, { ko: '분석 중...', zh: '分析中...', en: 'Analyzing...' })}</> : L(lang, { ko: '분석하기', zh: '分析链接', en: 'Analyze' })}
+                  {parsing ? <>{L(lang, { ko: '로딩중 분석 중...', zh: '로딩중 分析中...', en: 'Analyzing...' })}</> : L(lang, { ko: '분석하기', zh: '分析链接', en: 'Analyze' })}
                 </button>
                 {parseError && <p className="text-xs text-[#EF4444] mt-2">{L(lang, { ko: '자동 분석 실패. 아래에서 직접 입력하세요.', zh: '自动分析失败，请手动填写。', en: 'Auto-parse failed. Please fill in manually.' })}</p>}
               </>

@@ -843,7 +843,10 @@ export default function NearMap() {
     if (!el) return
     el.style.transition = 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
     if (sheetPoi) {
-      el.style.transform = `translateY(${el.offsetHeight - SHEET_PEEK}px)`
+      // 투어버스 정류장: 30vh 높이로 올라옴
+      const isTourbus = sheetPoi.category === 'tourbus' || sheetPoi.category === 'tourbus-live' || sheetPoi.category === 'alliance'
+      const peekHeight = isTourbus ? Math.max(window.innerHeight * 0.3, SHEET_PEEK) : SHEET_PEEK
+      el.style.transform = `translateY(${Math.max(0, el.offsetHeight - peekHeight)}px)`
     } else {
       el.style.transform = 'translateY(100%)'
     }
@@ -1005,6 +1008,26 @@ export default function NearMap() {
           </button>
         </div>
 
+        {/* ─── 투어버스: 버스찾기 + 제휴할인 (별도 줄) ─── */}
+        {tourbusMode && (
+          <div style={{ display: 'flex', gap: 8, padding: '6px 20px 0' }}>
+            <button onClick={() => setBusLiveMode(v => !v)} style={{
+              height: 30, padding: '0 14px', borderRadius: 20, border: busLiveMode ? 'none' : '1px solid rgba(0,0,0,0.08)',
+              background: busLiveMode ? '#C4725A' : 'white', color: busLiveMode ? 'white' : '#6B6B6B',
+              fontSize: 12, fontWeight: 600, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+            }}>
+              {lang === 'zh' ? '找公交' : lang === 'en' ? 'Find Bus' : '버스찾기'}
+            </button>
+            <button onClick={() => setShowAllianceSheet(v => !v)} style={{
+              height: 30, padding: '0 14px', borderRadius: 20, border: showAllianceSheet ? 'none' : '1px solid rgba(0,0,0,0.08)',
+              background: showAllianceSheet ? '#C4725A' : 'white', color: showAllianceSheet ? 'white' : '#6B6B6B',
+              fontSize: 12, fontWeight: 600, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+            }}>
+              {lang === 'zh' ? '优惠折扣' : lang === 'en' ? 'Deals' : '제휴할인'}
+            </button>
+          </div>
+        )}
+
         {/* ─── 투어버스 노선 서브필터 ─── */}
         {tourbusMode && (
           <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 20px 0', scrollbarWidth: 'none' }}>
@@ -1013,7 +1036,7 @@ export default function NearMap() {
               style={{
                 flexShrink: 0, height: 28, minWidth: 36,
                 background: activeRouteIds.length === 0 ? '#1A1A1A' : 'white',
-                color: activeRouteIds.length === 0 ? 'white' : '#777',
+                color: activeRouteIds.length === 0 ? 'white' : '#6B6B6B',
                 border: activeRouteIds.length === 0 ? 'none' : '1px solid rgba(0,0,0,0.08)',
                 borderRadius: 20, padding: '0 10px',
                 fontSize: 11, fontWeight: activeRouteIds.length === 0 ? 700 : 500,
@@ -1043,12 +1066,6 @@ export default function NearMap() {
                 </button>
               )
             })}
-            <button onClick={() => setBusLiveMode(v => !v)} style={{ flexShrink: 0, height: 28, padding: '0 10px', borderRadius: 20, background: busLiveMode ? '#C4725A' : 'white', color: busLiveMode ? 'white' : '#6B6B6B', border: busLiveMode ? 'none' : '1px solid rgba(0,0,0,0.08)', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
-              {lang === 'zh' ? '找公交' : lang === 'en' ? 'Bus' : '버스찾기'}
-            </button>
-            <button onClick={() => setShowAllianceSheet(v => !v)} style={{ flexShrink: 0, height: 28, padding: '0 10px', borderRadius: 20, background: showAllianceSheet ? '#C4725A' : 'white', color: showAllianceSheet ? 'white' : '#6B6B6B', border: showAllianceSheet ? 'none' : '1px solid rgba(0,0,0,0.08)', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
-              {lang === 'zh' ? '优惠折扣' : lang === 'en' ? 'Deals' : '제휴할인'}
-            </button>
           </div>
         )}
 

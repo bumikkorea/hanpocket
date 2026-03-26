@@ -2770,7 +2770,7 @@ function AppInner() {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white transition-transform duration-300"
         style={{
           borderTop: '0.5px solid var(--border)',
-          height: '72px',
+          height: '65px',
           paddingBottom: 'env(safe-area-inset-bottom)',
           transform: 'translateY(0)',
         }}>
@@ -2780,9 +2780,9 @@ function AppInner() {
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
                 aria-label={`${item.label} tab`}
-                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
-                <item.icon size={27} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s' }} />
-                <span style={{ fontSize: 12, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px', lineHeight: 1 }}>
+                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', transition: 'all 0.2s' }}>
+                <item.icon size={22} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s' }} />
+                <span style={{ fontSize: 11, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px', lineHeight: 1 }}>
                   {item.label}
                 </span>
               </button>

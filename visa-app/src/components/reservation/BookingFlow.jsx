@@ -23,7 +23,7 @@ const T = {
     warningSoft: "rgba(251,191,36,0.15)",
     error: "#FF6B9D",
     errorSoft: "rgba(255,107,157,0.15)",
-    text1: "#2D2D3F",
+    text1: "#1A1A1A",
     text2: "#6B6B6B",
     text3: "#A8A8A8",
     text4: "#A8A8A8",

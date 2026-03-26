@@ -306,12 +306,12 @@ function ShopCard({ shop, lang, onBook }) {
       </div>
       {/* 정보 */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{shopName}</div>
-        <div style={{ fontSize: 13, color: BRAND, fontWeight: 600, marginBottom: 4 }}>{shop[catKey]}</div>
-        <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{shopLoc}</div>
+        <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A', marginBottom: 3 }}>{shopName}</div>
+        <div style={{ fontSize: 13, color: '#C4725A', fontWeight: 600, marginBottom: 4 }}>{shop[catKey]}</div>
+        <div style={{ fontSize: 13, color: '#6B6B6B' }}>{shopLoc}</div>
       </div>
       {/* 예약 버튼 */}
-      <button onClick={() => onBook(shop)} style={{ flexShrink: 0, background: '#FAFAFA', border: 'none', borderRadius: 12, padding: '8px 14px', fontSize: 13, fontWeight: 700, color: BRAND, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 2, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>
+      <button onClick={() => onBook(shop)} style={{ flexShrink: 0, background: '#FFFFFF', border: '1px solid #F0EDED', borderRadius: 12, padding: '8px 14px', fontSize: 13, fontWeight: 700, color: '#C4725A', cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 2 }}>
         {L(lang, LABEL.book_btn)}
       </button>
     </div>

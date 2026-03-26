@@ -349,7 +349,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           {getGreeting(plan, lang)}
         </div>
         <div style={{ fontSize: 12, color: '#A8A8A8', marginTop: 6 }}>
-          {getNHDateLabel(9)} · {weatherData.KST ? `${weatherData.KST.temp}°` : '--°'} · ¥1 = ₩{Math.round(cnyRate)}
+          {getNHDateLabel(9)} · {weatherData.KST ? `${weatherData.KST.temp}°` : '--°'} · ¥1 = ₩{Math.round(cnyRate)} · {L(lang, { ko: '중국', zh: '中国', en: 'CN' })} {(() => { const n = new Date(); const utc = n.getTime() + n.getTimezoneOffset() * 60000; const cn = new Date(utc + 8 * 3600000); return `${String(cn.getHours()).padStart(2,'0')}:${String(cn.getMinutes()).padStart(2,'0')}` })()}
         </div>
       </div>
 
@@ -394,11 +394,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                   {nextItem.addr && <div style={{ fontSize: 10, color: '#A8A8A8', marginTop: 1 }}>{nextItem.addr.replace('서울특별시 ', '').slice(0, 20)}</div>}
                 </div>
               </div>
-            ) : (
-              <div style={{ fontSize: 12, color: '#A8A8A8' }}>
-                {L(lang, { ko: '일정을 확인하려면 탭하세요', zh: '点击查看行程', en: 'Tap to view itinerary' })}
-              </div>
-            )}
+            ) : null}
           </button>
         ) : (
           /* 미설정 카드 */
@@ -423,23 +419,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         )}
       </div>
 
-      {/* ─── 3. 검색창 ─── */}
-      <div style={{ padding: '16px 20px', ...fadeUp(2) }}>
-        <button onClick={openSearchOverlay}
-          style={{
-            width: '100%', display: 'flex', alignItems: 'center',
-            padding: '11px 16px', borderRadius: 12, border: 'none', cursor: 'pointer',
-            background: '#FFFFFF', textAlign: 'left',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
-          }}
-        >
-          <span style={{ fontSize: 13, color: '#CDCDCD' }}>
-            {L(lang, { ko: '카페, 맛집, 피부과 검색...', zh: '搜索咖啡厅、美食、皮肤科...', en: 'Search cafes, food, clinics...' })}
-          </span>
-        </button>
-      </div>
-
-      {/* ─── 4. "지금 뜨는 곳" 가로 스크롤 ─── */}
+      {/* ─── 3. "지금 뜨는 곳" 가로 스크롤 ─── */}
       <div style={{ ...fadeUp(3) }}>
         <div style={{ padding: '0 20px', marginBottom: 12 }}>
           <span style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>
@@ -464,6 +444,22 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* ─── 4. 검색창 (지금 뜨는 곳 아래) ─── */}
+      <div style={{ padding: '0 20px 12px', ...fadeUp(4) }}>
+        <button onClick={openSearchOverlay}
+          style={{
+            width: '100%', display: 'flex', alignItems: 'center',
+            padding: '11px 16px', borderRadius: 12, border: 'none', cursor: 'pointer',
+            background: '#FFFFFF', textAlign: 'left',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+          }}
+        >
+          <span style={{ fontSize: 13, color: '#A8A8A8' }}>
+            {L(lang, { ko: '카페, 맛집, 피부과 검색...', zh: '搜索咖啡厅、美食、皮肤科...', en: 'Search cafes, food, clinics...' })}
+          </span>
+        </button>
       </div>
 
       {/* ─── 5. 카테고리 필터 ─── */}

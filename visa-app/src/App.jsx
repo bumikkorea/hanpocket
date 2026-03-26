@@ -2118,10 +2118,10 @@ function AppInner() {
               )}
             </div>
 
-            {/* 중앙 로고 — #21 탭하면 홈으로 */}
-            <button className="flex-1 flex justify-center" onClick={() => { handleTabChange('home'); setSubPage(null); window.scrollTo(0,0) }}>
+            {/* 중앙 로고 — 표시만 */}
+            <div className="flex-1 flex justify-center">
               <Logo />
-            </button>
+            </div>
 
             {/* 우측: 언어 */}
             <div className="flex items-center justify-end gap-1 w-16">

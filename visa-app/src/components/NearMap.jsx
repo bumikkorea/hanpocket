@@ -829,6 +829,36 @@ export default function NearMap() {
       <div style={{ position: 'absolute', top: 12, left: 0, right: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px', scrollbarWidth: 'none', alignItems: 'center' }}>
 
+          {/* 최근 */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <button
+              onClick={() => { setShowRecent(v => !v); setShowAreaPicker(false) }}
+              style={{
+                height: 36, padding: '0 12px', borderRadius: 24,
+                background: showRecent ? '#1A1A1A' : 'white', color: showRecent ? 'white' : '#6B6B6B',
+                border: showRecent ? 'none' : '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
+                fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
+              }}
+            >
+              {lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근'}
+            </button>
+            {showRecent && (
+              <div style={{ position: 'absolute', top: 42, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 180, maxHeight: '50vh', overflowY: 'auto' }}>
+                {getMapRecent().length === 0 ? (
+                  <div style={{ padding: '12px 16px', fontSize: 12, color: '#A8A8A8' }}>
+                    {lang === 'zh' ? '暂无记录' : lang === 'en' ? 'No recent' : '최근 검색 없음'}
+                  </div>
+                ) : getMapRecent().map((term, i) => (
+                  <button key={`${term}-${i}`} onClick={() => { setShowRecent(false); setShowSearch(true) }}
+                    style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 16px', border: 'none', background: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1A1A', borderBottom: '1px solid #F0EDED' }}>
+                    {term}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* 검색 */}
           <button
             onClick={() => setShowSearch(true)}

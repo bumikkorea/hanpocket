@@ -10,7 +10,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MapPin, User as LucideUser, Calendar, Home as HomeIcon } from 'lucide-react'
+import { MapPin, User as LucideUser, Calendar, Home as HomeIcon, Languages } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -2804,14 +2804,7 @@ function AppInner() {
         }}
         aria-label="Translator"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M5 8l6 0"/>
-          <path d="M8 5l0 3"/>
-          <path d="M5 11c.667 1.333 2 3 4 5"/>
-          <path d="M12 11c-.667 1.333-2 3-4 5"/>
-          <path d="M14 14l2 4 2-4"/>
-          <path d="M15 18h2"/>
-        </svg>
+        <Languages size={24} color="white" strokeWidth={1.8} />
       </button>
 
       {/* Bottom Navigation — 4탭: 探险/地图/预约/我的 */}

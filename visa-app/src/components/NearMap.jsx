@@ -709,7 +709,7 @@ export default function NearMap() {
     setActiveCourseId(null)
   }, [])
 
-  const sheetPoi = activePopup || filteredPins[0] || null
+  const sheetPoi = activePopup || null
   const hotFallback = filteredPins.length === 0 && !pinsLoading
     ? [...allPins].sort((a, b) => b.view_count_7d - a.view_count_7d).slice(0, 3)
     : []
@@ -954,7 +954,7 @@ export default function NearMap() {
         onTouchEnd={e => e.stopPropagation()}
       >
         <div style={{ padding: '72px 14px 10px', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#999', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#6B6B6B', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
             {tLang('cat_all', lang)}
           </p>
         </div>
@@ -973,7 +973,7 @@ export default function NearMap() {
                 {pin.name_ko || pin.name_zh}
               </p>
               {pin.category && (
-                <p style={{ fontSize: 11, color: '#aaa', margin: '2px 0 0' }}>
+                <p style={{ fontSize: 11, color: '#6B6B6B', margin: '2px 0 0' }}>
                   {pin.category}
                 </p>
               )}
@@ -1052,7 +1052,7 @@ export default function NearMap() {
               <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
                 <button
                   onClick={() => setShowList(true)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', fontSize: 12, fontWeight: 600, color: '#AAAAAA', display: 'flex', alignItems: 'center', gap: 3 }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', fontSize: 12, fontWeight: 600, color: '#6B6B6B', display: 'flex', alignItems: 'center', gap: 3 }}
                 >
                   {lang === 'zh' ? '列表' : lang === 'en' ? 'List' : '목록'} ›
                 </button>
@@ -1213,7 +1213,7 @@ function MichelinSheetContent({ poi, restaurant, lang, onClose, userPos }) {
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: 36, height: 4, borderRadius: 2, background: '#DDDDDD' }} />
         </div>
-        <button onClick={onClose} style={{ color: '#AAAAAA', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
+        <button onClick={onClose} style={{ color: '#6B6B6B', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
       </div>
 
       <div style={{ padding: '0 20px 20px' }}>
@@ -1232,12 +1232,12 @@ function MichelinSheetContent({ poi, restaurant, lang, onClose, userPos }) {
             {pinCfg.emoji} {awardLabel[lang] || awardLabel.en}
           </span>
           {priceLabel && (
-            <span style={{ fontSize: 12, color: '#999', fontWeight: 600 }}>{priceLabel}</span>
+            <span style={{ fontSize: 12, color: '#6B6B6B', fontWeight: 600 }}>{priceLabel}</span>
           )}
         </div>
 
         {/* 지역 */}
-        <div style={{ fontSize: 13, color: '#666', marginBottom: 14 }}>
+        <div style={{ fontSize: 13, color: '#6B6B6B', marginBottom: 14 }}>
           📍 {r.area?.city} {r.area?.gu} {r.area?.dong || ''}
         </div>
 
@@ -1324,7 +1324,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: 36, height: 4, borderRadius: 2, background: '#DDDDDD' }} />
         </div>
-        <button onClick={onClose} style={{ color: '#AAAAAA', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
+        <button onClick={onClose} style={{ color: '#6B6B6B', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
       </div>
 
       <div style={{ padding: '0 20px 20px' }}>
@@ -1347,13 +1347,13 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
               {catLabel}
             </span>
           )}
-          {dist && <span style={{ fontSize: 12, color: '#999' }}>{dist}</span>}
+          {dist && <span style={{ fontSize: 12, color: '#6B6B6B' }}>{dist}</span>}
         </div>
 
         {/* 주소 — 한 번만 */}
         {address ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-            <span style={{ fontSize: 13, color: '#666', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: 13, color: '#6B6B6B', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               📍 {address}
             </span>
             <button
@@ -1363,7 +1363,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
                 background: copied ? 'rgba(22,163,74,0.1)' : '#FAFAFA',
                 border: 'none',
                 boxShadow: copied ? 'none' : '3px 3px 8px rgba(200,200,200,0.5), -3px -3px 8px #FFFFFF',
-                color: copied ? '#16A34A' : '#888888',
+                color: copied ? '#16A34A' : '#6B6B6B',
                 fontSize: 11, fontWeight: 600, cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
@@ -1437,7 +1437,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           )}
           <button
             onClick={() => onBookmark(poi)}
-            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FAFAFA', border: 'none', borderRadius: 14, cursor: 'pointer', flexShrink: 0, boxShadow: isBookmarked ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 15, color: isBookmarked ? '#FF3B30' : '#888888' }}
+            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FAFAFA', border: 'none', borderRadius: 14, cursor: 'pointer', flexShrink: 0, boxShadow: isBookmarked ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 15, color: isBookmarked ? '#FF3B30' : '#6B6B6B' }}
           >
             {isBookmarked ? '♥' : '♡'}
           </button>

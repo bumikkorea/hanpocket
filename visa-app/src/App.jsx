@@ -2088,11 +2088,11 @@ function AppInner() {
         </div>
       )}
 
-      {/* Top Bar — sticky, always on top */}
-      <div className="sticky top-0 z-[1000]" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #F0F0F0', display: tab === 'near-map' ? 'none' : 'block' }}>
+      {/* Top Bar — fixed, always on top */}
+      <div className="fixed top-0 left-0 right-0 z-[1000]" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #F0F0F0', display: tab === 'near-map' ? 'none' : 'block' }}>
         <div className="px-4 pt-2 pb-1">
           <div className="flex items-center">
-            {/* 좌측: 햄버거 메뉴 (메인) 또는 뒤로가기 (서브) */}
+            {/* 좌측: < 뒤로가기 (항상) */}
             {/* #24 터치 영역 44x44px 보장 */}
             <div className="flex items-center gap-1 w-16">
               {subPage ? (
@@ -2101,19 +2101,15 @@ function AppInner() {
                   setSubPage(null)
                   if (homeOriginPages.includes(subPage)) setTab('home')
                 }} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
-                  ←
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                 </button>
               ) : tab !== 'home' && tab !== 'near-home' && tab !== 'near-map' && tab !== 'booking' && tab !== 'my' ? (
                 <button onClick={() => { setTab('home'); setSubPage(null) }} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
-                  ←
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                 </button>
               ) : (
                 <button onClick={() => setShowAppMenu(!showAppMenu)} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                    <line x1="3" y1="5" x2="17" y2="5"/>
-                    <line x1="3" y1="10" x2="17" y2="10"/>
-                    <line x1="3" y1="15" x2="17" y2="15"/>
-                  </svg>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
                 </button>
               )}
             </div>
@@ -2156,6 +2152,9 @@ function AppInner() {
           </div>
         </div>
       </div>
+
+      {/* Top bar spacer for fixed header */}
+      {tab !== 'near-map' && <div style={{ height: 52 }} />}
 
       <OfflineNotice lang={lang} />
 

@@ -1958,17 +1958,6 @@ function AppInner() {
   }
 
   return (
-    <>
-    {/* PC 좌측 브랜드 */}
-    <div style={{
-      position: 'fixed', left: 0, top: 0, width: 'calc(50% - 215px)', height: '100vh',
-      background: '#FAFAFA', display: 'flex', flexDirection: 'column', justifyContent: 'center',
-      alignItems: 'flex-end', paddingRight: 60, zIndex: 0,
-    }}>
-      <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: 3, color: '#1A1A1A' }}>NEAR</div>
-      <div style={{ fontSize: 14, color: '#6B6B6B', marginTop: 8 }}>서울 여행의 모든 것</div>
-      <div style={{ fontSize: 12, color: '#A8A8A8', marginTop: 4 }}>Your travel companion in Seoul</div>
-    </div>
     <div className="pb-20" style={{ maxWidth: 430, margin: '0 auto', minHeight: '100vh', position: 'relative', background: '#FAFAFA' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
@@ -2821,7 +2810,6 @@ function AppInner() {
       </div>
       {/* 챗봇 제거 */}
     </div>
-    </>
   )
 }
 

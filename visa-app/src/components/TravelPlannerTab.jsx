@@ -558,7 +558,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
   if (!plan || editDates) {
     return (
       <div style={{
-        position: 'fixed', inset: 0, zIndex: 9600,
+        position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, zIndex: 40,
         background: '#FAFAFA',
         transform: slideIn ? 'translateX(0)' : 'translateX(100%)',
         transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -590,7 +590,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 9600,
+      position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, zIndex: 40,
       background: '#FAFAFA',
       transform: slideIn ? 'translateX(0)' : 'translateX(100%)',
       transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',

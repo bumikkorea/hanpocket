@@ -19,8 +19,7 @@ const NEU = {
 
 const MENU_ITEMS = [
   { id: 'reservations', bg: NEU.terraLight,      color: NEU.terra,    labelKey: 'my.orders',       action: 'booking-my'        },
-  { id: 'favorites',    bg: 'rgba(255,149,0,0.08)',  color: '#FF9500',    labelKey: 'my.wishlist',     action: 'sub:my-seoul'      },
-  { id: 'taxi',         bg: 'rgba(33,150,243,0.08)', color: '#2196F3',    labelKey: 'my.taxiHistory',  action: 'sub:taxi-history'  },
+  { id: 'coupons',      bg: 'rgba(255,149,0,0.08)',  color: '#FF9500',    labelKey: 'my.coupons',      action: 'sub:coupons'       },
   { id: 'notifications',bg: 'rgba(76,175,80,0.08)',  color: '#4CAF50',    labelKey: 'my.notifications',action: 'sub:notifications' },
   { id: 'help',         bg: 'rgba(153,153,153,0.08)',color: '#999999',    labelKey: 'my.help',         action: 'sub:help'          },
 ]
@@ -43,7 +42,6 @@ const PURPOSE_OPTIONS = [
 const ACTIVITY_STATS = [
   { storageKey: 'near_checkins',   labelKey: 'my.checkins' },
   { storageKey: 'near_reviews',    labelKey: 'my.reviews'  },
-  { storageKey: 'near_taxi_count', labelKey: 'my.taxiUse'  },
   { storageKey: 'near_my_seoul',   labelKey: 'my.saved'    },
   { storageKey: 'near_visited',    labelKey: 'my.visited'  },
 ]
@@ -197,7 +195,7 @@ export default function MyTab({ setTab, setSubPage }) {
         {[
           { labelKey: 'my.orders',   count: bookingCount,  unit: '', action: () => goToMyBookings()           },
           { labelKey: 'my.points',   count: 0,             unit: 'P', action: () => {}                       },
-          { labelKey: 'my.wishlist', count: favoriteCount, unit: '', action: () => setSubPage?.('my-seoul')  },
+          { labelKey: 'my.coupons', count: 0, unit: '', action: () => setSubPage?.('coupons')  },
         ].map((item, i) => (
           <button
             key={i}
@@ -226,24 +224,18 @@ export default function MyTab({ setTab, setSubPage }) {
       {/* ─── 활동 내역 카드 ─── */}
       <div style={{
         margin: '0 20px 24px',
-        background: NEU.bg, border: 'none', borderRadius: 20, padding: '20px',
+        background: NEU.bg, border: 'none', borderRadius: 16, padding: '14px 16px',
         boxShadow: NEU.shadowOut,
       }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A', marginBottom: 18 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 12 }}>
           {t('my.activity')}
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-around' }}>
           {ACTIVITY_STATS.map((stat, i) => {
             const count = getStorageCount(stat.storageKey)
             return (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                <div style={{
-                  width: 40, height: 40, borderRadius: '50%', background: NEU.bg,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: NEU.shadowOutSm,
-                }}>
-                </div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', fontFamily: 'Inter, sans-serif' }}>{count}</div>
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', fontFamily: 'Inter, sans-serif' }}>{count}</div>
                 <div style={{ fontSize: 11, color: '#6B6B6B' }}>{t(stat.labelKey)}</div>
               </div>
             )

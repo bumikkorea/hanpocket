@@ -2322,6 +2322,24 @@ function AppInner() {
             <MySeoulPage onBack={() => setSubPage(null)} setTab={setTab} />
           </Suspense>
         )}
+        {subPage==='coupons' && (
+          <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: 'var(--bg, #FAFAFA)', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
+            <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', borderBottom: '0.5px solid var(--border, #E5E7EB)' }}>
+              <button onClick={() => setSubPage(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#1A1A1A', padding: '4px 8px' }}>←</button>
+              <span style={{ flex: 1, textAlign: 'center', fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>Coupons</span>
+              <div style={{ width: 32 }} />
+            </div>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🎟️</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', marginBottom: 8 }}>Coming Soon</div>
+                <div style={{ fontSize: 14, color: '#6B6B6B' }}>
+                  {lang === 'zh' ? '优惠券功能即将上线，敬请期待！' : lang === 'ko' ? '쿠폰 기능이 곧 출시됩니다!' : 'Coupon features are coming soon!'}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {subPage==='taxrefund' && (
           <Suspense fallback={<div />}>
             <TaxRefundChecker lang={lang} profile={safeProfile} />

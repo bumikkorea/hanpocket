@@ -165,6 +165,24 @@ function getNHDateLabel(offset) {
   return `${d.getMonth() + 1}/${d.getDate()}(${DAY[d.getDay()]})`
 }
 
+function getNHTimeForOffset(offset) {
+  const now = new Date()
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000
+  const d = new Date(utc + offset * 3600000)
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`
+}
+
+const TIMEZONE_OPTIONS = [
+  { id: 'CST',    name: { ko: '중국',     zh: '中国',     en: 'China'     }, offset: 8  },
+  { id: 'JST',    name: { ko: '일본',     zh: '日本',     en: 'Japan'     }, offset: 9  },
+  { id: 'EST',    name: { ko: '미국 동부', zh: '美东',     en: 'US East'   }, offset: -5 },
+  { id: 'PST',    name: { ko: '미국 서부', zh: '美西',     en: 'US West'   }, offset: -8 },
+  { id: 'GMT',    name: { ko: '영국',     zh: '英国',     en: 'UK'        }, offset: 0  },
+  { id: 'SGT',    name: { ko: '싱가포르', zh: '新加坡',   en: 'Singapore' }, offset: 8  },
+  { id: 'ICT_TH', name: { ko: '태국',     zh: '泰国',     en: 'Thailand'  }, offset: 7  },
+  { id: 'ICT_VN', name: { ko: '베트남',   zh: '越南',     en: 'Vietnam'   }, offset: 7  },
+]
+
 // ─── 여행 상태 유틸 ───
 function strToDate(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d) }
 function dateToStr(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` }
@@ -260,6 +278,13 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   const weatherData = useNHWeather()
   const cnyRate = useNHCNYRate()
 
+  // ─── 타임존 ───
+  const [showTzPicker, setShowTzPicker] = useState(false)
+  const [extraTz, setExtraTz] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('hanpocket_extra_timezones') || '["CST"]') } catch { return ['CST'] }
+  })
+  const saveTz = (ids) => { setExtraTz(ids); localStorage.setItem('hanpocket_extra_timezones', JSON.stringify(ids)) }
+
   // ─── UI 상태 ───
   const [showPlanner, setShowPlanner] = useState(false)
   const [showMore, setShowMore] = useState(false)
@@ -348,9 +373,42 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         <div style={{ fontSize: 22, fontWeight: 800, color: '#1A1A1A', lineHeight: 1.3, letterSpacing: '-0.5px' }}>
           {getGreeting(plan, lang)}
         </div>
-        <div style={{ fontSize: 12, color: '#A8A8A8', marginTop: 6 }}>
-          {getNHDateLabel(9)} · {weatherData.KST ? `${weatherData.KST.temp}°` : '--°'} · ¥1 = ₩{Math.round(cnyRate)} · {L(lang, { ko: '중국', zh: '中国', en: 'CN' })} {(() => { const n = new Date(); const utc = n.getTime() + n.getTimezoneOffset() * 60000; const cn = new Date(utc + 8 * 3600000); return `${String(cn.getHours()).padStart(2,'0')}:${String(cn.getMinutes()).padStart(2,'0')}` })()}
+        <div style={{ fontSize: 12, color: '#A8A8A8', marginTop: 6, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 0 }}>
+          <span>{getNHDateLabel(9)} · {weatherData.KST ? `${weatherData.KST.temp}°` : '--°'} · ¥1 = ₩{Math.round(cnyRate)}</span>
+          {extraTz.map(id => {
+            const tz = TIMEZONE_OPTIONS.find(t => t.id === id)
+            if (!tz) return null
+            const diff = tz.offset - 9
+            const diffStr = diff === 0 ? '' : diff > 0 ? ` (+${diff}h)` : ` (${diff}h)`
+            return <span key={id} style={{ color: '#C4725A' }}> · {L(lang, tz.name)} {getNHTimeForOffset(tz.offset)}{diffStr}</span>
+          })}
+          <button onClick={() => setShowTzPicker(true)} style={{ background: 'none', border: '1px solid #F0EDED', borderRadius: 10, cursor: 'pointer', color: '#A8A8A8', fontSize: 10, padding: '0 5px', marginLeft: 4, lineHeight: '16px' }}>+</button>
         </div>
+
+        {/* 타임존 피커 */}
+        {showTzPicker && (
+          <div style={{ background: '#FFFFFF', border: '1px solid #F0EDED', borderRadius: 12, padding: '12px 16px', marginTop: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1A1A' }}>{L(lang, { ko: '시간대 선택', zh: '选择时区', en: 'Select timezone' })}</span>
+              <button onClick={() => setShowTzPicker(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: '#A8A8A8' }}>✕</button>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {TIMEZONE_OPTIONS.map(tz => {
+                const isOn = extraTz.includes(tz.id)
+                return (
+                  <button key={tz.id}
+                    onClick={() => saveTz(isOn ? extraTz.filter(x => x !== tz.id) : [...extraTz, tz.id])}
+                    style={{
+                      padding: '5px 10px', borderRadius: 16, cursor: 'pointer', fontSize: 11, fontWeight: 500,
+                      background: isOn ? '#C4725A' : '#FFFFFF', color: isOn ? '#FFFFFF' : '#6B6B6B',
+                      border: isOn ? '1px solid #C4725A' : '1px solid #F0EDED',
+                    }}
+                  >{L(lang, tz.name)}</button>
+                )
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ─── 2. 여행 카드 ─── */}

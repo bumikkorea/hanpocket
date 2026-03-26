@@ -10,7 +10,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MapPin, User as LucideUser, Calendar, Home as HomeIcon } from 'lucide-react'
+import { MapPin, User as LucideUser, Calendar, Home as HomeIcon, Languages } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -2768,20 +2768,20 @@ function AppInner() {
           </button>
         ))}
       </div>
-      {/* 메인 FAB — "译" */}
+      {/* 메인 FAB — Languages 아이콘 */}
       <button
         onClick={() => setFabOpen(v => !v)}
         style={{
-          position: 'fixed', right: 16, bottom: 72, zIndex: 200,
-          width: 42, height: 42, borderRadius: '50%', border: 'none', cursor: 'pointer',
+          position: 'fixed', right: 16, bottom: 70, zIndex: 200,
+          width: 50, height: 50, borderRadius: '50%', border: 'none', cursor: 'pointer',
           background: '#C4725A', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 12px rgba(196,114,90,0.35)',
-          transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          boxShadow: '0 2px 12px rgba(196,114,90,0.3)',
+          transition: 'transform 0.2s ease',
           transform: fabOpen ? 'scale(1.05)' : 'scale(1)',
         }}
         aria-label="Translator"
       >
-        <span style={{fontSize:11,fontWeight:700,color:'white',letterSpacing:'-0.5px'}}>译</span>
+        <Languages size={24} color="white" strokeWidth={1.8} />
       </button>
 
       {/* Bottom Navigation — 4탭: 探险/地图/预约/我的 */}

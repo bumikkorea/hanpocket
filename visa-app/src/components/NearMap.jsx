@@ -5,6 +5,7 @@ import PlaceDetail from './PlaceDetail.jsx'
 import { searchLocalPlaces } from '../data/hanpocketPlaceDB.js'
 import { CATEGORY_CONFIG } from '../data/poiData'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS } from '../data/restaurantData.js'
+import { FOOD_CATEGORIES, TV_CHANNELS } from '../data/foodCategories.js'
 import { COURSE_DATA } from '../data/courseData.js'
 import { supabase } from '../lib/supabase'
 import { t, tLang } from '../locales/index.js'
@@ -356,6 +357,7 @@ export default function NearMap() {
   }, [])
   const [activeCategory, setActiveCategory] = useState('all')
   const [michelinFilter, setMichelinFilter] = useState('all')
+  const [foodCategoryFilter, setFoodCategoryFilter] = useState('all')  // 음식 서브카테고리
   const michelinOverlaysRef = useRef([])  // 미슐랭 전용 오버레이
   const [selectedDistrict, setSelectedDistrict] = useState(null) // null = 서울 전체
   const [activePopup, setActivePopup] = useState(null)
@@ -879,6 +881,7 @@ export default function NearMap() {
                 onClick={() => {
                   setActiveCategory(chip.id)
                   if (chip.id !== 'michelin') setMichelinFilter('all')
+                  if (chip.id !== 'food') setFoodCategoryFilter('all')
                   closeSheet()
                   exitCourseMode()
                   setShowAllPanel(chip.id === 'all' ? v => !v : false)
@@ -945,6 +948,49 @@ export default function NearMap() {
                   }}
                 >
                   {tLang(f.key, lang)}
+                </button>
+              )
+            })}
+          </div>
+        )}
+
+        {/* ─── Food 서브카테고리 필터 ─── */}
+        {activeCategory === 'food' && !courseMode && (
+          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 20px 0', scrollbarWidth: 'none' }}>
+            <button
+              onClick={() => setFoodCategoryFilter('all')}
+              style={{
+                flexShrink: 0, height: 28, minWidth: 36,
+                background: foodCategoryFilter === 'all' ? '#1A1A1A' : 'white',
+                color: foodCategoryFilter === 'all' ? 'white' : '#777',
+                border: foodCategoryFilter === 'all' ? 'none' : '1px solid rgba(0,0,0,0.08)',
+                borderRadius: 20, padding: '0 10px',
+                fontSize: 11, fontWeight: foodCategoryFilter === 'all' ? 700 : 500,
+                boxShadow: foodCategoryFilter === 'all' ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 3px rgba(0,0,0,0.06)',
+                transition: 'all 0.15s ease', cursor: 'pointer',
+              }}
+            >
+              {lang === 'zh' ? '全部' : lang === 'en' ? 'All' : '전체'}
+            </button>
+            {FOOD_CATEGORIES.map(cat => {
+              const active = foodCategoryFilter === cat.id
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setFoodCategoryFilter(cat.id)}
+                  style={{
+                    flexShrink: 0, height: 28, minWidth: 36,
+                    background: active ? '#1A1A1A' : 'white',
+                    color: active ? 'white' : '#777',
+                    border: active ? 'none' : '1px solid rgba(0,0,0,0.08)',
+                    borderRadius: 20, padding: '0 10px',
+                    fontSize: 11, fontWeight: active ? 700 : 500,
+                    boxShadow: active ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 3px rgba(0,0,0,0.06)',
+                    transition: 'all 0.15s ease', cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {cat.icon} {cat.label?.[lang] || cat.label?.ko || ''}
                 </button>
               )
             })}

@@ -1844,18 +1844,20 @@ function AppInner() {
         items: menu.items.map(item => ({
           label: item.label,
           action: item.action ? () => {
+            setMenuOpen(false)
+            setShowAppMenu(false)
             // Handle different action types
             switch(item.action) {
               case 'visaTypes': setTab('transition'); setView('home'); break;
               case 'visaChange': setTab('transition'); setView('transition'); break;
               case 'agency': setTab('transition'); setView('agency'); break;
               case 'visaalert': setTab('visaalert'); break;
-              case 'medical': setTab('medical'); break;
-              case 'finance': setTab('finance'); break;
-              case 'resume': setTab('resume'); break;
+              case 'medical': setSubPage('medical'); break;
+              case 'finance': setSubPage('finance'); break;
+              case 'resume': setSubPage('resume'); break;
               case 'translator': setSubPage('translator'); break;
-              case 'artranslate': setTab('artranslate'); break;
-              case 'wallet': setTab('wallet'); break;
+              case 'artranslate': setSubPage('artranslate'); break;
+              case 'wallet': setSubPage('wallet'); break;
               default: break;
             }
           } : item.action
@@ -2259,12 +2261,12 @@ function AppInner() {
         )}
         {subPage==='translator' && (
           <Suspense fallback={<div />}>
-            <LiveTranslatorPage lang={lang} onBack={() => setSubPage(null)} />
+            <LiveTranslatorPage lang={lang} onBack={() => setSubPage(null)} activeSubPage={subPage} setSubPage={setSubPage} />
           </Suspense>
         )}
         {subPage==='artranslate' && (
           <Suspense fallback={<div />}>
-            <ARTranslateTab lang={lang} />
+            <ARTranslateTab lang={lang} setSubPage={setSubPage} />
           </Suspense>
         )}
         {subPage==='sos' && (
@@ -2399,7 +2401,7 @@ function AppInner() {
         {/* C 섹션 실용 가이드 (#51~#70) */}
         {subPage === 'currency' && <Suspense fallback={<div />}><CurrencyCalc lang={lang} /></Suspense>}
         {subPage === 'emergency-numbers' && <Suspense fallback={<div />}><EmergencyNumbers lang={lang} /></Suspense>}
-        {subPage === 'basic-korean' && <Suspense fallback={<div />}><BasicKorean lang={lang} setTab={handleTabChange} setSubPage={setSubPage} /></Suspense>}
+        {subPage === 'basic-korean' && <Suspense fallback={<div />}><BasicKorean lang={lang} setSubPage={setSubPage} /></Suspense>}
         {subPage === 'transit-card' && <Suspense fallback={<div />}><TransitCardGuide lang={lang} /></Suspense>}
         {subPage === 'voltage' && <Suspense fallback={<div />}><VoltageGuide lang={lang} /></Suspense>}
         {subPage === 'tax-free' && <Suspense fallback={<div />}><TaxFreeGuide lang={lang} /></Suspense>}
@@ -2695,6 +2697,27 @@ function AppInner() {
                 </div>
               </div>
 
+              {/* 통역/번역 */}
+              <div className="mb-5">
+                <p className="text-xs font-semibold mb-2" style={{ color: '#6B7280' }}>{L(lang, { ko: '통역/번역', zh: '翻译/口译', en: 'Translation' })}</p>
+                <div className="rounded-xl overflow-hidden" style={{ backgroundColor: '#fff', border: '1px solid #E5E7EB' }}>
+                  {[
+                    { label: { ko: '실시간 통역', zh: '实时翻译', en: 'Live Interpret' }, desc: { ko: '대화/텍스트 통역', zh: '对话/文本翻译', en: 'Chat/text translation' }, sub: 'translator' },
+                    { label: { ko: '기본 한국어 20문장', zh: '基础韩语20句', en: '20 Basic Phrases' }, desc: { ko: '생존 한국어 회화', zh: '生存韩语会话', en: 'Survival Korean' }, sub: 'basic-korean' },
+                    { label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dictionary' }, desc: { ko: '한국 간판 뜻 찾기', zh: '查找韩国招牌含义', en: 'Look up Korean signs' }, sub: 'artranslate' },
+                  ].map((item, i) => (
+                    <button key={item.sub} onClick={() => { setShowAppMenu(false); setSubPage(item.sub) }}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left active:bg-[#F9FAFB]"
+                      style={i > 0 ? { borderTop: '1px solid #F3F4F6' } : {}}>
+                      <div className="flex-1">
+                        <p className="text-[13px] font-semibold text-[#111827]">{L(lang, item.label)}</p>
+                        <p className="text-[10px] text-[#9CA3AF]">{L(lang, item.desc)}</p>
+                      </div>
+                      <span className="text-[#C4725A] text-xs">→</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
             </div>
           </div>

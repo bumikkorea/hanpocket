@@ -67,7 +67,13 @@ function ChatBubble({ entry, onSpeak }) {
 }
 
 // ─── Main ─────────────────────────────────────────────────────
-export default function LiveTranslatorPage({ lang, onBack }) {
+const TAB_BAR_ITEMS = [
+  { id: 'translator', label: { ko: '실시간 통역', zh: '实时翻译', en: 'Live Interpret' } },
+  { id: 'basic-korean', label: { ko: '기본 한국어', zh: '基础韩语', en: 'Basic Korean' } },
+  { id: 'artranslate', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict.' } },
+]
+
+export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSubPage }) {
   const [mode, setMode]           = useState('chat')  // 'chat' | 'text'
 
   // ── 대화 모드 state ──
@@ -219,6 +225,29 @@ export default function LiveTranslatorPage({ lang, onBack }) {
         <button onClick={reset} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex' }}>
           <RotateCcw size={18} color="#bbb" />
         </button>
+      </div>
+
+      {/* ── 섹션 탭 바 ── */}
+      <div style={{
+        display: 'flex', background: 'white', flexShrink: 0,
+        borderBottom: '1px solid rgba(0,0,0,0.07)',
+        position: 'sticky', top: 54, zIndex: 10,
+      }}>
+        {TAB_BAR_ITEMS.map(t => {
+          const cur = activeSubPage || 'translator'
+          const isActive = t.id === cur
+          return (
+            <button key={t.id} onClick={() => setSubPage?.(t.id)} style={{
+              flex: 1, padding: '10px 0 8px', background: 'none', border: 'none', cursor: 'pointer',
+              fontSize: 14, fontWeight: isActive ? 700 : 500,
+              color: isActive ? '#C4725A' : '#A8A8A8',
+              borderBottom: isActive ? '2px solid #C4725A' : '2px solid transparent',
+              transition: 'all 0.15s',
+            }}>
+              {t.label[lang] || t.label.en}
+            </button>
+          )
+        })}
       </div>
 
       {/* ── 모드 탭 ── */}

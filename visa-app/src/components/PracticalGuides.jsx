@@ -95,7 +95,37 @@ export function EmergencyNumbers({ lang }) {
 }
 
 // ─── #53 기본 한국어 회화 ────────────────────────────────────
-export function BasicKorean({ lang }) {
+const TRANSLATOR_TABS = [
+  { id: 'translator', label: { ko: '실시간 통역', zh: '实时翻译', en: 'Live Interpret' } },
+  { id: 'basic-korean', label: { ko: '기본 한국어', zh: '基础韩语', en: 'Basic Korean' } },
+  { id: 'artranslate', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict.' } },
+]
+
+function TranslatorTabBar({ lang, activeId, setSubPage }) {
+  return (
+    <div style={{
+      display: 'flex', background: 'white', marginBottom: 12,
+      borderBottom: '1px solid rgba(0,0,0,0.07)', borderRadius: '12px 12px 0 0',
+    }}>
+      {TRANSLATOR_TABS.map(t => {
+        const isActive = t.id === activeId
+        return (
+          <button key={t.id} onClick={() => setSubPage?.(t.id)} style={{
+            flex: 1, padding: '10px 0 8px', background: 'none', border: 'none', cursor: 'pointer',
+            fontSize: 14, fontWeight: isActive ? 700 : 500,
+            color: isActive ? '#C4725A' : '#A8A8A8',
+            borderBottom: isActive ? '2px solid #C4725A' : '2px solid transparent',
+            transition: 'all 0.15s',
+          }}>
+            {t.label[lang] || t.label.en}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+export function BasicKorean({ lang, setSubPage }) {
   const phrases = [
     { ko: '안녕하세요', zh: '你好', en: 'Hello', pron: 'an-nyeong-ha-se-yo' },
     { ko: '감사합니다', zh: '谢谢', en: 'Thank you', pron: 'gam-sa-ham-ni-da' },
@@ -120,22 +150,21 @@ export function BasicKorean({ lang }) {
   ]
   return (
     <div className="px-4 pt-4 pb-24">
+      <TranslatorTabBar lang={lang} activeId="basic-korean" setSubPage={setSubPage} />
       <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '기본 한국어 20문장', zh: '基础韩语20句', en: '20 Basic Korean Phrases' })}</p>
-      <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '탭하면 발음을 볼 수 있어요', zh: '点击查看发音', en: 'Tap to see pronunciation' })}</p>
+      <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '발음과 번역을 함께 보세요', zh: '查看发音和翻译', en: 'See pronunciation and translation' })}</p>
       <div className="flex flex-col gap-2">{phrases.map((p, i) => (
-          <details key={i} className="bg-white rounded-[12px] overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-            <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none">
+          <div key={i} className="bg-white rounded-[12px] overflow-hidden px-4 py-3" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+            <div className="flex items-center gap-3">
               <span className="text-[11px] text-[#9CA3AF] w-5 text-right">{i + 1}</span>
               <div className="flex-1">
                 <p className="text-[14px] font-bold text-[#111827]">{p.ko}</p>
                 <p className="text-[12px] text-[#6B7280]">{lang === 'en' ? p.en : p.zh}</p>
+                <p className="text-[12px] text-[#C4725A] font-medium mt-1">{p.pron}</p>
+                {lang !== 'en' && <p className="text-[11px] text-[#9CA3AF] mt-0.5">{p.en}</p>}
               </div>
-            </summary>
-            <div className="px-4 pb-3 pt-0">
-              <p className="text-[12px] text-[#C4725A] font-medium">{p.pron}</p>
-              {lang !== 'en' && <p className="text-[11px] text-[#9CA3AF] mt-0.5">{p.en}</p>}
             </div>
-          </details>
+          </div>
         ))}
       </div>
     </div>

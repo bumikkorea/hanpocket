@@ -6,7 +6,7 @@ import { searchLocalPlaces } from '../data/hanpocketPlaceDB.js'
 import { CATEGORY_CONFIG } from '../data/poiData'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS } from '../data/restaurantData.js'
 import { FOOD_CATEGORIES, TV_CHANNELS } from '../data/foodCategories.js'
-import { TOURBUS_ROUTES, TICKET_OFFICES, formatPrice } from '../data/tourbusData.js'
+import { TOURBUS_ROUTES, TICKET_OFFICES, formatPrice, getRouteLabel } from '../data/tourbusData.js'
 import { t, tLang } from '../locales/index.js'
 import { useLanguage } from '../i18n/index.jsx'
 import NavScreen from './NavScreen.jsx'
@@ -967,7 +967,7 @@ export default function NearMap() {
                     cursor: 'pointer', whiteSpace: 'nowrap',
                   }}
                 >
-                  {route.icon} {route.label[lang] || route.label.ko}
+                  {(() => { const l = getRouteLabel(route); return l[lang] || l.ko })()}
                 </button>
               )
             })}
@@ -2152,7 +2152,7 @@ function TourbusRouteList({ routes, lang, onSelectStop, onExit }) {
             <div key={route.id} style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <div style={{ width: 12, height: 12, borderRadius: '50%', background: route.color }} />
-                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{route.icon} {route.label[lang] || route.label.ko}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>{(() => { const l = getRouteLabel(route); return l[lang] || l.ko })()}</span>
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, paddingLeft: 20 }}>
                 {route.schedule[lang] || route.schedule.ko} · {route.duration[lang] || route.duration.ko}
@@ -2194,34 +2194,51 @@ function TourbusRouteList({ routes, lang, onSelectStop, onExit }) {
 // ─── 투어버스 정거장 상세 시트 ───
 function TourbusStopSheet({ stop, route, stopNum, lang, onClose, onExit }) {
   if (!stop || !route) return null
+  const routeLabel = getRouteLabel(route)
   return (
-    <div style={{ padding: '16px 20px 24px' }}>
+    <div style={{ padding: '12px 20px 24px', maxHeight: '50vh', overflowY: 'auto' }}>
+      {/* 드래그 핸들 */}
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+        <div style={{ width: 40, height: 4, borderRadius: 2, background: '#CDCDCD' }} />
+      </div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ width: 30, height: 30, borderRadius: '50%', background: route.color, color: 'white', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {stop.isTicketStop ? '⭐' : stopNum}
+            {stopNum}
           </div>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{stop.name[lang] || stop.name.ko}</div>
-            <div style={{ fontSize: 11, color: route.color, fontWeight: 600 }}>{route.icon} {route.label[lang] || route.label.ko}</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{stop.name[lang] || stop.name.ko}</div>
+            <div style={{ fontSize: 11, color: route.color, fontWeight: 600 }}>{routeLabel[lang] || routeLabel.ko}</div>
           </div>
         </div>
-        <button onClick={onClose} style={{ fontSize: 20, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>✕</button>
+        <button onClick={onClose} style={{ fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', color: '#6B6B6B', padding: 4 }}>✕</button>
       </div>
       {stop.isTicketStop && (
         <div style={{ background: '#FEF3C7', borderRadius: 12, padding: '10px 14px', marginBottom: 12 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: '#92400E', marginBottom: 4 }}>
-            {lang === 'zh' ? '🎫 售票处' : lang === 'en' ? '🎫 Ticket Office' : '🎫 매표소'}
+            {lang === 'zh' ? '售票处' : lang === 'en' ? 'Ticket Office' : '매표소'}
           </div>
           <div style={{ fontSize: 13, fontWeight: 600, color: '#78350F' }}>{formatPrice(route.price, lang)}</div>
         </div>
       )}
-      <div style={{ background: 'var(--surface)', borderRadius: 12, padding: '10px 14px' }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>
+      <div style={{ background: '#F5F5F5', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: '#6B6B6B', marginBottom: 4 }}>
           {lang === 'zh' ? '运行信息' : lang === 'en' ? 'Schedule' : '운행 정보'}
         </div>
-        <div style={{ fontSize: 13, color: 'var(--text-primary)' }}>{route.schedule[lang] || route.schedule.ko}</div>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{route.duration[lang] || route.duration.ko}</div>
+        <div style={{ fontSize: 13, color: '#1A1A1A' }}>{route.schedule[lang] || route.schedule.ko}</div>
+        <div style={{ fontSize: 12, color: '#6B6B6B', marginTop: 2 }}>{route.duration[lang] || route.duration.ko}</div>
+      </div>
+      {/* 전체 정류장 목록 */}
+      <div style={{ marginTop: 8 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: '#A8A8A8', marginBottom: 6 }}>
+          {lang === 'zh' ? '全部站点' : lang === 'en' ? 'All Stops' : '전체 정류장'}
+        </div>
+        {route.stops.filter(s => !s.noStop).map((s, i) => (
+          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #F0EDED', opacity: s.id === stop.id ? 1 : 0.6 }}>
+            <div style={{ width: 20, height: 20, borderRadius: '50%', background: s.id === stop.id ? route.color : '#F0EDED', color: s.id === stop.id ? 'white' : '#6B6B6B', fontSize: 9, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
+            <span style={{ fontSize: 12, color: '#1A1A1A', fontWeight: s.id === stop.id ? 700 : 400 }}>{s.name[lang] || s.name.ko}</span>
+          </div>
+        ))}
       </div>
     </div>
   )

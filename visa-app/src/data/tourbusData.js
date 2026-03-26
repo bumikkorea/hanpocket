@@ -1,8 +1,10 @@
 /**
  * 서울시티투어버스 (노랑풍선시티버스) 노선 데이터
  * 출처: seoulcitytourbus.co.kr + 위키피디아
- * 
+ *
  * isTicketStop: true = 매표소/결제 가능 정류장 (⭐ 하이라이트)
+ *
+ * // 주 1회 https://www.seoulcitybus.com/ 확인하여 노선변경/추가정보 업데이트 필요
  */
 
 export const TOURBUS_ROUTES = [
@@ -41,10 +43,13 @@ export const TOURBUS_ROUTES = [
   },
   {
     id: 'traditional-night',
-    label: { ko: '전통문화코스 (야간)', zh: '传统文化线路（夜间）', en: 'Traditional Culture (Night)' },
+    // 임시 노선 변경: 2026-03-22 ~ 2026-04-19 "도심·남산 코스", 2026-04-21~ "한강·남산 코스"
+    label: { ko: '야간 | 한강·남산 코스', zh: '夜间 | 汉江·南山线', en: 'Night | Hangang·Namsan' },
+    _tempLabel: { ko: '야간 | 도심·남산 코스', zh: '夜间 | 都心·南山线', en: 'Night | Downtown·Namsan' },
+    _tempStart: '2026-03-22',
+    _tempEnd: '2026-04-19',
     color: '#7C3AED', // 보라
-    icon: '🌃',
-    schedule: { ko: '3월 19:00 출발 / 1회 운행', zh: '3月19:00出发 / 1班次', en: 'Mar 19:00 / 1 trip' },
+    schedule: { ko: '19:00 출발 / 1회 운행', zh: '19:00出发 / 1班次', en: '19:00 / 1 trip' },
     duration: { ko: '약 1시간', zh: '约1小时', en: '~1h' },
     price: { adult: 20000, child: 17000 },
     stops: [
@@ -86,6 +91,17 @@ export const TOURBUS_ROUTES = [
     ],
   },
 ]
+
+/**
+ * 날짜 기반 노선명 분기 — 임시 변경 기간이면 _tempLabel 반환
+ */
+export function getRouteLabel(route, date = new Date()) {
+  if (route._tempLabel && route._tempStart && route._tempEnd) {
+    const d = date.toISOString().slice(0, 10)
+    if (d >= route._tempStart && d <= route._tempEnd) return route._tempLabel
+  }
+  return route.label
+}
 
 // 매표소 위치 (별도 하이라이트용)
 export const TICKET_OFFICES = [

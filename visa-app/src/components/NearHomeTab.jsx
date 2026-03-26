@@ -354,7 +354,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 2. 여행 카드 ─── */}
-      <div style={{ padding: '12px 20px 0', ...fadeUp(1) }}>
+      <div style={{ padding: '12px 20px 32px', ...fadeUp(1) }}>
         {plan ? (
           <button
             onClick={() => setShowPlanner(true)}
@@ -421,12 +421,12 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
       {/* ─── 3. "지금 뜨는 곳" 가로 스크롤 ─── */}
       <div style={{ ...fadeUp(3) }}>
-        <div style={{ padding: '0 20px', marginBottom: 12 }}>
+        <div style={{ padding: '0 20px', marginBottom: 16 }}>
           <span style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>
             {L(lang, { ko: '지금 뜨는 곳', zh: '现在热门', en: 'Trending Now' })}
           </span>
         </div>
-        <div style={{ overflowX: 'auto', display: 'flex', gap: 12, padding: '0 20px 20px', scrollbarWidth: 'none' }}>
+        <div style={{ overflowX: 'auto', display: 'flex', gap: 12, padding: '0 20px 28px', scrollbarWidth: 'none' }}>
           {TRENDING_SPOTS.map(spot => (
             <div key={spot.id} style={{
               flexShrink: 0, width: 200, borderRadius: 14, overflow: 'hidden',
@@ -447,7 +447,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 4. 검색창 (지금 뜨는 곳 아래) ─── */}
-      <div style={{ padding: '0 20px 12px', ...fadeUp(4) }}>
+      <div style={{ padding: '0 20px 16px', ...fadeUp(4) }}>
         <button onClick={openSearchOverlay}
           style={{
             width: '100%', display: 'flex', alignItems: 'center',
@@ -463,7 +463,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 5. 카테고리 필터 ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 2, padding: '0 14px 6px', ...fadeUp(4) }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 2, padding: '0 14px 28px', ...fadeUp(4) }}>
         {MEITU_CATEGORIES.map(cat => {
           const isActive = selectedCategory === cat.id
           return (

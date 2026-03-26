@@ -6,8 +6,7 @@ import { searchLocalPlaces } from '../data/hanpocketPlaceDB.js'
 import { CATEGORY_CONFIG } from '../data/poiData'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS } from '../data/restaurantData.js'
 import { FOOD_CATEGORIES, TV_CHANNELS } from '../data/foodCategories.js'
-import { COURSE_DATA } from '../data/courseData.js'
-import { supabase } from '../lib/supabase'
+import { TOURBUS_ROUTES, TICKET_OFFICES, formatPrice } from '../data/tourbusData.js'
 import { t, tLang } from '../locales/index.js'
 import { useLanguage } from '../i18n/index.jsx'
 import NavScreen from './NavScreen.jsx'
@@ -24,16 +23,6 @@ const CATEGORY_CHIPS = [
   { id: 'food',    key: 'cat_food'    },
   { id: 'cafe',    key: 'cat_cafe'    },
   { id: 'utility', key: 'cat_utility' },
-]
-
-// ─── 미슐랭 서브필터 ───
-const MICHELIN_SUB_FILTERS = [
-  { id: 'all',       key: 'michelin_all' },
-  { id: 'michelin3', key: 'michelin_3star' },
-  { id: 'michelin2', key: 'michelin_2star' },
-  { id: 'michelin1', key: 'michelin_1star' },
-  { id: 'bib',       key: 'michelin_bib' },
-  { id: 'blue',      key: 'michelin_blue' },
 ]
 
 // ─── 미슐랭 핀 설정 ───
@@ -237,6 +226,25 @@ function buildCoursePinHTML(number, color, poiId) {
   `
 }
 
+// ─── 투어버스 매표소 핀 HTML (⭐ 펄싱 글로우) ───
+function buildTourbusTicketPinHTML(number, color, stopId) {
+  return `
+    <div data-poi="${stopId}" style="transition:transform 200ms ease,opacity 200ms ease;display:inline-block;position:relative">
+      <div style="position:absolute;inset:-4px;border-radius:50%;background:${color}33;animation:tourbus-glow 1.5s ease-in-out infinite"></div>
+      <div style="
+        width:36px;height:36px;
+        background:${color};
+        border-radius:50%;
+        border:3px solid #FFD700;
+        box-shadow:0 2px 10px ${color}66;
+        display:flex;align-items:center;justify-content:center;
+        cursor:pointer;color:white;font-size:12px;font-weight:700;
+        position:relative;
+      ">⭐</div>
+    </div>
+  `
+}
+
 // ─── 미슐랭 핀 HTML ───
 function buildMichelinPinHTML(award, poiId) {
   const cfg = MICHELIN_PIN_CONFIG[award] || MICHELIN_PIN_CONFIG.michelin1
@@ -334,8 +342,8 @@ export default function NearMap() {
   const mapRef = useRef(null)
   const mapInstance = useRef(null)
   const overlaysRef = useRef([])        // { overlay, el, poi }[]
-  const courseOverlaysRef = useRef([])  // { overlay, el, poi }[]
-  const coursePolylineRef = useRef(null)
+  const tourbusOverlaysRef = useRef([])  // { overlay, el, stop }[]
+  const tourbusPolylinesRef = useRef([])  // kakao.maps.Polyline[]
   const tempSearchMarkerRef = useRef(null) // 검색 결과 임시 핀
 
   // ── 바텀 시트 드래그 ──
@@ -379,8 +387,8 @@ export default function NearMap() {
   const [showSearch, setShowSearch] = useState(false)
   const [showList, setShowList] = useState(false)
   const [listSort, setListSort] = useState('all')
-  const [courseMode, setCourseMode] = useState(false)
-  const [activeCourseId, setActiveCourseId] = useState(null)
+  const [tourbusMode, setTourbusMode] = useState(false)
+  const [activeRouteIds, setActiveRouteIds] = useState([])  // [] = all routes
   const [showMyPanel, setShowMyPanel] = useState(false)
   const [showAllPanel, setShowAllPanel] = useState(false)
   const [reservationPoi, setReservationPoi] = useState(null)
@@ -390,40 +398,6 @@ export default function NearMap() {
   const { pins: allPins, loading: pinsLoading, error: pinsError, userPos } = useNearPins()
   const [taxiPoi, setTaxiPoi] = useState(null)
   const [taxiFromFab, setTaxiFromFab] = useState(false)
-  const [courses, setCourses] = useState(() => {
-    try {
-      const custom = JSON.parse(localStorage.getItem('near_custom_courses') || '[]')
-      return [...COURSE_DATA, ...custom]
-    } catch { return COURSE_DATA }
-  })
-
-  // 코스 데이터 — Supabase 우선, COURSE_DATA fallback + localStorage 커스텀 코스 머지
-  useEffect(() => {
-    supabase.from('courses').select('*').eq('is_active', true)
-      .then(({ data, error }) => {
-        let base = (!error && data?.length) ? data : COURSE_DATA
-        try {
-          const custom = JSON.parse(localStorage.getItem('near_custom_courses') || '[]')
-          setCourses([...base, ...custom])
-        } catch { setCourses(base) }
-      })
-      .catch(() => {
-        try {
-          const custom = JSON.parse(localStorage.getItem('near_custom_courses') || '[]')
-          setCourses([...COURSE_DATA, ...custom])
-        } catch {}
-      })
-  }, [])
-
-  // 홈탭 여행코스 → sessionStorage pending 코스 자동 활성화
-  useEffect(() => {
-    const pending = sessionStorage.getItem('near_pending_course')
-    if (pending) {
-      sessionStorage.removeItem('near_pending_course')
-      setCourseMode(true)
-      setActiveCourseId(pending)
-    }
-  }, [])
 
   const today = new Date().toISOString().slice(0, 10)
   const filteredPins = allPins.filter(p => {
@@ -558,7 +532,7 @@ export default function NearMap() {
     if (!mapReady || !mapInstance.current) return
     const timer = setTimeout(() => mapInstance.current.relayout(), 310)
     return () => clearTimeout(timer)
-  }, [isExpanded, activeCourseId, mapReady])
+  }, [isExpanded, tourbusMode, mapReady])
 
   // ── 1분 간격 영업상태 갱신 ──
   useEffect(() => {
@@ -589,7 +563,7 @@ export default function NearMap() {
     if (!mapReady || !mapInstance.current) return
     overlaysRef.current.forEach(o => o.overlay.setMap(null))
     overlaysRef.current = []
-    if (activeCourseId) return  // 코스 모드: 코스 핀이 대신 렌더됨
+    if (tourbusMode) return  // 투어버스 모드: 별도 핀 렌더
     if (activeCategory === 'michelin') return  // 미슐랭 모드: 별도 렌더
 
     const map = mapInstance.current
@@ -608,7 +582,7 @@ export default function NearMap() {
       el.addEventListener('click', () => selectPin(poi))
       return { overlay, el, poi }
     })
-  }, [mapReady, filteredPins, selectPin, activeCourseId, mapMoveStamp, activeCategory])
+  }, [mapReady, filteredPins, selectPin, tourbusMode, mapMoveStamp, activeCategory])
 
   // ── 미슐랭 핀 렌더 ──
   useEffect(() => {
@@ -653,63 +627,87 @@ export default function NearMap() {
     })
   }, [mapReady, activeCategory, michelinFilter, selectPin, mapMoveStamp])
 
-  // ── 코스 핀 + 폴리라인 ──
+  // ── 투어버스 핀 + 폴리라인 ──
   useEffect(() => {
     if (!mapReady || !mapInstance.current) return
-    // 기존 코스 오버레이 제거
-    courseOverlaysRef.current.forEach(o => o.overlay.setMap(null))
-    courseOverlaysRef.current = []
-    if (coursePolylineRef.current) { coursePolylineRef.current.setMap(null); coursePolylineRef.current = null }
+    // 기존 투어버스 오버레이 제거
+    tourbusOverlaysRef.current.forEach(o => o.overlay.setMap(null))
+    tourbusOverlaysRef.current = []
+    tourbusPolylinesRef.current.forEach(p => p.setMap(null))
+    tourbusPolylinesRef.current = []
 
-    if (!activeCourseId) return
-    const course = courses.find(c => c.id === activeCourseId)
-    if (!course) return
+    if (!tourbusMode) return
 
     const map = mapInstance.current
-    let coursePois = (course.poi_ids || [])
-      .map(id => allPins.find(p => p.id === id))
-      .filter(Boolean)
-    // poi_ids 미매칭 시 stops 폴백 (하드코딩 좌표 코스)
-    if (coursePois.length === 0 && course.stops?.length) {
-      coursePois = course.stops.map((s, i) => ({
-        id: `stop-${i}`, category: 'utility',
-        name_zh: s.name_zh || s.name_ko, name_ko: s.name_ko, name_en: s.name_en,
-        lat: s.lat, lng: s.lng, image_url: null,
-        address_zh: s.address_zh || '',
-      }))
-    }
+    const routes = activeRouteIds.length > 0
+      ? TOURBUS_ROUTES.filter(r => activeRouteIds.includes(r.id))
+      : TOURBUS_ROUTES
 
-    // 번호 핀
-    courseOverlaysRef.current = coursePois.map((poi, idx) => {
-      const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
-      const el = document.createElement('div')
-      el.innerHTML = buildCoursePinHTML(idx + 1, cfg.color, poi.id)
-      const overlay = new window.kakao.maps.CustomOverlay({
-        map, position: new window.kakao.maps.LatLng(poi.lat, poi.lng),
-        content: el, yAnchor: 1.2, zIndex: 3,
+    const allOverlays = []
+
+    routes.forEach(route => {
+      const visibleStops = route.stops.filter(s => !s.noStop)
+
+      // 번호 핀
+      let stopNum = 0
+      route.stops.forEach((stop) => {
+        if (stop.noStop) return
+        stopNum++
+        const el = document.createElement('div')
+        if (stop.isTicketStop) {
+          el.innerHTML = buildTourbusTicketPinHTML(stopNum, route.color, stop.id)
+        } else {
+          el.innerHTML = buildCoursePinHTML(stopNum, route.color, stop.id)
+        }
+        const overlay = new window.kakao.maps.CustomOverlay({
+          map, position: new window.kakao.maps.LatLng(stop.lat, stop.lng),
+          content: el, yAnchor: 1.2, zIndex: stop.isTicketStop ? 5 : 3,
+        })
+        el.addEventListener('click', () => {
+          setActivePopup({ ...stop, _tourbusRoute: route, _stopNum: stopNum, id: stop.id, name_ko: stop.name.ko, name_zh: stop.name.zh, name_en: stop.name.en, lat: stop.lat, lng: stop.lng, category: 'tourbus' })
+        })
+        allOverlays.push({ overlay, el, stop })
       })
-      el.addEventListener('click', () => selectPin(poi))
-      return { overlay, el, poi }
+
+      // 폴리라인 — noStop 구간은 dashed
+      const segments = []
+      let currentSegment = { points: [], dashed: false }
+      route.stops.forEach((stop, i) => {
+        const isDashed = stop.noStop || false
+        if (i === 0) {
+          currentSegment.dashed = isDashed
+          currentSegment.points.push(new window.kakao.maps.LatLng(stop.lat, stop.lng))
+        } else if (isDashed !== currentSegment.dashed) {
+          // transition — share the boundary point
+          currentSegment.points.push(new window.kakao.maps.LatLng(stop.lat, stop.lng))
+          segments.push(currentSegment)
+          currentSegment = { points: [new window.kakao.maps.LatLng(stop.lat, stop.lng)], dashed: isDashed }
+        } else {
+          currentSegment.points.push(new window.kakao.maps.LatLng(stop.lat, stop.lng))
+        }
+      })
+      if (currentSegment.points.length >= 2) segments.push(currentSegment)
+
+      segments.forEach(seg => {
+        if (seg.points.length < 2) return
+        const polyline = new window.kakao.maps.Polyline({
+          map,
+          path: seg.points,
+          strokeWeight: 3,
+          strokeColor: route.color,
+          strokeOpacity: 0.7,
+          strokeStyle: seg.dashed ? 'shortdash' : 'solid',
+        })
+        tourbusPolylinesRef.current.push(polyline)
+      })
     })
 
-    // 점선 연결 폴리라인
-    if (coursePois.length >= 2) {
-      coursePolylineRef.current = new window.kakao.maps.Polyline({
-        map,
-        path: coursePois.map(p => new window.kakao.maps.LatLng(p.lat, p.lng)),
-        strokeWeight: 2,
-        strokeColor: '#1A1A1A',
-        strokeOpacity: 0.5,
-        strokeStyle: 'shortdash',
-      })
-    }
+    tourbusOverlaysRef.current = allOverlays
 
-    // 코스 시작점으로 지도 이동
-    if (coursePois[0]) {
-      map.panTo(new window.kakao.maps.LatLng(coursePois[0].lat, coursePois[0].lng))
-      map.setLevel(5)
-    }
-  }, [mapReady, activeCourseId, selectPin])
+    // 광화문 (공통 시작점)으로 이동
+    map.panTo(new window.kakao.maps.LatLng(37.5760, 126.9769))
+    map.setLevel(5)
+  }, [mapReady, tourbusMode, activeRouteIds])
 
   const moveToArea = (area) => {
     if (!mapReady || !mapInstance.current) return
@@ -719,9 +717,9 @@ export default function NearMap() {
     setShowList(false)
   }
 
-  const exitCourseMode = useCallback(() => {
-    setCourseMode(false)
-    setActiveCourseId(null)
+  const exitTourbusMode = useCallback(() => {
+    setTourbusMode(false)
+    setActiveRouteIds([])
   }, [])
 
   const sheetPoi = activePopup || null
@@ -819,7 +817,7 @@ export default function NearMap() {
         ref={mapRef}
         style={{
           position: 'absolute', top: 0, left: 0, right: 0,
-          bottom: activeCourseId ? '50dvh' : 0,
+          bottom: tourbusMode ? '50dvh' : 0,
           transition: 'bottom 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           touchAction: 'manipulation',
           willChange: 'transform',
@@ -870,7 +868,7 @@ export default function NearMap() {
             {lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색'}
           </button>
           {CATEGORY_CHIPS.map(chip => {
-            const active = activeCategory === chip.id && !courseMode
+            const active = activeCategory === chip.id && !tourbusMode
             return (
               <button
                 key={chip.id}
@@ -879,7 +877,7 @@ export default function NearMap() {
                   if (chip.id !== 'michelin') setMichelinFilter('all')
                   if (chip.id !== 'food') setFoodCategoryFilter('all')
                   closeSheet()
-                  exitCourseMode()
+                  exitTourbusMode()
                   setShowAllPanel(chip.id === 'all' ? v => !v : false)
                 }}
                 style={{
@@ -900,50 +898,62 @@ export default function NearMap() {
               </button>
             )
           })}
-          {/* 코스 토글 칩 */}
+          {/* 투어버스 토글 칩 */}
           <button
-            onClick={() => { if (courseMode) exitCourseMode(); else { setCourseMode(true); closeSheet() } }}
+            onClick={() => { if (tourbusMode) exitTourbusMode(); else { setTourbusMode(true); closeSheet() } }}
             style={{
               flexShrink: 0,
               height: 34, minWidth: 44,
-              background: courseMode ? '#1A1A1A' : 'white',
-              color: courseMode ? 'white' : '#555',
-              border: courseMode ? 'none' : '1px solid rgba(0,0,0,0.10)',
+              background: tourbusMode ? '#1A1A1A' : 'white',
+              color: tourbusMode ? 'white' : '#555',
+              border: tourbusMode ? 'none' : '1px solid rgba(0,0,0,0.10)',
               borderRadius: 24, padding: '0 13px',
-              fontSize: 13, fontWeight: courseMode ? 700 : 500,
-              boxShadow: courseMode ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.08)',
+              fontSize: 13, fontWeight: tourbusMode ? 700 : 500,
+              boxShadow: tourbusMode ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.08)',
               transition: 'all 0.15s ease',
               display: 'flex', alignItems: 'center', gap: 4,
               cursor: 'pointer',
             }}
           >
-            {tLang('course_toggle', lang)}
+            🚌 Tourbus!
           </button>
         </div>
 
-        {/* ─── 미슐랭 서브필터 ─── */}
-        {activeCategory === 'michelin' && !courseMode && (
+        {/* ─── 투어버스 노선 서브필터 ─── */}
+        {tourbusMode && (
           <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 20px 0', scrollbarWidth: 'none' }}>
-            {MICHELIN_SUB_FILTERS.map(f => {
-              const active = michelinFilter === f.id
-              const pinCfg = MICHELIN_PIN_CONFIG[f.id === 'all' ? 'michelin1' : f.id === 'blue' ? 'blue' : f.id === 'bib' ? 'bib' : f.id]
+            <button
+              onClick={() => setActiveRouteIds([])}
+              style={{
+                flexShrink: 0, height: 28, minWidth: 36,
+                background: activeRouteIds.length === 0 ? '#1A1A1A' : 'white',
+                color: activeRouteIds.length === 0 ? 'white' : '#777',
+                border: activeRouteIds.length === 0 ? 'none' : '1px solid rgba(0,0,0,0.08)',
+                borderRadius: 20, padding: '0 10px',
+                fontSize: 11, fontWeight: activeRouteIds.length === 0 ? 700 : 500,
+                cursor: 'pointer',
+              }}
+            >
+              {lang === 'zh' ? '全部' : lang === 'en' ? 'All' : '전체'}
+            </button>
+            {TOURBUS_ROUTES.map(route => {
+              const active = activeRouteIds.includes(route.id)
               return (
                 <button
-                  key={f.id}
-                  onClick={() => setMichelinFilter(f.id)}
+                  key={route.id}
+                  onClick={() => setActiveRouteIds(prev => active ? prev.filter(id => id !== route.id) : [...prev, route.id])}
                   style={{
                     flexShrink: 0, height: 28, minWidth: 36,
-                    background: active ? (pinCfg?.color || '#DC2626') : 'white',
+                    background: active ? route.color : 'white',
                     color: active ? 'white' : '#777',
-                    border: active ? 'none' : '1px solid rgba(0,0,0,0.08)',
+                    border: active ? 'none' : `1px solid ${route.color}40`,
                     borderRadius: 20, padding: '0 10px',
                     fontSize: 11, fontWeight: active ? 700 : 500,
-                    boxShadow: active ? `0 2px 6px ${(pinCfg?.color || '#DC2626')}40` : '0 1px 3px rgba(0,0,0,0.06)',
-                    transition: 'all 0.15s ease',
-                    cursor: 'pointer',
+                    boxShadow: active ? `0 2px 6px ${route.color}40` : '0 1px 3px rgba(0,0,0,0.06)',
+                    cursor: 'pointer', whiteSpace: 'nowrap',
                   }}
                 >
-                  {tLang(f.key, lang)}
+                  {route.icon} {route.label[lang] || route.label.ko}
                 </button>
               )
             })}
@@ -951,7 +961,7 @@ export default function NearMap() {
         )}
 
         {/* ─── Food 서브카테고리 필터 (미슐랭/블루리본 포함) ─── */}
-        {activeCategory === 'food' && !courseMode && (
+        {activeCategory === 'food' && !tourbusMode && (
           <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 20px 0', scrollbarWidth: 'none' }}>
             {/* 미슐랭 */}
             {[
@@ -1065,7 +1075,7 @@ export default function NearMap() {
               ))}
             </div>
           </div>
-          <style>{`@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }`}</style>
+          <style>{`@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } } @keyframes tourbus-glow { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.5); opacity: 0; } }`}</style>
         </>
       )}
 
@@ -1178,19 +1188,19 @@ export default function NearMap() {
       {/* ─── 바텀 시트 ─── */}
       <div
         ref={sheetRef}
-        onTouchStart={activeCourseId ? undefined : onDragStart}
-        onTouchMove={activeCourseId ? undefined : onDragMove}
-        onTouchEnd={activeCourseId ? undefined : onDragEnd}
+        onTouchStart={tourbusMode ? undefined : onDragStart}
+        onTouchMove={tourbusMode ? undefined : onDragMove}
+        onTouchEnd={tourbusMode ? undefined : onDragEnd}
         style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 20,
           maxHeight: '50vh',
-          height: activeCourseId ? '50dvh' : '68dvh',
+          height: tourbusMode ? '50dvh' : '68dvh',
           willChange: 'transform',
           transition: 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)',
           background: '#FAFAFA', borderRadius: '24px 24px 0 0',
           boxShadow: '0 -4px 16px rgba(0,0,0,0.08)',
           overflowX: 'hidden',
-          overflowY: isExpanded || activeCourseId ? 'auto' : 'hidden',
+          overflowY: isExpanded || tourbusMode ? 'auto' : 'hidden',
         }}
       >
         {isExpanded && sheetPoi ? (
@@ -1216,21 +1226,24 @@ export default function NearMap() {
             statusTick={statusTick}
           />
           )
-        ) : activeCourseId ? (
-          <CourseStopList
-            course={courses.find(c => c.id === activeCourseId)}
-            allPins={allPins}
+        ) : tourbusMode && sheetPoi?.category === 'tourbus' ? (
+          <TourbusStopSheet
+            stop={sheetPoi}
+            route={sheetPoi._tourbusRoute}
+            stopNum={sheetPoi._stopNum}
             lang={lang}
-            onSelectPoi={selectPin}
-            onNavigatePoi={(p) => setNavPoi(p)}
-            onExit={exitCourseMode}
+            onClose={closeSheet}
+            onExit={exitTourbusMode}
           />
-        ) : courseMode ? (
-          <CourseSelectorSheet
-            courses={courses}
+        ) : tourbusMode ? (
+          <TourbusRouteList
+            routes={activeRouteIds.length > 0 ? TOURBUS_ROUTES.filter(r => activeRouteIds.includes(r.id)) : TOURBUS_ROUTES}
             lang={lang}
-            onSelectCourse={(id) => setActiveCourseId(id)}
-            onExit={exitCourseMode}
+            onSelectStop={(stop, route, num) => {
+              setActivePopup({ ...stop, _tourbusRoute: route, _stopNum: num, id: stop.id, name_ko: stop.name.ko, name_zh: stop.name.zh, name_en: stop.name.en, lat: stop.lat, lng: stop.lng, category: 'tourbus' })
+              if (mapInstance.current) mapInstance.current.panTo(new window.kakao.maps.LatLng(stop.lat, stop.lng))
+            }}
+            onExit={exitTourbusMode}
           />
         ) : (
           <>
@@ -2074,110 +2087,95 @@ function ListView({ pins, lang, listSort, onSortChange, onSelectPoi, onBack }) {
   )
 }
 
-// ─── 코스 선택 시트 ───
-function CourseSelectorSheet({ courses, lang, onSelectCourse, onExit }) {
+// ─── 투어버스 노선 리스트 (기본 시트) ───
+function TourbusRouteList({ routes, lang, onSelectStop, onExit }) {
   return (
-    <div style={{ paddingBottom: 24 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px 10px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 20px 10px', flexShrink: 0, borderBottom: '1px solid var(--border)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: 'var(--text-hint)' }} />
+          <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>🚌 Seoul City Tour Bus</span>
         </div>
+        <button onClick={onExit} style={{ fontSize: 12, color: '#DC2626', background: 'none', border: '1px solid #FCA5A5', borderRadius: 100, padding: '4px 10px', cursor: 'pointer', fontWeight: 600 }}>
+          {lang === 'zh' ? '关闭' : lang === 'en' ? 'Close' : '닫기'}
+        </button>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px 14px' }}>
-        <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('course_select', lang)}</span>
-        <button onClick={onExit} style={{ fontSize: 13, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>{tLang('course_exit', lang)}</button>
-      </div>
-      <div style={{ padding: '0 20px' }}>
-        {(courses || []).map(course => (
-          <button
-            key={course.id}
-            onClick={() => onSelectCourse(course.id)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '16px 18px', background: '#FAFAFA', border: 'none', borderRadius: 20, marginBottom: 12, cursor: 'pointer', textAlign: 'left', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
-          >
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: '#DC2626', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ fontSize: 18 }}>🗺</span>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px 16px' }}>
+        {routes.map(route => {
+          let stopNum = 0
+          return (
+            <div key={route.id} style={{ marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                <div style={{ width: 12, height: 12, borderRadius: '50%', background: route.color }} />
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{route.icon} {route.label[lang] || route.label.ko}</span>
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, paddingLeft: 20 }}>
+                {route.schedule[lang] || route.schedule.ko} · {route.duration[lang] || route.duration.ko}
+              </div>
+              <div style={{ fontSize: 11, color: route.color, fontWeight: 600, marginBottom: 8, paddingLeft: 20 }}>
+                {formatPrice(route.price, lang)}
+              </div>
+              {route.stops.filter(s => !s.noStop).map(stop => {
+                stopNum++
+                const num = stopNum
+                return (
+                  <button
+                    key={stop.id}
+                    onClick={() => onSelectStop(stop, route, num)}
+                    style={{ width: '100%', display: 'flex', gap: 10, alignItems: 'center', padding: '8px 0', borderBottom: '1px solid #F3F4F6', background: 'none', border: 'none', borderBottom: '1px solid #F3F4F6', cursor: 'pointer', textAlign: 'left' }}
+                  >
+                    <div style={{ width: 24, height: 24, borderRadius: '50%', background: route.color, color: 'white', fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {stop.isTicketStop ? '⭐' : num}
+                    </div>
+                    <span style={{ fontSize: 13, fontWeight: stop.isTicketStop ? 700 : 500, color: 'var(--text-primary)' }}>
+                      {stop.name[lang] || stop.name.ko}
+                    </span>
+                    {stop.isTicketStop && (
+                      <span style={{ fontSize: 9, background: '#FFD700', color: '#1A1A1A', borderRadius: 4, padding: '1px 5px', fontWeight: 700 }}>
+                        {lang === 'zh' ? '售票处' : lang === 'en' ? 'Ticket' : '매표소'}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
             </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 2 }}>{course.title_zh}</div>
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{course.description_zh} · {course.estimated_hours}{tLang('course_hours', lang)}</div>
-            </div>
-            <span style={{ color: 'var(--text-hint)', fontSize: 16 }}>›</span>
-          </button>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
 }
 
-// ─── 코스 정거장 리스트 ───
-function CourseStopList({ course, allPins, lang, onSelectPoi, onNavigatePoi, onExit }) {
-  if (!course) return null
-  let coursePois = (course.poi_ids || []).map(id => allPins.find(p => p.id === id)).filter(Boolean)
-  if (coursePois.length === 0 && course.stops?.length) {
-    coursePois = course.stops.map((s, i) => ({
-      id: `stop-${i}`, category: 'utility',
-      name_zh: s.name_zh || s.name_ko, name_ko: s.name_ko, name_en: s.name_en,
-      lat: s.lat, lng: s.lng, image_url: null,
-      address_zh: s.address_zh || '',
-    }))
-  }
-
+// ─── 투어버스 정거장 상세 시트 ───
+function TourbusStopSheet({ stop, route, stopNum, lang, onClose, onExit }) {
+  if (!stop || !route) return null
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px 10px', flexShrink: 0, borderBottom: '1px solid var(--border)' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 8, background: '#DC2626', color: 'white', borderRadius: 4, padding: '2px 6px', fontWeight: 700 }}>
-              {tLang('course_mode', lang)}
-            </span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
-              {lang === 'ko' ? (course.title_ko || course.title_zh) : lang === 'en' ? (course.title_en || course.title_zh) : course.title_zh}
-            </span>
+    <div style={{ padding: '16px 20px 24px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 30, height: 30, borderRadius: '50%', background: route.color, color: 'white', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {stop.isTicketStop ? '⭐' : stopNum}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-            {lang === 'ko' ? (course.description_ko || course.description_zh) : lang === 'en' ? (course.description_en || course.description_zh) : course.description_zh} · {course.estimated_hours}{tLang('course_hours', lang)}
+          <div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{stop.name[lang] || stop.name.ko}</div>
+            <div style={{ fontSize: 11, color: route.color, fontWeight: 600 }}>{route.icon} {route.label[lang] || route.label.ko}</div>
           </div>
         </div>
-        <button onClick={onExit} style={{ fontSize: 12, color: '#DC2626', background: 'none', border: '1px solid #FCA5A5', borderRadius: 100, padding: '4px 10px', cursor: 'pointer', fontWeight: 600 }}>
-          {tLang('course_exit', lang)}
-        </button>
+        <button onClick={onClose} style={{ fontSize: 20, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}>✕</button>
       </div>
-      {/* 정거장 리스트 */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px 16px' }}>
-        {coursePois.map((poi, idx) => {
-          const cfg = CATEGORY_CONFIG[poi.category] || CATEGORY_CONFIG.popup
-          return (
-            <div key={poi.id} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 0', borderBottom: idx < coursePois.length - 1 ? '1px solid #F3F4F6' : 'none' }}>
-              {/* 번호 뱃지 */}
-              <div style={{ width: 28, height: 28, borderRadius: '50%', background: cfg.color, color: 'white', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '2px solid white', boxShadow: `0 0 0 2px ${cfg.color}` }}>
-                {idx + 1}
-              </div>
-              {/* 썸네일 */}
-              <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: 'var(--surface)' }}>
-                {poi.image_url
-                  ? <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                  : <div style={{ width: '100%', height: '100%', background: cfg.color, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 16, fontWeight: 700 }}>{cfg.letter}</div>
-                }
-              </div>
-              {/* 텍스트 */}
-              <button
-                onClick={() => onSelectPoi(poi)}
-                style={{ flex: 1, textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', padding: 0, minWidth: 0 }}
-              >
-                <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{getLocalizedName(poi, lang)}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{distLabel(poi) || getLocalizedAddress(poi, lang)}</div>
-              </button>
-              {/* 导航 버튼 */}
-              <button
-                onClick={() => onNavigatePoi(poi)}
-                style={{ flexShrink: 0, background: '#1A1A1A', color: 'white', border: 'none', borderRadius: 8, padding: '6px 10px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}
-              >
-                {tLang('navigate', lang)}
-              </button>
-            </div>
-          )
-        })}
+      {stop.isTicketStop && (
+        <div style={{ background: '#FEF3C7', borderRadius: 12, padding: '10px 14px', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#92400E', marginBottom: 4 }}>
+            {lang === 'zh' ? '🎫 售票处' : lang === 'en' ? '🎫 Ticket Office' : '🎫 매표소'}
+          </div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: '#78350F' }}>{formatPrice(route.price, lang)}</div>
+        </div>
+      )}
+      <div style={{ background: 'var(--surface)', borderRadius: 12, padding: '10px 14px' }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 4 }}>
+          {lang === 'zh' ? '运行信息' : lang === 'en' ? 'Schedule' : '운행 정보'}
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-primary)' }}>{route.schedule[lang] || route.schedule.ko}</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{route.duration[lang] || route.duration.ko}</div>
       </div>
     </div>
   )

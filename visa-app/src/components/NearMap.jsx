@@ -798,9 +798,9 @@ export default function NearMap() {
   }, [isExpanded, sheetPoi, snapSheet, selectPin, closeSheet, SHEET_PEEK])
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 116, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease' }}>
+    <div style={{ position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease' }}>
 
-      {/* ─── 카카오맵 ─── */}
+      {/* ─── 카카오맵 (풀 커버) ─── */}
       <div
         ref={mapRef}
         style={{
@@ -820,79 +820,30 @@ export default function NearMap() {
           background: sheetPoi ? 'rgba(0,0,0,0.15)' : 'transparent',
           transition: 'background 0.35s cubic-bezier(0.32, 0.72, 0, 1)',
         }}
-        onClick={closeSheet}
+        onClick={() => { closeSheet(); setShowAreaPicker(false) }}
       />
 
-      {/* ─── 검색바 ─── */}
-      <button
-        onClick={() => setShowSearch(true)}
-        style={{ position: 'absolute', top: 16, left: 16, right: 72, zIndex: 10, background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left' }}
-      >
-        <div style={{
-          background: '#FAFAFA',
-          borderRadius: 50,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.10)',
-          display: 'flex', alignItems: 'center',
-          padding: '0 14px', height: 44, gap: 8,
-          transition: 'box-shadow 0.15s ease',
-        }}>
-          <span style={{ fontSize: 14, color: '#A8A8A8', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}>
-            {tLang(PH_KEYS[phIdx], lang)}
-          </span>
-        </div>
-      </button>
+      {/* ─── 상단 바: [▼동네] [검색] [카테고리칩...] ─── */}
+      <div style={{ position: 'absolute', top: 12, left: 0, right: 0, zIndex: 10 }}>
+        <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px', scrollbarWidth: 'none', alignItems: 'center' }}>
 
-      {/* ─── Magic Pill (우상단) ─── */}
-      <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 10 }}>
-        <MagicPillSelector areas={QUICK_AREAS} lang={lang} onSelect={moveToArea} />
-      </div>
-
-      {/* ─── 내 위치 버튼 (우하단 FAB) ─── */}
-      <button
-        onClick={() => {
-          if (!navigator.geolocation) return
-          navigator.geolocation.getCurrentPosition(
-            p => {
-              if (!mapInstance.current) return
-              mapInstance.current.setCenter(new window.kakao.maps.LatLng(p.coords.latitude, p.coords.longitude))
-              mapInstance.current.setLevel(3)
-            },
-            () => {}
-          )
-        }}
-        style={{
-          position: 'absolute', bottom: 180, right: 16, zIndex: 10,
-          width: 44, height: 44, borderRadius: '50%',
-          background: '#FAFAFA', border: 'none', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-          transition: 'box-shadow 0.15s ease',
-        fontSize: 18, color: '#C4725A',
-        }}
-        onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)'}
-        onTouchEnd={e => e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.12)'}
-      >
-        ◎
-      </button>
-
-      {/* ─── 카테고리 칩 ─── */}
-      <div style={{ position: 'absolute', top: 70, left: 0, right: IS_DEV ? 56 : 0, zIndex: 9 }}>
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 12px 6px 12px', scrollbarWidth: 'none', alignItems: 'center' }}>
-          {/* 지역 선택 버튼 */}
+          {/* ▼ 동네 선택 */}
           <div style={{ position: 'relative', flexShrink: 0 }}>
             <button
               onClick={() => setShowAreaPicker(v => !v)}
               style={{
-                height: 34, padding: '0 10px', borderRadius: 24, border: '1px solid rgba(0,0,0,0.10)',
+                height: 36, padding: '0 12px', borderRadius: 24,
                 background: selectedDistrict ? '#C4725A' : 'white', color: selectedDistrict ? 'white' : '#1A1A1A',
+                border: selectedDistrict ? 'none' : '1px solid rgba(0,0,0,0.08)',
                 fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
-                boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
               }}
             >
-              ← {selectedDistrict ? (() => { const a = QUICK_AREAS.find(x => x.district === selectedDistrict); return a ? t(a.key) : selectedDistrict })() : (lang === 'zh' ? '首尔' : lang === 'en' ? 'Seoul' : '서울')}
+              {selectedDistrict ? (() => { const a = QUICK_AREAS.find(x => x.district === selectedDistrict); return a ? t(a.key) : selectedDistrict })() : (lang === 'zh' ? '首尔' : lang === 'en' ? 'Seoul' : '서울')}
+              <span style={{ fontSize: 10, opacity: 0.6 }}>▼</span>
             </button>
             {showAreaPicker && (
-              <div style={{ position: 'absolute', top: 40, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 140 }}>
+              <div style={{ position: 'absolute', top: 42, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 140 }}>
                 {QUICK_AREAS.map(area => (
                   <button key={area.id} onClick={() => { goToArea(area); setShowAreaPicker(false) }}
                     style={{
@@ -907,6 +858,19 @@ export default function NearMap() {
               </div>
             )}
           </div>
+
+          {/* 검색 (소형) */}
+          <button
+            onClick={() => setShowSearch(true)}
+            style={{
+              flexShrink: 0, height: 36, padding: '0 12px', borderRadius: 24,
+              background: 'white', border: '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
+              fontSize: 12, color: '#A8A8A8', display: 'flex', alignItems: 'center',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.10)', minWidth: 60,
+            }}
+          >
+            {lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색'}
+          </button>
           {CATEGORY_CHIPS.map(chip => {
             const active = activeCategory === chip.id && !courseMode
             return (
@@ -987,6 +951,31 @@ export default function NearMap() {
           </div>
         )}
       </div>
+
+      {/* ─── 내 위치 버튼 (좌하단) ─── */}
+      <button
+        onClick={() => {
+          if (!navigator.geolocation) return
+          navigator.geolocation.getCurrentPosition(
+            p => {
+              if (!mapInstance.current) return
+              mapInstance.current.setCenter(new window.kakao.maps.LatLng(p.coords.latitude, p.coords.longitude))
+              mapInstance.current.setLevel(3)
+            },
+            () => {}
+          )
+        }}
+        style={{
+          position: 'absolute', bottom: 16, left: 16, zIndex: 10,
+          width: 44, height: 44, borderRadius: '50%',
+          background: 'white', border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+          fontSize: 18, color: '#C4725A',
+        }}
+      >
+        ◎
+      </button>
 
       {/* ─── 전체 슬라이드 패널 ─── */}
       <div

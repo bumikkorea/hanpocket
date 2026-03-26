@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Lock, Settings, AlertCircle, Store, PlusCircle, Database } from 'lucide-react'
+import { Lock, Settings, AlertCircle, Store, PlusCircle, Database, Flag } from 'lucide-react'
 import { supabase as supabaseNear } from '../lib/supabase'
 import { supabaseScraper } from '../lib/supabaseScraper'
 import SuperAdminHeader from './SuperAdminHeader'
@@ -7,6 +7,7 @@ import SuperAdminNav from './SuperAdminNav'
 import PopupReviewTab from './tabs/PopupReviewTab'
 import PopupManualRegister from './tabs/PopupManualRegister'
 import PopupNearManage from './tabs/PopupNearManage'
+import ReportManageTab, { useReportPendingCount } from './tabs/ReportManageTab'
 import SettingsTab from './tabs/SettingsTab'
 
 /**
@@ -156,10 +157,13 @@ export default function SuperAdminApp() {
     return <SuperAdminLoginScreen onLogin={() => setIsAuthenticated(true)} />
   }
 
+  const reportPendingCount = useReportPendingCount(supabaseNear)
+
   const tabs = [
     { id: 'popup-review',    label: '팝업 검수', icon: Store },
     { id: 'manual-register', label: '수동 등록', icon: PlusCircle },
     { id: 'near-manage',     label: '매장 관리', icon: Database },
+    { id: 'report-manage',   label: '신고 관리', icon: Flag, badge: reportPendingCount || null },
     { id: 'settings',        label: '설정',      icon: Settings },
   ]
 
@@ -190,6 +194,7 @@ export default function SuperAdminApp() {
           {currentTab === 'popup-review'    && <PopupReviewTab supabaseScraper={supabaseScraper} supabaseNear={supabaseNear} />}
           {currentTab === 'manual-register' && <PopupManualRegister supabaseNear={supabaseNear} />}
           {currentTab === 'near-manage'     && <PopupNearManage supabaseNear={supabaseNear} />}
+          {currentTab === 'report-manage'   && <ReportManageTab supabaseNear={supabaseNear} />}
           {currentTab === 'settings'        && <SettingsTab />}
         </div>
       </div>

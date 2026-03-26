@@ -1,7 +1,9 @@
 import { useState, useMemo, useEffect, lazy, Suspense } from 'react'
-import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter, Navigation, Loader2, ChevronLeft } from 'lucide-react'
-import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES, LOCATION_FILTERS, LOCATION_HIERARCHY } from '../data/restaurantData'
+import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter, Navigation, Loader2, ChevronLeft, Tv, Heart } from 'lucide-react'
+import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES as LEGACY_FOOD_CATEGORIES, LOCATION_FILTERS, LOCATION_HIERARCHY } from '../data/restaurantData'
+import { FOOD_CATEGORIES, TV_CHANNELS, FOOD_CATEGORIES_FLAT } from '../data/foodCategories'
 import { trackSearch, trackEvent } from '../utils/analytics'
+import ReportButton from './food/ReportButton'
 
 function L(lang, data) {
   if (typeof data === 'string') return data
@@ -25,9 +27,12 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
   const [selectedGu, setSelectedGu] = useState('') // 구
   const [selectedDong, setSelectedDong] = useState('') // 동
   const [cuisine, setCuisine] = useState('all')
+  const [subCuisine, setSubCuisine] = useState('') // subcategory filter
   const [sortBy, setSortBy] = useState('name') // 'name' | 'location' | 'award'
   const [shown, setShown] = useState(PAGE_SIZE)
   const [detailRestaurant, setDetailRestaurant] = useState(null)
+  const [tvFilter, setTvFilter] = useState(false)
+  const [tvChannel, setTvChannel] = useState('')
 
   // 딥링크 처리 — 홈탭에서 맛집 클릭 시 상세 모달 직행
   useEffect(() => {
@@ -49,29 +54,45 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
 
   // Get available districts for selected city
   const gusForSi = selectedSi ? Object.keys(LOCATION_HIERARCHY[selectedSi] || {}) : []
-  
+
   // Get available neighborhoods for selected district
   const dongsForGu = selectedSi && selectedGu ? (LOCATION_HIERARCHY[selectedSi]?.[selectedGu] || []) : []
+
+  // Get subcategories for selected main category
+  const selectedCategory = cuisine !== 'all' ? FOOD_CATEGORIES.find(c => c.id === cuisine) : null
+  const subcategories = selectedCategory?.subcategories || []
 
   // Helper function to match city names (handle legacy data format)
   const matchesCity = (restaurant, targetSi) => {
     if (!targetSi) return true
     const city = restaurant.area.city
-    
+
     // Map legacy city names to new format
     const cityMapping = {
       '서울': '서울특별시',
-      '부산': '부산광역시', 
+      '부산': '부산광역시',
       '제주': '제주특별자치도'
     }
-    
+
     const mappedCity = cityMapping[city] || city
     return mappedCity === targetSi
   }
 
+  // Map new category IDs to legacy cuisine values
+  const categoryToLegacyMap = {
+    korean: ['korean', 'meat', 'stew', 'noodle', 'seafood', 'gopchang'],
+    chinese: ['chinese'],
+    japanese: ['japanese'],
+    western: ['french', 'italian', 'other'],
+    asian: ['other'],
+    bunsik: ['noodle'],
+    cafe: ['other'],
+    bar: ['other'],
+  }
+
   const filtered = useMemo(() => {
     let list = [...sourceList]
-    
+
     if (search.trim()) {
       const q = search.trim().toLowerCase()
       list = list.filter(r =>
@@ -80,11 +101,23 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
         r.name.zh.toLowerCase().includes(q)
       )
     }
-    
+
     if (selectedSi) list = list.filter(r => matchesCity(r, selectedSi))
     if (selectedGu) list = list.filter(r => r.area.gu === selectedGu)
     if (selectedDong) list = list.filter(r => r.area.dong === selectedDong)
-    if (cuisine !== 'all') list = list.filter(r => r.cuisine === cuisine)
+
+    if (cuisine !== 'all') {
+      const legacyIds = categoryToLegacyMap[cuisine] || [cuisine]
+      list = list.filter(r => legacyIds.includes(r.cuisine))
+    }
+
+    // TV filter
+    if (tvFilter) {
+      list = list.filter(r => r.tvShow || r.tvChannel)
+      if (tvChannel) {
+        list = list.filter(r => r.tvChannel === tvChannel)
+      }
+    }
 
     list.sort((a, b) => {
       if (sortBy === 'name') return L(lang, a.name).localeCompare(L(lang, b.name), lang === 'zh' ? 'zh' : lang === 'ko' ? 'ko' : 'en')
@@ -94,7 +127,7 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
       return (order[a.award] ?? 9) - (order[b.award] ?? 9)
     })
     return list
-  }, [sourceList, search, selectedSi, selectedGu, selectedDong, cuisine, sortBy, lang])
+  }, [sourceList, search, selectedSi, selectedGu, selectedDong, cuisine, sortBy, lang, tvFilter, tvChannel])
 
   const visible = filtered.slice(0, shown)
   const hasMore = shown < filtered.length
@@ -129,6 +162,25 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
     )
   }
 
+  function renderExtraBadges(r) {
+    const badges = []
+    if (r.tvShow) {
+      badges.push(
+        <span key="tv" className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded-full">
+          <Tv size={10} /> TV
+        </span>
+      )
+    }
+    if (r.bbeomPick) {
+      badges.push(
+        <span key="pick" className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-pink-700 bg-pink-50 px-1.5 py-0.5 rounded-full">
+          <Heart size={10} className="fill-pink-500" /> PICK
+        </span>
+      )
+    }
+    return badges
+  }
+
   const michelinCount = MICHELIN_RESTAURANTS.length
   const blueCount = BLUE_RIBBON_RESTAURANTS.length
 
@@ -157,7 +209,6 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
               setSelectedDong('')
               setShown(PAGE_SIZE)
 
-              // 맛집 탭 전환 이벤트 추적
               trackEvent('restaurant_tab_switch', {
                 tab: t.id,
                 event_category: 'restaurant_search',
@@ -175,6 +226,91 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
         ))}
       </div>
 
+      {/* Food category chips */}
+      <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+        <button
+          onClick={() => { setCuisine('all'); setSubCuisine(''); setShown(PAGE_SIZE) }}
+          className={`shrink-0 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+            cuisine === 'all'
+              ? 'bg-black text-white'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}
+        >
+          {L(lang, { ko: '전체', zh: '全部', en: 'All' })}
+        </button>
+        {FOOD_CATEGORIES.map(cat => (
+          <button
+            key={cat.id}
+            onClick={() => { setCuisine(cat.id); setSubCuisine(''); setShown(PAGE_SIZE) }}
+            className={`shrink-0 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap ${
+              cuisine === cat.id
+                ? 'bg-black text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            }`}
+          >
+            {cat.icon} {L(lang, cat.label)}
+          </button>
+        ))}
+      </div>
+
+      {/* Subcategory chips (show when main category selected) */}
+      {subcategories.length > 0 && (
+        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+          <button
+            onClick={() => { setSubCuisine(''); setShown(PAGE_SIZE) }}
+            className={`shrink-0 px-2 py-1 rounded-full text-[11px] font-medium transition-all ${
+              !subCuisine
+                ? 'bg-gray-800 text-white'
+                : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            {L(lang, { ko: '전체', zh: '全部', en: 'All' })}
+          </button>
+          {subcategories.map(sub => (
+            <button
+              key={sub.id}
+              onClick={() => { setSubCuisine(sub.id); setShown(PAGE_SIZE) }}
+              className={`shrink-0 px-2 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+                subCuisine === sub.id
+                  ? 'bg-gray-800 text-white'
+                  : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200'
+              }`}
+            >
+              {L(lang, sub.label)}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* TV맛집 toggle + channel filters */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <button
+          onClick={() => { setTvFilter(!tvFilter); setTvChannel(''); setShown(PAGE_SIZE) }}
+          className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            tvFilter
+              ? 'bg-purple-600 text-white shadow-lg'
+              : 'bg-white text-gray-500 border border-gray-200 hover:border-purple-300'
+          }`}
+        >
+          <Tv size={13} />
+          {L(lang, { ko: 'TV맛집', zh: 'TV美食', en: 'TV Picks' })}
+        </button>
+
+        {tvFilter && TV_CHANNELS.map(ch => (
+          <button
+            key={ch.id}
+            onClick={() => { setTvChannel(tvChannel === ch.id ? '' : ch.id); setShown(PAGE_SIZE) }}
+            className={`shrink-0 px-2 py-1 rounded-full text-[11px] font-medium transition-all whitespace-nowrap ${
+              tvChannel === ch.id
+                ? 'bg-purple-100 text-purple-700 border border-purple-300'
+                : 'bg-gray-50 text-gray-500 hover:bg-gray-100 border border-gray-200'
+            }`}
+          >
+            {ch.icon} {L(lang, ch.label)}
+          </button>
+        ))}
+      </div>
+
       {/* Search */}
       <div className="relative">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)]" />
@@ -186,9 +322,8 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
             setSearch(value)
             setShown(PAGE_SIZE)
 
-            // 검색 이벤트 추적 (3글자 이상일 때만)
             if (value.trim().length >= 3) {
-              trackSearch(value.trim(), 'restaurant', 0) // results_count는 나중에 업데이트됨
+              trackSearch(value.trim(), 'restaurant', 0)
             }
           }}
           placeholder={lang === 'ko' ? '레스토랑 검색...' : lang === 'zh' ? '搜索餐厅...' : 'Search restaurants...'}
@@ -202,14 +337,13 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
         <div className="relative">
           <select
             value={selectedSi}
-            onChange={e => { 
+            onChange={e => {
               const value = e.target.value
               setSelectedSi(value)
               setSelectedGu('')
               setSelectedDong('')
               setShown(PAGE_SIZE)
-              
-              // 지역 필터 변경 이벤트 추적
+
               if (value) {
                 trackEvent('restaurant_location_filter', {
                   filter_type: 'si',
@@ -234,13 +368,12 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
           <div className="relative">
             <select
               value={selectedGu}
-              onChange={e => { 
+              onChange={e => {
                 const value = e.target.value
                 setSelectedGu(value)
                 setSelectedDong('')
                 setShown(PAGE_SIZE)
-                
-                // 구/군 필터 변경 이벤트 추적
+
                 if (value) {
                   trackEvent('restaurant_location_filter', {
                     filter_type: 'gu',
@@ -267,12 +400,11 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
           <div className="relative">
             <select
               value={selectedDong}
-              onChange={e => { 
+              onChange={e => {
                 const value = e.target.value
                 setSelectedDong(value)
                 setShown(PAGE_SIZE)
-                
-                // 동 필터 변경 이벤트 추적
+
                 if (value) {
                   trackEvent('restaurant_location_filter', {
                     filter_type: 'dong',
@@ -294,20 +426,6 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
             <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)] pointer-events-none" />
           </div>
         )}
-
-        {/* Cuisine */}
-        <div className="relative">
-          <select
-            value={cuisine}
-            onChange={e => { setCuisine(e.target.value); setShown(PAGE_SIZE) }}
-            className="appearance-none text-xs bg-white border border-[var(--border)] rounded-full px-3 py-2 pr-7 text-[var(--y2k-text)] outline-none hover:border-[var(--y2k-lavender)] focus:border-[var(--y2k-pink)] focus:ring-2 focus:ring-[#FF85B3]/20 transition-all"
-          >
-            {FOOD_CATEGORIES.map(c => (
-              <option key={c.id} value={c.id}>{L(lang, c.label)}</option>
-            ))}
-          </select>
-          <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)] pointer-events-none" />
-        </div>
 
         {/* Sort */}
         <div className="relative">
@@ -338,6 +456,7 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
                 <div className="flex items-center gap-2 flex-wrap mb-1">
                   <h3 className="text-sm font-bold text-[#111827]">{L(lang, r.name)}</h3>
                   {renderBadge(r)}
+                  {renderExtraBadges(r)}
                 </div>
                 {lang !== 'ko' && (
                   <p className="text-xs text-[#9CA3AF] mb-1">{r.name.ko}</p>
@@ -347,7 +466,7 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
                   <span>{r.area.city} {r.area.gu}{r.area.dong ? ' ' + r.area.dong : ''}</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-[#9CA3AF]">
-                  <span>{L(lang, FOOD_CATEGORIES.find(c => c.id === r.cuisine)?.label || { ko: r.cuisine })}</span>
+                  <span>{L(lang, LEGACY_FOOD_CATEGORIES.find(c => c.id === r.cuisine)?.label || { ko: r.cuisine })}</span>
                   <span>{'$'.repeat(r.priceRange)}</span>
                 </div>
               </div>
@@ -356,6 +475,7 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="shrink-0 flex items-center gap-1 text-[11px] font-semibold text-[#111827] bg-[#F3F4F6] hover:bg-[#E5E7EB] px-3 py-2 rounded-[6px] transition-colors"
+                onClick={e => e.stopPropagation()}
               >
                 <MapPin size={12} />
                 {lang === 'ko' ? '지도' : lang === 'zh' ? '地图' : 'Map'}
@@ -396,7 +516,7 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
 /** 맛집 상세 모달 */
 function RestaurantDetailModal({ restaurant: r, lang, onClose }) {
   const awardInfo = AWARD_LABELS[r.award]
-  const cuisineLabel = FOOD_CATEGORIES.find(c => c.id === r.cuisine)?.label
+  const cuisineLabel = LEGACY_FOOD_CATEGORIES.find(c => c.id === r.cuisine)?.label
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={onClose}>
@@ -446,6 +566,16 @@ function RestaurantDetailModal({ restaurant: r, lang, onClose }) {
               {r.award === 'bib' && (
                 <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Bib Gourmand</span>
               )}
+              {r.tvShow && (
+                <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">
+                  <Tv size={11} /> {r.tvShow}
+                </span>
+              )}
+              {r.bbeomPick && (
+                <span className="inline-flex items-center gap-0.5 text-xs font-semibold text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full">
+                  <Heart size={11} className="fill-pink-500" /> PICK
+                </span>
+              )}
             </div>
             {lang !== 'ko' && <p className="text-sm text-[#9CA3AF] mt-0.5">{r.name.ko}</p>}
           </div>
@@ -478,13 +608,13 @@ function RestaurantDetailModal({ restaurant: r, lang, onClose }) {
             {r.catchTableUrl && (
               <a href={r.catchTableUrl} target="_blank" rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold text-[var(--y2k-text)] bg-white border border-[var(--border)] rounded-full active:scale-95 transition-all">
-                {lang === 'ko' ? '예약하기' : lang === 'zh' ? '预약' : 'Reserve'}
+                {lang === 'ko' ? '예약하기' : lang === 'zh' ? '预约' : 'Reserve'}
               </a>
             )}
           </div>
 
-          {/* 외부 링크 */}
-          <div className="flex gap-2">
+          {/* 외부 링크 + 신고 버튼 */}
+          <div className="flex items-center gap-2 flex-wrap">
             {r.michelinUrl && (
               <a href={r.michelinUrl} target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1 text-xs text-[#6B7280] hover:text-[#111827]">
@@ -497,6 +627,9 @@ function RestaurantDetailModal({ restaurant: r, lang, onClose }) {
                 {lang === 'ko' ? '식신 리뷰' : lang === 'zh' ? '食神评价' : 'Siksin Reviews'} <ExternalLink size={10} />
               </a>
             )}
+            <div className="ml-auto">
+              <ReportButton placeId={r.id} placeName={L(lang, r.name)} lang={lang} />
+            </div>
           </div>
         </div>
       </div>

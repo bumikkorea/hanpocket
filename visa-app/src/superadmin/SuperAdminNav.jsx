@@ -39,6 +39,9 @@ export default function SuperAdminNav({ tabs, currentTab, onTabChange, user, onL
               >
                 <Icon size={17} />
                 <span className="font-medium text-sm">{tab.label}</span>
+                {tab.badge > 0 && (
+                  <span className="ml-auto px-1.5 py-0.5 bg-red-500 text-white rounded-full text-[10px] font-bold leading-none">{tab.badge}</span>
+                )}
               </button>
             )
           })}
@@ -80,7 +83,12 @@ export default function SuperAdminNav({ tabs, currentTab, onTabChange, user, onL
               className="flex-1 flex flex-col items-center py-2.5 gap-1 transition-colors"
               style={{ color: isActive ? '#C4725A' : '#555' }}
             >
-              <Icon size={20} />
+              <div className="relative">
+                <Icon size={20} />
+                {tab.badge > 0 && (
+                  <span className="absolute -top-1 -right-2 px-1 py-0.5 bg-red-500 text-white rounded-full text-[8px] font-bold leading-none min-w-[14px] text-center">{tab.badge}</span>
+                )}
+              </div>
               <span className="text-[10px] font-medium leading-none">{tab.label}</span>
             </button>
           )

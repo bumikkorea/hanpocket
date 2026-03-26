@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, lazy, Suspense } from 'react'
-import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter, Navigation, Loader2, ChevronLeft, Tv, Heart } from 'lucide-react'
+import { Search, MapPin, Star, ChevronDown, ArrowUpDown, ExternalLink, Award, Filter, Navigation, Loader2, ChevronLeft, Tv, Heart, X, Clock } from 'lucide-react'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS, FOOD_CATEGORIES as LEGACY_FOOD_CATEGORIES, LOCATION_FILTERS, LOCATION_HIERARCHY } from '../data/restaurantData'
 import { FOOD_CATEGORIES, TV_CHANNELS, FOOD_CATEGORIES_FLAT } from '../data/foodCategories'
 import { trackSearch, trackEvent } from '../utils/analytics'
@@ -20,6 +20,33 @@ const AWARD_LABELS = {
 
 const PAGE_SIZE = 20
 
+const RECENT_SEARCH_KEY = 'near_food_recent_searches'
+const MAX_RECENT = 20
+
+function getRecentSearches() {
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_SEARCH_KEY) || '[]')
+  } catch { return [] }
+}
+
+function addRecentSearch(query) {
+  if (!query?.trim()) return
+  const q = query.trim()
+  let recent = getRecentSearches().filter(s => s !== q)
+  recent.unshift(q)
+  if (recent.length > MAX_RECENT) recent = recent.slice(0, MAX_RECENT)
+  localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(recent))
+}
+
+function removeRecentSearch(query) {
+  const recent = getRecentSearches().filter(s => s !== query)
+  localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(recent))
+}
+
+function clearRecentSearches() {
+  localStorage.removeItem(RECENT_SEARCH_KEY)
+}
+
 export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView = false }) {
   const [tab, setTab] = useState('all') // 'michelin' | 'blueribbon' | 'all'
   const [search, setSearch] = useState('')
@@ -33,6 +60,9 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
   const [detailRestaurant, setDetailRestaurant] = useState(null)
   const [tvFilter, setTvFilter] = useState(false)
   const [tvChannel, setTvChannel] = useState('')
+  const [recentSearches, setRecentSearches] = useState(getRecentSearches())
+  const [showRecent, setShowRecent] = useState(false)
+  const [searchFocused, setSearchFocused] = useState(false)
 
   // 딥링크 처리 — 홈탭에서 맛집 클릭 시 상세 모달 직행
   useEffect(() => {
@@ -311,24 +341,103 @@ export default function FoodTab({ lang, deepLink, onDeepLinkConsumed, adminView 
         ))}
       </div>
 
-      {/* Search */}
+      {/* Search — 1.5x wider with right-side search icon */}
       <div className="relative">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--y2k-text-sub)]" />
         <input
           type="text"
           value={search}
+          onFocus={() => { setSearchFocused(true); setShowRecent(true) }}
+          onBlur={() => { setTimeout(() => { setSearchFocused(false); setShowRecent(false) }, 200) }}
           onChange={e => {
             const value = e.target.value
             setSearch(value)
             setShown(PAGE_SIZE)
+            setShowRecent(!value.trim())
 
             if (value.trim().length >= 3) {
               trackSearch(value.trim(), 'restaurant', 0)
             }
           }}
-          placeholder={lang === 'ko' ? '레스토랑 검색...' : lang === 'zh' ? '搜索餐厅...' : 'Search restaurants...'}
-          className="w-full pl-9 pr-3 py-2.5 text-sm bg-white border-2 border-transparent rounded-2xl outline-none focus:border-[var(--y2k-lavender)] focus:ring-2 focus:ring-[#C4B5FD]/30 hover:border-[var(--border)] transition-all text-[var(--y2k-text)] placeholder:text-[var(--y2k-text-sub)]"
+          onKeyDown={e => {
+            if (e.key === 'Enter' && search.trim()) {
+              addRecentSearch(search.trim())
+              setRecentSearches(getRecentSearches())
+              setShowRecent(false)
+            }
+          }}
+          placeholder={lang === 'ko' ? '맛집 이름을 검색하세요' : lang === 'zh' ? '搜索餐厅名称' : 'Search restaurant name'}
+          className="w-full pl-4 pr-12 py-3.5 text-sm bg-white border-2 border-transparent rounded-2xl outline-none focus:border-[var(--y2k-lavender)] focus:ring-2 focus:ring-[#C4B5FD]/30 hover:border-[var(--border)] transition-all text-[var(--y2k-text)] placeholder:text-[var(--y2k-text-sub)]"
         />
+        {search && (
+          <button
+            onClick={() => { setSearch(''); setShowRecent(true) }}
+            className="absolute right-11 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1"
+          >
+            <X size={14} />
+          </button>
+        )}
+        <button
+          onClick={() => {
+            if (search.trim()) {
+              addRecentSearch(search.trim())
+              setRecentSearches(getRecentSearches())
+              setShowRecent(false)
+            }
+          }}
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-black hover:bg-gray-800 text-white rounded-xl p-2 transition-all active:scale-95"
+        >
+          <Search size={16} />
+        </button>
+
+        {/* Recent searches dropdown */}
+        {showRecent && searchFocused && !search.trim() && recentSearches.length > 0 && (
+          <div className="absolute top-full left-0 right-0 mt-1 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 max-h-80 overflow-y-auto">
+            <div className="flex items-center justify-between px-4 pt-3 pb-1">
+              <span className="text-xs font-semibold text-gray-400 flex items-center gap-1">
+                <Clock size={12} />
+                {lang === 'ko' ? '최근 검색' : lang === 'zh' ? '最近搜索' : 'Recent'}
+              </span>
+              <button
+                onClick={() => {
+                  clearRecentSearches()
+                  setRecentSearches([])
+                }}
+                className="text-[11px] text-gray-400 hover:text-red-500 transition-colors"
+              >
+                {lang === 'ko' ? '전체 삭제' : lang === 'zh' ? '全部清除' : 'Clear all'}
+              </button>
+            </div>
+            {recentSearches.map((q, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between px-4 py-2.5 hover:bg-gray-50 cursor-pointer group"
+              >
+                <button
+                  className="flex items-center gap-2 flex-1 text-left"
+                  onMouseDown={e => {
+                    e.preventDefault()
+                    setSearch(q)
+                    setShowRecent(false)
+                    setShown(PAGE_SIZE)
+                  }}
+                >
+                  <Clock size={13} className="text-gray-300" />
+                  <span className="text-sm text-gray-700">{q}</span>
+                </button>
+                <button
+                  onMouseDown={e => {
+                    e.preventDefault()
+                    removeRecentSearch(q)
+                    setRecentSearches(getRecentSearches())
+                  }}
+                  className="text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all p-1"
+                >
+                  <X size={13} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Filters row */}

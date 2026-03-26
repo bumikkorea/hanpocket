@@ -889,7 +889,7 @@ export default function NearMap() {
                 boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
               }}
             >
-              ← {selectedDistrict ? (() => { const a = QUICK_AREAS.find(x => x.district === selectedDistrict); return a ? t(a.key) : selectedDistrict })() : L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })}
+              ← {selectedDistrict ? (() => { const a = QUICK_AREAS.find(x => x.district === selectedDistrict); return a ? t(a.key) : selectedDistrict })() : (lang === 'zh' ? '首尔' : lang === 'en' ? 'Seoul' : '서울')}
             </button>
             {showAreaPicker && (
               <div style={{ position: 'absolute', top: 40, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 140 }}>

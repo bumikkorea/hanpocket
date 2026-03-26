@@ -520,21 +520,27 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         </button>
       </div>
 
-      {/* ─── 5. 카테고리 필터 ─── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 2, padding: '0 14px 28px', ...fadeUp(4) }}>
-        {MEITU_CATEGORIES.map(cat => {
-          const isActive = selectedCategory === cat.id
+      {/* ─── 5. 카테고리 탭 바 (가로 스크롤) ─── */}
+      <div style={{ overflowX: 'auto', display: 'flex', gap: 24, padding: '0 20px 0', scrollbarWidth: 'none', borderBottom: '1px solid #F0EDED', marginBottom: 20, ...fadeUp(4) }}>
+        {[
+          { id: null, zh: '全部', ko: '전체', en: 'All' },
+          ...MEITU_CATEGORIES.filter(c => c.id !== 'more'),
+        ].map(cat => {
+          const isActive = cat.id === null ? selectedCategory === null : selectedCategory === cat.id
           return (
-            <button key={cat.id} onClick={() => handleCategoryClick(cat)}
+            <button key={cat.id || 'all'} onClick={() => {
+              if (cat.id === null) { setSelectedCategory(null); return }
+              handleCategoryClick(cat)
+            }}
               style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                padding: '8px 2px', cursor: 'pointer', borderRadius: 10,
-                background: isActive ? '#FBF7F5' : 'transparent', border: 'none',
+                flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer',
+                padding: '0 0 8px', fontSize: 15, fontWeight: 600,
+                color: isActive ? '#1A1A1A' : '#A8A8A8',
+                borderBottom: isActive ? '2px solid #C4725A' : '2px solid transparent',
+                transition: 'all 0.15s',
               }}
             >
-              <span style={{ fontSize: 9, color: isActive ? '#C4725A' : '#6B6B6B', fontWeight: isActive ? 700 : 500 }}>
-                {L(lang, { zh: cat.zh, ko: cat.ko, en: cat.en })}
-              </span>
+              {L(lang, { zh: cat.zh, ko: cat.ko, en: cat.en })}
             </button>
           )
         })}
@@ -542,7 +548,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
       {/* ─── 6. 추천 장소 2열 그리드 ─── */}
       <div ref={feedRef} style={{ ...fadeUp(5) }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 20px 8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px 8px' }}>
           <span style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>
             {selectedCategory
               ? L(lang, CAT_LABELS[selectedCategory] || { ko: '추천 장소', zh: '推荐地点', en: 'Recommended' })

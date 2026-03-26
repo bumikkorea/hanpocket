@@ -831,7 +831,7 @@ export default function NearMap() {
         ref={mapRef}
         style={{
           position: 'absolute', top: 0, left: 0, right: 0,
-          bottom: tourbusMode ? '50dvh' : 0,
+          bottom: 0,
           transition: 'bottom 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           touchAction: 'manipulation',
           willChange: 'transform',

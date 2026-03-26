@@ -1665,6 +1665,8 @@ function AppInner() {
   const [subPage, setSubPage] = useState(null)
   const [deepLink, setDeepLink] = useState(null) // { tab, itemId, itemData }
   const [fabOpen, setFabOpen] = useState(false)
+  const [fabPos, setFabPos] = useState({ x: null, y: null })
+  const fabDragRef = useRef(null)
   const scrollPositions = useRef({}) // { tabId: { y: number, timestamp: number } }
 
   // A3: 언어 드롭다운 외부 클릭 닫기
@@ -2794,20 +2796,48 @@ function AppInner() {
           </button>
         ))}
       </div>
-      {/* 메인 FAB — Languages 아이콘 */}
+      {/* 메인 FAB — Languages 아이콘 (드래그 가능) */}
       <button
-        onClick={() => setFabOpen(v => !v)}
+        onClick={() => { if (!fabDragRef.current?.dragged) setFabOpen(v => !v) }}
+        onTouchStart={(e) => {
+          const touch = e.touches[0]
+          const btn = e.currentTarget
+          const rect = btn.getBoundingClientRect()
+          fabDragRef.current = { startX: touch.clientX, startY: touch.clientY, btnX: rect.left, btnY: rect.top, dragged: false }
+          btn.style.opacity = '0.7'
+        }}
+        onTouchMove={(e) => {
+          if (!fabDragRef.current) return
+          const touch = e.touches[0]
+          const dx = touch.clientX - fabDragRef.current.startX
+          const dy = touch.clientY - fabDragRef.current.startY
+          if (Math.abs(dx) > 5 || Math.abs(dy) > 5) fabDragRef.current.dragged = true
+          if (!fabDragRef.current.dragged) return
+          const nx = Math.max(0, Math.min(window.innerWidth - 55, fabDragRef.current.btnX + dx))
+          const ny = Math.max(0, Math.min(window.innerHeight - 55, fabDragRef.current.btnY + dy))
+          setFabPos({ x: nx, y: ny })
+        }}
+        onTouchEnd={(e) => {
+          e.currentTarget.style.opacity = '1'
+          if (fabDragRef.current?.dragged) {
+            e.preventDefault()
+          }
+          fabDragRef.current = null
+        }}
         style={{
-          position: 'fixed', right: 16, bottom: 70, zIndex: 200,
-          width: 50, height: 50, borderRadius: '50%', border: 'none', cursor: 'pointer',
+          position: 'fixed',
+          ...(fabPos.x != null ? { left: fabPos.x, top: fabPos.y } : { right: 16, bottom: 70 }),
+          zIndex: 200,
+          width: 55, height: 55, borderRadius: '50%', border: 'none', cursor: 'pointer',
           background: '#C4725A', display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: '0 2px 12px rgba(196,114,90,0.3)',
-          transition: 'transform 0.2s ease',
+          transition: fabDragRef.current?.dragged ? 'none' : 'transform 0.2s ease',
           transform: fabOpen ? 'scale(1.05)' : 'scale(1)',
+          touchAction: 'none',
         }}
         aria-label="Translator"
       >
-        <Languages size={24} color="white" strokeWidth={1.8} />
+        <Languages size={26} color="white" strokeWidth={1.8} />
       </button>
 
       {/* Bottom Navigation — 4탭: 探险/地图/预约/我的 */}

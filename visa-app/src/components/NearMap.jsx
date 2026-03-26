@@ -241,7 +241,7 @@ function buildTourbusTicketPinHTML(number, color, stopId) {
         display:flex;align-items:center;justify-content:center;
         cursor:pointer;color:white;font-size:12px;font-weight:700;
         position:relative;
-      ">⭐</div>
+      "><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg></div>
     </div>
   `
 }
@@ -730,63 +730,69 @@ export default function NearMap() {
   // ── 실시간 버스 위치 (스케줄 기반 예상 위치) ──
   // 실시간 API 확보 시 교체. 현재는 운행 스케줄 기반 예상 위치
   useEffect(() => {
-    busMarkersRef.current.forEach(o => o.setMap(null))
-    busMarkersRef.current = []
-    if (!busLiveMode || !mapReady || !mapInstance.current || !window.kakao?.maps) return
+    const updateBusPositions = () => {
+      busMarkersRef.current.forEach(o => o.setMap(null))
+      busMarkersRef.current = []
+      if (!busLiveMode || !mapReady || !mapInstance.current || !window.kakao?.maps) return
 
-    const map = mapInstance.current
-    const now = new Date()
-    const nowMin = now.getHours() * 60 + now.getMinutes()
+      const map = mapInstance.current
+      const now = new Date()
+      const nowMin = now.getHours() * 60 + now.getMinutes()
 
-    TOURBUS_ROUTES.forEach(route => {
-      const visibleStops = route.stops.filter(s => !s.noStop)
-      if (visibleStops.length < 2) return
+      TOURBUS_ROUTES.forEach(route => {
+        const visibleStops = route.stops.filter(s => !s.noStop)
+        if (visibleStops.length < 2) return
 
-      // 운행 시간 파싱 (예: "09:30~17:00")
-      const schedMatch = (route.schedule.ko || '').match(/(\d{1,2}):(\d{2})/)
-      if (!schedMatch) return
-      const startMin = parseInt(schedMatch[1]) * 60 + parseInt(schedMatch[2])
-      const isNight = route.id.includes('night')
-      const endMin = isNight ? startMin + 60 : 17 * 60
+        // 운행 시간 파싱 (예: "09:30~17:00")
+        const schedMatch = (route.schedule.ko || '').match(/(\d{1,2}):(\d{2})/)
+        if (!schedMatch) return
+        const startMin = parseInt(schedMatch[1]) * 60 + parseInt(schedMatch[2])
+        const isNight = route.id.includes('night')
+        const endMin = isNight ? startMin + 60 : 17 * 60
 
-      if (nowMin < startMin || nowMin > endMin) return
+        if (nowMin < startMin || nowMin > endMin) return
 
-      // 현재 시간 기반 예상 정류장 인덱스
-      const progress = (nowMin - startMin) / (endMin - startMin)
-      const stopIdx = Math.min(Math.floor(progress * visibleStops.length), visibleStops.length - 1)
-      const nextIdx = Math.min(stopIdx + 1, visibleStops.length - 1)
+        // 현재 시간 기반 예상 정류장 인덱스
+        const progress = (nowMin - startMin) / (endMin - startMin)
+        const stopIdx = Math.min(Math.floor(progress * visibleStops.length), visibleStops.length - 1)
+        const nextIdx = Math.min(stopIdx + 1, visibleStops.length - 1)
 
-      // 두 정류장 사이 보간
-      const s1 = visibleStops[stopIdx]
-      const s2 = visibleStops[nextIdx]
-      const subProgress = (progress * visibleStops.length) - stopIdx
-      const lat = s1.lat + (s2.lat - s1.lat) * subProgress
-      const lng = s1.lng + (s2.lng - s1.lng) * subProgress
+        // 두 정류장 사이 보간
+        const s1 = visibleStops[stopIdx]
+        const s2 = visibleStops[nextIdx]
+        const subProgress = (progress * visibleStops.length) - stopIdx
+        const lat = s1.lat + (s2.lat - s1.lat) * subProgress
+        const lng = s1.lng + (s2.lng - s1.lng) * subProgress
 
-      const el = document.createElement('div')
-      el.innerHTML = `<div style="width:20px;height:20px;border-radius:50%;background:#C4725A;border:2px solid white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(196,114,90,0.4);cursor:pointer"><span style="font-size:9px;font-weight:700;color:white">B</span></div>`
-      const overlay = new window.kakao.maps.CustomOverlay({
-        map, position: new window.kakao.maps.LatLng(lat, lng),
-        content: el, yAnchor: 0.5, zIndex: 6,
-      })
-      const routeLabel = getRouteLabel(route)
-      el.addEventListener('click', () => {
-        setActivePopup({
-          id: `bus-${route.id}`, category: 'tourbus-live',
-          name_ko: `${routeLabel.ko} 버스`,
-          name_zh: `${routeLabel.zh} 巴士`,
-          name_en: `${routeLabel.en} Bus`,
-          lat, lng,
-          _busInfo: {
-            route: routeLabel,
-            currentStop: s1.name,
-            nextStop: s2.name,
-            color: route.color,
-          },
+        const el = document.createElement('div')
+        el.innerHTML = `<div style="width:20px;height:20px;border-radius:50%;background:#C4725A;border:2px solid white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(196,114,90,0.4);cursor:pointer"><span style="font-size:9px;font-weight:700;color:white">B</span></div>`
+        const overlay = new window.kakao.maps.CustomOverlay({
+          map, position: new window.kakao.maps.LatLng(lat, lng),
+          content: el, yAnchor: 0.5, zIndex: 8,
         })
+        const routeLabel = getRouteLabel(route)
+        el.addEventListener('click', () => {
+          setActivePopup({
+            id: `bus-${route.id}`, category: 'tourbus-live',
+            name_ko: `${routeLabel.ko} 버스`,
+            name_zh: `${routeLabel.zh} 巴士`,
+            name_en: `${routeLabel.en} Bus`,
+            lat, lng,
+            _busInfo: {
+              route: routeLabel,
+              currentStop: s1.name,
+              nextStop: s2.name,
+              color: route.color,
+            },
+          })
+        })
+        busMarkersRef.current.push(overlay)
       })
-      busMarkersRef.current.push(overlay)
-    })
+    }
+
+    updateBusPositions()
+    const interval = busLiveMode ? setInterval(updateBusPositions, 30000) : null
+    return () => { if (interval) clearInterval(interval) }
   }, [busLiveMode, mapReady])
 
   const moveToArea = (area) => {
@@ -1037,6 +1043,12 @@ export default function NearMap() {
                 </button>
               )
             })}
+            <button onClick={() => setBusLiveMode(v => !v)} style={{ flexShrink: 0, height: 28, padding: '0 10px', borderRadius: 20, background: busLiveMode ? '#C4725A' : 'white', color: busLiveMode ? 'white' : '#6B6B6B', border: busLiveMode ? 'none' : '1px solid rgba(0,0,0,0.08)', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+              {lang === 'zh' ? '找公交' : lang === 'en' ? 'Bus' : '버스찾기'}
+            </button>
+            <button onClick={() => setShowAllianceSheet(v => !v)} style={{ flexShrink: 0, height: 28, padding: '0 10px', borderRadius: 20, background: showAllianceSheet ? '#C4725A' : 'white', color: showAllianceSheet ? 'white' : '#6B6B6B', border: showAllianceSheet ? 'none' : '1px solid rgba(0,0,0,0.08)', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+              {lang === 'zh' ? '优惠折扣' : lang === 'en' ? 'Deals' : '제휴할인'}
+            </button>
           </div>
         )}
 
@@ -1191,39 +1203,7 @@ export default function NearMap() {
         </>
       )}
 
-      {/* ─── 우측 플로팅: 버스 실시간 + 제휴할인 ─── */}
-      <div style={{ position: 'absolute', top: 60, right: 12, zIndex: 9, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {/* 실시간 버스 */}
-        <button
-          onClick={() => setBusLiveMode(v => !v)}
-          style={{
-            width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer',
-            background: busLiveMode ? '#C4725A' : 'white',
-            color: busLiveMode ? 'white' : '#6B6B6B',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-            fontSize: 16, fontWeight: 700,
-          }}
-          title={lang === 'zh' ? '实时巴士' : lang === 'en' ? 'Live Bus' : '실시간 버스'}
-        >
-          B
-        </button>
-        {/* 제휴할인 */}
-        <button
-          onClick={() => setShowAllianceSheet(v => !v)}
-          style={{
-            width: 40, height: 40, borderRadius: '50%', border: 'none', cursor: 'pointer',
-            background: showAllianceSheet ? '#C4725A' : 'white',
-            color: showAllianceSheet ? 'white' : '#6B6B6B',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-            fontSize: 14, fontWeight: 700,
-          }}
-          title={lang === 'zh' ? '优惠' : lang === 'en' ? 'Deals' : '할인'}
-        >
-          %
-        </button>
-      </div>
+      {/* B/% 버튼은 투어버스 서브필터 바로 이동됨 */}
 
       {/* ─── 제휴할인 바텀시트 ─── */}
       {showAllianceSheet && (

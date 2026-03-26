@@ -5,6 +5,8 @@
  * isTicketStop: true = 매표소/결제 가능 정류장 (⭐ 하이라이트)
  *
  * // 주 1회 https://www.seoulcitybus.com/ 확인하여 노선변경/추가정보 업데이트 필요
+ * // TODO: 노선 폴리라인을 실제 도로 경유지(waypoints)로 교체 — 현재는 정류장 간 직선
+ * // 카카오 Directions API 또는 수동 좌표 추가로 곡선 경로 구현 예정
  */
 
 export const TOURBUS_ROUTES = [

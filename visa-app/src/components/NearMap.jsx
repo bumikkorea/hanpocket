@@ -1257,7 +1257,17 @@ export default function NearMap() {
           overflowY: isExpanded || tourbusMode ? 'auto' : 'hidden',
         }}
       >
-        {isExpanded && sheetPoi ? (
+        {/* 투어버스 정류장 바텀시트 — 최우선 */}
+        {tourbusMode && sheetPoi?.category === 'tourbus' ? (
+          <TourbusStopSheet
+            stop={sheetPoi}
+            route={sheetPoi._tourbusRoute}
+            stopNum={sheetPoi._stopNum}
+            lang={lang}
+            onClose={closeSheet}
+            onExit={exitTourbusMode}
+          />
+        ) : isExpanded && sheetPoi ? (
           sheetPoi._restaurant ? (
             <MichelinSheetContent
               poi={sheetPoi}
@@ -1280,15 +1290,6 @@ export default function NearMap() {
             statusTick={statusTick}
           />
           )
-        ) : tourbusMode && sheetPoi?.category === 'tourbus' ? (
-          <TourbusStopSheet
-            stop={sheetPoi}
-            route={sheetPoi._tourbusRoute}
-            stopNum={sheetPoi._stopNum}
-            lang={lang}
-            onClose={closeSheet}
-            onExit={exitTourbusMode}
-          />
         ) : tourbusMode ? (
           <TourbusRouteList
             routes={activeRouteIds.length > 0 ? TOURBUS_ROUTES.filter(r => activeRouteIds.includes(r.id)) : TOURBUS_ROUTES}

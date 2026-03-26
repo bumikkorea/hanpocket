@@ -96,5 +96,15 @@
   "bookmark_empty":   "保存なし",
 
   "net_error":        "通信エラー。再試行してください",
-  "retry":            "再試行"
+  "retry":            "再試行",
+  "cat_michelin": "ミシュラン",
+  "michelin_all": "全部",
+  "michelin_3star": "三ツ星",
+  "michelin_2star": "二ツ星",
+  "michelin_1star": "一ツ星",
+  "michelin_bib": "ビブ",
+  "michelin_blue": "ブルーリボン",
+  "michelin_price": "価格帯",
+  "michelin_award": "受賞",
+  "michelin_reserve": "予約"
 }

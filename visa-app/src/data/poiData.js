@@ -9,6 +9,7 @@ export const CATEGORY_CONFIG = {
   cafe:        { color: '#8B6F47', label: '咖啡',   letter: 'C' },
   utility:     { color: '#007AFF', label: '便利',   letter: 'U' },
   convenience: { color: '#007AFF', label: '便利',   letter: 'U' },  // DB category alias
+  michelin:    { color: '#DC2626', label: '米其林', letter: 'M' },
 }
 
 export const POI_DATA = [

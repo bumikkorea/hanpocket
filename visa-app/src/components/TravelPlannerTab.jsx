@@ -6,8 +6,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLanguage } from '../i18n/index.jsx'
 import { searchKeyword } from '../api/tourApi'
+import { STORES, SERVICE_TYPES, getStoreHours, isStoreOpen } from '../data/stores.js'
 
 const STORAGE_KEY = 'near-travel-plan'
+
+// store_id → store 데이터 조회
+function findStore(storeId) { return STORES.find(s => s.id === storeId) || null }
 
 function L(lang, d) {
   if (typeof d === 'string') return d
@@ -98,7 +102,7 @@ function savePlan(plan) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(plan))
 }
 
-// 시스템 카드(입국/출국) 보장
+// 시스템 카드(입국/출국) 보장 + Day1 샘플 시드
 function ensureSystemItems(plan) {
   const { arrivalDate, departureDate } = plan
   const next = { ...plan, days: { ...plan.days } }
@@ -124,6 +128,32 @@ function ensureSystemItems(plan) {
         { id: 'auto-departure', type: 'system', subtype: 'departure', title: { ko: '출국하기', zh: '出境', en: 'Departure' }, time: null },
         ...depItems.filter(i => i.id !== 'auto-departure'),
       ],
+    }
+  }
+
+  // Day1 (입국일 다음날) 샘플 시드: stores.js 데이터 사용
+  const daysList = buildDaysList(arrivalDate, departureDate)
+  if (daysList.length >= 2) {
+    const day1 = daysList[1]
+    if (!next.days[day1]) next.days[day1] = { items: [] }
+    const day1Items = next.days[day1].items
+    if (!day1Items.find(i => i.store_id === 'beluga-studio')) {
+      const beluga = STORES.find(s => s.id === 'beluga-studio')
+      const mined = STORES.find(s => s.id === 'mined-seongsu')
+      const samplePlaces = []
+      if (beluga) samplePlaces.push({
+        id: 'sample-beluga', type: 'place', store_id: 'beluga-studio',
+        name_kr: beluga.name_kr, name_cn: beluga.name_cn,
+        category: beluga.service_type, time: '10:00',
+        addr: beluga.address_kr,
+      })
+      if (mined) samplePlaces.push({
+        id: 'sample-mined', type: 'place', store_id: 'mined-seongsu',
+        name_kr: mined.name_kr, name_cn: mined.name_cn,
+        category: mined.service_type, time: '14:00',
+        addr: mined.address_kr,
+      })
+      next.days[day1] = { ...next.days[day1], items: [...day1Items, ...samplePlaces] }
     }
   }
 
@@ -625,117 +655,137 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
         </div>
 
         {/* 우측 타임테이블 */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 16px 80px 12px', minWidth: 0 }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0 80px 0', minWidth: 0 }}>
 
-          {selectedDayData.items.map(item => {
-            /* ── 시스템 카드 ── */
-            if (item.type === 'system') {
-              const isExpanded = expandedSystem[item.id]
-              const subItems = item.subtype === 'arrival' ? ARRIVAL_ITEMS : DEPARTURE_ITEMS
-
-              return (
-                <div key={item.id} style={{ background: '#FBF7F5', borderRadius: 12, padding: '12px 14px', marginBottom: 6 }}>
-                  <div
-                    onClick={() => toggleSystemExpand(item.id)}
-                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-                  >
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: '#C4725A' }}>
-                        {L(lang, item.title)}
-                      </div>
-                      <div style={{ fontSize: 10, color: '#C4725A', opacity: 0.6, marginTop: 2 }}>
-                        {L(lang, { ko: '탭하여 보기', zh: '点击查看', en: 'Tap to view' })}
-                      </div>
-                    </div>
-                    <span style={{ fontSize: 10, color: '#C4725A', opacity: 0.4, transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', display: 'inline-block' }}>
-                      ▼
-                    </span>
+          {/* 시스템 카드들 (입국/출국) */}
+          {selectedDayData.items.filter(i => i.type === 'system').map(item => {
+            const isExpanded = expandedSystem[item.id]
+            const subItems = item.subtype === 'arrival' ? ARRIVAL_ITEMS : DEPARTURE_ITEMS
+            return (
+              <div key={item.id} style={{ background: '#FBF7F5', borderRadius: 12, padding: '12px 14px', margin: '0 12px 6px' }}>
+                <div onClick={() => toggleSystemExpand(item.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#C4725A' }}>{L(lang, item.title)}</div>
+                    <div style={{ fontSize: 10, color: '#C4725A', opacity: 0.6, marginTop: 2 }}>{L(lang, { ko: '탭하여 보기', zh: '点击查看', en: 'Tap to view' })}</div>
                   </div>
-
-                  {isExpanded && (
-                    <div style={{ marginTop: 8 }}>
-                      {subItems.map((si) => (
-                        <div
-                          key={si.id}
-                          onClick={() => {
-                            if (si.sub && setSubPage) setSubPage(si.sub)
-                            else if (si.tab && setTab) setTab(si.tab)
-                          }}
-                          style={{
-                            padding: '8px 0', borderTop: '1px solid rgba(196,114,90,0.1)',
-                            fontSize: 12, color: '#6B6B6B', cursor: 'pointer',
-                          }}
-                          onMouseEnter={e => e.currentTarget.style.color = '#C4725A'}
-                          onMouseLeave={e => e.currentTarget.style.color = '#6B6B6B'}
-                        >
-                          {L(lang, si.label)}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <span style={{ fontSize: 10, color: '#C4725A', opacity: 0.4, transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▼</span>
                 </div>
-              )
-            }
-
-            /* ── 장소 카드 ── */
-            if (item.type === 'place') {
-              const dayOfWeek = strToDate(selectedDay).getDay()
-              const isClosed = item.closedDay && item.closedDay.includes(DAY_NAMES_KO[dayOfWeek])
-              const displayName = item.name_cn || item.name_kr || ''
-              const initials = displayName.slice(0, 2)
-              const isHovered = hoveredItem === item.id
-
-              const metaParts = []
-              const catObj = CATEGORIES.find(c => c.id === item.category)
-              if (catObj) metaParts.push(L(lang, catObj.label))
-              if (item.hours) metaParts.push(item.hours)
-              if (item.closedDay) metaParts.push(`${item.closedDay} ${L(lang, { ko: '휴무', zh: '休息', en: 'closed' })}`)
-              const metaLine = metaParts.join(' · ')
-
-              return (
-                <div
-                  key={item.id}
-                  style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '10px 0', borderBottom: '1px solid #F0EDED' }}
-                  onMouseEnter={() => setHoveredItem(item.id)}
-                  onMouseLeave={() => setHoveredItem(null)}
-                >
-                  <div style={{ width: 3, height: 32, borderRadius: 2, background: isClosed ? '#D94F4F' : '#C4725A', opacity: 0.7, flexShrink: 0, marginTop: 4 }} />
-                  <div style={{ width: 36, height: 36, borderRadius: 8, background: '#F0EDED', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#A8A8A8' }}>{initials}</span>
+                {isExpanded && (
+                  <div style={{ marginTop: 8 }}>
+                    {subItems.map((si) => (
+                      <div key={si.id}
+                        onClick={() => { if (si.sub && setSubPage) setSubPage(si.sub); else if (si.tab && setTab) setTab(si.tab) }}
+                        style={{ padding: '8px 0', borderTop: '1px solid rgba(196,114,90,0.1)', fontSize: 12, color: '#6B6B6B', cursor: 'pointer' }}
+                        onMouseEnter={e => e.currentTarget.style.color = '#C4725A'}
+                        onMouseLeave={e => e.currentTarget.style.color = '#6B6B6B'}
+                      >{L(lang, si.label)}</div>
+                    ))}
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    {item.time && (
-                      <div style={{ fontSize: 10, fontWeight: 600, color: '#C4725A', marginBottom: 2 }}>{item.time}</div>
-                    )}
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {item.name_cn || item.name_kr}
-                    </div>
-                    {item.name_cn && item.name_kr && (
-                      <div style={{ fontSize: 11, color: '#A8A8A8', marginTop: 1 }}>{item.name_kr}</div>
-                    )}
-                    {metaLine && <div style={{ fontSize: 10, color: '#A8A8A8', marginTop: 2 }}>{metaLine}</div>}
-                    {isClosed && (
-                      <div style={{ marginTop: 2, fontSize: 10, color: '#D94F4F', fontWeight: 600 }}>
-                        {L(lang, { ko: '이 날은 휴무일입니다', zh: '今天休息', en: 'Closed today' })}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleDeleteItem(item.id)}
-                    style={{
-                      background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0,
-                      fontSize: 10, color: '#A8A8A8', padding: '4px',
-                      opacity: isHovered ? 1 : 0, transition: 'opacity 0.15s',
-                    }}
-                  >
-                    ✕
-                  </button>
-                </div>
-              )
-            }
-
-            return null
+                )}
+              </div>
+            )
           })}
+
+          {/* 장소 타임라인 */}
+          {(() => {
+            const placeItems = selectedDayData.items.filter(i => i.type === 'place')
+            const selectedDate = strToDate(selectedDay)
+            const dayOfWeek = selectedDate.getDay()
+            const nowHHMM = (() => { const n = new Date(); return `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}` })()
+            const isToday = selectedDay === dateToStr(new Date())
+
+            // "다음 일정" 인덱스 찾기 (오늘인 경우만)
+            let nextIdx = -1
+            if (isToday) {
+              for (let i = 0; i < placeItems.length; i++) {
+                if (placeItems[i].time && placeItems[i].time >= nowHHMM) { nextIdx = i; break }
+              }
+            }
+
+            if (placeItems.length === 0) return null
+
+            return (
+              <div style={{ padding: '4px 12px 0 0' }}>
+                {placeItems.map((item, idx) => {
+                  const store = item.store_id ? findStore(item.store_id) : null
+                  const isClosed = store ? !isStoreOpen(store, selectedDate) : (item.closedDay && item.closedDay.includes(DAY_NAMES_KO[dayOfWeek]))
+                  const displayName = (lang === 'zh' && item.name_cn) ? item.name_cn : item.name_kr || item.name_cn || ''
+                  const isHovered = hoveredItem === item.id
+                  const isNext = idx === nextIdx
+
+                  const metaParts = []
+                  if (store) {
+                    const typeLabel = SERVICE_TYPES[store.service_type]
+                    if (typeLabel) metaParts.push(L(lang, typeLabel))
+                    if (store.nearest_station) metaParts.push(store.nearest_station)
+                    const todayHours = getStoreHours(store, selectedDate)
+                    if (todayHours) metaParts.push(todayHours)
+                  } else {
+                    const catObj = CATEGORIES.find(c => c.id === item.category)
+                    if (catObj) metaParts.push(L(lang, catObj.label))
+                    if (item.hours) metaParts.push(item.hours)
+                  }
+                  const metaLine = metaParts.join(' · ')
+
+                  const closedDayText = isClosed ? (() => {
+                    const dayNames = { ko: DAY_NAMES_KO, zh: ['日','一','二','三','四','五','六'], en: DAY_NAMES_EN }
+                    const dn = (dayNames[lang] || DAY_NAMES_KO)[dayOfWeek]
+                    return L(lang, { ko: `${dn}요일 휴무`, zh: `周${dn}休息`, en: `Closed ${dn}` })
+                  })() : null
+
+                  // 연결선 색상
+                  const lineColor = isClosed ? '#D94F4F' : isNext ? '#C4725A' : '#F0EDED'
+                  const dotColor = isClosed ? '#D94F4F' : '#C4725A'
+                  const isLast = idx === placeItems.length - 1
+
+                  return (
+                    <div
+                      key={item.id}
+                      style={{ display: 'flex', padding: '0 0 0 4px' }}
+                      onMouseEnter={() => setHoveredItem(item.id)}
+                      onMouseLeave={() => setHoveredItem(null)}
+                    >
+                      {/* 시간 컬럼 (50px) */}
+                      <div style={{ width: 50, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', paddingRight: 8, position: 'relative' }}>
+                        {/* 시간 텍스트 */}
+                        <div style={{ fontSize: 11, fontWeight: 700, color: '#C4725A', lineHeight: 1, marginTop: 2 }}>
+                          {item.time || '--:--'}
+                        </div>
+                        {/* 연결선 (마지막 아이템 제외) */}
+                        {!isLast && (
+                          <div style={{ position: 'absolute', top: 16, right: -1, bottom: -6, width: 1, background: lineColor }} />
+                        )}
+                      </div>
+
+                      {/* dot + 가로선 */}
+                      <div style={{ display: 'flex', alignItems: 'flex-start', paddingTop: 4, flexShrink: 0 }}>
+                        <div style={{ width: 4, height: 4, borderRadius: '50%', background: dotColor, flexShrink: 0 }} />
+                        <div style={{ width: 8, height: 1, background: lineColor, marginTop: 1.5 }} />
+                      </div>
+
+                      {/* 장소 정보 */}
+                      <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : 6, borderBottom: isLast ? 'none' : '1px solid #F0EDED', marginBottom: isLast ? 0 : 6 }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              {displayName}
+                            </div>
+                            {metaLine && <div style={{ fontSize: 10, color: '#A8A8A8', marginTop: 2, letterSpacing: '-0.2px' }}>{metaLine}</div>}
+                            {closedDayText && <div style={{ marginTop: 2, fontSize: 10, color: '#D94F4F', fontWeight: 600 }}>{closedDayText}</div>}
+                          </div>
+                          {/* 삭제 — hover시만 */}
+                          <button onClick={() => handleDeleteItem(item.id)}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, fontSize: 10, color: '#A8A8A8', padding: '2px 4px', opacity: isHovered ? 1 : 0, transition: 'opacity 0.15s' }}>
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })()}
 
           {/* 빈 상태 */}
           {!isArrivalDay && !isDepartureDay && !hasPlaces && (
@@ -750,7 +800,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
           <button
             onClick={() => setShowAddPlace(true)}
             style={{
-              width: '100%', marginTop: 6, padding: 14, borderRadius: 10,
+              width: 'calc(100% - 24px)', margin: '6px 12px 0', padding: 14, borderRadius: 10,
               border: '1px dashed #F0EDED', background: 'transparent', cursor: 'pointer',
               fontSize: 12, color: '#A8A8A8',
             }}
@@ -761,7 +811,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
           </button>
 
           {/* 미배정 섹션 */}
-          <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed #F0EDED' }}>
+          <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed #F0EDED', margin: '12px 12px 0' }}>
             <div style={{ fontSize: 10, color: '#A8A8A8', fontWeight: 600 }}>
               {L(lang, { ko: '미배정 장소', zh: '未分配地点', en: 'Unassigned' })}
             </div>

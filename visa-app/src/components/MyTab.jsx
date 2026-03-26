@@ -158,7 +158,7 @@ export default function MyTab({ setTab, setSubPage }) {
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}
           >
             <span style={{ fontSize: 19, fontWeight: 700, color: '#1A1A1A' }}>{displayName}</span>
-            <span style={{ fontSize: 11, color: '#888888' }}>수정</span>
+            <span style={{ fontSize: 11, color: '#6B6B6B' }}>수정</span>
           </button>
 
           {/* 여행 목적 태그 */}
@@ -184,7 +184,7 @@ export default function MyTab({ setTab, setSubPage }) {
               onClick={() => { setSelectedPurposes([]); setPurposeModalOpen(true) }}
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
             >
-              <span style={{ fontSize: 12, color: '#BBBBBB' }}>
+              <span style={{ fontSize: 12, color: '#A8A8A8' }}>
                 {L(lang, { zh: '+ 设置旅行目的', ko: '+ 여행 목적 설정', en: '+ Set travel purpose' })}
               </span>
             </button>
@@ -217,7 +217,7 @@ export default function MyTab({ setTab, setSubPage }) {
               <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A', fontFamily: 'Inter, sans-serif', lineHeight: 1 }}>
                 {item.count}{item.unit}
               </div>
-              <div style={{ fontSize: 11, color: '#888888', marginTop: 2 }}>{t(item.labelKey)}</div>
+              <div style={{ fontSize: 11, color: '#6B6B6B', marginTop: 2 }}>{t(item.labelKey)}</div>
             </div>
           </button>
         ))}
@@ -244,7 +244,7 @@ export default function MyTab({ setTab, setSubPage }) {
                 }}>
                 </div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A', fontFamily: 'Inter, sans-serif' }}>{count}</div>
-                <div style={{ fontSize: 11, color: '#888888' }}>{t(stat.labelKey)}</div>
+                <div style={{ fontSize: 11, color: '#6B6B6B' }}>{t(stat.labelKey)}</div>
               </div>
             )
           })}
@@ -278,7 +278,7 @@ export default function MyTab({ setTab, setSubPage }) {
                   fontSize: 11, fontWeight: 700,
                 }}>{badge}</span>
               )}
-              <span style={{ fontSize: 14, color: '#BBBBBB' }}>›</span>
+              <span style={{ fontSize: 14, color: '#A8A8A8' }}>›</span>
             </button>
           )
         })}
@@ -286,8 +286,8 @@ export default function MyTab({ setTab, setSubPage }) {
 
       {/* ─── 버전 ─── */}
       <div style={{ textAlign: 'center', padding: '32px 0 8px' }}>
-        <p style={{ fontSize: 11, color: '#BBBBBB', margin: 0 }}>NEAR v1.0.0</p>
-        <p style={{ fontSize: 11, color: '#BBBBBB', marginTop: 4 }}>{t('my.version')}</p>
+        <p style={{ fontSize: 11, color: '#A8A8A8', margin: 0 }}>NEAR v1.0.0</p>
+        <p style={{ fontSize: 11, color: '#A8A8A8', marginTop: 4 }}>{t('my.version')}</p>
       </div>
 
       {/* ══════════════════ MODALS ══════════════════ */}
@@ -297,7 +297,7 @@ export default function MyTab({ setTab, setSubPage }) {
         <NeuSheet onClose={() => setLangModalOpen(false)}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: 0 }}>{t('lang.title')}</h3>
-            <button onClick={() => setLangModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#888888' }}>
+            <button onClick={() => setLangModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#6B6B6B' }}>
               ✕
             </button>
           </div>
@@ -331,7 +331,7 @@ export default function MyTab({ setTab, setSubPage }) {
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: 0 }}>
               {L(lang, { zh: '修改昵称', ko: '닉네임 수정', en: 'Edit Nickname' })}
             </h3>
-            <button onClick={() => setNicknameModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#888888' }}>
+            <button onClick={() => setNicknameModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#6B6B6B' }}>
               ✕
             </button>
           </div>
@@ -369,12 +369,12 @@ export default function MyTab({ setTab, setSubPage }) {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
             <h3 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: 0 }}>{t('my.purposeTitle')}</h3>
             {purposes !== null && (
-              <button onClick={() => setPurposeModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#888888' }}>
+              <button onClick={() => setPurposeModalOpen(false)} style={{ background: NEU.bg, border: 'none', cursor: 'pointer', padding: 8, borderRadius: '50%', boxShadow: NEU.shadowOutSm, display: 'flex', fontSize: 18, color: '#6B6B6B' }}>
                 ✕
               </button>
             )}
           </div>
-          <p style={{ fontSize: 13, color: '#888888', marginBottom: 20 }}>
+          <p style={{ fontSize: 13, color: '#6B6B6B', marginBottom: 20 }}>
             {L(lang, { zh: '最多选择3项', ko: '최대 3개 선택', en: 'Select up to 3' })}
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10, marginBottom: 24 }}>

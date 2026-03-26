@@ -465,6 +465,10 @@ export default function NearMap() {
       const wrapper = el?.querySelector('[data-poi]')
       if (wrapper) { wrapper.style.transform = 'scale(1)'; wrapper.style.opacity = '1' }
     })
+    michelinOverlaysRef.current.forEach(({ el }) => {
+      const wrapper = el?.querySelector('[data-poi]')
+      if (wrapper) { wrapper.style.transform = 'scale(1)'; wrapper.style.opacity = '1' }
+    })
     // 임시 검색 핀 제거
     if (tempSearchMarkerRef.current) {
       tempSearchMarkerRef.current.setMap(null)
@@ -479,7 +483,15 @@ export default function NearMap() {
     if (mapInstance.current) {
       mapInstance.current.panTo(new window.kakao.maps.LatLng(poi.lat, poi.lng))
     }
+    // 일반 핀 하이라이트
     overlaysRef.current.forEach(({ el, poi: p }) => {
+      const wrapper = el?.querySelector('[data-poi]')
+      if (!wrapper) return
+      wrapper.style.transform = p.id === poi.id ? 'scale(1.2)' : 'scale(1)'
+      wrapper.style.opacity = p.id === poi.id ? '1' : '0.4'
+    })
+    // 미슐랭 핀 하이라이트
+    michelinOverlaysRef.current.forEach(({ el, poi: p }) => {
       const wrapper = el?.querySelector('[data-poi]')
       if (!wrapper) return
       wrapper.style.transform = p.id === poi.id ? 'scale(1.2)' : 'scale(1)'
@@ -806,7 +818,7 @@ export default function NearMap() {
           padding: '0 14px', height: 44, gap: 8,
           transition: 'box-shadow 0.15s ease',
         }}>
-          <span style={{ fontSize: 14, color: '#888888', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}>
+          <span style={{ fontSize: 14, color: '#A8A8A8', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}>
             {tLang(PH_KEYS[phIdx], lang)}
           </span>
         </div>
@@ -855,6 +867,7 @@ export default function NearMap() {
                 key={chip.id}
                 onClick={() => {
                   setActiveCategory(chip.id)
+                  if (chip.id !== 'michelin') setMichelinFilter('all')
                   closeSheet()
                   exitCourseMode()
                   setShowAllPanel(chip.id === 'all' ? v => !v : false)
@@ -1678,14 +1691,14 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
               </span>
             )}
             {isKakao && (
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#888', background: 'rgba(0,0,0,0.06)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#6B6B6B', background: 'rgba(0,0,0,0.06)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
                 카카오
               </span>
             )}
           </div>
-          {addr ? <div style={{ fontSize: 13, color: '#888', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{addr}</div> : null}
+          {addr ? <div style={{ fontSize: 13, color: '#6B6B6B', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{addr}</div> : null}
         </div>
-        <span style={{ fontSize: 18, color: '#BBB', flexShrink: 0 }}>›</span>
+        <span style={{ fontSize: 18, color: '#A8A8A8', flexShrink: 0 }}>›</span>
       </button>
     )
   }
@@ -1751,7 +1764,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
         ) : searching ? (
           <div style={{ paddingTop: 32, textAlign: 'center' }}>
             <div style={{ fontSize: 24, marginBottom: 8 }}>🔍</div>
-            <div style={{ fontSize: 14, color: '#888' }}>{lang === 'zh' ? '搜索中...' : lang === 'ko' ? '검색 중...' : 'Searching...'}</div>
+            <div style={{ fontSize: 14, color: '#6B6B6B' }}>{lang === 'zh' ? '搜索中...' : lang === 'ko' ? '검색 중...' : 'Searching...'}</div>
           </div>
         ) : results.length > 0 ? (
           <div style={{ paddingTop: 8 }}>
@@ -2062,7 +2075,7 @@ function ReservationSheet({ poi, lang, onClose }) {
                   fontWeight: active ? 700 : 400,
                   transition: 'all 0.15s ease',
                 }}>
-                  <div style={{ fontSize: 10, opacity: 0.7 }}>{DAY_ZH[dt.getDay()]}</div>
+                  <div style={{ fontSize: 10, color: '#6B6B6B' }}>{DAY_ZH[dt.getDay()]}</div>
                   <div style={{ fontSize: 16, fontWeight: 700 }}>{dt.getDate()}</div>
                 </button>
               )

@@ -2107,7 +2107,11 @@ function AppInner() {
                 </button>
               ) : (
                 <button onClick={() => setShowAppMenu(!showAppMenu)} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
-                  메뉴
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <line x1="3" y1="5" x2="17" y2="5"/>
+                    <line x1="3" y1="10" x2="17" y2="10"/>
+                    <line x1="3" y1="15" x2="17" y2="15"/>
+                  </svg>
                 </button>
               )}
             </div>
@@ -2121,7 +2125,11 @@ function AppInner() {
             <div className="flex items-center justify-end gap-1 w-16">
               <div className="relative" ref={langMenuRef}>
                 <button onClick={() => setShowLangMenu(!showLangMenu)} className="text-[#5F6368] p-1">
-                  <span style={{fontSize:12,fontWeight:600,letterSpacing:'0.05em'}}>{lang?.toUpperCase?.() || 'ZH'}</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
                 </button>
                 {showLangMenu && (
                   <div className="absolute right-0 top-9 bg-white rounded-[10px] border border-[#E5E7EB] py-1 z-50 min-w-[120px]"
@@ -2762,7 +2770,7 @@ function AppInner() {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white transition-transform duration-300"
         style={{
           borderTop: '0.5px solid var(--border)',
-          height: '36px',
+          height: '72px',
           paddingBottom: 'env(safe-area-inset-bottom)',
           transform: 'translateY(0)',
         }}>
@@ -2772,9 +2780,9 @@ function AppInner() {
             return (
               <button key={item.id} onClick={() => handleTabChange(item.id)}
                 aria-label={`${item.label} tab`}
-                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 1, background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', transition: 'all 0.2s' }}>
-                <item.icon size={14} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s' }} />
-                <span style={{ fontSize: 8, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px', lineHeight: 1 }}>
+                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', transition: 'all 0.2s' }}>
+                <item.icon size={27} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s' }} />
+                <span style={{ fontSize: 12, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px', lineHeight: 1 }}>
                   {item.label}
                 </span>
               </button>

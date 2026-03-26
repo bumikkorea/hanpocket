@@ -299,9 +299,9 @@ function ShopCard({ shop, lang, onBook }) {
   const shopName = getLocalizedName(shop, lang)
   const shopLoc = lang === 'ko' ? (shop.location_ko || shop.location_zh) : lang === 'en' ? (shop.location_ko || shop.location_zh) : (shop.location_zh || shop.location_ko)
   return (
-    <div style={{ background: '#FAFAFA', borderRadius: 20, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF', padding: '20px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+    <div style={{ background: '#FAFAFA', borderRadius: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', padding: '20px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
       {/* 이미지/아이콘 */}
-      <div style={{ width: 56, height: 56, borderRadius: 16, background: shop.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '3px 3px 8px rgba(0,0,0,0.12), -2px -2px 6px rgba(255,255,255,0.5)' }}>
+      <div style={{ width: 56, height: 56, borderRadius: 16, background: shop.color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
         <span style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>{shop.letter}</span>
       </div>
       {/* 정보 */}
@@ -311,7 +311,7 @@ function ShopCard({ shop, lang, onBook }) {
         <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{shopLoc}</div>
       </div>
       {/* 예약 버튼 */}
-      <button onClick={() => onBook(shop)} style={{ flexShrink: 0, background: '#FAFAFA', border: 'none', borderRadius: 12, padding: '8px 14px', fontSize: 13, fontWeight: 700, color: BRAND, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 2, boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF'}>
+      <button onClick={() => onBook(shop)} style={{ flexShrink: 0, background: '#FAFAFA', border: 'none', borderRadius: 12, padding: '8px 14px', fontSize: 13, fontWeight: 700, color: BRAND, cursor: 'pointer', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 2, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>
         {L(lang, LABEL.book_btn)}
       </button>
     </div>
@@ -330,7 +330,7 @@ function StepService({ shop, services, servicesLoading, lang, onSelect, onBack, 
           <div style={{ textAlign: 'center', paddingTop: 60, color: 'var(--text-muted)', fontSize: 15 }}>{tLang('booking.loading', lang)}</div>
         ) : services.map(svc => (
           <button key={svc.id} onClick={() => setSelected(svc)}
-            style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '16px 16px', marginBottom: 12, background: '#FAFAFA', border: 'none', borderRadius: 16, cursor: 'pointer', gap: 12, textAlign: 'left', transition: 'box-shadow 0.15s ease', boxShadow: selected?.id === svc.id ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
+            style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '16px 16px', marginBottom: 12, background: '#FAFAFA', border: 'none', borderRadius: 16, cursor: 'pointer', gap: 12, textAlign: 'left', transition: 'box-shadow 0.15s ease', boxShadow: selected?.id === svc.id ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.04)' }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{svc[nameKey]}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -383,10 +383,10 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
             const isActive = selDate === d.date
             const isWeekend = d.dow === 0 || d.dow === 6
             const dateColor = isActive ? BRAND : isWeekend ? BRAND : '#1A1A1A'
-            const dayLabelColor = isActive ? BRAND : isWeekend ? BRAND : '#888888'
+            const dayLabelColor = isActive ? BRAND : isWeekend ? BRAND : '#6B6B6B'
             return (
               <button key={d.date} onClick={() => { setSelDate(d.date); setSelTime(null) }}
-                style={{ flexShrink: 0, minWidth: 48, padding: '8px 4px', borderRadius: 12, border: 'none', background: '#FAFAFA', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, transition: 'box-shadow 0.15s ease', boxShadow: isActive ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
+                style={{ flexShrink: 0, minWidth: 48, padding: '8px 4px', borderRadius: 12, border: 'none', background: '#FAFAFA', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, transition: 'box-shadow 0.15s ease', boxShadow: isActive ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.04)' }}>
                 <span style={{ fontSize: 10, fontWeight: 600, color: dayLabelColor }}>{d.isToday ? tLang('booking.today', lang) : getDayLabel(d.dow)}</span>
                 <span style={{ fontSize: 16, fontWeight: 800, color: dateColor }}>{d.day}</span>
               </button>
@@ -401,7 +401,7 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
             const active = selTime === slot
             return (
               <button key={slot} disabled={unavail} onClick={() => setSelTime(slot)}
-                style={{ padding: '10px 4px', borderRadius: 10, fontSize: 13, fontWeight: 600, border: 'none', background: '#FAFAFA', color: unavail ? '#BBBBBB' : active ? BRAND : '#1A1A1A', cursor: unavail ? 'not-allowed' : 'pointer', textDecoration: unavail ? 'line-through' : 'none', transition: 'box-shadow 0.15s ease', boxShadow: active ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : unavail ? 'none' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
+                style={{ padding: '10px 4px', borderRadius: 10, fontSize: 13, fontWeight: 600, border: 'none', background: '#FAFAFA', color: unavail ? '#A8A8A8' : active ? BRAND : '#1A1A1A', cursor: unavail ? 'not-allowed' : 'pointer', textDecoration: unavail ? 'line-through' : 'none', transition: 'box-shadow 0.15s ease', boxShadow: active ? '0 1px 4px rgba(0,0,0,0.06)' : unavail ? 'none' : '0 1px 4px rgba(0,0,0,0.04)' }}>
                 {slot}
               </button>
             )
@@ -411,10 +411,10 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>{L(lang, LABEL.guests)}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 4 }}>
           <button onClick={() => setGuests(g => Math.max(1, g - 1))}
-            style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#1A1A1A', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF'}>−</button>
+            style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#1A1A1A', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>−</button>
           <span style={{ fontSize: 20, fontWeight: 800, minWidth: 24, textAlign: 'center' }}>{guests}</span>
           <button onClick={() => setGuests(g => Math.min(10, g + 1))}
-            style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#1A1A1A', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF'}>+</button>
+            style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#1A1A1A', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>+</button>
           <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{guests}{L(lang, LABEL.people_unit)}</span>
         </div>
       </div>
@@ -461,7 +461,7 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
       {!noHeader && <StepHeader title={L(lang, LABEL.step3_title)} subtitle={shopName} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 16px' }}>
         {/* 예약 요약 */}
-        <div style={{ background: '#FAFAFA', borderRadius: 20, padding: '20px', marginBottom: 16, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
+        <div style={{ background: '#FAFAFA', borderRadius: 20, padding: '20px', marginBottom: 16, boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
           <Row label={lang === 'ko' ? '매장' : lang === 'zh' ? '门店' : 'Shop'} value={shopName} />
           <Row label={lang === 'ko' ? '서비스' : lang === 'zh' ? '服务' : 'Service'} value={svcName} />
           <Row label={lang === 'ko' ? '날짜' : lang === 'zh' ? '日期' : 'Date'} value={dateTime.date} />
@@ -478,7 +478,7 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
         </div>
         {/* 보증금 안내 토글 */}
         <button onClick={() => setShowNote(v => !v)}
-          style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#FAFAFA', borderRadius: 12, border: 'none', cursor: 'pointer', marginBottom: showNote ? 0 : 16, boxShadow: showNote ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
+          style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#FAFAFA', borderRadius: 12, border: 'none', cursor: 'pointer', marginBottom: showNote ? 0 : 16, boxShadow: showNote ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }}>
           <span style={{ fontSize: 12, fontWeight: 700, color: '#92400E' }}>{L(lang, LABEL.deposit_label)}</span>
           <span style={{ color: '#92400E', display: 'inline-block', transform: showNote ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s', fontSize: 14 }}>›</span>
         </button>
@@ -510,13 +510,13 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
 function ConfirmDone({ booking, lang, onGoMy, onGoMap }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 24px', textAlign: 'center', flex: 1 }}>
-      <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
+      <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
         <span style={{ color: '#16A34A', fontSize: 44, lineHeight: 1 }}>✓</span>
       </div>
       <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px' }}>{L(lang, LABEL.confirm_ok)}</h2>
       <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>{L(lang, LABEL.booking_no)}</p>
       <p style={{ fontSize: 16, fontWeight: 700, color: BRAND, marginBottom: 24, letterSpacing: '0.5px' }}>{booking.id}</p>
-      <div style={{ background: '#FAFAFA', borderRadius: 20, padding: '20px', width: '100%', marginBottom: 24, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF', textAlign: 'left' }}>
+      <div style={{ background: '#FAFAFA', borderRadius: 20, padding: '20px', width: '100%', marginBottom: 24, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', textAlign: 'left' }}>
         <Row label={lang === 'ko' ? '매장' : lang === 'zh' ? '门店' : 'Shop'} value={booking.shopName} />
         <Row label={lang === 'ko' ? '서비스' : lang === 'zh' ? '服务' : 'Service'} value={booking.service} />
         <Row label={lang === 'ko' ? '일시' : lang === 'zh' ? '日期时间' : 'DateTime'} value={`${booking.date} ${booking.time}`} />
@@ -527,7 +527,7 @@ function ConfirmDone({ booking, lang, onGoMy, onGoMap }) {
         {L(lang, LABEL.go_my)}
       </button>
       <button onClick={onGoMap}
-        style={{ width: '100%', height: 50, borderRadius: 14, background: '#FAFAFA', color: '#1A1A1A', fontSize: 15, fontWeight: 600, border: 'none', cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF'}>
+        style={{ width: '100%', height: 50, borderRadius: 14, background: '#FAFAFA', color: '#1A1A1A', fontSize: 15, fontWeight: 600, border: 'none', cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>
         {L(lang, LABEL.go_map)}
       </button>
     </div>
@@ -626,7 +626,7 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
       <div style={{ display: 'flex', gap: 6, padding: '12px 20px 10px', background: '#FAFAFA', boxShadow: '0 4px 12px rgba(200,200,200,0.25)' }}>
         {FILTERS.map(f => (
           <button key={f.id} onClick={() => setFilter(f.id)}
-            style={{ padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600, background: '#FAFAFA', color: filter === f.id ? '#C4725A' : '#888888', border: 'none', cursor: 'pointer', transition: 'box-shadow 0.15s ease', boxShadow: filter === f.id ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
+            style={{ padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 600, background: '#FAFAFA', color: filter === f.id ? '#C4725A' : '#6B6B6B', border: 'none', cursor: 'pointer', transition: 'box-shadow 0.15s ease', boxShadow: filter === f.id ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.04)' }}>
             {L(lang, f.label)}
           </button>
         ))}
@@ -646,7 +646,7 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {filtered.map(b => (
-              <div key={b.id} style={{ background: '#FAFAFA', borderRadius: 20, padding: '20px', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
+              <div key={b.id} style={{ background: '#FAFAFA', borderRadius: 20, padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                   <div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{b._shop ? getLocalizedName(b._shop, lang) : b.shopName}</div>
@@ -790,7 +790,7 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
               </p>
             </div>
             <button onClick={() => setScreen('my-bookings')}
-              style={{ fontSize: 13, fontWeight: 600, color: BRAND, background: '#FAFAFA', border: 'none', borderRadius: 12, padding: '7px 14px', cursor: 'pointer', flexShrink: 0, boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF'}>
+              style={{ fontSize: 13, fontWeight: 600, color: BRAND, background: '#FAFAFA', border: 'none', borderRadius: 12, padding: '7px 14px', cursor: 'pointer', flexShrink: 0, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>
               {t('booking.myBookings')}
             </button>
           </div>

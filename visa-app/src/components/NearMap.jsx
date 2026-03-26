@@ -6,7 +6,7 @@ import { searchLocalPlaces } from '../data/hanpocketPlaceDB.js'
 import { CATEGORY_CONFIG } from '../data/poiData'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS } from '../data/restaurantData.js'
 import { FOOD_CATEGORIES, TV_CHANNELS } from '../data/foodCategories.js'
-import { TOURBUS_ROUTES, TICKET_OFFICES, formatPrice, getRouteLabel } from '../data/tourbusData.js'
+import { TOURBUS_ROUTES_V2 as TOURBUS_ROUTES, getActiveRoutes, getNextArrival, formatFee, getRouteDisplayLabel } from '../data/tourBusRoutes.js'
 import { t, tLang } from '../locales/index.js'
 import { useLanguage } from '../i18n/index.jsx'
 import NavScreen from './NavScreen.jsx'
@@ -972,7 +972,7 @@ export default function NearMap() {
                     cursor: 'pointer', whiteSpace: 'nowrap',
                   }}
                 >
-                  {(() => { const l = getRouteLabel(route); return l[lang] || l.ko })()}
+                  {(() => { const l = getRouteDisplayLabel(route); return l[lang] || l.ko })()}
                 </button>
               )
             })}
@@ -2160,13 +2160,13 @@ function TourbusRouteList({ routes, lang, onSelectStop, onExit }) {
             <div key={route.id} style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <div style={{ width: 12, height: 12, borderRadius: '50%', background: route.color }} />
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>{(() => { const l = getRouteLabel(route); return l[lang] || l.ko })()}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>{(() => { const l = getRouteDisplayLabel(route); return l[lang] || l.ko })()}</span>
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, paddingLeft: 20 }}>
-                {route.schedule[lang] || route.schedule.ko} · {route.duration[lang] || route.duration.ko}
+                {route.duration?.[lang] || route.duration?.ko || ''}{route.interval ? ` · ${route.interval}${lang === 'zh' ? '分钟间隔' : lang === 'en' ? 'min interval' : '분 간격'}` : ''}
               </div>
               <div style={{ fontSize: 11, color: route.color, fontWeight: 600, marginBottom: 8, paddingLeft: 20 }}>
-                {formatPrice(route.price, lang)}
+                {formatFee(route.fee, lang)}
               </div>
               {route.stops.filter(s => !s.noStop).map(stop => {
                 stopNum++
@@ -2201,19 +2201,21 @@ function TourbusRouteList({ routes, lang, onSelectStop, onExit }) {
 
 // ─── 투어버스 정거장 상세 시트 ───
 function TourbusStopSheet({ stop, route, stopNum, lang, onClose, onExit }) {
+  const [showStory, setShowStory] = useState(false)
   if (!stop || !route) return null
-  const routeLabel = getRouteLabel(route)
+  const routeLabel = getRouteDisplayLabel(route)
+  const nextArr = getNextArrival(stop)
+  const sm = stop.summary
+  const storyText = stop.story?.[lang] || stop.story?.ko
   return (
     <div style={{ padding: '12px 20px 24px', maxHeight: '50vh', overflowY: 'auto' }}>
-      {/* 드래그 핸들 */}
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
         <div style={{ width: 40, height: 4, borderRadius: 2, background: '#CDCDCD' }} />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+      {/* 헤더: 정류장명 + 다음 도착 */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 30, height: 30, borderRadius: '50%', background: route.color, color: 'white', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            {stopNum}
-          </div>
+          <div style={{ width: 30, height: 30, borderRadius: '50%', background: route.color, color: 'white', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{stopNum}</div>
           <div>
             <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{stop.name[lang] || stop.name.ko}</div>
             <div style={{ fontSize: 11, color: route.color, fontWeight: 600 }}>{routeLabel[lang] || routeLabel.ko}</div>
@@ -2221,30 +2223,56 @@ function TourbusStopSheet({ stop, route, stopNum, lang, onClose, onExit }) {
         </div>
         <button onClick={onClose} style={{ fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', color: '#6B6B6B', padding: 4 }}>✕</button>
       </div>
-      {stop.isTicketStop && (
-        <div style={{ background: '#FEF3C7', borderRadius: 12, padding: '10px 14px', marginBottom: 12 }}>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#92400E', marginBottom: 4 }}>
-            {lang === 'zh' ? '售票处' : lang === 'en' ? 'Ticket Office' : '매표소'}
-          </div>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#78350F' }}>{formatPrice(route.price, lang)}</div>
+      {/* 다음 버스 */}
+      {nextArr && (
+        <div style={{ background: '#FBF7F5', borderRadius: 10, padding: '8px 12px', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 11, color: '#6B6B6B' }}>{lang === 'zh' ? '下一班' : lang === 'en' ? 'Next bus' : '다음 버스'}</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#C4725A' }}>{nextArr}</span>
         </div>
       )}
-      <div style={{ background: '#F5F5F5', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: '#6B6B6B', marginBottom: 4 }}>
-          {lang === 'zh' ? '运行信息' : lang === 'en' ? 'Schedule' : '운행 정보'}
+      {/* 매표소 */}
+      {stop.isTicketStop && (
+        <div style={{ background: '#FEF3C7', borderRadius: 10, padding: '8px 12px', marginBottom: 10 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#92400E', marginBottom: 2 }}>{lang === 'zh' ? '售票处' : lang === 'en' ? 'Ticket Office' : '매표소'}</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: '#78350F' }}>{formatFee(route.fee, lang)}</div>
         </div>
-        <div style={{ fontSize: 13, color: '#1A1A1A' }}>{route.schedule[lang] || route.schedule.ko}</div>
-        <div style={{ fontSize: 12, color: '#6B6B6B', marginTop: 2 }}>{route.duration[lang] || route.duration.ko}</div>
-      </div>
-      {/* 전체 정류장 목록 */}
-      <div style={{ marginTop: 8 }}>
-        <div style={{ fontSize: 11, fontWeight: 600, color: '#A8A8A8', marginBottom: 6 }}>
-          {lang === 'zh' ? '全部站点' : lang === 'en' ? 'All Stops' : '전체 정류장'}
+      )}
+      {/* 요약정보 */}
+      {sm && (
+        <div style={{ marginBottom: 10 }}>
+          {sm.stop && <div style={{ fontSize: 11, color: '#6B6B6B', marginBottom: 3 }}>{sm.stop[lang] || sm.stop.ko}</div>}
+          {sm.subway && <div style={{ fontSize: 11, color: '#6B6B6B', marginBottom: 3 }}>{sm.subway[lang] || sm.subway.ko}</div>}
+          {sm.address && <div style={{ fontSize: 11, color: '#A8A8A8', marginBottom: 3 }}>{sm.address[lang] || sm.address.ko}</div>}
         </div>
+      )}
+      {/* 주변 관광지 */}
+      {stop.nearbySpots?.length > 0 && (
+        <div style={{ marginBottom: 10 }}>
+          <div style={{ fontSize: 10, fontWeight: 600, color: '#A8A8A8', marginBottom: 4 }}>{lang === 'zh' ? '周边景点' : lang === 'en' ? 'Nearby' : '주변 관광지'}</div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+            {stop.nearbySpots.map((s, i) => (
+              <span key={i} style={{ fontSize: 11, color: '#C4725A', background: '#FBF7F5', padding: '3px 8px', borderRadius: 10, fontWeight: 500 }}>{s.name[lang] || s.name.ko}</span>
+            ))}
+          </div>
+        </div>
+      )}
+      {/* 자세히 보기 (story) */}
+      {storyText && (
+        <div style={{ marginBottom: 10 }}>
+          <button onClick={() => setShowStory(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, color: '#C4725A', padding: 0 }}>
+            {showStory ? (lang === 'zh' ? '收起' : lang === 'en' ? 'Less' : '접기') : (lang === 'zh' ? '详细' : lang === 'en' ? 'More' : '자세히 보기')} {showStory ? '▲' : '▼'}
+          </button>
+          {showStory && <div style={{ fontSize: 12, color: '#6B6B6B', lineHeight: 1.6, marginTop: 6 }}>{storyText}</div>}
+        </div>
+      )}
+      {/* 전체 정류장 */}
+      <div>
+        <div style={{ fontSize: 10, fontWeight: 600, color: '#A8A8A8', marginBottom: 4 }}>{lang === 'zh' ? '全部站点' : lang === 'en' ? 'All Stops' : '전체 정류장'}</div>
         {route.stops.filter(s => !s.noStop).map((s, i) => (
-          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid #F0EDED', opacity: s.id === stop.id ? 1 : 0.6 }}>
-            <div style={{ width: 20, height: 20, borderRadius: '50%', background: s.id === stop.id ? route.color : '#F0EDED', color: s.id === stop.id ? 'white' : '#6B6B6B', fontSize: 9, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
-            <span style={{ fontSize: 12, color: '#1A1A1A', fontWeight: s.id === stop.id ? 700 : 400 }}>{s.name[lang] || s.name.ko}</span>
+          <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid #F0EDED', opacity: s.id === stop.id ? 1 : 0.5 }}>
+            <div style={{ width: 18, height: 18, borderRadius: '50%', background: s.id === stop.id ? route.color : '#F0EDED', color: s.id === stop.id ? 'white' : '#6B6B6B', fontSize: 8, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
+            <span style={{ fontSize: 11, color: '#1A1A1A', fontWeight: s.id === stop.id ? 700 : 400, flex: 1 }}>{s.name[lang] || s.name.ko}</span>
+            {s.timetable?.[0] && <span style={{ fontSize: 9, color: '#A8A8A8' }}>{s.timetable[0]}</span>}
           </div>
         ))}
       </div>

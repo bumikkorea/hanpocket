@@ -377,7 +377,19 @@ export default function NearMap() {
   const getPlaceHistory = () => { try { return JSON.parse(localStorage.getItem(PLACE_HISTORY_KEY) || '[]') } catch { return [] } }
   const addPlaceHistory = (poi) => {
     if (!poi?.id) return
-    const entry = { id: poi.id, name: poi.name_ko || poi.name?.ko || poi.name_zh || '', category: poi.category || '', area: poi.area?.gu || poi.gu || '', lat: poi.lat, lng: poi.lng, award: poi.award || '', ts: Date.now() }
+    const entry = {
+      id: poi.id,
+      name: poi.name_ko || poi.name?.ko || poi.name_zh || '',
+      name_zh: poi.name_zh || poi.name?.zh || '',
+      name_en: poi.name_en || poi.name?.en || '',
+      category: poi.category || '',
+      subCategory: poi.subCategory || poi.cuisine || '',
+      area: poi.area?.gu || poi.gu || '',
+      lat: poi.lat, lng: poi.lng,
+      award: poi.award || '',
+      image: poi.image || poi.photo_url || poi.thumbnail || '',
+      ts: Date.now()
+    }
     const prev = getPlaceHistory().filter(p => p.id !== poi.id)
     localStorage.setItem(PLACE_HISTORY_KEY, JSON.stringify([entry, ...prev].slice(0, 20)))
   }
@@ -1044,35 +1056,67 @@ export default function NearMap() {
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: '#A8A8A8', fontSize: 13 }}>
                   {lang === 'zh' ? '暂无浏览记录' : lang === 'en' ? 'No history yet' : '아직 본 매장이 없어요'}
                 </div>
-              ) : getPlaceHistory().map((place, i) => (
-                <button
-                  key={`${place.id}-${i}`}
-                  onClick={() => {
-                    setShowHistoryPanel(false)
-                    if (place.lat && place.lng && mapInstance.current) {
-                      mapInstance.current.panTo(new window.kakao.maps.LatLng(place.lat, place.lng))
-                    }
-                  }}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left',
-                    padding: '12px 20px', border: 'none', background: 'none', cursor: 'pointer',
-                    borderBottom: '1px solid #F8F8F8', transition: 'background 0.1s',
-                  }}
-                  onMouseOver={e => e.currentTarget.style.background = '#F8F8F8'}
-                  onMouseOut={e => e.currentTarget.style.background = 'none'}
-                >
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>
-                    {place.award === 'michelin3' ? '⭐' : place.award === 'michelin2' ? '⭐' : place.award === 'michelin1' ? '⭐' : place.award === 'bib' ? '🍽️' : place.award === 'blueribbon' ? '🎗️' : '📍'}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{place.name}</div>
-                    <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>
-                      {place.area && <span>{place.area}</span>}
-                      {place.category && <span> · {place.category}</span>}
+              ) : getPlaceHistory().map((place, i) => {
+                // 카테고리 breadcrumb 생성
+                const catLabel = place.category ? tLang(`cat_${place.category}`, lang) : ''
+                const subLabel = place.subCategory || ''
+                const breadcrumb = [catLabel, subLabel].filter(Boolean).join(' > ')
+                const placeName = lang === 'zh' ? (place.name_zh || place.name) : lang === 'en' ? (place.name_en || place.name) : place.name
+
+                return (
+                  <button
+                    key={`${place.id}-${i}`}
+                    onClick={() => {
+                      setShowHistoryPanel(false)
+                      // 카테고리 자동 선택
+                      if (place.category) {
+                        setActiveCategory(place.category)
+                        if (place.category === 'food' && place.subCategory) {
+                          setFoodCategoryFilter(place.subCategory)
+                        }
+                      }
+                      // 지도 이동 + 상세 카드 표시
+                      if (place.lat && place.lng && mapInstance.current) {
+                        mapInstance.current.panTo(new window.kakao.maps.LatLng(place.lat, place.lng))
+                      }
+                      // 해당 POI의 상세 카드를 열기 위해 activePopup 설정
+                      setActivePopup(place)
+                    }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left',
+                      padding: '10px 16px', border: 'none', background: 'none', cursor: 'pointer',
+                      borderBottom: '1px solid #F5F5F5', transition: 'background 0.1s',
+                    }}
+                    onMouseOver={e => e.currentTarget.style.background = '#FAFAFA'}
+                    onMouseOut={e => e.currentTarget.style.background = 'none'}
+                  >
+                    {/* 썸네일 */}
+                    <div style={{
+                      width: 48, height: 48, borderRadius: 10, flexShrink: 0, overflow: 'hidden',
+                      background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      {place.image ? (
+                        <img src={place.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
+                      ) : (
+                        <span style={{ fontSize: 20 }}>
+                          {place.award?.startsWith('michelin') ? '⭐' : place.award === 'bib' ? '🍽️' : place.award === 'blueribbon' ? '🎗️' : place.category === 'food' ? '🍴' : place.category === 'fashion' ? '👗' : place.category === 'cafe' ? '☕' : place.category === 'popup' ? '🎪' : '📍'}
+                        </span>
+                      )}
                     </div>
-                  </div>
-                </button>
-              ))}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{placeName}</div>
+                      {breadcrumb && (
+                        <div style={{ fontSize: 11, color: '#ABABAB', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {breadcrumb}
+                        </div>
+                      )}
+                      {place.area && (
+                        <div style={{ fontSize: 10, color: '#CDCDCD', marginTop: 1 }}>{place.area}</div>
+                      )}
+                    </div>
+                  </button>
+                )
+              })}
             </div>
           </div>
           <style>{`@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } } @keyframes tourbus-glow { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.5); opacity: 0; } }`}</style>

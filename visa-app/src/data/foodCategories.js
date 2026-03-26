@@ -196,47 +196,7 @@ export const FOOD_CATEGORIES = [
       ]},
     ],
   },
-  {
-    id: 'snack',
-    icon: '🥐',
-    label: { ko: '간식', zh: '零食', en: 'Snacks' },
-    subcategories: [
-      { id: 'bakery', label: { ko: '빵/베이커리', zh: '面包/烘焙', en: 'Bakery' }, items: [
-        { id: 'bread', label: { ko: '빵', zh: '面包', en: 'Bread' } },
-        { id: 'croissant', label: { ko: '크로와상', zh: '牛角包', en: 'Croissant' } },
-        { id: 'salt-bread', label: { ko: '소금빵', zh: '盐面包', en: 'Salt Bread' } },
-        { id: 'bagel', label: { ko: '베이글', zh: '贝果', en: 'Bagel' } },
-      ]},
-      { id: 'donut', label: { ko: '도넛', zh: '甜甜圈', en: 'Donut' }, items: [
-        { id: 'donut-item', label: { ko: '도넛', zh: '甜甜圈', en: 'Donut' } },
-        { id: 'churros', label: { ko: '츄러스', zh: '吉拿棒', en: 'Churros' } },
-      ]},
-      { id: 'icecream', label: { ko: '아이스크림', zh: '冰淇淋', en: 'Ice Cream' }, items: [
-        { id: 'icecream-item', label: { ko: '아이스크림', zh: '冰淇淋', en: 'Ice Cream' } },
-        { id: 'gelato', label: { ko: '젤라또', zh: '意式冰淇淋', en: 'Gelato' } },
-        { id: 'bingsu', label: { ko: '빙수', zh: '刨冰', en: 'Bingsu' } },
-      ]},
-      { id: 'toast-sandwich', label: { ko: '토스트/샌드위치', zh: '吐司/三明治', en: 'Toast/Sandwich' }, items: [
-        { id: 'toast', label: { ko: '토스트', zh: '吐司', en: 'Toast' } },
-        { id: 'sandwich', label: { ko: '샌드위치', zh: '三明治', en: 'Sandwich' } },
-      ]},
-      { id: 'tteok-traditional', label: { ko: '떡/전통', zh: '年糕/传统', en: 'Rice Cake/Traditional' }, items: [
-        { id: 'tteok', label: { ko: '떡', zh: '年糕', en: 'Rice Cake' } },
-        { id: 'hotteok', label: { ko: '호떡', zh: '糖饼', en: 'Hotteok' } },
-        { id: 'bungeoppang', label: { ko: '붕어빵', zh: '鲫鱼饼', en: 'Fish Bread' } },
-        { id: 'yakgwa', label: { ko: '약과', zh: '药果', en: 'Yakgwa' } },
-      ]},
-      { id: 'hotdog', label: { ko: '핫도그', zh: '热狗', en: 'Hot Dog' }, items: [
-        { id: 'myeongrang', label: { ko: '명랑핫도그', zh: '明朗热狗', en: 'Myeongrang Hot Dog' } },
-        { id: 'corndog', label: { ko: '콘도그', zh: '玉米热狗', en: 'Corn Dog' } },
-      ]},
-      { id: 'waffle', label: { ko: '와플/크레이프', zh: '华夫饼/可丽饼', en: 'Waffle/Crepe' }, items: [
-        { id: 'waffle-item', label: { ko: '와플', zh: '华夫饼', en: 'Waffle' } },
-        { id: 'crepe', label: { ko: '크레이프', zh: '可丽饼', en: 'Crepe' } },
-        { id: 'takoyaki', label: { ko: '타코야끼', zh: '章鱼小丸子', en: 'Takoyaki' } },
-      ]},
-    ],
-  },
+  // 간식 카테고리 제거 — Cafe 칩과 겹침
   {
     id: 'fastfood',
     icon: '🍔',
@@ -262,23 +222,7 @@ export const FOOD_CATEGORIES = [
       ]},
     ],
   },
-  {
-    id: 'cafe',
-    icon: '☕',
-    label: { ko: '카페/디저트', zh: '咖啡/甜点', en: 'Cafe/Dessert' },
-    subcategories: [
-      { id: 'cafe-sub', label: { ko: '카페', zh: '咖啡店', en: 'Cafe' }, items: [
-        { id: 'coffee', label: { ko: '커피', zh: '咖啡', en: 'Coffee' } },
-        { id: 'tea', label: { ko: '차', zh: '茶', en: 'Tea' } },
-        { id: 'juice', label: { ko: '주스', zh: '果汁', en: 'Juice' } },
-      ]},
-      { id: 'dessert', label: { ko: '디저트', zh: '甜点', en: 'Dessert' }, items: [
-        { id: 'cake', label: { ko: '케이크', zh: '蛋糕', en: 'Cake' } },
-        { id: 'macaron', label: { ko: '마카롱', zh: '马卡龙', en: 'Macaron' } },
-        { id: 'tart', label: { ko: '타르트', zh: '挞', en: 'Tart' } },
-      ]},
-    ],
-  },
+  // 카페/디저트 카테고리 제거 — Cafe 칩과 겹침
   {
     id: 'buffet',
     icon: '🍽️',

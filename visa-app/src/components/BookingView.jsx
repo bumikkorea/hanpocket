@@ -327,21 +327,21 @@ function StepService({ shop, services, servicesLoading, lang, onSelect, onBack, 
       {!noHeader && <StepHeader title={L(lang, LABEL.step1_title)} subtitle={getLocalizedName(shop, lang)} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 20px' }}>
         {servicesLoading ? (
-          <div style={{ textAlign: 'center', paddingTop: 60, color: 'var(--text-muted)', fontSize: 15 }}>{tLang('booking.loading', lang)}</div>
+          <div style={{ textAlign: 'center', paddingTop: 60, color: '#6B6B6B', fontSize: 15 }}>{tLang('booking.loading', lang)}</div>
         ) : services.map(svc => (
           <button key={svc.id} onClick={() => setSelected(svc)}
             style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '16px 16px', marginBottom: 12, background: '#FAFAFA', border: 'none', borderRadius: 16, cursor: 'pointer', gap: 12, textAlign: 'left', transition: 'box-shadow 0.15s ease', boxShadow: selected?.id === svc.id ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.04)' }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{svc[nameKey]}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A', marginBottom: 4 }}>{svc[nameKey]}</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 13, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
+                <span style={{ fontSize: 13, color: '#6B6B6B', display: 'flex', alignItems: 'center', gap: 3 }}>
                   {svc.duration_min}{L(lang, LABEL.min)}
                 </span>
               </div>
             </div>
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text-primary)' }}>{L(lang, LABEL.krw)}{svc.price_krw.toLocaleString()}</div>
-              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>≈ {L(lang, LABEL.cny)}{krwToCny(svc.price_krw)}</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: '#1A1A1A' }}>{L(lang, LABEL.krw)}{svc.price_krw.toLocaleString()}</div>
+              <div style={{ fontSize: 13, color: '#6B6B6B', marginTop: 2 }}>≈ {L(lang, LABEL.cny)}{krwToCny(svc.price_krw)}</div>
             </div>
             {selected?.id === svc.id && <span style={{ color: BRAND, flexShrink: 0, fontSize: 20 }}>✓</span>}
           </button>
@@ -377,7 +377,7 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
       {!noHeader && <StepHeader title={L(lang, LABEL.step2_title)} subtitle={getLocalizedName(shop, lang)} onBack={onBack} />}
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 20px' }}>
         {/* 날짜 선택 */}
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{lang === 'ko' ? '날짜' : lang === 'zh' ? '选择日期' : 'Date'}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 10 }}>{lang === 'ko' ? '날짜' : lang === 'zh' ? '选择日期' : 'Date'}</div>
         <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 8, marginBottom: 20 }}>
           {days.map(d => {
             const isActive = selDate === d.date
@@ -394,7 +394,7 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
           })}
         </div>
         {/* 시간 슬롯 */}
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{lang === 'ko' ? '시간' : lang === 'zh' ? '选择时间' : 'Time'}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 10 }}>{lang === 'ko' ? '시간' : lang === 'zh' ? '选择时间' : 'Time'}</div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 24 }}>
           {slots.map(slot => {
             const unavail = shop.unavailable_slots.includes(slot)
@@ -408,14 +408,14 @@ function StepDateTime({ shop, service, lang, onConfirm, onBack, noHeader }) {
           })}
         </div>
         {/* 인원 */}
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>{L(lang, LABEL.guests)}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 12 }}>{L(lang, LABEL.guests)}</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 4 }}>
           <button onClick={() => setGuests(g => Math.max(1, g - 1))}
             style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#1A1A1A', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>−</button>
           <span style={{ fontSize: 20, fontWeight: 800, minWidth: 24, textAlign: 'center' }}>{guests}</span>
           <button onClick={() => setGuests(g => Math.min(10, g + 1))}
             style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: '#1A1A1A', boxShadow: '0 1px 4px rgba(0,0,0,0.04)', transition: 'box-shadow 0.15s ease' }} onTouchStart={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.06)'} onTouchEnd={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'}>+</button>
-          <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{guests}{L(lang, LABEL.people_unit)}</span>
+          <span style={{ fontSize: 13, color: '#6B6B6B' }}>{guests}{L(lang, LABEL.people_unit)}</span>
         </div>
       </div>
       <div style={{ padding: '12px 20px', background: '#FAFAFA', boxShadow: '-2px -4px 12px rgba(200,200,200,0.25), 0 -2px 6px rgba(255,255,255,0.8)' }}>
@@ -469,10 +469,10 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
           <Row label={L(lang, LABEL.guests)} value={`${dateTime.guests}${L(lang, LABEL.people_unit)}`} />
           <div style={{ borderTop: '1px solid var(--border)', margin: '12px 0 8px' }} />
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{L(lang, LABEL.deposit_abbr)}</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>{L(lang, LABEL.deposit_abbr)}</span>
             <div style={{ textAlign: 'right' }}>
               <span style={{ fontSize: 16, fontWeight: 800, color: BRAND }}>₩{deposit.toLocaleString()}</span>
-              <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 6 }}>≈ ¥{depositCny}</span>
+              <span style={{ fontSize: 13, color: '#6B6B6B', marginLeft: 6 }}>≈ ¥{depositCny}</span>
             </div>
           </div>
         </div>
@@ -500,7 +500,7 @@ function StepConfirm({ shop, service, dateTime, lang, onPay, onBack, noHeader })
         </button>
       </div>
       <div style={{ padding: '8px 16px 12px', textAlign: 'center' }}>
-        <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0, lineHeight: 1.5 }}>{L(lang, LABEL.cancel_policy)}</p>
+        <p style={{ fontSize: 13, color: '#6B6B6B', margin: 0, lineHeight: 1.5 }}>{L(lang, LABEL.cancel_policy)}</p>
       </div>
     </div>
   )
@@ -513,8 +513,8 @@ function ConfirmDone({ booking, lang, onGoMy, onGoMap }) {
       <div style={{ width: 72, height: 72, borderRadius: '50%', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
         <span style={{ color: '#16A34A', fontSize: 44, lineHeight: 1 }}>✓</span>
       </div>
-      <h2 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 8px' }}>{L(lang, LABEL.confirm_ok)}</h2>
-      <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>{L(lang, LABEL.booking_no)}</p>
+      <h2 style={{ fontSize: 22, fontWeight: 800, color: '#1A1A1A', margin: '0 0 8px' }}>{L(lang, LABEL.confirm_ok)}</h2>
+      <p style={{ fontSize: 13, color: '#6B6B6B', marginBottom: 4 }}>{L(lang, LABEL.booking_no)}</p>
       <p style={{ fontSize: 16, fontWeight: 700, color: BRAND, marginBottom: 24, letterSpacing: '0.5px' }}>{booking.id}</p>
       <div style={{ background: '#FAFAFA', borderRadius: 20, padding: '20px', width: '100%', marginBottom: 24, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', textAlign: 'left' }}>
         <Row label={lang === 'ko' ? '매장' : lang === 'zh' ? '门店' : 'Shop'} value={booking.shopName} />
@@ -538,12 +538,12 @@ function ConfirmDone({ booking, lang, onGoMy, onGoMap }) {
 function StepHeader({ title, subtitle, onBack }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 20px 12px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 12px rgba(200,200,200,0.25), 0 -2px 6px rgba(255,255,255,0.8)' }}>
-      <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-primary)', display: 'flex', borderRadius: 8 }}>
+      <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: '#1A1A1A', display: 'flex', borderRadius: 8 }}>
         ←
       </button>
       <div>
-        <div style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>{title}</div>
-        {subtitle && <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>{subtitle}</div>}
+        <div style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>{title}</div>
+        {subtitle && <div style={{ fontSize: 13, color: '#6B6B6B', marginTop: 2 }}>{subtitle}</div>}
       </div>
     </div>
   )
@@ -553,8 +553,8 @@ function StepHeader({ title, subtitle, onBack }) {
 function Row({ label, value }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '5px 0' }}>
-      <span style={{ fontSize: 13, color: 'var(--text-muted)', flexShrink: 0, marginRight: 8 }}>{label}</span>
-      <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', textAlign: 'right' }}>{value}</span>
+      <span style={{ fontSize: 13, color: '#6B6B6B', flexShrink: 0, marginRight: 8 }}>{label}</span>
+      <span style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A', textAlign: 'right' }}>{value}</span>
     </div>
   )
 }
@@ -635,7 +635,7 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px' }}>
         {filtered.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 80, gap: 12 }}>
-            <p style={{ fontSize: 15, color: 'var(--text-muted)', margin: 0 }}>
+            <p style={{ fontSize: 15, color: '#6B6B6B', margin: 0 }}>
               {tLang('booking.empty', lang)}
             </p>
             <button onClick={onBack}
@@ -649,21 +649,21 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
               <div key={b.id} style={{ background: '#FAFAFA', borderRadius: 20, padding: '20px', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
                   <div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{b._shop ? getLocalizedName(b._shop, lang) : b.shopName}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{b._service ? getLocalizedName(b._service, lang) : b.service}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A', marginBottom: 3 }}>{b._shop ? getLocalizedName(b._shop, lang) : b.shopName}</div>
+                    <div style={{ fontSize: 13, color: '#666666' }}>{b._service ? getLocalizedName(b._service, lang) : b.service}</div>
                   </div>
                   <StatusBadge status={b.status} />
                 </div>
-                <div style={{ display: 'flex', gap: 16, fontSize: 13, color: 'var(--text-muted)', marginBottom: 10 }}>
+                <div style={{ display: 'flex', gap: 16, fontSize: 13, color: '#6B6B6B', marginBottom: 10 }}>
                   <span>{b.date}</span>
                   <span>{b.time}</span>
                   <span>{b.guests}{lang === 'zh' ? '人' : lang === 'ko' ? '명' : ''}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10, borderTop: '1px solid var(--border)' }}>
                   <div>
-                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{lang === 'zh' ? '保证金' : lang === 'ko' ? '보증금' : 'Deposit'}: </span>
+                    <span style={{ fontSize: 13, color: '#6B6B6B' }}>{lang === 'zh' ? '保证金' : lang === 'ko' ? '보증금' : 'Deposit'}: </span>
                     <span style={{ fontSize: 14, fontWeight: 700, color: BRAND }}>₩{b.deposit?.toLocaleString()}</span>
-                    <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 4 }}>≈¥{b.depositCny}</span>
+                    <span style={{ fontSize: 13, color: '#6B6B6B', marginLeft: 4 }}>≈¥{b.depositCny}</span>
                   </div>
                   {(b.status === 'confirmed' || b.status === 'upcoming') && isCancellable(b) && (
                     <button onClick={() => cancelBooking(b)}
@@ -672,10 +672,10 @@ function MyBookings({ lang, onBack, onGoToMapTab }) {
                     </button>
                   )}
                   {(b.status === 'confirmed' || b.status === 'upcoming') && !isCancellable(b) && (
-                    <span style={{ fontSize: 11, color: 'var(--text-hint)' }}>{lang === 'zh' ? '不可取消' : lang === 'ko' ? '취소불가' : 'N/A'}</span>
+                    <span style={{ fontSize: 11, color: '#A8A8A8' }}>{lang === 'zh' ? '不可取消' : lang === 'ko' ? '취소불가' : 'N/A'}</span>
                   )}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--text-hint)', marginTop: 8, letterSpacing: '0.3px' }}>{b.id}</div>
+                <div style={{ fontSize: 11, color: '#A8A8A8', marginTop: 8, letterSpacing: '0.3px' }}>{b.id}</div>
               </div>
             ))}
           </div>
@@ -704,14 +704,14 @@ function StepIndicator({ currentStep, lang }) {
               <div style={{
                 width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 background: done || active ? BRAND : 'var(--surface)',
-                color: done || active ? 'white' : 'var(--text-hint)',
+                color: done || active ? 'white' : '#A8A8A8',
                 fontSize: 13, fontWeight: 700,
                 boxShadow: active ? `0 0 0 4px rgba(196,114,90,0.2)` : 'none',
                 transition: 'all 0.2s',
               }}>
                 {done ? '✓' : step}
               </div>
-              <span style={{ fontSize: 12, fontWeight: active ? 600 : 400, color: active ? BRAND : 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: 12, fontWeight: active ? 600 : 400, color: active ? BRAND : '#6B6B6B', whiteSpace: 'nowrap' }}>
                 {labels[i]}
               </span>
             </div>
@@ -784,8 +784,8 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
           {/* 헤더 */}
           <div style={{ padding: '20px 20px 16px', background: '#FAFAFA', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 12px rgba(200,200,200,0.25), 0 -2px 6px rgba(255,255,255,0.8)' }}>
             <div>
-              <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{t('booking.title')}</h1>
-              <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '4px 0 0' }}>
+              <h1 style={{ fontSize: 22, fontWeight: 700, color: '#1A1A1A', margin: 0 }}>{t('booking.title')}</h1>
+              <p style={{ fontSize: 13, color: '#6B6B6B', margin: '4px 0 0' }}>
                 {t('booking.subtitle')}
               </p>
             </div>
@@ -810,8 +810,8 @@ export default function BookingView({ lang, onGoToMyTab, onGoToMapTab }) {
               </div>
             ) : shops.length === 0 ? (
               <div style={{ textAlign: 'center', paddingTop: 80 }}>
-                <span style={{ color: 'var(--text-hint)', fontSize: 40, display: 'block', marginBottom: 12 }}></span>
-                <p style={{ fontSize: 15, color: 'var(--text-muted)', marginBottom: 16 }}>{L(lang, LABEL.empty_shops)}</p>
+                <span style={{ color: '#A8A8A8', fontSize: 40, display: 'block', marginBottom: 12 }}></span>
+                <p style={{ fontSize: 15, color: '#6B6B6B', marginBottom: 16 }}>{L(lang, LABEL.empty_shops)}</p>
                 <button onClick={onGoToMapTab} style={{ padding: '10px 24px', borderRadius: 'var(--radius-btn)', background: BRAND, color: 'white', border: 'none', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>
                   {L(lang, LABEL.empty_go)}
                 </button>

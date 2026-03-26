@@ -798,7 +798,7 @@ export default function NearMap() {
   }, [isExpanded, sheetPoi, snapSheet, selectPin, closeSheet, SHEET_PEEK])
 
   return (
-    <div style={{ position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 65, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease' }}>
 
       {/* ─── 카카오맵 (풀 커버) ─── */}
       <div

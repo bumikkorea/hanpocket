@@ -1958,7 +1958,18 @@ function AppInner() {
   }
 
   return (
-    <div className="pb-20" style={{ backgroundColor: '#FFFFFF' }}>
+    <>
+    {/* PC 좌측 브랜드 */}
+    <div style={{
+      position: 'fixed', left: 0, top: 0, width: 'calc(50% - 215px)', height: '100vh',
+      background: '#FAFAFA', display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      alignItems: 'flex-end', paddingRight: 60, zIndex: 0,
+    }}>
+      <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: 3, color: '#1A1A1A' }}>NEAR</div>
+      <div style={{ fontSize: 14, color: '#6B6B6B', marginTop: 8 }}>서울 여행의 모든 것</div>
+      <div style={{ fontSize: 12, color: '#A8A8A8', marginTop: 4 }}>Your travel companion in Seoul</div>
+    </div>
+    <div className="pb-20" style={{ maxWidth: 430, margin: '0 auto', minHeight: '100vh', position: 'relative', background: '#FAFAFA' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 
@@ -2087,7 +2098,7 @@ function AppInner() {
       )}
 
       {/* Top Bar — sticky, always on top */}
-      <div className="sticky top-0 z-[1000]" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #F0F0F0' }}>
+      <div className="sticky top-0 z-[1000]" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #F0F0F0', display: tab === 'near-map' ? 'none' : 'block' }}>
         <div className="px-4 pt-2 pb-1">
           <div className="flex items-center">
             {/* 좌측: 햄버거 메뉴 (메인) 또는 뒤로가기 (서브) */}
@@ -2810,6 +2821,7 @@ function AppInner() {
       </div>
       {/* 챗봇 제거 */}
     </div>
+    </>
   )
 }
 

@@ -20,11 +20,10 @@ const IS_DEV = import.meta.env.DEV
 // ─── 카테고리 칩 ───
 const CATEGORY_CHIPS = [
   { id: 'popup',   key: 'cat_popup'   },
-  { id: 'food',    key: 'cat_food'    },
   { id: 'fashion', key: 'cat_fashion' },
+  { id: 'food',    key: 'cat_food'    },
   { id: 'cafe',    key: 'cat_cafe'    },
   { id: 'utility', key: 'cat_utility' },
-  { id: 'michelin', key: 'cat_michelin' },
 ]
 
 // ─── 미슐랭 서브필터 ───
@@ -365,6 +364,16 @@ export default function NearMap() {
   const [showRecent, setShowRecent] = useState(false)
   const getMapRecent = () => { try { return JSON.parse(localStorage.getItem('near_map_recent') || '[]') } catch { return [] } }
   const addMapRecent = (term) => { if (!term?.trim()) return; const prev = getMapRecent().filter(t => t !== term); localStorage.setItem('near_map_recent', JSON.stringify([term, ...prev].slice(0, 20))) }
+  // 매장 방문(클릭) 히스토리
+  const PLACE_HISTORY_KEY = 'near_place_history'
+  const getPlaceHistory = () => { try { return JSON.parse(localStorage.getItem(PLACE_HISTORY_KEY) || '[]') } catch { return [] } }
+  const addPlaceHistory = (poi) => {
+    if (!poi?.id) return
+    const entry = { id: poi.id, name: poi.name_ko || poi.name?.ko || poi.name_zh || '', category: poi.category || '', area: poi.area?.gu || poi.gu || '', lat: poi.lat, lng: poi.lng, award: poi.award || '', ts: Date.now() }
+    const prev = getPlaceHistory().filter(p => p.id !== poi.id)
+    localStorage.setItem(PLACE_HISTORY_KEY, JSON.stringify([entry, ...prev].slice(0, 20)))
+  }
+  const [showHistoryPanel, setShowHistoryPanel] = useState(false)
   const [navPoi, setNavPoi] = useState(null)
   const [bookmarks, setBookmarks] = useState(() => getMySeoul().pins.map(p => p.id))
   const [showSearch, setShowSearch] = useState(false)
@@ -484,6 +493,7 @@ export default function NearMap() {
   // ── 핀 선택 ──
   const selectPin = useCallback((poi) => {
     setActivePopup(poi)
+    addPlaceHistory(poi)
     navigator.vibrate?.(10)  // 햅틱 피드백
     if (mapInstance.current) {
       mapInstance.current.panTo(new window.kakao.maps.LatLng(poi.lat, poi.lng))
@@ -831,35 +841,20 @@ export default function NearMap() {
       <div style={{ position: 'absolute', top: 12, left: 0, right: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px', scrollbarWidth: 'none', alignItems: 'center' }}>
 
-          {/* 최근 */}
-          <div style={{ position: 'relative', flexShrink: 0 }}>
-            <button
-              onClick={() => { setShowRecent(v => !v); setShowAreaPicker(false) }}
-              style={{
-                height: 36, padding: '0 12px', borderRadius: 24,
-                background: showRecent ? '#1A1A1A' : 'white', color: showRecent ? 'white' : '#6B6B6B',
-                border: showRecent ? 'none' : '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
-                fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
-              }}
-            >
-              {lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근'}
-            </button>
-            {showRecent && (
-              <div style={{ position: 'absolute', top: 42, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 180, maxHeight: '50vh', overflowY: 'auto' }}>
-                {getMapRecent().length === 0 ? (
-                  <div style={{ padding: '12px 16px', fontSize: 12, color: '#A8A8A8' }}>
-                    {lang === 'zh' ? '暂无记录' : lang === 'en' ? 'No recent' : '최근 검색 없음'}
-                  </div>
-                ) : getMapRecent().map((term, i) => (
-                  <button key={`${term}-${i}`} onClick={() => { setShowRecent(false); setShowSearch(true) }}
-                    style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 16px', border: 'none', background: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1A1A', borderBottom: '1px solid #F0EDED' }}>
-                    {term}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* 최근 — 왼쪽 슬라이드 패널 트리거 */}
+          <button
+            onClick={() => { setShowHistoryPanel(true); setShowAreaPicker(false) }}
+            style={{
+              flexShrink: 0, height: 36, padding: '0 12px', borderRadius: 24,
+              background: showHistoryPanel ? '#1A1A1A' : 'white', color: showHistoryPanel ? 'white' : '#6B6B6B',
+              border: showHistoryPanel ? 'none' : '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
+              fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4,
+              boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근'}
+          </button>
 
           {/* 검색 */}
           <button
@@ -867,10 +862,11 @@ export default function NearMap() {
             style={{
               flexShrink: 0, height: 36, padding: '0 14px', borderRadius: 24,
               background: 'white', border: '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
-              fontSize: 13, fontWeight: 600, color: '#1A1A1A', display: 'flex', alignItems: 'center',
+              fontSize: 13, fontWeight: 600, color: '#1A1A1A', display: 'flex', alignItems: 'center', gap: 4,
               boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
             }}
           >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             {lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색'}
           </button>
           {CATEGORY_CHIPS.map(chip => {
@@ -954,30 +950,42 @@ export default function NearMap() {
           </div>
         )}
 
-        {/* ─── Food 서브카테고리 필터 ─── */}
+        {/* ─── Food 서브카테고리 필터 (미슐랭/블루리본 포함) ─── */}
         {activeCategory === 'food' && !courseMode && (
           <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 20px 0', scrollbarWidth: 'none' }}>
-            <button
-              onClick={() => setFoodCategoryFilter('all')}
-              style={{
-                flexShrink: 0, height: 28, minWidth: 36,
-                background: foodCategoryFilter === 'all' ? '#1A1A1A' : 'white',
-                color: foodCategoryFilter === 'all' ? 'white' : '#777',
-                border: foodCategoryFilter === 'all' ? 'none' : '1px solid rgba(0,0,0,0.08)',
-                borderRadius: 20, padding: '0 10px',
-                fontSize: 11, fontWeight: foodCategoryFilter === 'all' ? 700 : 500,
-                boxShadow: foodCategoryFilter === 'all' ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 3px rgba(0,0,0,0.06)',
-                transition: 'all 0.15s ease', cursor: 'pointer',
-              }}
-            >
-              {lang === 'zh' ? '全部' : lang === 'en' ? 'All' : '전체'}
-            </button>
+            {/* 미슐랭 */}
+            {[
+              { id: 'michelin', icon: '⭐', label: { ko: '미슐랭', zh: '米其林', en: 'Michelin' }, color: '#DC2626' },
+              { id: 'blueribbon', icon: '🎗️', label: { ko: '블루리본', zh: '蓝带', en: 'Blue Ribbon' }, color: '#2563EB' },
+            ].map(special => {
+              const active = foodCategoryFilter === special.id
+              return (
+                <button
+                  key={special.id}
+                  onClick={() => setFoodCategoryFilter(active ? 'all' : special.id)}
+                  style={{
+                    flexShrink: 0, height: 28, minWidth: 36,
+                    background: active ? special.color : 'white',
+                    color: active ? 'white' : '#777',
+                    border: active ? 'none' : '1px solid rgba(0,0,0,0.08)',
+                    borderRadius: 20, padding: '0 10px',
+                    fontSize: 11, fontWeight: active ? 700 : 500,
+                    boxShadow: active ? `0 2px 6px ${special.color}40` : '0 1px 3px rgba(0,0,0,0.06)',
+                    transition: 'all 0.15s ease', cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {special.icon} {special.label?.[lang] || special.label?.ko}
+                </button>
+              )
+            })}
+            {/* 일반 음식 카테고리 — 토글 방식 (선택 해제 = 전체) */}
             {FOOD_CATEGORIES.map(cat => {
               const active = foodCategoryFilter === cat.id
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setFoodCategoryFilter(cat.id)}
+                  onClick={() => setFoodCategoryFilter(active ? 'all' : cat.id)}
                   style={{
                     flexShrink: 0, height: 28, minWidth: 36,
                     background: active ? '#1A1A1A' : 'white',
@@ -997,6 +1005,69 @@ export default function NearMap() {
           </div>
         )}
       </div>
+
+      {/* ─── 최근 방문 매장 왼쪽 슬라이드 패널 ─── */}
+      {showHistoryPanel && (
+        <>
+          {/* 배경 오버레이 */}
+          <div
+            onClick={() => setShowHistoryPanel(false)}
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 50, transition: 'opacity 0.2s' }}
+          />
+          {/* 왼쪽 패널 */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, bottom: 0, width: '75%', maxWidth: 320,
+            background: '#FFFFFF', zIndex: 51, borderTopRightRadius: 16, borderBottomRightRadius: 16,
+            boxShadow: '4px 0 24px rgba(0,0,0,0.15)', display: 'flex', flexDirection: 'column',
+            animation: 'slideInLeft 0.25s ease-out',
+          }}>
+            {/* 헤더 */}
+            <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid #F0F0F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>
+                {lang === 'zh' ? '最近浏览' : lang === 'en' ? 'Recently Viewed' : '최근 본 매장'}
+              </span>
+              <button onClick={() => setShowHistoryPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#999', padding: 4 }}>✕</button>
+            </div>
+            {/* 리스트 */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+              {getPlaceHistory().length === 0 ? (
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: '#A8A8A8', fontSize: 13 }}>
+                  {lang === 'zh' ? '暂无浏览记录' : lang === 'en' ? 'No history yet' : '아직 본 매장이 없어요'}
+                </div>
+              ) : getPlaceHistory().map((place, i) => (
+                <button
+                  key={`${place.id}-${i}`}
+                  onClick={() => {
+                    setShowHistoryPanel(false)
+                    if (place.lat && place.lng && mapInstance.current) {
+                      mapInstance.current.panTo(new window.kakao.maps.LatLng(place.lat, place.lng))
+                    }
+                  }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left',
+                    padding: '12px 20px', border: 'none', background: 'none', cursor: 'pointer',
+                    borderBottom: '1px solid #F8F8F8', transition: 'background 0.1s',
+                  }}
+                  onMouseOver={e => e.currentTarget.style.background = '#F8F8F8'}
+                  onMouseOut={e => e.currentTarget.style.background = 'none'}
+                >
+                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>
+                    {place.award === 'michelin3' ? '⭐' : place.award === 'michelin2' ? '⭐' : place.award === 'michelin1' ? '⭐' : place.award === 'bib' ? '🍽️' : place.award === 'blueribbon' ? '🎗️' : '📍'}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{place.name}</div>
+                    <div style={{ fontSize: 11, color: '#999', marginTop: 2 }}>
+                      {place.area && <span>{place.area}</span>}
+                      {place.category && <span> · {place.category}</span>}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+          <style>{`@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }`}</style>
+        </>
+      )}
 
       {/* ─── 좌하단: 지역 선택 + 내 위치 ─── */}
       <div style={{ position: 'absolute', bottom: 16, left: 16, zIndex: 10, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}>

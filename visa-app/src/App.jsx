@@ -2109,7 +2109,11 @@ function AppInner() {
                 </button>
               ) : (
                 <button onClick={() => setShowAppMenu(!showAppMenu)} className="text-[#5F6368] min-w-[44px] min-h-[44px] flex items-center justify-center -ml-2">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                    <line x1="3" y1="5" x2="17" y2="5"/>
+                    <line x1="3" y1="10" x2="17" y2="10"/>
+                    <line x1="3" y1="15" x2="17" y2="15"/>
+                  </svg>
                 </button>
               )}
             </div>

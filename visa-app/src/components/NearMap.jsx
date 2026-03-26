@@ -18,7 +18,6 @@ const IS_DEV = import.meta.env.DEV
 
 // ─── 카테고리 칩 ───
 const CATEGORY_CHIPS = [
-  { id: 'all',     key: 'cat_all'     },
   { id: 'popup',   key: 'cat_popup'   },
   { id: 'food',    key: 'cat_food'    },
   { id: 'fashion', key: 'cat_fashion' },
@@ -830,43 +829,18 @@ export default function NearMap() {
       <div style={{ position: 'absolute', top: 12, left: 0, right: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px', scrollbarWidth: 'none', alignItems: 'center' }}>
 
-          {/* 최근 검색 */}
-          <div style={{ position: 'relative', flexShrink: 0 }}>
-            <button
-              onClick={() => { setShowRecent(v => !v); setShowAreaPicker(false) }}
-              style={{
-                height: 36, padding: '0 12px', borderRadius: 24,
-                background: showRecent ? '#1A1A1A' : 'white', color: showRecent ? 'white' : '#6B6B6B',
-                border: showRecent ? 'none' : '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
-                fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.10)', minWidth: 50,
-              }}
-            >
-              {lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근'}
-            </button>
-            {showRecent && (
-              <div style={{ position: 'absolute', top: 42, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 180, maxHeight: '50vh', overflowY: 'auto' }}>
-                {getMapRecent().length === 0 ? (
-                  <div style={{ padding: '12px 16px', fontSize: 12, color: '#A8A8A8' }}>
-                    {lang === 'zh' ? '暂无搜索记录' : lang === 'en' ? 'No recent searches' : '최근 검색 없음'}
-                  </div>
-                ) : getMapRecent().map((term, i) => (
-                  <button key={`${term}-${i}`} onClick={() => {
-                    setShowRecent(false)
-                    setShowSearch(true)
-                    // trigger search with this term
-                    setTimeout(() => {
-                      const input = document.querySelector('[data-map-search-input]')
-                      if (input) { const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set; nativeInputValueSetter.call(input, term); input.dispatchEvent(new Event('input', { bubbles: true })) }
-                    }, 200)
-                  }}
-                    style={{ display: 'block', width: '100%', textAlign: 'left', padding: '10px 16px', border: 'none', background: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1A1A', borderBottom: '1px solid #F0EDED' }}>
-                    {term}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* 검색 */}
+          <button
+            onClick={() => setShowSearch(true)}
+            style={{
+              flexShrink: 0, height: 36, padding: '0 14px', borderRadius: 24,
+              background: 'white', border: '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
+              fontSize: 13, fontWeight: 600, color: '#1A1A1A', display: 'flex', alignItems: 'center',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
+            }}
+          >
+            {lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색'}
+          </button>
           {CATEGORY_CHIPS.map(chip => {
             const active = activeCategory === chip.id && !courseMode
             return (
@@ -968,7 +942,7 @@ export default function NearMap() {
           {showAreaPicker && (
             <div style={{ position: 'absolute', bottom: 50, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 140 }}>
               {QUICK_AREAS.map(area => (
-                <button key={area.id} onClick={() => { goToArea(area); setShowAreaPicker(false) }}
+                <button key={area.id} onClick={() => { moveToArea(area); setShowAreaPicker(false) }}
                   style={{
                     display: 'block', width: '100%', textAlign: 'left', padding: '8px 16px', border: 'none', background: 'none', cursor: 'pointer',
                     fontSize: 13, fontWeight: selectedDistrict === area.district ? 700 : 400,

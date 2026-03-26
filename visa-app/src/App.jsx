@@ -1523,7 +1523,7 @@ function AppInner() {
   const [adminView, setAdminView] = useState(false)
 
   // NEAR 온보딩 (첫 진입 3-슬라이드)
-  const [onboardingDone, setOnboardingDone] = useState(() => !!localStorage.getItem('near_onboarding_done'))
+  const [onboardingDone, setOnboardingDone] = useState(true)
   const completeOnboarding = () => {
     localStorage.setItem('near_onboarding_done', '1')
     setOnboardingDone(true)

@@ -10,6 +10,7 @@ import EditorialDetailPage from './EditorialDetailPage.jsx'
 import MorePage from './MorePage.jsx'
 import NearPageHeader from './NearPageHeader.jsx'
 import TravelPlannerTab, { useTravelPlan } from './TravelPlannerTab.jsx'
+import { AIRPORTS, AIRLINES, FLIGHT_TIMES, getAirlineCode, getAirlineName } from '../data/flightRoutes.js'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
@@ -188,17 +189,24 @@ function strToDate(s) { const [y, m, d] = s.split('-').map(Number); return new D
 function dateToStr(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` }
 
 function getGreeting(plan, lang) {
-  if (!plan) return L(lang, { ko: '다음 여행을 계획해보세요', zh: '计划您的下一次旅行吧', en: 'Plan your next trip' })
+  const h = new Date().getHours()
+  let timeGreeting
+  if (h >= 6 && h < 12) timeGreeting = L(lang, { ko: '좋은 아침이에요', zh: '早上好', en: 'Good morning' })
+  else if (h >= 12 && h < 18) timeGreeting = L(lang, { ko: '좋은 오후에요', zh: '下午好', en: 'Good afternoon' })
+  else if (h >= 18 && h < 22) timeGreeting = L(lang, { ko: '좋은 저녁이에요', zh: '晚上好', en: 'Good evening' })
+  else timeGreeting = L(lang, { ko: '좋은 밤이에요', zh: '晚安', en: 'Good night' })
+
+  if (!plan) return timeGreeting
   const now = new Date(); now.setHours(0,0,0,0)
   const a = strToDate(plan.arrivalDate)
   const d = strToDate(plan.departureDate)
   const diffA = Math.round((a - now) / 86400000)
-  if (diffA > 0) return L(lang, { ko: `서울까지 D-${diffA}`, zh: `首尔倒计时 D-${diffA}`, en: `D-${diffA} to Seoul` })
-  if (now > d) return L(lang, { ko: '서울 여행이 끝났어요', zh: '首尔之旅结束了', en: 'Your Seoul trip has ended' })
+  if (diffA > 0) return `${timeGreeting}, D-${diffA}`
+  if (now > d) return timeGreeting
   const dayNum = Math.round((now - a) / 86400000) + 1
-  if (lang === 'zh') return `在首尔的第${dayNum}天`
-  if (lang === 'en') return `Day ${dayNum} in Seoul`
-  return `서울에서의 ${dayNum}째 날이에요`
+  if (lang === 'zh') return `${timeGreeting}，在首尔第${dayNum}天`
+  if (lang === 'en') return `${timeGreeting}, Day ${dayNum}`
+  return `${timeGreeting}, ${dayNum}째 날`
 }
 
 function getTripStatusLabel(plan, lang) {
@@ -284,6 +292,43 @@ export default function NearHomeTab({ setTab, setSubPage }) {
     try { return JSON.parse(localStorage.getItem('hanpocket_extra_timezones') || '["CST"]') } catch { return ['CST'] }
   })
   const saveTz = (ids) => { setExtraTz(ids); localStorage.setItem('hanpocket_extra_timezones', JSON.stringify(ids)) }
+
+  // ─── 탑승권 ───
+  const [boardingPass, setBoardingPass] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('near_boarding_pass') || 'null') } catch { return null }
+  })
+  const [showBoardingModal, setShowBoardingModal] = useState(false)
+  const [bpDate, setBpDate] = useState('')
+  const [bpFlight, setBpFlight] = useState('')
+  const [bpFrom, setBpFrom] = useState('')
+  const [bpTo, setBpTo] = useState('ICN')
+  const [bpDepTime, setBpDepTime] = useState('10:00')
+
+  const saveBoardingPass = () => {
+    if (!bpDate || !bpFlight) return
+    const airlineCode = getAirlineCode(bpFlight)
+    const fromCode = bpFrom || 'PVG'
+    const toCode = bpTo || 'ICN'
+    const flightTime = FLIGHT_TIMES[`${fromCode}-${toCode}`] || 150
+    const depH = parseInt(bpDepTime.split(':')[0]) || 10
+    const depM = parseInt(bpDepTime.split(':')[1]) || 0
+    const arrH = depH + Math.floor((depM + flightTime) / 60)
+    const arrM = (depM + flightTime) % 60
+    const bp = {
+      date: bpDate, flight: bpFlight.toUpperCase(), airline: airlineCode,
+      from: fromCode, to: toCode, depTime: bpDepTime,
+      arrTime: `${String(arrH % 24).padStart(2,'0')}:${String(arrM).padStart(2,'0')}`,
+      flightMin: flightTime,
+    }
+    localStorage.setItem('near_boarding_pass', JSON.stringify(bp))
+    setBoardingPass(bp)
+    setShowBoardingModal(false)
+  }
+
+  const deleteBoardingPass = () => {
+    localStorage.removeItem('near_boarding_pass')
+    setBoardingPass(null)
+  }
 
   // ─── UI 상태 ───
   const [showPlanner, setShowPlanner] = useState(false)
@@ -410,6 +455,115 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           </div>
         )}
       </div>
+
+      {/* ─── 1.5 탑승권 ─── */}
+      <div style={{ padding: '8px 20px 0', ...fadeUp(0.5) }}>
+        {boardingPass ? (() => {
+          const bp = boardingPass
+          const fromAirport = AIRPORTS[bp.from]
+          const toAirport = AIRPORTS[bp.to]
+          const now = new Date(); now.setHours(0,0,0,0)
+          const depDate = strToDate(bp.date)
+          const dDay = Math.round((depDate - now) / 86400000)
+          const dLabel = dDay > 0 ? `D-${dDay}` : dDay === 0 ? 'D-DAY' : L(lang, { ko: '출발', zh: '已出发', en: 'Departed' })
+          const flightH = Math.floor(bp.flightMin / 60)
+          const flightM = bp.flightMin % 60
+          return (
+            <div style={{ background: '#2A2520', borderRadius: 16, padding: '16px 20px 18px', position: 'relative' }}>
+              {/* 삭제 */}
+              <button onClick={deleteBoardingPass} style={{ position: 'absolute', top: 10, right: 14, background: 'none', border: 'none', cursor: 'pointer', color: '#6B6B6B', fontSize: 12 }}>✕</button>
+              {/* 상단 */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                <span style={{ fontSize: 12, color: 'white', fontWeight: 500 }}>{formatTripDate(bp.date, lang)}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, color: 'white', background: '#C4725A', padding: '2px 8px', borderRadius: 10 }}>{dLabel}</span>
+              </div>
+              {/* 중앙: 공항 코드 */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginBottom: 8 }}>
+                <span style={{ fontSize: 24, fontWeight: 800, color: 'white', letterSpacing: 2 }}>{bp.from}</span>
+                <span style={{ fontSize: 14, color: '#A8A8A8' }}>—</span>
+                <span style={{ fontSize: 24, fontWeight: 800, color: 'white', letterSpacing: 2 }}>{bp.to}</span>
+              </div>
+              {/* 도시명 */}
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginBottom: 10 }}>
+                <span style={{ fontSize: 12, color: '#A8A8A8' }}>{fromAirport ? L(lang, fromAirport.city) : bp.from}</span>
+                <span style={{ fontSize: 12, color: '#6B6B6B' }}>{flightH}h{flightM > 0 ? ` ${flightM}m` : ''}</span>
+                <span style={{ fontSize: 12, color: '#A8A8A8' }}>{toAirport ? L(lang, toAirport.city) : bp.to}</span>
+              </div>
+              {/* 하단 */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 10 }}>
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ fontSize: 11, color: '#6B6B6B' }}>{L(lang, { ko: '출발', zh: '出发', en: 'Depart' })}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{bp.depTime}</div>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 11, color: '#6B6B6B' }}>{bp.flight}</div>
+                  <div style={{ fontSize: 11, color: '#6B6B6B' }}>{bp.airline ? getAirlineName(bp.airline, lang) : ''}</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontSize: 11, color: '#6B6B6B' }}>{L(lang, { ko: '도착', zh: '到达', en: 'Arrive' })}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{bp.arrTime}</div>
+                </div>
+              </div>
+            </div>
+          )
+        })() : (
+          <button onClick={() => setShowBoardingModal(true)} style={{
+            width: '100%', padding: '14px 20px', borderRadius: 12,
+            border: '1px dashed #F0EDED', background: 'transparent', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between', textAlign: 'left',
+          }}>
+            <span style={{ fontSize: 13, color: '#A8A8A8' }}>{L(lang, { ko: '탑승권을 등록하세요', zh: '请登记登机牌', en: 'Register your boarding pass' })}</span>
+            <span style={{ fontSize: 16, color: '#CDCDCD' }}>›</span>
+          </button>
+        )}
+      </div>
+
+      {/* 탑승권 등록 모달 */}
+      {showBoardingModal && (
+        <div onClick={() => setShowBoardingModal(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div onClick={e => e.stopPropagation()} style={{ background: '#FFFFFF', borderRadius: 16, padding: '24px 20px', width: 'calc(100% - 40px)', maxWidth: 360 }}>
+            <div style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A', marginBottom: 16 }}>
+              {L(lang, { ko: '탑승권 등록', zh: '登记登机牌', en: 'Register Boarding Pass' })}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#6B6B6B', marginBottom: 4 }}>{L(lang, { ko: '출발일', zh: '出发日', en: 'Departure Date' })}</div>
+                <input type="date" value={bpDate} onChange={e => setBpDate(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 15, color: '#1A1A1A', boxSizing: 'border-box' }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#6B6B6B', marginBottom: 4 }}>{L(lang, { ko: '항공편 번호', zh: '航班号', en: 'Flight Number' })}</div>
+                <input type="text" value={bpFlight} onChange={e => setBpFlight(e.target.value)} placeholder="OZ301" style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 15, color: '#1A1A1A', boxSizing: 'border-box' }} />
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#6B6B6B', marginBottom: 4 }}>{L(lang, { ko: '출발 공항', zh: '出发机场', en: 'From' })}</div>
+                  <select value={bpFrom} onChange={e => setBpFrom(e.target.value)} style={{ width: '100%', padding: '10px 8px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 13, color: '#1A1A1A', background: '#FFFFFF' }}>
+                    <option value="">{L(lang, { ko: '선택', zh: '选择', en: 'Select' })}</option>
+                    {Object.entries(AIRPORTS).filter(([,v]) => v.country === 'CN').map(([code, v]) => (
+                      <option key={code} value={code}>{code} — {L(lang, v.city)}</option>
+                    ))}
+                  </select>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#6B6B6B', marginBottom: 4 }}>{L(lang, { ko: '도착 공항', zh: '到达机场', en: 'To' })}</div>
+                  <select value={bpTo} onChange={e => setBpTo(e.target.value)} style={{ width: '100%', padding: '10px 8px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 13, color: '#1A1A1A', background: '#FFFFFF' }}>
+                    <option value="ICN">ICN — {L(lang, AIRPORTS.ICN.city)}</option>
+                    <option value="GMP">GMP — {L(lang, AIRPORTS.GMP.city)}</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#6B6B6B', marginBottom: 4 }}>{L(lang, { ko: '출발 시간', zh: '出发时间', en: 'Departure Time' })}</div>
+                <input type="time" value={bpDepTime} onChange={e => setBpDepTime(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 15, color: '#1A1A1A', boxSizing: 'border-box' }} />
+              </div>
+            </div>
+            <button onClick={saveBoardingPass} disabled={!bpDate || !bpFlight}
+              style={{ width: '100%', marginTop: 16, padding: 14, borderRadius: 12, border: 'none', cursor: bpDate && bpFlight ? 'pointer' : 'not-allowed', background: bpDate && bpFlight ? '#C4725A' : '#E0E0E0', color: 'white', fontSize: 15, fontWeight: 700 }}>
+              {L(lang, { ko: '등록', zh: '登记', en: 'Register' })}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* ─── 2. 여행 카드 ─── */}
       <div style={{ padding: '12px 20px 32px', ...fadeUp(1) }}>

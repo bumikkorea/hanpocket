@@ -344,6 +344,7 @@ export default function NearMap() {
   const dragRef = useRef(null)   // null = not dragging
   const skipSnapRef = useRef(false)
   const SHEET_PEEK = 124 // compact 상태에서 보이는 높이(px)
+  const sheetHidden = !sheetPoi // 시트 완전 숨김 여부
 
   const [mapReady, setMapReady] = useState(false)
   const [phIdx, setPhIdx] = useState(0)
@@ -360,6 +361,7 @@ export default function NearMap() {
   const michelinOverlaysRef = useRef([])  // 미슐랭 전용 오버레이
   const [selectedDistrict, setSelectedDistrict] = useState(null) // null = 서울 전체
   const [activePopup, setActivePopup] = useState(null)
+  const [showAreaPicker, setShowAreaPicker] = useState(false)
   const [navPoi, setNavPoi] = useState(null)
   const [bookmarks, setBookmarks] = useState(() => getMySeoul().pins.map(p => p.id))
   const [showSearch, setShowSearch] = useState(false)
@@ -729,14 +731,26 @@ export default function NearMap() {
     snapSheet(isExpanded)
   }, [isExpanded, snapSheet])
 
-  // 지도 로드 완료 후 초기 위치 세팅
+  // 지도 로드 완료 후 초기 위치 세팅 — sheetPoi 없으면 완전 숨김
   useEffect(() => {
     if (!mapReady) return
     const el = sheetRef.current
     if (!el) return
     el.style.transition = 'none'
-    el.style.transform = `translateY(${el.offsetHeight - SHEET_PEEK}px)`
-  }, [mapReady, SHEET_PEEK])
+    el.style.transform = 'translateY(100%)'
+  }, [mapReady])
+
+  // sheetPoi 변경 시 시트 애니메이션
+  useEffect(() => {
+    const el = sheetRef.current
+    if (!el) return
+    el.style.transition = 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
+    if (sheetPoi) {
+      el.style.transform = `translateY(${el.offsetHeight - SHEET_PEEK}px)`
+    } else {
+      el.style.transform = 'translateY(100%)'
+    }
+  }, [sheetPoi, SHEET_PEEK])
 
   // ── 드래그 핸들러 ──
   const onDragStart = useCallback((e) => {
@@ -794,16 +808,18 @@ export default function NearMap() {
           position: 'absolute', top: 0, left: 0, right: 0,
           bottom: activeCourseId ? '50dvh' : 0,
           transition: 'bottom 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          touchAction: 'manipulation',
+          willChange: 'transform',
         }}
       />
 
-      {/* ─── 지도 탭 클릭 → 바텀 시트 닫기 ─── */}
+      {/* ─── 지도 탭 클릭 → 바텀 시트 닫기 (backdrop) ─── */}
       <div
         style={{
-          position: 'absolute', top: 0, left: 0, right: 0, bottom: SHEET_PEEK, zIndex: 8,
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 8,
           pointerEvents: sheetPoi ? 'auto' : 'none',
-          opacity: sheetPoi ? 1 : 0,
-          transition: 'opacity 0.3s ease',
+          background: sheetPoi ? 'rgba(0,0,0,0.15)' : 'transparent',
+          transition: 'background 0.35s cubic-bezier(0.32, 0.72, 0, 1)',
         }}
         onClick={closeSheet}
       />
@@ -862,7 +878,36 @@ export default function NearMap() {
 
       {/* ─── 카테고리 칩 ─── */}
       <div style={{ position: 'absolute', top: 70, left: 0, right: IS_DEV ? 56 : 0, zIndex: 9 }}>
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 20px', scrollbarWidth: 'none' }}>
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '6px 12px 6px 12px', scrollbarWidth: 'none', alignItems: 'center' }}>
+          {/* 지역 선택 버튼 */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <button
+              onClick={() => setShowAreaPicker(v => !v)}
+              style={{
+                height: 34, padding: '0 10px', borderRadius: 24, border: '1px solid rgba(0,0,0,0.10)',
+                background: selectedDistrict ? '#C4725A' : 'white', color: selectedDistrict ? 'white' : '#1A1A1A',
+                fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
+                boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
+              }}
+            >
+              ← {selectedDistrict ? (() => { const a = QUICK_AREAS.find(x => x.district === selectedDistrict); return a ? t(a.key) : selectedDistrict })() : L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })}
+            </button>
+            {showAreaPicker && (
+              <div style={{ position: 'absolute', top: 40, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 140 }}>
+                {QUICK_AREAS.map(area => (
+                  <button key={area.id} onClick={() => { goToArea(area); setShowAreaPicker(false) }}
+                    style={{
+                      display: 'block', width: '100%', textAlign: 'left', padding: '8px 16px', border: 'none', background: 'none', cursor: 'pointer',
+                      fontSize: 13, fontWeight: selectedDistrict === area.district ? 700 : 400,
+                      color: selectedDistrict === area.district ? '#C4725A' : '#1A1A1A',
+                    }}
+                  >
+                    {t(area.key)}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           {CATEGORY_CHIPS.map(chip => {
             const active = activeCategory === chip.id && !courseMode
             return (
@@ -1002,9 +1047,9 @@ export default function NearMap() {
           maxHeight: '50vh',
           height: activeCourseId ? '50dvh' : '68dvh',
           willChange: 'transform',
-          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          transition: 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)',
           background: '#FAFAFA', borderRadius: '24px 24px 0 0',
-          boxShadow: '0 -8px 24px rgba(200,200,200,0.4), 0 -2px 8px rgba(255,255,255,0.9)',
+          boxShadow: '0 -4px 16px rgba(0,0,0,0.08)',
           overflowX: 'hidden',
           overflowY: isExpanded || activeCourseId ? 'auto' : 'hidden',
         }}

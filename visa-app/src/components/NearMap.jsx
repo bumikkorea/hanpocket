@@ -7,7 +7,6 @@ import { CATEGORY_CONFIG } from '../data/poiData'
 import { MICHELIN_RESTAURANTS, BLUE_RIBBON_RESTAURANTS } from '../data/restaurantData.js'
 import { FOOD_CATEGORIES, TV_CHANNELS } from '../data/foodCategories.js'
 import { TOURBUS_ROUTES, TICKET_OFFICES, formatPrice, getRouteLabel } from '../data/tourbusData.js'
-import { TOURBUS_ALLIANCE } from '../data/tourBusAlliance.js'
 import { t, tLang } from '../locales/index.js'
 import { useLanguage } from '../i18n/index.jsx'
 import NavScreen from './NavScreen.jsx'
@@ -371,9 +370,6 @@ export default function NearMap() {
   const [activePopup, setActivePopup] = useState(null)
   const [showAreaPicker, setShowAreaPicker] = useState(false)
   const [showRecent, setShowRecent] = useState(false)
-  const [busLiveMode, setBusLiveMode] = useState(false) // 실시간 버스 위치
-  const [showAllianceSheet, setShowAllianceSheet] = useState(false) // 제휴할인
-  const busMarkersRef = useRef([]) // 버스 마커 오버레이
   const getMapRecent = () => { try { return JSON.parse(localStorage.getItem('near_map_recent') || '[]') } catch { return [] } }
   const addMapRecent = (term) => { if (!term?.trim()) return; const prev = getMapRecent().filter(t => t !== term); localStorage.setItem('near_map_recent', JSON.stringify([term, ...prev].slice(0, 20))) }
   // 매장 방문(클릭) 히스토리
@@ -727,73 +723,6 @@ export default function NearMap() {
     map.setLevel(5)
   }, [mapReady, tourbusMode, activeRouteIds])
 
-  // ── 실시간 버스 위치 (스케줄 기반 예상 위치) ──
-  // 실시간 API 확보 시 교체. 현재는 운행 스케줄 기반 예상 위치
-  useEffect(() => {
-    const updateBusPositions = () => {
-      busMarkersRef.current.forEach(o => o.setMap(null))
-      busMarkersRef.current = []
-      if (!busLiveMode || !mapReady || !mapInstance.current || !window.kakao?.maps) return
-
-      const map = mapInstance.current
-      const now = new Date()
-      const nowMin = now.getHours() * 60 + now.getMinutes()
-
-      TOURBUS_ROUTES.forEach(route => {
-        const visibleStops = route.stops.filter(s => !s.noStop)
-        if (visibleStops.length < 2) return
-
-        // 운행 시간 파싱 (예: "09:30~17:00")
-        const schedMatch = (route.schedule.ko || '').match(/(\d{1,2}):(\d{2})/)
-        if (!schedMatch) return
-        const startMin = parseInt(schedMatch[1]) * 60 + parseInt(schedMatch[2])
-        const isNight = route.id.includes('night')
-        const endMin = isNight ? startMin + 60 : 17 * 60
-
-        if (nowMin < startMin || nowMin > endMin) return
-
-        // 현재 시간 기반 예상 정류장 인덱스
-        const progress = (nowMin - startMin) / (endMin - startMin)
-        const stopIdx = Math.min(Math.floor(progress * visibleStops.length), visibleStops.length - 1)
-        const nextIdx = Math.min(stopIdx + 1, visibleStops.length - 1)
-
-        // 두 정류장 사이 보간
-        const s1 = visibleStops[stopIdx]
-        const s2 = visibleStops[nextIdx]
-        const subProgress = (progress * visibleStops.length) - stopIdx
-        const lat = s1.lat + (s2.lat - s1.lat) * subProgress
-        const lng = s1.lng + (s2.lng - s1.lng) * subProgress
-
-        const el = document.createElement('div')
-        el.innerHTML = `<div style="width:20px;height:20px;border-radius:50%;background:#C4725A;border:2px solid white;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(196,114,90,0.4);cursor:pointer"><span style="font-size:9px;font-weight:700;color:white">B</span></div>`
-        const overlay = new window.kakao.maps.CustomOverlay({
-          map, position: new window.kakao.maps.LatLng(lat, lng),
-          content: el, yAnchor: 0.5, zIndex: 8,
-        })
-        const routeLabel = getRouteLabel(route)
-        el.addEventListener('click', () => {
-          setActivePopup({
-            id: `bus-${route.id}`, category: 'tourbus-live',
-            name_ko: `${routeLabel.ko} 버스`,
-            name_zh: `${routeLabel.zh} 巴士`,
-            name_en: `${routeLabel.en} Bus`,
-            lat, lng,
-            _busInfo: {
-              route: routeLabel,
-              currentStop: s1.name,
-              nextStop: s2.name,
-              color: route.color,
-            },
-          })
-        })
-        busMarkersRef.current.push(overlay)
-      })
-    }
-
-    updateBusPositions()
-    const interval = busLiveMode ? setInterval(updateBusPositions, 30000) : null
-    return () => { if (interval) clearInterval(interval) }
-  }, [busLiveMode, mapReady])
 
   const moveToArea = (area) => {
     if (!mapReady || !mapInstance.current) return
@@ -1008,25 +937,6 @@ export default function NearMap() {
           </button>
         </div>
 
-        {/* ─── 투어버스: 버스찾기 + 제휴할인 (별도 줄) ─── */}
-        {tourbusMode && (
-          <div style={{ display: 'flex', gap: 8, padding: '6px 20px 0' }}>
-            <button onClick={() => setBusLiveMode(v => !v)} style={{
-              height: 30, padding: '0 14px', borderRadius: 20, border: busLiveMode ? 'none' : '1px solid rgba(0,0,0,0.08)',
-              background: busLiveMode ? '#C4725A' : 'white', color: busLiveMode ? 'white' : '#6B6B6B',
-              fontSize: 12, fontWeight: 600, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-            }}>
-              {lang === 'zh' ? '找公交' : lang === 'en' ? 'Find Bus' : '버스찾기'}
-            </button>
-            <button onClick={() => setShowAllianceSheet(v => !v)} style={{
-              height: 30, padding: '0 14px', borderRadius: 20, border: showAllianceSheet ? 'none' : '1px solid rgba(0,0,0,0.08)',
-              background: showAllianceSheet ? '#C4725A' : 'white', color: showAllianceSheet ? 'white' : '#6B6B6B',
-              fontSize: 12, fontWeight: 600, cursor: 'pointer', boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-            }}>
-              {lang === 'zh' ? '优惠折扣' : lang === 'en' ? 'Deals' : '제휴할인'}
-            </button>
-          </div>
-        )}
 
         {/* ─── 투어버스 노선 서브필터 ─── */}
         {tourbusMode && (
@@ -1222,55 +1132,6 @@ export default function NearMap() {
 
       {/* B/% 버튼은 투어버스 서브필터 바로 이동됨 */}
 
-      {/* ─── 제휴할인 바텀시트 ─── */}
-      {showAllianceSheet && (
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 25, maxHeight: '50vh', background: '#FFFFFF', borderRadius: '20px 20px 0 0', boxShadow: '0 -4px 16px rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column', animation: 'slideUp 0.35s cubic-bezier(0.32,0.72,0,1)' }}>
-          <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
-          {/* 핸들 + 헤더 */}
-          <div style={{ padding: '12px 20px 8px', flexShrink: 0 }}>
-            <div style={{ width: 40, height: 4, borderRadius: 2, background: '#CDCDCD', margin: '0 auto 12px' }} />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>
-                {lang === 'zh' ? '首尔城市巴士 合作优惠' : lang === 'en' ? 'City Bus Partner Deals' : '서울시티버스 제휴할인'}
-              </span>
-              <button onClick={() => setShowAllianceSheet(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: '#6B6B6B', padding: 4 }}>✕</button>
-            </div>
-          </div>
-          {/* 리스트 */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px' }}>
-            {TOURBUS_ALLIANCE.map(item => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setShowAllianceSheet(false)
-                  if (mapInstance.current && window.kakao?.maps) {
-                    mapInstance.current.panTo(new window.kakao.maps.LatLng(item.lat, item.lng))
-                    mapInstance.current.setLevel(3)
-                  }
-                  setActivePopup({
-                    id: item.id, category: 'alliance',
-                    name_ko: item.name, name_zh: item.name_cn, name_en: item.name,
-                    lat: item.lat, lng: item.lng,
-                    _alliance: item,
-                  })
-                }}
-                style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: '1px solid #F0EDED', background: 'none', border: 'none', borderBottom: '1px solid #F0EDED', cursor: 'pointer', textAlign: 'left' }}
-              >
-                {/* 이니셜 썸네일 */}
-                <div style={{ width: 36, height: 36, borderRadius: 8, background: '#F0EDED', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#A8A8A8' }}>{item.name.slice(0, 2)}</span>
-                </div>
-                {/* 정보 */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lang === 'zh' ? item.name_cn : item.name}</div>
-                  <div style={{ fontSize: 11, color: '#C4725A', fontWeight: 600, marginTop: 1 }}>{item.discount} {lang === 'zh' ? '折扣' : lang === 'en' ? 'off' : '할인'}</div>
-                  <div style={{ fontSize: 10, color: '#A8A8A8', marginTop: 1 }}>{item.location[lang] || item.location.ko}</div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* ─── 좌하단: 지역 선택 + 내 위치 ─── */}
       <div style={{ position: 'absolute', bottom: 16, left: 16, zIndex: 10, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}>

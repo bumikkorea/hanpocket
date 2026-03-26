@@ -330,6 +330,8 @@ export default function NearHomeTab({ setTab, setSubPage }) {
     setBoardingPass(null)
   }
 
+  const [bpShowReturn, setBpShowReturn] = useState(false) // 탑승권 가는편/오는편 토글
+
   // ─── UI 상태 ───
   const [showPlanner, setShowPlanner] = useState(false)
   const [showMore, setShowMore] = useState(false)
@@ -458,7 +460,11 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         {/* 탑승권 (좌 50%) */}
         <div style={{ flex: 1, minWidth: 0 }}>
           {boardingPass?.outbound ? (() => {
-            const bp = boardingPass.outbound
+            const hasReturn = !!boardingPass.return
+            const bp = (bpShowReturn && hasReturn) ? boardingPass.return : boardingPass.outbound
+            const legLabel = (bpShowReturn && hasReturn)
+              ? L(lang, { ko: '오는 편', zh: '回程', en: 'Return' })
+              : L(lang, { ko: '가는 편', zh: '去程', en: 'Outbound' })
             const fromAp = AIRPORTS[bp.from]
             const toAp = AIRPORTS[bp.to]
             const now = new Date(); now.setHours(0,0,0,0)
@@ -466,12 +472,17 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             const dLabel = dDay > 0 ? `D-${dDay}` : dDay === 0 ? 'D-DAY' : L(lang, { ko: '출발', zh: '已出发', en: 'Gone' })
             const fH = Math.floor(bp.flightMin / 60), fM = bp.flightMin % 60
             return (
-              <div style={{ background: '#2A2520', borderRadius: 12, padding: '14px 14px 12px', position: 'relative', height: '100%', boxSizing: 'border-box' }}>
-                <button onClick={deleteBoardingPass} style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', cursor: 'pointer', color: '#6B6B6B', fontSize: 10 }}>✕</button>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <span style={{ fontSize: 10, color: '#A8A8A8' }}>{formatTripDate(bp.date, lang)}</span>
+              <div
+                onClick={() => hasReturn && setBpShowReturn(v => !v)}
+                style={{ background: '#2A2520', borderRadius: 12, padding: '14px 14px 12px', position: 'relative', height: '100%', boxSizing: 'border-box', cursor: hasReturn ? 'pointer' : 'default' }}
+              >
+                <button onClick={(e) => { e.stopPropagation(); deleteBoardingPass() }} style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', cursor: 'pointer', color: '#6B6B6B', fontSize: 10 }}>✕</button>
+                {/* 가는편/오는편 라벨 */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <span style={{ fontSize: 9, color: '#C4725A', fontWeight: 600 }}>{legLabel}</span>
                   <span style={{ fontSize: 9, fontWeight: 700, color: 'white', background: '#C4725A', padding: '1px 6px', borderRadius: 8 }}>{dLabel}</span>
                 </div>
+                <div style={{ fontSize: 10, color: '#A8A8A8', marginBottom: 6 }}>{formatTripDate(bp.date, lang)}</div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 4 }}>
                   <span style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>{bp.from}</span>
                   <span style={{ fontSize: 11, color: '#6B6B6B' }}>—</span>
@@ -487,6 +498,13 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                   <div><div style={{ fontSize: 9, color: '#6B6B6B' }}>{bp.flight} · {AIRLINES[bp.airline]?.cn || bp.airline}</div></div>
                   <div><div style={{ fontSize: 9, color: '#6B6B6B' }}>{bp.arrTime}</div></div>
                 </div>
+                {/* 왕복 인디케이터 */}
+                {hasReturn && (
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginTop: 8 }}>
+                    <div style={{ width: bpShowReturn ? 4 : 12, height: 4, borderRadius: 2, background: bpShowReturn ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.5)', transition: 'all 0.2s' }} />
+                    <div style={{ width: bpShowReturn ? 12 : 4, height: 4, borderRadius: 2, background: bpShowReturn ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.2)', transition: 'all 0.2s' }} />
+                  </div>
+                )}
               </div>
             )
           })() : (

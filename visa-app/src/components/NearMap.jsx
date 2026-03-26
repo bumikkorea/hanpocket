@@ -344,7 +344,6 @@ export default function NearMap() {
   const dragRef = useRef(null)   // null = not dragging
   const skipSnapRef = useRef(false)
   const SHEET_PEEK = 124 // compact 상태에서 보이는 높이(px)
-  const sheetHidden = !sheetPoi // 시트 완전 숨김 여부
 
   const [mapReady, setMapReady] = useState(false)
   const [phIdx, setPhIdx] = useState(0)

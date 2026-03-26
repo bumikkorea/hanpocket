@@ -539,11 +539,13 @@ export default function NearMap() {
     }).catch(() => {})
   }, [])
 
-  // ── 확장/축소/코스 시 map relayout ──
+  // ── 확장/축소/투어버스 시 map relayout ──
   useEffect(() => {
     if (!mapReady || !mapInstance.current) return
-    const timer = setTimeout(() => mapInstance.current.relayout(), 310)
-    return () => clearTimeout(timer)
+    const t1 = setTimeout(() => mapInstance.current.relayout(), 50)
+    const t2 = setTimeout(() => mapInstance.current.relayout(), 320)
+    const t3 = setTimeout(() => mapInstance.current.relayout(), 600)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [isExpanded, tourbusMode, mapReady])
 
   // ── 1분 간격 영업상태 갱신 ──

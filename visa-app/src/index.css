@@ -2,6 +2,22 @@
 
 @import "tailwindcss";
 
+/* ─── iOS pull-to-refresh 방지 + 전체 overscroll 방지 ─── */
+html {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+body {
+  overscroll-behavior: none;
+  overscroll-behavior-y: none;
+}
+
+/* 카카오맵 워터마크 숨김 */
+.kakao_logo, a[href*="map.kakao.com"], .map_copyright, div[class*="kakao"] > a {
+  display: none !important;
+  visibility: hidden !important;
+}
+
 /* ─── NEAR Design System — 토스/미단/소홍서 스타일 ─── */
 :root {
   color-scheme: light only;

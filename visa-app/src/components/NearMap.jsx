@@ -785,7 +785,7 @@ export default function NearMap() {
   }, [isExpanded, sheetPoi, snapSheet, selectPin, closeSheet, SHEET_PEEK])
 
   return (
-    <div style={{ position: 'relative', height: 'calc(100dvh - 116px)', overflow: 'hidden', background: 'var(--surface)' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 116, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease' }}>
 
       {/* ─── 카카오맵 ─── */}
       <div
@@ -798,12 +798,15 @@ export default function NearMap() {
       />
 
       {/* ─── 지도 탭 클릭 → 바텀 시트 닫기 ─── */}
-      {sheetPoi && (
-        <div
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: SHEET_PEEK, zIndex: 8 }}
-          onClick={closeSheet}
-        />
-      )}
+      <div
+        style={{
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: SHEET_PEEK, zIndex: 8,
+          pointerEvents: sheetPoi ? 'auto' : 'none',
+          opacity: sheetPoi ? 1 : 0,
+          transition: 'opacity 0.3s ease',
+        }}
+        onClick={closeSheet}
+      />
 
       {/* ─── 검색바 ─── */}
       <button
@@ -996,8 +999,10 @@ export default function NearMap() {
         onTouchEnd={activeCourseId ? undefined : onDragEnd}
         style={{
           position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 20,
+          maxHeight: '50vh',
           height: activeCourseId ? '50dvh' : '68dvh',
           willChange: 'transform',
+          transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           background: '#FAFAFA', borderRadius: '24px 24px 0 0',
           boxShadow: '0 -8px 24px rgba(200,200,200,0.4), 0 -2px 8px rgba(255,255,255,0.9)',
           overflowX: 'hidden',

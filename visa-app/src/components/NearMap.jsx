@@ -858,7 +858,7 @@ export default function NearMap() {
 
       {/* ─── 메인 카테고리 바 (지도 밖 상단 고정) ─── */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, background: '#FFFFFF', borderBottom: '0.5px solid #F2F4F6' }}>
-        <div style={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center', gap: 6, height: 48, padding: '0 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, padding: '0 12px' }}>
           {[
             { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true), hasIcon: true },
             { id: '_bookmark', label: lang === 'zh' ? '关注' : lang === 'en' ? 'Liked' : '관심', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
@@ -872,19 +872,17 @@ export default function NearMap() {
               <button key={item.id} onClick={item.action}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  padding: '0 4px',
+                  padding: '0 5px',
                   fontSize: 14, fontWeight: isActive ? 600 : 400,
                   color: isActive ? '#191F28' : '#8B95A1',
-                  position: 'relative', transition: 'all 0.2s',
-                  height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  lineHeight: '48px',
+                  transition: 'all 0.2s',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {item.hasIcon && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>}
                   {item.label}
                 </span>
-                {isActive && <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 20, height: 2.5, borderRadius: 1.5, background: '#191F28' }} />}
               </button>
             )
           })}

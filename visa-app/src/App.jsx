@@ -2802,7 +2802,7 @@ function AppInner() {
         }}
         onClick={() => setSubPage('translator')}
         style={{
-          position: 'fixed', right: 16, bottom: 80, zIndex: 999,
+          position: 'fixed', left: 16, bottom: 80, zIndex: 999,
           width: 44, height: 44, borderRadius: '50%',
           background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
           border: 'none', cursor: 'pointer',

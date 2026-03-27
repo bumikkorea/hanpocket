@@ -1116,7 +1116,7 @@ export default function NearMap() {
       </div>
 
       {/* ─── 좌하단: 내 위치 ─── */}
-      <div style={{ position: 'absolute', bottom: 16, left: 16, zIndex: 10 }}>
+      <div style={{ position: 'absolute', bottom: 16, right: 16, zIndex: 10 }}>
         {/* 내 위치 */}
         <button
           onClick={() => {

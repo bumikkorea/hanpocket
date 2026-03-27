@@ -225,7 +225,7 @@ function DateSetupScreen({ lang, onSave, onCancel }) {
   )
 }
 
-// ─── 장소 추가 바텀시트 ───
+// ─── 일정 추가 바텀시트 ───
 function AddPlaceSheet({ open, onClose, lang, onAdd }) {
   const [query, setQuery] = useState('')
   const [time, setTime] = useState('10:00')
@@ -298,7 +298,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
           <div style={{ width: 40, height: 4, borderRadius: 2, background: '#CDCDCD', margin: '0 auto 16px' }} />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <span style={{ fontSize: 17, fontWeight: 700, color: '#191F28' }}>
-              {L(lang, { ko: '장소 추가', zh: '添加地点', en: 'Add Place' })}
+              {L(lang, { ko: '일정 추가', zh: '添加行程', en: 'Add Schedule' })}
             </span>
             <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, fontSize: 14, color: '#8B95A1' }}>
               ✕
@@ -307,15 +307,15 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 44px' }}>
-          {/* 위시리스트 (찜한 장소) */}
+          {/* 위시리스트 (관심 장소) */}
           {step === 'wishlist' && (() => {
-            const wishlist = (() => { try { return JSON.parse(localStorage.getItem('near_wishlist') || '[]') } catch { return [] } })()
+            const wishlist = (() => { try { const d = JSON.parse(localStorage.getItem('near_my_seoul') || '{}'); return Array.isArray(d.pins) ? d.pins : [] } catch { return [] } })()
             return (
               <>
                 {wishlist.length > 0 && (
                   <div style={{ marginBottom: 16 }}>
                     <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 8 }}>
-                      {L(lang, { ko: '찜한 장소', zh: '收藏地点', en: 'Saved Places' })}
+                      {L(lang, { ko: '관심 장소', zh: '关注地点', en: 'Liked Places' })}
                     </div>
                     {wishlist.map((w, i) => (
                       <button key={w.id || i} onClick={() => {
@@ -341,7 +341,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
                 )}
                 {wishlist.length === 0 && (
                   <div style={{ textAlign: 'center', padding: '20px 0', color: '#8B95A1', fontSize: 13 }}>
-                    {L(lang, { ko: '찜한 장소가 없어요', zh: '还没有收藏的地点', en: 'No saved places yet' })}
+                    {L(lang, { ko: '관심 장소가 없어요', zh: '还没有关注的地点', en: 'No liked places yet' })}
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: 8 }}>
@@ -867,16 +867,8 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
             )
           })()}
 
-          {/* 빈 상태 */}
-          {!isArrivalDay && !isDepartureDay && !hasPlaces && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
-              <div style={{ fontSize: 13, color: '#8B95A1', lineHeight: 1.5, textAlign: 'center', whiteSpace: 'pre-line' }}>
-                {L(lang, { ko: '어디로 떠나볼까요?\n장소를 추가해서 하루를 채워보세요', zh: '今天去哪里？\n添加地点，制定行程', en: "Where to today?\nAdd places to build your itinerary" })}
-              </div>
-            </div>
-          )}
 
-          {/* 장소 추가 버튼 */}
+          {/* 일정 추가 버튼 */}
           <button
             onClick={() => setShowAddPlace(true)}
             style={{
@@ -887,13 +879,13 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
             onMouseEnter={e => { e.currentTarget.style.borderColor = '#3182F6'; e.currentTarget.style.color = '#3182F6'; e.currentTarget.style.background = 'rgba(49,130,246,0.06)' }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = '#F2F4F6'; e.currentTarget.style.color = '#8B95A1'; e.currentTarget.style.background = 'transparent' }}
           >
-            + {L(lang, { ko: '장소 추가', zh: '添加地点', en: 'Add Place' })}
+            + {L(lang, { ko: '일정 추가', zh: '添加行程', en: 'Add Schedule' })}
           </button>
 
           {/* 미배정 섹션 */}
           <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed #F2F4F6', margin: '12px 12px 0' }}>
             <div style={{ fontSize: 10, color: '#8B95A1', fontWeight: 600, marginBottom: 4 }}>
-              {L(lang, { ko: '미배정 장소', zh: '未分配地点', en: 'Unassigned' })} ({(plan._unassigned || []).length})
+              {L(lang, { ko: '미배정', zh: '未分配', en: 'Unassigned' })} ({(plan._unassigned || []).length})
             </div>
             {(plan._unassigned || []).length === 0 ? (
               <div style={{ fontSize: 10, color: '#8B95A1', opacity: 0.5 }}>

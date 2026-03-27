@@ -449,32 +449,6 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         </div>
       </div>
 
-      {/* ─── 1.5 출국 전광판 카드 ─── */}
-      <div style={{ padding: '0 24px 16px', ...fadeUp(1) }}>
-        <button
-          onClick={() => setSubPage('flight-board')}
-          style={{
-            width: '100%', background: '#191F28', borderRadius: 16, border: 'none',
-            padding: '18px 20px', textAlign: 'left', cursor: 'pointer',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            transition: 'all 0.2s',
-          }}
-        >
-          <div>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#3182F6', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: 4 }}>
-              DEPARTURES
-            </div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#FFFFFF' }}>
-              {L(lang, { ko: '출국 전광판', zh: '出发航班', en: 'Departures Board' })}
-            </div>
-            <div style={{ fontSize: 12, color: '#8B95A1', marginTop: 4 }}>
-              {L(lang, { ko: '인천공항 출발편 실시간 조회', zh: '仁川机场出发航班实时查询', en: 'Live ICN departure flights' })}
-            </div>
-          </div>
-          <span style={{ fontSize: 20, color: '#8B95A1', flexShrink: 0 }}>›</span>
-        </button>
-      </div>
-
       {/* ─── 2. 일정 카드 (풀 width) ─── */}
       <div style={{ padding: '0 24px 24px', ...fadeUp(1.5) }}>
         <button

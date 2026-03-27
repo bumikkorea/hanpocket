@@ -490,6 +490,54 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
   const [systemSheet, setSystemSheet] = useState(null)
   const [expandedSystem, setExpandedSystem] = useState({})
   const [hoveredItem, setHoveredItem] = useState(null)
+  const [transportPicker, setTransportPicker] = useState(null) // itemId showing picker
+
+  const TRANSPORT_OPTIONS = [
+    { id: 'walk', icon: '🚶', label: { ko: '도보', zh: '步行', en: 'Walk' } },
+    { id: 'bus', icon: '🚌', label: { ko: '버스', zh: '公交', en: 'Bus' } },
+    { id: 'subway', icon: '🚇', label: { ko: '지하철', zh: '地铁', en: 'Subway' } },
+    { id: 'taxi', icon: '🚕', label: { ko: '택시', zh: '出租车', en: 'Taxi' } },
+  ]
+
+  const setItemTransport = (itemId, transportId) => {
+    if (!selectedDay || !plan) return
+    const dayData = plan.days[selectedDay]
+    if (!dayData) return
+    const items = dayData.items.map(i => i.id === itemId ? { ...i, transport: transportId } : i)
+    const next = { ...plan, days: { ...plan.days, [selectedDay]: { ...dayData, items } } }
+    updatePlan(next)
+    setTransportPicker(null)
+  }
+
+  const openTransportDeeplink = (transport, fromItem, toItem) => {
+    if (!fromItem || !toItem) return
+    const fromLat = fromItem.lat || fromItem.store_id && findStore(fromItem.store_id)?.latitude
+    const fromLng = fromItem.lng || fromItem.store_id && findStore(fromItem.store_id)?.longitude
+    const toLat = toItem.lat || toItem.store_id && findStore(toItem.store_id)?.latitude
+    const toLng = toItem.lng || toItem.store_id && findStore(toItem.store_id)?.longitude
+    if (!toLat || !toLng) return
+
+    const toName = encodeURIComponent(toItem.name_kr || toItem.name_cn || '')
+
+    if (lang === 'zh') {
+      // 가오더지도
+      window.location.href = `amapuri://route/plan?dlat=${toLat}&dlon=${toLng}&dname=${toName}&dev=0&t=0`
+      setTimeout(() => window.open('https://apps.apple.com/app/id461703208', '_blank'), 2000)
+      return
+    }
+
+    if (transport === 'taxi') {
+      window.location.href = `kakaot://taxi?dest_lat=${toLat}&dest_lng=${toLng}&dest_name=${toName}`
+      setTimeout(() => window.open('https://apps.apple.com/app/id981110422', '_blank'), 2000)
+    } else {
+      const by = transport === 'bus' ? 'PUBLICTRANSIT' : transport === 'subway' ? 'PUBLICTRANSIT' : 'FOOT'
+      const url = fromLat && fromLng
+        ? `kakaomap://route?sp=${fromLat},${fromLng}&ep=${toLat},${toLng}&by=${by}`
+        : `kakaomap://route?ep=${toLat},${toLng}&by=${by}`
+      window.location.href = url
+      setTimeout(() => window.open('https://apps.apple.com/app/id304608425', '_blank'), 2000)
+    }
+  }
   const [slideIn, setSlideIn] = useState(false)
 
   const daysList = plan ? buildDaysList(plan.arrivalDate, plan.departureDate) : []
@@ -844,7 +892,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                       </div>
 
                       {/* 장소 정보 */}
-                      <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : 6, borderBottom: isLast ? 'none' : '1px solid #F2F4F6', marginBottom: isLast ? 0 : 6 }}>
+                      <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : 4 }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <div style={{ fontSize: 13, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -853,12 +901,62 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                             {metaLine && <div style={{ fontSize: 10, color: '#8B95A1', marginTop: 2, letterSpacing: '-0.2px' }}>{metaLine}</div>}
                             {closedDayText && <div style={{ marginTop: 2, fontSize: 10, color: '#D94F4F', fontWeight: 600 }}>{closedDayText}</div>}
                           </div>
-                          {/* 삭제 — hover시만 */}
                           <button onClick={() => handleDeleteItem(item.id)}
                             style={{ background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, fontSize: 10, color: '#8B95A1', padding: '2px 4px', opacity: isHovered ? 1 : 0, transition: 'opacity 0.15s' }}>
                             ✕
                           </button>
                         </div>
+
+                        {/* 이동수단 선택 (마지막 아이템 제외) */}
+                        {!isLast && (
+                          <div style={{ display: 'flex', alignItems: 'center', margin: '6px 0 2px', gap: 6 }}>
+                            <button
+                              onClick={() => {
+                                if (transportPicker === item.id) {
+                                  // 이미 열려있으면 딥링크 열기
+                                  openTransportDeeplink(item.transport || 'walk', item, placeItems[idx + 1])
+                                } else {
+                                  setTransportPicker(transportPicker === item.id ? null : item.id)
+                                }
+                              }}
+                              style={{
+                                width: 24, height: 24, borderRadius: '50%',
+                                border: '1px solid #F2F4F6', background: '#FFFFFF',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                fontSize: 11, cursor: 'pointer', transition: 'all 0.2s',
+                                flexShrink: 0,
+                              }}
+                            >
+                              {TRANSPORT_OPTIONS.find(t => t.id === (item.transport || 'walk'))?.icon || '🚶'}
+                            </button>
+                            {/* 펼쳐진 pill 선택지 */}
+                            {transportPicker === item.id && (
+                              <div style={{
+                                display: 'flex', gap: 4,
+                                background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+                                borderRadius: 16, padding: '3px 4px',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                                animation: 'fadeIn 0.2s ease',
+                              }}>
+                                {TRANSPORT_OPTIONS.map(opt => (
+                                  <button key={opt.id}
+                                    onClick={(e) => { e.stopPropagation(); setItemTransport(item.id, opt.id) }}
+                                    style={{
+                                      padding: '3px 8px', borderRadius: 12, border: 'none', cursor: 'pointer',
+                                      background: (item.transport || 'walk') === opt.id ? '#3182F6' : 'transparent',
+                                      color: (item.transport || 'walk') === opt.id ? 'white' : '#8B95A1',
+                                      fontSize: 10, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 2,
+                                      transition: 'all 0.15s',
+                                    }}
+                                  >
+                                    <span>{opt.icon}</span>
+                                    <span>{L(lang, opt.label)}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   )

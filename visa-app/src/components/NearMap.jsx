@@ -772,10 +772,13 @@ export default function NearMap() {
     if (!el) return
     el.style.transition = 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)'
     if (sheetPoi) {
-      // 투어버스 정류장: 30vh 높이로 올라옴
-      const isTourbus = sheetPoi.category === 'tourbus' || sheetPoi.category === 'tourbus-live' || sheetPoi.category === 'alliance'
-      const peekHeight = isTourbus ? Math.max(window.innerHeight * 0.3, SHEET_PEEK) : SHEET_PEEK
+      // 모든 장소: 화면의 38% 높이로 올라옴 (주소+버튼 바로 보이게)
+      const peekHeight = Math.max(window.innerHeight * 0.38, SHEET_PEEK)
       el.style.transform = `translateY(${Math.max(0, el.offsetHeight - peekHeight)}px)`
+      // 핀이 시트에 가리지 않도록 지도 카메라를 위로 이동
+      if (mapInstance.current && sheetPoi.lat) {
+        setTimeout(() => mapInstance.current?.panBy(0, -120), 100)
+      }
     } else {
       el.style.transform = 'translateY(100%)'
     }
@@ -858,12 +861,12 @@ export default function NearMap() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 48 }}>
           {[
             { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true), hasIcon: true },
-            { id: '_recent', label: lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
+            { id: '_bookmark', label: lang === 'zh' ? '收藏' : lang === 'en' ? 'Saved' : '찜', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
             ...CATEGORY_CHIPS.map(c => ({ id: c.id, label: tLang(c.key, lang), action: () => { setActiveCategory(c.id); if (c.id !== 'michelin') setMichelinFilter('all'); if (c.id !== 'food') setFoodCategoryFilter('all'); closeSheet(); exitTourbusMode(); setShowAllPanel(false) } })),
             { id: '_tourbus', label: 'Tourbus', action: () => { if (tourbusMode) exitTourbusMode(); else { setTourbusMode(true); closeSheet() } } },
           ].map(item => {
             const isActive = item.id === '_tourbus' ? tourbusMode
-              : item.id === '_search' || item.id === '_recent' ? false
+              : item.id === '_search' || item.id === '_bookmark' ? false
               : activeCategory === item.id && !tourbusMode
             return (
               <button key={item.id} onClick={item.action}
@@ -977,40 +980,32 @@ export default function NearMap() {
           </div>
         )}
 
-      {/* ─── 최근 방문 매장 왼쪽 슬라이드 패널 ─── */}
+      {/* ─── 찜 목록 왼쪽 슬라이드 패널 ─── */}
       {showHistoryPanel && (
         <>
-          {/* 배경 오버레이 */}
           <div
             onClick={() => setShowHistoryPanel(false)}
             style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 50, transition: 'opacity 0.2s' }}
           />
-          {/* 왼쪽 패널 */}
           <div style={{
             position: 'absolute', top: 0, left: 0, bottom: 0, width: '75%', maxWidth: 320,
             background: '#FFFFFF', zIndex: 51, borderTopRightRadius: 16, borderBottomRightRadius: 16,
             boxShadow: '4px 0 24px rgba(0,0,0,0.15)', display: 'flex', flexDirection: 'column',
             animation: 'slideInLeft 0.25s ease-out',
           }}>
-            {/* 헤더 */}
-            <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid #F0F0F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid #F2F4F6', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>
-                {lang === 'zh' ? '最近浏览' : lang === 'en' ? 'Recently Viewed' : '최근 본 매장'}
+                {lang === 'zh' ? '我的收藏' : lang === 'en' ? 'Saved Places' : '찜한 장소'}
               </span>
               <button onClick={() => setShowHistoryPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#999', padding: 4 }}>✕</button>
             </div>
-            {/* 리스트 */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
-              {getPlaceHistory().length === 0 ? (
+              {bookmarks.length === 0 ? (
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: '#8B95A1', fontSize: 13 }}>
-                  {lang === 'zh' ? '暂无浏览记录' : lang === 'en' ? 'No history yet' : '아직 본 매장이 없어요'}
+                  {lang === 'zh' ? '还没有收藏的地点' : lang === 'en' ? 'No saved places yet' : '아직 찜한 장소가 없어요'}
                 </div>
-              ) : getPlaceHistory().map((place, i) => {
-                // 카테고리 breadcrumb 생성
-                const catLabel = place.category ? tLang(`cat_${place.category}`, lang) : ''
-                const subLabel = place.subCategory || ''
-                const breadcrumb = [catLabel, subLabel].filter(Boolean).join(' > ')
-                const placeName = lang === 'zh' ? (place.name_zh || place.name) : lang === 'en' ? (place.name_en || place.name) : place.name
+              ) : allPins.filter(p => bookmarks.includes(p.id)).map((place, i) => {
+                const placeName = getLocalizedName(place, lang)
 
                 return (
                   <button
@@ -1869,9 +1864,11 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
     const isLocal = place.source === 'local'
     const isKakao = place.source === 'kakao'
     const hasDetail = place.category && place.lat
-    const name = lang === 'zh' ? (place.nameZh || place.zh || place.name) :
+    let name = lang === 'zh' ? (place.nameZh || place.zh || place.name) :
                  lang === 'ko' ? (place.ko || place.name) :
                  (place.nameEn || place.en || place.name)
+    // '카카오' 등 무성의한 텍스트 치환
+    if (!name || name === '카카오' || name === 'kakao') name = lang === 'zh' ? '选择的地点' : lang === 'en' ? 'Selected location' : '선택하신 지점'
     const addr = place.address_zh || place.address_ko || place.address || ''
 
     return (

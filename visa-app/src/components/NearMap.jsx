@@ -828,7 +828,7 @@ export default function NearMap() {
   }, [isExpanded, sheetPoi, snapSheet, selectPin, closeSheet, SHEET_PEEK])
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 65, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
+    <div style={{ position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
 
       {/* ─── 카카오맵 (풀 커버) ─── */}
       <div
@@ -857,7 +857,7 @@ export default function NearMap() {
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, background: '#FFFFFF', borderBottom: '0.5px solid #F2F4F6' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 44 }}>
           {[
-            { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true) },
+            { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true), hasIcon: true },
             { id: '_recent', label: lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
             ...CATEGORY_CHIPS.map(c => ({ id: c.id, label: tLang(c.key, lang), action: () => { setActiveCategory(c.id); if (c.id !== 'michelin') setMichelinFilter('all'); if (c.id !== 'food') setFoodCategoryFilter('all'); closeSheet(); exitTourbusMode(); setShowAllPanel(false) } })),
             { id: '_tourbus', label: 'Tourbus', action: () => { if (tourbusMode) exitTourbusMode(); else { setTourbusMode(true); closeSheet() } } },
@@ -874,7 +874,10 @@ export default function NearMap() {
                   position: 'relative', transition: 'all 0.2s',
                 }}
               >
-                {item.label}
+                <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                  {item.hasIcon && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>}
+                  {item.label}
+                </span>
                 {isActive && <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 20, height: 2.5, borderRadius: 1.5, background: '#191F28' }} />}
               </button>
             )

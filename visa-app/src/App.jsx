@@ -2091,7 +2091,7 @@ function AppInner() {
       )}
 
       {/* Top Bar — fixed, always on top */}
-      <div className="fixed top-0 left-0 right-0 z-[1000]" style={{ backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid #F2F4F6', display: tab === 'near-map' ? 'none' : 'block' }}>
+      <div className="fixed top-0 left-0 right-0 z-[1000]" style={{ backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid #F2F4F6', display: 'block' }}>
         <div className="px-4 pt-2 pb-1">
           <div className="flex items-center">
             {/* 좌측: < 뒤로가기 (항상) */}

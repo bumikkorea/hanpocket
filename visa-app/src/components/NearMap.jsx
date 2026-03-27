@@ -858,7 +858,8 @@ export default function NearMap() {
 
       {/* ─── 메인 카테고리 바 (지도 밖 상단 고정) ─── */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, background: '#FFFFFF', borderBottom: '0.5px solid #F2F4F6' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: 48, padding: '0 12px' }}>
+        <div className="map-cat-bar" style={{ display: 'flex', alignItems: 'center', gap: 24, height: 48, padding: '0 16px', overflowX: 'auto', scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
+          <style>{`.map-cat-bar::-webkit-scrollbar { display: none; }`}</style>
           {[
             { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true), hasIcon: true },
             { id: '_bookmark', label: lang === 'zh' ? '关注' : lang === 'en' ? 'Liked' : '관심', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
@@ -872,11 +873,12 @@ export default function NearMap() {
               <button key={item.id} onClick={item.action}
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
-                  padding: '0 5px',
+                  padding: '14px 0', flexShrink: 0,
                   fontSize: 14, fontWeight: isActive ? 600 : 400,
                   color: isActive ? '#191F28' : '#8B95A1',
                   transition: 'all 0.2s',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  lineHeight: 1, whiteSpace: 'nowrap',
                 }}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

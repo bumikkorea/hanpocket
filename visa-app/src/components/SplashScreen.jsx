@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react'
 
-export default function SplashScreen({ onFinish }) {
+export default function SplashScreen({ onFinish, lang }) {
   const [fadeOut, setFadeOut] = useState(false)
   const [activeLang, setActiveLang] = useState('ko')
 
   useEffect(() => {
-    const t1 = setTimeout(() => setActiveLang('cn'), 1000)
-    const t2 = setTimeout(() => setFadeOut(true), 2000)
-    const t3 = setTimeout(() => onFinish(), 2500)
+    const duration = lang === 'ko' ? 800 : lang === 'zh' ? 1200 : 1000
+    const switchAt = Math.floor(duration * 0.5)
+    const t1 = setTimeout(() => setActiveLang('cn'), switchAt)
+    const t2 = setTimeout(() => setFadeOut(true), duration)
+    const t3 = setTimeout(() => onFinish(), duration + 500)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
-  }, [onFinish])
+  }, [onFinish, lang])
 
   return (
     <div

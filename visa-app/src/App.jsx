@@ -1954,7 +1954,7 @@ function AppInner() {
   const currentHero = heroData[tab] || heroData.home
 
   if (showSplash) {
-    return <SplashScreen onFinish={() => setShowSplash(false)} />
+    return <SplashScreen onFinish={() => setShowSplash(false)} lang={lang} />
   }
 
   if (!onboardingDone) {

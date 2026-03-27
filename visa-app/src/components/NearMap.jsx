@@ -1877,35 +1877,23 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
     return (
       <button
         onClick={() => handleSelect(place)}
-        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid rgba(0,0,0,0.05)', textAlign: 'left' }}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '16px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid #F1F1F1', textAlign: 'left' }}
       >
-        <span style={{
-          width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-          background: hasDetail ? 'rgba(49,130,246,0.1)' : '#F2F2F2',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 12, fontWeight: 700, color: hasDetail ? '#3182F6' : '#8B95A1',
+        <div style={{
+          width: 40, height: 40, borderRadius: '50%', flexShrink: 0, marginRight: 15,
+          background: '#F8F8F8', display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          {isKakao ? 'K' : hasDetail ? 'N' : 'S'}
-        </span>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 15, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {name}
-            </span>
-            {hasDetail && (
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#3182F6', background: 'rgba(49,130,246,0.1)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
-                {lang === 'zh' ? '详情' : lang === 'ko' ? '상세' : 'Detail'}
-              </span>
-            )}
-            {isKakao && (
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#8B95A1', background: 'rgba(0,0,0,0.06)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
-                카카오
-              </span>
-            )}
-          </div>
-          {addr ? <div style={{ fontSize: 13, color: '#8B95A1', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{addr}</div> : null}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#191F28" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
+            <path d="M21 10c0 6-9 13-9 13s-9-7-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
         </div>
-        <span style={{ fontSize: 18, color: '#8B95A1', flexShrink: 0 }}>›</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 15, fontWeight: 500, color: '#000', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {name}
+          </div>
+          {addr && <div style={{ fontSize: 13, color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{addr}</div>}
+        </div>
+        <span style={{ color: '#CCC', fontSize: 14, flexShrink: 0, marginLeft: 8 }}>›</span>
       </button>
     )
   }

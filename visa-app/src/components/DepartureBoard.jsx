@@ -176,39 +176,70 @@ const CITY = {
   MEL:{ zh:'墨尔本',   en:'Melbourne',     co:{ ko:'호주', zh:'澳大利亚', en:'Australia' } },
 }
 
-// 항공사명 번역 (한국어 → zh / en)
-const AIRLINE = {
-  '대한항공':     { zh:'大韩航空',       en:'Korean Air'         },
-  '아시아나항공': { zh:'韩亚航空',       en:'Asiana Airlines'    },
-  '제주항공':     { zh:'济州航空',       en:'Jeju Air'           },
-  '진에어':       { zh:'真航空',         en:'Jin Air'            },
-  '에어부산':     { zh:'釜山航空',       en:'Air Busan'          },
-  '티웨이항공':   { zh:'T\'way航空',     en:"T'way Air"          },
-  '에어서울':     { zh:'首尔航空',       en:'Air Seoul'          },
-  '이스타항공':   { zh:'易斯达航空',     en:'Eastar Jet'         },
-  '에어프레미아': { zh:'Air Premia',     en:'Air Premia'         },
-  '중국국제항공': { zh:'中国国际航空',   en:'Air China'          },
-  '중국동방항공': { zh:'中国东方航空',   en:'China Eastern'      },
-  '중국남방항공': { zh:'中国南方航空',   en:'China Southern'     },
-  '일본항공':     { zh:'日本航空',       en:'Japan Airlines'     },
-  '전일본공수':   { zh:'全日本空输',     en:'ANA'                },
-  '말레이시아항공':{ zh:'马来西亚航空',  en:'Malaysia Airlines'  },
-  '말레이시아 항공':{ zh:'马来西亚航空', en:'Malaysia Airlines'  },
-  '싱가포르항공': { zh:'新加坡航空',     en:'Singapore Airlines' },
-  '타이항공':     { zh:'泰国航空',       en:'Thai Airways'       },
-  '베트남항공':   { zh:'越南航空',       en:'Vietnam Airlines'   },
-  '필리핀항공':   { zh:'菲律宾航空',     en:'Philippine Airlines'},
-  '에미레이트항공':{ zh:'阿联酋航空',    en:'Emirates'           },
-  '카타르항공':   { zh:'卡塔尔航空',     en:'Qatar Airways'      },
-  '터키항공':     { zh:'土耳其航空',     en:'Turkish Airlines'   },
-  '루프트한자':   { zh:'汉莎航空',       en:'Lufthansa'          },
-  '에어프랑스':   { zh:'法国航空',       en:'Air France'         },
-  '영국항공':     { zh:'英国航空',       en:'British Airways'    },
-  '델타항공':     { zh:'达美航空',       en:'Delta Air Lines'    },
-  '유나이티드항공':{ zh:'联合航空',      en:'United Airlines'    },
-  '아메리칸항공': { zh:'美国航공',       en:'American Airlines'  },
-  'KLM':          { zh:'荷兰皇家航空',   en:'KLM'                },
+// 항공사 IATA 코드 → 다국어 매핑
+const AIRLINE_BY_IATA = {
+  KE: { ko: '대한항공',       zh: '大韩航空',       en: 'Korean Air' },
+  OZ: { ko: '아시아나항공',   zh: '韩亚航空',       en: 'Asiana Airlines' },
+  '7C':{ ko: '제주항공',      zh: '济州航空',       en: 'Jeju Air' },
+  TW: { ko: '티웨이항공',     zh: '德威航空',       en: "T'way Air" },
+  LJ: { ko: '진에어',         zh: '真航空',         en: 'Jin Air' },
+  BX: { ko: '에어부산',       zh: '釜山航空',       en: 'Air Busan' },
+  RS: { ko: '에어서울',       zh: '首尔航空',       en: 'Air Seoul' },
+  ZE: { ko: '이스타항공',     zh: '易斯达航空',     en: 'Eastar Jet' },
+  YP: { ko: '에어프레미아',   zh: 'Air Premia',     en: 'Air Premia' },
+  '4V':{ ko: '플라이강원',    zh: '江原航空',       en: 'Fly Gangwon' },
+  CA: { ko: '중국국제항공',   zh: '中国国际航空',   en: 'Air China' },
+  CZ: { ko: '중국남방항공',   zh: '中国南方航空',   en: 'China Southern' },
+  MU: { ko: '중국동방항공',   zh: '中国东方航空',   en: 'China Eastern' },
+  ZH: { ko: '심천항공',       zh: '深圳航空',       en: 'Shenzhen Airlines' },
+  SC: { ko: '산동항공',       zh: '山东航空',       en: 'Shandong Airlines' },
+  HO: { ko: '길상항공',       zh: '吉祥航空',       en: 'Juneyao Airlines' },
+  '9C':{ ko: '춘추항공',      zh: '春秋航空',       en: 'Spring Airlines' },
+  '3U':{ ko: '쓰촨항공',      zh: '四川航空',       en: 'Sichuan Airlines' },
+  HU: { ko: '하이난항공',     zh: '海南航空',       en: 'Hainan Airlines' },
+  FM: { ko: '상하이항공',     zh: '上海航空',       en: 'Shanghai Airlines' },
+  NH: { ko: '전일본공수',     zh: '全日空',         en: 'ANA' },
+  JL: { ko: '일본항공',       zh: '日本航空',       en: 'Japan Airlines' },
+  MM: { ko: '피치항공',       zh: '乐桃航空',       en: 'Peach Aviation' },
+  BC: { ko: '스카이마크',     zh: 'Skymark',        en: 'Skymark' },
+  SQ: { ko: '싱가포르항공',   zh: '新加坡航空',     en: 'Singapore Airlines' },
+  TG: { ko: '타이항공',       zh: '泰国航空',       en: 'Thai Airways' },
+  VN: { ko: '베트남항공',     zh: '越南航空',       en: 'Vietnam Airlines' },
+  VJ: { ko: '비엣젯',         zh: '越捷航空',       en: 'VietJet Air' },
+  QD: { ko: '비엣젯',         zh: '越捷航空',       en: 'VietJet Air' },
+  PR: { ko: '필리핀항공',     zh: '菲律宾航空',     en: 'Philippine Airlines' },
+  '5J':{ ko: '세부퍼시픽',    zh: '宿务太平洋',     en: 'Cebu Pacific' },
+  MH: { ko: '말레이시아항공', zh: '马来西亚航空',   en: 'Malaysia Airlines' },
+  AK: { ko: '에어아시아',     zh: '亚洲航空',       en: 'AirAsia' },
+  BI: { ko: '로열브루나이',   zh: '文莱皇家航空',   en: 'Royal Brunei' },
+  EK: { ko: '에미레이트',     zh: '阿联酋航空',     en: 'Emirates' },
+  QR: { ko: '카타르항공',     zh: '卡塔尔航空',     en: 'Qatar Airways' },
+  EY: { ko: '에티하드',       zh: '阿提哈德航空',   en: 'Etihad Airways' },
+  TK: { ko: '터키항공',       zh: '土耳其航空',     en: 'Turkish Airlines' },
+  LH: { ko: '루프트한자',     zh: '汉莎航空',       en: 'Lufthansa' },
+  AF: { ko: '에어프랑스',     zh: '法国航空',       en: 'Air France' },
+  BA: { ko: '영국항공',       zh: '英国航空',       en: 'British Airways' },
+  KL: { ko: 'KLM',            zh: '荷兰皇家航空',   en: 'KLM' },
+  OS: { ko: '오스트리아항공', zh: '奥地利航空',     en: 'Austrian Airlines' },
+  AY: { ko: '핀에어',         zh: '芬兰航空',       en: 'Finnair' },
+  LO: { ko: '폴란드항공',     zh: '波兰航空',       en: 'LOT Polish' },
+  DL: { ko: '델타항공',       zh: '达美航空',       en: 'Delta' },
+  UA: { ko: '유나이티드',     zh: '美联航',         en: 'United' },
+  AA: { ko: '아메리칸항공',   zh: '美国航空',       en: 'American Airlines' },
+  HA: { ko: '하와이안항공',   zh: '夏威夷航空',     en: 'Hawaiian Airlines' },
+  AC: { ko: '에어캐나다',     zh: '加拿大航空',     en: 'Air Canada' },
+  QF: { ko: '콴타스',         zh: '澳洲航空',       en: 'Qantas' },
+  NZ: { ko: '에어뉴질랜드',   zh: '新西兰航空',     en: 'Air New Zealand' },
+  OM: { ko: '몽골항공',       zh: '蒙古航空',       en: 'MIAT Mongolian' },
+  HY: { ko: '우즈베키스탄항공', zh: '乌兹别克斯坦航空', en: 'Uzbekistan Airways' },
+  SU: { ko: '아에로플로트',   zh: '俄罗斯航空',     en: 'Aeroflot' },
+  ET: { ko: '에티오피아항공', zh: '埃塞俄比亚航空', en: 'Ethiopian Airlines' },
 }
+
+// 한국어 항공사명 → IATA 역매핑 (API가 한국어명으로 오므로)
+const AIRLINE_KO_TO_IATA = Object.fromEntries(
+  Object.entries(AIRLINE_BY_IATA).map(([code, v]) => [v.ko, code])
+)
 
 // { city, country } 반환 — 3개 언어 병기 + 번역 캐시 fallback
 function getCityInfo(lang, airportCode, koName, translations) {
@@ -232,13 +263,13 @@ function getCityInfo(lang, airportCode, koName, translations) {
   return { city: koName, country: '' }
 }
 function translateAirline(lang, koName) {
-  const a = AIRLINE[koName]
-  if (!a) return koName
-  // 병기: 중국어 + 영어
-  const parts = []
-  if (a.zh) parts.push(a.zh)
-  if (a.en && a.en !== a.zh) parts.push(a.en)
-  return parts.length > 0 ? parts.join(' ') : koName
+  // 한국어 항공사명 → IATA → 해당 언어 단일 표시
+  const iata = AIRLINE_KO_TO_IATA[koName]
+  if (iata) {
+    const a = AIRLINE_BY_IATA[iata]
+    return a?.[lang] || a?.en || koName
+  }
+  return koName
 }
 
 // P01=T1 본관 / P02=T2 / P03=탑승동(T1 소속, 셔틀 이용)

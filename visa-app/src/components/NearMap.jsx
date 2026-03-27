@@ -294,7 +294,7 @@ function MagicPillSelector({ areas, lang, onSelect }) {
         onTouchEnd={(e) => e.stopPropagation()}
         style={{
           width: 44, height: 44, borderRadius: '50%',
-          background: '#FAFAFA', border: 'none', cursor: 'pointer',
+          background: '#FFFFFF', border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: expanded ? '0 0 0 1.5px rgba(0,0,0,0.15) inset' : '0 2px 8px rgba(0,0,0,0.12)',
           transition: 'box-shadow 0.15s ease',
@@ -309,7 +309,7 @@ function MagicPillSelector({ areas, lang, onSelect }) {
           <div className="fixed inset-0 z-30" onClick={closeDropdown} onTouchEnd={closeDropdown} />
           <div
             className="absolute top-full right-0 mt-2 z-40 rounded-[16px] py-1 overflow-hidden"
-            style={{ background: '#FAFAFA', boxShadow: '8px 8px 18px rgba(200,200,200,0.5), -8px -8px 18px #FFFFFF', minWidth: 120 }}
+            style={{ background: '#FFFFFF', boxShadow: '8px 8px 18px rgba(200,200,200,0.5), -8px -8px 18px #FFFFFF', minWidth: 120 }}
             onTouchEnd={(e) => e.stopPropagation()}
           >
             {areas.map((area) => {
@@ -320,7 +320,7 @@ function MagicPillSelector({ areas, lang, onSelect }) {
                   onClick={(e) => handleSelect(area, e)}
                   onTouchEnd={(e) => e.stopPropagation()}
                   className="w-full px-3 py-2 flex items-center gap-1.5 cursor-pointer select-none transition-colors duration-100"
-                  style={{ background: isCurrent ? 'rgba(196,114,90,0.06)' : 'transparent', color: isCurrent ? '#C4725A' : '#1A1A1A' }}
+                  style={{ background: isCurrent ? 'rgba(49,130,246,0.06)' : 'transparent', color: isCurrent ? '#3182F6' : '#191F28' }}
                 >
                   <span className={`text-[12px] ${isCurrent ? 'font-bold' : 'font-medium'}`}>
                     {tLang(area.key, lang)}
@@ -828,7 +828,7 @@ export default function NearMap() {
   }, [isExpanded, sheetPoi, snapSheet, selectPin, closeSheet, SHEET_PEEK])
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 65, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 65, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
 
       {/* ─── 카카오맵 (풀 커버) ─── */}
       <div
@@ -862,7 +862,7 @@ export default function NearMap() {
             onClick={() => { setShowHistoryPanel(true); setShowAreaPicker(false) }}
             style={{
               flexShrink: 0, height: 36, padding: '0 12px', borderRadius: 24,
-              background: showHistoryPanel ? '#1A1A1A' : 'white', color: showHistoryPanel ? 'white' : '#6B6B6B',
+              background: showHistoryPanel ? '#191F28' : 'white', color: showHistoryPanel ? 'white' : '#8B95A1',
               border: showHistoryPanel ? 'none' : '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
               fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4,
               boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
@@ -876,10 +876,11 @@ export default function NearMap() {
           <button
             onClick={() => setShowSearch(true)}
             style={{
-              flexShrink: 0, height: 36, padding: '0 14px', borderRadius: 24,
-              background: 'white', border: '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
-              fontSize: 13, fontWeight: 600, color: '#1A1A1A', display: 'flex', alignItems: 'center', gap: 4,
+              flexShrink: 0, height: 36, padding: '0 14px', borderRadius: 8,
+              background: '#F2F4F6', border: 'none', cursor: 'pointer',
+              fontSize: 13, fontWeight: 600, color: '#191F28', display: 'flex', alignItems: 'center', gap: 4,
               boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
+              transition: 'all 0.2s',
             }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -901,13 +902,13 @@ export default function NearMap() {
                 style={{
                   flexShrink: 0,
                   height: 34, minWidth: 44,
-                  background: active ? '#1A1A1A' : 'white',
-                  color: active ? 'white' : '#555',
-                  border: active ? 'none' : '1px solid rgba(0,0,0,0.10)',
-                  borderRadius: 24, padding: '0 13px',
-                  fontSize: 13, fontWeight: active ? 700 : 500,
+                  background: active ? '#3182F6' : '#F2F4F6',
+                  color: active ? 'white' : '#8B95A1',
+                  border: 'none',
+                  borderRadius: 24, padding: '0 16px',
+                  fontSize: 14, fontWeight: 500,
                   boxShadow: active ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.08)',
-                  transition: 'all 0.15s ease',
+                  transition: 'all 0.2s',
                   display: 'flex', alignItems: 'center', gap: 4,
                   cursor: 'pointer',
                 }}
@@ -922,13 +923,13 @@ export default function NearMap() {
             style={{
               flexShrink: 0,
               height: 34, minWidth: 44,
-              background: tourbusMode ? '#1A1A1A' : 'white',
-              color: tourbusMode ? 'white' : '#555',
-              border: tourbusMode ? 'none' : '1px solid rgba(0,0,0,0.10)',
-              borderRadius: 24, padding: '0 13px',
-              fontSize: 13, fontWeight: tourbusMode ? 700 : 500,
+              background: tourbusMode ? '#3182F6' : '#F2F4F6',
+              color: tourbusMode ? 'white' : '#8B95A1',
+              border: 'none',
+              borderRadius: 24, padding: '0 16px',
+              fontSize: 14, fontWeight: 500,
               boxShadow: tourbusMode ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.08)',
-              transition: 'all 0.15s ease',
+              transition: 'all 0.2s',
               display: 'flex', alignItems: 'center', gap: 4,
               cursor: 'pointer',
             }}
@@ -945,8 +946,8 @@ export default function NearMap() {
               onClick={() => setActiveRouteIds([])}
               style={{
                 flexShrink: 0, height: 28, minWidth: 36,
-                background: activeRouteIds.length === 0 ? '#1A1A1A' : 'white',
-                color: activeRouteIds.length === 0 ? 'white' : '#6B6B6B',
+                background: activeRouteIds.length === 0 ? '#191F28' : 'white',
+                color: activeRouteIds.length === 0 ? 'white' : '#8B95A1',
                 border: activeRouteIds.length === 0 ? 'none' : '1px solid rgba(0,0,0,0.08)',
                 borderRadius: 20, padding: '0 10px',
                 fontSize: 11, fontWeight: activeRouteIds.length === 0 ? 700 : 500,
@@ -1017,7 +1018,7 @@ export default function NearMap() {
                   onClick={() => setFoodCategoryFilter(active ? 'all' : cat.id)}
                   style={{
                     flexShrink: 0, height: 28, minWidth: 36,
-                    background: active ? '#1A1A1A' : 'white',
+                    background: active ? '#191F28' : 'white',
                     color: active ? 'white' : '#777',
                     border: active ? 'none' : '1px solid rgba(0,0,0,0.08)',
                     borderRadius: 20, padding: '0 10px',
@@ -1052,7 +1053,7 @@ export default function NearMap() {
           }}>
             {/* 헤더 */}
             <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid #F0F0F0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>
+              <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>
                 {lang === 'zh' ? '最近浏览' : lang === 'en' ? 'Recently Viewed' : '최근 본 매장'}
               </span>
               <button onClick={() => setShowHistoryPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#999', padding: 4 }}>✕</button>
@@ -1060,7 +1061,7 @@ export default function NearMap() {
             {/* 리스트 */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
               {getPlaceHistory().length === 0 ? (
-                <div style={{ padding: '40px 20px', textAlign: 'center', color: '#A8A8A8', fontSize: 13 }}>
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: '#8B95A1', fontSize: 13 }}>
                   {lang === 'zh' ? '暂无浏览记录' : lang === 'en' ? 'No history yet' : '아직 본 매장이 없어요'}
                 </div>
               ) : getPlaceHistory().map((place, i) => {
@@ -1094,7 +1095,7 @@ export default function NearMap() {
                       padding: '10px 16px', border: 'none', background: 'none', cursor: 'pointer',
                       borderBottom: '1px solid #F5F5F5', transition: 'background 0.1s',
                     }}
-                    onMouseOver={e => e.currentTarget.style.background = '#FAFAFA'}
+                    onMouseOver={e => e.currentTarget.style.background = '#FFFFFF'}
                     onMouseOut={e => e.currentTarget.style.background = 'none'}
                   >
                     {/* 썸네일 */}
@@ -1111,14 +1112,14 @@ export default function NearMap() {
                       )}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{placeName}</div>
+                      <div style={{ fontSize: 14, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{placeName}</div>
                       {breadcrumb && (
                         <div style={{ fontSize: 11, color: '#ABABAB', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {breadcrumb}
                         </div>
                       )}
                       {place.area && (
-                        <div style={{ fontSize: 10, color: '#CDCDCD', marginTop: 1 }}>{place.area}</div>
+                        <div style={{ fontSize: 10, color: '#8B95A1', marginTop: 1 }}>{place.area}</div>
                       )}
                     </div>
                   </button>
@@ -1141,7 +1142,7 @@ export default function NearMap() {
             onClick={() => { setShowAreaPicker(v => !v); setShowRecent(false) }}
             style={{
               width: 44, height: 44, borderRadius: '50%',
-              background: selectedDistrict ? '#C4725A' : 'white', color: selectedDistrict ? 'white' : '#1A1A1A',
+              background: selectedDistrict ? '#3182F6' : 'white', color: selectedDistrict ? 'white' : '#191F28',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
@@ -1157,7 +1158,7 @@ export default function NearMap() {
                   style={{
                     display: 'block', width: '100%', textAlign: 'left', padding: '8px 16px', border: 'none', background: 'none', cursor: 'pointer',
                     fontSize: 13, fontWeight: selectedDistrict === area.district ? 700 : 400,
-                    color: selectedDistrict === area.district ? '#C4725A' : '#1A1A1A',
+                    color: selectedDistrict === area.district ? '#3182F6' : '#191F28',
                   }}
                 >
                   {t(area.key)}
@@ -1182,10 +1183,11 @@ export default function NearMap() {
           }}
           style={{
             width: 44, height: 44, borderRadius: '50%',
-            background: 'white', border: 'none', cursor: 'pointer',
+            background: '#FFFFFF', border: 'none', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-            fontSize: 18, color: '#C4725A',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+            fontSize: 18, color: '#191F28',
+            transition: 'all 0.2s',
           }}
         >
           ◎
@@ -1205,7 +1207,7 @@ export default function NearMap() {
         onTouchEnd={e => e.stopPropagation()}
       >
         <div style={{ padding: '72px 14px 10px', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#6B6B6B', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
+          <p style={{ fontSize: 11, fontWeight: 700, color: '#8B95A1', textTransform: 'uppercase', letterSpacing: '0.08em', margin: 0 }}>
             {tLang('cat_all', lang)}
           </p>
         </div>
@@ -1220,11 +1222,11 @@ export default function NearMap() {
                 borderBottom: '1px solid rgba(0,0,0,0.04)',
               }}
             >
-              <p style={{ fontSize: 12, fontWeight: 600, color: '#1A1A1A', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: '#191F28', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {pin.name_ko || pin.name_zh}
               </p>
               {pin.category && (
-                <p style={{ fontSize: 11, color: '#6B6B6B', margin: '2px 0 0' }}>
+                <p style={{ fontSize: 11, color: '#8B95A1', margin: '2px 0 0' }}>
                   {pin.category}
                 </p>
               )}
@@ -1251,8 +1253,8 @@ export default function NearMap() {
           height: tourbusMode ? '50dvh' : '68dvh',
           willChange: 'transform',
           transition: 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)',
-          background: '#FAFAFA', borderRadius: '24px 24px 0 0',
-          boxShadow: '0 -4px 16px rgba(0,0,0,0.08)',
+          background: '#FFFFFF', borderRadius: '16px 16px 0 0',
+          boxShadow: '0 -4px 12px rgba(0,0,0,0.05)',
           overflowX: 'hidden',
           overflowY: isExpanded || tourbusMode ? 'auto' : 'hidden',
         }}
@@ -1309,7 +1311,7 @@ export default function NearMap() {
               <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
                 <button
                   onClick={() => setShowList(true)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', fontSize: 12, fontWeight: 600, color: '#6B6B6B', display: 'flex', alignItems: 'center', gap: 3 }}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', fontSize: 12, fontWeight: 600, color: '#8B95A1', display: 'flex', alignItems: 'center', gap: 3 }}
                 >
                   {lang === 'zh' ? '列表' : lang === 'en' ? 'List' : '목록'} ›
                 </button>
@@ -1399,7 +1401,7 @@ export default function NearMap() {
               // 새 임시 핀 생성
               const pos = new window.kakao.maps.LatLng(poi.lat, poi.lng)
               const el = document.createElement('div')
-              el.innerHTML = `<div style="width:22px;height:22px;background:#C4725A;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(196,114,90,0.5);transform:scale(1);transition:transform 0.2s"></div>`
+              el.innerHTML = `<div style="width:22px;height:22px;background:#3182F6;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(49,130,246,0.5);transform:scale(1);transition:transform 0.2s"></div>`
               const overlay = new window.kakao.maps.CustomOverlay({ position: pos, content: el, zIndex: 5 })
               overlay.setMap(mapInstance.current)
               tempSearchMarkerRef.current = overlay
@@ -1471,12 +1473,12 @@ function MichelinSheetContent({ poi, restaurant, lang, onClose, userPos }) {
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: 36, height: 4, borderRadius: 2, background: '#DDDDDD' }} />
         </div>
-        <button onClick={onClose} style={{ color: '#6B6B6B', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
+        <button onClick={onClose} style={{ color: '#8B95A1', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
       </div>
 
       <div style={{ padding: '0 20px 20px' }}>
         {/* 이름 */}
-        <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: '0 0 6px' }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: '#191F28', margin: '0 0 6px' }}>
           {name || r.name?.ko}
         </h2>
 
@@ -1490,12 +1492,12 @@ function MichelinSheetContent({ poi, restaurant, lang, onClose, userPos }) {
             {pinCfg.emoji} {awardLabel[lang] || awardLabel.en}
           </span>
           {priceLabel && (
-            <span style={{ fontSize: 12, color: '#6B6B6B', fontWeight: 600 }}>{priceLabel}</span>
+            <span style={{ fontSize: 12, color: '#8B95A1', fontWeight: 600 }}>{priceLabel}</span>
           )}
         </div>
 
         {/* 지역 */}
-        <div style={{ fontSize: 13, color: '#6B6B6B', marginBottom: 14 }}>
+        <div style={{ fontSize: 13, color: '#8B95A1', marginBottom: 14 }}>
           📍 {r.area?.city} {r.area?.gu} {r.area?.dong || ''}
         </div>
 
@@ -1514,7 +1516,7 @@ function MichelinSheetContent({ poi, restaurant, lang, onClose, userPos }) {
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={() => openKakaoMapRoute(r.lat, r.lng, r.name?.ko || '', 'PUBLICTRANSIT')}
-            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#1A1A1A', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(0,0,0,0.15)', transition: 'transform 0.15s ease' }}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#191F28', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(0,0,0,0.15)', transition: 'transform 0.15s ease' }}
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
@@ -1531,7 +1533,7 @@ function MichelinSheetContent({ poi, restaurant, lang, onClose, userPos }) {
           {r.catchTableUrl && (
             <button
               onClick={() => window.open(r.catchTableUrl, '_blank')}
-              style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#FAFAFA', color: pinCfg.color, border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'transform 0.15s ease' }}
+              style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#FFFFFF', color: pinCfg.color, border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'transform 0.15s ease' }}
               onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
               onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
             >
@@ -1582,13 +1584,13 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <div style={{ width: 36, height: 4, borderRadius: 2, background: '#DDDDDD' }} />
         </div>
-        <button onClick={onClose} style={{ color: '#6B6B6B', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
+        <button onClick={onClose} style={{ color: '#8B95A1', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
       </div>
 
       <div style={{ padding: '0 20px 20px' }}>
         {/* 이름 + NEW 뱃지 */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#1A1A1A', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#191F28', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {getLocalizedName(poi, lang)}
           </h2>
           {isNewPoi(poi.created_at) && (
@@ -1605,23 +1607,23 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
               {catLabel}
             </span>
           )}
-          {dist && <span style={{ fontSize: 12, color: '#6B6B6B' }}>{dist}</span>}
+          {dist && <span style={{ fontSize: 12, color: '#8B95A1' }}>{dist}</span>}
         </div>
 
         {/* 주소 — 한 번만 */}
         {address ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-            <span style={{ fontSize: 13, color: '#6B6B6B', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: 13, color: '#8B95A1', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               📍 {address}
             </span>
             <button
               onClick={handleCopyAddress}
               style={{
                 flexShrink: 0, padding: '5px 10px', borderRadius: 10,
-                background: copied ? 'rgba(22,163,74,0.1)' : '#FAFAFA',
+                background: copied ? 'rgba(22,163,74,0.1)' : '#FFFFFF',
                 border: 'none',
                 boxShadow: copied ? 'none' : '3px 3px 8px rgba(200,200,200,0.5), -3px -3px 8px #FFFFFF',
-                color: copied ? '#16A34A' : '#6B6B6B',
+                color: copied ? '#16A34A' : '#8B95A1',
                 fontSize: 11, fontWeight: 600, cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
@@ -1669,7 +1671,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', 'PUBLICTRANSIT')}
-            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#1A1A1A', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(0,0,0,0.15)', transition: 'transform 0.15s ease' }}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#191F28', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(0,0,0,0.15)', transition: 'transform 0.15s ease' }}
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
@@ -1677,7 +1679,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           </button>
           <button
             onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', userPos)}
-            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#C4725A', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(196,114,90,0.3)', transition: 'transform 0.15s ease' }}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#3182F6', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(49,130,246,0.3)', transition: 'transform 0.15s ease' }}
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
@@ -1686,7 +1688,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           {poi.has_reservation && (
             <button
               onClick={() => onReserve(poi)}
-              style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#FAFAFA', color: '#C4725A', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'transform 0.15s ease' }}
+              style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#FFFFFF', color: '#3182F6', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'transform 0.15s ease' }}
               onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
               onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
             >
@@ -1695,7 +1697,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           )}
           <button
             onClick={() => onBookmark(poi)}
-            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FAFAFA', border: 'none', borderRadius: 14, cursor: 'pointer', flexShrink: 0, boxShadow: isBookmarked ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 15, color: isBookmarked ? '#FF3B30' : '#6B6B6B' }}
+            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: 'none', borderRadius: 14, cursor: 'pointer', flexShrink: 0, boxShadow: isBookmarked ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 15, color: isBookmarked ? '#FF3B30' : '#8B95A1' }}
           >
             {isBookmarked ? '♥' : '♡'}
           </button>
@@ -1933,41 +1935,41 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
       >
         <span style={{
           width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-          background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 18, boxShadow: '3px 3px 8px rgba(190,190,190,0.4), -3px -3px 8px #FFFFFF',
         }}>
           {isKakao ? '📍' : hasDetail ? '⭐' : '🗺️'}
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 15, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: 15, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {name}
             </span>
             {hasDetail && (
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#C4725A', background: 'rgba(196,114,90,0.1)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#3182F6', background: 'rgba(49,130,246,0.1)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
                 {lang === 'zh' ? '详情' : lang === 'ko' ? '상세' : 'Detail'}
               </span>
             )}
             {isKakao && (
-              <span style={{ fontSize: 10, fontWeight: 700, color: '#6B6B6B', background: 'rgba(0,0,0,0.06)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#8B95A1', background: 'rgba(0,0,0,0.06)', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>
                 카카오
               </span>
             )}
           </div>
-          {addr ? <div style={{ fontSize: 13, color: '#6B6B6B', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{addr}</div> : null}
+          {addr ? <div style={{ fontSize: 13, color: '#8B95A1', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{addr}</div> : null}
         </div>
-        <span style={{ fontSize: 18, color: '#A8A8A8', flexShrink: 0 }}>›</span>
+        <span style={{ fontSize: 18, color: '#8B95A1', flexShrink: 0 }}>›</span>
       </button>
     )
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       {/* 검색 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 20px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 20px', background: '#FFFFFF', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
         <button onClick={onClose} style={{
-          background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10,
-          borderRadius: '50%', color: '#1A1A1A', display: 'flex',
+          background: '#FFFFFF', border: 'none', cursor: 'pointer', padding: 10,
+          borderRadius: '50%', color: '#191F28', display: 'flex',
           boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
           transition: 'box-shadow 0.15s ease',
           fontSize: 20, fontWeight: 'bold',
@@ -1975,7 +1977,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
           ←
         </button>
         <div style={{
-          flex: 1, background: '#FAFAFA', borderRadius: 50,
+          flex: 1, background: '#FFFFFF', borderRadius: 50,
           boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)',
           display: 'flex', alignItems: 'center', padding: '0 14px', height: 44, gap: 8,
         }}>
@@ -1984,7 +1986,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder={tLang(PH_KEYS[phIdx], lang)}
-            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 16, color: '#1A1A1A', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}
+            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 16, color: '#191F28', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}
           />
           {query && (
             <button onClick={() => setQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, fontSize: 16, lineHeight: 1 }}>✕</button>
@@ -2007,7 +2009,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
                   {recent.map((r, i) => (
-                    <button key={i} onClick={() => setQuery(r)} style={{ background: '#FAFAFA', border: 'none', borderRadius: 24, padding: '8px 16px', fontSize: 13, color: '#1A1A1A', cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
+                    <button key={i} onClick={() => setQuery(r)} style={{ background: '#FFFFFF', border: 'none', borderRadius: 24, padding: '8px 16px', fontSize: 13, color: '#191F28', cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
                       {r}
                     </button>
                   ))}
@@ -2022,7 +2024,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
         ) : searching ? (
           <div style={{ paddingTop: 32, textAlign: 'center' }}>
             <div style={{ fontSize: 24, marginBottom: 8 }}>🔍</div>
-            <div style={{ fontSize: 14, color: '#6B6B6B' }}>{lang === 'zh' ? '搜索中...' : lang === 'ko' ? '검색 중...' : 'Searching...'}</div>
+            <div style={{ fontSize: 14, color: '#8B95A1' }}>{lang === 'zh' ? '搜索中...' : lang === 'ko' ? '검색 중...' : 'Searching...'}</div>
           </div>
         ) : results.length > 0 ? (
           <div style={{ paddingTop: 8 }}>
@@ -2065,16 +2067,16 @@ function ListView({ pins, lang, listSort, onSortChange, onSelectPoi, onBack }) {
   })
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 30, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 30, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px 14px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
-        <span style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>{tLang('list_title', lang)}</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px 14px', background: '#FFFFFF', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+        <span style={{ fontSize: 17, fontWeight: 700, color: '#191F28' }}>{tLang('list_title', lang)}</span>
         <button
           onClick={onBack}
           style={{
             display: 'flex', alignItems: 'center', gap: 4,
-            background: '#FAFAFA', border: 'none', borderRadius: 24, padding: '8px 18px',
-            fontSize: 13, fontWeight: 600, cursor: 'pointer', color: '#1A1A1A',
+            background: '#FFFFFF', border: 'none', borderRadius: 24, padding: '8px 18px',
+            fontSize: 13, fontWeight: 600, cursor: 'pointer', color: '#191F28',
             boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
             transition: 'box-shadow 0.15s ease',
           }}
@@ -2085,15 +2087,15 @@ function ListView({ pins, lang, listSort, onSortChange, onSelectPoi, onBack }) {
         </button>
       </div>
       {/* 정렬 칩 */}
-      <div style={{ display: 'flex', gap: 8, padding: '12px 20px', overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0, background: '#FAFAFA' }}>
+      <div style={{ display: 'flex', gap: 8, padding: '12px 20px', overflowX: 'auto', scrollbarWidth: 'none', flexShrink: 0, background: '#FFFFFF' }}>
         {SORTS.map(s => (
           <button
             key={s.id}
             onClick={() => onSortChange(s.id)}
             style={{
               flexShrink: 0,
-              background: '#FAFAFA',
-              color: listSort === s.id ? '#C4725A' : '#666666',
+              background: '#FFFFFF',
+              color: listSort === s.id ? '#3182F6' : '#666666',
               border: 'none', borderRadius: 24, padding: '7px 16px',
               fontSize: 13, fontWeight: listSort === s.id ? 700 : 600, cursor: 'pointer',
               boxShadow: listSort === s.id
@@ -2161,7 +2163,7 @@ function TourbusRouteList({ routes, lang, onSelectStop, onExit }) {
             <div key={route.id} style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <div style={{ width: 12, height: 12, borderRadius: '50%', background: route.color }} />
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>{(() => { const l = getRouteDisplayLabel(route); return l[lang] || l.ko })()}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#191F28' }}>{(() => { const l = getRouteDisplayLabel(route); return l[lang] || l.ko })()}</span>
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 6, paddingLeft: 20 }}>
                 {route.duration?.[lang] || route.duration?.ko || ''}{route.interval ? ` · ${route.interval}${lang === 'zh' ? '分钟间隔' : lang === 'en' ? 'min interval' : '분 간격'}` : ''}
@@ -2185,7 +2187,7 @@ function TourbusRouteList({ routes, lang, onSelectStop, onExit }) {
                       {stop.name[lang] || stop.name.ko}
                     </span>
                     {stop.isTicketStop && (
-                      <span style={{ fontSize: 9, background: '#FFD700', color: '#1A1A1A', borderRadius: 4, padding: '1px 5px', fontWeight: 700 }}>
+                      <span style={{ fontSize: 9, background: '#FFD700', color: '#191F28', borderRadius: 4, padding: '1px 5px', fontWeight: 700 }}>
                         {lang === 'zh' ? '售票处' : lang === 'en' ? 'Ticket' : '매표소'}
                       </span>
                     )}
@@ -2211,24 +2213,24 @@ function TourbusStopSheet({ stop, route, stopNum, lang, onClose, onExit }) {
   return (
     <div style={{ padding: '12px 20px 24px', maxHeight: '50vh', overflowY: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
-        <div style={{ width: 40, height: 4, borderRadius: 2, background: '#CDCDCD' }} />
+        <div style={{ width: 40, height: 4, borderRadius: 2, background: '#8B95A1' }} />
       </div>
       {/* 헤더: 정류장명 + 다음 도착 */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{ width: 30, height: 30, borderRadius: '50%', background: route.color, color: 'white', fontSize: 13, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{stopNum}</div>
           <div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{stop.name[lang] || stop.name.ko}</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#191F28' }}>{stop.name[lang] || stop.name.ko}</div>
             <div style={{ fontSize: 11, color: route.color, fontWeight: 600 }}>{routeLabel[lang] || routeLabel.ko}</div>
           </div>
         </div>
-        <button onClick={onClose} style={{ fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', color: '#6B6B6B', padding: 4 }}>✕</button>
+        <button onClick={onClose} style={{ fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', color: '#8B95A1', padding: 4 }}>✕</button>
       </div>
       {/* 다음 버스 */}
       {nextArr && (
-        <div style={{ background: '#FBF7F5', borderRadius: 10, padding: '8px 12px', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#6B6B6B' }}>{lang === 'zh' ? '下一班' : lang === 'en' ? 'Next bus' : '다음 버스'}</span>
-          <span style={{ fontSize: 14, fontWeight: 700, color: '#C4725A' }}>{nextArr}</span>
+        <div style={{ background: 'rgba(49,130,246,0.1)', borderRadius: 10, padding: '8px 12px', marginBottom: 10, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 11, color: '#8B95A1' }}>{lang === 'zh' ? '下一班' : lang === 'en' ? 'Next bus' : '다음 버스'}</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#3182F6', transition: 'all 0.2s' }}>{nextArr}</span>
         </div>
       )}
       {/* 매표소 */}
@@ -2241,18 +2243,18 @@ function TourbusStopSheet({ stop, route, stopNum, lang, onClose, onExit }) {
       {/* 요약정보 */}
       {sm && (
         <div style={{ marginBottom: 10 }}>
-          {sm.stop && <div style={{ fontSize: 11, color: '#6B6B6B', marginBottom: 3 }}>{sm.stop[lang] || sm.stop.ko}</div>}
-          {sm.subway && <div style={{ fontSize: 11, color: '#6B6B6B', marginBottom: 3 }}>{sm.subway[lang] || sm.subway.ko}</div>}
-          {sm.address && <div style={{ fontSize: 11, color: '#A8A8A8', marginBottom: 3 }}>{sm.address[lang] || sm.address.ko}</div>}
+          {sm.stop && <div style={{ fontSize: 16, color: '#191F28', marginBottom: 3 }}>{sm.stop[lang] || sm.stop.ko}</div>}
+          {sm.subway && <div style={{ fontSize: 16, color: '#191F28', marginBottom: 3 }}>{sm.subway[lang] || sm.subway.ko}</div>}
+          {sm.address && <div style={{ fontSize: 13, color: '#8B95A1', marginBottom: 3 }}>{sm.address[lang] || sm.address.ko}</div>}
         </div>
       )}
       {/* 주변 관광지 */}
       {stop.nearbySpots?.length > 0 && (
         <div style={{ marginBottom: 10 }}>
-          <div style={{ fontSize: 10, fontWeight: 600, color: '#A8A8A8', marginBottom: 4 }}>{lang === 'zh' ? '周边景点' : lang === 'en' ? 'Nearby' : '주변 관광지'}</div>
+          <div style={{ fontSize: 10, fontWeight: 600, color: '#8B95A1', marginBottom: 4 }}>{lang === 'zh' ? '周边景点' : lang === 'en' ? 'Nearby' : '주변 관광지'}</div>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {stop.nearbySpots.map((s, i) => (
-              <span key={i} style={{ fontSize: 11, color: '#C4725A', background: '#FBF7F5', padding: '3px 8px', borderRadius: 10, fontWeight: 500 }}>{s.name[lang] || s.name.ko}</span>
+              <span key={i} style={{ fontSize: 11, color: '#3182F6', background: 'rgba(49,130,246,0.1)', padding: '3px 8px', borderRadius: 10, fontWeight: 500, transition: 'all 0.2s' }}>{s.name[lang] || s.name.ko}</span>
             ))}
           </div>
         </div>
@@ -2260,20 +2262,20 @@ function TourbusStopSheet({ stop, route, stopNum, lang, onClose, onExit }) {
       {/* 자세히 보기 (story) */}
       {storyText && (
         <div style={{ marginBottom: 10 }}>
-          <button onClick={() => setShowStory(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, color: '#C4725A', padding: 0 }}>
+          <button onClick={() => setShowStory(v => !v)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 600, color: '#8B95A1', padding: 0, transition: 'all 0.2s' }}>
             {showStory ? (lang === 'zh' ? '收起' : lang === 'en' ? 'Less' : '접기') : (lang === 'zh' ? '详细' : lang === 'en' ? 'More' : '자세히 보기')} {showStory ? '▲' : '▼'}
           </button>
-          {showStory && <div style={{ fontSize: 12, color: '#6B6B6B', lineHeight: 1.6, marginTop: 6 }}>{storyText}</div>}
+          {showStory && <div style={{ fontSize: 12, color: '#8B95A1', lineHeight: 1.6, marginTop: 6 }}>{storyText}</div>}
         </div>
       )}
       {/* 전체 정류장 */}
       <div>
-        <div style={{ fontSize: 10, fontWeight: 600, color: '#A8A8A8', marginBottom: 4 }}>{lang === 'zh' ? '全部站点' : lang === 'en' ? 'All Stops' : '전체 정류장'}</div>
+        <div style={{ fontSize: 10, fontWeight: 600, color: '#8B95A1', marginBottom: 4 }}>{lang === 'zh' ? '全部站点' : lang === 'en' ? 'All Stops' : '전체 정류장'}</div>
         {route.stops.filter(s => !s.noStop).map((s, i) => (
           <div key={s.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0', borderBottom: '1px solid #F0EDED', opacity: s.id === stop.id ? 1 : 0.5 }}>
-            <div style={{ width: 18, height: 18, borderRadius: '50%', background: s.id === stop.id ? route.color : '#F0EDED', color: s.id === stop.id ? 'white' : '#6B6B6B', fontSize: 8, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
-            <span style={{ fontSize: 11, color: '#1A1A1A', fontWeight: s.id === stop.id ? 700 : 400, flex: 1 }}>{s.name[lang] || s.name.ko}</span>
-            {s.timetable?.[0] && <span style={{ fontSize: 9, color: '#A8A8A8' }}>{s.timetable[0]}</span>}
+            <div style={{ width: 18, height: 18, borderRadius: '50%', background: s.id === stop.id ? route.color : '#F2F4F6', color: s.id === stop.id ? 'white' : '#8B95A1', fontSize: 8, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</div>
+            <span style={{ fontSize: 11, color: '#191F28', fontWeight: s.id === stop.id ? 700 : 400, flex: 1 }}>{s.name[lang] || s.name.ko}</span>
+            {s.timetable?.[0] && <span style={{ fontSize: 9, color: '#8B95A1' }}>{s.timetable[0]}</span>}
           </div>
         ))}
       </div>
@@ -2327,7 +2329,7 @@ function ReservationSheet({ poi, lang, onClose }) {
 
   if (done) {
     return (
-      <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FAFAFA', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+      <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FFFFFF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
         <div style={{ fontSize: 52 }}>✅</div>
         <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('reserve_success', lang)}</div>
         <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>{getLocalizedName(poi, lang)} · {selDate} {selTime} · {count}{tLang('res_people', lang)}</div>
@@ -2336,12 +2338,12 @@ function ReservationSheet({ poi, lang, onClose }) {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
-        <button onClick={onClose} style={{ background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#1A1A1A', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 20, fontWeight: 'bold' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#FFFFFF', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+        <button onClick={onClose} style={{ background: '#FFFFFF', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#191F28', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 20, fontWeight: 'bold' }}>
           ←
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{getLocalizedName(poi, lang)} · {tLang('reserve', lang)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>{getLocalizedName(poi, lang)} · {tLang('reserve', lang)}</span>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '20px 16px 16px' }}>
@@ -2354,8 +2356,8 @@ function ReservationSheet({ poi, lang, onClose }) {
               return (
                 <button key={d} onClick={() => setSelDate(d)} style={{
                   flexShrink: 0, width: 52, padding: '8px 0', borderRadius: 16, textAlign: 'center',
-                  background: '#FAFAFA',
-                  color: active ? '#C4725A' : '#374151',
+                  background: '#FFFFFF',
+                  color: active ? '#3182F6' : '#374151',
                   border: 'none', cursor: 'pointer',
                   boxShadow: active
                     ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
@@ -2363,7 +2365,7 @@ function ReservationSheet({ poi, lang, onClose }) {
                   fontWeight: active ? 700 : 400,
                   transition: 'all 0.15s ease',
                 }}>
-                  <div style={{ fontSize: 10, color: '#6B6B6B' }}>{DAY_ZH[dt.getDay()]}</div>
+                  <div style={{ fontSize: 10, color: '#8B95A1' }}>{DAY_ZH[dt.getDay()]}</div>
                   <div style={{ fontSize: 16, fontWeight: 700 }}>{dt.getDate()}</div>
                 </button>
               )
@@ -2378,8 +2380,8 @@ function ReservationSheet({ poi, lang, onClose }) {
             {timeSlots.map(slot => (
               <button key={slot} onClick={() => setSelTime(slot)} style={{
                 padding: '8px 16px', borderRadius: 24,
-                background: '#FAFAFA',
-                color: selTime === slot ? '#C4725A' : '#374151',
+                background: '#FFFFFF',
+                color: selTime === slot ? '#3182F6' : '#374151',
                 border: 'none', cursor: 'pointer', fontSize: 13,
                 fontWeight: selTime === slot ? 700 : 500,
                 boxShadow: selTime === slot
@@ -2395,14 +2397,14 @@ function ReservationSheet({ poi, lang, onClose }) {
         <div style={{ marginBottom: 32 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>{tLang('reserve_people', lang)}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <button onClick={() => setCount(c => Math.max(1, c - 1))} style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', color: '#1A1A1A' }}>−</button>
-            <span style={{ fontSize: 20, fontWeight: 700, minWidth: 28, textAlign: 'center', color: '#1A1A1A' }}>{count}</span>
-            <button onClick={() => setCount(c => Math.min(6, c + 1))} style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: '#FAFAFA', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', color: '#1A1A1A' }}>+</button>
+            <button onClick={() => setCount(c => Math.max(1, c - 1))} style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: '#FFFFFF', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', color: '#191F28' }}>−</button>
+            <span style={{ fontSize: 20, fontWeight: 700, minWidth: 28, textAlign: 'center', color: '#191F28' }}>{count}</span>
+            <button onClick={() => setCount(c => Math.min(6, c + 1))} style={{ width: 40, height: 40, borderRadius: '50%', border: 'none', background: '#FFFFFF', fontSize: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', color: '#191F28' }}>+</button>
             <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{count} {tLang('res_people', lang)}</span>
           </div>
         </div>
 
-        <button onClick={handleConfirm} style={{ width: '100%', height: 52, borderRadius: 16, background: '#C4725A', color: 'white', fontSize: 16, fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '6px 6px 14px rgba(196,114,90,0.3), -4px -4px 10px rgba(255,255,255,0.8)', transition: 'box-shadow 0.15s ease, transform 0.15s ease' }}>
+        <button onClick={handleConfirm} style={{ width: '100%', height: 52, borderRadius: 16, background: '#3182F6', color: 'white', fontSize: 16, fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '6px 6px 14px rgba(49,130,246,0.3), -4px -4px 10px rgba(255,255,255,0.8)', transition: 'box-shadow 0.15s ease, transform 0.15s ease' }}>
           {tLang('reserve_confirm', lang)}
         </button>
       </div>
@@ -2490,22 +2492,22 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 45, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#FAFAFA', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
-        <button onClick={onClose} style={{ background: '#FAFAFA', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#1A1A1A', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 20, fontWeight: 'bold' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', background: '#FFFFFF', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+        <button onClick={onClose} style={{ background: '#FFFFFF', border: 'none', cursor: 'pointer', padding: 10, borderRadius: '50%', color: '#191F28', display: 'flex', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 20, fontWeight: 'bold' }}>
           ←
         </button>
-        <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>{tLang('my_panel', lang)}</span>
+        <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>{tLang('my_panel', lang)}</span>
       </div>
 
       {/* 섹션 탭 */}
-      <div style={{ display: 'flex', background: '#FAFAFA', flexShrink: 0, padding: '8px 16px 0', gap: 4 }}>
+      <div style={{ display: 'flex', background: '#FFFFFF', flexShrink: 0, padding: '8px 16px 0', gap: 4 }}>
         {SECTIONS.map(s => (
           <button key={s.id} onClick={() => setActiveSection(s.id)} style={{
             flex: 1, padding: '10px 4px', fontSize: 12, fontWeight: 600,
-            background: '#FAFAFA', border: 'none', cursor: 'pointer',
-            color: activeSection === s.id ? '#C4725A' : '#9CA3AF',
+            background: '#FFFFFF', border: 'none', cursor: 'pointer',
+            color: activeSection === s.id ? '#3182F6' : '#9CA3AF',
             borderBottom: activeSection === s.id ? '2px solid #C4725A' : '2px solid transparent',
             transition: 'all 0.15s ease',
           }}>
@@ -2522,7 +2524,7 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
             {/* 예약 상태 필터 */}
             <div style={{ display: 'flex', gap: 6, padding: '12px 0 8px', position: 'sticky', top: 0, background: 'white', zIndex: 1 }}>
               {RES_FILTERS.map(f => (
-                <button key={f.id} onClick={() => setResFilter(f.id)} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: resFilter === f.id ? '#1A1A1A' : '#F3F4F6', color: resFilter === f.id ? 'white' : '#6B7280', border: 'none', cursor: 'pointer', transition: 'all 0.15s' }}>
+                <button key={f.id} onClick={() => setResFilter(f.id)} style={{ padding: '5px 12px', borderRadius: 20, fontSize: 11, fontWeight: 600, background: resFilter === f.id ? '#191F28' : '#F3F4F6', color: resFilter === f.id ? 'white' : '#6B7280', border: 'none', cursor: 'pointer', transition: 'all 0.15s' }}>
                   {f.zh}
                 </button>
               ))}
@@ -2551,7 +2553,7 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
                           {res.guests && ` · ${res.guests}人`}
                         </div>
                         {res.deposit > 0 && (
-                          <div style={{ fontSize: 11, color: '#C4725A', marginTop: 2, fontWeight: 600 }}>
+                          <div style={{ fontSize: 11, color: '#3182F6', marginTop: 2, fontWeight: 600 }}>
                             保证金 ₩{res.deposit?.toLocaleString()} (≈¥{res.depositCny})
                           </div>
                         )}
@@ -2613,7 +2615,7 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
             {LANGS.map(lang => (
               <button key={lang.code} onClick={() => { setLocalLang(lang.code); localStorage.setItem('near_lang', lang.code) }} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 0', background: 'none', border: 'none', borderBottom: '1px solid var(--border)', cursor: 'pointer', textAlign: 'left' }}>
                 <span style={{ fontSize: 14, color: 'var(--text-primary)', fontWeight: localLang === lang.code ? 700 : 400 }}>{lang.label}</span>
-                {localLang === lang.code && <span style={{ fontSize: 16, color: '#1A1A1A', fontWeight: 700 }}>✓</span>}
+                {localLang === lang.code && <span style={{ fontSize: 16, color: '#191F28', fontWeight: 700 }}>✓</span>}
               </button>
             ))}
             <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 16, lineHeight: 1.6 }}>

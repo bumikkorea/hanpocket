@@ -1009,6 +1009,8 @@ export default function NearMap() {
                 </div>
               ) : allPins.filter(p => bookmarks.includes(p.id)).map((place, i) => {
                 const placeName = getLocalizedName(place, lang)
+                const catLabel = place.category ? tLang(`cat_${place.category}`, lang) : ''
+                const breadcrumb = catLabel || ''
 
                 return (
                   <button

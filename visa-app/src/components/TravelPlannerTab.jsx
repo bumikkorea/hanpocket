@@ -699,7 +699,13 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
         {/* 좌측 날짜 사이드바 (52px) */}
-        <div style={{ width: 52, flexShrink: 0, display: 'flex', flexDirection: 'column', borderRight: '1px solid #F2F4F6', overflowY: 'auto', paddingTop: 4 }}>
+        <style>{`
+          .day-sidebar-scroll::-webkit-scrollbar { width: 3px; }
+          .day-sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+          .day-sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(139,149,161,0.3); border-radius: 2px; max-height: 50%; }
+          .day-sidebar-scroll { scrollbar-width: thin; scrollbar-color: rgba(139,149,161,0.3) transparent; }
+        `}</style>
+        <div className="day-sidebar-scroll" style={{ width: 52, flexShrink: 0, display: 'flex', flexDirection: 'column', borderRight: '1px solid #F2F4F6', overflowY: 'auto', paddingTop: 4 }}>
           {daysList.map((day, idx) => {
             const isSelected = selectedDay === day
             const isToday = day === todayStr

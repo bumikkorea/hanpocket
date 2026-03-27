@@ -260,15 +260,14 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState('search')
   const [selected, setSelected] = useState(null)
-  const [nameKr, setNameKr] = useState('')
-  const [nameCn, setNameCn] = useState('')
+  const [placeName, setPlaceName] = useState('')
   const debounceRef = useRef(null)
   const inputRef = useRef(null)
 
   useEffect(() => {
     if (open) {
-      setQuery(''); setResults([]); setStep('search'); setSelected(null)
-      setTime('10:00'); setCategory('sightseeing'); setNameKr(''); setNameCn('')
+      setQuery(''); setResults([]); setStep('wishlist'); setSelected(null)
+      setTime('10:00'); setCategory('sightseeing'); setPlaceName('')
       setTimeout(() => inputRef.current?.focus(), 120)
     }
   }, [open])
@@ -291,8 +290,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
 
   const handleSelectResult = (item) => {
     setSelected(item)
-    setNameKr(item.title || '')
-    setNameCn('')
+    setPlaceName(item.title || '')
     setStep('detail')
   }
 
@@ -300,8 +298,8 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
     const item = {
       id: `place-${Date.now()}`,
       type: 'place',
-      name_kr: nameKr,
-      name_cn: nameCn,
+      name_kr: placeName,
+      name_cn: '',
       category,
       time,
       hours: null,
@@ -315,7 +313,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
     onClose()
   }
 
-  const canAdd = !!(nameKr || nameCn)
+  const canAdd = !!placeName
 
   if (!open) return null
 
@@ -335,6 +333,55 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 44px' }}>
+          {/* 위시리스트 (찜한 장소) */}
+          {step === 'wishlist' && (() => {
+            const wishlist = (() => { try { return JSON.parse(localStorage.getItem('near_wishlist') || '[]') } catch { return [] } })()
+            return (
+              <>
+                {wishlist.length > 0 && (
+                  <div style={{ marginBottom: 16 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 8 }}>
+                      {L(lang, { ko: '찜한 장소', zh: '收藏地点', en: 'Saved Places' })}
+                    </div>
+                    {wishlist.map((w, i) => (
+                      <button key={w.id || i} onClick={() => {
+                        const item = {
+                          id: `wish-${Date.now()}`, type: 'place',
+                          name_kr: w.name_ko || w.name || w.title || '', name_cn: w.name_zh || '',
+                          category: w.category || 'sightseeing', time: '10:00',
+                          addr: w.addr || w.address || '',
+                        }
+                        onAdd(item); onClose()
+                      }}
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 10, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', borderBottom: '1px solid #F2F4F6' }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 8, background: '#F2F4F6', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <span style={{ fontSize: 11, fontWeight: 600, color: '#8B95A1' }}>{(w.name_ko || w.name || '').slice(0, 2)}</span>
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 14, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.name_ko || w.name || w.title}</div>
+                          {w.addr && <div style={{ fontSize: 12, color: '#8B95A1', marginTop: 2 }}>{w.addr}</div>}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {wishlist.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '20px 0', color: '#8B95A1', fontSize: 13 }}>
+                    {L(lang, { ko: '찜한 장소가 없어요', zh: '还没有收藏的地点', en: 'No saved places yet' })}
+                  </div>
+                )}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={() => setStep('search')} style={{ flex: 1, padding: 12, borderRadius: 12, border: '1px solid #F2F4F6', background: '#FFFFFF', cursor: 'pointer', fontSize: 13, fontWeight: 600, color: '#191F28', transition: 'all 0.2s' }}>
+                    {L(lang, { ko: '검색으로 추가', zh: '搜索添加', en: 'Search' })}
+                  </button>
+                  <button onClick={() => { setSelected(null); setStep('detail') }} style={{ flex: 1, padding: 12, borderRadius: 12, border: 'none', background: '#3182F6', cursor: 'pointer', fontSize: 13, fontWeight: 600, color: 'white', transition: 'all 0.2s' }}>
+                    {L(lang, { ko: '직접 입력', zh: '手动输入', en: 'Manual' })}
+                  </button>
+                </div>
+              </>
+            )
+          })()}
+
           {step === 'search' && (
             <>
               <div style={{ position: 'relative', marginBottom: 14 }}>
@@ -395,20 +442,10 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
 
               <div style={{ marginBottom: 12 }}>
                 <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 6 }}>
-                  {L(lang, { ko: '중국어 이름 (선택)', zh: '中文名称（可选）', en: 'Chinese Name (optional)' })}
+                  {L(lang, { ko: '장소 이름', zh: '地点名称', en: 'Place Name' })}
                 </div>
-                <input type="text" value={nameCn} onChange={e => setNameCn(e.target.value)}
-                  placeholder={L(lang, { ko: '예: 蓝瓶咖啡', zh: '例：蓝瓶咖啡', en: 'e.g. 蓝瓶咖啡' })}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #F2F4F6', outline: 'none', fontSize: 15, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
-                />
-              </div>
-
-              <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 6 }}>
-                  {L(lang, { ko: '한국어 이름', zh: '韩文名称', en: 'Korean Name' })} *
-                </div>
-                <input type="text" value={nameKr} onChange={e => setNameKr(e.target.value)}
-                  placeholder={L(lang, { ko: '예: 블루보틀', zh: '例：蓝瓶咖啡', en: 'e.g. Blue Bottle' })}
+                <input type="text" value={placeName} onChange={e => setPlaceName(e.target.value)}
+                  placeholder={L(lang, { ko: '예: 블루보틀 성수', zh: '例：蓝瓶咖啡 圣水', en: 'e.g. Blue Bottle Seongsu' })}
                   style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #F2F4F6', outline: 'none', fontSize: 15, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
                 />
               </div>
@@ -444,7 +481,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
               </div>
 
               <div style={{ display: 'flex', gap: 10 }}>
-                <button onClick={() => setStep('search')}
+                <button onClick={() => setStep('wishlist')}
                   style={{ flex: 1, padding: '14px', borderRadius: 12, border: '1px solid #F2F4F6', cursor: 'pointer', background: '#FFFFFF', color: '#8B95A1', fontSize: 15, fontWeight: 600 }}
                 >
                   {L(lang, { ko: '뒤로', zh: '返回', en: 'Back' })}
@@ -474,6 +511,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
   const [plan, setPlan] = useState(() => loadPlan())
   const [selectedDay, setSelectedDay] = useState(null)
   const [editDates, setEditDates] = useState(false)
+  const [showDatePicker, setShowDatePicker] = useState(false)
   const [showAddPlace, setShowAddPlace] = useState(false)
   const [systemSheet, setSystemSheet] = useState(null)
   const [expandedSystem, setExpandedSystem] = useState({})
@@ -600,13 +638,57 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
 
       {/* ─── 상단 헤더 ─── */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #F2F4F6', flexShrink: 0 }}>
-        <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
-          {L(lang, { ko: '내 일정', zh: '我的行程', en: 'My Itinerary' })}
-        </span>
-        <button onClick={() => setEditDates(true)} style={{ background: '#F2F4F6', border: 'none', cursor: 'pointer', fontSize: 11, color: '#8B95A1', fontWeight: 500, padding: '4px 10px', borderRadius: 20 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#191F28', padding: '4px', display: 'flex', alignItems: 'center' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
+            {L(lang, { ko: '내 일정', zh: '我的行程', en: 'My Itinerary' })}
+          </span>
+        </div>
+        <button onClick={() => setShowDatePicker(v => !v)} style={{ background: '#F2F4F6', border: 'none', cursor: 'pointer', fontSize: 11, color: '#8B95A1', fontWeight: 500, padding: '4px 10px', borderRadius: 20, transition: 'all 0.2s' }}>
           {L(lang, { ko: '수정', zh: '修改', en: 'Edit' })}
         </button>
       </div>
+
+      {/* ─── 인라인 날짜 피커 ─── */}
+      {showDatePicker && (
+        <div style={{ padding: '12px 16px', borderBottom: '1px solid #F2F4F6', flexShrink: 0, background: '#F2F4F6' }}>
+          <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: '#8B95A1', marginBottom: 4 }}>{L(lang, { ko: '입국일', zh: '入境日', en: 'Arrival' })}</div>
+              <input type="date" value={plan.arrivalDate}
+                onChange={e => {
+                  const newArr = e.target.value
+                  if (!newArr || newArr > plan.departureDate) return
+                  const newDays = buildDaysList(newArr, plan.departureDate)
+                  const newPlan = { ...plan, arrivalDate: newArr, days: {} }
+                  newDays.forEach(d => { newPlan.days[d] = plan.days[d] || { items: [] } })
+                  updatePlan(newPlan)
+                }}
+                style={{ width: '100%', padding: '8px 10px', borderRadius: 8, border: '1px solid #F2F4F6', outline: 'none', fontSize: 14, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: '#8B95A1', marginBottom: 4 }}>{L(lang, { ko: '출국일', zh: '出境日', en: 'Departure' })}</div>
+              <input type="date" value={plan.departureDate} min={plan.arrivalDate}
+                onChange={e => {
+                  const newDep = e.target.value
+                  if (!newDep || newDep < plan.arrivalDate) return
+                  const newDays = buildDaysList(plan.arrivalDate, newDep)
+                  const newPlan = { ...plan, departureDate: newDep, days: {} }
+                  newDays.forEach(d => { newPlan.days[d] = plan.days[d] || { items: [] } })
+                  updatePlan(newPlan)
+                }}
+                style={{ width: '100%', padding: '8px 10px', borderRadius: 8, border: '1px solid #F2F4F6', outline: 'none', fontSize: 14, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
+              />
+            </div>
+          </div>
+          <div style={{ fontSize: 12, color: '#3182F6', fontWeight: 600, textAlign: 'center' }}>
+            {getNightsLabel(plan.arrivalDate, plan.departureDate, lang)}
+          </div>
+        </div>
+      )}
 
       {/* ─── 메인 레이아웃 (사이드바 + 타임테이블) ─── */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>

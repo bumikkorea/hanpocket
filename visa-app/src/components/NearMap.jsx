@@ -984,25 +984,27 @@ export default function NearMap() {
       {/* ─── 찜 목록 왼쪽 슬라이드 패널 ─── */}
       {showHistoryPanel && (
         <>
+          {/* 오버레이 — 지도 영역 안에서만 */}
           <div
             onClick={() => setShowHistoryPanel(false)}
-            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 50, transition: 'opacity 0.2s' }}
+            style={{ position: 'absolute', top: 48, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.15)', zIndex: 15, transition: 'opacity 0.2s' }}
           />
+          {/* 관심 장소 패널 — 상단탭 아래, 하단탭 위 */}
           <div style={{
-            position: 'absolute', top: 0, left: 0, bottom: 0, width: '75%', maxWidth: 320,
-            background: '#FFFFFF', zIndex: 51, borderTopRightRadius: 16, borderBottomRightRadius: 16,
-            boxShadow: '4px 0 24px rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column',
+            position: 'absolute', top: 48, left: 0, bottom: 0, width: '72%', maxWidth: 300,
+            background: '#FFFFFF', zIndex: 16, borderTopRightRadius: 16, borderBottomRightRadius: 16,
+            boxShadow: '4px 0 20px rgba(0,0,0,0.06)', display: 'flex', flexDirection: 'column',
             animation: 'nearSlideInLeft 0.3s cubic-bezier(0.32, 0.72, 0, 1)',
           }}>
-            <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid #F2F4F6', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>
+            <div style={{ padding: '14px 16px 10px', borderBottom: '1px solid #F2F4F6', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
                 {lang === 'zh' ? '我的关注' : lang === 'en' ? 'Liked Places' : '관심 장소'}
               </span>
-              <button onClick={() => setShowHistoryPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#999', padding: 4 }}>✕</button>
+              <button onClick={() => setShowHistoryPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#8B95A1', padding: 4 }}>✕</button>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
               {bookmarks.length === 0 ? (
-                <div style={{ padding: '40px 20px', textAlign: 'center', color: '#8B95A1', fontSize: 13 }}>
+                <div style={{ padding: '40px 16px', textAlign: 'center', color: '#8B95A1', fontSize: 13 }}>
                   {lang === 'zh' ? '还没有关注的地点' : lang === 'en' ? 'No liked places yet' : '아직 관심 장소가 없어요'}
                 </div>
               ) : allPins.filter(p => bookmarks.includes(p.id)).map((place, i) => {
@@ -1012,24 +1014,15 @@ export default function NearMap() {
                   <button
                     key={`${place.id}-${i}`}
                     onClick={() => {
-                      setShowHistoryPanel(false)
-                      // 카테고리 자동 선택
-                      if (place.category) {
-                        setActiveCategory(place.category)
-                        if (place.category === 'food' && place.subCategory) {
-                          setFoodCategoryFilter(place.subCategory)
-                        }
-                      }
-                      // 지도 이동 + 상세 카드 표시
+                      // 패널은 유지 — 지도 이동 + 상세 카드 열기
                       if (place.lat && place.lng && mapInstance.current) {
                         mapInstance.current.panTo(new window.kakao.maps.LatLng(place.lat, place.lng))
                       }
-                      // 해당 POI의 상세 카드를 열기 위해 activePopup 설정
-                      setActivePopup(place)
+                      selectPin(place)
                     }}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 12, width: '100%', textAlign: 'left',
-                      padding: '10px 16px', border: 'none', background: 'none', cursor: 'pointer',
+                      padding: '12px 16px', border: 'none', background: 'none', cursor: 'pointer',
                       borderBottom: '1px solid #F5F5F5', transition: 'background 0.1s',
                     }}
                     onMouseOver={e => e.currentTarget.style.background = '#FFFFFF'}

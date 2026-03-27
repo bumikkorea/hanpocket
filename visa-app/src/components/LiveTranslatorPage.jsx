@@ -69,8 +69,6 @@ function ChatBubble({ entry, onSpeak }) {
 // ─── Main ─────────────────────────────────────────────────────
 const TAB_BAR_ITEMS = [
   { id: 'translator', label: { ko: '실시간 통역', zh: '实时翻译', en: 'Live Interpret' } },
-  { id: 'basic-korean', label: { ko: '기본 한국어', zh: '基础韩语', en: 'Basic Korean' } },
-  { id: 'artranslate', label: { ko: '간판 사전', zh: '招牌词典', en: 'Sign Dict.' } },
 ]
 
 export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSubPage }) {
@@ -228,8 +226,8 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
         </button>
       </div>
 
-      {/* ── 섹션 탭 바 ── */}
-      <div style={{
+      {/* ── 섹션 탭 바 (탭 1개 → 숨김) ── */}
+      {TAB_BAR_ITEMS.length > 1 && <div style={{
         display: 'flex', background: 'white', flexShrink: 0,
         borderBottom: '1px solid rgba(0,0,0,0.07)',
         position: 'sticky', top: 54, zIndex: 10,
@@ -249,7 +247,7 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
             </button>
           )
         })}
-      </div>
+      </div>}
 
       {/* ── 모드 탭 ── */}
       <div style={{ display: 'flex', padding: '10px 16px', background: 'white', gap: 8, flexShrink: 0, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>

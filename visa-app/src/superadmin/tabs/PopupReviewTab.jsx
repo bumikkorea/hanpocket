@@ -200,7 +200,7 @@ function PopupCard({ item, onClick }) {
 
   return (
     <div
-      className="bg-white rounded-xl border border-gray-200 p-4 hover:border-[#C4725A] hover:shadow-sm transition-all cursor-pointer"
+      className="bg-white rounded-xl border border-gray-200 p-4 hover:border-[#3182F6] hover:shadow-sm transition-all cursor-pointer"
       onClick={() => onClick(item)}
     >
       <div className="flex items-start justify-between gap-3">
@@ -395,7 +395,7 @@ export default function PopupReviewTab({ supabaseScraper, supabaseNear }) {
           onClick={fetchPopups}
           disabled={loading}
           className="flex items-center gap-2 px-4 py-2 text-white rounded-lg disabled:opacity-50 transition-colors text-sm font-medium flex-shrink-0"
-          style={{ backgroundColor: '#C4725A' }}
+          style={{ backgroundColor: '#3182F6' }}
         >
           <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           새로고침

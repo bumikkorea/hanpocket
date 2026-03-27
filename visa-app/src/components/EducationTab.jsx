@@ -46,9 +46,9 @@ function PronunciationQuiz({ word, pronunciation, zh_pron, meaning, lang, onComp
   return (
     <div className="bg-[#F5F1EB] rounded-xl p-6 border border-[#B2DFDB]">
       <div className="text-center mb-4">
-        <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">{word}</h3>
+        <h3 className="text-2xl font-bold text-[#191F28] mb-2">{word}</h3>
         {lang === 'zh' && zh_pron
-          ? <p className="text-sm text-[#C4725A] font-medium">{zh_pron}</p>
+          ? <p className="text-sm text-[#3182F6] font-medium">{zh_pron}</p>
           : <p className="text-sm text-[#666666] italic">[{pronunciation}]</p>
         }
         {lang === 'zh' && zh_pron && (
@@ -117,7 +117,7 @@ function XpBar({ xp, lang }) {
     <div className="bg-white rounded-xl p-4 border border-[#E5E7EB]">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-[#1A1A1A]">Lv.{level + 1} {title}</span>
+          <span className="font-bold text-[#191F28]">Lv.{level + 1} {title}</span>
         </div>
         <span className="text-sm text-[#666666]">{xp} XP</span>
       </div>
@@ -166,7 +166,7 @@ function SessionCard({ session, isActive, isCurrent, isLocked, completedCount, t
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-[#1A1A1A] text-sm">{L(lang, session.title)}</span>
+            <span className="font-bold text-[#191F28] text-sm">{L(lang, session.title)}</span>
             {isCurrent && <span className="text-xs bg-[#E8F5E9] text-[#2D5A3D] px-2 py-0.5 rounded-full">
               {lang === 'ko' ? '진행중' : lang === 'zh' ? '进行中' : 'Current'}
             </span>}
@@ -230,7 +230,7 @@ function LessonList({ session, eduState, onComplete, onOpenMinimap, onOpenUnit, 
               }`}>
                 {done ? '✓' : unit.day}
               </div>
-              <span className={`text-sm flex-1 ${done ? 'text-[#2D5A3D]' : isNext ? 'text-[#1A1A1A] font-semibold' : 'text-[#999999]'}`}>
+              <span className={`text-sm flex-1 ${done ? 'text-[#2D5A3D]' : isNext ? 'text-[#191F28] font-semibold' : 'text-[#999999]'}`}>
                 {L(lang, unit.title)}
               </span>
               {unit.minimap && <span className="text-xs bg-[#F5F1EB] text-[#B8860B] px-2 py-0.5 rounded-full">🗺️</span>}
@@ -260,8 +260,8 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
           {lang === 'ko' ? '← 대화로 돌아가기' : lang === 'zh' ? '← 返回对话' : '← Back to dialogue'}
         </button>
         <div className="bg-white rounded-xl p-5 border border-[#E5E7EB]">
-          <h3 className="font-bold text-[#1A1A1A] mb-4">📝 Quiz</h3>
-          <p className="text-sm text-[#1A1A1A] mb-4">{L(lang, scene.quiz.question)}</p>
+          <h3 className="font-bold text-[#191F28] mb-4">📝 Quiz</h3>
+          <p className="text-sm text-[#191F28] mb-4">{L(lang, scene.quiz.question)}</p>
           <div className="space-y-2">
             {scene.quiz.options[lang]?.map((opt, i) => (
               <button
@@ -301,7 +301,7 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
         <button onClick={() => setSelectedScene(null)} className="text-[#2D5A3D] text-sm font-medium">
           {lang === 'ko' ? '← 미니맵으로' : lang === 'zh' ? '← 回到迷你地图' : '← Back to minimap'}
         </button>
-        <h2 className="text-lg font-bold text-[#1A1A1A]">{L(lang, scene.title)}</h2>
+        <h2 className="text-lg font-bold text-[#191F28]">{L(lang, scene.title)}</h2>
 
         {/* 대화문 */}
         <div className="space-y-3">
@@ -310,7 +310,7 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
               <div className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
                 line.speaker === 'you'
                   ? 'bg-[#2D5A3D] text-white rounded-br-md'
-                  : 'bg-[#F5F5F5] text-[#1A1A1A] rounded-bl-md'
+                  : 'bg-[#F5F5F5] text-[#191F28] rounded-bl-md'
               }`}>
                 {line.speaker !== 'you' && <div className="text-xs text-[#999999] mb-1">🧑‍💼 Staff</div>}
                 {line.text}
@@ -355,7 +355,7 @@ function MinimapView({ minimapId, onBack, eduState, onQuizAnswer, lang }) {
                 {i + 1}
               </div>
               <div>
-                <div className="font-semibold text-[#1A1A1A] text-sm">{L(lang, scene.title)}</div>
+                <div className="font-semibold text-[#191F28] text-sm">{L(lang, scene.title)}</div>
                 <div className="text-xs text-[#999999]">
                   {lang === 'ko' ? '대화 + 퀴즈' : lang === 'zh' ? '对话 + 练习' : 'Dialogue + Quiz'}
                 </div>
@@ -403,7 +403,7 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
       <div className="bg-white rounded-xl p-6 border border-[#E5E7EB]">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-bold text-[#1A1A1A]">Day {unit.day}</h2>
+            <h2 className="text-xl font-bold text-[#191F28]">Day {unit.day}</h2>
             <p className="text-[#666666]">{L(lang, unit.title)}</p>
           </div>
           <div className="text-right">
@@ -431,7 +431,7 @@ function UnitDetail({ session, unit, onBack, onComplete, lang }) {
               <Onigiri mood="celebrate" size={64} />
               <span className="text-4xl animate-bounce" style={{ animationDelay: '0.2s' }}>🍜</span>
             </div>
-            <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">
+            <h3 className="text-2xl font-bold text-[#191F28] mb-2">
               {lang === 'ko' ? '완료!' : lang === 'zh' ? '完成！' : 'Complete!'}
             </h3>
             <p className="text-[#666666] mb-6">
@@ -555,7 +555,7 @@ export default function EducationTab({ lang, onSessionComplete }) {
       <XpBar xp={eduState.xp} lang={lang} />
 
       {/* 세션 목록 */}
-      <h2 className="text-lg font-bold text-[#1A1A1A]">
+      <h2 className="text-lg font-bold text-[#191F28]">
         📚 {lang === 'ko' ? '학습 세션' : lang === 'zh' ? '学习课程' : 'Study Sessions'}
       </h2>
       <div className="space-y-3">

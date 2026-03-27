@@ -605,7 +605,7 @@ export default function MapTab({ lang }) {
       beauty: { emoji: '💅', color: '#FF6B8A' },
       cafe: { emoji: '☕', color: '#8B6F47' },
       convenience: { emoji: '🏪', color: '#007AFF' },
-      medical: { emoji: '🏥', color: '#C4725A' },
+      medical: { emoji: '🏥', color: '#3182F6' },
       transport: { emoji: '🚇', color: '#45B7D1' },
       shopping: { emoji: '🛍️', color: '#96CEB4' },
       tourism: { emoji: '🏛️', color: '#FECA57' },
@@ -613,7 +613,7 @@ export default function MapTab({ lang }) {
       city_tour_bus: { emoji: '🚌', color: '#E53935' }
     }
 
-    const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#C4725A' }
+    const { emoji, color } = iconMap[category] || { emoji: '📍', color: '#3182F6' }
 
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`
       <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
@@ -1768,8 +1768,8 @@ export default function MapTab({ lang }) {
                           '💅': '#FF6B8A',
                           '☕': '#8B6F47',
                           '🏪': '#007AFF',
-                          '🏥': '#C4725A'
-                        }[selectedMarker.emoji] || '#C4725A'
+                          '🏥': '#3182F6'
+                        }[selectedMarker.emoji] || '#3182F6'
                       }}
                     >
                       {selectedMarker.categoryName}

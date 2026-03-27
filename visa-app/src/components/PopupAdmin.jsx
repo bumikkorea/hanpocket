@@ -95,7 +95,7 @@ function Field({ label, children }) {
 function Input({ value, onChange, placeholder, type = 'text' }) {
   return (
     <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-      className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A]" />
+      className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6]" />
   )
 }
 
@@ -114,7 +114,7 @@ function Toggle({ label, checked, onChange }) {
 function Select({ value, onChange, options }) {
   return (
     <select value={value} onChange={e => onChange(e.target.value)}
-      className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A] bg-white">
+      className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6] bg-white">
       {options.map(o => <option key={o.v} value={o.v}>{o.ko}</option>)}
     </select>
   )
@@ -328,7 +328,7 @@ export default function PopupAdmin({ onClose }) {
 
             {loading ? (
               <div className="flex justify-center py-12">
-                <div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#C4725A] rounded-full" />
+                <div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#3182F6] rounded-full" />
               </div>
             ) : filtered.length === 0 ? (
               <div className="text-center py-12">
@@ -384,7 +384,7 @@ export default function PopupAdmin({ onClose }) {
           <>
             {stagingLoading ? (
               <div className="flex justify-center py-12">
-                <div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#C4725A] rounded-full" />
+                <div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#3182F6] rounded-full" />
               </div>
             ) : staging.length === 0 ? (
               <div className="text-center py-12">
@@ -513,12 +513,12 @@ export default function PopupAdmin({ onClose }) {
               <Field label="한국어 설명">
                 <textarea value={form.description_ko} onChange={e => set('description_ko', e.target.value)}
                   placeholder="팝업 소개 (한국어)"
-                  className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A] resize-none h-20" />
+                  className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6] resize-none h-20" />
               </Field>
               <Field label="중국어 설명">
                 <textarea value={form.description_zh} onChange={e => set('description_zh', e.target.value)}
                   placeholder="中文介绍"
-                  className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A] resize-none h-20" />
+                  className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6] resize-none h-20" />
               </Field>
             </Section>
 
@@ -721,7 +721,7 @@ export default function PopupAdmin({ onClose }) {
           <div className="mb-3">
             <p className="text-[11px] text-[#9CA3AF] mb-1 font-medium">팝업명 (한국어)</p>
             <input value={overrideForm.title_ko} onChange={e => setOverrideForm(f => ({...f, title_ko: e.target.value}))}
-              className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A]" />
+              className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6]" />
           </div>
 
           {/* 팝업 유형 */}
@@ -755,7 +755,7 @@ export default function PopupAdmin({ onClose }) {
             <p className="text-[11px] text-[#9CA3AF] mb-1 font-medium">장소명 (비워두면 자동 지오코딩)</p>
             <input value={overrideForm.venue_name} onChange={e => setOverrideForm(f => ({...f, venue_name: e.target.value}))}
               placeholder="더현대 서울, 팩토리얼 성수..."
-              className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A]" />
+              className="w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6]" />
           </div>
 
           {/* 운영 기간 */}
@@ -763,9 +763,9 @@ export default function PopupAdmin({ onClose }) {
             <p className="text-[11px] text-[#9CA3AF] mb-1 font-medium">운영 기간</p>
             <div className="flex gap-2">
               <input type="date" value={overrideForm.start_date} onChange={e => setOverrideForm(f => ({...f, start_date: e.target.value}))}
-                className="flex-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A]" />
+                className="flex-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6]" />
               <input type="date" value={overrideForm.end_date} onChange={e => setOverrideForm(f => ({...f, end_date: e.target.value}))}
-                className="flex-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A]" />
+                className="flex-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6]" />
             </div>
             {approveModal.data.end_date_hint && (
               <p className="text-[10px] text-[#9CA3AF] mt-1">📌 힌트: {approveModal.data.end_date_hint}</p>
@@ -778,10 +778,10 @@ export default function PopupAdmin({ onClose }) {
             <div className="flex gap-2">
               <input type="number" step="any" value={overrideForm.lat} onChange={e => setOverrideForm(f => ({...f, lat: e.target.value}))}
                 placeholder="위도 37.52..."
-                className="flex-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A]" />
+                className="flex-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6]" />
               <input type="number" step="any" value={overrideForm.lng} onChange={e => setOverrideForm(f => ({...f, lng: e.target.value}))}
                 placeholder="경도 126.92..."
-                className="flex-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#C4725A]" />
+                className="flex-1 border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm outline-none focus:border-[#3182F6]" />
             </div>
           </div>
 

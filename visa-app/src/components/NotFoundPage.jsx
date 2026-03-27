@@ -7,7 +7,7 @@ export default function NotFoundPage({ lang = 'zh', onGoHome }) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center" style={{ background: '#FAFAF7' }}>
       <div className="text-[80px] mb-4">🗺️</div>
-      <h1 className="text-[28px] font-bold mb-2" style={{ color: '#1A1A1A', fontFamily: "'Pretendard Variable', 'Noto Sans SC', sans-serif" }}>
+      <h1 className="text-[28px] font-bold mb-2" style={{ color: '#191F28', fontFamily: "'Pretendard Variable', 'Noto Sans SC', sans-serif" }}>
         {L({ ko: '길을 잃었어요', zh: '迷路了', en: 'Page Not Found' })}
       </h1>
       <p className="text-[14px] mb-8" style={{ color: '#8A8A7A' }}>
@@ -16,7 +16,7 @@ export default function NotFoundPage({ lang = 'zh', onGoHome }) {
       <button
         onClick={onGoHome}
         className="px-6 py-3 rounded-full text-[14px] font-semibold text-white active:scale-95 transition-transform"
-        style={{ backgroundColor: '#C4725A' }}
+        style={{ backgroundColor: '#3182F6' }}
       >
         {L({ ko: 'NEAR 홈으로', zh: '回到NEAR首页', en: 'Back to NEAR' })}
       </button>

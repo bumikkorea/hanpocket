@@ -6,11 +6,11 @@
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.en || d?.zh || d?.ko || '' }
 
 const NEU = {
-  bg: '#FAFAFA',
+  bg: '#FFFFFF',
   shadowOut: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
-  terra: '#C4725A',
-  textPrimary: '#1A1A1A',
-  textSecondary: '#888888',
+  terra: '#3182F6',
+  textPrimary: '#191F28',
+  textSecondary: '#8B95A1',
 }
 
 const SECTIONS = [
@@ -120,9 +120,9 @@ export default function MorePage({ lang, setTab, setSubPage }) {
                   borderTop: i > 0 ? '1px solid rgba(0,0,0,0.04)' : 'none',
                   transition: 'background 0.15s ease',
                 }}
-                onTouchStart={e => e.currentTarget.style.background = 'rgba(196,114,90,0.05)'}
+                onTouchStart={e => e.currentTarget.style.background = 'rgba(49,130,246,0.05)'}
                 onTouchEnd={e => e.currentTarget.style.background = 'transparent'}
-                onMouseDown={e => e.currentTarget.style.background = 'rgba(196,114,90,0.05)'}
+                onMouseDown={e => e.currentTarget.style.background = 'rgba(49,130,246,0.05)'}
                 onMouseUp={e => e.currentTarget.style.background = 'transparent'}
               >
                 <span style={{ fontSize: 20, flexShrink: 0 }}>{item.emoji}</span>
@@ -136,7 +136,7 @@ export default function MorePage({ lang, setTab, setSubPage }) {
                     </p>
                   )}
                 </div>
-                <span style={{ color: '#BBBBBB', flexShrink: 0, fontSize: 16 }}>›</span>
+                <span style={{ color: '#8B95A1', flexShrink: 0, fontSize: 16 }}>›</span>
               </button>
             ))}
           </div>
@@ -145,8 +145,8 @@ export default function MorePage({ lang, setTab, setSubPage }) {
 
       {/* NEAR 버전 정보 */}
       <div style={{ textAlign: 'center', marginTop: 28, paddingBottom: 0 }}>
-        <p style={{ fontSize: 11, color: '#BBBBBB', margin: 0 }}>NEAR v1.0.0</p>
-        <p style={{ fontSize: 11, color: '#BBBBBB', marginTop: 4 }}>到韩国，只需NEAR</p>
+        <p style={{ fontSize: 11, color: '#8B95A1', margin: 0 }}>NEAR v1.0.0</p>
+        <p style={{ fontSize: 11, color: '#8B95A1', marginTop: 4 }}>到韩国，只需NEAR</p>
       </div>
     </div>
   )

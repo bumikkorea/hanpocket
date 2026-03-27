@@ -113,7 +113,7 @@ function EditModal({ item, onSave, onClose, loading }) {
         </div>
         <div className="flex gap-3 px-6 py-4 border-t border-gray-100">
           <button onClick={onClose} className="flex-1 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50">취소</button>
-          <button onClick={() => onSave(form)} disabled={loading} className="flex-1 py-2.5 text-white rounded-xl text-sm font-bold disabled:opacity-50" style={{ backgroundColor: '#C4725A' }}>
+          <button onClick={() => onSave(form)} disabled={loading} className="flex-1 py-2.5 text-white rounded-xl text-sm font-bold disabled:opacity-50" style={{ backgroundColor: '#3182F6' }}>
             {loading ? '저장 중...' : '저장'}
           </button>
         </div>
@@ -216,7 +216,7 @@ function CSVUploadModal({ onClose, onUpload, loading, result }) {
             onClick={() => parsed && onUpload(parsed.rows)}
             disabled={!parsed || loading}
             className="flex-1 py-2.5 text-white rounded-xl text-sm font-bold disabled:opacity-50"
-            style={{ backgroundColor: '#C4725A' }}
+            style={{ backgroundColor: '#3182F6' }}
           >
             {loading ? '업로드 중...' : `업로드 (${parsed?.rows.length ?? 0}건)`}
           </button>
@@ -341,10 +341,10 @@ export default function PopupNearManage({ supabaseNear }) {
           <button onClick={handleDownload} className="flex items-center gap-1.5 px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
             <Download size={14} /> CSV↓
           </button>
-          <button onClick={() => { setShowCSVUp(true); setCsvResult(null) }} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm" style={{ border: '1px solid #C4725A', color: '#C4725A' }}>
+          <button onClick={() => { setShowCSVUp(true); setCsvResult(null) }} className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm" style={{ border: '1px solid #3182F6', color: '#3182F6' }}>
             <Upload size={14} /> CSV↑
           </button>
-          <button onClick={fetchPopups} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 text-white rounded-lg text-sm disabled:opacity-50" style={{ backgroundColor: '#C4725A' }}>
+          <button onClick={fetchPopups} disabled={loading} className="flex items-center gap-1.5 px-3 py-2 text-white rounded-lg text-sm disabled:opacity-50" style={{ backgroundColor: '#3182F6' }}>
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
           </button>
         </div>
@@ -380,7 +380,7 @@ export default function PopupNearManage({ supabaseNear }) {
                   <td className="px-4 py-3 font-medium text-gray-900 max-w-[160px] truncate">{item.name_ko || '-'}</td>
                   <td className="px-4 py-3 text-gray-600 max-w-[140px] truncate">{item.name_zh || '-'}</td>
                   <td className="px-4 py-3">
-                    <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(196,114,90,0.1)', color: '#C4725A' }}>{item.category}</span>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ backgroundColor: 'rgba(49,130,246,0.1)', color: '#3182F6' }}>{item.category}</span>
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">{item.district || '-'}</td>
                   <td className="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">

@@ -1,12 +1,12 @@
 import Onigiri from './Onigiri'
 
 const PARTICLES = [
-  { size: 6, left: '20%', top: '30%', delay: '0s', color: '#C4725A' },
+  { size: 6, left: '20%', top: '30%', delay: '0s', color: '#3182F6' },
   { size: 4, left: '70%', top: '20%', delay: '1.2s', color: '#D4956B' },
   { size: 5, left: '40%', top: '60%', delay: '2.4s', color: '#8B6F5C' },
   { size: 3, left: '80%', top: '50%', delay: '0.8s', color: '#B8860B' },
   { size: 4, left: '15%', top: '70%', delay: '3.0s', color: '#2D5A3D' },
-  { size: 5, left: '60%', top: '40%', delay: '1.8s', color: '#C4725A' },
+  { size: 5, left: '60%', top: '40%', delay: '1.8s', color: '#3182F6' },
 ]
 
 const LoadingSpinner = () => {

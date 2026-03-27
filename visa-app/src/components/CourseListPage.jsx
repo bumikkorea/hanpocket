@@ -267,13 +267,13 @@ const MODE_COLORS = {
 }
 
 function CuratedCourseCard({ course, modeId, lang, onAddToMySeoul, onCourseClick }) {
-  const color = MODE_COLORS[modeId] || '#C4725A'
+  const color = MODE_COLORS[modeId] || '#3182F6'
   return (
-    <div style={{ position: 'relative', borderRadius: 20, background: '#FAFAFA', overflow: 'hidden', marginBottom: 12, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
+    <div style={{ position: 'relative', borderRadius: 20, background: '#FFFFFF', overflow: 'hidden', marginBottom: 12, boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
       <button
         onClick={() => onCourseClick(course)}
         style={{ width: '100%', padding: '16px 16px 12px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', transition: 'background 0.15s ease' }}
-        onTouchStart={e => e.currentTarget.style.background = 'rgba(196,114,90,0.04)'}
+        onTouchStart={e => e.currentTarget.style.background = 'rgba(49,130,246,0.04)'}
         onTouchEnd={e => e.currentTarget.style.background = 'none'}
       >
         {/* 타입 뱃지 */}
@@ -302,7 +302,7 @@ function CuratedCourseCard({ course, modeId, lang, onAddToMySeoul, onCourseClick
         style={{
           margin: '0 16px 14px', padding: '9px 0', width: 'calc(100% - 32px)',
           borderRadius: 12, border: 'none',
-          background: '#FAFAFA', color: '#C4725A', fontSize: 13, fontWeight: 700,
+          background: '#FFFFFF', color: '#3182F6', fontSize: 13, fontWeight: 700,
           cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
           boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
           transition: 'box-shadow 0.15s ease',
@@ -330,7 +330,7 @@ export default function CourseListPage({ onClose, setTab }) {
   const [mySeoulCourses, setMySeoulCourses] = useState(() => getMySeoul().courses)
 
   const currentMode = TRAVEL_MODES.find(m => m.id === selectedMode) || TRAVEL_MODES[0]
-  const color = MODE_COLORS[selectedMode] || '#C4725A'
+  const color = MODE_COLORS[selectedMode] || '#3182F6'
 
   const handleAddToMySeoul = (course) => {
     const added = addBulkPins(course.stops)
@@ -352,7 +352,7 @@ export default function CourseListPage({ onClose, setTab }) {
   }
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
 
       <NearPageHeader onBack={onClose} setTab={setTab} />
 
@@ -376,8 +376,8 @@ export default function CourseListPage({ onClose, setTab }) {
                 onClick={() => setSelectedMode(mode.id)}
                 style={{
                   flexShrink: 0, padding: '8px 16px', borderRadius: 20, border: 'none',
-                  background: '#FAFAFA',
-                  color: isSelected ? '#C4725A' : mcolor,
+                  background: '#FFFFFF',
+                  color: isSelected ? '#3182F6' : mcolor,
                   fontSize: 12, fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap',
                   boxShadow: isSelected
                     ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)'
@@ -427,7 +427,7 @@ export default function CourseListPage({ onClose, setTab }) {
                       onClose()
                       setTab('near-map')
                     }}
-                    style={{ width: '100%', padding: '14px 44px 14px 16px', borderRadius: 16, background: '#FAFAFA', border: 'none', cursor: 'pointer', textAlign: 'left', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
+                    style={{ width: '100%', padding: '14px 44px 14px 16px', borderRadius: 16, background: '#FFFFFF', border: 'none', cursor: 'pointer', textAlign: 'left', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
                   >
                     <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 3 }}>{course.title}</div>
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -457,10 +457,10 @@ export default function CourseListPage({ onClose, setTab }) {
               <div key={course.id} style={{ position: 'relative' }}>
                 <button
                   onClick={() => { sessionStorage.setItem('near_pending_course', course.id); onClose(); setTab('near-map') }}
-                  style={{ width: '100%', height: 72, borderRadius: 16, background: '#FAFAFA', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '0 44px 0 16px', display: 'flex', alignItems: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
+                  style={{ width: '100%', height: 72, borderRadius: 16, background: '#FFFFFF', border: 'none', cursor: 'pointer', textAlign: 'left', padding: '0 44px 0 16px', display: 'flex', alignItems: 'center', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}
                 >
                   <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#1A1A1A' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: '#191F28' }}>
                       {L(lang, { zh: course.title_zh, ko: course.title_ko, en: course.title_en })}
                     </div>
                     <div style={{ fontSize: 11, color: '#777', marginTop: 2 }}>
@@ -504,7 +504,7 @@ export default function CourseListPage({ onClose, setTab }) {
         </div>
 
         {/* 하단 힌트 */}
-        <div style={{ margin: '20px 20px 0', padding: '12px 16px', borderRadius: 14, background: '#FAFAFA', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
+        <div style={{ margin: '20px 20px 0', padding: '12px 16px', borderRadius: 14, background: '#FFFFFF', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF' }}>
           <p style={{ fontSize: 12, color: 'var(--text-muted)', margin: 0, lineHeight: 1.6, textAlign: 'center' }}>
             {L(lang, { zh: '点击路线，在地图上查看详细停靠点', ko: '코스를 클릭하면 지도에서 탐색할 수 있어요', en: 'Tap a course to explore it on the map' })}
           </p>

@@ -12,27 +12,27 @@ import { useState, useEffect, useRef } from "react";
 const T = {
   // Color: Y2K Dream Gradient vibes
   color: {
-    primary: "#FF85B3",
-    primarySoft: "rgba(255,133,179,0.15)",
-    primaryMid: "rgba(255,133,179,0.25)",
-    lavender: "#C4B5FD",
-    lavenderSoft: "rgba(196,181,253,0.15)",
+    primary: "#3182F6",
+    primarySoft: "rgba(49,130,246,0.08)",
+    primaryMid: "rgba(49,130,246,0.15)",
+    lavender: "#3182F6",
+    lavenderSoft: "rgba(49,130,246,0.06)",
     success: "#86EFAC",
     successSoft: "rgba(134,239,172,0.15)",
     warning: "#FBBF24",
     warningSoft: "rgba(251,191,36,0.15)",
-    error: "#FF6B9D",
-    errorSoft: "rgba(255,107,157,0.15)",
-    text1: "#1A1A1A",
-    text2: "#6B6B6B",
-    text3: "#A8A8A8",
-    text4: "#A8A8A8",
-    bg: "#FFF5F9",
+    error: "#FF6B6B",
+    errorSoft: "rgba(255,107,107,0.15)",
+    text1: "#191F28",
+    text2: "#8B95A1",
+    text3: "#8B95A1",
+    text4: "#8B95A1",
+    bg: "#FFFFFF",
     card: "#FFFFFF",
-    border: "rgba(196,181,253,0.3)",
-    borderStrong: "rgba(255,133,179,0.4)",
-    overlay: "rgba(45,45,63,0.6)",
-    white: "#FFFBFE",
+    border: "rgba(49,130,246,0.12)",
+    borderStrong: "rgba(49,130,246,0.3)",
+    overlay: "rgba(25,31,40,0.6)",
+    white: "#FFFFFF",
   },
   // Typography: Pretendard + Inter
   font: {
@@ -174,7 +174,7 @@ function Steps({ current, labels }) {
 
 // ── Alipay icon ──
 function AlipayIcon({ s = 20 }) {
-  return <svg width={s} height={s} viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#C4725A"/><path d="M35.5 28.2c-2.8-1.2-6.2-2.6-8.2-3.4 1.4-2.2 2.5-4.8 3.1-7.6H24v-2.8h8V12h-8V8h-3v4h-8v2.4h8v2.8H14v2.4h12.6c-.5 2-1.4 3.9-2.5 5.5-2.8-.8-5.8-1.2-8.1-.6-4.2 1.1-5.8 4.5-4.8 7.2 1 2.7 4.2 4.1 7.6 2.4 2.2-1.1 4.2-3.2 5.8-5.8 3 1.3 7.8 3.4 10.9 4.8V28.2zM17.2 34.4c-2.4 1-4.2.2-4.8-1.2-.6-1.4.2-3.4 2.6-4 1.6-.4 3.6-.1 5.6.5-1 1.8-2.1 3.5-3.4 4.7z" fill="white"/></svg>;
+  return <svg width={s} height={s} viewBox="0 0 48 48" fill="none"><rect width="48" height="48" rx="8" fill="#3182F6"/><path d="M35.5 28.2c-2.8-1.2-6.2-2.6-8.2-3.4 1.4-2.2 2.5-4.8 3.1-7.6H24v-2.8h8V12h-8V8h-3v4h-8v2.4h8v2.8H14v2.4h12.6c-.5 2-1.4 3.9-2.5 5.5-2.8-.8-5.8-1.2-8.1-.6-4.2 1.1-5.8 4.5-4.8 7.2 1 2.7 4.2 4.1 7.6 2.4 2.2-1.1 4.2-3.2 5.8-5.8 3 1.3 7.8 3.4 10.9 4.8V28.2zM17.2 34.4c-2.4 1-4.2.2-4.8-1.2-.6-1.4.2-3.4 2.6-4 1.6-.4 3.6-.1 5.6.5-1 1.8-2.1 3.5-3.4 4.7z" fill="white"/></svg>;
 }
 
 // ── Main Component ──

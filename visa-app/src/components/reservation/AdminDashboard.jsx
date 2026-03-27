@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 /*
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  *  NEAR Design System v2
- *  Brand: #C4725A (Terracotta)
+ *  Brand: #3182F6 (Blue)
  *  "신뢰감이 묻어나는 간결함. 하지만 분명함."
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
@@ -63,7 +63,7 @@ const f = (level) => ({ fontSize: T.font[level].size, fontWeight: T.font[level].
 // ── Mock Data ──
 const TODAY = new Date();
 const STYLISTS = [
-  { id: 1, name: "김수진", color: "#C4725A" },
+  { id: 1, name: "김수진", color: "#3182F6" },
   { id: 2, name: "박민호", color: "#5A8FC4" },
   { id: 3, name: "이하은", color: "#6B9E5E" },
 ];

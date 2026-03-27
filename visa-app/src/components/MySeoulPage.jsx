@@ -199,7 +199,7 @@ export default function MySeoulPage({ onBack, setTab }) {
                 flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                 padding: '8px 0', borderRadius: 20, border: 'none', cursor: 'pointer',
                 fontSize: 13, fontWeight: 700,
-                background: viewMode === tab.id ? 'var(--primary, #C4725A)' : 'var(--surface)',
+                background: viewMode === tab.id ? 'var(--primary, #3182F6)' : 'var(--surface)',
                 color: viewMode === tab.id ? 'white' : 'var(--text-secondary)',
               }}
             >
@@ -263,7 +263,7 @@ export default function MySeoulPage({ onBack, setTab }) {
 
             {/* 코스 만들기 모드 — 이름 입력 */}
             {courseMode && (
-              <div style={{ marginBottom: 16, padding: '12px 14px', borderRadius: 12, background: 'var(--surface)', border: '1.5px solid var(--primary, #C4725A)' }}>
+              <div style={{ marginBottom: 16, padding: '12px 14px', borderRadius: 12, background: 'var(--surface)', border: '1.5px solid var(--primary, #3182F6)' }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
                   <input
                     value={courseTitle}
@@ -277,7 +277,7 @@ export default function MySeoulPage({ onBack, setTab }) {
                     disabled={!courseTitle.trim() || orderedPins.length < 2}
                     style={{
                       padding: '8px 14px', borderRadius: 8,
-                      background: courseTitle.trim() && orderedPins.length >= 2 ? 'var(--primary, #C4725A)' : '#E5E7EB',
+                      background: courseTitle.trim() && orderedPins.length >= 2 ? 'var(--primary, #3182F6)' : '#E5E7EB',
                       color: courseTitle.trim() && orderedPins.length >= 2 ? 'white' : '#9CA3AF',
                       border: 'none', cursor: courseTitle.trim() && orderedPins.length >= 2 ? 'pointer' : 'default',
                       fontSize: 13, fontWeight: 700, flexShrink: 0,
@@ -307,7 +307,7 @@ export default function MySeoulPage({ onBack, setTab }) {
                 </div>
                 <button
                   onClick={() => { onBack(); setTab('near-map') }}
-                  style={{ padding: '10px 20px', borderRadius: 20, background: 'var(--primary, #C4725A)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
+                  style={{ padding: '10px 20px', borderRadius: 20, background: 'var(--primary, #3182F6)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}
                 >
                   {tLang('mySeoul.goExplore', lang)}
                 </button>
@@ -367,7 +367,7 @@ export default function MySeoulPage({ onBack, setTab }) {
             <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '16px 20px 28px', background: 'linear-gradient(transparent, var(--bg) 35%)' }}>
               <button
                 onClick={() => setCourseMode(true)}
-                style={{ width: '100%', padding: '14px', borderRadius: 14, background: 'var(--primary, #C4725A)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 700, boxShadow: '0 4px 16px rgba(196,114,90,0.35)' }}
+                style={{ width: '100%', padding: '14px', borderRadius: 14, background: 'var(--primary, #3182F6)', color: 'white', border: 'none', cursor: 'pointer', fontSize: 15, fontWeight: 700, boxShadow: '0 4px 16px rgba(49,130,246,0.35)' }}
               >
                 {tLang('mySeoul.makeCourse', lang)}
               </button>

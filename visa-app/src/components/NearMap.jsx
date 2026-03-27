@@ -2508,7 +2508,7 @@ function NearMyPanel({ lang, bookmarks, allPins, onClose, onSelectPoi }) {
             flex: 1, padding: '10px 4px', fontSize: 12, fontWeight: 600,
             background: '#FFFFFF', border: 'none', cursor: 'pointer',
             color: activeSection === s.id ? '#3182F6' : '#9CA3AF',
-            borderBottom: activeSection === s.id ? '2px solid #C4725A' : '2px solid transparent',
+            borderBottom: activeSection === s.id ? '2px solid #3182F6' : '2px solid transparent',
             transition: 'all 0.15s ease',
           }}>
             {tLang(s.key, lang)}

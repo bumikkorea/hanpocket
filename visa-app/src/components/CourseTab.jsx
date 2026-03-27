@@ -1596,7 +1596,7 @@ function UserPopupCard({ popup, lang, onDelete }) {
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="text-[11px] font-semibold" style={{ color: info.color }}>{popup.brand || info.name}</p>
-            <p className="text-[13px] font-semibold text-[#1A1A1A] leading-snug truncate">{popup.title || popup.brand || L(lang, { ko: '팝업스토어', zh: '快闪店', en: 'Popup Store' })}</p>
+            <p className="text-[13px] font-semibold text-[#191F28] leading-snug truncate">{popup.title || popup.brand || L(lang, { ko: '팝업스토어', zh: '快闪店', en: 'Popup Store' })}</p>
             {popup.address && <p className="text-[11px] text-[var(--y2k-text-sub)] mt-0.5 truncate">{popup.address}</p>}
           </div>
           <div className="flex flex-col items-end gap-1 shrink-0">
@@ -1984,7 +1984,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
   // ─── Detail View ───
   if (view === 'detail' && selectedCourse) {
     return (
-      <div className="h-full" style={{ height: 'calc(100vh - 140px)', background: '#FAFAFA' }}>
+      <div className="h-full" style={{ height: 'calc(100vh - 140px)', background: '#FFFFFF' }}>
         <CourseDetail
           course={selectedCourse}
           lang={lang}
@@ -1999,7 +1999,7 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
   // ─── Create View ───
   if (view === 'create') {
     return (
-      <div className="h-full" style={{ height: 'calc(100vh - 140px)', background: '#FAFAFA' }}>
+      <div className="h-full" style={{ height: 'calc(100vh - 140px)', background: '#FFFFFF' }}>
         <CreateCourse lang={lang} onBack={() => setView('list')} onSave={saveCustomCourse} />
       </div>
     )
@@ -2009,10 +2009,10 @@ export default function CourseTab({ lang, deepLink, onDeepLinkConsumed, adminVie
   return (
     <div className="overflow-y-auto px-4 py-4 max-w-[480px] mx-auto" style={{
       height: 'calc(100vh - 140px)',
-      background: '#FAFAFA',
+      background: '#FFFFFF',
       '--y2k-bg': '#FFFFFF',
-      '--y2k-card': '#FAFAFA',
-      '--y2k-text': '#1A1A1A',
+      '--y2k-card': '#FFFFFF',
+      '--y2k-text': '#191F28',
       '--y2k-text-sub': '#888888',
       '--y2k-border': 'rgba(200,200,200,0.3)',
     }}>

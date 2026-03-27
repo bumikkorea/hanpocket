@@ -177,8 +177,8 @@ export default function ARTranslateTab({ lang, setSubPage }) {
             <button key={t.id} onClick={() => setSubPage?.(t.id)} style={{
               flex: 1, padding: '10px 0 8px', background: 'none', border: 'none', cursor: 'pointer',
               fontSize: 14, fontWeight: isActive ? 700 : 500,
-              color: isActive ? '#C4725A' : '#A8A8A8',
-              borderBottom: isActive ? '2px solid #C4725A' : '2px solid transparent',
+              color: isActive ? '#3182F6' : '#8B95A1',
+              borderBottom: isActive ? '2px solid #3182F6' : '2px solid transparent',
               transition: 'all 0.15s',
             }}>
               {t.label[lang] || t.label.en}

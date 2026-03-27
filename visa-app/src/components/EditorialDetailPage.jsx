@@ -14,7 +14,7 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
   const isLight = editorial.textDark
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9800, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9800, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: '"Noto Sans SC", Pretendard, Inter, sans-serif' }}>
 
       {/* ─── 공통 헤더 ─── */}
       <NearPageHeader onBack={onBack} setTab={setTab} />
@@ -52,20 +52,20 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
             <h1 style={{ fontSize: 20, fontWeight: 700, color: '#111', lineHeight: 1.4, margin: '0 0 10px', letterSpacing: '-0.02em' }}>
               {L(lang, editorial.title)}
             </h1>
-            <p style={{ fontSize: 13, color: '#999999', margin: 0, lineHeight: 1.5, fontStyle: 'italic' }}>
+            <p style={{ fontSize: 13, color: '#8B95A1', margin: 0, lineHeight: 1.5, fontStyle: 'italic' }}>
               {L(lang, editorial.oneLiner)}
             </p>
           </div>
         </div>
 
         {/* ─── 본문 영역 ─── */}
-        <div style={{ padding: '28px 24px 60px', background: '#FAFAFA' }}>
+        <div style={{ padding: '28px 24px 60px', background: '#FFFFFF' }}>
 
           {/* 추천 방문 시간 */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
             padding: '12px 16px', borderRadius: 14,
-            background: '#FAFAFA', marginBottom: 24,
+            background: '#FFFFFF', marginBottom: 24,
             boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
           }}>
             <span style={{ fontSize: 13, color: '#666' }}>
@@ -99,7 +99,7 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
                 {spots.map((spot, i) => (
                   <span key={i} style={{
                     display: 'inline-block', padding: '7px 14px',
-                    borderRadius: 20, background: '#FAFAFA',
+                    borderRadius: 20, background: '#FFFFFF',
                     fontSize: 13, color: '#444', fontWeight: 500,
                     boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
                   }}>
@@ -114,10 +114,10 @@ export default function EditorialDetailPage({ editorial, lang, onBack, setTab })
           {editorial.subtitle && (
             <div style={{
               padding: '16px 18px', borderRadius: 16,
-              background: '#FAFAFA',
+              background: '#FFFFFF',
               boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF',
             }}>
-              <div style={{ fontSize: 11, color: '#C4725A', fontWeight: 700, letterSpacing: '0.08em', marginBottom: 6, textTransform: 'uppercase' }}>
+              <div style={{ fontSize: 11, color: '#3182F6', fontWeight: 700, letterSpacing: '0.08em', marginBottom: 6, textTransform: 'uppercase' }}>
                 {L(lang, { ko: '이런 곳과 비슷해요', zh: '类似的地方', en: 'Feels like' })}
               </div>
               <p style={{ fontSize: 14, color: '#555', margin: 0, lineHeight: 1.6 }}>

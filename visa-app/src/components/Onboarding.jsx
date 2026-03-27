@@ -19,10 +19,10 @@ const SLIDE_BG = [
   'linear-gradient(160deg, #F0F7FF, #D6EAFF, #B8DAFF)',
   'linear-gradient(160deg, #F0FFF4, #C6F6D5, #9AE6B4)',
 ]
-const SLIDE_ICON_COLOR = ['#C4725A', '#007AFF', '#34C759']
+const SLIDE_ICON_COLOR = ['#3182F6', '#007AFF', '#34C759']
 const SLIDE_ICON_BG    = ['#FDF3F1', '#EBF3FF', '#ECFDF5']
-const SLIDE_DECOR1     = ['rgba(196,114,90,0.12)', 'rgba(0,122,255,0.10)', 'rgba(52,199,89,0.10)']
-const SLIDE_DECOR2     = ['rgba(196,114,90,0.08)', 'rgba(0,122,255,0.06)', 'rgba(52,199,89,0.06)']
+const SLIDE_DECOR1     = ['rgba(49,130,246,0.12)', 'rgba(0,122,255,0.10)', 'rgba(52,199,89,0.10)']
+const SLIDE_DECOR2     = ['rgba(49,130,246,0.08)', 'rgba(0,122,255,0.06)', 'rgba(52,199,89,0.06)']
 const TITLE_KEYS = ['onboarding.title1', 'onboarding.title2', 'onboarding.title3']
 const DESC_KEYS  = ['onboarding.desc1',  'onboarding.desc2',  'onboarding.desc3']
 

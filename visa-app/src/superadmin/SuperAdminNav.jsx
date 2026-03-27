@@ -25,9 +25,9 @@ export default function SuperAdminNav({ tabs, currentTab, onTabChange, user, onL
                 onClick={() => onTabChange(tab.id)}
                 className="w-full flex items-center gap-3 py-2.5 rounded-lg transition-all text-left"
                 style={isActive ? {
-                  color: '#C4725A',
-                  backgroundColor: 'rgba(196,114,90,0.1)',
-                  borderLeft: '3px solid #C4725A',
+                  color: '#3182F6',
+                  backgroundColor: 'rgba(49,130,246,0.1)',
+                  borderLeft: '3px solid #3182F6',
                   paddingLeft: '9px',
                   paddingRight: '12px',
                 } : {
@@ -81,7 +81,7 @@ export default function SuperAdminNav({ tabs, currentTab, onTabChange, user, onL
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className="flex-1 flex flex-col items-center py-2.5 gap-1 transition-colors"
-              style={{ color: isActive ? '#C4725A' : '#555' }}
+              style={{ color: isActive ? '#3182F6' : '#555' }}
             >
               <div className="relative">
                 <Icon size={20} />

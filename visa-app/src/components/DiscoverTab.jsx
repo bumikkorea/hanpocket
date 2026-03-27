@@ -323,7 +323,7 @@ export default function DiscoverTab({ lang, setTab, setSubPage }) {
 
       {/* ─── 히어로 배너 ─── */}
       {showTrending && !query && (
-        <div style={{ margin: '4px 20px 0', height: 160, borderRadius: 'var(--radius-card)', background: 'linear-gradient(135deg, #C4725A, #E8956F)', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ margin: '4px 20px 0', height: 160, borderRadius: 'var(--radius-card)', background: 'linear-gradient(135deg, #3182F6, #6BA8F8)', padding: 24, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', overflow: 'hidden', position: 'relative' }}>
           <div style={{ position: 'absolute', right: -20, top: -20, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }} />
           <div style={{ fontSize: 22, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>首尔弹窗情报站</div>
           <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>发现最新限时快闪店 · 美食 · 美容</div>

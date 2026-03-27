@@ -899,7 +899,7 @@ body {
 
 /* Primary */
 .btn-primary {
-  background: linear-gradient(180deg, #CC7D66, #C4725A);
+  background: linear-gradient(180deg, #4A93F7, #3182F6);
   color: white;
   box-shadow: 0 1px 1px rgba(196,114,90,0.12), 0 2px 3px rgba(196,114,90,0.05);
 }

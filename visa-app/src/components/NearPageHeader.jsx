@@ -53,7 +53,7 @@ export default function NearPageHeader({ onBack, setTab }) {
           fontWeight: 900,
           fontSize: 21,
           letterSpacing: '0.04em',
-          color: '#1A1A1A',
+          color: '#191F28',
           userSelect: 'none',
           lineHeight: 1,
         }}>
@@ -95,11 +95,11 @@ export default function NearPageHeader({ onBack, setTab }) {
                     border: 'none', cursor: 'pointer',
                     fontSize: 13,
                     fontWeight: lang === l.code ? 700 : 400,
-                    color: lang === l.code ? '#1A1A1A' : '#555555',
+                    color: lang === l.code ? '#191F28' : '#555555',
                   }}
                 >
                   {l.label}
-                  {lang === l.code && <span style={{ color: '#C4725A', marginLeft: 6 }}>✓</span>}
+                  {lang === l.code && <span style={{ color: '#3182F6', marginLeft: 6 }}>✓</span>}
                 </button>
               ))}
             </div>

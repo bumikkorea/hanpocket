@@ -22,9 +22,9 @@ function CultureCard({ item, lang }) {
         <button
           onClick={() => setLiked(!liked)}
           className="flex items-center gap-1 text-xs"
-          style={{ color: liked ? '#C4725A' : '#ABABAB' }}
+          style={{ color: liked ? '#3182F6' : '#ABABAB' }}
         >
-          <ThumbsUp size={14} fill={liked ? '#C4725A' : 'none'} />
+          <ThumbsUp size={14} fill={liked ? '#3182F6' : 'none'} />
           {liked ? (lang === 'ko' ? '공감' : lang === 'zh' ? '共鸣' : 'Relatable') : (lang === 'ko' ? '공감해요' : lang === 'zh' ? '有共鸣' : 'Relatable')}
         </button>
       </div>
@@ -63,9 +63,9 @@ function CultureBoard({ lang }) {
           onChange={e => setNewPost(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && addPost()}
           placeholder={lang === 'ko' ? '한국에서 놀란 문화 차이는?' : lang === 'zh' ? '在韩国让你惊讶的文化差异？' : 'What cultural difference surprised you?'}
-          className="flex-1 px-4 py-2.5 bg-[#F7F3EF] rounded-xl text-sm text-[#1A1A1A] placeholder-[#999] outline-none"
+          className="flex-1 px-4 py-2.5 bg-[#F2F4F6] rounded-xl text-sm text-[#1A1A1A] placeholder-[#999] outline-none"
         />
-        <button onClick={addPost} className="px-3 py-2.5 bg-[#C4725A] rounded-xl text-white active:scale-95 transition-transform">
+        <button onClick={addPost} className="px-3 py-2.5 bg-[#3182F6] rounded-xl text-white active:scale-95 transition-transform">
           <Send size={18} />
         </button>
       </div>
@@ -110,14 +110,14 @@ export default function KoreanCulture({ lang, onBack }) {
         <button
           onClick={() => setActiveTab('list')}
           className="flex-1 py-2 rounded-full text-sm font-medium transition-all"
-          style={{ backgroundColor: activeTab === 'list' ? '#C4725A' : '#F3F4F6', color: activeTab === 'list' ? '#FFF' : '#666' }}
+          style={{ backgroundColor: activeTab === 'list' ? '#3182F6' : '#F3F4F6', color: activeTab === 'list' ? '#FFF' : '#666' }}
         >
           {L(lang, { ko: '문화 차이 50', zh: '文化差异50', en: '50 Differences' })}
         </button>
         <button
           onClick={() => setActiveTab('korean')}
           className="flex-1 py-2 rounded-full text-sm font-medium transition-all"
-          style={{ backgroundColor: activeTab === 'korean' ? '#C4725A' : '#F3F4F6', color: activeTab === 'korean' ? '#FFF' : '#666' }}
+          style={{ backgroundColor: activeTab === 'korean' ? '#3182F6' : '#F3F4F6', color: activeTab === 'korean' ? '#FFF' : '#666' }}
         >
           {L(lang, { ko: '한국어', zh: '韩语', en: 'Korean' })}
         </button>
@@ -134,7 +134,7 @@ export default function KoreanCulture({ lang, onBack }) {
             <button
               onClick={() => setActiveCat(null)}
               className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all"
-              style={{ backgroundColor: !activeCat ? '#C4725A' : '#F7F3EF', color: !activeCat ? '#FFF' : '#8B6F5C' }}
+              style={{ backgroundColor: !activeCat ? '#3182F6' : '#F2F4F6', color: !activeCat ? '#FFF' : '#8B95A1' }}
             >
               {L(lang, { ko: '전체', zh: '全部', en: 'All' })} (50)
             </button>
@@ -145,7 +145,7 @@ export default function KoreanCulture({ lang, onBack }) {
                   key={cat.id}
                   onClick={() => setActiveCat(cat.id)}
                   className="px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all"
-                  style={{ backgroundColor: activeCat === cat.id ? '#C4725A' : '#F7F3EF', color: activeCat === cat.id ? '#FFF' : '#8B6F5C' }}
+                  style={{ backgroundColor: activeCat === cat.id ? '#3182F6' : '#F2F4F6', color: activeCat === cat.id ? '#FFF' : '#8B95A1' }}
                 >
                   {cat.icon} {L(lang, cat.label)} ({count})
                 </button>

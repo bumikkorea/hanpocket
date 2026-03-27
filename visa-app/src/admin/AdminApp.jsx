@@ -107,7 +107,7 @@ function LoginScreen({ onLogin }) {
 
         {/* 로고 */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ fontSize: 28, fontWeight: 800, color: '#C4725A',
+          <div style={{ fontSize: 28, fontWeight: 800, color: '#3182F6',
             letterSpacing: -1, marginBottom: 6 }}>NEAR</div>
           <div style={{ fontSize: 14, color: '#888', fontWeight: 500 }}>가맹점 관리자</div>
         </div>
@@ -148,7 +148,7 @@ function LoginScreen({ onLogin }) {
 
           <button type="submit"
             style={{ width: '100%', padding: '14px', marginTop: 16,
-              background: '#C4725A', color: '#fff', border: 'none', borderRadius: 10,
+              background: '#3182F6', color: '#fff', border: 'none', borderRadius: 10,
               fontSize: 15, fontWeight: 700, cursor: 'pointer', letterSpacing: -0.3 }}>
             로그인
           </button>
@@ -185,7 +185,7 @@ function Dashboard({ shop, admin }) {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)',
         gap: 14, marginBottom: 32 }}>
         {[
-          { label: '오늘 예약', value: stats.total, sub: '총 건수', color: '#C4725A' },
+          { label: '오늘 예약', value: stats.total, sub: '총 건수', color: '#3182F6' },
           { label: '대기 중',   value: stats.pending, sub: '확인 필요', color: '#F9A825' },
           { label: '완료',      value: stats.completed, sub: '건', color: '#43A047' },
           { label: '이번달 매출', value: `₩${(monthRevenue/10000).toFixed(0)}만`, sub: '누적', color: '#1976D2' },
@@ -333,15 +333,15 @@ function ReservationsPage({ admin }) {
             return (
               <div key={day} onClick={() => setSelected(dateStr)}
                 style={{ textAlign: 'center', padding: '8px 4px', borderRadius: 8,
-                  cursor: 'pointer', border: isToday ? '2px solid #C4725A' : '2px solid transparent',
+                  cursor: 'pointer', border: isToday ? '2px solid #3182F6' : '2px solid transparent',
                   background: isSel ? '#FFF0EB' : 'transparent',
                   transition: 'background 0.15s' }}>
                 <div style={{ fontSize: 13, fontWeight: isToday ? 700 : 400,
-                  color: isSel ? '#C4725A' : '#333' }}>{day}</div>
+                  color: isSel ? '#3182F6' : '#333' }}>{day}</div>
                 {count > 0 && (
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
                     <span style={{ width: 6, height: 6, borderRadius: '50%',
-                      background: '#C4725A', display: 'block' }} />
+                      background: '#3182F6', display: 'block' }} />
                   </div>
                 )}
               </div>
@@ -356,7 +356,7 @@ function ReservationsPage({ admin }) {
           <button key={s} onClick={() => setFilter(s)}
             style={{ padding: '6px 14px', borderRadius: 100, fontSize: 12, fontWeight: 600,
               cursor: 'pointer', border: 'none',
-              background: filter === s ? '#C4725A' : '#F0F0F0',
+              background: filter === s ? '#3182F6' : '#F0F0F0',
               color: filter === s ? '#fff' : '#666' }}>
             {s === 'all' ? '전체' : BADGE[s]?.label}
           </button>
@@ -422,7 +422,7 @@ function CustomersPage({ admin }) {
       <div>
         <button onClick={() => setDetail(null)}
           style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13,
-            color: '#C4725A', background: 'none', border: 'none',
+            color: '#3182F6', background: 'none', border: 'none',
             cursor: 'pointer', marginBottom: 20, padding: 0, fontWeight: 600 }}>
           ← 목록으로
         </button>
@@ -456,7 +456,7 @@ function CustomersPage({ admin }) {
               border: '1.5px solid #E8E8E8', fontSize: 13, resize: 'vertical',
               minHeight: 80, fontFamily: 'inherit', outline: 'none' }} />
           <button onClick={saveMemo}
-            style={{ marginTop: 8, padding: '8px 20px', background: '#C4725A',
+            style={{ marginTop: 8, padding: '8px 20px', background: '#3182F6',
               color: '#fff', border: 'none', borderRadius: 8, fontSize: 13,
               fontWeight: 600, cursor: 'pointer' }}>저장</button>
         </div>
@@ -650,7 +650,7 @@ function Toggle({ value, onChange }) {
   return (
     <div onClick={() => onChange(!value)}
       style={{ width: 44, height: 26, borderRadius: 13, cursor: 'pointer',
-        background: value ? '#C4725A' : '#DDD', position: 'relative',
+        background: value ? '#3182F6' : '#DDD', position: 'relative',
         transition: 'background 0.2s' }}>
       <div style={{ position: 'absolute', top: 3, left: value ? 21 : 3,
         width: 20, height: 20, borderRadius: '50%', background: '#fff',
@@ -715,7 +715,7 @@ export default function AdminApp() {
             height: '100vh', flexShrink: 0 }}>
 
             <div style={{ padding: '24px 20px 16px' }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#C4725A',
+              <div style={{ fontSize: 20, fontWeight: 800, color: '#3182F6',
                 letterSpacing: -0.5 }}>NEAR</div>
               <div style={{ fontSize: 11, color: '#aaa', marginTop: 2 }}>관리자</div>
             </div>
@@ -725,9 +725,9 @@ export default function AdminApp() {
                 <div key={item.id} onClick={() => setPage(item.id)}
                   style={{ display: 'flex', alignItems: 'center', gap: 10,
                     padding: '11px 12px', borderRadius: 8, cursor: 'pointer', marginBottom: 2,
-                    borderLeft: page === item.id ? '3px solid #C4725A' : '3px solid transparent',
+                    borderLeft: page === item.id ? '3px solid #3182F6' : '3px solid transparent',
                     background: page === item.id ? '#FFF0EB' : 'transparent',
-                    color: page === item.id ? '#C4725A' : '#666',
+                    color: page === item.id ? '#3182F6' : '#666',
                     fontSize: 14, fontWeight: page === item.id ? 700 : 400,
                     transition: 'all 0.15s' }}>
                   <span style={{ fontSize: 16 }}>{item.icon}</span>
@@ -773,7 +773,7 @@ export default function AdminApp() {
           <header style={{ height: 52, background: '#fff', borderBottom: '1px solid #EBEBEB',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '0 16px', position: 'sticky', top: 0, zIndex: 10 }}>
-            <span style={{ fontSize: 15, fontWeight: 700, color: '#C4725A' }}>NEAR 관리자</span>
+            <span style={{ fontSize: 15, fontWeight: 700, color: '#3182F6' }}>NEAR 관리자</span>
             <span style={{ fontSize: 13, color: '#888' }}>{shop.name}</span>
           </header>
 
@@ -790,7 +790,7 @@ export default function AdminApp() {
               <div key={item.id} onClick={() => setPage(item.id)}
                 style={{ flex: 1, display: 'flex', flexDirection: 'column',
                   alignItems: 'center', gap: 3, cursor: 'pointer', padding: '8px 0',
-                  color: page === item.id ? '#C4725A' : '#aaa' }}>
+                  color: page === item.id ? '#3182F6' : '#aaa' }}>
                 <span style={{ fontSize: 20 }}>{item.icon}</span>
                 <span style={{ fontSize: 9, fontWeight: page === item.id ? 700 : 400 }}>
                   {item.label}

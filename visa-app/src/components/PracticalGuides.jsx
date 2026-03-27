@@ -31,11 +31,11 @@ export function CurrencyCalc({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency Converter' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '환율 계산기', zh: '汇率计算器', en: 'Currency Converter' })}</p>
       <div className="bg-white rounded-[14px] p-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
         <div className="flex items-center gap-2 mb-3">
           <button onClick={() => setDirection(d => d === 'cny2krw' ? 'krw2cny' : 'cny2krw')}
-            className="text-[13px] font-bold text-[#C4725A] px-3 py-1.5 rounded-full bg-[#FFF5F2] active:scale-95">{direction === 'cny2krw' ? 'CNY → KRW' : 'KRW → CNY'} ⇄
+            className="text-[13px] font-bold text-[#3182F6] px-3 py-1.5 rounded-full bg-[#FFF5F2] active:scale-95">{direction === 'cny2krw' ? 'CNY → KRW' : 'KRW → CNY'} ⇄
           </button>
           <span className="text-[11px] text-[#9CA3AF]">1 CNY ≈ {rate.toFixed(1)} KRW {loading ? '' : '· 실시간'}</span>
         </div>
@@ -44,7 +44,7 @@ export function CurrencyCalc({ lang }) {
           className="w-full text-[24px] font-bold text-[#111827] bg-[#F3F4F6] rounded-[12px] px-4 py-3 mb-3 outline-none" />
         <div className="text-center">
           <p className="text-[11px] text-[#9CA3AF]">{direction === 'cny2krw' ? '≈ 韩元' : '≈ 人民币'}</p>
-          <p className="text-[28px] font-bold text-[#C4725A]">{direction === 'cny2krw' ? `₩ ${converted.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}` : `¥ ${converted.toFixed(2)}`}
+          <p className="text-[28px] font-bold text-[#3182F6]">{direction === 'cny2krw' ? `₩ ${converted.toLocaleString('ko-KR', { maximumFractionDigits: 0 })}` : `¥ ${converted.toFixed(2)}`}
           </p>
         </div>
       </div>
@@ -75,7 +75,7 @@ export function EmergencyNumbers({ lang }) {
   ]
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '긴급 전화번호', zh: '紧急电话', en: 'Emergency Numbers' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '긴급 전화번호', zh: '紧急电话', en: 'Emergency Numbers' })}</p>
       <div className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
         {numbers.map((n, i) => (
           <a key={n.num} href={`tel:${n.num.replace(/-/g, '')}`}
@@ -86,7 +86,7 @@ export function EmergencyNumbers({ lang }) {
               <p className="text-[13px] font-semibold text-[#111827]">{L(lang, n.label)}</p>
               <p className="text-[10px] text-[#9CA3AF]">{L(lang, n.desc)}</p>
             </div>
-            <span className="text-[14px] font-bold text-[#C4725A]">{n.num}</span>
+            <span className="text-[14px] font-bold text-[#3182F6]">{n.num}</span>
           </a>
         ))}
       </div>
@@ -113,8 +113,8 @@ function TranslatorTabBar({ lang, activeId, setSubPage }) {
           <button key={t.id} onClick={() => setSubPage?.(t.id)} style={{
             flex: 1, padding: '10px 0 8px', background: 'none', border: 'none', cursor: 'pointer',
             fontSize: 14, fontWeight: isActive ? 700 : 500,
-            color: isActive ? '#C4725A' : '#A8A8A8',
-            borderBottom: isActive ? '2px solid #C4725A' : '2px solid transparent',
+            color: isActive ? '#3182F6' : '#8B95A1',
+            borderBottom: isActive ? '2px solid #3182F6' : '2px solid transparent',
             transition: 'all 0.15s',
           }}>
             {t.label[lang] || t.label.en}
@@ -151,7 +151,7 @@ export function BasicKorean({ lang, setSubPage }) {
   return (
     <div className="px-4 pt-4 pb-24">
       <TranslatorTabBar lang={lang} activeId="basic-korean" setSubPage={setSubPage} />
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '기본 한국어 20문장', zh: '基础韩语20句', en: '20 Basic Korean Phrases' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '기본 한국어 20문장', zh: '基础韩语20句', en: '20 Basic Korean Phrases' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '발음과 번역을 함께 보세요', zh: '查看发音和翻译', en: 'See pronunciation and translation' })}</p>
       <div className="flex flex-col gap-2">{phrases.map((p, i) => (
           <div key={i} className="bg-white rounded-[12px] overflow-hidden px-4 py-3" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
@@ -160,7 +160,7 @@ export function BasicKorean({ lang, setSubPage }) {
               <div className="flex-1">
                 <p className="text-[14px] font-bold text-[#111827]">{p.ko}</p>
                 <p className="text-[12px] text-[#6B7280]">{lang === 'en' ? p.en : p.zh}</p>
-                <p className="text-[12px] text-[#C4725A] font-medium mt-1">{p.pron}</p>
+                <p className="text-[12px] text-[#3182F6] font-medium mt-1">{p.pron}</p>
                 {lang !== 'en' && <p className="text-[11px] text-[#9CA3AF] mt-0.5">{p.en}</p>}
               </div>
             </div>
@@ -175,7 +175,7 @@ export function BasicKorean({ lang, setSubPage }) {
 export function TransitCardGuide({ lang }) {
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '교통카드 안내', zh: '交通卡指南', en: 'Transit Card Guide' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '교통카드 안내', zh: '交通卡指南', en: 'Transit Card Guide' })}</p>
       <div className="space-y-3">{[
           { title: { ko: 'T-money 카드', zh: 'T-money卡', en: 'T-money Card' }, emoji: '',
             items: [
@@ -202,7 +202,7 @@ export function TransitCardGuide({ lang }) {
             <p className="text-[14px] font-bold text-[#111827] mb-2">{L(lang, section.title)}</p>
             <div className="space-y-1.5">{section.items.map((item, j) => (
                 <p key={j} className="text-[12px] text-[#555] flex items-start gap-2">
-                  <span className="text-[#C4725A] mt-0.5">•</span> {L(lang, item)}
+                  <span className="text-[#3182F6] mt-0.5">•</span> {L(lang, item)}
                 </p>
               ))}
             </div>
@@ -217,7 +217,7 @@ export function TransitCardGuide({ lang }) {
 export function VoltageGuide({ lang }) {
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '콘센트/전압 안내', zh: '插座/电压指南', en: 'Plug & Voltage Guide' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '콘센트/전압 안내', zh: '插座/电压指南', en: 'Plug & Voltage Guide' })}</p>
       <div className="bg-white rounded-[14px] p-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
         <div className="text-center mb-4">
           
@@ -253,7 +253,7 @@ export function VoltageGuide({ lang }) {
 export function TaxFreeGuide({ lang }) {
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '쇼핑 면세 안내', zh: '退税购物指南', en: 'Tax-Free Shopping' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '쇼핑 면세 안내', zh: '退税购物指南', en: 'Tax-Free Shopping' })}</p>
       <div className="space-y-3">
         <div className="bg-white rounded-[14px] p-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <p className="text-[14px] font-bold text-[#111827] mb-2">{L(lang, { ko: '면세 조건', zh: '退税条件', en: 'Conditions' })}</p>
@@ -274,7 +274,7 @@ export function TaxFreeGuide({ lang }) {
             ].map(([range, refund]) => (
               <div key={range} className="flex justify-between py-1" style={{ borderBottom: '1px solid #F3F4F6' }}>
                 <span className="text-[#555]">{range}</span>
-                <span className="font-bold text-[#C4725A]">{refund}</span>
+                <span className="font-bold text-[#3182F6]">{refund}</span>
               </div>
             ))}
           </div>
@@ -313,7 +313,7 @@ export function EtiquetteGuide({ lang }) {
   ]
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '한국 에티켓', zh: '韩国礼仪', en: 'Korean Etiquette' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '한국 에티켓', zh: '韩国礼仪', en: 'Korean Etiquette' })}</p>
       <div className="space-y-3">{tips.map(section => (
           <div key={L(lang, section.title)} className="bg-white rounded-[14px] p-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
             <p className="text-[14px] font-bold text-[#111827] mb-2">{L(lang, section.title)}</p>
@@ -332,7 +332,7 @@ export function EtiquetteGuide({ lang }) {
 export function SimGuide({ lang }) {
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: 'SIM/eSIM 구매 안내', zh: 'SIM/eSIM购买指南', en: 'SIM/eSIM Guide' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: 'SIM/eSIM 구매 안내', zh: 'SIM/eSIM购买指南', en: 'SIM/eSIM Guide' })}</p>
       <div className="space-y-3">{[
           { title: 'eSIM', emoji: '', desc: { ko: '공항 도착 전 온라인 구매 추천', zh: '建议到达前在线购买', en: 'Buy online before arrival' },
             items: [
@@ -356,7 +356,7 @@ export function SimGuide({ lang }) {
         ].map(section => (
           <div key={typeof section.title === 'string' ? section.title : L(lang, section.title)} className="bg-white rounded-[14px] p-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
             <p className="text-[14px] font-bold text-[#111827] mb-2">{typeof section.title === 'string' ? section.title : L(lang, section.title)}</p>
-            {section.desc && <p className="text-[11px] text-[#C4725A] mb-2">{L(lang, section.desc)}</p>}
+            {section.desc && <p className="text-[11px] text-[#3182F6] mb-2">{L(lang, section.desc)}</p>}
             <div className="space-y-1.5">{section.items.map((item, j) => (
                 <p key={j} className="text-[12px] text-[#555]">• {L(lang, item)}</p>
               ))}
@@ -384,7 +384,7 @@ export function PriceGuide({ lang }) {
   ]
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '한국 물가 가이드', zh: '韩国物价指南', en: 'Korea Price Guide' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '한국 물가 가이드', zh: '韩国物价指南', en: 'Korea Price Guide' })}</p>
       <div className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
         {prices.map((p, i) => (
           <div key={i} className="flex items-center gap-3 px-4 py-3" style={i > 0 ? { borderTop: '1px solid #F3F4F6' } : {}}>
@@ -393,7 +393,7 @@ export function PriceGuide({ lang }) {
               <p className="text-[13px] font-medium text-[#111827]">{L(lang, p.item)}</p>
               <p className="text-[10px] text-[#9CA3AF]">{L(lang, p.note)}</p>
             </div>
-            <span className="text-[13px] font-bold text-[#C4725A]">{p.price}</span>
+            <span className="text-[13px] font-bold text-[#3182F6]">{p.price}</span>
           </div>
         ))}
       </div>
@@ -419,7 +419,7 @@ export function AllergyCard({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '음식 알레르기 카드', zh: '食物过敏卡', en: 'Food Allergy Card' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '음식 알레르기 카드', zh: '食物过敏卡', en: 'Food Allergy Card' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '알레르기를 선택하고 식당에 보여주세요', zh: '选择过敏原，在餐厅出示', en: 'Select allergies and show at restaurant' })}</p>
 
       <div className="flex flex-wrap gap-2 mb-4">{allergies.map(a => (
@@ -458,16 +458,16 @@ export function AllergyCard({ lang }) {
 export function LostItemGuide({ lang }) {
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '분실물 신고', zh: '失物报告', en: 'Lost & Found' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '분실물 신고', zh: '失物报告', en: 'Lost & Found' })}</p>
       <div className="space-y-3">
         <div className="bg-white rounded-[14px] p-4" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
           <p className="text-[14px] font-bold text-[#111827] mb-2">{L(lang, { ko: '전화 신고', zh: '电话报告', en: 'Phone Report' })}</p>
           <a href="tel:112" className="flex items-center gap-2 py-2">
-            <span className="text-[14px] font-bold text-[#C4725A]">112</span>
+            <span className="text-[14px] font-bold text-[#3182F6]">112</span>
             <span className="text-[12px] text-[#555]">{L(lang, { ko: '경찰 (24시간)', zh: '警察 (24小时)', en: 'Police (24h)' })}</span>
           </a>
           <a href="tel:1566-0112" className="flex items-center gap-2 py-2">
-            <span className="text-[14px] font-bold text-[#C4725A]">1566-0112</span>
+            <span className="text-[14px] font-bold text-[#3182F6]">1566-0112</span>
             <span className="text-[12px] text-[#555]">{L(lang, { ko: '경찰 분실물센터', zh: '警察失物中心', en: 'Police Lost & Found' })}</span>
           </a>
         </div>
@@ -514,13 +514,13 @@ export function HolidayCalendar({ lang }) {
   const today = new Date().toISOString().slice(5, 10)
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-4">{L(lang, { ko: '2026 공휴일', zh: '2026韩国公休日', en: '2026 Korean Holidays' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-4">{L(lang, { ko: '2026 공휴일', zh: '2026韩国公休日', en: '2026 Korean Holidays' })}</p>
       <div className="bg-white rounded-[14px] overflow-hidden" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
         {holidays2026.map((h, i) => {
           const isPast = h.date < today
           return (
             <div key={`${h.date}-${i}`} className="flex items-center gap-3 px-4 py-3" style={i > 0 ? { borderTop: '1px solid #F3F4F6' } : {}}>
-              <span className={`text-[13px] font-mono w-12 ${isPast ? 'text-[#D1D5DB]' : 'text-[#C4725A] font-bold'}`}>{h.date.replace('-', '/')}</span>
+              <span className={`text-[13px] font-mono w-12 ${isPast ? 'text-[#D1D5DB]' : 'text-[#3182F6] font-bold'}`}>{h.date.replace('-', '/')}</span>
               <p className={`text-[13px] flex-1 ${isPast ? 'text-[#D1D5DB]' : 'text-[#111827] font-medium'}`}>{L(lang, h)}</p>
               {h.date === today && <span className="text-[10px] bg-[#DC2626] text-white px-2 py-0.5 rounded-full font-bold">TODAY</span>}
             </div>
@@ -556,7 +556,7 @@ export function DiscoverSeoulPass({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '디스커버서울패스', zh: 'Discover Seoul Pass', en: 'Discover Seoul Pass' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '디스커버서울패스', zh: 'Discover Seoul Pass', en: 'Discover Seoul Pass' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '갈 곳을 선택하고 얼마나 아끼는지 확인!', zh: '选择目的地，看能省多少钱！', en: 'Select spots and see how much you save!' })}</p>
 
       <div className="flex flex-wrap gap-2 mb-4">{spots.map((s, i) => (
@@ -590,7 +590,7 @@ export function DiscoverSeoulPass({ lang }) {
       )}
 
       <a href="https://www.discoverseoulpass.com" target="_blank" rel="noreferrer"
-        className="block w-full py-3 rounded-[12px] bg-[#C4725A] text-white text-[13px] font-bold text-center active:scale-95 transition-transform">{L(lang, { ko: '디스커버서울패스 구매하기', zh: '购买Discover Seoul Pass', en: 'Buy Discover Seoul Pass' })}
+        className="block w-full py-3 rounded-[12px] bg-[#3182F6] text-white text-[13px] font-bold text-center active:scale-95 transition-transform">{L(lang, { ko: '디스커버서울패스 구매하기', zh: '购买Discover Seoul Pass', en: 'Buy Discover Seoul Pass' })}
       </a>
     </div>
   )
@@ -609,7 +609,7 @@ export function HallyuExperiences({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '한류 체험 프로그램', zh: '韩流体验项目', en: 'Hallyu Experiences' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '한류 체험 프로그램', zh: '韩流体验项目', en: 'Hallyu Experiences' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-3">{L(lang, { ko: 'Visit Seoul 공식 프로그램', zh: 'Visit Seoul官方项目', en: 'Official Visit Seoul Programs' })}</p>
 
       <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3" style={{ scrollbarWidth: 'none' }}>
@@ -637,7 +637,7 @@ export function HallyuExperiences({ lang }) {
                 <p className="text-[11px] text-[#6B7280] mt-0.5">{exp.brand} · {exp.duration}</p>
                 <p className="text-[12px] text-[#555] mt-1">{L(lang, exp.desc)}</p>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-[14px] font-bold text-[#C4725A]">{exp.price}</span>
+                  <span className="text-[14px] font-bold text-[#3182F6]">{exp.price}</span>
                   <a href={exp.bookingUrl} target="_blank" rel="noreferrer"
                     className="text-[11px] bg-[#111827] text-white px-3 py-1.5 rounded-full font-medium active:scale-95 transition-transform">{L(lang, { ko: '예약하기', zh: '立即预约', en: 'Book Now' })}
                   </a>
@@ -661,7 +661,7 @@ export function HikingCourses({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '서울 등산 코스', zh: '首尔登山路线', en: 'Seoul Hiking Courses' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '서울 등산 코스', zh: '首尔登山路线', en: 'Seoul Hiking Courses' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '도심 속 가벼운 하이킹 (轻徒步)', zh: '城市轻徒步', en: 'Urban Light Hiking' })}</p>
 
       <div className="space-y-3">{courses.map(c => (
@@ -735,7 +735,7 @@ export function TasteOfSeoul({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: 'Taste of Seoul', zh: '首尔之味', en: 'Taste of Seoul' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: 'Taste of Seoul', zh: '首尔之味', en: 'Taste of Seoul' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-3">{L(lang, { ko: '서울에서 꼭 먹어야 할 음식 가이드', zh: '在首尔必吃的美食指南', en: 'Must-eat food guide in Seoul' })}</p>
 
       {/* 카테고리 필터 */}
@@ -774,7 +774,7 @@ export function TasteOfSeoul({ lang }) {
                     </div>
                     {item.tip && (
                       <div className="bg-[#FFF5F2] rounded-lg px-2.5 py-1.5">
-                        <p className="text-[10px] text-[#C4725A] font-medium">{L(lang, item.tip)}</p>
+                        <p className="text-[10px] text-[#3182F6] font-medium">{L(lang, item.tip)}</p>
                       </div>
                     )}
                     <a href={`https://map.kakao.com/link/search/${encodeURIComponent(L(lang, item.name))}`}
@@ -838,7 +838,7 @@ export function TodayEvents({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '오늘의 서울', zh: '今日首尔', en: "Today's Seoul" })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '오늘의 서울', zh: '今日首尔', en: "Today's Seoul" })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-3">{L(lang, { ko: '지금 진행 중인 축제·전시·공연·마켓', zh: '正在进行的节庆·展览·演出·市集', en: 'Ongoing festivals, exhibitions, shows & markets' })}</p>
 
       <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3" style={{ scrollbarWidth: 'none' }}>
@@ -852,7 +852,7 @@ export function TodayEvents({ lang }) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-8"><div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#C4725A] rounded-full" /></div>
+        <div className="flex justify-center py-8"><div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#3182F6] rounded-full" /></div>
       ) : filtered.length === 0 ? (
         <p className="text-center text-[13px] text-[#9CA3AF] py-8">{L(lang, { ko: '진행 중인 행사가 없습니다', zh: '暂无活动', en: 'No events found' })}</p>
       ) : (
@@ -875,7 +875,7 @@ export function TodayEvents({ lang }) {
                 </div>
                 {ev.url && (
                   <a href={ev.url} target="_blank" rel="noreferrer"
-                    className="mt-2 inline-block text-[11px] text-[#C4725A] font-medium">{L(lang, { ko: '자세히 보기 →', zh: '查看详情 →', en: 'View Details →' })}
+                    className="mt-2 inline-block text-[11px] text-[#3182F6] font-medium">{L(lang, { ko: '자세히 보기 →', zh: '查看详情 →', en: 'View Details →' })}
                   </a>
                 )}
               </div>
@@ -914,14 +914,14 @@ export function HallyuCourseMap({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '한류 테마 코스', zh: '韩流主题路线', en: 'Hallyu Themed Courses' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '한류 테마 코스', zh: '韩流主题路线', en: 'Hallyu Themed Courses' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: 'K-POP, K-Drama, K-Beauty 성지 순례 코스', zh: 'K-POP、K-Drama、K-Beauty圣地巡礼路线', en: 'K-POP, K-Drama, K-Beauty pilgrimage courses' })}</p>
 
       {/* 코스 선택 카드 */}
       <div className="grid grid-cols-2 gap-2 mb-4">{courses.map((c, i) => (
           <button key={c.id} onClick={() => setSelected(selected === i ? null : i)}
             className="rounded-[12px] p-3 text-left transition-all"
-            style={{ background: selected === i ? '#111827' : '#FFF', color: selected === i ? '#FFF' : '#1A1A1A', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+            style={{ background: selected === i ? '#111827' : '#FFF', color: selected === i ? '#FFF' : '#191F28', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
             
             <p className="text-[13px] font-bold mt-1">{L(lang, c.title)}</p>
             <p className="text-[10px] mt-0.5" style={{ opacity: 0.7 }}>{c.spots.length} {L(lang, { ko: '장소', zh: '个地点', en: 'spots' })}</p>
@@ -974,7 +974,7 @@ export function HallyuCourseMap({ lang }) {
         <div className="flex gap-2">
           <a href={`https://map.kakao.com/link/search/${encodeURIComponent(L(lang, current.spots[0].name) + ' 맛집')}`}
             target="_blank" rel="noreferrer"
-            className="flex-1 py-2.5 rounded-[10px] bg-[#FFF5F2] text-[#C4725A] text-[12px] font-bold text-center active:scale-95 transition-transform">{L(lang, { ko: '근처 맛집', zh: '附近美食', en: 'Nearby Food' })}
+            className="flex-1 py-2.5 rounded-[10px] bg-[#FFF5F2] text-[#3182F6] text-[12px] font-bold text-center active:scale-95 transition-transform">{L(lang, { ko: '근처 맛집', zh: '附近美食', en: 'Nearby Food' })}
           </a>
           <a href={`https://map.kakao.com/link/search/${encodeURIComponent(L(lang, current.spots[0].name) + ' 카페')}`}
             target="_blank" rel="noreferrer"
@@ -1001,11 +1001,11 @@ export function WifiHotspot({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '공공 와이파이', zh: '公共WiFi热点', en: 'Public WiFi Hotspots' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '공공 와이파이', zh: '公共WiFi热点', en: 'Public WiFi Hotspots' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '서울시 무료 와이파이 위치', zh: '首尔市免费WiFi位置', en: 'Free WiFi locations in Seoul' })}</p>
 
       {loading ? (
-        <div className="flex justify-center py-8"><div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#C4725A] rounded-full" /></div>
+        <div className="flex justify-center py-8"><div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#3182F6] rounded-full" /></div>
       ) : (
         <div className="space-y-2">{spots.map(s => (
             <div key={s.id} className="bg-white rounded-[12px] px-4 py-3 flex items-center gap-3" style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
@@ -1130,7 +1130,7 @@ export function WeatherRecommend({ lang }) {
       })
   }, [])
 
-  if (loading) return <div className="flex justify-center py-8"><div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#C4725A] rounded-full" /></div>
+  if (loading) return <div className="flex justify-center py-8"><div className="animate-spin w-6 h-6 border-2 border-gray-300 border-t-[#3182F6] rounded-full" /></div>
 
   const zone = getTempZone(weather.temp)
   const cond = getWeatherCond(weather.code)
@@ -1139,7 +1139,7 @@ export function WeatherRecommend({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '날씨별 추천 관광지', zh: '天气推荐景点', en: 'Weather-Based Recommendations' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '날씨별 추천 관광지', zh: '天气推荐景点', en: 'Weather-Based Recommendations' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '지금 서울 날씨에 딱 맞는 장소', zh: '最适合当前首尔天气的地方', en: 'Perfect spots for current Seoul weather' })}</p>
 
       {/* 현재 날씨 카드 */}
@@ -1160,7 +1160,7 @@ export function WeatherRecommend({ lang }) {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-[14px] font-bold text-[#111827]">{L(lang, p)}</p>
-                <p className="text-[11px] text-[#C4725A] mt-1">{L(lang, p.why)}</p>
+                <p className="text-[11px] text-[#3182F6] mt-1">{L(lang, p.why)}</p>
               </div>
               <a href={`https://map.kakao.com/link/search/${encodeURIComponent(p.ko)}`}
                 target="_blank" rel="noreferrer"
@@ -1227,10 +1227,10 @@ export function MedicalTourism({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '의료관광', zh: '医疗旅游', en: 'Medical Tourism' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '의료관광', zh: '医疗旅游', en: 'Medical Tourism' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-1">{L(lang, { ko: '한국 의료 서비스를 합리적 가격에', zh: '以合理的价格享受韩国医疗服务', en: 'Korean medical services at reasonable prices' })}</p>
       <div className="bg-[#FFF5F2] rounded-[10px] px-3 py-2 mb-4">
-        <p className="text-[10px] text-[#C4725A] font-medium">{L(lang, { ko: '한국은 성형, 피부, 치과, 안과, 종합검진 분야에서 세계적 수준이며 가격은 미국·중국 대비 30~70% 저렴합니다', zh: '韩国在整形、皮肤、牙科、眼科、综合体检领域世界领先，价格比美国·中国低30~70%', en: 'Korea is world-class in cosmetic, dental, ophthalmology, and health checkups at 30-70% lower prices' })}</p>
+        <p className="text-[10px] text-[#3182F6] font-medium">{L(lang, { ko: '한국은 성형, 피부, 치과, 안과, 종합검진 분야에서 세계적 수준이며 가격은 미국·중국 대비 30~70% 저렴합니다', zh: '韩国在整形、皮肤、牙科、眼科、综合体检领域世界领先，价格比美国·中国低30~70%', en: 'Korea is world-class in cosmetic, dental, ophthalmology, and health checkups at 30-70% lower prices' })}</p>
       </div>
 
       <div className="space-y-3">{MEDICAL_ITEMS.map(item => {
@@ -1311,7 +1311,7 @@ export function SeoulStay({ lang }) {
 
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '서울 스테이', zh: '首尔住宿', en: 'Seoul Stay' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '서울 스테이', zh: '首尔住宿', en: 'Seoul Stay' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '한옥부터 한강뷰 호텔까지, 서울에서 어디서 잘까?', zh: '从韩屋到汉江景酒店，在首尔住哪里？', en: 'From hanok to Han River view hotels, where to stay in Seoul?' })}</p>
 
       <div className="space-y-3">{SEOUL_STAY_DATA.map(item => {
@@ -1383,7 +1383,7 @@ const CULTURE_LOUNGE_DATA = [
 export function CultureLounge({ lang }) {
   return (
     <div className="px-4 pt-4 pb-24">
-      <p className="text-[20px] font-bold text-[#1A1A1A] mb-1">{L(lang, { ko: '서울 문화 라운지', zh: '首尔文化空间', en: 'Seoul Culture Lounge' })}</p>
+      <p className="text-[20px] font-bold text-[#191F28] mb-1">{L(lang, { ko: '서울 문화 라운지', zh: '首尔文化空间', en: 'Seoul Culture Lounge' })}</p>
       <p className="text-[11px] text-[#9CA3AF] mb-4">{L(lang, { ko: '서울에서 꼭 가봐야 할 문화 공간', zh: '在首尔必访的文化空间', en: 'Must-visit cultural spaces in Seoul' })}</p>
 
       <div className="space-y-2.5">{CULTURE_LOUNGE_DATA.map(item => (

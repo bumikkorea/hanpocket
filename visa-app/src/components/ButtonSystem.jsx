@@ -29,8 +29,8 @@ export default function Button({
     const disabledStyle = disabled ? 'opacity-50 cursor-not-allowed' : ''
 
     const variants = {
-      primary: `${baseStyle} text-white bg-gradient-to-b from-[#CC7D66] to-[#C4725A] shadow-[0_1px_1px_rgba(196,114,90,0.12),0_2px_3px_rgba(196,114,90,0.05)] btn-hover-lift btn-active-press`,
-      dark: `${baseStyle} text-white bg-gradient-to-b from-[#252525] to-[#1A1A1A] shadow-[0_1px_1px_rgba(0,0,0,0.08),0_2px_3px_rgba(0,0,0,0.04)] btn-hover-lift btn-active-press`,
+      primary: `${baseStyle} text-white bg-gradient-to-b from-[#4A93F7] to-[#3182F6] shadow-[0_1px_1px_rgba(49,130,246,0.12),0_2px_3px_rgba(49,130,246,0.05)] btn-hover-lift btn-active-press`,
+      dark: `${baseStyle} text-white bg-gradient-to-b from-[#252525] to-[#191F28] shadow-[0_1px_1px_rgba(0,0,0,0.08),0_2px_3px_rgba(0,0,0,0.04)] btn-hover-lift btn-active-press`,
       outline: `${baseStyle} text-[var(--text-secondary)] bg-white border-0.5 border-[#E0E0E0] shadow-[0_0px_1px_rgba(0,0,0,0.015)] btn-hover-lift btn-active-press`,
       success: `${baseStyle} text-white bg-gradient-to-b from-[#3DD06E] to-[#34C759] shadow-[0_1px_1px_rgba(52,199,89,0.12),0_2px_3px_rgba(52,199,89,0.05)] btn-hover-lift btn-active-press`,
       danger: `${baseStyle} text-[var(--price)] bg-[#FFF5F5] btn-hover-lift btn-active-press`,

@@ -25,7 +25,7 @@ export default function HotelHeader({ hotel, language, onLanguageChange, L }) {
             onClick={() => onLanguageChange(lang.code)}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
               language === lang.code
-                ? 'bg-[#C4725A] text-white'
+                ? 'bg-[#3182F6] text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >

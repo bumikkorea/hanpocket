@@ -397,7 +397,7 @@ export default function PopupReviewDetail({ item, onBack, supabaseNear, supabase
           onClick={handleApprove}
           disabled={loading}
           className="flex-1 flex items-center justify-center gap-2 py-3 text-white rounded-xl disabled:opacity-50 transition-colors text-sm font-bold"
-          style={{ backgroundColor: '#C4725A' }}
+          style={{ backgroundColor: '#3182F6' }}
         >
           <Check size={16} /> {loading ? '처리 중...' : '승인 → NEAR DB 저장'}
         </button>

@@ -11,7 +11,7 @@ const screens = [
   {
     title: { ko: '발견하기', zh: '发现身边的好店', en: 'Discover' },
     description: { ko: '주변 최고의 매장들을 발견하세요', zh: '探索身边最好的商店', en: 'Find the best shops nearby' },
-    background: 'linear-gradient(135deg, #C4725A, #E8956F)',
+    background: 'linear-gradient(135deg, #3182F6, #6BA8F8)',
     emoji: '🔍'
   },
   {

@@ -13,7 +13,7 @@ const TOAST_CONFIG = {
   error:   { bg: '#FFF0F0', text: '#B71C1C', Icon: XCircle,        iconColor: '#FF3B30' },
   warning: { bg: '#FFF8E1', text: '#E65100', Icon: AlertTriangle,   iconColor: '#FF9500' },
   info:    { bg: '#E3F2FD', text: '#0D47A1', Icon: Info,            iconColor: '#007AFF' },
-  booking: { bg: '#FDF3F1', text: '#A85D48', Icon: CalendarCheck,   iconColor: '#C4725A', border: '1px solid rgba(196,114,90,0.2)' },
+  booking: { bg: '#EBF3FE', text: '#1B6AE0', Icon: CalendarCheck,   iconColor: '#3182F6', border: '1px solid rgba(49,130,246,0.2)' },
 }
 
 let idCounter = 0

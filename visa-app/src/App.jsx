@@ -2148,7 +2148,7 @@ function AppInner() {
                         className={`w-full px-3 py-2 text-left text-[13px] flex items-center gap-2 ${lang === l.code ? 'font-bold text-[#1A1A1A] bg-[#F3F4F6]' : 'text-[#555]'}`}>
                         <span>{l.flag}</span>
                         <span>{l.label}</span>
-                        {lang === l.code && <span className="ml-auto text-[#C4725A]">✓</span>}
+                        {lang === l.code && <span className="ml-auto text-[#3182F6]">✓</span>}
                       </button>
                     ))}
                   </div>
@@ -2718,7 +2718,7 @@ function AppInner() {
                         <p className="text-[13px] font-semibold text-[#111827]">{L(lang, item.label)}</p>
                         <p className="text-[10px] text-[#9CA3AF]">{L(lang, item.desc)}</p>
                       </div>
-                      <span className="text-[#C4725A] text-xs">→</span>
+                      <span className="text-[#3182F6] text-xs">→</span>
                     </button>
                   ))}
                 </div>

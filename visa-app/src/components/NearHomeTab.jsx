@@ -195,15 +195,14 @@ function getGreeting(lang) {
   return greetings[lang] || greetings.en
 }
 
-function getTripStatusLabel(plan, lang) {
+function getTripStatusLabel(plan) {
   if (!plan) return ''
   const now = new Date(); now.setHours(0,0,0,0)
   const a = strToDate(plan.arrivalDate)
-  const d = strToDate(plan.departureDate)
-  const diffA = Math.round((a - now) / 86400000)
-  if (diffA > 0) return `D-${diffA}`
-  if (now > d) return L(lang, { ko: '완료', zh: '结束', en: 'Done' })
-  return L(lang, { ko: 'D-DAY · 오늘', zh: 'D-DAY · 今天', en: 'D-DAY · Today' })
+  const diff = Math.round((now - a) / 86400000)
+  if (diff < 0) return `D${diff}` // D-7, D-3 등
+  if (diff === 0) return 'D-DAY'
+  return `D+${diff}` // D+1, D+2 등
 }
 
 function formatTripDate(s, lang) {
@@ -453,7 +452,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       )}
 
       {/* ─── 1. 인사 + 사용자 이름 (한 줄) ─── */}
-      <div style={{ padding: '10px 24px 16px', ...fadeUp(0) }}>
+      <div style={{ padding: '24px 24px 16px', ...fadeUp(0) }}>
         <div style={{ fontSize: lang === 'en' ? 24 : lang === 'ja' ? 22 : 24, fontWeight: 700, color: '#191F28', letterSpacing: '-0.3px', lineHeight: 1.3 }}>
           {getGreeting(lang)} <span style={{ color: '#3182F6' }}>{userName}<span className="blinking-dot">.</span></span>
         </div>
@@ -475,14 +474,14 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             <>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 10, fontWeight: 600, color: '#3182F6', letterSpacing: '1px', marginBottom: 6, textTransform: 'uppercase' }}>
-                    {getTripStatusLabel(plan, lang)}
+                  <div style={{ fontSize: 10, fontWeight: 600, color: '#3182F6', letterSpacing: '1px', marginBottom: 6, textTransform: 'uppercase', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
+                    {getTripStatusLabel(plan)}
                   </div>
                   <div style={{ fontSize: 28, fontWeight: 700, color: '#191F28', lineHeight: 1, marginBottom: 6 }}>
                     {L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })}
                   </div>
                   <div style={{ fontSize: 13, color: '#8B95A1' }}>
-                    {formatTripDate(plan.arrivalDate, lang)} — {formatTripDate(plan.departureDate, lang)} · {getNightsLabel(plan.arrivalDate, plan.departureDate, lang)}
+                    {formatTripDate(plan.arrivalDate, lang)} - {formatTripDate(plan.departureDate, lang)}
                   </div>
                 </div>
                 <span style={{ fontSize: 20, color: '#8B95A1', marginTop: 8, flexShrink: 0 }}>›</span>

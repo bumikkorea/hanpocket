@@ -828,7 +828,7 @@ export default function NearMap() {
   }, [isExpanded, sheetPoi, snapSheet, selectPin, closeSheet, SHEET_PEEK])
 
   return (
-    <div style={{ position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
+    <div style={{ position: 'fixed', top: 48, left: 0, right: 0, bottom: 0, overflow: 'hidden', background: 'var(--surface)', transition: 'opacity 0.2s ease', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
 
       {/* ─── 카카오맵 (풀 커버) ─── */}
       <div
@@ -868,10 +868,12 @@ export default function NearMap() {
             return (
               <button key={item.id} onClick={item.action}
                 style={{
-                  background: 'none', border: 'none', cursor: 'pointer', padding: '14px 0',
+                  background: 'none', border: 'none', cursor: 'pointer', padding: 0,
                   fontSize: 14, fontWeight: isActive ? 600 : 400,
                   color: isActive ? '#191F28' : '#8B95A1',
                   position: 'relative', transition: 'all 0.2s',
+                  height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  lineHeight: 1,
                 }}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1073,8 +1075,8 @@ export default function NearMap() {
       {/* B/% 버튼은 투어버스 서브필터 바로 이동됨 */}
 
 
-      {/* ─── 좌상단: 지역 선택 ─── */}
-      <div style={{ position: 'absolute', top: 56, left: 12, zIndex: 9 }}>
+      {/* ─── 좌상단: 지역 선택 (서브필터 있으면 아래로 밀림) ─── */}
+      <div style={{ position: 'absolute', top: (tourbusMode || (activeCategory === 'food' && !tourbusMode)) ? 92 : 56, left: 12, zIndex: 9, transition: 'top 0.2s ease' }}>
         <div style={{ position: 'relative' }}>
           <button
             onClick={() => { setShowAreaPicker(v => !v); setShowRecent(false) }}

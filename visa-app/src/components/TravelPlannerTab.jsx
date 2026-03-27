@@ -566,10 +566,10 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
         display: 'flex', flexDirection: 'column',
       }}>
         {/* 헤더 */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #F2F4F6' }}>
-          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#8B95A1', padding: '4px 8px', fontWeight: 500 }}>
-            ← {L(lang, { ko: '홈', zh: '首页', en: 'Home' })}
-          </button>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #F2F4F6' }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
+            {L(lang, { ko: '내 일정', zh: '我的行程', en: 'My Itinerary' })}
+          </span>
         </div>
         <div style={{ flex: 1, overflowY: 'auto' }}>
           <DateSetupScreen

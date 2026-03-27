@@ -1664,6 +1664,14 @@ function AppInner() {
   const langMenuRef = useRef(null)
   const [subPage, setSubPage] = useState(null)
   const [deepLink, setDeepLink] = useState(null) // { tab, itemId, itemData }
+
+  // 지도 등 자식 컴포넌트에서 subPage 네비게이션 이벤트
+  useEffect(() => {
+    const handler = (e) => { if (e.detail?.subPage) setSubPage(e.detail.subPage) }
+    window.addEventListener('near-navigate', handler)
+    return () => window.removeEventListener('near-navigate', handler)
+  }, [])
+
   const [fabOpen, setFabOpen] = useState(false)
   const [fabPos, setFabPos] = useState({ x: null, y: null })
   const fabDragRef = useRef(null)

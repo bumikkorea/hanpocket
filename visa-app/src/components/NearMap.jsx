@@ -1182,15 +1182,17 @@ export default function NearMap() {
             )
           }}
           style={{
-            width: 44, height: 44, borderRadius: '50%',
-            background: '#FFFFFF', border: 'none', cursor: 'pointer',
+            width: 40, height: 40, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+            border: 'none', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-            fontSize: 18, color: '#191F28',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
             transition: 'all 0.2s',
           }}
         >
-          ◎
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#191F28" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+          </svg>
         </button>
       </div>
 

@@ -10,7 +10,7 @@ import { handleNaverCallback } from './utils/naverAuth'
 
 
 import { initGA, setConsentMode, trackPageView, trackLogin, trackTabSwitch, trackLanguageChange, trackKakaoEvent } from './utils/analytics'
-import { MapPin, User as LucideUser, Calendar, Home as HomeIcon, Languages } from 'lucide-react'
+import { MapPin, User as LucideUser, Calendar, Home as HomeIcon } from 'lucide-react'
 import { visaCategories, visaTypes, quickGuide, regionComparison, documentAuth, passportRequirements, immigrationQuestions, approvalTips } from './data/visaData'
 import { visaTransitions, visaOptions, nationalityOptions } from './data/visaTransitions'
 import { t } from './data/i18n'
@@ -2747,97 +2747,22 @@ function AppInner() {
       {/* Scroll to Top Button */}
       <button
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        className="fixed z-50 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-all duration-300"
         style={{
-          right: '16px',
-          bottom: fabOpen ? '164px' : '104px',
-          backgroundColor: '#FFFFFF',
-          border: '1px solid #E5E7EB',
+          position: 'fixed', right: 16, bottom: 80, zIndex: 50,
+          width: 40, height: 40, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+          border: 'none', cursor: 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
           opacity: showScrollTop ? 1 : 0,
           pointerEvents: showScrollTop ? 'auto' : 'none',
           transform: showScrollTop ? 'scale(1)' : 'scale(0.8)',
-          transition: 'bottom 0.25s ease, opacity 0.3s, transform 0.3s',
+          transition: 'opacity 0.3s, transform 0.3s',
+          fontSize: 16, color: '#191F28',
         }}
         aria-label="Scroll to top"
       >
         ↑
-      </button>
-
-      {/* ─── 플로팅 통역/번역 FAB ─── */}
-      {/* 딤 오버레이 */}
-      {fabOpen && (
-        <div
-          onClick={() => setFabOpen(false)}
-          style={{ position: 'fixed', inset: 0, zIndex: 199, background: 'rgba(0,0,0,0.35)' }}
-        />
-      )}
-      {/* 확장 옵션 */}
-      <div style={{ position: 'fixed', right: 16, bottom: 122, zIndex: 200, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, pointerEvents: fabOpen ? 'auto' : 'none' }}>
-        {[
-          { label: { ko: '번역', zh: '翻译', en: 'Translate' }, subPage: 'basic-korean' },
-          { label: { ko: '통역', zh: '口译', en: 'Interpret' }, subPage: 'translator'   },
-        ].map((opt, i) => (
-          <button
-            key={opt.subPage}
-            onClick={() => { setFabOpen(false); setSubPage(opt.subPage) }}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 8,
-              opacity: fabOpen ? 1 : 0,
-              transform: fabOpen ? 'translateY(0)' : 'translateY(8px)',
-              transition: `opacity 0.15s ease ${i * 0.05}s, transform 0.15s ease ${i * 0.05}s`,
-              background: '#FFFFFF', border: '1px solid #F0EDED', borderRadius: 20,
-              padding: '8px 14px', cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-            }}
-          >
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', whiteSpace: 'nowrap' }}>
-              {lang === 'zh' ? opt.label.zh : lang === 'en' ? opt.label.en : opt.label.ko}
-            </span>
-          </button>
-        ))}
-      </div>
-      {/* 메인 FAB — Languages 아이콘 (드래그 가능) */}
-      <button
-        onClick={() => { if (!fabDragRef.current?.dragged) setFabOpen(v => !v) }}
-        onTouchStart={(e) => {
-          const touch = e.touches[0]
-          const btn = e.currentTarget
-          const rect = btn.getBoundingClientRect()
-          fabDragRef.current = { startX: touch.clientX, startY: touch.clientY, btnX: rect.left, btnY: rect.top, dragged: false }
-          btn.style.opacity = '0.7'
-        }}
-        onTouchMove={(e) => {
-          if (!fabDragRef.current) return
-          const touch = e.touches[0]
-          const dx = touch.clientX - fabDragRef.current.startX
-          const dy = touch.clientY - fabDragRef.current.startY
-          if (Math.abs(dx) > 5 || Math.abs(dy) > 5) fabDragRef.current.dragged = true
-          if (!fabDragRef.current.dragged) return
-          const nx = Math.max(0, Math.min(window.innerWidth - 55, fabDragRef.current.btnX + dx))
-          const ny = Math.max(0, Math.min(window.innerHeight - 55, fabDragRef.current.btnY + dy))
-          setFabPos({ x: nx, y: ny })
-        }}
-        onTouchEnd={(e) => {
-          e.currentTarget.style.opacity = '1'
-          if (fabDragRef.current?.dragged) {
-            e.preventDefault()
-          }
-          fabDragRef.current = null
-        }}
-        style={{
-          position: 'fixed',
-          ...(fabPos.x != null ? { left: fabPos.x, top: fabPos.y } : { right: 16, bottom: 70 }),
-          zIndex: 200,
-          width: 55, height: 55, borderRadius: '50%', border: 'none', cursor: 'pointer',
-          background: '#3182F6', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 12px rgba(49,130,246,0.3)',
-          transition: fabDragRef.current?.dragged ? 'none' : 'transform 0.2s ease',
-          transform: fabOpen ? 'scale(1.05)' : 'scale(1)',
-          touchAction: 'none',
-        }}
-        aria-label="Translator"
-      >
-        <Languages size={26} color="white" strokeWidth={1.8} />
       </button>
 
       {/* Bottom Navigation */}

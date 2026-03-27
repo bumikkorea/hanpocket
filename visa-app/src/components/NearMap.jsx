@@ -1073,25 +1073,26 @@ export default function NearMap() {
       {/* B/% 버튼은 투어버스 서브필터 바로 이동됨 */}
 
 
-      {/* ─── 좌하단: 지역 선택 + 내 위치 ─── */}
-      <div style={{ position: 'absolute', bottom: 16, left: 16, zIndex: 10, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
-        {/* ▼ 지역 선택 */}
+      {/* ─── 좌상단: 지역 선택 ─── */}
+      <div style={{ position: 'absolute', top: 56, left: 12, zIndex: 9 }}>
         <div style={{ position: 'relative' }}>
           <button
             onClick={() => { setShowAreaPicker(v => !v); setShowRecent(false) }}
             style={{
-              width: 44, height: 44, borderRadius: '50%',
-              background: selectedDistrict ? '#3182F6' : 'white', color: selectedDistrict ? 'white' : '#191F28',
+              width: 40, height: 40, borderRadius: '50%',
+              background: selectedDistrict ? '#3182F6' : 'rgba(255,255,255,0.88)',
+              backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+              color: selectedDistrict ? 'white' : '#191F28',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-              fontSize: 12, fontWeight: 700,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+              transition: 'all 0.2s',
             }}
           >
-            ▼
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
           </button>
           {showAreaPicker && (
-            <div style={{ position: 'absolute', bottom: 50, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F0EDED', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 140 }}>
+            <div style={{ position: 'absolute', top: 46, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F2F4F6', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 140 }}>
               {QUICK_AREAS.map(area => (
                 <button key={area.id} onClick={() => { moveToArea(area); setShowAreaPicker(false) }}
                   style={{
@@ -1106,7 +1107,10 @@ export default function NearMap() {
             </div>
           )}
         </div>
+      </div>
 
+      {/* ─── 좌하단: 내 위치 ─── */}
+      <div style={{ position: 'absolute', bottom: 16, left: 16, zIndex: 10 }}>
         {/* 내 위치 */}
         <button
           onClick={() => {

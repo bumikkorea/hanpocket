@@ -1139,22 +1139,6 @@ export default function NearMap() {
         </button>
       </div>
 
-      {/* ─── 우하단: 통역 FAB ─── */}
-      <button
-        onClick={() => { window.dispatchEvent(new CustomEvent('near-navigate', { detail: { subPage: 'translator' } })) }}
-        style={{
-          position: 'absolute', bottom: 16, right: 16, zIndex: 10,
-          width: 44, height: 44, borderRadius: '50%',
-          background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
-          border: 'none', cursor: 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-          fontSize: 13, fontWeight: 600, color: '#191F28',
-          transition: 'all 0.2s',
-        }}
-      >
-        {lang === 'zh' ? '啥?' : lang === 'en' ? 'Huh?' : '네?'}
-      </button>
 
       {/* ─── 전체 슬라이드 패널 ─── */}
       <div

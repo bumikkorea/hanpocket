@@ -2773,6 +2773,48 @@ function AppInner() {
         ↑
       </button>
 
+      {/* ─── 글로벌 통역 FAB (드래그 이동 가능, 모든 화면) ─── */}
+      <button
+        onTouchStart={(e) => {
+          const touch = e.touches[0]
+          const rect = e.currentTarget.getBoundingClientRect()
+          e.currentTarget._drag = { sx: touch.clientX, sy: touch.clientY, bx: rect.left, by: rect.top, moved: false }
+          e.currentTarget.style.opacity = '0.7'
+        }}
+        onTouchMove={(e) => {
+          const d = e.currentTarget._drag
+          if (!d) return
+          const touch = e.touches[0]
+          const dx = touch.clientX - d.sx, dy = touch.clientY - d.sy
+          if (Math.abs(dx) > 5 || Math.abs(dy) > 5) d.moved = true
+          if (!d.moved) return
+          const nx = Math.max(0, Math.min(window.innerWidth - 44, d.bx + dx))
+          const ny = Math.max(0, Math.min(window.innerHeight - 44, d.by + dy))
+          e.currentTarget.style.left = nx + 'px'
+          e.currentTarget.style.top = ny + 'px'
+          e.currentTarget.style.right = 'auto'
+          e.currentTarget.style.bottom = 'auto'
+        }}
+        onTouchEnd={(e) => {
+          e.currentTarget.style.opacity = '1'
+          if (e.currentTarget._drag?.moved) { e.preventDefault() } else { setSubPage('translator') }
+          e.currentTarget._drag = null
+        }}
+        onClick={() => setSubPage('translator')}
+        style={{
+          position: 'fixed', right: 16, bottom: 80, zIndex: 999,
+          width: 44, height: 44, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+          border: 'none', cursor: 'pointer',
+          display: subPage ? 'none' : 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+          fontSize: 13, fontWeight: 600, color: '#191F28',
+          touchAction: 'none', transition: 'opacity 0.2s',
+        }}
+      >
+        {lang === 'zh' ? '啥?' : lang === 'en' ? 'Huh?' : '네?'}
+      </button>
+
       {/* Bottom Navigation */}
       <div style={{
         position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,

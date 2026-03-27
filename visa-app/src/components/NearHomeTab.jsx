@@ -421,7 +421,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       `}</style>
 
       {/* ─── 0. Info Bar (최상단) ─── */}
-      <div style={{ fontSize: 13, color: '#8B95A1', padding: '6px 24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div style={{ fontSize: 13, color: '#8B95A1', padding: '16px 24px 0', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <span>{getNHDateLabel(9)} · {weatherData.KST ? `${weatherData.KST.temp}°` : '--°'} · ¥1 = ₩{Math.round(cnyRate)}</span>
         {extraTz.map(id => {
           const tz = TIMEZONE_OPTIONS.find(t => t.id === id)
@@ -497,7 +497,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                     <div key={item.id || i} style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', marginBottom: i < todayPlaces.length - 1 ? 6 : 0 }}>
                       <div style={{ width: 3, height: 20, borderRadius: 2, background: '#3182F6', opacity: 0.3, flexShrink: 0 }} />
                       <span style={{ fontSize: 11, color: '#3182F6', fontWeight: 600, flexShrink: 0, width: 36 }}>{item.time || ''}</span>
-                      <span style={{ fontSize: 13, fontWeight: 500, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name_cn || item.name_kr}</span>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{lang === 'zh' ? (item.name_cn || item.name_kr) : (item.name_kr || item.name_cn)}</span>
                     </div>
                   ))}
                 </>
@@ -594,8 +594,8 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 24px 8px' }}>
           <span style={{ fontSize: 16, fontWeight: 800, color: '#191F28' }}>
             {selectedCategory
-              ? L(lang, CAT_LABELS[selectedCategory] || { ko: '추천 장소', zh: '推荐地点', en: 'Recommended' })
-              : L(lang, { ko: '추천 장소', zh: '推荐地点', en: 'Recommended' })
+              ? L(lang, CAT_LABELS[selectedCategory] || { ko: '내게 맞는 추천장소', zh: '为您推荐', en: 'Recommended for You' })
+              : L(lang, { ko: '내게 맞는 추천장소', zh: '为您推荐', en: 'Recommended for You' })
             }
           </span>
           {selectedCategory && (

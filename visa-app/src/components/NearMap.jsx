@@ -1905,7 +1905,7 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
       {/* 검색 헤더 — 풀 너비 통합 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 20px', background: '#FFFFFF', flexShrink: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '24px 20px 10px', background: '#FFFFFF', flexShrink: 0 }}>
         <button onClick={onClose} style={{
           background: 'none', border: 'none', cursor: 'pointer', padding: 4,
           color: '#191F28', display: 'flex', alignItems: 'center',

@@ -183,12 +183,12 @@ const TIMEZONE_OPTIONS = [
 function strToDate(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d) }
 function dateToStr(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` }
 
-function getGreeting(lang) {
+function getGreeting() {
   const h = new Date().getHours()
-  if (h >= 6 && h < 12) return L(lang, { ko: '좋은 아침이에요', zh: '早上好', en: 'Good morning' })
-  if (h >= 12 && h < 18) return L(lang, { ko: '좋은 오후에요', zh: '下午好', en: 'Good afternoon' })
-  if (h >= 18 && h < 22) return L(lang, { ko: '좋은 저녁이에요', zh: '晚上好', en: 'Good evening' })
-  return L(lang, { ko: '좋은 밤이에요', zh: '晚安', en: 'Good night' })
+  if (h >= 6 && h < 12) return 'Good Morning,'
+  if (h >= 12 && h < 18) return 'Good Afternoon,'
+  if (h >= 18 && h < 22) return 'Good Evening,'
+  return 'Good Night,'
 }
 
 function getTripStatusLabel(plan, lang) {
@@ -408,6 +408,11 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        .blinking-dot { animation: blink 1s infinite; }
       `}</style>
 
       {/* ─── 0. Info Bar (최상단) ─── */}
@@ -442,10 +447,13 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         </div>
       )}
 
-      {/* ─── 1. 인사 ─── */}
-      <div style={{ padding: '10px 24px 10px', ...fadeUp(0) }}>
-        <div style={{ fontSize: 28, fontWeight: 700, color: '#191F28', letterSpacing: '-0.5px', lineHeight: 1.4 }}>
-          {getGreeting(lang)}
+      {/* ─── 1. 인사 + 위치 ─── */}
+      <div style={{ padding: '10px 24px 16px', ...fadeUp(0) }}>
+        <div style={{ fontSize: 20, fontWeight: 500, color: '#8B95A1', letterSpacing: '-0.3px', marginBottom: 2 }}>
+          {getGreeting()}
+        </div>
+        <div style={{ fontSize: 28, fontWeight: 700, color: '#3182F6', letterSpacing: '-0.5px', lineHeight: 1.3 }}>
+          Seoul<span className="blinking-dot">.</span>
         </div>
       </div>
 

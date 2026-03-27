@@ -459,7 +459,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 2. 일정 카드 (풀 width) ─── */}
-      <div style={{ padding: '0 24px 48px', ...fadeUp(1.5) }}>
+      <div style={{ padding: '0 24px 32px', ...fadeUp(1.5) }}>
         <button
           onClick={() => setShowPlanner(true)}
           style={{
@@ -522,7 +522,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             {L(lang, { ko: '지금 뜨는 곳', zh: '现在热门', en: 'Trending Now' })}
           </span>
         </div>
-        <div style={{ overflowX: 'auto', display: 'flex', gap: 12, padding: '0 24px 48px', scrollbarWidth: 'none' }}>
+        <div style={{ overflowX: 'auto', display: 'flex', gap: 12, padding: '0 24px 32px', scrollbarWidth: 'none' }}>
           {TRENDING_SPOTS.map(spot => (
             <div key={spot.id} style={{
               flexShrink: 0, width: 160, borderRadius: 16, overflow: 'hidden',
@@ -543,7 +543,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 4. 검색창 (지금 뜨는 곳 아래) ─── */}
-      <div style={{ padding: '0 24px 48px', ...fadeUp(4) }}>
+      <div style={{ padding: '0 24px 16px', ...fadeUp(4) }}>
         <button onClick={openSearchOverlay}
           style={{
             width: '100%', display: 'flex', alignItems: 'center',
@@ -559,7 +559,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 5. 카테고리 탭 바 (가로 스크롤) ─── */}
-      <div style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '0 24px 0', scrollbarWidth: 'none', marginBottom: 48, ...fadeUp(4) }}>
+      <div style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '0 24px 0', scrollbarWidth: 'none', marginBottom: 32, ...fadeUp(4) }}>
         {[
           { id: null, zh: '全部', ko: '전체', en: 'All' },
           ...MEITU_CATEGORIES.filter(c => c.id !== 'more'),

@@ -252,8 +252,8 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
       {/* ── 모드 탭 ── */}
       <div style={{ display: 'flex', padding: '10px 16px', background: 'white', gap: 8, flexShrink: 0, borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
         {[
-          { id: 'chat', label: '대화 모드', icon: '💬' },
-          { id: 'text', label: '텍스트',   icon: '📝' },
+          { id: 'chat', label: '대화 모드' },
+          { id: 'text', label: '텍스트' },
         ].map(m => (
           <button key={m.id} onClick={() => handleModeChange(m.id)} style={{
             flex: 1, height: 42, borderRadius: 8,
@@ -263,7 +263,6 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
             transition: 'all 0.15s',
           }}>
-            <span>{m.icon}</span>
             <span>{m.label}</span>
           </button>
         ))}
@@ -288,12 +287,11 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
           {/* 채팅 로그 */}
           <div ref={logRef} style={{ flex: 1, overflowY: 'auto', padding: '20px 16px 12px' }}>
             {chatLog.length === 0 && !chatInterim.text ? (
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 10, paddingBottom: 60 }}>
-                <span style={{ fontSize: 48 }}>💬</span>
-                <p style={{ fontSize: 15, color: '#8B95A1', textAlign: 'center', margin: 0, lineHeight: 1.6 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 6 }}>
+                <p style={{ fontSize: 16, color: '#8B95A1', textAlign: 'center', margin: 0, lineHeight: 1.6 }}>
                   아래 버튼을 눌러 대화를 시작하세요
                 </p>
-                <p style={{ fontSize: 12, color: '#8B95A1', textAlign: 'center', margin: 0 }}>
+                <p style={{ fontSize: 13, color: '#8B95A1', textAlign: 'center', margin: 0 }}>
                   버튼을 누르는 동안 녹음됩니다
                 </p>
               </div>

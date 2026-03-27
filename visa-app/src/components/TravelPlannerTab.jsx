@@ -102,7 +102,7 @@ function savePlan(plan) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(plan))
 }
 
-// 시스템 카드(입국/출국) 보장 + Day1 샘플 시드
+// 시스템 카드(입국/출국) 보장
 function ensureSystemItems(plan) {
   const { arrivalDate, departureDate } = plan
   const next = { ...plan, days: { ...plan.days } }
@@ -128,32 +128,6 @@ function ensureSystemItems(plan) {
         { id: 'auto-departure', type: 'system', subtype: 'departure', title: { ko: '출국하기', zh: '出境', en: 'Departure' }, time: null },
         ...depItems.filter(i => i.id !== 'auto-departure'),
       ],
-    }
-  }
-
-  // Day1 (입국일 다음날) 샘플 시드: stores.js 데이터 사용
-  const daysList = buildDaysList(arrivalDate, departureDate)
-  if (daysList.length >= 2) {
-    const day1 = daysList[1]
-    if (!next.days[day1]) next.days[day1] = { items: [] }
-    const day1Items = next.days[day1].items
-    if (!day1Items.find(i => i.store_id === 'beluga-studio')) {
-      const beluga = STORES.find(s => s.id === 'beluga-studio')
-      const mined = STORES.find(s => s.id === 'mined-seongsu')
-      const samplePlaces = []
-      if (beluga) samplePlaces.push({
-        id: 'sample-beluga', type: 'place', store_id: 'beluga-studio',
-        name_kr: beluga.name_kr, name_cn: beluga.name_cn,
-        category: beluga.service_type, time: '10:00',
-        addr: beluga.address_kr,
-      })
-      if (mined) samplePlaces.push({
-        id: 'sample-mined', type: 'place', store_id: 'mined-seongsu',
-        name_kr: mined.name_kr, name_cn: mined.name_cn,
-        category: mined.service_type, time: '14:00',
-        addr: mined.address_kr,
-      })
-      next.days[day1] = { ...next.days[day1], items: [...day1Items, ...samplePlaces] }
     }
   }
 
@@ -667,7 +641,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
 
       {/* ─── 인라인 날짜 피커 ─── */}
       {showDatePicker && (
-        <div style={{ padding: '12px 16px', borderBottom: '1px solid #F2F4F6', flexShrink: 0, background: '#F2F4F6' }}>
+        <div style={{ padding: '24px 16px 12px', borderBottom: '1px solid #F2F4F6', flexShrink: 0, background: '#F2F4F6' }}>
           <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 10, fontWeight: 600, color: '#8B95A1', marginBottom: 4 }}>{L(lang, { ko: '입국일', zh: '入境日', en: 'Arrival' })}</div>
@@ -676,8 +650,17 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                   const newArr = e.target.value
                   if (!newArr || newArr > plan.departureDate) return
                   const newDays = buildDaysList(newArr, plan.departureDate)
-                  const newPlan = { ...plan, arrivalDate: newArr, days: {} }
-                  newDays.forEach(d => { newPlan.days[d] = plan.days[d] || { items: [] } })
+                  const newDaysSet = new Set(newDays)
+                  const newPlan = { ...plan, arrivalDate: newArr, days: {}, _unassigned: [...(plan._unassigned || [])] }
+                  // 기존 일정 보존: 새 범위에 포함되면 유지, 아니면 미배정으로
+                  Object.entries(plan.days).forEach(([d, dayData]) => {
+                    if (newDaysSet.has(d)) { newPlan.days[d] = dayData }
+                    else {
+                      const places = dayData.items?.filter(i => i.type === 'place') || []
+                      if (places.length > 0) newPlan._unassigned.push(...places)
+                    }
+                  })
+                  newDays.forEach(d => { if (!newPlan.days[d]) newPlan.days[d] = { items: [] } })
                   updatePlan(newPlan)
                 }}
                 style={{ width: '100%', padding: '8px 10px', borderRadius: 8, border: '1px solid #F2F4F6', outline: 'none', fontSize: 14, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
@@ -690,8 +673,16 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                   const newDep = e.target.value
                   if (!newDep || newDep < plan.arrivalDate) return
                   const newDays = buildDaysList(plan.arrivalDate, newDep)
-                  const newPlan = { ...plan, departureDate: newDep, days: {} }
-                  newDays.forEach(d => { newPlan.days[d] = plan.days[d] || { items: [] } })
+                  const newDaysSet = new Set(newDays)
+                  const newPlan = { ...plan, departureDate: newDep, days: {}, _unassigned: [...(plan._unassigned || [])] }
+                  Object.entries(plan.days).forEach(([d, dayData]) => {
+                    if (newDaysSet.has(d)) { newPlan.days[d] = dayData }
+                    else {
+                      const places = dayData.items?.filter(i => i.type === 'place') || []
+                      if (places.length > 0) newPlan._unassigned.push(...places)
+                    }
+                  })
+                  newDays.forEach(d => { if (!newPlan.days[d]) newPlan.days[d] = { items: [] } })
                   updatePlan(newPlan)
                 }}
                 style={{ width: '100%', padding: '8px 10px', borderRadius: 8, border: '1px solid #F2F4F6', outline: 'none', fontSize: 14, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
@@ -895,12 +886,30 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
 
           {/* 미배정 섹션 */}
           <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed #F2F4F6', margin: '12px 12px 0' }}>
-            <div style={{ fontSize: 10, color: '#8B95A1', fontWeight: 600 }}>
-              {L(lang, { ko: '미배정 장소', zh: '未分配地点', en: 'Unassigned' })}
+            <div style={{ fontSize: 10, color: '#8B95A1', fontWeight: 600, marginBottom: 4 }}>
+              {L(lang, { ko: '미배정 장소', zh: '未分配地点', en: 'Unassigned' })} ({(plan._unassigned || []).length})
             </div>
-            <div style={{ fontSize: 10, color: '#CDCDCD', marginTop: 4 }}>
-              {L(lang, { ko: '미배정 장소가 없습니다', zh: '没有未分配的地点', en: 'No unassigned places' })}
-            </div>
+            {(plan._unassigned || []).length === 0 ? (
+              <div style={{ fontSize: 10, color: '#8B95A1', opacity: 0.5 }}>
+                {L(lang, { ko: '미배정 장소가 없습니다', zh: '没有未分配的地点', en: 'No unassigned places' })}
+              </div>
+            ) : (plan._unassigned || []).map((item, i) => (
+              <div key={item.id || i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 0', borderBottom: '1px solid #F2F4F6' }}>
+                <div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#191F28' }}>{item.name_kr || item.name_cn}</div>
+                  {item.time && <div style={{ fontSize: 10, color: '#8B95A1' }}>{item.time}</div>}
+                </div>
+                <button onClick={() => {
+                  if (!selectedDay) return
+                  handleAddPlace(item)
+                  const updated = { ...plan, _unassigned: (plan._unassigned || []).filter((_, idx) => idx !== i) }
+                  savePlan(updated)
+                  setPlan(updated)
+                }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 10, color: '#3182F6', fontWeight: 600 }}>
+                  {L(lang, { ko: '배치', zh: '分配', en: 'Assign' })}
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </div>

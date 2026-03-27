@@ -680,7 +680,12 @@ export default function NearMap() {
           content: el, yAnchor: 1.2, zIndex: stop.isTicketStop ? 5 : 3,
         })
         el.addEventListener('click', () => {
-          setActivePopup({ ...stop, _tourbusRoute: route, _stopNum: stopNum, id: stop.id, name_ko: stop.name.ko, name_zh: stop.name.zh, name_en: stop.name.en, lat: stop.lat, lng: stop.lng, category: 'tourbus' })
+          const poi = { ...stop, _tourbusRoute: route, _stopNum: stopNum, id: stop.id, name_ko: stop.name.ko, name_zh: stop.name.zh, name_en: stop.name.en, lat: stop.lat, lng: stop.lng, category: 'tourbus' }
+          setActivePopup(poi)
+          if (mapInstance.current && stop.lat && stop.lng) {
+            mapInstance.current.panTo(new window.kakao.maps.LatLng(stop.lat, stop.lng))
+            if (mapInstance.current.getLevel() > 5) mapInstance.current.setLevel(4)
+          }
         })
         allOverlays.push({ overlay, el, stop })
       })
@@ -1207,8 +1212,8 @@ export default function NearMap() {
           height: tourbusMode ? '50dvh' : '68dvh',
           willChange: 'transform',
           transition: 'transform 0.35s cubic-bezier(0.32, 0.72, 0, 1)',
-          background: '#FFFFFF', borderRadius: '16px 16px 0 0',
-          boxShadow: '0 -4px 12px rgba(0,0,0,0.05)',
+          background: '#FFFFFF', borderRadius: '20px 20px 0 0',
+          boxShadow: '0 -4px 24px rgba(0,0,0,0.08)',
           overflowX: 'hidden',
           overflowY: isExpanded || tourbusMode ? 'auto' : 'hidden',
         }}
@@ -1531,52 +1536,49 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
   const address = getLocalizedAddress(poi, lang) || poi.address_ko || poi.address_zh || poi.address || ''
   const catLabel = poi.category ? (CATEGORY_CONFIG[poi.category]?.letter || poi.category) : ''
 
+  const daysLeft = poi.end_date ? Math.ceil((new Date(poi.end_date) - new Date()) / 86400000) : null
+  const endingSoon = daysLeft !== null && daysLeft >= 0 && daysLeft <= 7
+
   return (
     <div style={{ overflowX: 'hidden' }}>
-      {/* 핸들바 + 닫기 */}
-      <div style={{ display: 'flex', alignItems: 'center', padding: '10px 20px 8px' }}>
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: 36, height: 4, borderRadius: 2, background: '#DDDDDD' }} />
-        </div>
-        <button onClick={onClose} style={{ color: '#8B95A1', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
+      {/* 핸들바 */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 6px' }}>
+        <div style={{ width: 32, height: 4, borderRadius: 2, background: '#DDDDDD' }} />
       </div>
 
       <div style={{ padding: '0 16px 12px' }}>
-        {/* 이름 + NEW 뱃지 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#191F28', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        {/* ROW 1: 이름 + 닫기 */}
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 6 }}>
+          <h2 style={{ fontSize: 17, fontWeight: 700, color: '#191F28', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {getLocalizedName(poi, lang)}
           </h2>
-          {isNewPoi(poi.created_at) && (
-            <span style={{ fontSize: 9, background: '#FF3141', color: 'white', borderRadius: 4, padding: '1px 5px', fontWeight: 700, flexShrink: 0 }}>
-              {tLang('badge_new', lang)}
-            </span>
-          )}
+          <button onClick={onClose} style={{ width: 28, height: 28, borderRadius: 14, background: '#F2F4F6', color: '#8B95A1', border: 'none', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginLeft: 8, lineHeight: 1 }}>✕</button>
         </div>
 
-        {/* 종류 + 거리 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: address ? 6 : 8 }}>
-          {poi.category && (
-            <span style={{ fontSize: 11, fontWeight: 700, color: cfg.color, background: cfg.color + '18', borderRadius: 6, padding: '2px 8px', flexShrink: 0 }}>
-              {catLabel}
-            </span>
-          )}
-          {dist && <span style={{ fontSize: 12, color: '#8B95A1' }}>{dist}</span>}
-        </div>
+        {/* ROW 2: 카테고리 뱃지 + 거리 */}
+        {(poi.category || dist) && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
+            {poi.category && cfg && (
+              <span style={{ fontSize: 11, fontWeight: 700, color: cfg.color, background: cfg.color + '18', borderRadius: 6, padding: '2px 8px', flexShrink: 0 }}>
+                {catLabel}
+              </span>
+            )}
+            {dist && <span style={{ fontSize: 12, color: '#8B95A1' }}>{dist}</span>}
+          </div>
+        )}
 
-        {/* 주소 — 한 번만 */}
+        {/* ROW 3: 주소 + 복사 */}
         {address ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 13, color: '#8B95A1', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              📍 {address}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: 13, color: '#6B6B6B', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {address}
             </span>
             <button
               onClick={handleCopyAddress}
               style={{
-                flexShrink: 0, padding: '5px 10px', borderRadius: 10,
-                background: copied ? 'rgba(22,163,74,0.1)' : '#FFFFFF',
-                border: 'none',
-                boxShadow: copied ? 'none' : '3px 3px 8px rgba(200,200,200,0.5), -3px -3px 8px #FFFFFF',
+                flexShrink: 0, padding: '4px 10px', borderRadius: 6,
+                background: copied ? 'rgba(22,163,74,0.08)' : '#FFFFFF',
+                border: copied ? 'none' : '1px solid #E5E8EB',
                 color: copied ? '#16A34A' : '#8B95A1',
                 fontSize: 11, fontWeight: 600, cursor: 'pointer',
                 transition: 'all 0.15s ease',
@@ -1587,43 +1589,39 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           </div>
         ) : null}
 
-        {/* 운영 기간 */}
+        {/* ROW 4: 운영 기간 */}
         {poi.is_temporary && poi.start_date && poi.end_date && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
             <span style={{ fontSize: 12, color: '#8B95A1' }}>{poi.start_date} – {poi.end_date}</span>
           </div>
         )}
 
-        {/* 영업 시간 */}
+        {/* ROW 5: 영업 시간 + 상태 뱃지 */}
         {poi.open_time && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-            <span style={{ fontSize: 13, color: '#444' }}>{poi.open_time}–{poi.close_time}</span>
-            {status === 'open' && <span style={{ fontSize: 10, background: '#DCFCE7', color: '#16A34A', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_open', lang)}</span>}
-            {status === 'closed' && <span style={{ fontSize: 10, background: '#FEE2E2', color: '#DC2626', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_closed', lang)}</span>}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+            <span style={{ fontSize: 14, fontWeight: 500, color: '#191F28' }}>{poi.open_time}–{poi.close_time}</span>
+            {status === 'open' && <span style={{ fontSize: 10, background: '#00C853', color: 'white', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_open', lang)}</span>}
+            {status === 'closed' && <span style={{ fontSize: 10, background: '#FF4D4D', color: 'white', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_closed', lang)}</span>}
             {status === 'coming' && <span style={{ fontSize: 10, background: '#FFFBEB', color: '#D97706', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_coming', lang)}</span>}
           </div>
         )}
 
-        {/* 웨이팅 */}
-        {poi.wait_minutes != null && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-            <span style={{ fontSize: 14 }}>⏳</span>
-            <span style={{ fontSize: 13, color: '#444' }}>{tLang('wait_prefix', lang)}{poi.wait_minutes}{tLang('wait_suffix', lang)}</span>
+        {/* ROW 6: 종료 임박 뱃지 */}
+        {endingSoon && (
+          <div style={{ marginBottom: 14 }}>
+            <span style={{ fontSize: 12, color: '#FF4D4D', background: '#FFF0F0', borderRadius: 4, padding: '2px 8px', fontWeight: 600 }}>
+              {daysLeft === 0
+                ? (lang === 'zh' ? '今天结束' : lang === 'en' ? 'Ends today' : '오늘 종료')
+                : (lang === 'zh' ? `${daysLeft}天后结束` : lang === 'en' ? `Ends in ${daysLeft}d` : `${daysLeft}일 후 종료`)}
+            </span>
           </div>
         )}
 
-        {/* 태그 */}
-        {tags.length > 0 && (
-          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
-            {tags.map(tag => <TagPill key={tag.label} label={tag.label} bg={tag.bg} color={tag.color} />)}
-          </div>
-        )}
-
-        {/* CTA 버튼 */}
+        {/* ROW 7: CTA 버튼 */}
         <div style={{ display: 'flex', gap: 8 }}>
           <button
             onClick={() => openKakaoMapRoute(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', 'PUBLICTRANSIT')}
-            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#191F28', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(0,0,0,0.15)', transition: 'transform 0.15s ease' }}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#191F28', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'transform 0.15s ease' }}
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
@@ -1631,36 +1629,19 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
           </button>
           <button
             onClick={() => openKakaoTaxi(poi.lat, poi.lng, poi.name_ko || poi.name_zh || '', userPos)}
-            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#3182F6', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(49,130,246,0.3)', transition: 'transform 0.15s ease' }}
+            style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#3182F6', color: 'white', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', transition: 'transform 0.15s ease' }}
             onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
             onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
           >
             {tLang('taxi_mode', lang)}
           </button>
-          {poi.has_reservation && (
-            <button
-              onClick={() => onReserve(poi)}
-              style={{ flex: 1, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#FFFFFF', color: '#3182F6', border: 'none', borderRadius: 14, fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'transform 0.15s ease' }}
-              onTouchStart={e => e.currentTarget.style.transform = 'scale(0.97)'}
-              onTouchEnd={e => e.currentTarget.style.transform = 'scale(1)'}
-            >
-              {tLang('reserve', lang)}
-            </button>
-          )}
           <button
             onClick={() => onBookmark(poi)}
-            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: 'none', borderRadius: 14, cursor: 'pointer', flexShrink: 0, boxShadow: isBookmarked ? 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)' : '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease', fontSize: 15, color: isBookmarked ? '#FF3B30' : '#8B95A1' }}
+            style={{ width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#FFFFFF', border: '1px solid #E5E8EB', borderRadius: 14, cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s ease', fontSize: 15, color: isBookmarked ? '#FF3B30' : '#8B95A1' }}
           >
             {isBookmarked ? '♥' : '♡'}
           </button>
         </div>
-
-        {/* 이미지 — 아래쪽, 있을 때만 */}
-        {poi.image_url && (
-          <div style={{ marginTop: 14, height: 130, borderRadius: 16, overflow: 'hidden', boxShadow: '6px 6px 14px rgba(200,200,200,0.5), -6px -6px 14px #FFFFFF' }}>
-            <img src={poi.image_url} alt="" loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-        )}
       </div>
     </div>
   )

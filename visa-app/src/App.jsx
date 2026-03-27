@@ -2028,7 +2028,7 @@ function AppInner() {
           <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden" style={{ maxHeight: '85vh' }}>
             <div className="px-5 pt-5 pb-3">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-lg font-bold text-[#1A1A1A]">NEAR</h2>
+                <h2 style={{ fontSize: 30, fontWeight: 700, color: '#191F28', letterSpacing: '-0.5px' }}>NEAR</h2>
                 <button onClick={dismissAuth} className="p-1 text-[#999]">✕</button>
               </div>
               <p className="text-sm text-[#666666]">
@@ -2091,7 +2091,7 @@ function AppInner() {
       )}
 
       {/* Top Bar — fixed, always on top */}
-      <div className="fixed top-0 left-0 right-0 z-[1000]" style={{ backgroundColor: '#FFFFFF', borderBottom: '1px solid #F0F0F0', display: tab === 'near-map' ? 'none' : 'block' }}>
+      <div className="fixed top-0 left-0 right-0 z-[1000]" style={{ backgroundColor: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', borderBottom: '1px solid #F2F4F6', display: tab === 'near-map' ? 'none' : 'block' }}>
         <div className="px-4 pt-2 pb-1">
           <div className="flex items-center">
             {/* 좌측: < 뒤로가기 (항상) */}
@@ -2829,8 +2829,8 @@ function AppInner() {
           ...(fabPos.x != null ? { left: fabPos.x, top: fabPos.y } : { right: 16, bottom: 70 }),
           zIndex: 200,
           width: 55, height: 55, borderRadius: '50%', border: 'none', cursor: 'pointer',
-          background: '#C4725A', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 2px 12px rgba(196,114,90,0.3)',
+          background: '#3182F6', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: '0 2px 12px rgba(49,130,246,0.3)',
           transition: fabDragRef.current?.dragged ? 'none' : 'transform 0.2s ease',
           transform: fabOpen ? 'scale(1.05)' : 'scale(1)',
           touchAction: 'none',

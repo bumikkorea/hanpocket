@@ -230,16 +230,16 @@ function getNightsLabel(arrival, departure, lang) {
 // ─── 더보기 페이지 ───
 function DiscoverPage({ lang, t, setSubPage, setTab, onClose, onEditorialClick }) {
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: '#FAFAFA', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9500, background: '#FFFFFF', display: 'flex', flexDirection: 'column' }}>
       <NearPageHeader onBack={onClose} setTab={setTab} />
       <div style={{ flex: 1, overflowY: 'auto' }}>
         <div style={{ padding: '20px 0 8px' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, padding: '0 20px 12px' }}>
-            <span style={{ fontSize: 16, fontWeight: 700, color: '#1A1A1A' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, padding: '0 24px 12px' }}>
+            <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>
               {L(lang, { ko: '서울 에디토리얼', zh: '首尔编辑部', en: 'Seoul Editorial' })}
             </span>
           </div>
-          <div style={{ overflowX: 'auto', display: 'flex', gap: 10, padding: '0 20px 20px', scrollbarWidth: 'none' }}>
+          <div style={{ overflowX: 'auto', display: 'flex', gap: 10, padding: '0 24px 20px', scrollbarWidth: 'none' }}>
             {EDITORIALS.map(ed => (
               <button key={ed.id} onClick={() => onEditorialClick?.(ed.id)}
                 style={{ flexShrink: 0, width: 148, height: 120, borderRadius: 14, overflow: 'hidden', background: ed.gradient, border: 'none', cursor: 'pointer', position: 'relative', textAlign: 'left', padding: '12px 12px 14px', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}
@@ -405,7 +405,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   })() : null
 
   return (
-    <div style={{ background: '#FAFAFA', fontFamily: '-apple-system, "Pretendard", "Noto Sans SC", sans-serif', paddingBottom: 80, minHeight: '100vh' }}>
+    <div style={{ background: '#FFFFFF', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif", paddingBottom: 80, minHeight: '100vh' }}>
 
       {/* ─── @keyframes ─── */}
       <style>{`
@@ -416,29 +416,29 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       `}</style>
 
       {/* ─── 0. Info Bar (최상단) ─── */}
-      <div style={{ fontSize: 11, color: '#A8A8A8', padding: '6px 20px', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div style={{ fontSize: 13, color: '#8B95A1', padding: '6px 24px', display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <span>{getNHDateLabel(9)} · {weatherData.KST ? `${weatherData.KST.temp}°` : '--°'} · ¥1 = ₩{Math.round(cnyRate)}</span>
         {extraTz.map(id => {
           const tz = TIMEZONE_OPTIONS.find(t => t.id === id)
           if (!tz) return null
           const diff = tz.offset - 9
           const diffStr = diff === 0 ? '' : diff > 0 ? ` (+${diff}h)` : ` (${diff}h)`
-          return <span key={id} style={{ color: '#C4725A' }}> · {L(lang, tz.name)} {getNHTimeForOffset(tz.offset)}{diffStr}</span>
+          return <span key={id} style={{ color: '#3182F6' }}> · {L(lang, tz.name)} {getNHTimeForOffset(tz.offset)}{diffStr}</span>
         })}
-        <button onClick={() => setShowTzPicker(true)} style={{ background: 'none', border: '1px solid #F0EDED', borderRadius: 10, cursor: 'pointer', color: '#A8A8A8', fontSize: 10, padding: '0 5px', marginLeft: 4, lineHeight: '16px' }}>+</button>
+        <button onClick={() => setShowTzPicker(true)} style={{ background: 'none', border: '1px solid #F2F4F6', borderRadius: 10, cursor: 'pointer', color: '#8B95A1', fontSize: 10, padding: '0 5px', marginLeft: 4, lineHeight: '16px' }}>+</button>
       </div>
       {showTzPicker && (
-        <div style={{ background: '#FFFFFF', border: '1px solid #F0EDED', borderRadius: 12, padding: '12px 16px', margin: '0 20px 8px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
+        <div style={{ background: '#FFFFFF', border: '1px solid #F2F4F6', borderRadius: 12, padding: '12px 16px', margin: '0 20px 8px', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-            <span style={{ fontSize: 12, fontWeight: 600, color: '#1A1A1A' }}>{L(lang, { ko: '시간대 선택', zh: '选择时区', en: 'Select timezone' })}</span>
-            <button onClick={() => setShowTzPicker(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: '#A8A8A8' }}>✕</button>
+            <span style={{ fontSize: 12, fontWeight: 600, color: '#191F28' }}>{L(lang, { ko: '시간대 선택', zh: '选择时区', en: 'Select timezone' })}</span>
+            <button onClick={() => setShowTzPicker(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: '#8B95A1' }}>✕</button>
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {TIMEZONE_OPTIONS.map(tz => {
               const isOn = extraTz.includes(tz.id)
               return (
                 <button key={tz.id} onClick={() => saveTz(isOn ? extraTz.filter(x => x !== tz.id) : [...extraTz, tz.id])}
-                  style={{ padding: '5px 10px', borderRadius: 16, cursor: 'pointer', fontSize: 11, fontWeight: 500, background: isOn ? '#C4725A' : '#FFFFFF', color: isOn ? '#FFFFFF' : '#6B6B6B', border: isOn ? '1px solid #C4725A' : '1px solid #F0EDED' }}>
+                  style={{ padding: '5px 10px', borderRadius: 16, cursor: 'pointer', fontSize: 11, fontWeight: 500, background: isOn ? '#3182F6' : '#FFFFFF', color: isOn ? '#FFFFFF' : '#8B95A1', border: isOn ? '1px solid #3182F6' : '1px solid #F2F4F6' }}>
                   {L(lang, tz.name)}
                 </button>
               )
@@ -448,14 +448,14 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       )}
 
       {/* ─── 1. 인사 ─── */}
-      <div style={{ padding: '10px 20px 10px', ...fadeUp(0) }}>
-        <div style={{ fontSize: 22, fontWeight: 800, color: '#1A1A1A', letterSpacing: '-0.5px' }}>
+      <div style={{ padding: '10px 24px 10px', ...fadeUp(0) }}>
+        <div style={{ fontSize: 28, fontWeight: 700, color: '#191F28', letterSpacing: '-0.5px', lineHeight: 1.4 }}>
           {getGreeting(lang)}
         </div>
       </div>
 
       {/* ─── 1.5 탑승권 + 일정 카드 (가로 반반) ─── */}
-      <div style={{ display: 'flex', gap: 10, padding: '0 20px 24px', ...fadeUp(1) }}>
+      <div style={{ display: 'flex', gap: 10, padding: '0 24px 24px', ...fadeUp(1) }}>
 
         {/* 탑승권 (좌 50%) */}
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -476,27 +476,27 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                 onClick={() => hasReturn && setBpShowReturn(v => !v)}
                 style={{ background: '#2A2520', borderRadius: 12, padding: '14px 14px 12px', position: 'relative', height: '100%', boxSizing: 'border-box', cursor: hasReturn ? 'pointer' : 'default' }}
               >
-                <button onClick={(e) => { e.stopPropagation(); deleteBoardingPass() }} style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', cursor: 'pointer', color: '#6B6B6B', fontSize: 10 }}>✕</button>
+                <button onClick={(e) => { e.stopPropagation(); deleteBoardingPass() }} style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', cursor: 'pointer', color: '#8B95A1', fontSize: 10 }}>✕</button>
                 {/* 가는편/오는편 라벨 */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={{ fontSize: 9, color: '#C4725A', fontWeight: 600 }}>{legLabel}</span>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: 'white', background: '#C4725A', padding: '1px 6px', borderRadius: 8 }}>{dLabel}</span>
+                  <span style={{ fontSize: 9, color: '#3182F6', fontWeight: 600 }}>{legLabel}</span>
+                  <span style={{ fontSize: 9, fontWeight: 700, color: 'white', background: '#3182F6', padding: '1px 6px', borderRadius: 8 }}>{dLabel}</span>
                 </div>
-                <div style={{ fontSize: 10, color: '#A8A8A8', marginBottom: 6 }}>{formatTripDate(bp.date, lang)}</div>
+                <div style={{ fontSize: 10, color: '#8B95A1', marginBottom: 6 }}>{formatTripDate(bp.date, lang)}</div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 4 }}>
                   <span style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>{bp.from}</span>
-                  <span style={{ fontSize: 11, color: '#6B6B6B' }}>—</span>
+                  <span style={{ fontSize: 11, color: '#8B95A1' }}>—</span>
                   <span style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>{bp.to}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginBottom: 8 }}>
-                  <span style={{ fontSize: 10, color: '#A8A8A8' }}>{fromAp ? L(lang, fromAp.city) : bp.from}</span>
-                  <span style={{ fontSize: 10, color: '#6B6B6B' }}>{fH}h{fM > 0 ? `${fM}m` : ''}</span>
-                  <span style={{ fontSize: 10, color: '#A8A8A8' }}>{toAp ? L(lang, toAp.city) : bp.to}</span>
+                  <span style={{ fontSize: 10, color: '#8B95A1' }}>{fromAp ? L(lang, fromAp.city) : bp.from}</span>
+                  <span style={{ fontSize: 10, color: '#8B95A1' }}>{fH}h{fM > 0 ? `${fM}m` : ''}</span>
+                  <span style={{ fontSize: 10, color: '#8B95A1' }}>{toAp ? L(lang, toAp.city) : bp.to}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 8 }}>
-                  <div><div style={{ fontSize: 9, color: '#6B6B6B' }}>{bp.depTime}</div></div>
-                  <div><div style={{ fontSize: 9, color: '#6B6B6B' }}>{bp.flight} · {AIRLINES[bp.airline]?.cn || bp.airline}</div></div>
-                  <div><div style={{ fontSize: 9, color: '#6B6B6B' }}>{bp.arrTime}</div></div>
+                  <div><div style={{ fontSize: 9, color: '#8B95A1' }}>{bp.depTime}</div></div>
+                  <div><div style={{ fontSize: 9, color: '#8B95A1' }}>{bp.flight} · {AIRLINES[bp.airline]?.cn || bp.airline}</div></div>
+                  <div><div style={{ fontSize: 9, color: '#8B95A1' }}>{bp.arrTime}</div></div>
                 </div>
                 {/* 왕복 인디케이터 */}
                 {hasReturn && (
@@ -510,11 +510,11 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           })() : (
             <button onClick={() => setShowBoardingModal(true)} style={{
               width: '100%', height: '100%', borderRadius: 12, padding: '20px 14px',
-              border: '1px dashed #F0EDED', background: 'transparent', cursor: 'pointer',
+              border: '1px dashed #F2F4F6', background: 'transparent', cursor: 'pointer',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', boxSizing: 'border-box',
             }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#A8A8A8', marginBottom: 4 }}>{L(lang, { ko: '탑승권', zh: '登机牌', en: 'Boarding Pass' })}</div>
-              <div style={{ fontSize: 11, color: '#CDCDCD' }}>{L(lang, { ko: '등록하기', zh: '登记', en: 'Register' })}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 4 }}>{L(lang, { ko: '탑승권', zh: '登机牌', en: 'Boarding Pass' })}</div>
+              <div style={{ fontSize: 11, color: '#8B95A1' }}>{L(lang, { ko: '등록하기', zh: '登记', en: 'Register' })}</div>
             </button>
           )}
         </div>
@@ -532,29 +532,29 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           >
             {plan ? (
               <>
-                <div style={{ fontSize: 9, fontWeight: 600, color: '#C4725A', letterSpacing: '0.5px', marginBottom: 4, textTransform: 'uppercase' }}>
+                <div style={{ fontSize: 9, fontWeight: 600, color: '#3182F6', letterSpacing: '0.5px', marginBottom: 4, textTransform: 'uppercase' }}>
                   {getTripStatusLabel(plan, lang)}
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 900, color: '#1A1A1A', lineHeight: 1, marginBottom: 4 }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: '#191F28', lineHeight: 1, marginBottom: 4 }}>
                   {L(lang, { ko: '서울', zh: '首尔', en: 'Seoul' })}
                 </div>
-                <div style={{ fontSize: 10, color: '#A8A8A8', marginBottom: 6 }}>
+                <div style={{ fontSize: 10, color: '#8B95A1', marginBottom: 6 }}>
                   {formatTripDate(plan.arrivalDate, lang)} — {formatTripDate(plan.departureDate, lang)}
                 </div>
-                <div style={{ fontSize: 10, color: '#A8A8A8' }}>{getNightsLabel(plan.arrivalDate, plan.departureDate, lang)}</div>
+                <div style={{ fontSize: 10, color: '#8B95A1' }}>{getNightsLabel(plan.arrivalDate, plan.departureDate, lang)}</div>
                 {nextItem && (
-                  <div style={{ marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #F0EDED' }}>
-                    <div style={{ fontSize: 9, color: '#C4725A', fontWeight: 600 }}>{nextItem.time}</div>
-                    <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nextItem.name_cn || nextItem.name_kr}</div>
+                  <div style={{ marginTop: 'auto', paddingTop: 8, borderTop: '1px solid #F2F4F6' }}>
+                    <div style={{ fontSize: 9, color: '#3182F6', fontWeight: 600 }}>{nextItem.time}</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nextItem.name_cn || nextItem.name_kr}</div>
                   </div>
                 )}
               </>
             ) : (
               <>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A', marginBottom: 4 }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#191F28', marginBottom: 4 }}>
                   {L(lang, { ko: '일정 만들기', zh: '创建行程', en: 'Create Plan' })}
                 </div>
-                <div style={{ fontSize: 11, color: '#A8A8A8' }}>
+                <div style={{ fontSize: 11, color: '#8B95A1' }}>
                   {L(lang, { ko: '여행 날짜를 설정하세요', zh: '设置旅行日期', en: 'Set travel dates' })}
                 </div>
               </>
@@ -567,17 +567,17 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       {showBoardingModal && (
         <div onClick={() => setShowBoardingModal(false)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div onClick={e => e.stopPropagation()} style={{ background: '#FFFFFF', borderRadius: 16, padding: '24px 20px', width: 'calc(100% - 40px)', maxWidth: 360 }}>
-            <div style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A', marginBottom: 16 }}>
+            <div style={{ fontSize: 17, fontWeight: 700, color: '#191F28', marginBottom: 16 }}>
               {L(lang, { ko: '탑승권 등록', zh: '登记登机牌', en: 'Boarding Pass' })}
             </div>
 
             {/* 편도/왕복 토글 */}
-            <div style={{ display: 'flex', gap: 0, marginBottom: 16, background: '#F0EDED', borderRadius: 8, padding: 2 }}>
+            <div style={{ display: 'flex', gap: 0, marginBottom: 16, background: '#F2F4F6', borderRadius: 8, padding: 2 }}>
               {['oneway', 'roundtrip'].map(m => (
                 <button key={m} onClick={() => setBpMode(m)} style={{
                   flex: 1, padding: '6px', borderRadius: 6, border: 'none', cursor: 'pointer',
                   background: bpMode === m ? '#FFFFFF' : 'transparent',
-                  color: bpMode === m ? '#1A1A1A' : '#A8A8A8',
+                  color: bpMode === m ? '#191F28' : '#8B95A1',
                   fontSize: 12, fontWeight: 600,
                   boxShadow: bpMode === m ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                 }}>
@@ -588,14 +588,14 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {/* 가는 편 */}
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#C4725A' }}>{L(lang, { ko: '가는 편', zh: '去程', en: 'Outbound' })}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#3182F6' }}>{L(lang, { ko: '가는 편', zh: '去程', en: 'Outbound' })}</div>
               <input type="date" value={bpOutDate} onChange={e => setBpOutDate(e.target.value)}
-                style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 14, color: '#1A1A1A', boxSizing: 'border-box' }} />
+                style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F2F4F6', outline: 'none', fontSize: 14, color: '#191F28', boxSizing: 'border-box' }} />
               <div style={{ position: 'relative' }}>
                 <input type="text" value={bpOutFlight} onChange={e => handleFlightInput(e.target.value, setBpOutFlight, setBpOutLookup)} placeholder="OZ301"
-                  style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 14, color: '#1A1A1A', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F2F4F6', outline: 'none', fontSize: 14, color: '#191F28', boxSizing: 'border-box' }} />
                 {bpOutLookup && (
-                  <div style={{ fontSize: 10, color: '#C4725A', marginTop: 4 }}>
+                  <div style={{ fontSize: 10, color: '#3182F6', marginTop: 4 }}>
                     {bpOutLookup.from} → {bpOutLookup.to} · {bpOutLookup.dep}-{bpOutLookup.arr} · {bpOutLookup.airlineName?.cn || bpOutLookup.airline}
                   </div>
                 )}
@@ -604,14 +604,14 @@ export default function NearHomeTab({ setTab, setSubPage }) {
               {/* 오는 편 */}
               {bpMode === 'roundtrip' && (
                 <>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#C4725A', marginTop: 4 }}>{L(lang, { ko: '오는 편', zh: '回程', en: 'Return' })}</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#3182F6', marginTop: 4 }}>{L(lang, { ko: '오는 편', zh: '回程', en: 'Return' })}</div>
                   <input type="date" value={bpRetDate} onChange={e => setBpRetDate(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 14, color: '#1A1A1A', boxSizing: 'border-box' }} />
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F2F4F6', outline: 'none', fontSize: 14, color: '#191F28', boxSizing: 'border-box' }} />
                   <div style={{ position: 'relative' }}>
                     <input type="text" value={bpRetFlight} onChange={e => handleFlightInput(e.target.value, setBpRetFlight, setBpRetLookup)} placeholder="OZ302"
-                      style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F0EDED', outline: 'none', fontSize: 14, color: '#1A1A1A', boxSizing: 'border-box' }} />
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: 10, border: '1px solid #F2F4F6', outline: 'none', fontSize: 14, color: '#191F28', boxSizing: 'border-box' }} />
                     {bpRetLookup && (
-                      <div style={{ fontSize: 10, color: '#C4725A', marginTop: 4 }}>
+                      <div style={{ fontSize: 10, color: '#3182F6', marginTop: 4 }}>
                         {bpRetLookup.from} → {bpRetLookup.to} · {bpRetLookup.dep}-{bpRetLookup.arr}
                       </div>
                     )}
@@ -621,7 +621,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
             </div>
 
             <button onClick={saveBoardingPass} disabled={!bpOutDate || !bpOutFlight}
-              style={{ width: '100%', marginTop: 16, padding: 14, borderRadius: 12, border: 'none', cursor: bpOutDate && bpOutFlight ? 'pointer' : 'not-allowed', background: bpOutDate && bpOutFlight ? '#C4725A' : '#E0E0E0', color: 'white', fontSize: 15, fontWeight: 700 }}>
+              style={{ width: '100%', marginTop: 16, padding: 14, borderRadius: 12, border: 'none', cursor: bpOutDate && bpOutFlight ? 'pointer' : 'not-allowed', background: bpOutDate && bpOutFlight ? '#3182F6' : '#E0E0E0', color: 'white', fontSize: 15, fontWeight: 700 }}>
               {L(lang, { ko: '등록', zh: '登记', en: 'Register' })}
             </button>
           </div>
@@ -630,23 +630,23 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
       {/* ─── 3. "지금 뜨는 곳" 가로 스크롤 ─── */}
       <div style={{ ...fadeUp(3) }}>
-        <div style={{ padding: '0 20px', marginBottom: 16 }}>
-          <span style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>
+        <div style={{ padding: '0 24px', marginBottom: 16 }}>
+          <span style={{ fontSize: 16, fontWeight: 800, color: '#191F28' }}>
             {L(lang, { ko: '지금 뜨는 곳', zh: '现在热门', en: 'Trending Now' })}
           </span>
         </div>
-        <div style={{ overflowX: 'auto', display: 'flex', gap: 12, padding: '0 20px 28px', scrollbarWidth: 'none' }}>
+        <div style={{ overflowX: 'auto', display: 'flex', gap: 12, padding: '0 24px 48px', scrollbarWidth: 'none' }}>
           {TRENDING_SPOTS.map(spot => (
             <div key={spot.id} style={{
-              flexShrink: 0, width: 200, borderRadius: 14, overflow: 'hidden',
-              background: '#FFFFFF', boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+              flexShrink: 0, width: 200, borderRadius: 16, overflow: 'hidden',
+              background: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
             }}>
               <div style={{ height: 140, background: spot.gradient }} />
               <div style={{ padding: '10px 12px 12px' }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', marginBottom: 6 }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#191F28', marginBottom: 6 }}>
                   {L(lang, spot.title)}
                 </div>
-                <span style={{ fontSize: 9, fontWeight: 600, color: '#C4725A', background: '#FBF7F5', padding: '2px 8px', borderRadius: 10 }}>
+                <span style={{ fontSize: 9, fontWeight: 600, color: '#3182F6', background: 'rgba(49,130,246,0.1)', padding: '2px 8px', borderRadius: 10 }}>
                   {L(lang, spot.tag)}
                 </span>
               </div>
@@ -656,23 +656,23 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 4. 검색창 (지금 뜨는 곳 아래) ─── */}
-      <div style={{ padding: '0 20px 16px', ...fadeUp(4) }}>
+      <div style={{ padding: '0 24px 16px', ...fadeUp(4) }}>
         <button onClick={openSearchOverlay}
           style={{
             width: '100%', display: 'flex', alignItems: 'center',
-            padding: '11px 16px', borderRadius: 12, border: 'none', cursor: 'pointer',
-            background: '#FFFFFF', textAlign: 'left',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+            padding: '11px 16px', borderRadius: 8, border: 'none', cursor: 'pointer',
+            background: '#F2F4F6', textAlign: 'left',
+            transition: 'all 0.2s',
           }}
         >
-          <span style={{ fontSize: 13, color: '#A8A8A8' }}>
+          <span style={{ fontSize: 14, color: '#8B95A1' }}>
             {L(lang, { ko: '카페, 맛집, 피부과 검색...', zh: '搜索咖啡厅、美食、皮肤科...', en: 'Search cafes, food, clinics...' })}
           </span>
         </button>
       </div>
 
       {/* ─── 5. 카테고리 탭 바 (가로 스크롤) ─── */}
-      <div style={{ overflowX: 'auto', display: 'flex', gap: 24, padding: '0 20px 0', scrollbarWidth: 'none', borderBottom: '1px solid #F0EDED', marginBottom: 20, ...fadeUp(4) }}>
+      <div style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '0 24px 0', scrollbarWidth: 'none', marginBottom: 20, ...fadeUp(4) }}>
         {[
           { id: null, zh: '全部', ko: '전체', en: 'All' },
           ...MEITU_CATEGORIES.filter(c => c.id !== 'more'),
@@ -684,11 +684,12 @@ export default function NearHomeTab({ setTab, setSubPage }) {
               handleCategoryClick(cat)
             }}
               style={{
-                flexShrink: 0, background: 'none', border: 'none', cursor: 'pointer',
-                padding: '0 0 8px', fontSize: 15, fontWeight: 600,
-                color: isActive ? '#1A1A1A' : '#A8A8A8',
-                borderBottom: isActive ? '2px solid #C4725A' : '2px solid transparent',
-                transition: 'all 0.15s',
+                flexShrink: 0, cursor: 'pointer',
+                padding: '8px 16px', fontSize: 14, fontWeight: 500, borderRadius: 24,
+                background: isActive ? '#3182F6' : '#F2F4F6',
+                color: isActive ? '#FFFFFF' : '#8B95A1',
+                border: 'none',
+                transition: 'all 0.2s',
               }}
             >
               {L(lang, { zh: cat.zh, ko: cat.ko, en: cat.en })}
@@ -699,8 +700,8 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
       {/* ─── 6. 추천 장소 2열 그리드 ─── */}
       <div ref={feedRef} style={{ ...fadeUp(5) }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px 8px' }}>
-          <span style={{ fontSize: 16, fontWeight: 800, color: '#1A1A1A' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 24px 8px' }}>
+          <span style={{ fontSize: 16, fontWeight: 800, color: '#191F28' }}>
             {selectedCategory
               ? L(lang, CAT_LABELS[selectedCategory] || { ko: '추천 장소', zh: '推荐地点', en: 'Recommended' })
               : L(lang, { ko: '추천 장소', zh: '推荐地点', en: 'Recommended' })
@@ -708,13 +709,13 @@ export default function NearHomeTab({ setTab, setSubPage }) {
           </span>
           {selectedCategory && (
             <button onClick={() => setSelectedCategory(null)}
-              style={{ fontSize: 11, color: '#A8A8A8', background: '#F0EDED', border: 'none', borderRadius: 20, padding: '3px 10px', cursor: 'pointer' }}>
+              style={{ fontSize: 11, color: '#8B95A1', background: '#F2F4F6', border: 'none', borderRadius: 20, padding: '3px 10px', cursor: 'pointer' }}>
               {L(lang, { ko: '전체', zh: '全部', en: 'All' })}
             </button>
           )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, padding: '0 20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, padding: '0 24px' }}>
           {(showSearch ? results : filteredFeed).map((item) => {
             const isFeed = 'gradient' in item
             return (
@@ -722,19 +723,19 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                 onClick={() => !isFeed && item.url && window.open(item.url, '_blank')}
                 style={{
                   borderRadius: 12, overflow: 'hidden', background: '#FFFFFF',
-                  boxShadow: '0 1px 4px rgba(0,0,0,0.04)', cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)', cursor: 'pointer',
                 }}
               >
-                <div style={{ width: '100%', aspectRatio: '4/3', background: isFeed ? item.gradient : (item.image ? 'none' : '#F0EDED'), position: 'relative', overflow: 'hidden' }}>
+                <div style={{ width: '100%', aspectRatio: '4/3', background: isFeed ? item.gradient : (item.image ? 'none' : '#F2F4F6'), position: 'relative', overflow: 'hidden' }}>
                   {!isFeed && item.image && (
                     <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none' }} loading="lazy" />
                   )}
                 </div>
                 <div style={{ padding: '8px 10px 10px' }}>
-                  <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3, color: '#1A1A1A', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3, color: '#191F28', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     {isFeed ? t(item.titleKey) : item.title}
                   </div>
-                  <div style={{ fontSize: 10, color: '#A8A8A8', marginTop: 4 }}>
+                  <div style={{ fontSize: 10, color: '#8B95A1', marginTop: 4 }}>
                     {isFeed
                       ? (item.locationKey ? t(item.locationKey) : (item.statusKey ? t(item.statusKey) : 'NEAR'))
                       : (item.addr ? item.addr.replace('서울특별시 ', '').slice(0, 16) : '')
@@ -749,7 +750,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         {showSearch && results.length < total && results.length > 0 && (
           <div style={{ padding: '12px 20px 0' }}>
             <button onClick={() => { const term = lang === 'zh' ? zhToKo(query) : query; loadContent(term, null, page + 1) }}
-              disabled={loading} style={{ width: '100%', padding: 12, borderRadius: 12, border: '1px solid #F0EDED', background: '#FFFFFF', cursor: 'pointer', fontSize: 13, color: '#6B6B6B', fontWeight: 600 }}>
+              disabled={loading} style={{ width: '100%', padding: 12, borderRadius: 12, border: '1px solid #F2F4F6', background: '#FFFFFF', cursor: 'pointer', fontSize: 13, color: '#8B95A1', fontWeight: 600 }}>
               {loading ? '...' : L(lang, { ko: '더 보기', zh: '加载更多', en: 'Load more' })}
             </button>
           </div>
@@ -757,7 +758,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
         {!showSearch && selectedCategory && filteredFeed.length === 0 && (
           <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-            <p style={{ fontSize: 14, color: '#A8A8A8' }}>{L(lang, { ko: '아직 준비 중이에요', zh: '即将推出', en: 'Coming soon' })}</p>
+            <p style={{ fontSize: 14, color: '#8B95A1' }}>{L(lang, { ko: '아직 준비 중이에요', zh: '即将推出', en: 'Coming soon' })}</p>
           </div>
         )}
       </div>
@@ -778,15 +779,15 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
       {/* ─── 검색 오버레이 ─── */}
       {showSearchOverlay && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 9200, background: '#FAFAFA', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderBottom: '1px solid #F0EDED', flexShrink: 0 }}>
-            <button onClick={closeSearchOverlay} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 18, color: '#A8A8A8', padding: '4px 8px' }}>←</button>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 9200, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderBottom: '1px solid #F2F4F6', flexShrink: 0 }}>
+            <button onClick={closeSearchOverlay} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 18, color: '#8B95A1', padding: '4px 8px' }}>←</button>
             <div style={{ flex: 1, position: 'relative' }}>
               <input ref={overlayInputRef} type="text" value={query} onChange={e => handleSearch(e.target.value)}
                 placeholder={L(lang, { ko: '카페, 맛집, 피부과 검색...', zh: '搜索咖啡厅、美食、皮肤科...', en: 'Search cafes, food, clinics...' })}
-                style={{ width: '100%', padding: '11px 16px', borderRadius: 12, border: '1px solid #F0EDED', outline: 'none', fontSize: 15, color: '#1A1A1A', background: '#FFFFFF', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '11px 16px', borderRadius: 8, border: 'none', outline: 'none', fontSize: 14, color: '#191F28', background: '#F2F4F6', boxSizing: 'border-box' }}
               />
-              {query && <button onClick={() => handleSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#CDCDCD' }}>✕</button>}
+              {query && <button onClick={() => handleSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#8B95A1' }}>✕</button>}
             </div>
           </div>
 
@@ -795,20 +796,20 @@ export default function NearHomeTab({ setTab, setSubPage }) {
               <div>
                 {recentSearches.length > 0 && (
                   <>
-                    <p style={{ fontSize: 11, fontWeight: 700, color: '#A8A8A8', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>
+                    <p style={{ fontSize: 11, fontWeight: 700, color: '#8B95A1', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>
                       {L(lang, { ko: '최근 검색', zh: '最近搜索', en: 'Recent' })}
                     </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 }}>
                       {recentSearches.map(term => (
-                        <div key={term} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#FFFFFF', borderRadius: 20, padding: '7px 12px', border: '1px solid #F0EDED' }}>
-                          <button onClick={() => handleSearch(term)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#1A1A1A', padding: 0 }}>{term}</button>
-                          <button onClick={() => removeRecentSearch(term)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, color: '#CDCDCD' }}>✕</button>
+                        <div key={term} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#FFFFFF', borderRadius: 20, padding: '7px 12px', border: '1px solid #F2F4F6' }}>
+                          <button onClick={() => handleSearch(term)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#191F28', padding: 0 }}>{term}</button>
+                          <button onClick={() => removeRecentSearch(term)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 11, color: '#8B95A1' }}>✕</button>
                         </div>
                       ))}
                     </div>
                   </>
                 )}
-                <p style={{ fontSize: 11, fontWeight: 700, color: '#A8A8A8', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>
+                <p style={{ fontSize: 11, fontWeight: 700, color: '#8B95A1', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 12 }}>
                   {L(lang, { ko: '추천 검색어', zh: '推荐搜索', en: 'Suggestions' })}
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -821,7 +822,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                     { ko: '성수동 팝업', zh: '圣水洞快闪', en: 'Seongsu popup' },
                   ].map(s => (
                     <button key={s.ko} onClick={() => handleSearch(L(lang, s))}
-                      style={{ background: '#FFFFFF', border: '1px solid #F0EDED', borderRadius: 20, padding: '7px 14px', fontSize: 13, color: '#C4725A', fontWeight: 600, cursor: 'pointer' }}>
+                      style={{ background: '#FFFFFF', border: '1px solid #F2F4F6', borderRadius: 20, padding: '7px 14px', fontSize: 13, color: '#3182F6', fontWeight: 600, cursor: 'pointer' }}>
                       {L(lang, s)}
                     </button>
                   ))}
@@ -831,7 +832,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
             {query && !loading && results.length === 0 && (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <div style={{ fontSize: 14, color: '#A8A8A8' }}>{L(lang, { ko: '검색 결과가 없습니다', zh: '没有搜索结果', en: 'No results found' })}</div>
+                <div style={{ fontSize: 14, color: '#8B95A1' }}>{L(lang, { ko: '검색 결과가 없습니다', zh: '没有搜索结果', en: 'No results found' })}</div>
               </div>
             )}
 
@@ -839,12 +840,12 @@ export default function NearHomeTab({ setTab, setSubPage }) {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {results.map(item => (
                   <div key={item.id} onClick={() => item.url && window.open(item.url, '_blank')}
-                    style={{ borderRadius: 12, overflow: 'hidden', background: '#FFFFFF', border: '1px solid #F0EDED', cursor: 'pointer' }}>
-                    <div style={{ width: '100%', aspectRatio: '4/3', background: item.image ? 'none' : '#F0EDED', overflow: 'hidden' }}>
+                    style={{ borderRadius: 12, overflow: 'hidden', background: '#FFFFFF', border: '1px solid #F2F4F6', cursor: 'pointer' }}>
+                    <div style={{ width: '100%', aspectRatio: '4/3', background: item.image ? 'none' : '#F2F4F6', overflow: 'hidden' }}>
                       {item.image && <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" onError={e => e.target.style.display = 'none'} />}
                     </div>
                     <div style={{ padding: '6px 8px 8px' }}>
-                      <div style={{ fontSize: 11, fontWeight: 600, color: '#1A1A1A', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#191F28', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</div>
                     </div>
                   </div>
                 ))}

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Pretendard:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Sans:wght@400;500;700&display=swap');
 
 @import "tailwindcss";
 
@@ -8,9 +8,11 @@ html {
   -webkit-overflow-scrolling: touch;
 }
 body {
+  font-family: 'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif;
+  background: var(--bg-l0);
+  color: var(--text-high);
   overscroll-behavior: none;
   overscroll-behavior-y: none;
-  background: #FFFFFF;
 }
 
 /* 카카오맵 워터마크 숨김 */
@@ -19,61 +21,59 @@ body {
   visibility: hidden !important;
 }
 
-/* ─── NEAR Design System — 토스/미단/소홍서 스타일 ─── */
+/* ─── NEAR Design System v2 ─── */
 :root {
   color-scheme: light only;
 
-  /* Brand Colors */
-  --primary: #C4725A;
-  --primary-light: #FDF8F6;
-  --primary-dark: #A85D48;
+  /* 배경 */
+  --bg-l0: #FFFFFF;
+  --surface-l1: #F2F4F6;
+  --card-l2: #FFFFFF;
 
-  /* Semantic Colors */
+  /* 텍스트 */
+  --text-high: #191F28;
+  --text-low: #8B95A1;
+
+  /* 포인트 */
+  --primary: #3182F6;
+
+  /* 시맨틱 */
   --price: #FF3B30;
   --success: #34C759;
   --warning: #FF9500;
-  --info: #007AFF;
 
-  /* Text Hierarchy */
-  --text-primary: #1A1A1A;
-  --text-secondary: #666666;
-  --text-muted: #6B6B6B;
-  --text-hint: #A8A8A8;
+  /* 그림자 */
+  --shadow-premium: 0 4px 12px rgba(0, 0, 0, 0.05);
 
-  /* Backgrounds */
+  /* 간격 */
+  --global-margin: 24px;
+  --inner-padding: 24px;
+  --gap-section: 48px;
+  --gap-item: 16px;
+
+  /* 라운딩 */
+  --radius-s: 8px;
+  --radius-m: 16px;
+  --radius-l: 24px;
+
+  /* 레거시 호환 (다른 탭에서 아직 사용) */
+  --text-primary: #191F28;
+  --text-secondary: #8B95A1;
+  --text-muted: #8B95A1;
+  --text-hint: #8B95A1;
   --bg: #FFFFFF;
-  --surface: #F7F7F7;
+  --surface: #F2F4F6;
   --card: #FFFFFF;
-  --border: #F0F0F0;
-
-  /* Border Radius — 2025 Trend */
+  --border: #F2F4F6;
   --radius-card: 16px;
   --radius-btn: 14px;
-  --radius-chip: 20px;
+  --radius-chip: 24px;
   --radius-pill: 24px;
-
-  /* Shadows — Minimal */
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-hover: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.05);
   --shadow-pressed: 0 2px 8px rgba(0, 0, 0, 0.08);
-
-  /* Spacing — 토스 수준으로 넉넉 */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 12px;
-  --spacing-lg: 16px;
-  --spacing-xl: 20px;
-  --spacing-2xl: 32px;
-}
-
-.dark {
-  --text-primary: #FFFFFF;
-  --text-secondary: #CCCCCC;
-  --text-muted: #999999;
-  --bg: #1A1A1A;
-  --surface: #262626;
-  --card: #1A1A1A;
-  --border: #333333;
+  --primary-light: #EBF3FE;
+  --primary-dark: #1B6AE0;
 }
 
 /* ─── Y2K Animations ─── */

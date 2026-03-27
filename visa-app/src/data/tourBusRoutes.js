@@ -172,6 +172,45 @@ const STOP_DETAILS = {
     nearbySpots: [{ name: { ko: '광화문광장', zh: '光化门广场', en: 'Gwanghwamun Sq' }, lat: 37.5724, lng: 126.9768 }],
     story: { ko: '광화문광장은 길이 557m, 세종대왕·이순신 장군 동상이 있습니다.', zh: '光化门广场长557米，有世宗大王和李舜臣将军铜像。', en: 'Gwanghwamun Square, 557m long, with statues of King Sejong and Admiral Yi.' },
   },
+  deoksugung: {
+    summary: {
+      stop: { ko: '덕수궁대한문, 서울광장 건너편', zh: '德寿宫大汉门，首尔广场对面', en: 'Deoksugung Daehanmun' },
+      marker: { ko: '쉘터', zh: '候车亭', en: 'Shelter' },
+      subway: { ko: '시청역 3번출구', zh: '市厅站3号出口', en: 'City Hall Exit 3' },
+      address: { ko: '서울 중구 세종대로 101', zh: '首尔中区世宗大路101', en: 'Sejong-daero 101' },
+    },
+    nearbySpots: [
+      { name: { ko: '덕수궁', zh: '德寿宫', en: 'Deoksugung' }, lat: 37.5658, lng: 126.9750 },
+      { name: { ko: '덕수궁돌담길', zh: '德寿宫石墙路', en: 'Stone Wall Road' }, lat: 37.5665, lng: 126.9740 },
+    ],
+    story: { ko: '덕수궁은 대한제국의 궁궐로, 서양식 건물인 석조전과 전통 한식 건물이 조화를 이룹니다. 왕궁 수문장 교대식을 관람할 수 있습니다.', zh: '德寿宫是大韩帝国的宫殿，可观看王宫守门将换岗仪式。', en: 'Deoksugung features a mix of Western and Korean architecture. Watch the Royal Guard Changing ceremony.' },
+  },
+  namdaemun: {
+    summary: {
+      stop: { ko: '부영태평빌딩앞, 프레이저플레이스 건너', zh: '富荣太平大厦前', en: 'In front of Buyoung Bldg' },
+      marker: { ko: '사인폴', zh: '标志杆', en: 'Sign pole' },
+      subway: { ko: '2호선 시청역 8번 출구 300m', zh: '2号线市厅站8号出口300m', en: 'Line 2 City Hall Exit 8' },
+      address: { ko: '서울 중구 세종대로 53-2', zh: '首尔中区世宗大路53-2', en: 'Sejong-daero 53-2' },
+    },
+    nearbySpots: [
+      { name: { ko: '남대문시장', zh: '南大门市场', en: 'Namdaemun Market' }, lat: 37.5593, lng: 126.9775 },
+      { name: { ko: '숭례문', zh: '崇礼门', en: 'Sungnyemun' }, lat: 37.5600, lng: 126.9753 },
+    ],
+    story: { ko: '남대문시장은 600년 전통의 재래시장으로 1700여 종의 상품을 판매합니다. 갈치조림골목이 유명합니다.', zh: '南大门市场有600年传统，销售1700多种商品。', en: 'Namdaemun Market is a 600-year-old traditional market.' },
+  },
+  hybe: {
+    summary: {
+      stop: { ko: '용산역사박물관 앞 버스정류장', zh: '龙山历史博物馆前公交站', en: 'Near Yongsan History Museum' },
+      marker: { ko: '사인폴', zh: '标志杆', en: 'Sign pole' },
+      subway: { ko: '1호선 용산역 1번 출구 500m', zh: '1号线龙山站1号出口500m', en: 'Line 1 Yongsan Exit 1' },
+      address: { ko: '서울 용산구 한강로3가 64', zh: '首尔龙山区', en: 'Hangang-ro 3-ga 64' },
+    },
+    nearbySpots: [
+      { name: { ko: '하이브 본사', zh: 'HYBE总部', en: 'HYBE HQ' }, lat: 37.5283, lng: 126.9654 },
+      { name: { ko: '용산역사박물관', zh: '龙山历史博物馆', en: 'Yongsan Museum' }, lat: 37.5285, lng: 126.9660 },
+    ],
+    story: { ko: 'BTS를 비롯한 글로벌 아티스트들이 소속된 HYBE 본사. 전 세계 ARMY 팬들이 찾는 K-pop 성지입니다.', zh: 'BTS等全球艺人所属HYBE总部，全球ARMY粉丝圣地。', en: 'HYBE HQ, home of BTS, a pilgrimage site for ARMY worldwide.' },
+  },
 }
 
 function sd(key) { return STOP_DETAILS[key] || { summary: null, nearbySpots: [], story: null } }
@@ -231,8 +270,8 @@ const BTS_DAY_STOPS = [
 // TOUR04 야경 정류장
 const TOUR04_NIGHT_STOPS = [
   { id: 'T04-01', name: { ko: '광화문', zh: '光化门', en: 'Gwanghwamun' }, lat: 37.5710, lng: 126.9769, isTicketStop: true, noStop: false, timetable: ['19:00'], ...sd('gwanghwamun') },
-  { id: 'T04-02', name: { ko: '덕수궁', zh: '德寿宫', en: 'Deoksugung' }, lat: 37.5660, lng: 126.9754, noStop: true, timetable: ['19:02'], summary: null, nearbySpots: [], story: null },
-  { id: 'T04-03', name: { ko: '남대문시장', zh: '南大门市场', en: 'Namdaemun' }, lat: 37.5594, lng: 126.9772, noStop: true, timetable: ['19:04'], summary: null, nearbySpots: [], story: null },
+  { id: 'T04-02', name: { ko: '덕수궁', zh: '德寿宫', en: 'Deoksugung' }, lat: 37.5660, lng: 126.9754, noStop: true, timetable: ['19:02'], ...sd('deoksugung') },
+  { id: 'T04-03', name: { ko: '남대문시장', zh: '南大门市场', en: 'Namdaemun' }, lat: 37.5594, lng: 126.9772, noStop: true, timetable: ['19:04'], ...sd('namdaemun') },
   { id: 'T04-04', name: { ko: '명동', zh: '明洞', en: 'Myeongdong' }, lat: 37.5607, lng: 126.9860, noStop: true, timetable: ['19:08'], ...sd('myeongdong') },
   { id: 'T04-05', name: { ko: '남산골 한옥마을', zh: '南山韩屋村', en: 'Namsangol' }, lat: 37.5590, lng: 126.9940, noStop: true, timetable: ['19:12'], ...sd('namsangol') },
   { id: 'T04-06', name: { ko: '앰배서더 호텔', zh: 'Ambassador酒店', en: 'Ambassador' }, lat: 37.5580, lng: 126.9980, noStop: true, timetable: ['19:14'], ...sd('ambassador') },

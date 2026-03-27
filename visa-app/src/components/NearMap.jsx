@@ -1065,38 +1065,51 @@ export default function NearMap() {
 
 
       {/* ─── 좌상단: 지역 선택 (서브필터 있으면 아래로 밀림) ─── */}
-      <div style={{ position: 'absolute', top: (tourbusMode || (activeCategory === 'food' && !tourbusMode)) ? 92 : 56, left: 12, zIndex: 9, transition: 'top 0.2s ease' }}>
+      <div style={{ position: 'absolute', top: (tourbusMode || (activeCategory === 'food' && !tourbusMode)) ? 92 : 56, left: 12, zIndex: 9, transition: 'top 0.3s ease' }}>
         <div style={{ position: 'relative' }}>
+          {/* > 버튼 — 열리면 90도 회전 */}
           <button
             onClick={() => { setShowAreaPicker(v => !v); setShowRecent(false) }}
             style={{
               width: 40, height: 40, borderRadius: '50%',
-              background: selectedDistrict ? '#3182F6' : 'rgba(255,255,255,0.88)',
+              background: selectedDistrict ? '#3182F6' : 'rgba(255,255,255,0.92)',
               backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
               color: selectedDistrict ? 'white' : '#191F28',
               border: 'none', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-              transition: 'all 0.2s',
+              transition: 'all 0.3s ease',
             }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              style={{ transform: showAreaPicker ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s ease' }}>
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
           </button>
-          {showAreaPicker && (
-            <div style={{ position: 'absolute', top: 46, left: 0, background: '#FFFFFF', borderRadius: 12, border: '1px solid #F2F4F6', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', padding: '8px 0', zIndex: 99, minWidth: 140 }}>
-              {QUICK_AREAS.map(area => (
-                <button key={area.id} onClick={() => { moveToArea(area); setShowAreaPicker(false) }}
-                  style={{
-                    display: 'block', width: '100%', textAlign: 'left', padding: '8px 16px', border: 'none', background: 'none', cursor: 'pointer',
-                    fontSize: 13, fontWeight: selectedDistrict === area.district ? 700 : 400,
-                    color: selectedDistrict === area.district ? '#3182F6' : '#191F28',
-                  }}
-                >
-                  {t(area.key)}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* 지역 목록 — slideDown + fadeIn */}
+          <div style={{
+            position: 'absolute', top: 46, left: 0, zIndex: 99, minWidth: 150,
+            background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+            borderRadius: 16, boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+            padding: '6px 0',
+            opacity: showAreaPicker ? 1 : 0,
+            transform: showAreaPicker ? 'translateY(0) scale(1)' : 'translateY(-8px) scale(0.95)',
+            pointerEvents: showAreaPicker ? 'auto' : 'none',
+            transition: 'opacity 0.3s ease, transform 0.3s ease',
+          }}>
+            {QUICK_AREAS.map(area => (
+              <button key={area.id} onClick={() => { moveToArea(area); setShowAreaPicker(false) }}
+                style={{
+                  display: 'block', width: '100%', textAlign: 'left', padding: '10px 16px', border: 'none', background: 'none', cursor: 'pointer',
+                  fontSize: 13, fontWeight: selectedDistrict === area.district ? 600 : 400,
+                  color: selectedDistrict === area.district ? '#3182F6' : '#191F28',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {t(area.key)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

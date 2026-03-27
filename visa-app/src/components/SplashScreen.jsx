@@ -25,7 +25,7 @@ export default function SplashScreen({ onFinish }) {
       onClick={() => { setFadeOut(true); setTimeout(onFinish, 500) }}
     >
       <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div style={{ fontSize: 84, fontWeight: 900, letterSpacing: -4, marginBottom: 24, color: '#000000', fontFamily: "'Montserrat', sans-serif" }}>
+        <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -4, marginBottom: 24, color: '#000000', fontFamily: "'Nunito', sans-serif" }}>
           NEAR
         </div>
 

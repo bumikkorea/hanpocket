@@ -392,15 +392,14 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   const filteredFeed = selectedCategory ? FEED_DATA.filter(item => item.category === selectedCategory) : FEED_DATA
   const currentEditorial = editorialId ? EDITORIALS.find(e => e.id === editorialId) : null
 
-  // 여행 카드: 다음 일정 미리보기
-  const nextItem = plan ? (() => {
+  // 여행 카드: 오늘 전체 일정
+  const todayPlaces = plan ? (() => {
     const now = new Date(); now.setHours(0,0,0,0)
     const todayStr = dateToStr(now)
     const dayData = plan.days?.[todayStr]
-    if (!dayData) return null
-    const places = dayData.items?.filter(i => i.type === 'place') || []
-    return places[0] || null
-  })() : null
+    if (!dayData) return []
+    return (dayData.items?.filter(i => i.type === 'place') || []).sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+  })() : []
 
   return (
     <div style={{ background: '#FFFFFF', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif", paddingBottom: 80, minHeight: '100vh' }}>
@@ -488,16 +487,16 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                 </div>
                 <span style={{ fontSize: 20, color: '#8B95A1', marginTop: 8, flexShrink: 0 }}>›</span>
               </div>
-              {nextItem && (
+              {todayPlaces.length > 0 && (
                 <>
-                  <div style={{ height: 1, background: '#F2F4F6', margin: '14px 0 12px', width: '100%' }} />
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
-                    <div style={{ width: 3, height: 28, borderRadius: 2, background: '#3182F6', opacity: 0.5, flexShrink: 0 }} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 11, color: '#3182F6', fontWeight: 600 }}>{nextItem.time || ''}</div>
-                      <div style={{ fontSize: 14, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{nextItem.name_cn || nextItem.name_kr}</div>
+                  <div style={{ height: 1, background: '#F2F4F6', margin: '14px 0 10px', width: '100%' }} />
+                  {todayPlaces.map((item, i) => (
+                    <div key={item.id || i} style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', marginBottom: i < todayPlaces.length - 1 ? 6 : 0 }}>
+                      <div style={{ width: 3, height: 20, borderRadius: 2, background: '#3182F6', opacity: 0.3, flexShrink: 0 }} />
+                      <span style={{ fontSize: 11, color: '#3182F6', fontWeight: 600, flexShrink: 0, width: 36 }}>{item.time || ''}</span>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name_cn || item.name_kr}</span>
                     </div>
-                  </div>
+                  ))}
                 </>
               )}
             </>

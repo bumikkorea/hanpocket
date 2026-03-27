@@ -861,7 +861,7 @@ export default function NearMap() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 48 }}>
           {[
             { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true), hasIcon: true },
-            { id: '_bookmark', label: lang === 'zh' ? '收藏' : lang === 'en' ? 'Saved' : '찜', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
+            { id: '_bookmark', label: lang === 'zh' ? '关注' : lang === 'en' ? 'Liked' : '관심', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
             ...CATEGORY_CHIPS.map(c => ({ id: c.id, label: tLang(c.key, lang), action: () => { setActiveCategory(c.id); if (c.id !== 'michelin') setMichelinFilter('all'); if (c.id !== 'food') setFoodCategoryFilter('all'); closeSheet(); exitTourbusMode(); setShowAllPanel(false) } })),
             { id: '_tourbus', label: 'Tourbus', action: () => { if (tourbusMode) exitTourbusMode(); else { setTourbusMode(true); closeSheet() } } },
           ].map(item => {
@@ -990,19 +990,19 @@ export default function NearMap() {
           <div style={{
             position: 'absolute', top: 0, left: 0, bottom: 0, width: '75%', maxWidth: 320,
             background: '#FFFFFF', zIndex: 51, borderTopRightRadius: 16, borderBottomRightRadius: 16,
-            boxShadow: '4px 0 24px rgba(0,0,0,0.15)', display: 'flex', flexDirection: 'column',
-            animation: 'slideInLeft 0.25s ease-out',
+            boxShadow: '4px 0 24px rgba(0,0,0,0.08)', display: 'flex', flexDirection: 'column',
+            animation: 'nearSlideInLeft 0.3s cubic-bezier(0.32, 0.72, 0, 1)',
           }}>
             <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid #F2F4F6', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>
-                {lang === 'zh' ? '我的收藏' : lang === 'en' ? 'Saved Places' : '찜한 장소'}
+                {lang === 'zh' ? '我的关注' : lang === 'en' ? 'Liked Places' : '관심 장소'}
               </span>
               <button onClick={() => setShowHistoryPanel(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: '#999', padding: 4 }}>✕</button>
             </div>
             <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
               {bookmarks.length === 0 ? (
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: '#8B95A1', fontSize: 13 }}>
-                  {lang === 'zh' ? '还没有收藏的地点' : lang === 'en' ? 'No saved places yet' : '아직 찜한 장소가 없어요'}
+                  {lang === 'zh' ? '还没有关注的地点' : lang === 'en' ? 'No liked places yet' : '아직 관심 장소가 없어요'}
                 </div>
               ) : allPins.filter(p => bookmarks.includes(p.id)).map((place, i) => {
                 const placeName = getLocalizedName(place, lang)
@@ -1063,7 +1063,7 @@ export default function NearMap() {
               })}
             </div>
           </div>
-          <style>{`@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } } @keyframes tourbus-glow { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.5); opacity: 0; } }`}</style>
+          <style>{`@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } } @keyframes nearSlideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } @keyframes tourbus-glow { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.5); opacity: 0; } }`}</style>
         </>
       )}
 

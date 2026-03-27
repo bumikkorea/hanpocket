@@ -2840,29 +2840,44 @@ function AppInner() {
         <Languages size={26} color="white" strokeWidth={1.8} />
       </button>
 
-      {/* Bottom Navigation — 4탭: 探险/地图/预约/我的 */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white transition-transform duration-300"
-        style={{
-          borderTop: '0.5px solid var(--border)',
-          height: '65px',
-          paddingBottom: 'env(safe-area-inset-bottom)',
-          transform: 'translateY(0)',
-        }}>
-        <div className="flex items-center justify-around h-full">
-          {bottomTabs.map(item => {
-            const active = tab === item.id
-            return (
-              <button key={item.id} onClick={() => handleTabChange(item.id)}
-                aria-label={`${item.label} tab`}
-                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, background: 'none', border: 'none', cursor: 'pointer', padding: '4px 0', transition: 'all 0.2s' }}>
-                <item.icon size={22} strokeWidth={active ? 2.5 : 1.5} style={{ color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s' }} />
-                <span style={{ fontSize: 11, fontWeight: active ? 600 : 500, color: active ? 'var(--primary)' : 'var(--text-hint)', transition: 'all 0.2s', letterSpacing: '-0.2px', lineHeight: 1 }}>
-                  {item.label}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+      {/* Bottom Navigation */}
+      <div style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,
+        background: '#FFFFFF', borderTop: '1px solid #F2F4F6',
+        paddingTop: 10, paddingBottom: 'max(10px, env(safe-area-inset-bottom))',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-around',
+      }}>
+        {bottomTabs.map(item => {
+          const active = tab === item.id
+          const c = active ? '#191F28' : '#8B95A1'
+          const sw = 1.5
+          return (
+            <button key={item.id} onClick={() => handleTabChange(item.id)} aria-label={`${item.label} tab`}
+              style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.2s' }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill={active ? c : 'none'} stroke={c} strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                {item.id === 'near-home' && (active
+                  ? <><path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1z" fill={c} stroke={c}/></>
+                  : <><path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1z"/></>
+                )}
+                {item.id === 'near-map' && (active
+                  ? <><path d="M21 10c0 6-9 13-9 13s-9-7-9-13a9 9 0 1118 0z" fill={c} stroke={c}/><circle cx="12" cy="10" r="3" fill="#FFFFFF" stroke="#FFFFFF"/></>
+                  : <><path d="M21 10c0 6-9 13-9 13s-9-7-9-13a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></>
+                )}
+                {item.id === 'booking' && (active
+                  ? <><rect x="3" y="4" width="18" height="18" rx="2" fill={c} stroke={c}/><line x1="16" y1="2" x2="16" y2="6" stroke="#FFFFFF"/><line x1="8" y1="2" x2="8" y2="6" stroke="#FFFFFF"/><line x1="3" y1="10" x2="21" y2="10" stroke="#FFFFFF"/></>
+                  : <><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></>
+                )}
+                {item.id === 'my' && (active
+                  ? <><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" fill={c} stroke={c}/><circle cx="12" cy="7" r="4" fill={c} stroke={c}/></>
+                  : <><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></>
+                )}
+              </svg>
+              <span style={{ fontSize: 10, fontWeight: active ? 600 : 400, color: c, letterSpacing: '0.3px', lineHeight: 1, fontFamily: "'Noto Sans KR', 'Noto Sans', sans-serif" }}>
+                {item.label}
+              </span>
+            </button>
+          )
+        })}
       </div>
       {/* 챗봇 제거 */}
     </div>

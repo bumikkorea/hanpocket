@@ -1153,7 +1153,7 @@ export default function NearMap() {
           transition: 'all 0.2s',
         }}
       >
-        {lang === 'zh' ? '译' : lang === 'en' ? 'Hi?' : '네?'}
+        {lang === 'zh' ? '啥?' : lang === 'en' ? 'Huh?' : '네?'}
       </button>
 
       {/* ─── 전체 슬라이드 패널 ─── */}

@@ -1880,11 +1880,12 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
         style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid rgba(0,0,0,0.05)', textAlign: 'left' }}
       >
         <span style={{
-          width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-          background: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 18, boxShadow: '3px 3px 8px rgba(190,190,190,0.4), -3px -3px 8px #FFFFFF',
+          width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+          background: hasDetail ? 'rgba(49,130,246,0.1)' : '#F2F2F2',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 12, fontWeight: 700, color: hasDetail ? '#3182F6' : '#8B95A1',
         }}>
-          {isKakao ? '📍' : hasDetail ? '⭐' : '🗺️'}
+          {isKakao ? 'K' : hasDetail ? 'N' : 'S'}
         </span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -1910,32 +1911,29 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
   }
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: '-apple-system, "Pretendard", sans-serif' }}>
-      {/* 검색 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 20px', background: '#FFFFFF', flexShrink: 0, boxShadow: '0 4px 10px rgba(200,200,200,0.25)' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 50, background: '#FFFFFF', display: 'flex', flexDirection: 'column', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif" }}>
+      {/* 검색 헤더 — 풀 너비 통합 */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 20px', background: '#FFFFFF', flexShrink: 0 }}>
         <button onClick={onClose} style={{
-          background: '#FFFFFF', border: 'none', cursor: 'pointer', padding: 10,
-          borderRadius: '50%', color: '#191F28', display: 'flex',
-          boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF',
-          transition: 'box-shadow 0.15s ease',
-          fontSize: 20, fontWeight: 'bold',
+          background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+          color: '#191F28', display: 'flex', alignItems: 'center',
+          fontSize: 18,
         }}>
-          ←
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
         <div style={{
-          flex: 1, background: '#FFFFFF', borderRadius: 50,
-          boxShadow: 'inset 3px 3px 8px rgba(190,190,190,0.35), inset -3px -3px 8px rgba(255,255,255,0.7)',
-          display: 'flex', alignItems: 'center', padding: '0 14px', height: 44, gap: 8,
+          flex: 1, background: '#F8F8F8', borderRadius: 22,
+          display: 'flex', alignItems: 'center', padding: '0 20px', height: 44,
         }}>
           <input
             ref={inputRef}
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder={tLang(PH_KEYS[phIdx], lang)}
-            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 16, color: '#191F28', transition: 'opacity 0.3s ease', opacity: phVisible ? 1 : 0 }}
+            placeholder={lang === 'zh' ? '想去哪里？' : lang === 'en' ? 'Where to?' : '어디로 떠나고 싶으신가요?'}
+            style={{ flex: 1, border: 'none', background: 'none', outline: 'none', fontSize: 15, color: '#191F28' }}
           />
           {query && (
-            <button onClick={() => setQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, fontSize: 16, lineHeight: 1 }}>✕</button>
+            <button onClick={() => setQuery('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#8B95A1', padding: 0, fontSize: 14, lineHeight: 1 }}>✕</button>
           )}
         </div>
       </div>
@@ -1944,32 +1942,45 @@ function SearchOverlay({ allPins, lang, onSelectPoi, onClose }) {
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 16px' }}>
         {query.trim() === '' ? (
           <>
+            {/* 최근 검색 — 정갈한 태그 */}
             {recent.length > 0 && (
               <div style={{ paddingTop: 20 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>{tLang('search_recent', lang)}</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 15 }}>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#191F28' }}>{tLang('search_recent', lang)}</span>
                   <button
                     onClick={() => { setRecent([]); localStorage.removeItem('near_searches') }}
-                    style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
+                    style={{ fontSize: 12, color: '#999', background: 'none', border: 'none', cursor: 'pointer' }}
                   >{tLang('search_clear', lang)}</button>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
                   {recent.map((r, i) => (
-                    <button key={i} onClick={() => setQuery(r)} style={{ background: '#FFFFFF', border: 'none', borderRadius: 24, padding: '8px 16px', fontSize: 13, color: '#191F28', cursor: 'pointer', boxShadow: '4px 4px 10px rgba(200,200,200,0.5), -4px -4px 10px #FFFFFF', transition: 'box-shadow 0.15s ease' }}>
+                    <button key={i} onClick={() => setQuery(r)} style={{
+                      background: '#F2F2F2', border: 'none', borderRadius: 15,
+                      padding: '6px 14px', fontSize: 13, color: '#444', cursor: 'pointer',
+                    }}>
                       {r}
                     </button>
                   ))}
                 </div>
               </div>
             )}
+            {/* 인기 장소 — 랭킹 강조형 */}
             <div style={{ paddingTop: 20 }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>🔥 {tLang('search_hot', lang)}</div>
-              {hotPins.map((poi, i) => <PoiRow key={poi.id} poi={poi} rank={i} />)}
+              <div style={{ fontSize: 14, fontWeight: 700, color: '#191F28', marginBottom: 12 }}>{tLang('search_hot', lang)}</div>
+              {hotPins.map((poi, i) => (
+                <button key={poi.id} onClick={() => handlePoiRow(poi)}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '15px 0', background: 'none', border: 'none', cursor: 'pointer', borderBottom: '1px solid #F9F9F9', textAlign: 'left' }}>
+                  <span style={{ fontSize: 18, fontWeight: 700, color: '#191F28', width: 30, flexShrink: 0 }}>{i + 1}</span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 500, color: '#191F28', marginBottom: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{getLocalizedName(poi, lang)}</div>
+                    <div style={{ fontSize: 12, color: '#999' }}>{getLocalizedAddress(poi, lang)}</div>
+                  </div>
+                </button>
+              ))}
             </div>
           </>
         ) : searching ? (
           <div style={{ paddingTop: 32, textAlign: 'center' }}>
-            <div style={{ fontSize: 24, marginBottom: 8 }}>🔍</div>
             <div style={{ fontSize: 14, color: '#8B95A1' }}>{lang === 'zh' ? '搜索中...' : lang === 'ko' ? '검색 중...' : 'Searching...'}</div>
           </div>
         ) : results.length > 0 ? (

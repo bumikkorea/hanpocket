@@ -858,7 +858,7 @@ export default function NearMap() {
 
       {/* ─── 메인 카테고리 바 (지도 밖 상단 고정) ─── */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, background: '#FFFFFF', borderBottom: '0.5px solid #F2F4F6' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 48 }}>
+        <div style={{ display: 'flex', alignItems: 'stretch', justifyContent: 'center', gap: 6, height: 48, padding: '0 12px' }}>
           {[
             { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true), hasIcon: true },
             { id: '_bookmark', label: lang === 'zh' ? '关注' : lang === 'en' ? 'Liked' : '관심', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
@@ -871,12 +871,13 @@ export default function NearMap() {
             return (
               <button key={item.id} onClick={item.action}
                 style={{
-                  background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  padding: '0 4px',
                   fontSize: 14, fontWeight: isActive ? 600 : 400,
                   color: isActive ? '#191F28' : '#8B95A1',
                   position: 'relative', transition: 'all 0.2s',
                   height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  lineHeight: 1,
+                  lineHeight: '48px',
                 }}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

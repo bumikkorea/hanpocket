@@ -834,7 +834,7 @@ export default function NearMap() {
       <div
         ref={mapRef}
         style={{
-          position: 'absolute', top: 0, left: 0, right: 0,
+          position: 'absolute', top: 44, left: 0, right: 0,
           bottom: 0,
           transition: 'bottom 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           touchAction: 'manipulation',
@@ -853,105 +853,48 @@ export default function NearMap() {
         onClick={() => { closeSheet(); setShowAreaPicker(false) }}
       />
 
-      {/* ─── 상단 바: [▼동네] [검색] [카테고리칩...] ─── */}
-      <div style={{ position: 'absolute', top: 12, left: 0, right: 0, zIndex: 10 }}>
-        <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '0 12px', scrollbarWidth: 'none', alignItems: 'center' }}>
-
-          {/* 최근 — 왼쪽 슬라이드 패널 트리거 */}
-          <button
-            onClick={() => { setShowHistoryPanel(true); setShowAreaPicker(false) }}
-            style={{
-              flexShrink: 0, height: 36, padding: '0 12px', borderRadius: 24,
-              background: showHistoryPanel ? '#191F28' : 'white', color: showHistoryPanel ? 'white' : '#8B95A1',
-              border: showHistoryPanel ? 'none' : '1px solid rgba(0,0,0,0.08)', cursor: 'pointer',
-              fontSize: 12, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4,
-              boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
-            }}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            {lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근'}
-          </button>
-
-          {/* 검색 */}
-          <button
-            onClick={() => setShowSearch(true)}
-            style={{
-              flexShrink: 0, height: 36, padding: '0 14px', borderRadius: 8,
-              background: '#F2F4F6', border: 'none', cursor: 'pointer',
-              fontSize: 13, fontWeight: 600, color: '#191F28', display: 'flex', alignItems: 'center', gap: 4,
-              boxShadow: '0 2px 6px rgba(0,0,0,0.10)',
-              transition: 'all 0.2s',
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            {lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색'}
-          </button>
-          {CATEGORY_CHIPS.map(chip => {
-            const active = activeCategory === chip.id && !tourbusMode
+      {/* ─── 메인 카테고리 바 (지도 밖 상단 고정) ─── */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, background: '#FFFFFF', borderBottom: '0.5px solid #F2F4F6' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 44 }}>
+          {[
+            { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true) },
+            { id: '_recent', label: lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
+            ...CATEGORY_CHIPS.map(c => ({ id: c.id, label: tLang(c.key, lang), action: () => { setActiveCategory(c.id); if (c.id !== 'michelin') setMichelinFilter('all'); if (c.id !== 'food') setFoodCategoryFilter('all'); closeSheet(); exitTourbusMode(); setShowAllPanel(false) } })),
+            { id: '_tourbus', label: 'Tourbus', action: () => { if (tourbusMode) exitTourbusMode(); else { setTourbusMode(true); closeSheet() } } },
+          ].map(item => {
+            const isActive = item.id === '_tourbus' ? tourbusMode
+              : item.id === '_search' || item.id === '_recent' ? false
+              : activeCategory === item.id && !tourbusMode
             return (
-              <button
-                key={chip.id}
-                onClick={() => {
-                  setActiveCategory(chip.id)
-                  if (chip.id !== 'michelin') setMichelinFilter('all')
-                  if (chip.id !== 'food') setFoodCategoryFilter('all')
-                  closeSheet()
-                  exitTourbusMode()
-                  setShowAllPanel(chip.id === 'all' ? v => !v : false)
-                }}
+              <button key={item.id} onClick={item.action}
                 style={{
-                  flexShrink: 0,
-                  height: 34, minWidth: 44,
-                  background: active ? '#3182F6' : '#F2F4F6',
-                  color: active ? 'white' : '#8B95A1',
-                  border: 'none',
-                  borderRadius: 24, padding: '0 16px',
-                  fontSize: 14, fontWeight: 500,
-                  boxShadow: active ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.08)',
-                  transition: 'all 0.2s',
-                  display: 'flex', alignItems: 'center', gap: 4,
-                  cursor: 'pointer',
+                  background: 'none', border: 'none', cursor: 'pointer', padding: '10px 0 8px',
+                  fontSize: 14, fontWeight: isActive ? 600 : 400,
+                  color: isActive ? '#191F28' : '#8B95A1',
+                  position: 'relative', transition: 'all 0.2s',
                 }}
               >
-                {tLang(chip.key, lang)}
+                {item.label}
+                {isActive && <div style={{ position: 'absolute', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: 20, height: 2.5, borderRadius: 1.5, background: '#191F28' }} />}
               </button>
             )
           })}
-          {/* 투어버스 토글 칩 */}
-          <button
-            onClick={() => { if (tourbusMode) exitTourbusMode(); else { setTourbusMode(true); closeSheet() } }}
-            style={{
-              flexShrink: 0,
-              height: 34, minWidth: 44,
-              background: tourbusMode ? '#3182F6' : '#F2F4F6',
-              color: tourbusMode ? 'white' : '#8B95A1',
-              border: 'none',
-              borderRadius: 24, padding: '0 16px',
-              fontSize: 14, fontWeight: 500,
-              boxShadow: tourbusMode ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 4px rgba(0,0,0,0.08)',
-              transition: 'all 0.2s',
-              display: 'flex', alignItems: 'center', gap: 4,
-              cursor: 'pointer',
-            }}
-          >
-            🚌 Tourbus!
-          </button>
         </div>
+      </div>
 
 
-        {/* ─── 투어버스 노선 서브필터 ─── */}
+        {/* ─── 투어버스 노선 서브필터 (플로팅) ─── */}
         {tourbusMode && (
-          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 20px 0', scrollbarWidth: 'none' }}>
+          <div style={{ position: 'absolute', top: 52, left: 0, right: 0, zIndex: 9, display: 'flex', gap: 6, overflowX: 'auto', padding: '0 16px', scrollbarWidth: 'none' }}>
             <button
               onClick={() => setActiveRouteIds([])}
               style={{
-                flexShrink: 0, height: 28, minWidth: 36,
-                background: activeRouteIds.length === 0 ? '#191F28' : 'white',
-                color: activeRouteIds.length === 0 ? 'white' : '#8B95A1',
-                border: activeRouteIds.length === 0 ? 'none' : '1px solid rgba(0,0,0,0.08)',
-                borderRadius: 20, padding: '0 10px',
-                fontSize: 11, fontWeight: activeRouteIds.length === 0 ? 700 : 500,
-                cursor: 'pointer',
+                flexShrink: 0, padding: '8px 14px', borderRadius: 20,
+                background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+                border: 'none',
+                color: activeRouteIds.length === 0 ? '#191F28' : '#8B95A1',
+                fontSize: 12, fontWeight: activeRouteIds.length === 0 ? 600 : 400,
+                cursor: 'pointer', transition: 'all 0.2s',
               }}
             >
               {lang === 'zh' ? '全部' : lang === 'en' ? 'All' : '전체'}
@@ -963,14 +906,12 @@ export default function NearMap() {
                   key={route.id}
                   onClick={() => setActiveRouteIds(prev => active ? prev.filter(id => id !== route.id) : [...prev, route.id])}
                   style={{
-                    flexShrink: 0, height: 28, minWidth: 36,
-                    background: active ? route.color : 'white',
-                    color: active ? 'white' : '#777',
-                    border: active ? 'none' : `1px solid ${route.color}40`,
-                    borderRadius: 20, padding: '0 10px',
-                    fontSize: 11, fontWeight: active ? 700 : 500,
-                    boxShadow: active ? `0 2px 6px ${route.color}40` : '0 1px 3px rgba(0,0,0,0.06)',
-                    cursor: 'pointer', whiteSpace: 'nowrap',
+                    flexShrink: 0, padding: '8px 14px', borderRadius: 20,
+                    background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+                    border: active ? `2px solid ${route.color}` : 'none',
+                    color: active ? '#191F28' : '#8B95A1',
+                    fontSize: 12, fontWeight: active ? 600 : 400,
+                    cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s',
                   }}
                 >
                   {(() => { const l = getRouteDisplayLabel(route); return l[lang] || l.ko })()}
@@ -980,9 +921,9 @@ export default function NearMap() {
           </div>
         )}
 
-        {/* ─── Food 서브카테고리 필터 (미슐랭/블루리본 포함) ─── */}
+        {/* ─── Food 서브카테고리 필터 (플로팅) ─── */}
         {activeCategory === 'food' && !tourbusMode && (
-          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', padding: '4px 20px 0', scrollbarWidth: 'none' }}>
+          <div style={{ position: 'absolute', top: 52, left: 0, right: 0, zIndex: 9, display: 'flex', gap: 6, overflowX: 'auto', padding: '0 16px', scrollbarWidth: 'none' }}>
             {/* 미슐랭 */}
             {[
               { id: 'michelin', icon: '⭐', label: { ko: '미슐랭', zh: '米其林', en: 'Michelin' }, color: '#DC2626' },
@@ -994,18 +935,15 @@ export default function NearMap() {
                   key={special.id}
                   onClick={() => setFoodCategoryFilter(active ? 'all' : special.id)}
                   style={{
-                    flexShrink: 0, height: 28, minWidth: 36,
-                    background: active ? special.color : 'white',
-                    color: active ? 'white' : '#777',
-                    border: active ? 'none' : '1px solid rgba(0,0,0,0.08)',
-                    borderRadius: 20, padding: '0 10px',
-                    fontSize: 11, fontWeight: active ? 700 : 500,
-                    boxShadow: active ? `0 2px 6px ${special.color}40` : '0 1px 3px rgba(0,0,0,0.06)',
-                    transition: 'all 0.15s ease', cursor: 'pointer',
-                    whiteSpace: 'nowrap',
+                    flexShrink: 0, padding: '8px 14px', borderRadius: 20,
+                    background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+                    border: active ? `2px solid ${special.color}` : 'none',
+                    color: active ? '#191F28' : '#8B95A1',
+                    fontSize: 12, fontWeight: active ? 600 : 400,
+                    transition: 'all 0.2s', cursor: 'pointer', whiteSpace: 'nowrap',
                   }}
                 >
-                  {special.icon} {special.label?.[lang] || special.label?.ko}
+                  {special.label?.[lang] || special.label?.ko}
                 </button>
               )
             })}
@@ -1017,12 +955,11 @@ export default function NearMap() {
                   key={cat.id}
                   onClick={() => setFoodCategoryFilter(active ? 'all' : cat.id)}
                   style={{
-                    flexShrink: 0, height: 28, minWidth: 36,
-                    background: active ? '#191F28' : 'white',
-                    color: active ? 'white' : '#777',
-                    border: active ? 'none' : '1px solid rgba(0,0,0,0.08)',
-                    borderRadius: 20, padding: '0 10px',
-                    fontSize: 11, fontWeight: active ? 700 : 500,
+                    flexShrink: 0, padding: '8px 14px', borderRadius: 20,
+                    background: 'rgba(255,255,255,0.88)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+                    border: 'none',
+                    color: active ? '#191F28' : '#8B95A1',
+                    fontSize: 12, fontWeight: active ? 600 : 400,
                     boxShadow: active ? '0 2px 6px rgba(0,0,0,0.18)' : '0 1px 3px rgba(0,0,0,0.06)',
                     transition: 'all 0.15s ease', cursor: 'pointer',
                     whiteSpace: 'nowrap',
@@ -1034,7 +971,6 @@ export default function NearMap() {
             })}
           </div>
         )}
-      </div>
 
       {/* ─── 최근 방문 매장 왼쪽 슬라이드 패널 ─── */}
       {showHistoryPanel && (

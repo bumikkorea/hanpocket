@@ -490,7 +490,21 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
   const [systemSheet, setSystemSheet] = useState(null)
   const [expandedSystem, setExpandedSystem] = useState({})
   const [hoveredItem, setHoveredItem] = useState(null)
-  const [transportPicker, setTransportPicker] = useState(null) // itemId showing picker
+  const [transportPicker, setTransportPicker] = useState(null)
+  const [swipedItemId, setSwipedItemId] = useState(null)
+  const [editingTimeId, setEditingTimeId] = useState(null)
+  const swipeRef = useRef(null)
+
+  const handleItemTimeChange = (itemId, newTime) => {
+    if (!selectedDay || !plan) return
+    const dayData = plan.days[selectedDay]
+    if (!dayData) return
+    const items = dayData.items.map(i => i.id === itemId ? { ...i, time: newTime } : i)
+      .sort((a, b) => { if (a.type === 'system') return -1; if (b.type === 'system') return 1; return (a.time || '').localeCompare(b.time || '') })
+    const next = { ...plan, days: { ...plan.days, [selectedDay]: { ...dayData, items } } }
+    updatePlan(next)
+    setEditingTimeId(null)
+  }
 
   const TRANSPORT_OPTIONS = [
     { id: 'walk', icon: '🚶', label: { ko: '도보', zh: '步行', en: 'Walk' } },
@@ -866,20 +880,66 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                   const dotColor = isClosed ? '#D94F4F' : '#3182F6'
                   const isLast = idx === placeItems.length - 1
 
+                  const isSwiped = swipedItemId === item.id
+                  const isEditingTime = editingTimeId === item.id
+
                   return (
-                    <div
-                      key={item.id}
-                      style={{ display: 'flex', padding: '0 0 0 4px' }}
-                      onMouseEnter={() => setHoveredItem(item.id)}
-                      onMouseLeave={() => setHoveredItem(null)}
-                    >
+                    <div key={item.id} style={{ position: 'relative', overflow: 'hidden' }}>
+                      {/* 스와이프 뒤 액션 버튼 */}
+                      <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'stretch', zIndex: 0 }}>
+                        <button onClick={() => { setEditingTimeId(item.id); setSwipedItemId(null) }}
+                          style={{ width: 60, background: '#34C759', color: 'white', border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {L(lang, { ko: '수정', zh: '修改', en: 'Edit' })}
+                        </button>
+                        <button onClick={() => { setSwipedItemId(null); setTimeout(() => handleDeleteItem(item.id), 50) }}
+                          style={{ width: 60, background: '#FF3B30', color: 'white', border: 'none', cursor: 'pointer', fontSize: 11, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {L(lang, { ko: '삭제', zh: '删除', en: 'Delete' })}
+                        </button>
+                      </div>
+
+                      {/* 카드 본체 (스와이프) */}
+                      <div
+                        style={{
+                          display: 'flex', padding: '0 0 0 4px',
+                          background: '#FFFFFF', position: 'relative', zIndex: 1,
+                          transform: isSwiped ? 'translateX(-120px)' : 'translateX(0)',
+                          transition: 'transform 0.25s ease-out',
+                        }}
+                        onTouchStart={e => {
+                          swipeRef.current = { sx: e.touches[0].clientX, id: item.id }
+                        }}
+                        onTouchMove={e => {
+                          if (!swipeRef.current || swipeRef.current.id !== item.id) return
+                          const dx = e.touches[0].clientX - swipeRef.current.sx
+                          if (dx < -10) e.currentTarget.style.transform = `translateX(${Math.max(-120, dx)}px)`
+                        }}
+                        onTouchEnd={e => {
+                          if (!swipeRef.current || swipeRef.current.id !== item.id) return
+                          const dx = e.changedTouches[0].clientX - swipeRef.current.sx
+                          if (dx < -50) {
+                            setSwipedItemId(item.id)
+                            e.currentTarget.style.transform = 'translateX(-120px)'
+                          } else {
+                            setSwipedItemId(null)
+                            e.currentTarget.style.transform = 'translateX(0)'
+                          }
+                          swipeRef.current = null
+                        }}
+                      >
                       {/* 시간 컬럼 (50px) */}
                       <div style={{ width: 50, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', paddingRight: 8, position: 'relative' }}>
-                        {/* 시간 텍스트 */}
-                        <div style={{ fontSize: 11, fontWeight: 700, color: '#3182F6', lineHeight: 1, marginTop: 2 }}>
-                          {item.time || '--:--'}
-                        </div>
-                        {/* 연결선 (마지막 아이템 제외) */}
+                        {isEditingTime ? (
+                          <input type="time" value={item.time || '10:00'}
+                            onChange={e => handleItemTimeChange(item.id, e.target.value)}
+                            onBlur={() => setEditingTimeId(null)}
+                            autoFocus
+                            style={{ width: 50, fontSize: 10, border: '1px solid #3182F6', borderRadius: 4, padding: '1px 2px', outline: 'none', color: '#3182F6', fontWeight: 700 }}
+                          />
+                        ) : (
+                          <div style={{ fontSize: 11, fontWeight: 700, color: '#3182F6', lineHeight: 1, marginTop: 2 }}>
+                            {item.time || '--:--'}
+                          </div>
+                        )}
                         {!isLast && (
                           <div style={{ position: 'absolute', top: 16, right: -1, bottom: -6, width: 1, background: lineColor }} />
                         )}
@@ -893,18 +953,12 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
 
                       {/* 장소 정보 */}
                       <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : 4 }}>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {displayName}
-                            </div>
-                            {metaLine && <div style={{ fontSize: 10, color: '#8B95A1', marginTop: 2, letterSpacing: '-0.2px' }}>{metaLine}</div>}
-                            {closedDayText && <div style={{ marginTop: 2, fontSize: 10, color: '#D94F4F', fontWeight: 600 }}>{closedDayText}</div>}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {displayName}
                           </div>
-                          <button onClick={() => handleDeleteItem(item.id)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, fontSize: 10, color: '#8B95A1', padding: '2px 4px', opacity: isHovered ? 1 : 0, transition: 'opacity 0.15s' }}>
-                            ✕
-                          </button>
+                          {metaLine && <div style={{ fontSize: 10, color: '#8B95A1', marginTop: 2, letterSpacing: '-0.2px' }}>{metaLine}</div>}
+                          {closedDayText && <div style={{ marginTop: 2, fontSize: 10, color: '#D94F4F', fontWeight: 600 }}>{closedDayText}</div>}
                         </div>
 
                         {/* 이동수단 선택 (마지막 아이템 제외) */}
@@ -958,6 +1012,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                           </div>
                         )}
                       </div>
+                    </div>
                     </div>
                   )
                 })}

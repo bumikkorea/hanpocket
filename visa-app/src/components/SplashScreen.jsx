@@ -3,15 +3,23 @@ import { useState, useEffect } from 'react'
 export default function SplashScreen({ onFinish, lang }) {
   const [fadeOut, setFadeOut] = useState(false)
   const [activeLang, setActiveLang] = useState('ko')
+  const [fontReady, setFontReady] = useState(false)
 
+  // 폰트 로드 완료 대기
   useEffect(() => {
+    document.fonts.ready.then(() => setFontReady(true)).catch(() => setFontReady(true))
+  }, [])
+
+  // 폰트 로드 후 타이머 시작
+  useEffect(() => {
+    if (!fontReady) return
     const duration = lang === 'ko' ? 800 : lang === 'zh' ? 1200 : 1000
     const switchAt = Math.floor(duration * 0.5)
     const t1 = setTimeout(() => setActiveLang('cn'), switchAt)
     const t2 = setTimeout(() => setFadeOut(true), duration)
     const t3 = setTimeout(() => onFinish(), duration + 500)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
-  }, [onFinish, lang])
+  }, [onFinish, lang, fontReady])
 
   return (
     <div
@@ -26,8 +34,18 @@ export default function SplashScreen({ onFinish, lang }) {
       }}
       onClick={() => { setFadeOut(true); setTimeout(onFinish, 500) }}
     >
-      <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div style={{ fontSize: 84, fontWeight: 800, letterSpacing: -4, marginBottom: 24, color: '#000000', fontFamily: "'Nunito', sans-serif" }}>
+      <div style={{
+        textAlign: 'center', width: '100%',
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        opacity: fontReady ? 1 : 0,
+        transition: 'opacity 0.3s ease-in',
+      }}>
+        <div style={{
+          fontSize: 84, fontWeight: 800, letterSpacing: -4, marginBottom: 24, color: '#000000',
+          fontFamily: "'Nunito', sans-serif",
+          WebkitFontSmoothing: 'antialiased',
+          textRendering: 'optimizeLegibility',
+        }}>
           NEAR
         </div>
 

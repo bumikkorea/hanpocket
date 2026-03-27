@@ -220,7 +220,7 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
         <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 12px 0 0', display: 'flex' }}>
           <ChevronLeft size={23} color="#191F28" />
         </button>
-        <span style={{ fontSize: 17, fontWeight: 800, flex: 1, letterSpacing: '-0.3px' }}>실시간 통역기</span>
+        <span style={{ fontSize: 17, fontWeight: 800, flex: 1, letterSpacing: '-0.3px' }}>{lang === 'zh' ? '实时翻译' : lang === 'en' ? 'Live Interpreter' : '실시간 통역기'}</span>
         <button onClick={reset} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex' }}>
           <RotateCcw size={18} color="#8B95A1" />
         </button>
@@ -280,7 +280,7 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
           }}>
             <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>中文</span>
             <span style={{ fontSize: 11, color: '#8B95A1' }}>↔</span>
-            <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>한국어</span>
+            <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>{lang === 'zh' ? '韩语' : lang === 'en' ? 'Korean' : '한국어'}</span>
             <span style={{ fontSize: 11, color: '#8B95A1', marginLeft: 4 }}>· 자동 번역</span>
           </div>
 
@@ -338,10 +338,10 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
               }}
             >
               {activeRec === 'A'
-                ? <><MicOff size={24} /><span style={{ fontSize: 12, fontWeight: 700 }}>듣는 중…</span></>
+                ? <><MicOff size={24} /><span style={{ fontSize: 12, fontWeight: 700 }}>{lang === 'zh' ? '听取中…' : lang === 'en' ? 'Listening…' : '듣는 중…'}</span></>
                 : <>
                     <Mic size={24} />
-                    <span style={{ fontSize: 13, fontWeight: 800 }}>내가 말하기</span>
+                    <span style={{ fontSize: 13, fontWeight: 800 }}>{lang === 'zh' ? '我说' : lang === 'en' ? 'I speak' : '내가 말하기'}</span>
                     <span style={{ fontSize: 11, opacity: 0.55 }}>中文으로</span>
                   </>
               }
@@ -364,11 +364,11 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
               }}
             >
               {activeRec === 'B'
-                ? <><MicOff size={24} /><span style={{ fontSize: 12, fontWeight: 700 }}>듣는 중…</span></>
+                ? <><MicOff size={24} /><span style={{ fontSize: 12, fontWeight: 700 }}>{lang === 'zh' ? '听取中…' : lang === 'en' ? 'Listening…' : '듣는 중…'}</span></>
                 : <>
                     <Mic size={24} />
-                    <span style={{ fontSize: 13, fontWeight: 800 }}>상대방 말하기</span>
-                    <span style={{ fontSize: 11, opacity: 0.45 }}>한국어로</span>
+                    <span style={{ fontSize: 13, fontWeight: 800 }}>{lang === 'zh' ? '对方说' : lang === 'en' ? 'They speak' : '상대방 말하기'}</span>
+                    <span style={{ fontSize: 11, opacity: 0.45 }}>{lang === 'zh' ? '用韩语' : lang === 'en' ? 'in Korean' : '한국어로'}</span>
                   </>
               }
             </button>
@@ -452,11 +452,11 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
               </span>
               <div style={{ flex: 1, overflowY: 'auto' }}>
                 {isTranslating ? (
-                  <span style={{ fontSize: 17, color: '#8B95A1' }}>번역 중…</span>
+                  <span style={{ fontSize: 17, color: '#8B95A1' }}>{lang === 'zh' ? '翻译中…' : lang === 'en' ? 'Translating…' : '번역 중…'}</span>
                 ) : translated ? (
                   <p style={{ fontSize: 20, lineHeight: 1.6, color: '#191F28', margin: 0 }}>{translated}</p>
                 ) : (
-                  <span style={{ fontSize: 15, color: '#8B95A1' }}>번역 결과</span>
+                  <span style={{ fontSize: 15, color: '#8B95A1' }}>{lang === 'zh' ? '翻译结果' : lang === 'en' ? 'Result' : '번역 결과'}</span>
                 )}
               </div>
               {/* 재생 버튼 */}

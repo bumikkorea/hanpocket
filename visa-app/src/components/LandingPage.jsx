@@ -22,7 +22,7 @@ export default function LandingPage({ onEnter }) {
     <div
       className="fixed inset-0 z-[400] flex flex-col items-center justify-center"
       style={{
-        background: '#C4715A',
+        background: '#3182F6',
         transition: 'opacity 0.3s ease',
         opacity: exiting ? 0 : 1,
       }}

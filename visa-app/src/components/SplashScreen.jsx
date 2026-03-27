@@ -10,12 +10,20 @@ export default function SplashScreen({ onFinish, lang }) {
     document.fonts.ready.then(() => setFontReady(true)).catch(() => setFontReady(true))
   }, [])
 
+  // Set initial language based on lang prop
+  useEffect(() => {
+    if (lang === 'zh') setActiveLang('cn')
+    else if (lang === 'en') setActiveLang('en')
+    else setActiveLang('ko')
+  }, [lang])
+
   // 폰트 로드 후 타이머 시작
   useEffect(() => {
     if (!fontReady) return
     const duration = lang === 'ko' ? 800 : lang === 'zh' ? 1200 : 1000
     const switchAt = Math.floor(duration * 0.5)
-    const t1 = setTimeout(() => setActiveLang('cn'), switchAt)
+    const secondLang = lang === 'zh' ? 'ko' : lang === 'en' ? 'ko' : 'cn'
+    const t1 = setTimeout(() => setActiveLang(secondLang), switchAt)
     const t2 = setTimeout(() => setFadeOut(true), duration)
     const t3 = setTimeout(() => onFinish(), duration + 500)
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
@@ -65,6 +73,14 @@ export default function SplashScreen({ onFinish, lang }) {
             transition: 'all 0.4s ease-in-out', whiteSpace: 'nowrap',
           }}>
             您的韩国高端服务管家。
+          </div>
+          <div style={{
+            position: 'absolute', fontSize: 16, fontWeight: 400, color: '#444',
+            opacity: activeLang === 'en' ? 1 : 0,
+            transform: activeLang === 'en' ? 'translateY(0)' : 'translateY(10px)',
+            transition: 'all 0.4s ease-in-out', whiteSpace: 'nowrap',
+          }}>
+            For your most Korean moment
           </div>
         </div>
 

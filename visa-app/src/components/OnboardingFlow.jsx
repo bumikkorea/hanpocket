@@ -99,7 +99,7 @@ export default function OnboardingFlow({ onComplete, lang, setLang }) {
   }, [step])
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: step === 'splash' ? '#FFFFFF' : '#C4715A' }}>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: step === 'splash' ? '#FFFFFF' : '#3182F6' }}>
       <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
         {/* 언어 토글 - splash 제외 */}
         {step !== 'splash' && (

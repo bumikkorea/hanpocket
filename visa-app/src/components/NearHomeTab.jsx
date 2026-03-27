@@ -42,37 +42,32 @@ const CAT_LABELS = {
 
 // ─── "지금 뜨는 곳" 하드코드 데이터 (가로 스크롤) ───
 const TRENDING_SPOTS = [
-  { id: 'tr1', title: { ko: '성수 카페거리', zh: '圣水咖啡街', en: 'Seongsu Cafe St' }, tag: { ko: '카페', zh: '咖啡', en: 'Cafe' }, gradient: 'linear-gradient(160deg,#EFEBE9,#D7CCC8)' },
-  { id: 'tr2', title: { ko: '망원 한강공원', zh: '望远汉江公园', en: 'Mangwon Hangang' }, tag: { ko: '산책', zh: '散步', en: 'Walk' }, gradient: 'linear-gradient(160deg,#E8F5E9,#C8E6C9)' },
-  { id: 'tr3', title: { ko: '을지로 노포', zh: '乙支路老店', en: 'Euljiro Retro' }, tag: { ko: '맛집', zh: '美食', en: 'Food' }, gradient: 'linear-gradient(160deg,#FFF3E0,#FFE0B2)' },
-  { id: 'tr4', title: { ko: '한남동 편집샵', zh: '汉南洞买手店', en: 'Hannam Select' }, tag: { ko: '쇼핑', zh: '购物', en: 'Shopping' }, gradient: 'linear-gradient(160deg,#F3E5F5,#E1BEE7)' },
-  { id: 'tr5', title: { ko: '연남동 골목', zh: '延南洞胡同', en: 'Yeonnam Alley' }, tag: { ko: '팝업', zh: '快闪', en: 'Popup' }, gradient: 'linear-gradient(160deg,#FFEEF0,#FFD6DC)' },
-  { id: 'tr6', title: { ko: '삼청동 한옥', zh: '三清洞韩屋', en: 'Samcheong Hanok' }, tag: { ko: '관광', zh: '景点', en: 'Tour' }, gradient: 'linear-gradient(160deg,#E8F4FF,#BBDEFB)' },
+  { id: 'tr1', title: { ko: '성수 카페거리', zh: '圣水咖啡街', en: 'Seongsu Cafe St' }, tag: { ko: '카페', zh: '咖啡', en: 'Cafe' } },
+  { id: 'tr2', title: { ko: '망원 한강공원', zh: '望远汉江公园', en: 'Mangwon Hangang' }, tag: { ko: '산책', zh: '散步', en: 'Walk' } },
+  { id: 'tr3', title: { ko: '을지로 노포', zh: '乙支路老店', en: 'Euljiro Retro' }, tag: { ko: '맛집', zh: '美食', en: 'Food' } },
+  { id: 'tr4', title: { ko: '한남동 편집샵', zh: '汉南洞买手店', en: 'Hannam Select' }, tag: { ko: '쇼핑', zh: '购物', en: 'Shopping' } },
+  { id: 'tr5', title: { ko: '연남동 골목', zh: '延南洞胡同', en: 'Yeonnam Alley' }, tag: { ko: '팝업', zh: '快闪', en: 'Popup' } },
+  { id: 'tr6', title: { ko: '삼청동 한옥', zh: '三清洞韩屋', en: 'Samcheong Hanok' }, tag: { ko: '관광', zh: '景点', en: 'Tour' } },
 ]
 
 // ─── 추천 장소 (피드 데이터) ───
 const FEED_DATA = [
-  { id: 'fd1', category: 'beauty',   titleKey: 'feed.1.title', locationKey: 'feed.1.location', statusKey: null,            likes: '328',  gradient: 'linear-gradient(160deg,#FFEEF0,#FFD6DC)' },
-  { id: 'fd2', category: 'food',     titleKey: 'feed.2.title', locationKey: null,              statusKey: 'feed.2.status', likes: '892',  gradient: 'linear-gradient(160deg,#F3E5F5,#E1BEE7)' },
-  { id: 'fd3', category: 'popup',    titleKey: 'feed.3.title', locationKey: 'feed.3.location', statusKey: null,            likes: '1.2k', gradient: 'linear-gradient(160deg,#FFF3E0,#FFE0B2)' },
-  { id: 'fd4', category: 'cafe',     titleKey: 'feed.4.title', locationKey: null,              statusKey: 'feed.4.status', likes: '567',  gradient: 'linear-gradient(160deg,#E8F5E9,#C8E6C9)' },
-  { id: 'fd5', category: 'shopping', titleKey: 'feed.5.title', locationKey: 'feed.5.location', statusKey: null,            likes: '2.1k', gradient: 'linear-gradient(160deg,#FCE4EC,#F8BBD9)' },
-  { id: 'fd6', category: 'nail',     titleKey: 'feed.6.title', locationKey: 'feed.6.location', statusKey: null,            likes: '445',  gradient: 'linear-gradient(160deg,#EFEBE9,#D7CCC8)' },
+  { id: 'fd1', category: 'beauty',   titleKey: 'feed.1.title', locationKey: 'feed.1.location', statusKey: null,            likes: '328'  },
+  { id: 'fd2', category: 'food',     titleKey: 'feed.2.title', locationKey: null,              statusKey: 'feed.2.status', likes: '892'  },
+  { id: 'fd3', category: 'popup',    titleKey: 'feed.3.title', locationKey: 'feed.3.location', statusKey: null,            likes: '1.2k' },
+  { id: 'fd4', category: 'cafe',     titleKey: 'feed.4.title', locationKey: null,              statusKey: 'feed.4.status', likes: '567'  },
+  { id: 'fd5', category: 'shopping', titleKey: 'feed.5.title', locationKey: 'feed.5.location', statusKey: null,            likes: '2.1k' },
+  { id: 'fd6', category: 'nail',     titleKey: 'feed.6.title', locationKey: 'feed.6.location', statusKey: null,            likes: '445'  },
 ]
 
 // ─── TourAPI 매핑 ───
 const TOUR_CAT_MAP = { '82': 'food', '85': 'shopping', '76': 'beauty', '78': 'popup', '32': 'hotel', '38': 'hotel' }
-const TOUR_GRADIENTS = {
-  food: 'linear-gradient(160deg,#FFF3E0,#FFE0B2)', shopping: 'linear-gradient(160deg,#FCE4EC,#F8BBD9)',
-  beauty: 'linear-gradient(160deg,#FFEEF0,#FFD6DC)', popup: 'linear-gradient(160deg,#F3E5F5,#E1BEE7)',
-  hotel: 'linear-gradient(160deg,#E8F5E9,#C8E6C9)', more: 'linear-gradient(160deg,#E8F4FF,#BBDEFB)',
-}
 function normalizeTourItem(item) {
   const cat = TOUR_CAT_MAP[String(item.contentTypeId)] || 'more'
   return {
     id: `tour_${item.contentid}`, title: item.title,
     image: item.firstimage || item.firstimage2 || null,
-    gradient: (!item.firstimage && !item.firstimage2) ? TOUR_GRADIENTS[cat] : undefined,
+    // 이미지 없으면 surface-l1 배경 사용 (렌더 시 처리)
     url: (item.mapx && item.mapy) ? `https://map.kakao.com/link/map/${encodeURIComponent(item.title)},${item.mapy},${item.mapx}` : null,
     category: cat, tags: [], addr: item.addr1 || '', source: 'tour',
   }
@@ -638,10 +633,10 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         <div style={{ overflowX: 'auto', display: 'flex', gap: 12, padding: '0 24px 48px', scrollbarWidth: 'none' }}>
           {TRENDING_SPOTS.map(spot => (
             <div key={spot.id} style={{
-              flexShrink: 0, width: 200, borderRadius: 16, overflow: 'hidden',
+              flexShrink: 0, width: 160, borderRadius: 16, overflow: 'hidden',
               background: '#FFFFFF', boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
             }}>
-              <div style={{ height: 140, background: spot.gradient }} />
+              <div style={{ aspectRatio: '4/3', background: '#F2F4F6' }} />
               <div style={{ padding: '10px 12px 12px' }}>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#191F28', marginBottom: 6 }}>
                   {L(lang, spot.title)}
@@ -717,7 +712,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, padding: '0 24px' }}>
           {(showSearch ? results : filteredFeed).map((item) => {
-            const isFeed = 'gradient' in item
+            const isFeed = !!item.titleKey
             return (
               <div key={item.id}
                 onClick={() => !isFeed && item.url && window.open(item.url, '_blank')}
@@ -726,7 +721,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
                   boxShadow: '0 4px 12px rgba(0,0,0,0.05)', cursor: 'pointer',
                 }}
               >
-                <div style={{ width: '100%', aspectRatio: '4/3', background: isFeed ? item.gradient : (item.image ? 'none' : '#F2F4F6'), position: 'relative', overflow: 'hidden' }}>
+                <div style={{ width: '100%', aspectRatio: '4/3', background: item.image ? 'none' : '#F2F4F6', position: 'relative', overflow: 'hidden' }}>
                   {!isFeed && item.image && (
                     <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={e => { e.target.style.display = 'none' }} loading="lazy" />
                   )}

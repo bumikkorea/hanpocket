@@ -481,8 +481,10 @@ export default function NearMap() {
     setActivePopup(poi)
     addPlaceHistory(poi)
     navigator.vibrate?.(10)  // 햅틱 피드백
-    if (mapInstance.current) {
-      mapInstance.current.panTo(new window.kakao.maps.LatLng(poi.lat, poi.lng))
+    if (mapInstance.current && poi.lat && poi.lng) {
+      const pos = new window.kakao.maps.LatLng(poi.lat, poi.lng)
+      mapInstance.current.panTo(pos)
+      if (mapInstance.current.getLevel() > 5) mapInstance.current.setLevel(4)
     }
     // 일반 핀 하이라이트
     overlaysRef.current.forEach(({ el, poi: p }) => {

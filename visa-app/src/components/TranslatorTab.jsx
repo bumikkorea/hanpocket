@@ -274,7 +274,7 @@ export default function TranslatorTab({ lang }) {
         onClick={() => setShowLive(true)}
         style={{
           width: '100%', borderRadius: 16, padding: '16px 18px',
-          background: '#1A1A1A', border: 'none', cursor: 'pointer',
+          background: '#191F28', border: 'none', cursor: 'pointer',
           display: 'flex', alignItems: 'center', gap: 14, textAlign: 'left',
         }}
       >

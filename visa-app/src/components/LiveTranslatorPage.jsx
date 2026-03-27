@@ -28,17 +28,17 @@ function ChatBubble({ entry, onSpeak }) {
   const isA = entry.side === 'A'
   return (
     <div style={{ marginBottom: 18, display: 'flex', flexDirection: 'column', alignItems: isA ? 'flex-end' : 'flex-start' }}>
-      <span style={{ fontSize: 10, color: '#bbb', marginBottom: 5, fontWeight: 600 }}>
+      <span style={{ fontSize: 10, color: '#8B95A1', marginBottom: 5, fontWeight: 600 }}>
         {isA ? `나  ·  ${LANG.zh.label}` : `상대방  ·  ${LANG.ko.label}`}
       </span>
       {/* 원문 */}
       <div style={{
         maxWidth: '82%', padding: '11px 15px',
         borderRadius: isA ? '18px 18px 5px 18px' : '18px 18px 18px 5px',
-        background: isA ? '#1A1A1A' : 'white',
-        color: isA ? 'white' : '#1A1A1A',
+        background: isA ? '#191F28' : 'white',
+        color: isA ? 'white' : '#191F28',
         fontSize: 16, lineHeight: 1.55, fontWeight: 500,
-        boxShadow: '0 1px 6px rgba(0,0,0,0.08)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
         border: isA ? 'none' : '1px solid rgba(0,0,0,0.08)',
         marginBottom: 5,
         wordBreak: 'keep-all',
@@ -209,21 +209,22 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9800,
-      background: '#F2F2F2', display: 'flex', flexDirection: 'column',
-      fontFamily: 'Inter, "Noto Sans SC", Pretendard, sans-serif',
+      background: '#FFFFFF', display: 'flex', flexDirection: 'column',
+      fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif",
     }}>
 
       {/* ── 헤더 ── */}
       <div style={{
         display: 'flex', alignItems: 'center', height: 54, padding: '0 16px',
-        background: 'white', borderBottom: '1px solid rgba(0,0,0,0.07)', flexShrink: 0,
+        background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(0,0,0,0.07)', flexShrink: 0,
       }}>
         <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 12px 0 0', display: 'flex' }}>
-          <ChevronLeft size={23} color="#1A1A1A" />
+          <ChevronLeft size={23} color="#191F28" />
         </button>
         <span style={{ fontSize: 17, fontWeight: 800, flex: 1, letterSpacing: '-0.3px' }}>실시간 통역기</span>
         <button onClick={reset} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 6, display: 'flex' }}>
-          <RotateCcw size={18} color="#bbb" />
+          <RotateCcw size={18} color="#8B95A1" />
         </button>
       </div>
 
@@ -240,8 +241,8 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
             <button key={t.id} onClick={() => setSubPage?.(t.id)} style={{
               flex: 1, padding: '10px 0 8px', background: 'none', border: 'none', cursor: 'pointer',
               fontSize: 14, fontWeight: isActive ? 700 : 500,
-              color: isActive ? '#C4725A' : '#A8A8A8',
-              borderBottom: isActive ? '2px solid #C4725A' : '2px solid transparent',
+              color: isActive ? '#3182F6' : '#8B95A1',
+              borderBottom: isActive ? '2px solid #3182F6' : '2px solid transparent',
               transition: 'all 0.15s',
             }}>
               {t.label[lang] || t.label.en}
@@ -257,9 +258,9 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
           { id: 'text', label: '텍스트',   icon: '📝' },
         ].map(m => (
           <button key={m.id} onClick={() => handleModeChange(m.id)} style={{
-            flex: 1, height: 42, borderRadius: 12,
-            background: mode === m.id ? '#1A1A1A' : '#F2F2F2',
-            color: mode === m.id ? 'white' : '#777',
+            flex: 1, height: 42, borderRadius: 8,
+            background: mode === m.id ? '#191F28' : '#F2F4F6',
+            color: mode === m.id ? 'white' : '#191F28',
             border: 'none', fontSize: 12, fontWeight: 700, cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5,
             transition: 'all 0.15s',
@@ -280,10 +281,10 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
             flexShrink: 0,
           }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>中文</span>
-            <span style={{ fontSize: 11, color: '#bbb' }}>↔</span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#1A1A1A' }}>한국어</span>
-            <span style={{ fontSize: 11, color: '#bbb', marginLeft: 4 }}>· 자동 번역</span>
+            <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>中文</span>
+            <span style={{ fontSize: 11, color: '#8B95A1' }}>↔</span>
+            <span style={{ fontSize: 16, fontWeight: 700, color: '#191F28' }}>한국어</span>
+            <span style={{ fontSize: 11, color: '#8B95A1', marginLeft: 4 }}>· 자동 번역</span>
           </div>
 
           {/* 채팅 로그 */}
@@ -291,10 +292,10 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
             {chatLog.length === 0 && !chatInterim.text ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 10, paddingBottom: 60 }}>
                 <span style={{ fontSize: 48 }}>💬</span>
-                <p style={{ fontSize: 15, color: '#bbb', textAlign: 'center', margin: 0, lineHeight: 1.6 }}>
+                <p style={{ fontSize: 15, color: '#8B95A1', textAlign: 'center', margin: 0, lineHeight: 1.6 }}>
                   아래 버튼을 눌러 대화를 시작하세요
                 </p>
-                <p style={{ fontSize: 12, color: '#ddd', textAlign: 'center', margin: 0 }}>
+                <p style={{ fontSize: 12, color: '#8B95A1', textAlign: 'center', margin: 0 }}>
                   버튼을 누르는 동안 녹음됩니다
                 </p>
               </div>
@@ -332,12 +333,12 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
               onPointerUp={stopChatListen}
               onPointerCancel={stopChatListen}
               style={{
-                height: 80, borderRadius: 18, border: 'none', cursor: 'pointer',
-                background: activeRec === 'A' ? '#EF4444' : '#1A1A1A',
+                height: 80, borderRadius: 16, border: 'none', cursor: 'pointer',
+                background: activeRec === 'A' ? '#EF4444' : '#191F28',
                 color: 'white', display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center', gap: 5,
-                transition: 'background 0.15s', userSelect: 'none', WebkitUserSelect: 'none',
-                boxShadow: activeRec === 'A' ? '0 0 0 4px rgba(239,68,68,0.25)' : '0 2px 10px rgba(0,0,0,0.15)',
+                transition: 'all 0.2s', userSelect: 'none', WebkitUserSelect: 'none',
+                boxShadow: activeRec === 'A' ? '0 0 0 4px rgba(239,68,68,0.25)' : '0 4px 12px rgba(0,0,0,0.05)',
               }}
             >
               {activeRec === 'A'
@@ -356,14 +357,14 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
               onPointerUp={stopChatListen}
               onPointerCancel={stopChatListen}
               style={{
-                height: 80, borderRadius: 18, cursor: 'pointer',
-                background: activeRec === 'B' ? '#EF4444' : 'white',
-                color: activeRec === 'B' ? 'white' : '#1A1A1A',
-                border: activeRec === 'B' ? 'none' : '2px solid #1A1A1A',
+                height: 80, borderRadius: 16, cursor: 'pointer',
+                background: activeRec === 'B' ? '#EF4444' : '#FFFFFF',
+                color: activeRec === 'B' ? 'white' : '#191F28',
+                border: activeRec === 'B' ? 'none' : '1px solid #F2F4F6',
                 display: 'flex', flexDirection: 'column',
                 alignItems: 'center', justifyContent: 'center', gap: 5,
-                transition: 'all 0.15s', userSelect: 'none', WebkitUserSelect: 'none',
-                boxShadow: activeRec === 'B' ? '0 0 0 4px rgba(239,68,68,0.25)' : 'none',
+                transition: 'all 0.2s', userSelect: 'none', WebkitUserSelect: 'none',
+                boxShadow: activeRec === 'B' ? '0 0 0 4px rgba(239,68,68,0.25)' : '0 4px 12px rgba(0,0,0,0.05)',
               }}
             >
               {activeRec === 'B'
@@ -393,12 +394,12 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
               onClick={() => { setDirIdx(v => 1 - v); setInputText(''); setTranslated(''); setInterimText('') }}
               style={{
                 display: 'flex', alignItems: 'center', gap: 10, padding: '8px 20px',
-                borderRadius: 24, background: '#F2F2F2', border: 'none', cursor: 'pointer',
+                borderRadius: 24, background: '#F2F4F6', border: 'none', cursor: 'pointer',
               }}
             >
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#1A1A1A' }}>{LANG[textDir.from].label}</span>
-              <ArrowLeftRight size={15} color="#999" />
-              <span style={{ fontSize: 14, fontWeight: 800, color: '#1A1A1A' }}>{LANG[textDir.to].label}</span>
+              <span style={{ fontSize: 14, fontWeight: 800, color: '#191F28' }}>{LANG[textDir.from].label}</span>
+              <ArrowLeftRight size={15} color="#8B95A1" />
+              <span style={{ fontSize: 14, fontWeight: 800, color: '#191F28' }}>{LANG[textDir.to].label}</span>
             </button>
           </div>
 
@@ -411,7 +412,7 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
               display: 'flex', flexDirection: 'column', padding: '14px 16px 54px',
               position: 'relative', overflow: 'hidden', transition: 'border-color 0.2s',
             }}>
-              <span style={{ fontSize: 11, fontWeight: 800, color: '#bbb', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 10 }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: '#8B95A1', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 10 }}>
                 {LANG[textDir.from].label}
               </span>
               <textarea
@@ -420,12 +421,12 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
                 placeholder={LANG[textDir.from].placeholder}
                 style={{
                   flex: 1, border: 'none', outline: 'none', resize: 'none',
-                  fontSize: 20, lineHeight: 1.6, color: '#1A1A1A',
+                  fontSize: 20, lineHeight: 1.6, color: '#191F28',
                   background: 'transparent', fontFamily: 'inherit',
                 }}
               />
               {interimText && (
-                <p style={{ fontSize: 16, color: '#bbb', margin: '4px 0 0', fontStyle: 'italic' }}>{interimText}…</p>
+                <p style={{ fontSize: 16, color: '#8B95A1', margin: '4px 0 0', fontStyle: 'italic' }}>{interimText}…</p>
               )}
               {/* 마이크 버튼 */}
               <button
@@ -433,10 +434,10 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
                 style={{
                   position: 'absolute', bottom: 14, right: 14,
                   width: 46, height: 46, borderRadius: '50%', border: 'none', cursor: 'pointer',
-                  background: isListening ? '#EF4444' : '#1A1A1A',
+                  background: isListening ? '#EF4444' : '#191F28',
                   color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   transition: 'background 0.15s',
-                  boxShadow: isListening ? '0 0 0 4px rgba(239,68,68,0.2)' : '0 2px 8px rgba(0,0,0,0.18)',
+                  boxShadow: isListening ? '0 0 0 4px rgba(239,68,68,0.2)' : '0 4px 12px rgba(0,0,0,0.05)',
                 }}
               >
                 {isListening ? <MicOff size={20} /> : <Mic size={20} />}
@@ -450,16 +451,16 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
               display: 'flex', flexDirection: 'column', padding: '14px 16px 54px',
               position: 'relative', overflow: 'hidden',
             }}>
-              <span style={{ fontSize: 11, fontWeight: 800, color: '#bbb', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 10 }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: '#8B95A1', letterSpacing: '0.07em', textTransform: 'uppercase', marginBottom: 10 }}>
                 {LANG[textDir.to].label}
               </span>
               <div style={{ flex: 1, overflowY: 'auto' }}>
                 {isTranslating ? (
-                  <span style={{ fontSize: 17, color: '#ccc' }}>번역 중…</span>
+                  <span style={{ fontSize: 17, color: '#8B95A1' }}>번역 중…</span>
                 ) : translated ? (
-                  <p style={{ fontSize: 20, lineHeight: 1.6, color: '#1A1A1A', margin: 0 }}>{translated}</p>
+                  <p style={{ fontSize: 20, lineHeight: 1.6, color: '#191F28', margin: 0 }}>{translated}</p>
                 ) : (
-                  <span style={{ fontSize: 15, color: '#e0e0e0' }}>번역 결과</span>
+                  <span style={{ fontSize: 15, color: '#8B95A1' }}>번역 결과</span>
                 )}
               </div>
               {/* 재생 버튼 */}
@@ -472,7 +473,7 @@ export default function LiveTranslatorPage({ lang, onBack, activeSubPage, setSub
                     background: isSpeaking ? '#EF4444' : '#059669',
                     color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: 'background 0.15s',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                   }}
                 >
                   {isSpeaking ? <Square size={18} fill="white" /> : <Volume2 size={20} />}

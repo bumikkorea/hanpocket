@@ -452,13 +452,10 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         </div>
       )}
 
-      {/* ─── 1. 인사 + 사용자 이름 ─── */}
+      {/* ─── 1. 인사 + 사용자 이름 (한 줄) ─── */}
       <div style={{ padding: '10px 24px 16px', ...fadeUp(0) }}>
-        <div style={{ fontSize: lang === 'en' ? 22 : lang === 'ja' ? 20 : 22, fontWeight: 700, color: '#191F28', letterSpacing: lang === 'en' ? '-0.3px' : '-0.5px', marginBottom: 4, lineHeight: 1.3 }}>
-          {getGreeting(lang)}
-        </div>
-        <div style={{ fontSize: lang === 'en' ? 30 : lang === 'ja' ? 26 : 28, fontWeight: 700, color: '#3182F6', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
-          {userName}<span className="blinking-dot">.</span>
+        <div style={{ fontSize: lang === 'en' ? 24 : lang === 'ja' ? 22 : 24, fontWeight: 700, color: '#191F28', letterSpacing: '-0.3px', lineHeight: 1.3 }}>
+          {getGreeting(lang)} <span style={{ color: '#3182F6' }}>{userName}<span className="blinking-dot">.</span></span>
         </div>
       </div>
 

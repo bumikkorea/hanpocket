@@ -1282,7 +1282,7 @@ export default function NearMap() {
               <CompactSheetCard
                 poi={sheetPoi}
                 lang={lang}
-                onExpand={() => selectPin(sheetPoi)}
+                onExpand={() => { selectPin(sheetPoi); snapSheet(true) }}
               />
             ) : (
               <NearbyHotFallback pins={hotFallback} lang={lang} onSelect={selectPin} />
@@ -1528,9 +1528,9 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         <button onClick={onClose} style={{ color: '#8B95A1', fontSize: 18, background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 8px', lineHeight: 1 }}>✕</button>
       </div>
 
-      <div style={{ padding: '0 20px 20px' }}>
+      <div style={{ padding: '0 16px 12px' }}>
         {/* 이름 + NEW 뱃지 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: '#191F28', margin: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {getLocalizedName(poi, lang)}
           </h2>
@@ -1542,7 +1542,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
         </div>
 
         {/* 종류 + 거리 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: address ? 10 : 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: address ? 6 : 8 }}>
           {poi.category && (
             <span style={{ fontSize: 11, fontWeight: 700, color: cfg.color, background: cfg.color + '18', borderRadius: 6, padding: '2px 8px', flexShrink: 0 }}>
               {catLabel}
@@ -1553,7 +1553,7 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
 
         {/* 주소 — 한 번만 */}
         {address ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
             <span style={{ fontSize: 13, color: '#8B95A1', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               📍 {address}
             </span>
@@ -1576,16 +1576,14 @@ function ExpandedSheetContent({ poi, lang, bookmarks, onBookmark, onClose, onNav
 
         {/* 운영 기간 */}
         {poi.is_temporary && poi.start_date && poi.end_date && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-            <span style={{ fontSize: 14 }}>📅</span>
-            <span style={{ fontSize: 13, color: '#444' }}>{poi.start_date} – {poi.end_date}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+            <span style={{ fontSize: 12, color: '#8B95A1' }}>{poi.start_date} – {poi.end_date}</span>
           </div>
         )}
 
         {/* 영업 시간 */}
         {poi.open_time && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-            <span style={{ fontSize: 14 }}>⏰</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
             <span style={{ fontSize: 13, color: '#444' }}>{poi.open_time}–{poi.close_time}</span>
             {status === 'open' && <span style={{ fontSize: 10, background: '#DCFCE7', color: '#16A34A', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_open', lang)}</span>}
             {status === 'closed' && <span style={{ fontSize: 10, background: '#FEE2E2', color: '#DC2626', borderRadius: 4, padding: '1px 6px', fontWeight: 700 }}>{tLang('status_closed', lang)}</span>}

@@ -73,7 +73,7 @@ export default function SplashScreen({ onFinish }) {
       {/* 콘텐츠 */}
       <div style={{ textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         {/* 로고 */}
-        <div style={{ fontSize: 84, fontWeight: 900, letterSpacing: -4, marginBottom: 24, color: '#000000' }}>
+        <div style={{ fontSize: 84, fontWeight: 900, letterSpacing: -4, marginBottom: 24, color: '#000000', fontFamily: "'Montserrat', sans-serif" }}>
           NEAR
         </div>
 

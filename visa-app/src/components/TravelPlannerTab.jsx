@@ -596,18 +596,27 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
   if (!plan || editDates) {
     return (
       <div style={{
-        position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, zIndex: 40,
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 65, zIndex: 1100,
         background: '#FFFFFF',
         transform: slideIn ? 'translateX(0)' : 'translateX(100%)',
         transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         fontFamily: '-apple-system, "Pretendard", "Noto Sans SC", sans-serif',
         display: 'flex', flexDirection: 'column',
       }}>
-        {/* 헤더 */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #F2F4F6' }}>
+        {/* 헤더 (앱 헤더 스타일) */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '8px 16px',
+          background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: '1px solid #F2F4F6',
+        }}>
+          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#191F28', padding: '8px', display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44 }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
           <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
             {L(lang, { ko: '내 일정', zh: '我的行程', en: 'My Itinerary' })}
           </span>
+          <div style={{ minWidth: 44 }} />
         </div>
         <div style={{ flex: 1, overflowY: 'auto' }}>
           <DateSetupScreen
@@ -628,7 +637,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
 
   return (
     <div style={{
-      position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, zIndex: 40,
+      position: 'fixed', top: 0, left: 0, right: 0, bottom: 65, zIndex: 1100,
       background: '#FFFFFF',
       transform: slideIn ? 'translateX(0)' : 'translateX(100%)',
       transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -636,20 +645,25 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
       display: 'flex', flexDirection: 'column',
     }}>
 
-      {/* ─── 상단 헤더 ─── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #F2F4F6', flexShrink: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#191F28', padding: '4px', display: 'flex', alignItems: 'center' }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-          </button>
-          <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
-            {L(lang, { ko: '내 일정', zh: '我的行程', en: 'My Itinerary' })}
-          </span>
-        </div>
-        <button onClick={() => setShowDatePicker(v => !v)} style={{ background: '#F2F4F6', border: 'none', cursor: 'pointer', fontSize: 11, color: '#8B95A1', fontWeight: 500, padding: '4px 10px', borderRadius: 20, transition: 'all 0.2s' }}>
+      {/* ─── 상단 헤더 (앱 헤더와 동일 스타일) ─── */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '8px 16px', flexShrink: 0,
+        background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
+        borderBottom: '1px solid #F2F4F6',
+      }}>
+        <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#191F28', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', minWidth: 44, minHeight: 44 }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
+          {L(lang, { ko: '내 일정', zh: '我的行程', en: 'My Itinerary' })}
+        </span>
+        <button onClick={() => setShowDatePicker(v => !v)} style={{ background: '#F2F4F6', border: 'none', cursor: 'pointer', fontSize: 11, color: '#8B95A1', fontWeight: 500, padding: '4px 10px', borderRadius: 20, transition: 'all 0.2s', minWidth: 44 }}>
           {L(lang, { ko: '수정', zh: '修改', en: 'Edit' })}
         </button>
       </div>
+
+      {/* ─── 헤더 아래 간격 ─── */}
 
       {/* ─── 인라인 날짜 피커 ─── */}
       {showDatePicker && (

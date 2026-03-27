@@ -183,12 +183,15 @@ const TIMEZONE_OPTIONS = [
 function strToDate(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d) }
 function dateToStr(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}` }
 
-function getGreeting() {
+function getGreeting(lang) {
   const h = new Date().getHours()
-  if (h >= 6 && h < 12) return 'Good Morning,'
-  if (h >= 12 && h < 18) return 'Good Afternoon,'
-  if (h >= 18 && h < 22) return 'Good Evening,'
-  return 'Good Night,'
+  const greetings = {
+    ko: h >= 6 && h < 12 ? '좋은 아침,' : h >= 12 && h < 18 ? '좋은 오후,' : h >= 18 && h < 22 ? '좋은 저녁,' : '좋은 밤,',
+    zh: h >= 6 && h < 12 ? '早上好,' : h >= 12 && h < 18 ? '下午好,' : h >= 18 && h < 22 ? '晚上好,' : '晚安,',
+    en: h >= 6 && h < 12 ? 'Good Morning,' : h >= 12 && h < 18 ? 'Good Afternoon,' : h >= 18 && h < 22 ? 'Good Evening,' : 'Good Night,',
+    ja: h >= 6 && h < 12 ? 'おはようございます,' : h >= 12 && h < 18 ? 'こんにちは,' : h >= 18 && h < 22 ? 'こんばんは,' : 'おやすみなさい,',
+  }
+  return greetings[lang] || greetings.en
 }
 
 function getTripStatusLabel(plan, lang) {
@@ -449,10 +452,10 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
       {/* ─── 1. 인사 + 위치 ─── */}
       <div style={{ padding: '10px 24px 16px', ...fadeUp(0) }}>
-        <div style={{ fontSize: 20, fontWeight: 500, color: '#8B95A1', letterSpacing: '-0.3px', marginBottom: 2 }}>
-          {getGreeting()}
+        <div style={{ fontSize: lang === 'en' ? 22 : lang === 'ja' ? 20 : 22, fontWeight: 700, color: '#191F28', letterSpacing: lang === 'en' ? '-0.3px' : '-0.5px', marginBottom: 4, lineHeight: 1.3 }}>
+          {getGreeting(lang)}
         </div>
-        <div style={{ fontSize: 28, fontWeight: 700, color: '#3182F6', letterSpacing: '-0.5px', lineHeight: 1.3 }}>
+        <div style={{ fontSize: lang === 'en' ? 30 : lang === 'ja' ? 26 : 28, fontWeight: 700, color: '#3182F6', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
           Seoul<span className="blinking-dot">.</span>
         </div>
       </div>

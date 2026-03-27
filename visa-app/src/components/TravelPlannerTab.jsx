@@ -191,37 +191,37 @@ function DateSetupScreen({ lang, onSave, onCancel }) {
   return (
     <div style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: 20 }}>
       {onCancel && (
-        <button onClick={onCancel} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#A8A8A8', padding: 0, alignSelf: 'flex-start' }}>
+        <button onClick={onCancel} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#8B95A1', padding: 0, alignSelf: 'flex-start' }}>
           ← {L(lang, { ko: '취소', zh: '取消', en: 'Cancel' })}
         </button>
       )}
 
       <div>
-        <div style={{ fontSize: 20, fontWeight: 700, color: '#1A1A1A', marginBottom: 6 }}>
+        <div style={{ fontSize: 20, fontWeight: 700, color: '#191F28', marginBottom: 6 }}>
           {L(lang, { ko: '여행 날짜를 설정해주세요', zh: '请设置旅行日期', en: 'Set your travel dates' })}
         </div>
-        <div style={{ fontSize: 13, color: '#A8A8A8', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+        <div style={{ fontSize: 13, color: '#8B95A1', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
           {L(lang, { ko: '입국일과 출국일을 입력하면\n일정표가 자동으로 생성됩니다', zh: '输入入境和出境日期\n将自动生成行程表', en: 'Enter arrival and departure dates\nto auto-generate your itinerary' })}
         </div>
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div style={{ borderRadius: 12, border: '1px solid #F0EDED', background: '#FFFFFF', padding: '16px 20px' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#C4725A', letterSpacing: '0.06em', marginBottom: 8, textTransform: 'uppercase' }}>
+        <div style={{ borderRadius: 12, border: '1px solid #F2F4F6', background: '#FFFFFF', padding: '16px 20px' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#3182F6', letterSpacing: '0.06em', marginBottom: 8, textTransform: 'uppercase' }}>
             {L(lang, { ko: '입국일 (D-Day)', zh: '入境日 (D-Day)', en: 'Arrival (D-Day)' })}
           </div>
           <input
             type="date" value={arrival} onChange={e => setArrival(e.target.value)}
-            style={{ width: '100%', border: 'none', outline: 'none', background: 'transparent', fontSize: 18, fontWeight: 700, color: arrival ? '#1A1A1A' : '#CDCDCD', fontFamily: 'inherit', boxSizing: 'border-box' }}
+            style={{ width: '100%', border: 'none', outline: 'none', background: 'transparent', fontSize: 18, fontWeight: 700, color: arrival ? '#191F28' : '#CDCDCD', fontFamily: 'inherit', boxSizing: 'border-box' }}
           />
         </div>
-        <div style={{ borderRadius: 12, border: '1px solid #F0EDED', background: '#FFFFFF', padding: '16px 20px' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#6B6B6B', letterSpacing: '0.06em', marginBottom: 8, textTransform: 'uppercase' }}>
+        <div style={{ borderRadius: 12, border: '1px solid #F2F4F6', background: '#FFFFFF', padding: '16px 20px' }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#8B95A1', letterSpacing: '0.06em', marginBottom: 8, textTransform: 'uppercase' }}>
             {L(lang, { ko: '출국일', zh: '出境日', en: 'Departure' })}
           </div>
           <input
             type="date" value={departure} min={arrival || undefined} onChange={e => setDeparture(e.target.value)}
-            style={{ width: '100%', border: 'none', outline: 'none', background: 'transparent', fontSize: 18, fontWeight: 700, color: departure ? '#1A1A1A' : '#CDCDCD', fontFamily: 'inherit', boxSizing: 'border-box' }}
+            style={{ width: '100%', border: 'none', outline: 'none', background: 'transparent', fontSize: 18, fontWeight: 700, color: departure ? '#191F28' : '#CDCDCD', fontFamily: 'inherit', boxSizing: 'border-box' }}
           />
         </div>
       </div>
@@ -233,7 +233,7 @@ function DateSetupScreen({ lang, onSave, onCancel }) {
       )}
 
       {arrival && departure && departure >= arrival && (
-        <div style={{ textAlign: 'center', fontSize: 13, color: '#C4725A', fontWeight: 600 }}>
+        <div style={{ textAlign: 'center', fontSize: 13, color: '#3182F6', fontWeight: 600 }}>
           {getNightsLabel(arrival, departure, lang)} · {buildDaysList(arrival, departure).length}{L(lang, { ko: '일 일정', zh: '天行程', en: ' days' })}
         </div>
       )}
@@ -242,7 +242,7 @@ function DateSetupScreen({ lang, onSave, onCancel }) {
         onClick={handleSave} disabled={!canSave}
         style={{
           padding: '16px', borderRadius: 12, border: 'none', cursor: canSave ? 'pointer' : 'not-allowed',
-          background: canSave ? '#C4725A' : '#E0E0E0', color: 'white', fontSize: 16, fontWeight: 700,
+          background: canSave ? '#3182F6' : '#E0E0E0', color: 'white', fontSize: 16, fontWeight: 700,
         }}
       >
         {L(lang, { ko: '일정표 만들기', zh: '创建行程表', en: 'Create Itinerary' })}
@@ -325,10 +325,10 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
         <div style={{ padding: '12px 20px 0', flexShrink: 0 }}>
           <div style={{ width: 40, height: 4, borderRadius: 2, background: '#CDCDCD', margin: '0 auto 16px' }} />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <span style={{ fontSize: 17, fontWeight: 700, color: '#1A1A1A' }}>
+            <span style={{ fontSize: 17, fontWeight: 700, color: '#191F28' }}>
               {L(lang, { ko: '장소 추가', zh: '添加地点', en: 'Add Place' })}
             </span>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, fontSize: 14, color: '#A8A8A8' }}>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, fontSize: 14, color: '#8B95A1' }}>
               ✕
             </button>
           </div>
@@ -341,12 +341,12 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
                 <input
                   ref={inputRef} type="text" value={query} onChange={e => handleQuery(e.target.value)}
                   placeholder={L(lang, { ko: '장소 검색...', zh: '搜索地点...', en: 'Search places...' })}
-                  style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1px solid #F0EDED', outline: 'none', fontSize: 15, color: '#1A1A1A', background: '#FAFAFA', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '12px 14px', borderRadius: 12, border: '1px solid #F2F4F6', outline: 'none', fontSize: 15, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
                 />
               </div>
 
               {loading && (
-                <div style={{ textAlign: 'center', padding: '20px 0', color: '#A8A8A8', fontSize: 13 }}>
+                <div style={{ textAlign: 'center', padding: '20px 0', color: '#8B95A1', fontSize: 13 }}>
                   {L(lang, { ko: '검색 중...', zh: '搜索中...', en: 'Searching...' })}
                 </div>
               )}
@@ -354,18 +354,18 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
               {!loading && results.map(item => (
                 <button
                   key={item.contentid} onClick={() => handleSelectResult(item)}
-                  style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', borderBottom: '1px solid #F0EDED' }}
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', borderBottom: '1px solid #F2F4F6' }}
                 >
-                  <div style={{ width: 40, height: 40, borderRadius: 10, background: '#F0EDED', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 10, background: '#F2F4F6', flexShrink: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {item.firstimage
                       ? <img src={item.firstimage} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} loading="lazy" />
-                      : <span style={{ fontSize: 12, fontWeight: 600, color: '#A8A8A8' }}>{(item.title || '').slice(0, 2)}</span>
+                      : <span style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1' }}>{(item.title || '').slice(0, 2)}</span>
                     }
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</div>
                     {item.addr1 && (
-                      <div style={{ fontSize: 12, color: '#A8A8A8', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ fontSize: 12, color: '#8B95A1', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {item.addr1.replace('서울특별시 ', '')}
                       </div>
                     )}
@@ -375,7 +375,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
 
               <button
                 onClick={() => { setSelected(null); setStep('detail') }}
-                style={{ width: '100%', padding: '14px', borderRadius: 10, border: '1px dashed #F0EDED', background: 'transparent', cursor: 'pointer', fontSize: 14, color: '#A8A8A8', textAlign: 'center', marginTop: 8 }}
+                style={{ width: '100%', padding: '14px', borderRadius: 10, border: '1px dashed #F2F4F6', background: 'transparent', cursor: 'pointer', fontSize: 14, color: '#8B95A1', textAlign: 'center', marginTop: 8 }}
               >
                 {L(lang, { ko: '+ 직접 입력', zh: '+ 手动输入', en: '+ Enter manually' })}
               </button>
@@ -385,45 +385,45 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
           {step === 'detail' && (
             <>
               {selected && (
-                <div style={{ borderRadius: 12, background: '#FBF7F5', padding: '12px 16px', marginBottom: 16, borderLeft: '3px solid #C4725A' }}>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#1A1A1A' }}>{selected.title}</div>
+                <div style={{ borderRadius: 12, background: 'rgba(49,130,246,0.06)', padding: '12px 16px', marginBottom: 16, borderLeft: '3px solid #3182F6' }}>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: '#191F28' }}>{selected.title}</div>
                   {selected.addr1 && (
-                    <div style={{ fontSize: 12, color: '#A8A8A8', marginTop: 2 }}>{selected.addr1.replace('서울특별시 ', '')}</div>
+                    <div style={{ fontSize: 12, color: '#8B95A1', marginTop: 2 }}>{selected.addr1.replace('서울특별시 ', '')}</div>
                   )}
                 </div>
               )}
 
               <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#6B6B6B', marginBottom: 6 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 6 }}>
                   {L(lang, { ko: '중국어 이름 (선택)', zh: '中文名称（可选）', en: 'Chinese Name (optional)' })}
                 </div>
                 <input type="text" value={nameCn} onChange={e => setNameCn(e.target.value)}
                   placeholder={L(lang, { ko: '예: 蓝瓶咖啡', zh: '例：蓝瓶咖啡', en: 'e.g. 蓝瓶咖啡' })}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #F0EDED', outline: 'none', fontSize: 15, color: '#1A1A1A', background: '#FAFAFA', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #F2F4F6', outline: 'none', fontSize: 15, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#6B6B6B', marginBottom: 6 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 6 }}>
                   {L(lang, { ko: '한국어 이름', zh: '韩文名称', en: 'Korean Name' })} *
                 </div>
                 <input type="text" value={nameKr} onChange={e => setNameKr(e.target.value)}
                   placeholder={L(lang, { ko: '예: 블루보틀', zh: '例：蓝瓶咖啡', en: 'e.g. Blue Bottle' })}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #F0EDED', outline: 'none', fontSize: 15, color: '#1A1A1A', background: '#FAFAFA', boxSizing: 'border-box' }}
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #F2F4F6', outline: 'none', fontSize: 15, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box' }}
                 />
               </div>
 
               <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#6B6B6B', marginBottom: 6 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 6 }}>
                   {L(lang, { ko: '방문 시간', zh: '到访时间', en: 'Visit Time' })}
                 </div>
                 <input type="time" value={time} onChange={e => setTime(e.target.value)}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #F0EDED', outline: 'none', fontSize: 15, color: '#1A1A1A', background: '#FAFAFA', boxSizing: 'border-box', fontFamily: 'inherit' }}
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: 12, border: '1px solid #F2F4F6', outline: 'none', fontSize: 15, color: '#191F28', background: '#FFFFFF', boxSizing: 'border-box', fontFamily: 'inherit' }}
                 />
               </div>
 
               <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: '#6B6B6B', marginBottom: 8 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#8B95A1', marginBottom: 8 }}>
                   {L(lang, { ko: '카테고리', zh: '类别', en: 'Category' })}
                 </div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -431,9 +431,9 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
                     <button key={cat.id} onClick={() => setCategory(cat.id)}
                       style={{
                         padding: '8px 14px', borderRadius: 20, cursor: 'pointer',
-                        background: category === cat.id ? '#C4725A' : 'transparent',
-                        color: category === cat.id ? '#FFFFFF' : '#6B6B6B',
-                        border: category === cat.id ? '1px solid #C4725A' : '1px solid #F0EDED',
+                        background: category === cat.id ? '#3182F6' : 'transparent',
+                        color: category === cat.id ? '#FFFFFF' : '#8B95A1',
+                        border: category === cat.id ? '1px solid #3182F6' : '1px solid #F2F4F6',
                         fontSize: 13, fontWeight: category === cat.id ? 700 : 500,
                       }}
                     >
@@ -445,7 +445,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
 
               <div style={{ display: 'flex', gap: 10 }}>
                 <button onClick={() => setStep('search')}
-                  style={{ flex: 1, padding: '14px', borderRadius: 12, border: '1px solid #F0EDED', cursor: 'pointer', background: '#FFFFFF', color: '#6B6B6B', fontSize: 15, fontWeight: 600 }}
+                  style={{ flex: 1, padding: '14px', borderRadius: 12, border: '1px solid #F2F4F6', cursor: 'pointer', background: '#FFFFFF', color: '#8B95A1', fontSize: 15, fontWeight: 600 }}
                 >
                   {L(lang, { ko: '뒤로', zh: '返回', en: 'Back' })}
                 </button>
@@ -453,7 +453,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
                   style={{
                     flex: 2, padding: '14px', borderRadius: 12, border: 'none',
                     cursor: canAdd ? 'pointer' : 'not-allowed',
-                    background: canAdd ? '#C4725A' : '#E0E0E0', color: 'white',
+                    background: canAdd ? '#3182F6' : '#E0E0E0', color: 'white',
                     fontSize: 15, fontWeight: 700,
                   }}
                 >
@@ -559,15 +559,15 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
     return (
       <div style={{
         position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, zIndex: 40,
-        background: '#FAFAFA',
+        background: '#FFFFFF',
         transform: slideIn ? 'translateX(0)' : 'translateX(100%)',
         transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         fontFamily: '-apple-system, "Pretendard", "Noto Sans SC", sans-serif',
         display: 'flex', flexDirection: 'column',
       }}>
         {/* 헤더 */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #F0EDED' }}>
-          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#A8A8A8', padding: '4px 8px', fontWeight: 500 }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #F2F4F6' }}>
+          <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#8B95A1', padding: '4px 8px', fontWeight: 500 }}>
             ← {L(lang, { ko: '홈', zh: '首页', en: 'Home' })}
           </button>
         </div>
@@ -591,7 +591,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
   return (
     <div style={{
       position: 'fixed', top: 48, left: 0, right: 0, bottom: 65, zIndex: 40,
-      background: '#FAFAFA',
+      background: '#FFFFFF',
       transform: slideIn ? 'translateX(0)' : 'translateX(100%)',
       transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       fontFamily: '-apple-system, "Pretendard", "Noto Sans SC", sans-serif',
@@ -599,24 +599,24 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
     }}>
 
       {/* ─── 상단 헤더 ─── */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #F0EDED', flexShrink: 0 }}>
-        <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#A8A8A8', padding: '4px 0', fontWeight: 500 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #F2F4F6', flexShrink: 0 }}>
+        <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#8B95A1', padding: '4px 0', fontWeight: 500 }}>
           ← {L(lang, { ko: '홈', zh: '首页', en: 'Home' })}
         </button>
-        <span style={{ fontSize: 15, fontWeight: 700, color: '#1A1A1A' }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
           {L(lang, { ko: '내 일정', zh: '我的行程', en: 'My Itinerary' })}
         </span>
-        <button onClick={() => setEditDates(true)} style={{ background: '#F0EDED', border: 'none', cursor: 'pointer', fontSize: 11, color: '#A8A8A8', fontWeight: 500, padding: '4px 10px', borderRadius: 20 }}>
+        <button onClick={() => setEditDates(true)} style={{ background: '#F2F4F6', border: 'none', cursor: 'pointer', fontSize: 11, color: '#8B95A1', fontWeight: 500, padding: '4px 10px', borderRadius: 20 }}>
           {L(lang, { ko: '수정', zh: '修改', en: 'Edit' })}
         </button>
       </div>
 
       {/* ─── Trip Summary ─── */}
-      <div style={{ padding: '12px 20px 10px', borderBottom: '1px solid #F0EDED', flexShrink: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', letterSpacing: '-0.3px' }}>
+      <div style={{ padding: '12px 20px 10px', borderBottom: '1px solid #F2F4F6', flexShrink: 0 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#191F28', letterSpacing: '-0.3px' }}>
           {formatDateLabel(plan.arrivalDate, lang)} — {formatDateLabel(plan.departureDate, lang)}
         </div>
-        <div style={{ fontSize: 11, color: '#C4725A', marginTop: 2, fontWeight: 600 }}>
+        <div style={{ fontSize: 11, color: '#3182F6', marginTop: 2, fontWeight: 600 }}>
           {getNightsLabel(plan.arrivalDate, plan.departureDate, lang)}
         </div>
       </div>
@@ -625,7 +625,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
         {/* 좌측 날짜 사이드바 (52px) */}
-        <div style={{ width: 52, flexShrink: 0, display: 'flex', flexDirection: 'column', borderRight: '1px solid #F0EDED', overflowY: 'auto', paddingTop: 4 }}>
+        <div style={{ width: 52, flexShrink: 0, display: 'flex', flexDirection: 'column', borderRight: '1px solid #F2F4F6', overflowY: 'auto', paddingTop: 4 }}>
           {daysList.map((day, idx) => {
             const isSelected = selectedDay === day
             const isToday = day === todayStr
@@ -637,17 +637,17 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                   width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center',
                   padding: '10px 0', border: 'none', cursor: 'pointer',
                   background: 'transparent',
-                  borderLeft: isSelected ? '3px solid #C4725A' : '3px solid transparent',
+                  borderLeft: isSelected ? '3px solid #3182F6' : '3px solid transparent',
                 }}
               >
-                <span style={{ fontSize: 11, fontWeight: 700, color: isSelected ? '#C4725A' : '#A8A8A8', lineHeight: 1.2 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: isSelected ? '#3182F6' : '#8B95A1', lineHeight: 1.2 }}>
                   {label}
                 </span>
-                <span style={{ fontSize: 9, color: isSelected ? '#C4725A' : '#A8A8A8', marginTop: 2, opacity: isSelected ? 0.8 : 0.6 }}>
+                <span style={{ fontSize: 9, color: isSelected ? '#3182F6' : '#8B95A1', marginTop: 2 }}>
                   {formatShortDate(day)}
                 </span>
                 {isToday && (
-                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#C4725A', marginTop: 3 }} />
+                  <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#3182F6', marginTop: 3 }} />
                 )}
               </button>
             )
@@ -662,22 +662,22 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
             const isExpanded = expandedSystem[item.id]
             const subItems = item.subtype === 'arrival' ? ARRIVAL_ITEMS : DEPARTURE_ITEMS
             return (
-              <div key={item.id} style={{ background: '#FBF7F5', borderRadius: 12, padding: '12px 14px', margin: '0 12px 6px' }}>
+              <div key={item.id} style={{ background: 'rgba(49,130,246,0.06)', borderRadius: 12, padding: '12px 14px', margin: '0 12px 6px' }}>
                 <div onClick={() => toggleSystemExpand(item.id)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: '#C4725A' }}>{L(lang, item.title)}</div>
-                    <div style={{ fontSize: 10, color: '#C4725A', opacity: 0.6, marginTop: 2 }}>{L(lang, { ko: '탭하여 보기', zh: '点击查看', en: 'Tap to view' })}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#3182F6' }}>{L(lang, item.title)}</div>
+                    <div style={{ fontSize: 10, color: 'rgba(49,130,246,0.5)', marginTop: 2 }}>{L(lang, { ko: '탭하여 보기', zh: '点击查看', en: 'Tap to view' })}</div>
                   </div>
-                  <span style={{ fontSize: 10, color: '#C4725A', opacity: 0.4, transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▼</span>
+                  <span style={{ fontSize: 10, color: '#3182F6', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', display: 'inline-block' }}>▼</span>
                 </div>
                 {isExpanded && (
                   <div style={{ marginTop: 8 }}>
                     {subItems.map((si) => (
                       <div key={si.id}
                         onClick={() => { if (si.sub && setSubPage) setSubPage(si.sub); else if (si.tab && setTab) setTab(si.tab) }}
-                        style={{ padding: '8px 0', borderTop: '1px solid rgba(196,114,90,0.1)', fontSize: 12, color: '#6B6B6B', cursor: 'pointer' }}
-                        onMouseEnter={e => e.currentTarget.style.color = '#C4725A'}
-                        onMouseLeave={e => e.currentTarget.style.color = '#6B6B6B'}
+                        style={{ padding: '8px 0', borderTop: '1px solid rgba(49,130,246,0.1)', fontSize: 12, color: '#8B95A1', cursor: 'pointer' }}
+                        onMouseEnter={e => e.currentTarget.style.color = '#3182F6'}
+                        onMouseLeave={e => e.currentTarget.style.color = '#8B95A1'}
                       >{L(lang, si.label)}</div>
                     ))}
                   </div>
@@ -734,8 +734,8 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                   })() : null
 
                   // 연결선 색상
-                  const lineColor = isClosed ? '#D94F4F' : isNext ? '#C4725A' : '#F0EDED'
-                  const dotColor = isClosed ? '#D94F4F' : '#C4725A'
+                  const lineColor = isClosed ? '#D94F4F' : isNext ? '#3182F6' : '#F2F4F6'
+                  const dotColor = isClosed ? '#D94F4F' : '#3182F6'
                   const isLast = idx === placeItems.length - 1
 
                   return (
@@ -748,7 +748,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                       {/* 시간 컬럼 (50px) */}
                       <div style={{ width: 50, flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', paddingRight: 8, position: 'relative' }}>
                         {/* 시간 텍스트 */}
-                        <div style={{ fontSize: 11, fontWeight: 700, color: '#C4725A', lineHeight: 1, marginTop: 2 }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: '#3182F6', lineHeight: 1, marginTop: 2 }}>
                           {item.time || '--:--'}
                         </div>
                         {/* 연결선 (마지막 아이템 제외) */}
@@ -764,18 +764,18 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
                       </div>
 
                       {/* 장소 정보 */}
-                      <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : 6, borderBottom: isLast ? 'none' : '1px solid #F0EDED', marginBottom: isLast ? 0 : 6 }}>
+                      <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : 6, borderBottom: isLast ? 'none' : '1px solid #F2F4F6', marginBottom: isLast ? 0 : 6 }}>
                         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
                           <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: '#1A1A1A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: '#191F28', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {displayName}
                             </div>
-                            {metaLine && <div style={{ fontSize: 10, color: '#A8A8A8', marginTop: 2, letterSpacing: '-0.2px' }}>{metaLine}</div>}
+                            {metaLine && <div style={{ fontSize: 10, color: '#8B95A1', marginTop: 2, letterSpacing: '-0.2px' }}>{metaLine}</div>}
                             {closedDayText && <div style={{ marginTop: 2, fontSize: 10, color: '#D94F4F', fontWeight: 600 }}>{closedDayText}</div>}
                           </div>
                           {/* 삭제 — hover시만 */}
                           <button onClick={() => handleDeleteItem(item.id)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, fontSize: 10, color: '#A8A8A8', padding: '2px 4px', opacity: isHovered ? 1 : 0, transition: 'opacity 0.15s' }}>
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0, fontSize: 10, color: '#8B95A1', padding: '2px 4px', opacity: isHovered ? 1 : 0, transition: 'opacity 0.15s' }}>
                             ✕
                           </button>
                         </div>
@@ -790,7 +790,7 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
           {/* 빈 상태 */}
           {!isArrivalDay && !isDepartureDay && !hasPlaces && (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
-              <div style={{ fontSize: 13, color: '#A8A8A8', lineHeight: 1.5, textAlign: 'center', whiteSpace: 'pre-line' }}>
+              <div style={{ fontSize: 13, color: '#8B95A1', lineHeight: 1.5, textAlign: 'center', whiteSpace: 'pre-line' }}>
                 {L(lang, { ko: '어디로 떠나볼까요?\n장소를 추가해서 하루를 채워보세요', zh: '今天去哪里？\n添加地点，制定行程', en: "Where to today?\nAdd places to build your itinerary" })}
               </div>
             </div>
@@ -801,18 +801,18 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
             onClick={() => setShowAddPlace(true)}
             style={{
               width: 'calc(100% - 24px)', margin: '6px 12px 0', padding: 14, borderRadius: 10,
-              border: '1px dashed #F0EDED', background: 'transparent', cursor: 'pointer',
-              fontSize: 12, color: '#A8A8A8',
+              border: '1px dashed #F2F4F6', background: 'transparent', cursor: 'pointer',
+              fontSize: 12, color: '#8B95A1',
             }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#C4725A'; e.currentTarget.style.color = '#C4725A'; e.currentTarget.style.background = '#FBF7F5' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = '#F0EDED'; e.currentTarget.style.color = '#A8A8A8'; e.currentTarget.style.background = 'transparent' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#3182F6'; e.currentTarget.style.color = '#3182F6'; e.currentTarget.style.background = 'rgba(49,130,246,0.06)' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#F2F4F6'; e.currentTarget.style.color = '#8B95A1'; e.currentTarget.style.background = 'transparent' }}
           >
             + {L(lang, { ko: '장소 추가', zh: '添加地点', en: 'Add Place' })}
           </button>
 
           {/* 미배정 섹션 */}
-          <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed #F0EDED', margin: '12px 12px 0' }}>
-            <div style={{ fontSize: 10, color: '#A8A8A8', fontWeight: 600 }}>
+          <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dashed #F2F4F6', margin: '12px 12px 0' }}>
+            <div style={{ fontSize: 10, color: '#8B95A1', fontWeight: 600 }}>
               {L(lang, { ko: '미배정 장소', zh: '未分配地点', en: 'Unassigned' })}
             </div>
             <div style={{ fontSize: 10, color: '#CDCDCD', marginTop: 4 }}>

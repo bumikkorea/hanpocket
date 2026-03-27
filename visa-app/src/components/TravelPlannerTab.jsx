@@ -600,25 +600,12 @@ export default function TravelPlannerTab({ open, onClose, setSubPage, setTab }) 
 
       {/* ─── 상단 헤더 ─── */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #F2F4F6', flexShrink: 0 }}>
-        <button onClick={handleClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#8B95A1', padding: '4px 0', fontWeight: 500 }}>
-          ← {L(lang, { ko: '홈', zh: '首页', en: 'Home' })}
-        </button>
         <span style={{ fontSize: 15, fontWeight: 700, color: '#191F28' }}>
           {L(lang, { ko: '내 일정', zh: '我的行程', en: 'My Itinerary' })}
         </span>
         <button onClick={() => setEditDates(true)} style={{ background: '#F2F4F6', border: 'none', cursor: 'pointer', fontSize: 11, color: '#8B95A1', fontWeight: 500, padding: '4px 10px', borderRadius: 20 }}>
           {L(lang, { ko: '수정', zh: '修改', en: 'Edit' })}
         </button>
-      </div>
-
-      {/* ─── Trip Summary ─── */}
-      <div style={{ padding: '12px 20px 10px', borderBottom: '1px solid #F2F4F6', flexShrink: 0 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#191F28', letterSpacing: '-0.3px' }}>
-          {formatDateLabel(plan.arrivalDate, lang)} — {formatDateLabel(plan.departureDate, lang)}
-        </div>
-        <div style={{ fontSize: 11, color: '#3182F6', marginTop: 2, fontWeight: 600 }}>
-          {getNightsLabel(plan.arrivalDate, plan.departureDate, lang)}
-        </div>
       </div>
 
       {/* ─── 메인 레이아웃 (사이드바 + 타임테이블) ─── */}

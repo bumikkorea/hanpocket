@@ -10,6 +10,63 @@ import { fetchDepartureFlights, getRemarkInfo } from '../api/flightApi'
 import NearPageHeader from './NearPageHeader'
 import { useLanguage } from '../i18n/index.jsx'
 
+// ─── qwen-mt-turbo 도시명 번역 ───
+const TRANSLATE_CACHE_KEY = (lang) => `flight-city-translations-${lang}`
+const CACHE_TTL = 30 * 24 * 60 * 60 * 1000 // 30일
+
+function loadTranslationCache(lang) {
+  try {
+    const raw = localStorage.getItem(TRANSLATE_CACHE_KEY(lang))
+    if (!raw) return {}
+    const { data, ts } = JSON.parse(raw)
+    if (Date.now() - ts > CACHE_TTL) return {}
+    return data || {}
+  } catch { return {} }
+}
+
+function saveTranslationCache(lang, cache) {
+  localStorage.setItem(TRANSLATE_CACHE_KEY(lang), JSON.stringify({ data: cache, ts: Date.now() }))
+}
+
+async function translateCityNames(names, lang) {
+  if (!names.length || lang === 'ko') return {}
+  const targetLang = lang === 'zh' ? 'Chinese' : 'English'
+  const cache = loadTranslationCache(lang)
+  const uncached = names.filter(n => !cache[n])
+  if (uncached.length === 0) return cache
+
+  try {
+    // 일괄 번역: 줄바꿈으로 구분
+    const text = uncached.join('\n')
+    const resp = await fetch('https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sk-placeholder' },
+      body: JSON.stringify({
+        model: 'qwen-mt-turbo',
+        messages: [{ role: 'user', content: text }],
+        translation_options: { source_lang: 'Korean', target_lang: targetLang },
+      }),
+    })
+    if (!resp.ok) throw new Error('translate failed')
+    const data = await resp.json()
+    const translated = (data.choices?.[0]?.message?.content || '').split('\n')
+    uncached.forEach((name, i) => { if (translated[i]) cache[name] = translated[i].trim() })
+    saveTranslationCache(lang, cache)
+  } catch {
+    // 실패 시 Google Translate fallback
+    try {
+      const tl = lang === 'zh' ? 'zh-CN' : 'en'
+      for (const name of uncached.slice(0, 10)) { // 최대 10개씩
+        const r = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=${tl}&dt=t&q=${encodeURIComponent(name)}`)
+        const d = await r.json()
+        cache[name] = d[0]?.map(s => s[0]).join('') || name
+      }
+      saveTranslationCache(lang, cache)
+    } catch { /* 캐시된 것만 사용 */ }
+  }
+  return cache
+}
+
 function L(lang, d) {
   if (typeof d === 'string') return d
   return d?.[lang] || d?.ko || d?.zh || d?.en || ''
@@ -153,21 +210,26 @@ const AIRLINE = {
   'KLM':          { zh:'荷兰皇家航空',   en:'KLM'                },
 }
 
-// { city, country } 반환 — 3개 언어 병기
-function getCityInfo(lang, airportCode, koName) {
+// { city, country } 반환 — 3개 언어 병기 + 번역 캐시 fallback
+function getCityInfo(lang, airportCode, koName, translations) {
   const c = CITY[airportCode]
-  if (!c) return { city: koName, country: '' }
-  // 병기: 중국어 + 영어 (한국어 시스템이면 한국어도 추가)
-  const parts = []
-  if (c.zh) parts.push(c.zh)
-  if (c.en && c.en !== c.zh) parts.push(c.en)
-  const city = parts.length > 0 ? parts.join(' ') : koName
-  // 국가도 병기
-  const coParts = []
-  if (c.co?.zh) coParts.push(c.co.zh)
-  if (c.co?.en && c.co.en !== c.co.zh) coParts.push(c.co.en)
-  const country = coParts.join(' ')
-  return { city, country }
+  if (c) {
+    const parts = []
+    if (c.zh) parts.push(c.zh)
+    if (c.en && c.en !== c.zh) parts.push(c.en)
+    const city = parts.length > 0 ? parts.join(' ') : koName
+    const coParts = []
+    if (c.co?.zh) coParts.push(c.co.zh)
+    if (c.co?.en && c.co.en !== c.co.zh) coParts.push(c.co.en)
+    const country = coParts.join(' ')
+    return { city, country }
+  }
+  // CITY에 없는 도시 — 번역 캐시에서 조회
+  const translated = translations?.[koName]
+  if (translated && translated !== koName) {
+    return { city: `${translated} ${koName}`, country: '' }
+  }
+  return { city: koName, country: '' }
 }
 function translateAirline(lang, koName) {
   const a = AIRLINE[koName]
@@ -249,11 +311,11 @@ function FlightRow({ f, lang, isEven }) {
       {/* 목적지 + 국가 + 항공사 */}
       <div style={{ minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: '#111827', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {getCityInfo(lang, f.airportCode, f.destination).city}
+          {getCityInfo(lang, f.airportCode, f.destination, cityTranslations).city}
         </div>
         <div style={{ fontSize: 10, color: '#9CA3AF', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {getCityInfo(lang, f.airportCode, f.destination).country
-            ? `${getCityInfo(lang, f.airportCode, f.destination).country} · ${translateAirline(lang, f.airline)}`
+          {getCityInfo(lang, f.airportCode, f.destination, cityTranslations).country
+            ? `${getCityInfo(lang, f.airportCode, f.destination, cityTranslations).country} · ${translateAirline(lang, f.airline)}`
             : translateAirline(lang, f.airline)}
         </div>
       </div>
@@ -293,7 +355,7 @@ function MyFlightCard({ flight, lang }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <PlaneTakeoff size={16} color={tl?.color || '#3B82F6'} />
           <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{flight.flightId}</span>
-          <span style={{ fontSize: 12, color: '#6B7280' }}>→ {getCityInfo(lang, flight.airportCode, flight.destination).city}</span>
+          <span style={{ fontSize: 12, color: '#6B7280' }}>→ {getCityInfo(lang, flight.airportCode, flight.destination, cityTranslations).city}</span>
         </div>
         <span style={{ fontSize: 11, fontWeight: 700, color: ri.color, background: ri.color + '18', borderRadius: 6, padding: '3px 8px' }}>
           {lang === 'zh' ? ri.zh : lang === 'en' ? ri.en : (flight.remark || '정시')}
@@ -339,6 +401,16 @@ export default function DepartureBoard({ onBack, setTab }) {
   const [myFlightInput, setMyFlightInput] = useState('')
   const [airlineFilter, setAirlineFilter] = useState(null)
   const hasKey = !!(import.meta.env.VITE_AIRPORT_PROXY_URL || import.meta.env.VITE_AIRPORT_API_KEY)
+  const [cityTranslations, setCityTranslations] = useState(() => loadTranslationCache(lang))
+
+  // 항공편 로드 후 도시명 번역
+  useEffect(() => {
+    if (!flights || lang === 'ko') return
+    const koNames = [...new Set(flights.map(f => f.destination).filter(Boolean))]
+    const uncachedNames = koNames.filter(n => !CITY[n] && !cityTranslations[n])
+    if (uncachedNames.length === 0) return
+    translateCityNames(uncachedNames, lang).then(cache => setCityTranslations(cache))
+  }, [flights, lang])
 
   async function load() {
     setLoading(true)

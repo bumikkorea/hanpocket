@@ -834,7 +834,7 @@ export default function NearMap() {
       <div
         ref={mapRef}
         style={{
-          position: 'absolute', top: 44, left: 0, right: 0,
+          position: 'absolute', top: 48, left: 0, right: 0,
           bottom: 0,
           transition: 'bottom 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           touchAction: 'manipulation',
@@ -855,7 +855,7 @@ export default function NearMap() {
 
       {/* ─── 메인 카테고리 바 (지도 밖 상단 고정) ─── */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 10, background: '#FFFFFF', borderBottom: '0.5px solid #F2F4F6' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 44 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', height: 48 }}>
           {[
             { id: '_search', label: lang === 'zh' ? '搜索' : lang === 'en' ? 'Search' : '검색', action: () => setShowSearch(true), hasIcon: true },
             { id: '_recent', label: lang === 'zh' ? '最近' : lang === 'en' ? 'Recent' : '최근', action: () => { setShowHistoryPanel(true); setShowAreaPicker(false) } },
@@ -868,13 +868,13 @@ export default function NearMap() {
             return (
               <button key={item.id} onClick={item.action}
                 style={{
-                  background: 'none', border: 'none', cursor: 'pointer', padding: '10px 0 8px',
+                  background: 'none', border: 'none', cursor: 'pointer', padding: '14px 0',
                   fontSize: 14, fontWeight: isActive ? 600 : 400,
                   color: isActive ? '#191F28' : '#8B95A1',
                   position: 'relative', transition: 'all 0.2s',
                 }}
               >
-                <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {item.hasIcon && <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>}
                   {item.label}
                 </span>

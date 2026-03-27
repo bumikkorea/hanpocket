@@ -153,19 +153,30 @@ const AIRLINE = {
   'KLM':          { zh:'荷兰皇家航空',   en:'KLM'                },
 }
 
-// { city, country } 반환
+// { city, country } 반환 — 3개 언어 병기
 function getCityInfo(lang, airportCode, koName) {
   const c = CITY[airportCode]
   if (!c) return { city: koName, country: '' }
-  const city    = lang === 'ko' ? koName : (c[lang] || koName)
-  const country = c.co?.[lang] || ''
+  // 병기: 중국어 + 영어 (한국어 시스템이면 한국어도 추가)
+  const parts = []
+  if (c.zh) parts.push(c.zh)
+  if (c.en && c.en !== c.zh) parts.push(c.en)
+  const city = parts.length > 0 ? parts.join(' ') : koName
+  // 국가도 병기
+  const coParts = []
+  if (c.co?.zh) coParts.push(c.co.zh)
+  if (c.co?.en && c.co.en !== c.co.zh) coParts.push(c.co.en)
+  const country = coParts.join(' ')
   return { city, country }
 }
 function translateAirline(lang, koName) {
-  if (lang === 'ko') return koName
   const a = AIRLINE[koName]
-  if (a) return a[lang] || koName
-  return koName
+  if (!a) return koName
+  // 병기: 중국어 + 영어
+  const parts = []
+  if (a.zh) parts.push(a.zh)
+  if (a.en && a.en !== a.zh) parts.push(a.en)
+  return parts.length > 0 ? parts.join(' ') : koName
 }
 
 // P01=T1 본관 / P02=T2 / P03=탑승동(T1 소속, 셔틀 이용)

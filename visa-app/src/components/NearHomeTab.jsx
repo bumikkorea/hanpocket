@@ -460,7 +460,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 2. 일정 카드 (풀 width) ─── */}
-      <div style={{ padding: '0 24px 24px', ...fadeUp(1.5) }}>
+      <div style={{ padding: '0 24px 48px', ...fadeUp(1.5) }}>
         <button
           onClick={() => setShowPlanner(true)}
           style={{
@@ -544,7 +544,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 4. 검색창 (지금 뜨는 곳 아래) ─── */}
-      <div style={{ padding: '0 24px 16px', ...fadeUp(4) }}>
+      <div style={{ padding: '0 24px 48px', ...fadeUp(4) }}>
         <button onClick={openSearchOverlay}
           style={{
             width: '100%', display: 'flex', alignItems: 'center',
@@ -560,7 +560,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
       </div>
 
       {/* ─── 5. 카테고리 탭 바 (가로 스크롤) ─── */}
-      <div style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '0 24px 0', scrollbarWidth: 'none', marginBottom: 20, ...fadeUp(4) }}>
+      <div style={{ overflowX: 'auto', display: 'flex', gap: 8, padding: '0 24px 0', scrollbarWidth: 'none', marginBottom: 48, ...fadeUp(4) }}>
         {[
           { id: null, zh: '全部', ko: '전체', en: 'All' },
           ...MEITU_CATEGORIES.filter(c => c.id !== 'more'),
@@ -588,7 +588,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
 
       {/* ─── 6. 추천 장소 2열 그리드 ─── */}
       <div ref={feedRef} style={{ ...fadeUp(5) }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 24px 8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 24px 16px' }}>
           <span style={{ fontSize: 16, fontWeight: 800, color: '#191F28' }}>
             {selectedCategory
               ? L(lang, CAT_LABELS[selectedCategory] || { ko: '내게 맞는 추천장소', zh: '为您推荐', en: 'Recommended for You' })

@@ -11,6 +11,7 @@ import MorePage from './MorePage.jsx'
 import NearPageHeader from './NearPageHeader.jsx'
 import TravelPlannerTab, { useTravelPlan } from './TravelPlannerTab.jsx'
 import { AIRPORTS, AIRLINES, lookupFlight } from '../data/flights.js'
+import { useProfile } from '../hooks/useProfile.js'
 
 function L(lang, d) { if (typeof d === 'string') return d; return d?.[lang] || d?.zh || d?.ko || d?.en || '' }
 
@@ -267,6 +268,8 @@ const fadeUp = (i) => ({
 // ═══════════════════════════════════════════
 export default function NearHomeTab({ setTab, setSubPage }) {
   const { lang, t } = useLanguage()
+  const { profile } = useProfile()
+  const userName = profile?.name || profile?.nickname || L(lang, { ko: '여행자', zh: '旅行者', en: 'Traveler', ja: '旅行者' })
   const plan = useTravelPlan()
   const weatherData = useNHWeather()
   const cnyRate = useNHCNYRate()
@@ -449,13 +452,13 @@ export default function NearHomeTab({ setTab, setSubPage }) {
         </div>
       )}
 
-      {/* ─── 1. 인사 + 위치 ─── */}
+      {/* ─── 1. 인사 + 사용자 이름 ─── */}
       <div style={{ padding: '10px 24px 16px', ...fadeUp(0) }}>
         <div style={{ fontSize: lang === 'en' ? 22 : lang === 'ja' ? 20 : 22, fontWeight: 700, color: '#191F28', letterSpacing: lang === 'en' ? '-0.3px' : '-0.5px', marginBottom: 4, lineHeight: 1.3 }}>
           {getGreeting(lang)}
         </div>
         <div style={{ fontSize: lang === 'en' ? 30 : lang === 'ja' ? 26 : 28, fontWeight: 700, color: '#3182F6', letterSpacing: '-0.5px', lineHeight: 1.2 }}>
-          Seoul<span className="blinking-dot">.</span>
+          {userName}<span className="blinking-dot">.</span>
         </div>
       </div>
 

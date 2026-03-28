@@ -143,7 +143,7 @@ export default function MyTab({ setTab, setSubPage }) {
         {/* 아바타 */}
         <div style={{
           width: 64, height: 64, borderRadius: '50%',
-          background: 'linear-gradient(135deg, #3182F6, #E8956F)',
+          background: '#3182F6',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           color: 'white', fontSize: 24, fontWeight: 700, flexShrink: 0,
           boxShadow: '6px 6px 14px rgba(49,130,246,0.3), -4px -4px 10px rgba(255,255,255,0.8)',

@@ -242,7 +242,11 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
     if (open) {
       setQuery(''); setResults([]); setStep('wishlist'); setSelected(null)
       setTime('10:00'); setCategory('sightseeing'); setPlaceName('')
+      document.body.style.overflow = 'hidden'
       setTimeout(() => inputRef.current?.focus(), 120)
+      return () => {
+        document.body.style.overflow = ''
+      }
     }
   }, [open])
 
@@ -293,7 +297,7 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
 
   return (
     <div onClick={onClose} style={{ position: 'fixed', inset: 0, zIndex: 9800, background: 'rgba(0,0,0,0.35)', display: 'flex', alignItems: 'flex-end' }}>
-      <div onClick={e => e.stopPropagation()} style={{ background: '#FFFFFF', borderRadius: '16px 16px 0 0', width: '100%', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
+      <div onClick={e => e.stopPropagation()} style={{ background: '#FFFFFF', borderRadius: '16px 16px 0 0', width: '100%', minHeight: '60vh', maxHeight: 'calc(100vh - 70px)', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '12px 20px 0', flexShrink: 0 }}>
           <div style={{ width: 40, height: 4, borderRadius: 2, background: '#CDCDCD', margin: '0 auto 16px' }} />
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -345,9 +349,6 @@ function AddPlaceSheet({ open, onClose, lang, onAdd }) {
                   </div>
                 )}
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button onClick={() => setStep('search')} style={{ flex: 1, padding: 12, borderRadius: 12, border: '1px solid #F2F4F6', background: '#FFFFFF', cursor: 'pointer', fontSize: 13, fontWeight: 600, color: '#191F28', transition: 'all 0.2s' }}>
-                    {L(lang, { ko: '검색으로 추가', zh: '搜索添加', en: 'Search' })}
-                  </button>
                   <button onClick={() => { setSelected(null); setStep('detail') }} style={{ flex: 1, padding: 12, borderRadius: 12, border: 'none', background: '#3182F6', cursor: 'pointer', fontSize: 13, fontWeight: 600, color: 'white', transition: 'all 0.2s' }}>
                     {L(lang, { ko: '직접 입력', zh: '手动输入', en: 'Manual' })}
                   </button>

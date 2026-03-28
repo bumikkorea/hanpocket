@@ -2,17 +2,35 @@
 
 @import "tailwindcss";
 
-/* ─── iOS pull-to-refresh 방지 + 전체 overscroll 방지 ─── */
+/* ─── 전체 overscroll 방지 + 배경 통일 ─── */
 html {
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
+  background-color: #FFFFFF;
 }
 body {
   font-family: 'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif;
-  background: var(--bg-l0);
+  background-color: #FFFFFF;
   color: var(--text-high);
   overscroll-behavior: none;
   overscroll-behavior-y: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* 앱 최상위 컨테이너 — 스크롤 차단 */
+#root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background-color: #FFFFFF;
+}
+
+/* 스크롤 가능한 내부 영역 — 부모로 전파 차단 */
+.scroll-area {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* 카카오맵 워터마크 숨김 */

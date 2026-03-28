@@ -71,9 +71,9 @@ const T = {
   },
   // Gradients
   gradient: {
-    dream: "linear-gradient(135deg, #FF85B3 0%, #C4B5FD 50%, #7DD3FC 100%)",
-    sunset: "linear-gradient(135deg, #FCA5A5 0%, #FBBF24 100%)",
-    aurora: "linear-gradient(135deg, #C4B5FD 0%, #7DD3FC 50%, #86EFAC 100%)",
+    dream: "linear-gradient(135deg, #3182F6 0%, #6BA8F8 100%)",
+    sunset: "linear-gradient(135deg, #3182F6 0%, #6BA8F8 100%)",
+    aurora: "linear-gradient(135deg, #3182F6 0%, #6BA8F8 100%)",
   },
 };
 

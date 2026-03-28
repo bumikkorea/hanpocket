@@ -1970,7 +1970,7 @@ function AppInner() {
   }
 
   return (
-    <div className="pb-20" style={{ maxWidth: 430, margin: '0 auto', minHeight: '100vh', position: 'relative', background: '#FAFAFA' }}>
+    <div className="pb-20 scroll-area" style={{ maxWidth: 430, margin: '0 auto', height: '100%', position: 'relative', background: '#FFFFFF', overflowY: 'auto' }}>
       {showNotice && <NoticePopup lang={lang} onClose={() => setShowNotice(false)} />}
       <PWAInstallPrompt />
 

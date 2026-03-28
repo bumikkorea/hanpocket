@@ -404,7 +404,7 @@ export default function NearHomeTab({ setTab, setSubPage }) {
   })() : []
 
   return (
-    <div style={{ background: '#FFFFFF', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif", paddingBottom: 80, minHeight: '100vh' }}>
+    <div style={{ background: '#FFFFFF', fontFamily: "'Noto Sans KR', 'Noto Sans SC', 'Noto Sans', sans-serif", paddingBottom: 80, minHeight: '100vh', overscrollBehavior: 'contain' }}>
 
       {/* ─── @keyframes ─── */}
       <style>{`
